@@ -761,6 +761,29 @@ public actor GlifiStudioProjectSession {
         }
     }
 
+    /// Selects sentences with `SentenceTFIDFMean-v1` within a declared budget and resolves
+    /// their source text.
+    public func analyzeExtractiveSummary(
+        sourceRevisionIDs: [String],
+        budget: GlifiStudioSummaryBudget = .standard,
+        scheme: GlifiStudioTermWeightingScheme = .summaryStandard,
+        corpusOptions: GlifiStudioCorpusAnalysisOptions = .standard
+    ) async throws -> GlifiStudioExtractiveSummaryResult {
+        try await derivedOperation {
+            let ids = try sourceRevisionIDs.map(SourceRevisionID.init(canonicalValue:))
+            let result = try await engine.analyzeExtractiveSummary(
+                in: project,
+                sourceRevisionIDs: ids,
+                budget: try budget.coreValue(),
+                scheme: try scheme.coreValue(),
+                corpusOptions: corpusOptions.coreValue
+            )
+            let resolved = try await engine.resolveSummarySentences(
+                result.value, in: project, corpusOptions: corpusOptions.coreValue)
+            return GlifiStudioExtractiveSummaryResult(result, resolved: resolved)
+        }
+    }
+
     /// Counts forms, word n-grams or character n-grams and applies declared filters.
     public func analyzeNGramFrequencies(
         sourceRevisionIDs: [String],

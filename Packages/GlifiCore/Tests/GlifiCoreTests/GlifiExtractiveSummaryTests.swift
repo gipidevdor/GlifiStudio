@@ -1,0 +1,189 @@
+// SPDX-License-Identifier: BSD-3-Clause
+
+import Foundation
+import Testing
+
+@testable import GlifiCore
+
+// Oracolo: Tests/Oracles/Python/summary.py (righe SUMMARY_* di expected.txt).
+private func revision(_ index: Int) throws -> SourceRevisionID {
+    try SourceRevisionID(
+        canonicalValue: "source-revision:00000000-0000-0000-0000-00000000000\(index)")
+}
+
+private func sentence(_ index: Int, _ terms: [String]) throws -> GlifiSummaryCandidateSentence {
+    GlifiSummaryCandidateSentence(
+        range: try GlifiUTF8Range(start: index * 10, end: index * 10 + 5), terms: terms)
+}
+
+private func oracleDocuments() throws -> [GlifiSummaryDocument] {
+    [
+        GlifiSummaryDocument(
+            sourceRevisionID: try revision(1),
+            sentences: [
+                try sentence(0, ["casa", "bella", "casa"]),
+                try sentence(1, []),
+                try sentence(2, ["bella", "giardino"]),
+            ]
+        ),
+        GlifiSummaryDocument(
+            sourceRevisionID: try revision(2),
+            sentences: [
+                try sentence(0, ["giardino", "verde"]),
+                try sentence(1, ["casa"]),
+            ]
+        ),
+    ]
+}
+
+private func close(_ value: Double, _ reference: Double) -> Bool {
+    abs(value - reference) <= 1e-12 * max(1, abs(reference))
+}
+
+@Test("SentenceTFIDFMean-v1 coincide con l'oracolo Python: punteggi, rank e selezioni")
+func extractiveSummaryMatchesPython() throws {
+    let documents = try oracleDocuments()
+    let scheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme
+    let bySentences = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: GlifiSummaryBudget(unit: .sentences, limit: 2),
+        scheme: scheme)
+    let scores = bySentences.sentences.map(\.score)
+    let expected = [1.92198454876287, 0, 1.68982964258436, 1.20273255405408, 1]
+    #expect(scores.count == expected.count)
+    for (score, reference) in zip(scores, expected) {
+        #expect(close(score, reference))
+    }
+    #expect(bySentences.sentences.map(\.rank) == [1, 5, 2, 3, 4])
+    #expect(bySentences.sentences.map(\.sentenceIndex) == [0, 1, 2, 0, 1])
+    #expect(bySentences.sentences.map(\.isSelected) == [true, false, true, false, false])
+    #expect(bySentences.consumedBudget == 2)
+    #expect(bySentences.rankedSentences.map(\.rank) == [1, 2, 3, 4, 5])
+    #expect(bySentences.selectedSentences.map(\.sentenceIndex) == [0, 2])
+
+    let byTokens = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: GlifiSummaryBudget(unit: .lexicalTokens, limit: 3),
+        scheme: scheme)
+    #expect(byTokens.sentences.map(\.isSelected) == [true, false, false, false, false])
+    #expect(byTokens.consumedBudget == 3)
+    #expect(byTokens.sentences.map(\.score) == bySentences.sentences.map(\.score))
+}
+
+@Test("Riassunto: frase senza token a punteggio zero mai scelta, parità per posizione, budget")
+func extractiveSummaryEdgeCases() throws {
+    let scheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme
+    let tied = [
+        GlifiSummaryDocument(
+            sourceRevisionID: try revision(1),
+            sentences: [
+                try sentence(0, ["a", "b"]),
+                try sentence(1, []),
+                try sentence(2, ["b", "a"]),
+            ]
+        )
+    ]
+    let summary = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: tied, budget: GlifiSummaryBudget(unit: .sentences, limit: 5), scheme: scheme)
+    // Frasi duplicate: stesso punteggio, rank per posizione; la frase vuota resta ultima.
+    #expect(summary.sentences[0].score == summary.sentences[2].score)
+    #expect(summary.sentences.map(\.rank) == [1, 3, 2])
+    #expect(summary.sentences.map(\.isSelected) == [true, false, true])
+    #expect(summary.sentences[1].score == 0)
+    #expect(summary.consumedBudget == 2)
+    #expect(summary.eligibilityPolicy == "eligibility.lexical-tokens-required-v1")
+    #expect(summary.tieBreakIdentifier == "tie-break.source-position-v1")
+    #expect(summary.outputOrderIdentifier == "output-order.source-v1")
+
+    // Un solo documento: l'IDF liscio resta definito e positivo.
+    #expect(summary.sentences[0].score > 0)
+
+    for limit in [0, -1, GlifiSummaryBudget.maximumLimit + 1] {
+        #expect(throws: GlifiFailure.self) {
+            _ = try GlifiCorpusExtractiveSummaryAnalysis(
+                documents: tied, budget: GlifiSummaryBudget(unit: .sentences, limit: limit),
+                scheme: scheme)
+        }
+    }
+    #expect(throws: GlifiFailure.self) {
+        _ = try GlifiCorpusExtractiveSummaryAnalysis(
+            documents: [], budget: .standard, scheme: scheme)
+    }
+    #expect(throws: GlifiFailure.self) {
+        _ = try GlifiCorpusExtractiveSummaryAnalysis(
+            documents: tied + tied, budget: .standard, scheme: scheme)
+    }
+
+    let empty = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: [GlifiSummaryDocument(sourceRevisionID: try revision(1), sentences: [])],
+        budget: .standard, scheme: scheme)
+    #expect(empty.sentences.isEmpty)
+    #expect(empty.consumedBudget == 0)
+
+    let encoded = try JSONEncoder().encode(summary)
+    #expect(
+        try JSONDecoder().decode(GlifiCorpusExtractiveSummaryAnalysis.self, from: encoded)
+            == summary)
+}
+
+@Test("Il riassunto estrattivo si persiste dal testo, si riusa e risolve le frasi scelte")
+func extractiveSummaryIsPersistedFromText() async throws {
+    let root = FileManager.default.temporaryDirectory.appending(
+        path: "GlifiExtractiveSummary-\(UUID().uuidString)", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let project = try GlifiProjectPackage.create(
+        at: root.appending(path: "P.glifi", directoryHint: .isDirectory))
+    let engine = GlifiEngine()
+    let texts = [
+        "La casa è bella. Il giardino è verde e grande. Sì.",
+        "Il giardino della casa è verde.",
+    ]
+    var ids: [SourceRevisionID] = []
+    for (index, text) in texts.enumerated() {
+        let imported = try GlifiTextImporter().importText(
+            from: Data(text.utf8), format: .plainText, sourceRevisionID: try revision(index + 1))
+        _ = try await project.importText(imported)
+        ids.append(imported.sourceRevisionID)
+    }
+    let result = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids, budget: GlifiSummaryBudget(unit: .sentences, limit: 2))
+    let reused = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids.reversed(),
+        budget: GlifiSummaryBudget(unit: .sentences, limit: 2))
+    #expect(reused.artifactID == result.artifactID)
+    #expect(reused.value == result.value)
+    let summary = result.value
+    #expect(summary.sourceRevisionIDs == ids.map(\.canonicalValue))
+    #expect(summary.sentences.count == 4)
+    #expect(summary.sentences.map(\.sentenceIndex) == [0, 1, 2, 0])
+    #expect(summary.sentences.map(\.tokenCount) == [4, 6, 1, 6])
+    #expect(Set(summary.sentences.map(\.rank)) == [1, 2, 3, 4])
+    #expect(summary.selectedSentences.count == 2)
+    #expect(summary.consumedBudget == 2)
+
+    let resolved = try await engine.resolveSummarySentences(summary, in: project)
+    #expect(resolved.map(\.sentence) == summary.selectedSentences)
+    let combined = texts.joined(separator: "\n")
+    for entry in resolved {
+        #expect(!entry.text.isEmpty)
+        #expect(combined.contains(entry.text))
+    }
+
+    // Budget e schema diversi sono nodi distinti; budget non valido rifiutato.
+    let wider = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids, budget: GlifiSummaryBudget(unit: .sentences, limit: 4))
+    #expect(wider.artifactID != result.artifactID)
+    #expect(wider.value.selectedSentences.count == 4)
+    #expect(wider.value.sentences.map(\.score) == summary.sentences.map(\.score))
+    let stored: GlifiProjectDerivedResult<GlifiCorpusExtractiveSummaryAnalysis> =
+        try await engine.storedDerivedResult(
+            GlifiCorpusExtractiveSummaryAnalysis.self, artifactID: wider.artifactID, in: project)
+    #expect(stored.value == wider.value)
+    await #expect(throws: GlifiFailure.self) {
+        _ = try await engine.analyzeExtractiveSummary(
+            in: project, sourceRevisionIDs: ids,
+            budget: GlifiSummaryBudget(unit: .sentences, limit: 0))
+    }
+    await #expect(throws: GlifiFailure.self) {
+        _ = try await engine.analyzeExtractiveSummary(in: project, sourceRevisionIDs: [])
+    }
+}

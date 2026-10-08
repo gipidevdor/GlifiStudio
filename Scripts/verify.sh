@@ -452,6 +452,10 @@ cli_bm25_output="$(swift run --package-path Packages/GlifiCore \
 cli_diversity_output="$(swift run --package-path Packages/GlifiCore \
     --scratch-path "$build_cache_directory/SwiftPM" --skip-build \
     GlifiCLI --format json diversity "$cli_visual_project_path" --sources "$cli_visual_sources")"
+cli_summarize_output="$(swift run --package-path Packages/GlifiCore \
+    --scratch-path "$build_cache_directory/SwiftPM" --skip-build \
+    GlifiCLI --format json summarize "$cli_visual_project_path" --sources "$cli_visual_sources" \
+    --sentences 2)"
 # ADR-0027: storia qualitativa dalla CLI.
 cli_codebook_request="$temporary_build_directory/codebook.json"
 print -r -- '{"codebookRevised":{"codebookID":"temi","revision":1,"categories":[{"categoryID":"fonte","label":"Fonte","definition":"Riferimenti alla fonte."}]}}' \
@@ -602,6 +606,28 @@ assert len(result["documents"]) == 2
 for document in result["documents"]:
     value = document["mtld"]["value"]
     assert value == "+Infinity" or value > 0
+PY
+python3 - "$cli_summarize_output" <<'PY'
+import json
+import sys
+
+summary = json.loads(sys.argv[1])
+assert summary["command"] == "summarize"
+result = summary["result"]
+assert result["methodIdentifier"] == "SentenceTFIDFMean-v1"
+assert result["budget"] == {"unit": "Budget-sentences-v1", "limit": 2}
+assert result["outputOrderIdentifier"] == "output-order.source-v1"
+sentences = result["sentences"]
+assert len(result["sourceRevisionIDs"]) == 2
+assert sorted(s["rank"] for s in sentences) == list(range(1, len(sentences) + 1))
+ranked = sorted(sentences, key=lambda s: s["rank"])
+assert all(a["score"] >= b["score"] for a, b in zip(ranked, ranked[1:]))
+selected = [s for s in sentences if s["isSelected"]]
+assert len(selected) == min(2, sum(1 for s in sentences if s["tokenCount"] > 0))
+assert result["consumedBudget"] == len(selected)
+assert [entry["sentence"] for entry in result["selected"]] == selected
+assert all(entry["text"] and entry["sentence"]["endUTF8"] > entry["sentence"]["startUTF8"]
+           for entry in result["selected"])
 PY
 python3 - "$cli_weighting_output" "$cli_bm25_output" <<'PY'
 import json

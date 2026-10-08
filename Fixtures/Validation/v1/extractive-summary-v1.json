@@ -1,0 +1,67 @@
+{
+  "schema": "studio.glifi.validation-manifest",
+  "schemaVersion": 1,
+  "id": "validation-extractive-summary-v1",
+  "capabilityIdentifier": "corpus-extractive-summary-v1",
+  "methodIdentifiers": [
+    "SentenceTFIDFMean-v1"
+  ],
+  "status": "candidate",
+  "statusReason": "Verifica dinamica eseguita dal runner remoto; promozione a supported dopo la review dell'evidenza GS-VER-142.",
+  "license": "BSD-3-Clause",
+  "toolchain": {
+    "swiftLanguageMode": "6",
+    "swiftToolsVersion": "6.4",
+    "platforms": [
+      "macOS 27",
+      "iPadOS 27"
+    ]
+  },
+  "levels": {
+    "V0": {
+      "status": "pass",
+      "description": "Schema con budget, schema di ponderazione, rank, intervallo e flag di selezione espliciti."
+    },
+    "V1": {
+      "status": "pass",
+      "description": "Frase senza token, frasi duplicate, un solo documento, documento senza frasi, budget non valido, gruppo vuoto e fonte duplicata."
+    },
+    "V2": {
+      "status": "pass",
+      "description": "Implementazione indipendente in Python (Tests/Oracles/Python/summary.py)."
+    },
+    "V3": {
+      "status": "pass",
+      "description": "Persistenza, riuso, rilettura e parità GlifiCore/Kit/CLI (GS-VER-142)."
+    },
+    "V4": {
+      "status": "pass",
+      "description": "Oracoli versionati in Tests/Oracles/expected.txt come golden numerico, riletti da make check-oracles.",
+      "datasets": [
+        "Packages/GlifiCore/Tests/Oracles/expected.txt"
+      ]
+    },
+    "V5": {
+      "status": "not-applicable",
+      "description": "Un solo backend nel nucleo 0.1."
+    }
+  },
+  "limits": [
+    "Una sola famiglia estrattiva; nessuna valutazione ROUGE o umana; oracolo Python, non pacchetto terzo."
+  ],
+  "evidence": [
+    "docs/evidenze/GS-VER-142-riassunto-estrattivo.md"
+  ],
+  "numericAgreement": {
+    "comparisonMode": "relativeTolerance",
+    "relativeTolerance": 1e-12,
+    "oracle": "Packages/GlifiCore/Tests/Oracles/Python/summary.py",
+    "notes": "Media dei pesi TF-IDF per frase; rank e selezioni confrontati come interi esatti."
+  },
+  "review": {
+    "reviewer": "Iniziatore del progetto",
+    "date": "2026-10-03",
+    "kind": "interna",
+    "scope": "GS-DOR-012: variante fissata, oracolo indipendente e tolleranza dichiarata"
+  }
+}

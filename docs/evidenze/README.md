@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.8.0 |
+| Versione | 1.9.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-10-03 |
@@ -156,3 +156,4 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 - [GS-VER-138 — Corpus gold italiano su prosa reale](GS-VER-138-gold-italiano-su-prosa-reale.md) — Superato localmente
 - [GS-VER-139 — Cache di build riusata e limitata](GS-VER-139-cache-di-build-limitata.md) — Superato localmente
 - [GS-VER-141 — Prima esecuzione remota dei workflow su runner Xcode 27](GS-VER-141-prima-ci-remota-verde.md) — Superato su runner remoto; controlli opzionali saltati
+- [GS-VER-142 — Riassunto estrattivo deterministico `SentenceTFIDFMean-v1`](GS-VER-142-riassunto-estrattivo.md) — In verifica sul runner remoto
