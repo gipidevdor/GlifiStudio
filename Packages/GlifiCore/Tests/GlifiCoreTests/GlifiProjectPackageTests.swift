@@ -136,7 +136,8 @@ func projectPromotionPreservesExistingObject(kind: String) async throws {
 }
 
 private func promotionOperation(
-    _ kind: PromotionKind, project: GlifiProjectPackage
+    _ kind: PromotionKind, project: GlifiProjectPackage,
+    interruption: GlifiProjectCommitInterruption? = nil
 ) async throws -> (path: String, perform: @Sendable () async throws -> GlifiProjectSnapshot) {
     let snapshot = await project.snapshot()
     let descriptor = try projectDescriptor(
@@ -149,7 +150,10 @@ private func promotionOperation(
         let hex = String(imported.contentDigest.dropFirst(7))
         return (
             "sources/objects/sha256/\(hex.prefix(2))/\(hex)",
-            { try await project.importText(imported) }
+            {
+                try await project.importText(
+                    imported, sourceID: SourceID(), interruption: interruption)
+            }
         )
     case .artifact, .descriptor:
         let data = try JSONEncoder().encode(payload)
@@ -161,7 +165,13 @@ private func promotionOperation(
             kind == .descriptor
             ? "artifacts/descriptors/sha256/\(hex.prefix(2))/\(hex).json"
             : "artifacts/objects/sha256/\(hex.prefix(2))/\(hex)"
-        return (path, { try await project.storeArtifact(payload, descriptor: descriptor) })
+        return (
+            path,
+            {
+                try await project.storeArtifact(
+                    payload, descriptor: descriptor, interruption: interruption)
+            }
+        )
     case .investigation:
         let artifacts = try await project.storeArtifact(payload, descriptor: descriptor)
         let artifact = try #require(artifacts.artifacts.first)
@@ -189,8 +199,54 @@ private func promotionOperation(
         let hex = String(try event.eventID().dropFirst(7))
         return (
             "qualitative/events/sha256/\(hex.prefix(2))/\(hex).json",
-            { try await project.appendQualitativeEvent(event) }
+            {
+                try await project.appendQualitativeEvent(
+                    event, interruption: interruption, interruptionBehavior: .throwFailure)
+            }
         )
+    }
+}
+
+@Test(
+    "Le transazioni interrotte conservano staging e file privati senza pubblicare il manifest",
+    arguments: [PromotionKind.source, .artifact, .qualitative],
+    [GlifiProjectCommitInterruption.staged, .manifestPrepared]
+)
+private func projectTransactionStagingIsPrivate(
+    kind: PromotionKind, interruption: GlifiProjectCommitInterruption
+) async throws {
+    try await withTemporaryProject { packageURL in
+        let project = try GlifiProjectPackage.create(at: packageURL)
+        let operation = try await promotionOperation(
+            kind, project: project, interruption: interruption)
+        let snapshot = await project.snapshot()
+        let manifest = try Data(contentsOf: packageURL.appending(path: "manifest.json"))
+        await #expect(throws: GlifiFailure.self) { _ = try await operation.perform() }
+        #expect(await project.snapshot() == snapshot)
+        #expect(try Data(contentsOf: packageURL.appending(path: "manifest.json")) == manifest)
+        let transactionsURL = packageURL.appending(path: "transactions")
+        let entries = try FileManager.default.contentsOfDirectory(atPath: transactionsURL.path)
+            .filter { $0 != ".writer.lock" }
+        try #require(entries.count == 1)
+        let stagingURL = transactionsURL.appending(path: try #require(entries.first))
+        var status = stat()
+        try #require(lstat(stagingURL.path, &status) == 0)
+        #expect((status.st_mode & S_IFMT) == S_IFDIR)
+        #expect(status.st_mode & 0o777 == 0o700)
+        let files = Set(try FileManager.default.contentsOfDirectory(atPath: stagingURL.path))
+        let expected: Set<String> =
+            interruption == .manifestPrepared
+            ? ["transaction.json", "manifest.json"]
+            : (kind == .qualitative
+                ? ["transaction.json", "qualitative-event"] : ["transaction.json"])
+        #expect(files == expected)
+        for name in files {
+            try #require(lstat(stagingURL.appending(path: name).path, &status) == 0)
+            #expect((status.st_mode & S_IFMT) == S_IFREG)
+            #expect(status.st_mode & 0o777 == 0o600)
+            #expect(status.st_nlink == 1)
+        }
+        #expect(try await GlifiProjectPackage.open(at: packageURL).snapshot() == snapshot)
     }
 }
 

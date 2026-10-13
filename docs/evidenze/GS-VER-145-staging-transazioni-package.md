@@ -1,0 +1,73 @@
+<!-- SPDX-License-Identifier: BSD-3-Clause -->
+
+# Staging privato delle transazioni del package
+
+| Campo | Valore |
+| --- | --- |
+| Identificatore | GS-VER-145 |
+| Tipo | Evidenza di verifica |
+| Versione | 1.0.0 |
+| Stato | Parziale; compilazione Apple superata, verifica dinamica pendente |
+| Responsabile | Iniziatore del progetto |
+| Ultima modifica | 2026-10-06 |
+| Approvazione | Review pendente; non promuove requisiti o clausole |
+| Riferimenti | RF-043, RQ-044, RQ-057, TV-060, CMP-095, GS-DOR-011 |
+
+## Ambito
+
+Estensione della [DoR GS-DOR-011](../pianificazione/dor-accessi-file-package.md),
+registrata prima del coding su richiesta di prosecuzione dell'iniziatore.
+Prosegue [GS-VER-144](GS-VER-144-pubblicazione-oggetti-package.md) senza cambiare
+API pubbliche, nomi persistiti, formato, dipendenze o commit point.
+
+- Le directory di transazione sono create con `mkdirat` esclusivo e permessi `0700`;
+  una voce preesistente, anche directory valida, non viene adottata.
+- `openat` con `O_EXCL`, `O_NOFOLLOW`, `O_CLOEXEC` e permessi `0600` crea i file
+  `transaction.json`, oggetti staged e manifest candidato. Scrittura e sincronizzazione
+  usano il descriptor del file; nessun chmod di voci preesistenti.
+  Anche la scrittura del manifest iniziale riusa lo stesso helper esclusivo.
+- Il descriptor della transazione resta lo stesso dalla creazione alla promozione degli
+  oggetti. Non viene riaperto il suo percorso per pubblicare gli oggetti.
+- I nomi sono componenti singoli validati. Le collisioni sono `corruption` senza retry;
+  i fallimenti operativi di creazione mantengono `transientIO`/`transientBackoff`.
+
+## Regressioni predisposte
+
+| Area | Controllo |
+| --- | --- |
+| Componenti | Path vuoti, assoluti, traversal, separatori alternativi e NUL rifiutati |
+| Collisioni | File regolare, symlink, dangling link, hard link, FIFO e directory non sovrascritti né adottati; inode e sentinel conservati |
+| Permessi | Nuove directory `0700`, file `0600`; byte vuoti, singoli e oltre un chunk conservati |
+| Sostituzioni | Radice, directory transactions e staging già aperte rinominate e sostituite da link: scritture sui descriptor originali, esterno invariato |
+| Failure | Directory aperta poi rimossa: errore operativo con backoff e ultima generazione conservata |
+| Integrazione | Importazione, Artifact e qualitativo interrotti a staged/manifestPrepared: permessi, inventario dei file, snapshot e manifest precedenti conservati |
+
+Le sostituzioni sono deterministiche, senza sleep. Gli eventi investigation usano gli
+stessi helper e restano coperti dai round-trip esistenti; non si aggiunge un checkpoint
+di fault injection alla loro API.
+
+## Verifica osservata
+
+Host macOS 26.5.2 arm64, Xcode 27.0 (`27A266a`), Swift 6.4 e Python 3.12.14.
+
+| Comando | Esito osservato |
+| --- | --- |
+| `make quality-static` | Superato, inclusi documenti e matrice |
+| `make format-check` | Superato |
+| `swift build --build-tests --package-path Packages/GlifiCore` | Package e bundle test compilati |
+| `make verify` | Exit 2: statici, failure checks e lint superati; bundle test compilati ma non caricabili su macOS 26.5.2 |
+
+Il caricamento fallisce sul simbolo CoreGraphics richiesto da macOS 27: nessuna asserzione
+eseguita localmente. Recovery, smoke CLI e build app non raggiunti dal gate locale.
+Rscript e veraPDF non disponibili. Nessun target abbassato, nuovo harness o esito runtime
+dedotto dalla compilazione. La CI macOS 27 deve completare i gate prima del merge.
+
+## Limiti e recupero
+
+La creazione non è una nuova transazione filesystem atomica. Una directory già aperta
+e rinominata conserva la propria identità, non la posizione nominale. La sostituzione
+con una directory reale fra `mkdirat` e `openat` e writer non cooperanti non sono esclusi
+da questo incremento. La lettura e il replacement del manifest candidato, cleanup,
+SQLite e l'identità condivisa fra lock, verifica iniziale e commit restano path-based
+o non integralmente ancorati. Nessuna garanzia su ACL, file provider o power-loss
+durability. CMP-095 resta `blocked`, TV-060 aperto. Rollback tramite revert senza migrazione.

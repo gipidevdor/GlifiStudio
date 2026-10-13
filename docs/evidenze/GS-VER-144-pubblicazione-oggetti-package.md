@@ -4,7 +4,7 @@
 
 | Campo | Valore |
 | --- | --- |
-| Identificatore | GS-VER-143 |
+| Identificatore | GS-VER-144 |
 | Tipo | Evidenza di verifica |
 | Versione | 1.0.0 |
 | Stato | Parziale; compilazione Apple superata, verifica dinamica pendente |

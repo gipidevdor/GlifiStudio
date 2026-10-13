@@ -446,10 +446,16 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Sicurezza
 
+- Staging delle transazioni creato esclusivamente tramite directory aperte: `mkdirat`
+  `0700`, file `openat`/`O_EXCL` `0600` e promozione dallo stesso descriptor. Regressioni
+  per collisioni, sostituzioni controllate e permessi ai checkpoint (GS-VER-145).
+  Formato e commit point invariati; accessi path-based al manifest candidato, cleanup,
+  SQLite e identità globale della radice restano fuori dall'incremento.
+
 - Pubblicazione di fonti, Artifact, descriptor ed eventi tramite directory aperte: creazione
   privata `mkdirat`, attraversamento nofollow e rinomina esclusiva `renameatx_np` senza
   sovrascrivere oggetti esistenti. Convalida bounded sul descriptor di destinazione e
-  regressioni su collisioni e directory sostituite (GS-VER-143). Nessun cambio al formato;
+  regressioni su collisioni e directory sostituite (GS-VER-144). Nessun cambio al formato;
   staging iniziale, manifest replacement, cleanup e SQLite restano fuori dall'incremento.
 
 - Letture di manifest e oggetti del package relative a directory aperte: rifiuto dei link

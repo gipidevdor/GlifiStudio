@@ -23,6 +23,8 @@ func packageDirectoryRejectsInvalidPaths(path: String) throws {
         let directory = try GlifiPackageDirectory(at: root)
         #expect(throws: GlifiFailure.self) { _ = try directory.openFile(relativePath: path) }
         #expect(throws: GlifiFailure.self) { _ = try directory.createDirectory(relativePath: path) }
+        #expect(throws: GlifiFailure.self) { _ = try directory.createNewDirectory(named: path) }
+        #expect(throws: GlifiFailure.self) { try directory.writeFile(Data(), named: path) }
         #expect(throws: GlifiFailure.self) {
             _ = try directory.moveFile(named: path, to: directory, named: "copy")
         }
@@ -176,6 +178,18 @@ func packageDirectoryPreservesExistingDestinations(kind: String) throws {
         try #require(lstat(targetURL.path, &before) == 0)
         let directory = try GlifiPackageDirectory(at: root)
         #expect(try !directory.moveFile(named: "source", to: directory, named: "target"))
+        for operation in [
+            { try directory.writeFile(original, named: "target") },
+            { _ = try directory.createNewDirectory(named: "target") },
+        ] {
+            do {
+                try operation()
+                Issue.record("Expected exclusive creation to reject an existing entry")
+            } catch let failure as GlifiFailure {
+                #expect(failure.category == .corruption)
+                #expect(failure.retryDisposition == .never)
+            }
+        }
         var after = stat()
         try #require(lstat(targetURL.path, &after) == 0)
         #expect(after.st_ino == before.st_ino && after.st_mode == before.st_mode)
@@ -185,6 +199,79 @@ func packageDirectoryPreservesExistingDestinations(kind: String) throws {
             #expect(!FileManager.default.fileExists(atPath: externalURL.path))
         } else {
             #expect(try Data(contentsOf: externalURL) == original)
+        }
+    }
+}
+
+@Test("Lo staging nuovo è privato e conserva tutti i byte", arguments: [0, 1, 1_048_577])
+func packageDirectoryWritesPrivateFiles(byteCount: Int) throws {
+    try withDirectoryFixture { root in
+        let directory = try GlifiPackageDirectory(at: root)
+        let staging = try directory.createNewDirectory(named: "staging")
+        let bytes = Data(repeating: 0x61, count: byteCount)
+        try staging.writeFile(bytes, named: "payload")
+        let handle = try staging.openFile(relativePath: "payload")
+        defer { try? handle.close() }
+        #expect((try handle.readToEnd() ?? Data()) == bytes)
+        for (path, permissions) in [("staging", 0o700), ("staging/payload", 0o600)] {
+            let attributes = try FileManager.default.attributesOfItem(
+                atPath: root.appending(path: path).path)
+            let mode = try #require(attributes[.posixPermissions] as? NSNumber)
+            #expect(mode.intValue & 0o777 == permissions)
+        }
+    }
+}
+
+@Test(
+    "Le scritture staged restano sui descriptor dopo sostituzioni",
+    arguments: ["root", "transactions", "staging"]
+)
+func packageDirectoryPinsStagedWrites(replaced: String) throws {
+    try withDirectoryFixture { root in
+        let packageURL = root.appending(path: "Project.glifi")
+        try FileManager.default.createDirectory(at: packageURL, withIntermediateDirectories: false)
+        let package = try GlifiPackageDirectory(at: packageURL)
+        let transactions = try package.createNewDirectory(named: "transactions")
+        let staging = try transactions.createNewDirectory(named: "staging")
+        let outside = root.appending(path: "outside")
+        try FileManager.default.createDirectory(at: outside, withIntermediateDirectories: false)
+        let sentinel = Data("external sentinel".utf8)
+        try sentinel.write(to: outside.appending(path: "payload"))
+        let path = replaced == "transactions" ? "transactions" : "transactions/staging"
+        let replacedURL = replaced == "root" ? packageURL : packageURL.appending(path: path)
+        try FileManager.default.moveItem(at: replacedURL, to: root.appending(path: "detached"))
+        try FileManager.default.createSymbolicLink(at: replacedURL, withDestinationURL: outside)
+
+        let bytes = Data("private staged bytes".utf8)
+        try staging.writeFile(bytes, named: "payload")
+        _ = try transactions.createNewDirectory(named: "another")
+        let handle = try staging.openFile(relativePath: "payload")
+        defer { try? handle.close() }
+        #expect(try handle.readToEnd() == bytes)
+        #expect(try FileManager.default.contentsOfDirectory(atPath: outside.path) == ["payload"])
+        #expect(try Data(contentsOf: outside.appending(path: "payload")) == sentinel)
+    }
+}
+
+@Test("Gli errori operativi di creazione mantengono backoff e ultima generazione")
+func packageDirectoryClassifiesCreationIOFailures() throws {
+    try withDirectoryFixture { root in
+        let url = root.appending(path: "removed")
+        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false)
+        let directory = try GlifiPackageDirectory(at: url)
+        try FileManager.default.removeItem(at: url)
+        for operation in [
+            { try directory.writeFile(Data(), named: "payload") },
+            { _ = try directory.createNewDirectory(named: "staging") },
+        ] {
+            do {
+                try operation()
+                Issue.record("Expected an I/O failure for a removed directory")
+            } catch let failure as GlifiFailure {
+                #expect(failure.category == .transientIO)
+                #expect(failure.retryDisposition == .transientBackoff)
+                #expect(failure.retainedState == .lastCommittedGeneration)
+            }
         }
     }
 }

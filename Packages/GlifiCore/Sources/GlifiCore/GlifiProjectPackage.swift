@@ -1364,16 +1364,18 @@ private enum GlifiProjectPackageIO {
             path: "transactions/\(transactionID)",
             directoryHint: .isDirectory
         )
-        try fileManager.createDirectory(at: transactionURL, withIntermediateDirectories: false)
+        let packageDirectory = try GlifiPackageDirectory(at: packageURL)
+        let transactionDirectory = try packageDirectory.openDirectory(named: "transactions")
+            .createNewDirectory(named: transactionID)
         let transactionState = TransactionState(
             transactionID: transactionID,
             baseGeneration: observedSnapshot.generation,
             targetGeneration: observedSnapshot.generation + 1,
             state: "staging"
         )
-        try durableWrite(
+        try transactionDirectory.writeFile(
             try GlifiCanonicalJSON.encode(transactionState),
-            to: transactionURL.appending(path: "transaction.json")
+            named: "transaction.json"
         )
         try interruptIfRequested(.staged, interruption, behavior: interruptionBehavior)
 
@@ -1386,9 +1388,9 @@ private enum GlifiProjectPackageIO {
             byteCount: importedText.bytes.count,
             objectPath: objectPath
         )
-        let stagedObjectURL = transactionURL.appending(path: "source-object")
-        try durableWrite(importedText.bytes, to: stagedObjectURL)
-        try promoteObject("source-object", from: transactionID, source: source, in: packageURL)
+        try transactionDirectory.writeFile(importedText.bytes, named: "source-object")
+        try promoteObject(
+            "source-object", from: transactionDirectory, source: source, in: packageDirectory)
         try interruptIfRequested(.objectPromoted, interruption, behavior: interruptionBehavior)
 
         var sources = observedSnapshot.sources
@@ -1444,7 +1446,8 @@ private enum GlifiProjectPackageIO {
             qualitativeEventCount: observedSnapshot.qualitativeEvents.count
         )
         let candidateURL = transactionURL.appending(path: "manifest.json")
-        try durableWrite(try GlifiCanonicalJSON.encode(manifest), to: candidateURL)
+        try transactionDirectory.writeFile(
+            try GlifiCanonicalJSON.encode(manifest), named: "manifest.json")
         let decodedCandidate = try JSONDecoder().decode(
             GlifiProjectManifest.self,
             from: Data(contentsOf: candidateURL)
@@ -1582,7 +1585,9 @@ private enum GlifiProjectPackageIO {
             path: "transactions/\(transactionID)",
             directoryHint: .isDirectory
         )
-        try fileManager.createDirectory(at: transactionURL, withIntermediateDirectories: false)
+        let packageDirectory = try GlifiPackageDirectory(at: packageURL)
+        let transactionDirectory = try packageDirectory.openDirectory(named: "transactions")
+            .createNewDirectory(named: transactionID)
         let targetGeneration = observedSnapshot.generation + 1
         let transactionState = TransactionState(
             transactionID: transactionID,
@@ -1590,31 +1595,29 @@ private enum GlifiProjectPackageIO {
             targetGeneration: targetGeneration,
             state: "staging"
         )
-        try durableWrite(
+        try transactionDirectory.writeFile(
             try GlifiCanonicalJSON.encode(transactionState),
-            to: transactionURL.appending(path: "transaction.json")
+            named: "transaction.json"
         )
         try interruptIfRequested(.staged, interruption, behavior: interruptionBehavior)
 
-        let stagedDescriptorURL = transactionURL.appending(path: "descriptor-object")
-        try durableWrite(descriptorData, to: stagedDescriptorURL)
+        try transactionDirectory.writeFile(descriptorData, named: "descriptor-object")
         try promoteArtifactObject(
-            "descriptor-object", from: transactionID,
+            "descriptor-object", from: transactionDirectory,
             relativePath: artifact.descriptorObjectPath,
             expectedDigest: artifact.descriptorDigest,
             expectedByteCount: artifact.descriptorByteCount,
             maximumByteCount: GlifiProjectPackage.maximumDescriptorByteCount,
-            in: packageURL
+            in: packageDirectory
         )
-        let stagedArtifactURL = transactionURL.appending(path: "artifact-object")
-        try durableWrite(data, to: stagedArtifactURL)
+        try transactionDirectory.writeFile(data, named: "artifact-object")
         try promoteArtifactObject(
-            "artifact-object", from: transactionID,
+            "artifact-object", from: transactionDirectory,
             relativePath: artifact.objectPath,
             expectedDigest: artifact.contentDigest,
             expectedByteCount: artifact.byteCount,
             maximumByteCount: GlifiProjectPackage.maximumArtifactByteCount,
-            in: packageURL
+            in: packageDirectory
         )
         try interruptIfRequested(.objectPromoted, interruption, behavior: interruptionBehavior)
 
@@ -1661,7 +1664,8 @@ private enum GlifiProjectPackageIO {
             qualitativeEventCount: observedSnapshot.qualitativeEvents.count
         )
         let candidateURL = transactionURL.appending(path: "manifest.json")
-        try durableWrite(try GlifiCanonicalJSON.encode(manifest), to: candidateURL)
+        try transactionDirectory.writeFile(
+            try GlifiCanonicalJSON.encode(manifest), named: "manifest.json")
         let decodedCandidate = try JSONDecoder().decode(
             GlifiProjectManifest.self,
             from: Data(contentsOf: candidateURL)
@@ -1749,9 +1753,11 @@ private enum GlifiProjectPackageIO {
             path: "transactions/\(transactionID)",
             directoryHint: .isDirectory
         )
-        try fileManager.createDirectory(at: transactionURL, withIntermediateDirectories: false)
+        let packageDirectory = try GlifiPackageDirectory(at: packageURL)
+        let transactionDirectory = try packageDirectory.openDirectory(named: "transactions")
+            .createNewDirectory(named: transactionID)
         let targetGeneration = observedSnapshot.generation + 1
-        try durableWrite(
+        try transactionDirectory.writeFile(
             try GlifiCanonicalJSON.encode(
                 TransactionState(
                     transactionID: transactionID,
@@ -1760,18 +1766,17 @@ private enum GlifiProjectPackageIO {
                     state: "staging"
                 )
             ),
-            to: transactionURL.appending(path: "transaction.json")
+            named: "transaction.json"
         )
-        let stagedEventURL = transactionURL.appending(path: "qualitative-event")
-        try durableWrite(data, to: stagedEventURL)
+        try transactionDirectory.writeFile(data, named: "qualitative-event")
         try interruptIfRequested(.staged, interruption, behavior: interruptionBehavior)
         try promoteArtifactObject(
-            "qualitative-event", from: transactionID,
+            "qualitative-event", from: transactionDirectory,
             relativePath: record.objectPath,
             expectedDigest: record.contentDigest,
             expectedByteCount: record.byteCount,
             maximumByteCount: GlifiProjectPackage.maximumInvestigationEventByteCount,
-            in: packageURL
+            in: packageDirectory
         )
         try interruptIfRequested(.objectPromoted, interruption, behavior: interruptionBehavior)
         let rootDigest = try qualitativeRootDigest(records)
@@ -1814,7 +1819,8 @@ private enum GlifiProjectPackageIO {
             qualitativeEventCount: records.count
         )
         let candidateURL = transactionURL.appending(path: "manifest.json")
-        try durableWrite(try GlifiCanonicalJSON.encode(manifest), to: candidateURL)
+        try transactionDirectory.writeFile(
+            try GlifiCanonicalJSON.encode(manifest), named: "manifest.json")
         try validate(
             JSONDecoder().decode(
                 GlifiProjectManifest.self,
@@ -1926,9 +1932,11 @@ private enum GlifiProjectPackageIO {
             path: "transactions/\(transactionID)",
             directoryHint: .isDirectory
         )
-        try fileManager.createDirectory(at: transactionURL, withIntermediateDirectories: false)
+        let packageDirectory = try GlifiPackageDirectory(at: packageURL)
+        let transactionDirectory = try packageDirectory.openDirectory(named: "transactions")
+            .createNewDirectory(named: transactionID)
         let targetGeneration = observedSnapshot.generation + 1
-        try durableWrite(
+        try transactionDirectory.writeFile(
             try GlifiCanonicalJSON.encode(
                 TransactionState(
                     transactionID: transactionID,
@@ -1937,17 +1945,16 @@ private enum GlifiProjectPackageIO {
                     state: "staging"
                 )
             ),
-            to: transactionURL.appending(path: "transaction.json")
+            named: "transaction.json"
         )
-        let stagedEventURL = transactionURL.appending(path: "investigation-event")
-        try durableWrite(data, to: stagedEventURL)
+        try transactionDirectory.writeFile(data, named: "investigation-event")
         try promoteArtifactObject(
-            "investigation-event", from: transactionID,
+            "investigation-event", from: transactionDirectory,
             relativePath: record.objectPath,
             expectedDigest: record.contentDigest,
             expectedByteCount: record.byteCount,
             maximumByteCount: GlifiProjectPackage.maximumInvestigationEventByteCount,
-            in: packageURL
+            in: packageDirectory
         )
 
         let investigationRootDigest = try investigationRootDigest(events)
@@ -1991,7 +1998,8 @@ private enum GlifiProjectPackageIO {
             qualitativeEventCount: observedSnapshot.qualitativeEvents.count
         )
         let candidateURL = transactionURL.appending(path: "manifest.json")
-        try durableWrite(try GlifiCanonicalJSON.encode(manifest), to: candidateURL)
+        try transactionDirectory.writeFile(
+            try GlifiCanonicalJSON.encode(manifest), named: "manifest.json")
         try validate(
             JSONDecoder().decode(
                 GlifiProjectManifest.self,
@@ -2412,13 +2420,13 @@ private enum GlifiProjectPackageIO {
 
     private static func promoteObject(
         _ stagedName: String,
-        from transactionID: String,
+        from staging: GlifiPackageDirectory,
         source: GlifiProjectSourceRecord,
-        in packageURL: URL
+        in directory: GlifiPackageDirectory
     ) throws {
         let observation = try promoteImmutableObject(
-            stagedName, from: transactionID, relativePath: source.objectPath,
-            maximumByteCount: source.byteCount, in: packageURL)
+            stagedName, from: staging, relativePath: source.objectPath,
+            maximumByteCount: source.byteCount, in: directory)
         guard observation.digest == source.contentDigest,
             observation.byteCount == source.byteCount
         else {
@@ -2428,16 +2436,16 @@ private enum GlifiProjectPackageIO {
 
     private static func promoteArtifactObject(
         _ stagedName: String,
-        from transactionID: String,
+        from staging: GlifiPackageDirectory,
         relativePath: String,
         expectedDigest: String,
         expectedByteCount: Int,
         maximumByteCount: Int,
-        in packageURL: URL
+        in directory: GlifiPackageDirectory
     ) throws {
         let observation = try promoteImmutableObject(
-            stagedName, from: transactionID, relativePath: relativePath,
-            maximumByteCount: maximumByteCount, in: packageURL)
+            stagedName, from: staging, relativePath: relativePath,
+            maximumByteCount: maximumByteCount, in: directory)
         guard observation.digest == expectedDigest,
             observation.byteCount == expectedByteCount
         else {
@@ -2447,18 +2455,15 @@ private enum GlifiProjectPackageIO {
 
     private static func promoteImmutableObject(
         _ stagedName: String,
-        from transactionID: String,
+        from staging: GlifiPackageDirectory,
         relativePath: String,
         maximumByteCount: Int,
-        in packageURL: URL
+        in directory: GlifiPackageDirectory
     ) throws -> (digest: String, byteCount: Int) {
         let components = relativePath.split(separator: "/", omittingEmptySubsequences: false)
         guard components.count > 1, let name = components.last else {
             throw corruption("project.invalid-object-path")
         }
-        let directory = try GlifiPackageDirectory(at: packageURL)
-        let staging = try directory.openDirectory(named: "transactions")
-            .openDirectory(named: transactionID)
         let destination = try directory.createDirectory(
             relativePath: components.dropLast().joined(separator: "/"))
         _ = try staging.moveFile(named: stagedName, to: destination, named: String(name))
@@ -2484,34 +2489,8 @@ private enum GlifiProjectPackageIO {
     }
 
     private static func durableWrite(_ data: Data, to url: URL) throws {
-        let descriptor = Darwin.open(
-            url.path, O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC | O_NOFOLLOW, 0o600
-        )
-        guard descriptor >= 0 else {
-            if errno == EEXIST {
-                throw GlifiFailure(
-                    code: "project.unexpected-existing-file",
-                    category: .corruption,
-                    operation: .persistProject,
-                    retryDisposition: .never,
-                    retainedState: .lastCommittedGeneration,
-                    messageKey: "failure.project.unexpected-existing-file"
-                )
-            }
-            throw GlifiFailure(
-                code: "project.file-create-failed",
-                category: .transientIO,
-                operation: .persistProject,
-                retryDisposition: .transientBackoff,
-                retainedState: .lastCommittedGeneration,
-                messageKey: "failure.project.file-create-failed"
-            )
-        }
-        let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
-        defer { try? handle.close() }
-        try handle.write(contentsOf: data)
-        try handle.synchronize()
-        try handle.close()
+        let directory = try GlifiPackageDirectory(at: url.deletingLastPathComponent())
+        try directory.writeFile(data, named: url.lastPathComponent)
     }
 
     private static func digestFile(

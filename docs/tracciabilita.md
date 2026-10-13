@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.83.0 |
+| Versione | 0.84.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-04 |
+| Ultima modifica | 2026-10-06 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -174,11 +174,18 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 | [GS-VER-139](evidenze/GS-VER-139-cache-di-build-limitata.md) | Slice TV-063; GS-DEV-002 § Cache di build | Superato localmente: picco su disco da ~37 GiB a 1,8 GiB, seconda esecuzione a 303 s contro 773 s, arresto anticipato se lo spazio non basta | Tetto prudenziale non ottimizzato; misure su una sola macchina |
 | [GS-VER-141](evidenze/GS-VER-141-prima-ci-remota-verde.md) | TV-011, TV-013, TV-049; GS-STD-001-20, GS-REP-005, GS-WVR-001…004 | Superato su runner remoto: `verify` verde su `xcode-27` con 257 test, 22 checkpoint di recovery e build macOS/iPadOS; deroghe budget in rientro | Rscript e veraPDF assenti sul runner; dispositivi, firma e TestFlight non coperti; non conformità 2026-09-22→2026-10-03 registrata |
 | [GS-VER-142](evidenze/GS-VER-142-letture-directory-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: letture descriptor-relative, regressioni su directory simboliche e sostituzioni controllate; statici, lint e compilazione Apple superati | Test compilati, non eseguiti su host 26.5.2; scritture, SQLite, ACL e file provider esclusi dalla garanzia |
-| [GS-VER-143](evidenze/GS-VER-143-pubblicazione-oggetti-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: pubblicazione descriptor-relative ed esclusiva, regressioni su cinque tipi di oggetto e collisioni; compilazione Apple superata | Verifica dinamica pendente su macOS 27; staging iniziale, manifest replacement, cleanup e SQLite esclusi |
+| [GS-VER-144](evidenze/GS-VER-144-pubblicazione-oggetti-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: pubblicazione descriptor-relative ed esclusiva, regressioni su cinque tipi di oggetto e collisioni; compilazione Apple superata | Verifica dinamica pendente su macOS 27; staging iniziale, manifest replacement, cleanup e SQLite esclusi |
+
+| [GS-VER-145](evidenze/GS-VER-145-staging-transazioni-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: staging privato, esclusivo e descriptor-relative; regressioni su collisioni, sostituzioni e checkpoint | Verifica dinamica macOS 27 pendente; manifest replacement, cleanup, SQLite e identità globale della radice esclusi |
 
 ## Catalogo delle verifiche pianificate
 
-Incremento [GS-VER-143](evidenze/GS-VER-143-pubblicazione-oggetti-package.md): TV-060,
+Incremento [GS-VER-145](evidenze/GS-VER-145-staging-transazioni-package.md): TV-060,
+RF-043, RQ-044, RQ-057 e CMP-095. Directory di transazione nuove `0700`, file `0600`
+creati esclusivamente tramite descriptor; promozione dalla stessa directory staged.
+Non cambia il commit point; CMP-095 resta `blocked` e TV-060 aperto.
+
+Incremento [GS-VER-144](evidenze/GS-VER-144-pubblicazione-oggetti-package.md): TV-060,
 RF-043, RQ-044, RQ-057 e CMP-095. Pubblicazione di oggetti immutabili tramite directory
 aperte e rinomina esclusiva; regressioni su cinque tipi di oggetto, collisioni e directory
 sostituite. Package e test compilati con Xcode 27; verifica dinamica pendente su macOS 27.

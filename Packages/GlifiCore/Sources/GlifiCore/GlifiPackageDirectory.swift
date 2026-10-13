@@ -87,6 +87,53 @@ final class GlifiPackageDirectory {
         throw Self.writeFailure()
     }
 
+    func createNewDirectory(named name: String) throws -> GlifiPackageDirectory {
+        guard try Self.components(of: name).count == 1 else { throw Self.corruption() }
+        let (result, error) = withExtendedLifetime(self) {
+            (mkdirat(descriptor, name, 0o700), errno)
+        }
+        guard result == 0 else { throw Self.creationFailure(error) }
+        return try openDirectory(named: name)
+    }
+
+    func writeFile(_ data: Data, named name: String) throws {
+        guard try Self.components(of: name).count == 1 else { throw Self.corruption() }
+        let (file, error) = withExtendedLifetime(self) {
+            (
+                openat(
+                    descriptor, name, O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC | O_NOFOLLOW, 0o600),
+                errno
+            )
+        }
+        guard file >= 0 else { throw Self.creationFailure(error) }
+        let handle = FileHandle(fileDescriptor: file, closeOnDealloc: true)
+        defer { try? handle.close() }
+        try handle.write(contentsOf: data)
+        try handle.synchronize()
+        try handle.close()
+    }
+
+    private static func creationFailure(_ error: Int32) -> GlifiFailure {
+        if error == EEXIST {
+            return GlifiFailure(
+                code: "project.unexpected-existing-file",
+                category: .corruption,
+                operation: .persistProject,
+                retryDisposition: .never,
+                retainedState: .lastCommittedGeneration,
+                messageKey: "failure.project.unexpected-existing-file"
+            )
+        }
+        return GlifiFailure(
+            code: "project.file-create-failed",
+            category: .transientIO,
+            operation: .persistProject,
+            retryDisposition: .transientBackoff,
+            retainedState: .lastCommittedGeneration,
+            messageKey: "failure.project.file-create-failed"
+        )
+    }
+
     private static func components(of path: String) throws -> [String] {
         guard !path.isEmpty, path.utf8.count <= 256,
             !path.contains("\0"), !path.contains("\\")

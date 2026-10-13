@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.specification-compliance-matrix",
   "schemaVersion": 1,
-  "updatedAt": "2026-10-04",
+  "updatedAt": "2026-10-06",
   "requiredRequirementCoverage": [
     "RQ-057",
     "RQ-058",
@@ -33,11 +33,12 @@
         "docs/evidenze/GS-VER-140-accessi-file-package.md",
         "docs/evidenze/GS-VER-141-prima-ci-remota-verde.md",
         "docs/evidenze/GS-VER-142-letture-directory-package.md",
-        "docs/evidenze/GS-VER-143-pubblicazione-oggetti-package.md"
+        "docs/evidenze/GS-VER-144-pubblicazione-oggetti-package.md",
+        "docs/evidenze/GS-VER-145-staging-transazioni-package.md"
       ],
       "gate": "G2",
       "status": "blocked",
-      "blockingReason": "Letture e pubblicazione degli oggetti descriptor-relative aggiunte e compilate; verifica dinamica della pubblicazione pendente su macOS 27. Restano staging iniziale, manifest replacement, cleanup e SQLite sotto sostituzioni concorrenti, identità della radice fra accessi, ACL e file provider; nessuna promozione del requisito."
+      "blockingReason": "Letture, pubblicazione e staging degli oggetti descriptor-relative; verifica dinamica dello staging pendente su macOS 27. Restano lettura e replacement del manifest candidato, cleanup e SQLite sotto sostituzioni concorrenti, identità della radice fra accessi, ACL e file provider; nessuna promozione del requisito."
     },
     {
       "id": "CMP-001",
