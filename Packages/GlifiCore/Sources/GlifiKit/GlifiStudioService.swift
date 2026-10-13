@@ -305,6 +305,19 @@ public actor GlifiStudioProjectSession {
         }
     }
 
+    /// Executes QueryAST v1 JSON (at most 64 KiB) with the same limits and results as textual queries.
+    ///
+    /// Rejects incompatible schemas and malformed input without exposing decoder details.
+    public func query(canonicalAST data: Data) async throws -> GlifiStudioProjectQueryResult {
+        try ensureOpen()
+        do {
+            return try await GlifiStudioProjectQueryResult(
+                engine.query(canonicalAST: data, in: project))
+        } catch {
+            throw Self.map(error, operation: .query)
+        }
+    }
+
     /// Loads the exact UTF-8 text of one immutable source revision for source jump.
     public func sourceText(sourceRevisionID: String) async throws -> GlifiStudioSourceText {
         try ensureOpen()

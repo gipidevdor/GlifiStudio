@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.82.0 |
+| Versione | 0.84.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-03 |
+| Ultima modifica | 2026-10-06 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -173,14 +173,26 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 | [GS-VER-138](evidenze/GS-VER-138-gold-italiano-su-prosa-reale.md) | Slice TV-013; GS-LNG-001, GS-MET-001-18, ADR-0030 | Superato localmente: gold su 434 token di prosa italiana di pubblico dominio, annotazione indipendente in accordo pieno con il prodotto | Un solo autore ottocentesco; dialogo, lemma, POS e NER esclusi |
 | [GS-VER-139](evidenze/GS-VER-139-cache-di-build-limitata.md) | Slice TV-063; GS-DEV-002 § Cache di build | Superato localmente: picco su disco da ~37 GiB a 1,8 GiB, seconda esecuzione a 303 s contro 773 s, arresto anticipato se lo spazio non basta | Tetto prudenziale non ottimizzato; misure su una sola macchina |
 | [GS-VER-141](evidenze/GS-VER-141-prima-ci-remota-verde.md) | TV-011, TV-013, TV-049; GS-STD-001-20, GS-REP-005, GS-WVR-001…004 | Superato su runner remoto: `verify` verde su `xcode-27` con 257 test, 22 checkpoint di recovery e build macOS/iPadOS; deroghe budget in rientro | Rscript e veraPDF assenti sul runner; dispositivi, firma e TestFlight non coperti; non conformità 2026-09-22→2026-10-03 registrata |
-| [GS-VER-142](evidenze/GS-VER-142-riassunto-estrattivo.md) | Slice TV-036; RF-042, GS-MET-001-19, CMP-096 | In verifica: oracolo Python indipendente, test di persistenza e contract test CLI aggiunti; controlli statici superati | Una sola famiglia; nessuna valutazione ROUGE o umana; Rscript assente sul runner |
+| [GS-VER-144](evidenze/GS-VER-144-riassunto-estrattivo.md) | Slice TV-036; RF-042, GS-MET-001-19, CMP-096 | In verifica: oracolo Python indipendente, test di persistenza e contract test CLI aggiunti; controlli statici superati | Una sola famiglia; nessuna valutazione ROUGE o umana; Rscript assente sul runner |
+| [GS-VER-142](evidenze/GS-VER-142-letture-directory-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: letture descriptor-relative, regressioni su directory simboliche e sostituzioni controllate; statici, lint e compilazione Apple superati | Test compilati, non eseguiti su host 26.5.2; scritture, SQLite, ACL e file provider esclusi dalla garanzia |
 
 ## Catalogo delle verifiche pianificate
 
-Incremento [GS-VER-142](evidenze/GS-VER-142-riassunto-estrattivo.md): prima slice di
-TV-036 con RF-042, GS-DOR-012 e CMP-096 (`implemented`): riassunto estrattivo
+Incremento [GS-VER-144](evidenze/GS-VER-144-riassunto-estrattivo.md): prima slice di
+TV-036 con RF-042, GS-DOR-013 e CMP-096 (`implemented`): riassunto estrattivo
 `SentenceTFIDFMean-v1` con budget, tie-break, lineage della frase e distinzione dal generativo;
 esito del gate remoto registrato nell'evidenza.
+
+Incremento [GS-VER-143](evidenze/GS-VER-143-ingresso-queryast.md): TV-053 e TV-060,
+RF-080, RQ-042, RQ-044, RQ-046, CMP-081. Ingresso QueryAST v1 bounded in Core,
+Kit e CLI; parità e input avversari aggiunti al gate. Verifica nativa pendente;
+nessuna estensione della garanzia a indice, streaming o audit su dispositivo.
+
+Incremento [GS-VER-142](evidenze/GS-VER-142-letture-directory-package.md): TV-060, RF-043,
+RQ-044 e RQ-057, CMP-095. Letture descriptor-relative con regressioni sui link intermedi e
+sostituzioni controllate delle directory. Statici, lint e compilazione Apple superati; verifica
+dinamica del nuovo incremento pendente su macOS 27. Scritture, SQLite, ACL e file provider
+non attestati; CMP-095 resta `blocked`.
 
 Incremento [GS-VER-141](evidenze/GS-VER-141-prima-ci-remota-verde.md): prima CI remota
 verde su runner Xcode 27, GS-WVR-001…004 in rientro tardivo (chiusura dopo App Store preflight verde). I test aggiunti da
@@ -280,7 +292,7 @@ nessuna promozione a requisito verificato.
 - TV-009, TV-010 e TV-019 richiedono dataset, soglie e hardware di riferimento.
 - TV-020 e TV-021 richiedono funzioni di prodotto e contratti persistenti ancora da implementare.
 - TV-026–TV-036 restano parziali: GS-VER-022 prova una slice di TV-029/TV-030 con
-  seed indipendente e GS-VER-142 una slice di TV-036 (una sola famiglia estrattiva), ma
+  seed indipendente e GS-VER-144 una slice di TV-036 (una sola famiglia estrattiva), ma
   corpus gold, review, streaming e le altre famiglie mancano.
 - TV-037–TV-048 richiedono prototipi, utenti rappresentativi, soglie UX, dispositivi
   e tecnologie assistive; la revisione GS-UX valida soltanto contratti e coerenza.

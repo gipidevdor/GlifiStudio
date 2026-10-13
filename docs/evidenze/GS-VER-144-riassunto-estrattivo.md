@@ -1,17 +1,17 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# GS-VER-142 — Riassunto estrattivo deterministico `SentenceTFIDFMean-v1`
+# GS-VER-144 — Riassunto estrattivo deterministico `SentenceTFIDFMean-v1`
 
 | Campo | Valore |
 | --- | --- |
-| Identificatore | GS-VER-142 |
+| Identificatore | GS-VER-144 |
 | Tipo | Evidenza di verifica numerica e di integrazione |
 | Versione | 1.0.0 |
 | Stato | In verifica sul runner remoto |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-10-03 |
-| Approvazione | GS-DOR-012; richiesta dell'iniziatore di proseguire lo sviluppo |
-| Riferimenti | GS-DOR-012; GS-MET-001-19 § Variante implementata; GS-MET-001-07; RF-042; TV-036; CMP-096 |
+| Approvazione | GS-DOR-013; richiesta dell'iniziatore di proseguire lo sviluppo |
+| Riferimenti | GS-DOR-013; GS-MET-001-19 § Variante implementata; GS-MET-001-07; RF-042; TV-036; CMP-096 |
 
 ## Ambito
 

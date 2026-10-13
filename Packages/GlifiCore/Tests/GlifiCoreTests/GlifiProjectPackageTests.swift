@@ -7,6 +7,83 @@ import Testing
 
 @testable import GlifiCore
 
+@Test(
+    "Le letture del package rifiutano directory simboliche a ogni livello",
+    arguments: ["source", "artifact", "descriptor", "investigation"], [0, 1, 2, 3]
+)
+func projectPackageRejectsLinkedObjectDirectories(kind: String, depth: Int) async throws {
+    try await withTemporaryProject { packageURL in
+        let project = try GlifiProjectPackage.create(at: packageURL)
+        let imported = try GlifiTextImporter().importText(
+            from: Data("Synthetic source".utf8), format: .plainText)
+        let corpus = try await project.importText(imported)
+        let artifacts = try await project.storeArtifact(
+            ProjectTestArtifactPayload(value: "synthetic"),
+            descriptor: projectDescriptor(named: "paths", corpusDigest: corpus.sourceRootDigest))
+        let artifact = try #require(artifacts.artifacts.first)
+        let event = try GlifiInvestigationEvent(
+            investigationID: InvestigationID(), predecessorEventID: nil,
+            recordedAtUnixMilliseconds: 1, actor: .localPerson,
+            payload: .created(
+                question: "Synthetic question", languageCode: "it", intent: .understandCollection,
+                planArtifactID: artifact.artifactID, interpretationArtifactID: artifact.artifactID,
+                availableFindingIDs: [], selectedFindingIDs: []))
+        let snapshot = try await project.appendInvestigationEvent(event)
+        let paths = [
+            "source": try #require(snapshot.sources.first).objectPath,
+            "artifact": artifact.objectPath,
+            "descriptor": artifact.descriptorObjectPath,
+            "investigation": try #require(snapshot.investigationEvents.first).objectPath,
+        ]
+        let path = try #require(paths[kind])
+        let components = path.split(separator: "/")
+        let directoryURL = packageURL.appending(
+            path: components.prefix(depth + 1).joined(separator: "/"))
+        let externalURL = packageURL.deletingLastPathComponent().appending(path: "external")
+        let original = try Data(contentsOf: packageURL.appending(path: path))
+        let manifest = try Data(contentsOf: packageURL.appending(path: "manifest.json"))
+        try FileManager.default.moveItem(at: directoryURL, to: externalURL)
+        try FileManager.default.createSymbolicLink(
+            at: directoryURL, withDestinationURL: externalURL)
+
+        do {
+            _ = try GlifiProjectPackage.open(at: packageURL)
+            Issue.record("Expected rejection of a linked object directory")
+        } catch let failure as GlifiFailure {
+            #expect(failure.category == .corruption)
+            #expect(failure.retryDisposition == .never)
+        }
+        switch kind {
+        case "source":
+            await #expect(throws: GlifiFailure.self) {
+                _ = try await project.sourceData(for: imported.sourceRevisionID)
+            }
+        case "artifact":
+            await #expect(throws: GlifiFailure.self) {
+                _ = try await project.artifactData(for: artifact.artifactID)
+            }
+        case "investigation":
+            await #expect(throws: GlifiFailure.self) {
+                _ = try await project.investigationEvent(for: event.eventID())
+            }
+        case "descriptor":
+            break
+        default:
+            Issue.record("Unknown test case")
+        }
+        #expect(await project.snapshot() == snapshot)
+        #expect(try Data(contentsOf: packageURL.appending(path: "manifest.json")) == manifest)
+        let externalObject = externalURL.appending(
+            path: components.dropFirst(depth + 1).joined(separator: "/"))
+        #expect(try Data(contentsOf: externalObject) == original)
+
+        try FileManager.default.removeItem(at: directoryURL)
+        try FileManager.default.moveItem(at: externalURL, to: directoryURL)
+        #expect(try await GlifiProjectPackage.open(at: packageURL).snapshot() == snapshot)
+        #expect(try await project.sourceData(for: imported.sourceRevisionID) == imported.bytes)
+    }
+}
+
 @Test("Il manifest non accetta hard link anche se i byte sono validi")
 func projectPackageRejectsHardLinkedManifest() async throws {
     try await withTemporaryProject { packageURL in

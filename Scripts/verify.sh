@@ -109,6 +109,10 @@ cli_markdown_query_output="$(swift run \
     --scratch-path "$build_cache_directory/SwiftPM" \
     --skip-build \
     GlifiCLI --format json query "$cli_project_path" --text "normalized:fonte")"
+cli_binary_directory="$(swift build --package-path Packages/GlifiCore \
+    --scratch-path "$build_cache_directory/SwiftPM" --show-bin-path)"
+python3 Scripts/check-query-ast.py --executable "$cli_binary_directory/GlifiCLI" \
+    --project "$cli_project_path"
 cli_analysis_output="$(swift run \
     --package-path Packages/GlifiCore \
     --scratch-path "$build_cache_directory/SwiftPM" \

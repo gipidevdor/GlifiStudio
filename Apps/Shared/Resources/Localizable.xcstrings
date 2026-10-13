@@ -3826,6 +3826,74 @@
         }
       }
     },
+    "failure.query.ast-not-regular-file" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose a regular QueryAST file, not a symbolic link."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scegli un file QueryAST regolare, non un collegamento simbolico."
+          }
+        }
+      }
+    },
+    "failure.query.ast-unreadable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The QueryAST file could not be read."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è possibile leggere il file QueryAST."
+          }
+        }
+      }
+    },
+    "failure.query.incompatible-ast" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The QueryAST schema or version is not supported."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo schema o la versione del QueryAST non è supportata."
+          }
+        }
+      }
+    },
+    "failure.query.invalid-ast" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The QueryAST JSON is not valid."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il JSON del QueryAST non è valido."
+          }
+        }
+      }
+    },
     "failure.query.empty" : {
       "extractionState" : "manual",
       "localizations" : {

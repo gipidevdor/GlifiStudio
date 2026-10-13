@@ -476,11 +476,11 @@ public actor GlifiProjectPackage {
                 messageKey: "failure.project.source-not-found"
             )
         }
-        let objectURL = try GlifiProjectPackageIO.validatedObjectURL(
+        _ = try GlifiProjectPackageIO.validatedObjectURL(
             for: source,
             in: packageURL
         )
-        return try GlifiProjectPackageIO.readValidatedObject(objectURL, source: source)
+        return try GlifiProjectPackageIO.readValidatedObject(source, in: packageURL)
     }
 
     /// Returns the fully verified analysis DAG selected by the current generation.
@@ -779,11 +779,11 @@ extension GlifiProjectPackage {
                     messageKey: "failure.project.source-not-found"
                 )
             }
-            let objectURL = try GlifiProjectPackageIO.validatedObjectURL(
+            _ = try GlifiProjectPackageIO.validatedObjectURL(
                 for: source,
                 in: packageURL
             )
-            return try GlifiProjectPackageIO.readValidatedObject(objectURL, source: source)
+            return try GlifiProjectPackageIO.readValidatedObject(source, in: packageURL)
         }
 
         /// Reads immutable artifact bytes after checking path, size, digest, and identity again.
@@ -951,7 +951,7 @@ private enum GlifiProjectPackageIO {
                 throw corruption("project.invalid-manifest-file")
             }
             let observation = try readFile(
-                manifestURL,
+                "manifest.json", in: packageURL,
                 maximumByteCount: GlifiProjectPackage.maximumManifestByteCount,
                 retainBytes: true
             )
@@ -1116,7 +1116,7 @@ private enum GlifiProjectPackageIO {
                 throw corruption("project.invalid-manifest-file")
             }
             let observation = try readFile(
-                manifestURL,
+                "manifest.json", in: packageURL,
                 maximumByteCount: GlifiProjectPackage.maximumManifestByteCount,
                 retainBytes: true
             )
@@ -1314,9 +1314,8 @@ private enum GlifiProjectPackageIO {
         else {
             throw corruption("project.illegal-qualitative-event-reference")
         }
-        let url = try containedObjectURL(relativePath: record.objectPath, in: packageURL)
         let observation = try readFile(
-            url,
+            record.objectPath, in: packageURL,
             maximumByteCount: record.byteCount,
             retainBytes: true
         )
@@ -2022,7 +2021,8 @@ private enum GlifiProjectPackageIO {
         guard objectURL.standardizedFileURL.path.hasPrefix(standardizedRoot) else {
             throw corruption("project.object-path-escape")
         }
-        let observation = try digestFile(objectURL, maximumByteCount: source.byteCount)
+        let observation = try digestFile(
+            source.objectPath, in: packageURL, maximumByteCount: source.byteCount)
         guard observation.byteCount == source.byteCount,
             observation.digest == source.contentDigest
         else {
@@ -2043,12 +2043,8 @@ private enum GlifiProjectPackageIO {
         else {
             throw corruption("project.illegal-descriptor-reference")
         }
-        let descriptorURL = try containedObjectURL(
-            relativePath: stored.descriptorObjectPath,
-            in: packageURL
-        )
         let observation = try readFile(
-            descriptorURL,
+            stored.descriptorObjectPath, in: packageURL,
             maximumByteCount: stored.descriptorByteCount,
             retainBytes: true
         )
@@ -2100,7 +2096,8 @@ private enum GlifiProjectPackageIO {
             throw corruption("project.illegal-artifact-reference")
         }
         let objectURL = try containedObjectURL(relativePath: artifact.objectPath, in: packageURL)
-        let observation = try digestFile(objectURL, maximumByteCount: artifact.byteCount)
+        let observation = try digestFile(
+            artifact.objectPath, in: packageURL, maximumByteCount: artifact.byteCount)
         guard observation.byteCount == artifact.byteCount,
             observation.digest == artifact.contentDigest
         else {
@@ -2125,11 +2122,11 @@ private enum GlifiProjectPackageIO {
     }
 
     static func readValidatedObject(
-        _ objectURL: URL,
-        source: GlifiProjectSourceRecord
+        _ source: GlifiProjectSourceRecord,
+        in packageURL: URL
     ) throws -> Data {
         let observation = try readFile(
-            objectURL,
+            source.objectPath, in: packageURL,
             maximumByteCount: source.byteCount,
             retainBytes: true
         )
@@ -2146,9 +2143,9 @@ private enum GlifiProjectPackageIO {
         _ artifact: GlifiProjectArtifactRecord,
         in packageURL: URL
     ) throws -> Data {
-        let objectURL = try validatedArtifactObjectURL(for: artifact, in: packageURL)
+        _ = try validatedArtifactObjectURL(for: artifact, in: packageURL)
         let observation = try readFile(
-            objectURL,
+            artifact.objectPath, in: packageURL,
             maximumByteCount: artifact.byteCount,
             retainBytes: true
         )
@@ -2172,9 +2169,8 @@ private enum GlifiProjectPackageIO {
         else {
             throw corruption("project.illegal-investigation-event-reference")
         }
-        let objectURL = try containedObjectURL(relativePath: record.objectPath, in: packageURL)
         let observation = try readFile(
-            objectURL,
+            record.objectPath, in: packageURL,
             maximumByteCount: record.byteCount,
             retainBytes: true
         )
@@ -2447,7 +2443,8 @@ private enum GlifiProjectPackageIO {
             withIntermediateDirectories: true
         )
         if fileManager.fileExists(atPath: objectURL.path) {
-            let observation = try digestFile(objectURL, maximumByteCount: maximumByteCount)
+            let observation = try digestFile(
+                relativePath, in: packageURL, maximumByteCount: maximumByteCount)
             guard observation.digest == expectedDigest,
                 observation.byteCount == expectedByteCount
             else {
@@ -2457,7 +2454,8 @@ private enum GlifiProjectPackageIO {
             return
         }
         try fileManager.moveItem(at: stagedURL, to: objectURL)
-        let observation = try digestFile(objectURL, maximumByteCount: maximumByteCount)
+        let observation = try digestFile(
+            relativePath, in: packageURL, maximumByteCount: maximumByteCount)
         guard observation.digest == expectedDigest,
             observation.byteCount == expectedByteCount
         else {
@@ -2513,11 +2511,12 @@ private enum GlifiProjectPackageIO {
     }
 
     private static func digestFile(
-        _ url: URL,
+        _ relativePath: String,
+        in packageURL: URL,
         maximumByteCount: Int
     ) throws -> (digest: String, byteCount: Int) {
         let observation = try readFile(
-            url,
+            relativePath, in: packageURL,
             maximumByteCount: maximumByteCount,
             retainBytes: false
         )
@@ -2525,18 +2524,16 @@ private enum GlifiProjectPackageIO {
     }
 
     private static func readFile(
-        _ url: URL,
+        _ relativePath: String,
+        in packageURL: URL,
         maximumByteCount: Int,
         retainBytes: Bool
     ) throws -> (digest: String, byteCount: Int, data: Data?) {
-        let descriptor = Darwin.open(url.path, O_RDONLY | O_CLOEXEC | O_NOFOLLOW | O_NONBLOCK)
-        guard descriptor >= 0 else {
-            throw corruption("project.object-open-failed")
-        }
-        let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
+        let directory = try GlifiPackageDirectory(at: packageURL)
+        let handle = try directory.openFile(relativePath: relativePath)
         defer { try? handle.close() }
         var status = stat()
-        guard fstat(descriptor, &status) == 0,
+        guard fstat(handle.fileDescriptor, &status) == 0,
             (status.st_mode & S_IFMT) == S_IFREG,
             status.st_nlink == 1,
             status.st_size >= 0,

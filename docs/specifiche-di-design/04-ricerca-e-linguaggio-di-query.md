@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-QRY-001 |
 | Tipo | Specifica di design della ricerca |
-| Versione | 1.2.0 |
+| Versione | 1.3.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-10-06 |
 | Approvazione | Baseline proposta; parser e usability test richiesti |
 | Riferimenti | GS-DOM-001; GS-DAT-001; GS-LNG-001; GS-UX-001-11; ADR-0016 |
 
@@ -159,10 +159,28 @@ execute(validatedQuery, scope, budget) -> AsyncSequence<SearchBatch>
 explain(matchID) -> MatchExplanation
 ```
 
-Il comando disponibile `glifi query <progetto.glifi> --text <query>` accetta testo
-e produce righe tabulate oppure un envelope JSON v1. File AST, progress strutturato,
-CSV e streaming restano superficie target non ancora esposta. GUI e CLI non
-possono aggiungere semantiche private al motore.
+Il comando `glifi query <progetto.glifi> (--text <query> | --ast <query.json>)`
+accetta due ingressi esclusivi e produce righe tabulate oppure un envelope JSON v1.
+`--ast` legge al massimo 64 KiB da un file regolare, senza seguire il collegamento
+simbolico del componente finale e senza attendere un writer su FIFO. Il Core
+applica i budget di nodi e profondità durante la decodifica e valida schema,
+versioni, campi, operatori e regex prima della scansione delle fonti. La radice ha
+profondità zero; ogni arco verso un nodo figlio incrementa la profondità di uno.
+Gli spazi e l'ordine delle chiavi del JSON d'ingresso non partecipano al digest,
+calcolato dalla ricodifica canonica dell'albero validato.
+
+`GlifiStudioProjectSession.query(canonicalAST:)` riceve `Data`, senza esporre tipi
+Core. L'esecuzione è condivisa con `query(_:)`: stesso digest, ordine, KWIC e
+troncatura, senza modifica della generazione. JSON malformato o struttura non
+decodificabile producono `query.invalid-ast`; schema/versioni incompatibili
+`query.incompatible-ast`. Le failure di budget mantengono i codici esistenti;
+I/O e file non regolari producono `query.ast-unreadable` e
+`query.ast-not-regular-file`. Le diagnostiche AST non includono contenuto, path o
+dettagli del decoder e non inventano span del testo della query.
+
+Verifiche e limiti dell'incremento sono in [GS-VER-143](../evidenze/GS-VER-143-ingresso-queryast.md).
+Progress strutturato, CSV e streaming restano superficie target non ancora
+esposta. GUI e CLI non possono aggiungere semantiche private al motore.
 
 ## Conformità
 

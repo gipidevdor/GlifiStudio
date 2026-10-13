@@ -7,7 +7,7 @@
     "SentenceTFIDFMean-v1"
   ],
   "status": "candidate",
-  "statusReason": "Verifica dinamica eseguita dal runner remoto; promozione a supported dopo la review dell'evidenza GS-VER-142.",
+  "statusReason": "Verifica dinamica eseguita dal runner remoto; promozione a supported dopo la review dell'evidenza GS-VER-144.",
   "license": "BSD-3-Clause",
   "toolchain": {
     "swiftLanguageMode": "6",
@@ -32,7 +32,7 @@
     },
     "V3": {
       "status": "pass",
-      "description": "Persistenza, riuso, rilettura e parità GlifiCore/Kit/CLI (GS-VER-142)."
+      "description": "Persistenza, riuso, rilettura e parità GlifiCore/Kit/CLI (GS-VER-144)."
     },
     "V4": {
       "status": "pass",
@@ -50,7 +50,7 @@
     "Una sola famiglia estrattiva; nessuna valutazione ROUGE o umana; oracolo Python, non pacchetto terzo."
   ],
   "evidence": [
-    "docs/evidenze/GS-VER-142-riassunto-estrattivo.md"
+    "docs/evidenze/GS-VER-144-riassunto-estrattivo.md"
   ],
   "numericAgreement": {
     "comparisonMode": "relativeTolerance",
@@ -62,6 +62,6 @@
     "reviewer": "Iniziatore del progetto",
     "date": "2026-10-03",
     "kind": "interna",
-    "scope": "GS-DOR-012: variante fissata, oracolo indipendente e tolleranza dichiarata"
+    "scope": "GS-DOR-013: variante fissata, oracolo indipendente e tolleranza dichiarata"
   }
 }

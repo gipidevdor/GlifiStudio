@@ -8,11 +8,14 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Aggiunto
 
+- Ingresso `query --ast <query.json>` in alternativa a `--text`: QueryAST v1 condiviso
+  tra Core, GlifiKit e CLI, limiti durante lettura/decodifica, rifiuto di file non
+  regolari e diagnostiche senza contenuto o path (GS-VER-143).
 - Riassunto estrattivo deterministico `SentenceTFIDFMean-v1` (GS-MET-001-19, RF-042): frasi
   esistenti selezionate per media dei pesi TF-IDF entro un budget in frasi o token, con rank,
   tie-break per posizione, intervallo sorgente e ordine della fonte; Artifact
   `corpus-extractive-summary-v1`, `analyzeExtractiveSummary` in GlifiKit e `glifi summarize`
-  (GS-VER-142).
+  (GS-VER-144).
 - Corpus gold italiano su prosa reale di pubblico dominio (Collodi, «Le avventure di Pinocchio»,
   capitolo 1): 434 token lessicali e 19 frasi annotati da un'implementazione del contratto
   indipendente dal tokenizzatore, in accordo pieno con il prodotto (ADR-0030, GS-VER-138).
@@ -450,6 +453,11 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   di `ripgrep`, con fallback `grep` fail-closed.
 
 ### Sicurezza
+
+- Letture di manifest e oggetti del package relative a directory aperte: rifiuto dei link
+  intermedi e dei percorsi anomali, mantenimento dei controlli bounded sul file finale e
+  regressioni di sostituzione controllata delle directory (GS-VER-142). La garanzia non si
+  estende alle scritture o a SQLite; CMP-095 resta bloccata.
 
 - Letture, creazione e permessi dei file persistiti rafforzati, con regressioni sintetiche
   per package ed export; verifica dinamica su macOS 27 ancora necessaria

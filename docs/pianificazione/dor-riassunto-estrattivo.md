@@ -4,7 +4,7 @@
 
 | Campo | Valore |
 | --- | --- |
-| Identificatore | GS-DOR-012 |
+| Identificatore | GS-DOR-013 |
 | Tipo | Scheda Definition of Ready |
 | Versione | 1.0.0 |
 | Stato | Ready |
@@ -37,7 +37,7 @@
 
 Controlli statici e formattazione sulla macchina di sviluppo; compilazione, test e
 `make verify` sul runner `xcode-27` tramite il workflow `Verifica`. Risultati e limiti
-sono registrati in [GS-VER-142](../evidenze/GS-VER-142-riassunto-estrattivo.md), nella
+sono registrati in [GS-VER-144](../evidenze/GS-VER-144-riassunto-estrattivo.md), nella
 matrice di tracciabilità (RF-042, TV-036) e in CMP-096, che resta `implemented` finché la
 review non promuove l'evidenza. Nessuna nuova decisione architetturale: la variante era
 già candidata in GS-MET-001-19.

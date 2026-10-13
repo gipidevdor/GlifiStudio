@@ -10,7 +10,7 @@
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-10-03 |
-| Approvazione | Architettura approvata; `SentenceTFIDFMean-v1` fissato (GS-VER-142) |
+| Approvazione | Architettura approvata; `SentenceTFIDFMean-v1` fissato (GS-VER-144) |
 | Documento padre | [GS-MET-001](README.md) |
 
 ## Contratto
@@ -45,7 +45,7 @@ linguistici.
 
 ## Variante implementata: `SentenceTFIDFMean-v1`
 
-L'implementazione di riferimento (`corpus-extractive-summary-v1`, GS-VER-142) fissa la variante
+L'implementazione di riferimento (`corpus-extractive-summary-v1`, GS-VER-144) fissa la variante
 così:
 
 - **unità**: le frasi del tokenizzatore italiano (GS-LNG-001) di ogni revisione del gruppo;
