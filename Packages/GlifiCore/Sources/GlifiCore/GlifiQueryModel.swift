@@ -2,6 +2,7 @@
 
 import CryptoKit
 import Foundation
+import Synchronization
 
 /// Stable fields admitted by `query-ast-v1`.
 public struct GlifiQueryField: Codable, Hashable, RawRepresentable, Sendable {
@@ -220,6 +221,11 @@ extension GlifiQueryNode: Codable {
 
     /// Decodes the explicit, tagged v1 representation.
     public init(from decoder: any Decoder) throws {
+        if let key = QueryDecodingBudget.userInfoKey,
+            let budget = decoder.userInfo[key] as? QueryDecodingBudget
+        {
+            try budget.consume(at: decoder.codingPath)
+        }
         let container = try decoder.container(keyedBy: CodingKeys.self)
         switch try container.decode(NodeType.self, forKey: .type) {
         case .matchAll:
@@ -349,6 +355,39 @@ public struct GlifiQueryAST: Codable, Equatable, Sendable {
         self.root = root
     }
 
+    /// Decodes untrusted v1 JSON with byte, node, and depth limits before execution.
+    ///
+    /// Malformed input produces a typed failure without decoder details or content.
+    public static func decode(
+        _ data: Data,
+        limits: GlifiQueryLimits = .standard
+    ) throws -> GlifiQueryAST {
+        guard data.count <= limits.maximumQueryByteCount else {
+            throw queryExecutionFailure(
+                "query.byte-limit-exceeded", category: .insufficientResources)
+        }
+        try Task.checkCancellation()
+        guard let key = QueryDecodingBudget.userInfoKey else {
+            throw queryExecutionFailure("query.internal-failure", category: .invariantViolation)
+        }
+        let decoder = JSONDecoder()
+        decoder.userInfo[key] = QueryDecodingBudget(limits: limits)
+        let query: Self
+        do {
+            query = try decoder.decode(Self.self, from: data)
+        } catch let failure as GlifiFailure
+            where ["query.node-limit-exceeded", "query.depth-limit-exceeded"].contains(failure.code)
+        {
+            throw failure
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch {
+            throw queryExecutionFailure("query.invalid-ast")
+        }
+        try GlifiQueryEvaluator().validate(query, limits: limits)
+        return query
+    }
+
     /// Returns deterministic JSON with sorted keys and no locale-sensitive values.
     public func canonicalData() throws -> Data {
         let encoder = JSONEncoder()
@@ -360,6 +399,33 @@ public struct GlifiQueryAST: Codable, Equatable, Sendable {
     public func canonicalDigest() throws -> String {
         let hash = SHA256.hash(data: try canonicalData())
         return "sha256:" + hash.map { String(format: "%02x", $0) }.joined()
+    }
+}
+
+private final class QueryDecodingBudget: Sendable {
+    static let userInfoKey = CodingUserInfoKey(rawValue: "studio.glifi.query-decoding-budget")
+    let limits: GlifiQueryLimits
+    private let nodeCount = Mutex(0)
+
+    init(limits: GlifiQueryLimits) {
+        self.limits = limits
+    }
+
+    func consume(at path: [any CodingKey]) throws {
+        try Task.checkCancellation()
+        try nodeCount.withLock { count in
+            guard count < limits.maximumNodeCount else {
+                throw queryExecutionFailure(
+                    "query.node-limit-exceeded", category: .insufficientResources)
+            }
+            count += 1
+        }
+        let depth = path.filter { ["child", "children", "left", "right"].contains($0.stringValue) }
+            .count
+        guard depth <= limits.maximumDepth else {
+            throw queryExecutionFailure(
+                "query.depth-limit-exceeded", category: .insufficientResources)
+        }
     }
 }
 
@@ -382,7 +448,7 @@ public struct GlifiQueryLimits: Equatable, Sendable {
 
     /// Maximum UTF-8 byte length of a textual query.
     public let maximumQueryByteCount: Int
-    /// Maximum parenthesis and unary nesting depth.
+    /// Maximum parenthesis/unary nesting and AST edge depth (root is zero).
     public let maximumDepth: Int
     /// Maximum number of AST nodes.
     public let maximumNodeCount: Int

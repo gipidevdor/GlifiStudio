@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VER-144 |
 | Tipo | Evidenza di verifica |
-| Versione | 1.0.0 |
-| Stato | Parziale; compilazione Apple superata, verifica dinamica pendente |
+| Versione | 1.1.0 |
+| Stato | Parziale; CI promozione superata, riverifica integrata pendente |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-04 |
+| Ultima modifica | 2026-10-13 |
 | Approvazione | Review pendente; non promuove requisiti o clausole |
 | Riferimenti | RF-043, RQ-044, RQ-057, TV-060, CMP-095, GS-DOR-011 |
 
@@ -54,7 +54,7 @@ e [GlifiProjectPackageTests.swift](../../Packages/GlifiCore/Tests/GlifiCoreTests
 
 ## Verifica osservata
 
-Base `caeda51` con patch locale non pubblicata. Host macOS 26.5.2 arm64, Xcode 27.0
+Verifica locale iniziale su base `caeda51`. Host macOS 26.5.2 arm64, Xcode 27.0
 `27A266a`, Swift 6.4, Python 3.12.14; nessun abbassamento di target o gate.
 
 | Comando | Esito osservato |
@@ -74,6 +74,20 @@ di `verify` o del preflight completo. Recovery kill, smoke CLI e PDF/A non raggi
 Rscript e veraPDF assenti; nessun nuovo harness simulator. Resta il warning iPadOS
 preesistente sull'apertura dei documenti in-place. La cache dedicata è stata rimossa
 con `make clean-cache`. Log e comandi completi sono allegati alla consegna della patch.
+
+### CI della promozione e riallineamento
+
+Il commit [e8f7206](https://github.com/gpicchiarelli/GlifiStudio/commit/e8f72062f698f6f0f446562d08710c1dc77aa111)
+della [PR #14](https://github.com/gpicchiarelli/GlifiStudio/pull/14) ha superato
+`verify`, `app-store-baseline`, `static-quality` e `format-check`.
+Il job `verify` 112392960731 registra runner macOS 27.0, 242 test Core superati,
+22 checkpoint di recovery e build app completate; veraPDF assente.
+Questi risultati riguardano la promozione prima dello staging aggiuntivo, non attestano
+la revisione integrata successiva: i gate devono essere rieseguiti su quella revisione.
+
+L'evidenza è rinumerata da GS-VER-143 a GS-VER-144 al riallineamento con `main`,
+che ha già assegnato GS-VER-143 all'ingresso QueryAST. Il nuovo staging è registrato
+separatamente in [GS-VER-145](GS-VER-145-staging-transazioni-package.md).
 
 ## Limiti
 

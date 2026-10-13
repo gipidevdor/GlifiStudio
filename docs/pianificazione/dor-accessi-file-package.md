@@ -9,7 +9,7 @@
 | Versione | 1.3.0 |
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-06 |
+| Ultima modifica | 2026-10-13 |
 | Approvazione | Richiesta dell'iniziatore: migliorare qualità e sicurezza; review della PR pendente |
 | Riferimenti | GS-SEC-001 § 8; GS-DAT-001; RF-043; RQ-044; RQ-057; ADR-0019; ADR-0022; ADR-0027 |
 

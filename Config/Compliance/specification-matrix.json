@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.specification-compliance-matrix",
   "schemaVersion": 1,
-  "updatedAt": "2026-10-06",
+  "updatedAt": "2026-10-13",
   "requiredRequirementCoverage": [
     "RQ-057",
     "RQ-058",
@@ -1850,23 +1850,30 @@
       "id": "CMP-081",
       "clause": "GS-QRY-001 § Parità della QueryAST fra client",
       "specification": "docs/specifiche-di-design/04-ricerca-e-linguaggio-di-query.md",
-      "requirements": ["RF-080"],
+      "requirements": ["RF-080", "RQ-042", "RQ-044", "RQ-046"],
       "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryModel.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryEvaluator.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
-        "Scripts/verify.sh"
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
-        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiQueryParityTests.swift"
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiQueryASTInputTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiQueryParityTests.swift",
+        "Scripts/check-query-ast.py",
+        "Scripts/verify.sh"
       ],
       "fixtures": [
         "Fixtures/Query/v1/cases.json"
       ],
       "evidence": [
-        "docs/evidenze/GS-VER-123-parita-queryast-client.md"
+        "docs/evidenze/GS-VER-123-parita-queryast-client.md",
+        "docs/evidenze/GS-VER-143-ingresso-queryast.md"
       ],
       "gate": "G3",
-      "status": "verified",
-      "blockingReason": null
+      "status": "blocked",
+      "blockingReason": "Parità testuale già verificata in GS-VER-123; nuovo ingresso AST e regressioni aggiunti, verifica nativa Xcode 27 pendente in GS-VER-143."
     },
     {
       "id": "CMP-082",

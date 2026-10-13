@@ -9,7 +9,7 @@
 | Versione | 1.0.0 |
 | Stato | Parziale; compilazione Apple superata, verifica dinamica pendente |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-06 |
+| Ultima modifica | 2026-10-13 |
 | Approvazione | Review pendente; non promuove requisiti o clausole |
 | Riferimenti | RF-043, RQ-044, RQ-057, TV-060, CMP-095, GS-DOR-011 |
 
@@ -49,13 +49,18 @@ di fault injection alla loro API.
 ## Verifica osservata
 
 Host macOS 26.5.2 arm64, Xcode 27.0 (`27A266a`), Swift 6.4 e Python 3.12.14.
+Controlli ripetuti dopo l'integrazione di `main` a `c10d7f1`, preservando l'ingresso
+QueryAST. Evidenza rinumerata da GS-VER-144 a GS-VER-145 per mantenere univoci gli
+identificatori degli incrementi concorrenti.
 
 | Comando | Esito osservato |
 | --- | --- |
 | `make quality-static` | Superato, inclusi documenti e matrice |
+| `make check-failure-taxonomy check-failure-messages` | Superato |
 | `make format-check` | Superato |
 | `swift build --build-tests --package-path Packages/GlifiCore` | Package e bundle test compilati |
 | `make verify` | Exit 2: statici, failure checks e lint superati; bundle test compilati ma non caricabili su macOS 26.5.2 |
+| `make verify-app-store` | Exit 2 allo stesso caricamento; packaging non raggiunto |
 
 Il caricamento fallisce sul simbolo CoreGraphics richiesto da macOS 27: nessuna asserzione
 eseguita localmente. Recovery, smoke CLI e build app non raggiunti dal gate locale.

@@ -8,6 +8,9 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Aggiunto
 
+- Ingresso `query --ast <query.json>` in alternativa a `--text`: QueryAST v1 condiviso
+  tra Core, GlifiKit e CLI, limiti durante lettura/decodifica, rifiuto di file non
+  regolari e diagnostiche senza contenuto o path (GS-VER-143).
 - Corpus gold italiano su prosa reale di pubblico dominio (Collodi, «Le avventure di Pinocchio»,
   capitolo 1): 434 token lessicali e 19 frasi annotati da un'implementazione del contratto
   indipendente dal tokenizzatore, in accordo pieno con il prodotto (ADR-0030, GS-VER-138).

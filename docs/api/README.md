@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-API-001 |
 | Tipo | Specifica normativa delle interfacce applicative e headless |
-| Versione | 1.24.0 |
+| Versione | 1.25.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-20 |
+| Ultima modifica | 2026-10-06 |
 | Approvazione | Baseline pre-1.0 proposta; contract test richiesti prima della stabilizzazione |
 | Riferimenti | GS-DOM-001; GS-DAT-001; GS-QRY-001; GS-ANA-001; GS-RUN-001; GS-SEC-001; ADR-0002; ADR-0019 |
 
@@ -212,7 +212,7 @@ chiave (GS-VER-135).
 | elenca indagini | generazione verificata | tutti gli head di ramo in ordine stabile | Implementata in Core, GlifiKit e CLI |
 | analizza | generazione corrente e budget bounded nella slice | profilo corpus, AnalysisNodeID e ArtifactID persistiti | Slice descrittiva implementata con riuso dopo riapertura; l'interpretazione è prodotta dall'esecutore del piano, analisi temporale aperta |
 | confronta keyness | due insiemi espliciti e disgiunti di SourceRevisionID | profili dipendenza e famiglia G-test/effect/BH persistiti | `keyness-gtest-fisher-ha-ci-bh-v2` bounded implementata con riuso dopo riapertura, selezione di Fisher e intervalli di confidenza (GS-VER-118) |
-| interroga | testo `glifi-query-v1`, generazione di sessione e limiti | digest QueryAST e KWIC con SourceRevision/offset | Slice bounded TXT/Markdown con `sourceRanges` implementata e verificata; indice, metadati, annotazioni, cursor e streaming aperti |
+| interroga | testo `glifi-query-v1` oppure QueryAST v1 JSON, generazione di sessione e limiti | digest QueryAST e KWIC con SourceRevision/offset | Slice bounded TXT/Markdown con `sourceRanges`; ingresso AST in GS-VER-143, verifica nativa pendente; indice, metadati, annotazioni, cursor e streaming aperti |
 | carica testo fonte | SourceRevisionID della generazione corrente | testo UTF-8 esatto della revisione incorporata | Implementata in GlifiKit per salto UI KWIC→fonte; non espone path interni |
 | esporta | selezione, formato, destinazione | ExportReceipt + manifest | PDF/A-2u, Markdown, CSV e JSON implementati e verificati |
 
@@ -299,7 +299,7 @@ glifi investigation select <project> --request <json-file>
 glifi investigation list <project>
 glifi analyze <project>
 glifi keyness <project> --target <source-revision-id,...> --reference <source-revision-id,...>
-glifi query <project> --text <query>
+glifi query <project> (--text <query> | --ast <query.json>)
 glifi export <project> --request <json-file> --output <path>
 glifi qualitative state|append|agreement <project> [opzioni]
 glifi qualitative segments <project> --source <source-revision-id>
@@ -307,7 +307,7 @@ glifi qualitative passage <project> --source <source-revision-id> --sentences <p
 ```
 
 Sono disponibili `status`, `project create`, `project info`, `project validate`,
-`import` per TXT/Markdown, `query --text`, `plan --request`, `execute --request`,
+`import` per TXT/Markdown, `query --text|--ast`, `plan --request`, `execute --request`,
 `investigation create|select|list`, `analyze`, `keyness` ed `export`. Accettano
 `--format text|json`;
 l'envelope JSON ha `cliProtocolVersion = 1`. La query JSON include generazione,
@@ -379,6 +379,33 @@ I codici 12–69 sono riservati. Una pipe chiusa non converte un'operazione già
 committata in failure scientifica, ma la CLI termina con errore di output.
 
 ## 11. Determinismo e riproducibilità
+
+### Ingresso QueryAST
+
+`GlifiStudioProjectSession.query(canonicalAST: Data)` e `query --ast <file.json>`
+riusano il QueryAST `studio.glifi.query-ast`, versione 1, grammatica
+`glifi-query-v1`. `--ast` e `--text` sono alternative esclusive; nessuna delle due
+modifica la generazione del progetto. L'input JSON può avere spazi o chiavi in
+ordine diverso: il digest deriva sempre dalla ricodifica canonica del Core.
+
+Il limite è 64 KiB di JSON, 1.024 nodi e profondità 32 (radice a zero). La CLI
+richiede un file regolare, rifiuta symlink terminali e FIFO e limita la lettura
+anche se il file cresce. JSON malformato/struttura non decodificabile produce
+`query.invalid-ast` (exit 3); schema/versioni incompatibili
+`query.incompatible-ast` (10); budget ecceduto mantiene la failure specifica
+`query.*-limit-exceeded` (7). File non regolare produce
+`query.ast-not-regular-file` (3), errore I/O `query.ast-unreadable` (6).
+Queste failure non riportano path, contenuto né dettagli del decoder.
+Vedere [GS-VER-143](../evidenze/GS-VER-143-ingresso-queryast.md) per copertura e
+limiti della verifica.
+
+Esempio equivalente a `--text normalized:due`:
+
+```json
+{"schema":"studio.glifi.query-ast","schemaVersion":1,"grammarVersion":"glifi-query-v1","root":{"type":"term","field":"normalized","value":"due","matchMode":"exact"}}
+```
+
+### Identità dei risultati
 
 Ogni comando macchina accetta request versionata e può emettere il piano canonico
 prima dell'esecuzione. A parità di input, capability e policy, piano, ordine e

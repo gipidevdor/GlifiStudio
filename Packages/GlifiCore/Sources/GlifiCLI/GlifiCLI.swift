@@ -95,10 +95,26 @@ enum GlifiCLI {
                     )
                 )
             }
-        case let .query(projectURL, queryText):
+        case let .query(projectURL, input):
+            let astData: Data?
+            switch input {
+            case .text: astData = nil
+            case let .ast(url): astData = try readQueryAST(at: url)
+            }
             let session = try await service.openProject(at: projectURL)
-            let result = try await session.query(queryText)
-            await session.close()
+            let result: GlifiStudioProjectQueryResult
+            do {
+                switch input {
+                case let .text(text): result = try await session.query(text)
+                case .ast:
+                    guard let astData else { throw CLIError.internalFailure }
+                    result = try await session.query(canonicalAST: astData)
+                }
+                await session.close()
+            } catch {
+                await session.close()
+                throw error
+            }
             switch request.format {
             case .text:
                 for match in result.matches {
@@ -858,6 +874,60 @@ enum GlifiCLI {
         }
     }
 
+    private static func readQueryAST(at url: URL) throws -> Data {
+        try Task.checkCancellation()
+        let maximumByteCount = 65_536
+        func failure(_ code: String, category: String = "invalidInput") -> GlifiStudioFailure {
+            planRequestFailure(
+                code: code,
+                category: category,
+                retryDisposition: category == "transientIO"
+                    ? "transientBackoff"
+                    : category == "insufficientResources"
+                        ? "afterConditionsChange" : "afterCorrection",
+                operation: "query"
+            )
+        }
+        let descriptor = open(url.path, O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_CLOEXEC)
+        guard descriptor >= 0 else {
+            if errno == ELOOP {
+                throw failure("query.ast-not-regular-file")
+            }
+            throw failure("query.ast-unreadable", category: "transientIO")
+        }
+        defer { close(descriptor) }
+        var metadata = stat()
+        guard fstat(descriptor, &metadata) == 0 else {
+            throw failure("query.ast-unreadable", category: "transientIO")
+        }
+        guard (metadata.st_mode & S_IFMT) == S_IFREG else {
+            throw failure("query.ast-not-regular-file")
+        }
+        guard metadata.st_size >= 0, metadata.st_size <= maximumByteCount else {
+            throw failure("query.byte-limit-exceeded", category: "insufficientResources")
+        }
+        var data = Data(count: maximumByteCount + 1)
+        var count = 0
+        try data.withUnsafeMutableBytes { buffer in
+            guard let base = buffer.baseAddress else { throw CLIError.internalFailure }
+            while count < buffer.count {
+                try Task.checkCancellation()
+                let readCount = read(descriptor, base.advanced(by: count), buffer.count - count)
+                if readCount < 0 {
+                    if errno == EINTR { continue }
+                    throw failure("query.ast-unreadable", category: "transientIO")
+                }
+                if readCount == 0 { break }
+                count += readCount
+            }
+        }
+        guard count <= maximumByteCount else {
+            throw failure("query.byte-limit-exceeded", category: "insufficientResources")
+        }
+        data.count = count
+        return data
+    }
+
     private static func readPlanRequest(
         at url: URL,
         operation: String = "plan"
@@ -1039,7 +1109,7 @@ private struct CLIRequest {
           glifi [--format text|json] [--no-progress] project info <progetto.glifi>
           glifi [--format text|json] [--no-progress] project validate <progetto.glifi>
           glifi [--format text|json] [--no-progress] import <progetto.glifi> <fonte.txt>...
-          glifi [--format text|json] [--no-progress] query <progetto.glifi> --text <query>
+          glifi [--format text|json] [--no-progress] query <progetto.glifi> (--text <query> | --ast <query.json>)
           glifi [--format text|json] [--no-progress] plan <progetto.glifi> --request <richiesta.json>
           glifi [--format text|json] [--no-progress] execute <progetto.glifi> --request <richiesta.json>
           glifi [--format text|json] [--no-progress] visualize <progetto.glifi> --request <richiesta.json>
@@ -1139,11 +1209,13 @@ private struct CLIRequest {
             command = .importSources(projectURL, sourceURLs)
         } else if remaining.count == 4,
             remaining[0] == "query",
-            remaining[2] == "--text"
+            ["--text", "--ast"].contains(remaining[2])
         {
             command = .query(
                 URL(fileURLWithPath: remaining[1]).standardizedFileURL,
-                remaining[3]
+                remaining[2] == "--text"
+                    ? .text(remaining[3])
+                    : .ast(URL(fileURLWithPath: remaining[3]).standardizedFileURL)
             )
         } else if remaining.count == 2, remaining[0] == "analyze" {
             command = .analyze(URL(fileURLWithPath: remaining[1]).standardizedFileURL)
@@ -1685,13 +1757,18 @@ private struct CLIWindowFlags {
     }
 }
 
+private enum CLIQueryInput {
+    case text(String)
+    case ast(URL)
+}
+
 private enum CLICommand {
     case status
     case projectCreate(URL)
     case projectInfo(URL)
     case projectValidate(URL)
     case importSources(URL, [URL])
-    case query(URL, String)
+    case query(URL, CLIQueryInput)
     case plan(URL, URL)
     case executePlan(URL, URL)
     case visualize(URL, URL)
