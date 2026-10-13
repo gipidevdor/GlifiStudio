@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.85.0 |
+| Versione | 0.85.1 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-10-13 |
@@ -193,7 +193,9 @@ CMP-095 resta `blocked`.
 
 Incremento [GS-VER-143](evidenze/GS-VER-143-ingresso-queryast.md): TV-053 e TV-060,
 RF-080, RQ-042, RQ-044, RQ-046, CMP-081. Ingresso QueryAST v1 bounded in Core,
-Kit e CLI; parità e input avversari aggiunti al gate. Verifica nativa pendente;
+Kit e CLI; parità e input avversari aggiunti al gate. Fixture profonda generata
+direttamente in JSON per evitare il crash dell'encoder prima della verifica bounded.
+Compilazione Apple superata; riverifica nativa pendente;
 nessuna estensione della garanzia a indice, streaming o audit su dispositivo.
 
 Incremento [GS-VER-142](evidenze/GS-VER-142-letture-directory-package.md): TV-060, RF-043,

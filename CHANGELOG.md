@@ -421,6 +421,9 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Corretto
 
+- La fixture QueryAST con 200 livelli è costruita direttamente in JSON: non serializza
+  ricorsivamente un albero fuori budget prima di provare il decoder, evitando il crash
+  nello stack del runner Debug senza ridurre profondità, limiti o asserzioni (GS-VER-143).
 - Gli script di qualità creavano una cache di compilazione nuova a ogni esecuzione: nulla veniva
   riusato e ogni giro riscriveva circa 37 GiB, fino a riempire il disco e far morire il gate con
   «No space left on device». Le cache vivono ora in `~/Library/Caches/GlifiStudio/verify`, riusate

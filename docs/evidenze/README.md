@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.12.0 |
+| Versione | 1.12.1 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-10-13 |
@@ -17,7 +17,7 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 - [GS-VER-145 — Staging privato delle transazioni](GS-VER-145-staging-transazioni-package.md) — Parziale; verifica dinamica su macOS 27 pendente
 - [GS-VER-144 — Pubblicazione degli oggetti del package](GS-VER-144-pubblicazione-oggetti-package.md) — Parziale; CI promozione superata, riverifica integrata pendente
 
-- [GS-VER-143 — Ingresso QueryAST nel percorso headless](GS-VER-143-ingresso-queryast.md) — Parziale; verifica nativa pendente
+- [GS-VER-143 — Ingresso QueryAST nel percorso headless](GS-VER-143-ingresso-queryast.md) — Parziale; compilazione Apple superata, fixture profonda corretta, riverifica nativa pendente
 
 - [GS-VER-142 — Letture relative a directory aperte del package](GS-VER-142-letture-directory-package.md) — Parziale; compilazione Apple superata, verifica dinamica pendente
 

@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VER-143 |
 | Tipo | Evidenza di ingresso headless e parità |
-| Versione | 1.0.0 |
+| Versione | 1.1.0 |
 | Stato | Parziale; verifica nativa pendente |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-06 |
+| Ultima modifica | 2026-10-13 |
 | Approvazione | Attuazione GS-DOR-012; verifica del nuovo incremento pendente |
 | Riferimenti | GS-DOR-012; GS-QRY-001; GS-API-001; RF-080; RQ-042; RQ-044; RQ-046; CMP-081; TV-053; TV-060 |
 
@@ -57,6 +57,27 @@ dipendenza, rete o UI.
   il toolchain locale 6.2 rifiuta `swift-tools-version: 6.4`. Build, test Core/Kit
   e smoke CLI aggiunti richiedono esecuzione sui check Xcode 27 della PR; non
   vengono attestati come superati da questa evidenza locale.
+
+### Correzione della fixture profonda
+
+Il job `verify` della PR #15 (112395388013) e i gate integrati della PR #14
+su `4bd1b7d` terminano `GlifiCoreTests` con segnale 10, senza un'asserzione fallita.
+Il caso profondo costruiva e serializzava 200 nodi `not` prima di invocare il
+decoder bounded. Un riproduttore isolato dell'encoder, compilato Debug con Xcode
+27 su macOS 26.5.2, termina anch'esso con SIGBUS durante questa serializzazione
+su un thread con stack di 512 KiB; con 8 MiB raggiunge il decoder. Il medesimo
+input JSON da 4.714 byte costruito senza ricorsione raggiunge invece la failure
+`query.depth-limit-exceeded` anche sullo stack da 512 KiB.
+
+La fixture ora costruisce direttamente JSON con 200 livelli: non usa l'encoder
+ricorsivo come prerequisito per provare il decoder. Profondità ostile, budget e
+asserzioni restano invariati; si controlla anche che il payload sia entro il
+limite di byte. Nessuna modifica al prodotto, ai target o ai gate.
+
+Statici, failure taxonomy/messages, formato e compilazione SwiftPM inclusi test
+superati sulla correzione. Il riproduttore isolato non sostituisce i test del
+package: i bundle macOS 27 non si caricano sull'host 26.5.2 per il simbolo
+CoreGraphics mancante. Riverifica dei gate completi su macOS 27 richiesta.
 
 ## Limiti
 
