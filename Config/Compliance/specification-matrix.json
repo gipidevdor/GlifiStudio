@@ -2147,7 +2147,7 @@
         "Scripts/verify.sh"
       ],
       "fixtures": ["Fixtures/Validation/v1/extractive-summary-v1.json"],
-      "evidence": ["docs/evidenze/GS-VER-144-riassunto-estrattivo.md"],
+      "evidence": ["docs/evidenze/GS-VER-146-riassunto-estrattivo.md"],
       "gate": "G3",
       "status": "implemented",
       "blockingReason": null

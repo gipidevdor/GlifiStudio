@@ -1,10 +1,10 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# GS-VER-144 — Riassunto estrattivo deterministico `SentenceTFIDFMean-v1`
+# GS-VER-146 — Riassunto estrattivo deterministico `SentenceTFIDFMean-v1`
 
 | Campo | Valore |
 | --- | --- |
-| Identificatore | GS-VER-144 |
+| Identificatore | GS-VER-146 |
 | Tipo | Evidenza di verifica numerica e di integrazione |
 | Versione | 1.0.0 |
 | Stato | In verifica sul runner remoto |

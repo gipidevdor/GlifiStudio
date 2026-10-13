@@ -15,7 +15,7 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   esistenti selezionate per media dei pesi TF-IDF entro un budget in frasi o token, con rank,
   tie-break per posizione, intervallo sorgente e ordine della fonte; Artifact
   `corpus-extractive-summary-v1`, `analyzeExtractiveSummary` in GlifiKit e `glifi summarize`
-  (GS-VER-144).
+  (GS-VER-146).
 - Corpus gold italiano su prosa reale di pubblico dominio (Collodi, «Le avventure di Pinocchio»,
   capitolo 1): 434 token lessicali e 19 frasi annotati da un'implementazione del contratto
   indipendente dal tokenizzatore, in accordo pieno con il prodotto (ADR-0030, GS-VER-138).

@@ -14,7 +14,7 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
-- [GS-VER-144 — Riassunto estrattivo deterministico `SentenceTFIDFMean-v1`](GS-VER-144-riassunto-estrattivo.md) — In verifica sul runner remoto
+- [GS-VER-146 — Riassunto estrattivo deterministico `SentenceTFIDFMean-v1`](GS-VER-146-riassunto-estrattivo.md) — In verifica sul runner remoto
 
 - [GS-VER-143 — Ingresso QueryAST nel percorso headless](GS-VER-143-ingresso-queryast.md) — Parziale; verifica nativa pendente
 

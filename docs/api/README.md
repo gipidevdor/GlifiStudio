@@ -239,7 +239,7 @@ CLI con envelope JSON v1.
 | `analyzeNGramFrequencies` | `ngrams --unit [--n] [filtri]` | `corpus-ngram-frequencies-v1` | GS-VER-117 |
 | `analyzeLexicalDiversity` | `diversity [--threshold]` | `corpus-lexical-diversity-mtld-v1` | GS-VER-116 |
 | `rankDocumentsBM25` | `bm25 --query [--k1 --b]` | `corpus-bm25-ranking-v1` | GS-VER-115 |
-| `analyzeExtractiveSummary` | `summarize [--sentences n] [--tokens n] [--tf --idf --norm]` | `corpus-extractive-summary-v1` | GS-VER-144 |
+| `analyzeExtractiveSummary` | `summarize [--sentences n] [--tokens n] [--tf --idf --norm]` | `corpus-extractive-summary-v1` | GS-VER-146 |
 | `analyzeMultivariate` | `multivariate --method` | `corpus-document-term-multivariate-v2` | GS-VER-102, GS-VER-108 |
 | `assessCodingAgreement` | `agreement` | `coding-agreement-v2` | GS-VER-092, GS-VER-103 |
 

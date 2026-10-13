@@ -37,7 +37,7 @@
 
 Controlli statici e formattazione sulla macchina di sviluppo; compilazione, test e
 `make verify` sul runner `xcode-27` tramite il workflow `Verifica`. Risultati e limiti
-sono registrati in [GS-VER-144](../evidenze/GS-VER-144-riassunto-estrattivo.md), nella
+sono registrati in [GS-VER-146](../evidenze/GS-VER-146-riassunto-estrattivo.md), nella
 matrice di tracciabilità (RF-042, TV-036) e in CMP-096, che resta `implemented` finché la
 review non promuove l'evidenza. Nessuna nuova decisione architetturale: la variante era
 già candidata in GS-MET-001-19.
