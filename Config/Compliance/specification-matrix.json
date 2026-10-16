@@ -1867,7 +1867,8 @@
       ],
       "evidence": [
         "docs/evidenze/GS-VER-123-parita-queryast-client.md",
-        "docs/evidenze/GS-VER-143-ingresso-queryast.md"
+        "docs/evidenze/GS-VER-143-ingresso-queryast.md",
+        "docs/evidenze/GS-VER-147-permessi-queryast.md"
       ],
       "gate": "G3",
       "status": "blocked",

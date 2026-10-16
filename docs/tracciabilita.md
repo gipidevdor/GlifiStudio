@@ -178,6 +178,11 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 
 ## Catalogo delle verifiche pianificate
 
+Incremento [GS-VER-147](evidenze/GS-VER-147-permessi-queryast.md): TV-053 e TV-060,
+RF-080, RQ-044, RQ-046, CMP-081. Permessi negati in `query --ast` classificati
+`authorizationDenied`/`afterUserAction`; test CLI su file non leggibile e file
+mancante. Statici superati, verifica nativa pendente; nessuna promozione di conformità.
+
 Incremento [GS-VER-146](evidenze/GS-VER-146-riassunto-estrattivo.md): prima slice di
 TV-036 con RF-042, GS-DOR-013 e CMP-096 (`implemented`): riassunto estrattivo
 `SentenceTFIDFMean-v1` con budget, tie-break, lineage della frase e distinzione dal generativo;

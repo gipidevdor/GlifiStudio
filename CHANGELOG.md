@@ -426,6 +426,10 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Corretto
 
+- Errori di permesso `EACCES`/`EPERM` in `query --ast` classificati come
+  `authorizationDenied` con retry dopo intervento utente, non backoff; exit code
+  6 e diagnostica senza percorsi invariati. Test CLI su file non leggibile e
+  correzione della disponibilità AST nel contratto headless (GS-VER-147).
 - Il test del budget di decodifica QueryAST costruiva un albero `not` di 200 livelli e lo
   codificava con `JSONEncoder` sullo stack limitato di un thread di test: dal merge di GS-VER-143
   `GlifiCoreTests` terminava con segnale 10 (SIGBUS) su `verify` e `app-store-baseline`. L'input
