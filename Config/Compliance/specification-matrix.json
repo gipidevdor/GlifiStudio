@@ -2130,6 +2130,29 @@
       "gate": "G3",
       "status": "verified",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-096",
+      "clause": "GS-MET-001-19 § Variante implementata: SentenceTFIDFMean-v1",
+      "specification": "docs/metodi-analitici/19-riassunto-estrattivo.md",
+      "requirements": ["RF-042"],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiExtractiveSummaryAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiExtractiveSummaryPresentation.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExtractiveSummaryTests.swift",
+        "Packages/GlifiCore/Tests/Oracles/Python/summary.py",
+        "Packages/GlifiCore/Tests/Oracles/expected.txt",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": ["Fixtures/Validation/v1/extractive-summary-v1.json"],
+      "evidence": ["docs/evidenze/GS-VER-146-riassunto-estrattivo.md"],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }

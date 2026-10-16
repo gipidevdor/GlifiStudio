@@ -4,15 +4,17 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.12.1 |
+| Versione | 1.13.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-13 |
+| Ultima modifica | 2026-10-16 |
 | Approvazione | Non applicabile; registro operativo |
 
 Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un esito positivo prova soltanto l'ambito dichiarato e non sostituisce l'approvazione dei requisiti o della baseline.
 
 ## Indice
+
+- [GS-VER-146 — Riassunto estrattivo deterministico `SentenceTFIDFMean-v1`](GS-VER-146-riassunto-estrattivo.md) — In verifica sul runner remoto
 
 - [GS-VER-145 — Staging privato delle transazioni](GS-VER-145-staging-transazioni-package.md) — Parziale; verifica dinamica su macOS 27 pendente
 - [GS-VER-144 — Pubblicazione degli oggetti del package](GS-VER-144-pubblicazione-oggetti-package.md) — Parziale; CI promozione superata, riverifica integrata pendente

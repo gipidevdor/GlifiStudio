@@ -6,11 +6,11 @@
 | --- | --- |
 | Identificatore | GS-MET-001-19 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.0.0 |
+| Versione | 1.1.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
-| Approvazione | Architettura approvata; algoritmi MVP da selezionare |
+| Ultima modifica | 2026-10-03 |
+| Approvazione | Architettura approvata; `SentenceTFIDFMean-v1` fissato (GS-VER-146) |
 | Documento padre | [GS-MET-001](README.md) |
 
 ## Contratto
@@ -42,6 +42,33 @@ L'inclusione in questa specifica non rende tutte le famiglie obbligatorie nel pr
 rilascio. Un'implementazione diventa disponibile soltanto dopo avere fissato
 completamente la variante, superato fixture di riferimento e registrato i limiti
 linguistici.
+
+## Variante implementata: `SentenceTFIDFMean-v1`
+
+L'implementazione di riferimento (`corpus-extractive-summary-v1`, GS-VER-146) fissa la variante
+così:
+
+- **unità**: le frasi del tokenizzatore italiano (GS-LNG-001) di ogni revisione del gruppo;
+  `SentenceID` è la posizione zero-based della frase nel documento; la posizione sorgente è
+  l'intervallo UTF-8 esatto, mai il testo copiato nell'Artifact;
+- **token inclusi**: i token lessicali della frase, normalizzati come il profilo corpus
+  (`it-token-v1-nfc-lowercase-v1`), ripetizioni comprese; i token fuori da ogni frase sono ignorati;
+- **pesi**: matrice documento-termine del gruppo con uno schema GS-MET-001-07 dichiarato nel
+  descrittore; il default è `TF-sublinear-v1`, `IDF-smooth-v1`, `RowNorm-none-v1`, definito anche
+  per un solo documento; il punteggio di una frase è la media dei pesi `(documento, tipo)` dei suoi
+  token, zero senza token;
+- **rank**: punteggio decrescente, poi ordine canonico dei documenti, poi `SentenceID`
+  (`tie-break.source-position-v1`); frasi duplicate hanno lo stesso punteggio e rank distinti;
+- **budget**: `Budget-sentences-v1` (numero massimo di frasi) o `Budget-lexical-tokens-v1`
+  (somma massima dei token lessicali), limite in `1…10 000`; la selezione scorre il rank e
+  include ogni frase che rientra nel budget residuo, saltando quelle che lo supererebbero;
+- **eleggibilità**: una frase senza token lessicali è classificata con punteggio zero ma non
+  è mai selezionata (`eligibility.lexical-tokens-required-v1`);
+- **ridondanza**: nessuna (`redundancy.none-v1`); frasi identiche possono entrare entrambe;
+- **ordine di output**: `output-order.source-v1`; ogni frase candidata conserva punteggio, rank e
+  flag di selezione, così la vista per rank è derivabile senza ricalcolo.
+
+Il budget in caratteri e le altre famiglie restano candidate.
 
 ## Separazione dalla generazione
 
