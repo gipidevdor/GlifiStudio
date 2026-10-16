@@ -398,7 +398,7 @@ anche se il file cresce. JSON malformato/struttura non decodificabile produce
 `query.ast-not-regular-file` (3), errore I/O `query.ast-unreadable` (6).
 Per `EACCES` e `EPERM`, quest'ultima failure ha categoria `authorizationDenied`
 e retry `afterUserAction`; gli altri errori I/O mantengono `transientIO` e
-`transientBackoff`. Stato preservato `unchanged` e argomenti diagnostici vuoti.
+`transientBackoff`. Stato preservato `lastCommittedGeneration` e argomenti diagnostici vuoti.
 Queste failure non riportano path, contenuto né dettagli del decoder.
 Vedere [GS-VER-143](../evidenze/GS-VER-143-ingresso-queryast.md) per copertura e
 limiti della verifica, e [GS-VER-147](../evidenze/GS-VER-147-permessi-queryast.md)

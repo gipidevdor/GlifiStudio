@@ -180,7 +180,7 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 Incremento [GS-VER-147](evidenze/GS-VER-147-permessi-queryast.md): TV-053 e TV-060,
 RF-080, RQ-044, RQ-046, CMP-081. Permessi negati in `query --ast` classificati
 `authorizationDenied`/`afterUserAction`; test CLI su file non leggibile e file
-mancante. Verifiche statiche e native pendenti; nessuna promozione di conformità.
+mancante. Statici superati, verifica nativa pendente; nessuna promozione di conformità.
 
 Incremento [GS-VER-143](evidenze/GS-VER-143-ingresso-queryast.md): TV-053 e TV-060,
 RF-080, RQ-042, RQ-044, RQ-046, CMP-081. Ingresso QueryAST v1 bounded in Core,

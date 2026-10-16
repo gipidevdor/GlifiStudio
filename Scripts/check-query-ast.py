@@ -96,7 +96,7 @@ def main() -> None:
             denied = run("--ast", str(path), status=6, code="query.ast-unreadable")["failure"]
             assert denied["category"] == "authorizationDenied", denied
             assert denied["retryDisposition"] == "afterUserAction", denied
-            assert denied["retainedState"] == "unchanged", denied
+            assert denied["retainedState"] == "lastCommittedGeneration", denied
         finally:
             path.chmod(0o600)
         for arguments in [

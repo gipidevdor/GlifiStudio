@@ -7,7 +7,7 @@
 | Identificatore | GS-VER-147 |
 | Tipo | Evidenza di regressione headless |
 | Versione | 1.0.0 |
-| Stato | Parziale; verifiche pendenti |
+| Stato | Parziale; statici superati, verifica nativa pendente |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-10-16 |
 | Approvazione | Correzione del contratto GS-DOR-012; verifica pendente |
@@ -22,7 +22,7 @@ a `query.ast-unreadable`, categoria `authorizationDenied` e retry
 `transientBackoff`; `ELOOP` in apertura resta un file non regolare. L'exit code
 resta 6 per entrambe le categorie, come richiesto dal protocollo CLI esistente.
 
-La failure mantiene stato `unchanged`, operazione `query` e argomenti vuoti:
+La failure mantiene stato `lastCommittedGeneration`, operazione `query` e argomenti vuoti:
 nessuna esposizione di percorso, contenuto o dettaglio POSIX. Nessuna modifica
 al formato persistente, al modello AST o alle API pubbliche. Il contratto CLI
 non dichiara più erroneamente indisponibile l'ingresso AST da file.
@@ -38,8 +38,11 @@ Il caso file mancante controlla che la tassonomia I/O transitoria resti invariat
 
 ## Verifiche osservate e limiti
 
-Controlli statici, formattazione e gate nativi ancora da eseguire sulla revisione
-corretta. Questa VM Linux dispone di Swift 6.2, non di Apple Swift 6.4/macOS 27:
+`make quality-static`, `make check-failure-taxonomy`, `make check-failure-messages`,
+`Scripts/format.sh --check`, `git diff --check` e controllo sintattico Python
+superati su Linux. `make verify` e `make verify-app-store` tentati: exit 2 sul
+controllo disco `df -g`, opzione BSD non disponibile su GNU/Linux.
+Questa VM Linux dispone di Swift 6.2, non di Apple Swift 6.4/macOS 27:
 non può attestare build o test del prodotto. I gate Xcode 27 della PR sono
 l'evidenza richiesta per la verifica dinamica. Il test di permessi induce
 `EACCES`; non induce separatamente un errore `EPERM` da sandbox/ACL né una
