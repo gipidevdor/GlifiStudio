@@ -426,6 +426,11 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Corretto
 
+- Il test del budget di decodifica QueryAST costruiva un albero `not` di 200 livelli e lo
+  codificava con `JSONEncoder` sullo stack limitato di un thread di test: dal merge di GS-VER-143
+  `GlifiCoreTests` terminava con segnale 10 (SIGBUS) su `verify` e `app-store-baseline`. L'input
+  profondo è ora JSON costruito testualmente; il decodificatore sotto test resta bounded dal budget
+  di profondità.
 - Gli script di qualità creavano una cache di compilazione nuova a ogni esecuzione: nulla veniva
   riusato e ogni giro riscriveva circa 37 GiB, fino a riempire il disco e far morire il gate con
   «No space left on device». Le cache vivono ora in `~/Library/Caches/GlifiStudio/verify`, riusate
