@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.5.0 |
+| Versione | 1.6.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-10-03 |
@@ -29,3 +29,4 @@ accettato` prima del primo cambiamento implementativo.
 - [GS-DOR-009 — Selezione libera del passaggio](dor-selezione-libera-del-passaggio.md) — Ready con rischio accettato
 - [GS-DOR-010 — Invalidazione selettiva alla reimportazione (ADR-0028)](dor-invalidazione-selettiva.md) — Ready con rischio accettato
 - [GS-DOR-011 — Accessi ai file persistiti del package](dor-accessi-file-package.md) — Ready
+- [GS-DOR-013 — Riassunto estrattivo deterministico (GS-MET-001-19)](dor-riassunto-estrattivo.md) — Ready

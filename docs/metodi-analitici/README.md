@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001 |
 | Tipo | Specifica normativa ingegneristico-scientifica |
-| Versione | 1.1.0 |
+| Versione | 1.2.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-10-03 |
 | Approvazione | Perimetro scientifico richiesto dall'iniziatore del progetto; baseline da revisionare |
 | Riferimenti | GS-VIS-001; GS-SRS-001; ADR-0013 |
 
