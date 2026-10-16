@@ -87,7 +87,18 @@ def main() -> None:
         os.mkfifo(fifo)
         for invalid in [link, root, fifo]:
             run("--ast", str(invalid), status=3, code="query.ast-not-regular-file")
-        run("--ast", str(root / "missing.json"), status=6, code="query.ast-unreadable")
+        missing = run("--ast", str(root / "missing.json"), status=6, code="query.ast-unreadable")["failure"]
+        assert missing["category"] == "transientIO", missing
+        assert missing["retryDisposition"] == "transientBackoff", missing
+        assert os.geteuid() != 0, "The permission regression requires an unprivileged user"
+        path.chmod(0)
+        try:
+            denied = run("--ast", str(path), status=6, code="query.ast-unreadable")["failure"]
+            assert denied["category"] == "authorizationDenied", denied
+            assert denied["retryDisposition"] == "afterUserAction", denied
+            assert denied["retainedState"] == "unchanged", denied
+        finally:
+            path.chmod(0o600)
         for arguments in [
             (), ("--ast",), ("--text",), ("--ast", str(path), "--text", "due"),
             ("--text", "due", "--ast", str(path)), ("--ast", str(path), "--ast", str(path)),
@@ -95,7 +106,7 @@ def main() -> None:
             run(*arguments, status=2)
         assert run("--text", "normalized:due") == baseline
         assert run("--ast", str(path)) == baseline
-    print("QueryAST CLI: parità, limiti, file ostili, argomenti e privacy superati")
+    print("QueryAST CLI: parità, limiti, file ostili, permessi, argomenti e privacy superati")
 
 
 if __name__ == "__main__":

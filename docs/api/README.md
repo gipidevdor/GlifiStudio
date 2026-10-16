@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-API-001 |
 | Tipo | Specifica normativa delle interfacce applicative e headless |
-| Versione | 1.25.0 |
+| Versione | 1.25.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-10-06 |
+| Ultima modifica | 2026-10-16 |
 | Approvazione | Baseline pre-1.0 proposta; contract test richiesti prima della stabilizzazione |
 | Riferimenti | GS-DOM-001; GS-DAT-001; GS-QRY-001; GS-ANA-001; GS-RUN-001; GS-SEC-001; ADR-0002; ADR-0019 |
 
@@ -330,7 +330,8 @@ bounded a 1 MiB e usano soltanto ID canonici; `list` restituisce ogni head di ra
 `export` riceve head, formati, locale e fuso in una request bounded, crea una nuova
 directory con il sottoinsieme richiesto di `report.json`, `report.md`, `report.pdf`,
 `findings.csv`/`evidence.csv` ed `export-manifest.json` e restituisce un receipt
-soltanto dopo la verifica dei digest. File QueryAST, streaming generale e
+soltanto dopo la verifica dei digest. I file QueryAST sono accettati da `query --ast`
+secondo il contratto bounded sotto riportato; streaming generale e
 sovrascrittura di export restano fail-closed. L'invocazione senza
 argomenti resta alias temporaneo dello smoke test e stampa `GlifiCore pronto`;
 prima del protocollo CLI 1.0 deve diventare `help` o essere rimossa con nota di
@@ -395,9 +396,13 @@ anche se il file cresce. JSON malformato/struttura non decodificabile produce
 `query.incompatible-ast` (10); budget ecceduto mantiene la failure specifica
 `query.*-limit-exceeded` (7). File non regolare produce
 `query.ast-not-regular-file` (3), errore I/O `query.ast-unreadable` (6).
+Per `EACCES` e `EPERM`, quest'ultima failure ha categoria `authorizationDenied`
+e retry `afterUserAction`; gli altri errori I/O mantengono `transientIO` e
+`transientBackoff`. Stato preservato `unchanged` e argomenti diagnostici vuoti.
 Queste failure non riportano path, contenuto né dettagli del decoder.
 Vedere [GS-VER-143](../evidenze/GS-VER-143-ingresso-queryast.md) per copertura e
-limiti della verifica.
+limiti della verifica, e [GS-VER-147](../evidenze/GS-VER-147-permessi-queryast.md)
+per la regressione dei permessi.
 
 Esempio equivalente a `--text normalized:due`:
 

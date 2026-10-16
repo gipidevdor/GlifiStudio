@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.83.0 |
+| Versione | 0.83.1 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-06 |
+| Ultima modifica | 2026-10-16 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -176,6 +176,11 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 | [GS-VER-142](evidenze/GS-VER-142-letture-directory-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: letture descriptor-relative, regressioni su directory simboliche e sostituzioni controllate; statici, lint e compilazione Apple superati | Test compilati, non eseguiti su host 26.5.2; scritture, SQLite, ACL e file provider esclusi dalla garanzia |
 
 ## Catalogo delle verifiche pianificate
+
+Incremento [GS-VER-147](evidenze/GS-VER-147-permessi-queryast.md): TV-053 e TV-060,
+RF-080, RQ-044, RQ-046, CMP-081. Permessi negati in `query --ast` classificati
+`authorizationDenied`/`afterUserAction`; test CLI su file non leggibile e file
+mancante. Verifiche statiche e native pendenti; nessuna promozione di conformità.
 
 Incremento [GS-VER-143](evidenze/GS-VER-143-ingresso-queryast.md): TV-053 e TV-060,
 RF-080, RQ-042, RQ-044, RQ-046, CMP-081. Ingresso QueryAST v1 bounded in Core,
