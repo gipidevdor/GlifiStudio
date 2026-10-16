@@ -58,13 +58,7 @@ func queryASTInputBoundsEveryRecursiveEdge() throws {
         try expectASTFailure(
             data, limits: astInputLimits(depth: 0), code: "query.depth-limit-exceeded")
     }
-    let opening = String(repeating: #"{"type":"not","child":"#, count: 200)
-    let closing = String(repeating: "}", count: 200)
-    let deep = Data(
-        """
-        {"schema":"studio.glifi.query-ast","schemaVersion":1,"grammarVersion":"glifi-query-v1",\
-        "root":\(opening){"type":"matchAll"}\(closing)}
-        """.utf8)
+    let deep = deepNotChainJSON(depth: 200)
     #expect(deep.count < GlifiQueryLimits.standard.maximumQueryByteCount)
     try expectASTFailure(deep, code: "query.depth-limit-exceeded")
     let wide = GlifiQueryAST(root: .or(Array(repeating: leaf, count: 1_024)))
@@ -127,6 +121,20 @@ func queryASTInputPreservesCancellation() async throws {
     } catch is CancellationError {
         // Cancellation remains distinct from malformed input.
     }
+}
+
+/// Builds the canonical JSON of `depth` nested `not` nodes without encoding a deep tree:
+/// the encoder would recurse once per level on the bounded stack of a test thread, while
+/// the decoder under test stops at `maximumDepth` by budget.
+private func deepNotChainJSON(depth: Int) -> Data {
+    let root =
+        String(repeating: #"{"type":"not","child":"#, count: depth) + #"{"type":"matchAll"}"#
+        + String(repeating: "}", count: depth)
+    let json = """
+        {"grammarVersion":"\(GlifiQueryAST.grammarVersion)","root":\(root),\
+        "schema":"\(GlifiQueryAST.schema)","schemaVersion":\(GlifiQueryAST.schemaVersion)}
+        """
+    return Data(json.utf8)
 }
 
 private func astInputLimits(
