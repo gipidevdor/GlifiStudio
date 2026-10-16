@@ -897,14 +897,25 @@ enum GlifiCLI {
         try Task.checkCancellation()
         let maximumByteCount = 65_536
         func failure(_ code: String, category: String = "invalidInput") -> GlifiStudioFailure {
-            planRequestFailure(
+            let retryDisposition: String
+            switch category {
+            case "authorizationDenied": retryDisposition = "afterUserAction"
+            case "transientIO": retryDisposition = "transientBackoff"
+            case "insufficientResources": retryDisposition = "afterConditionsChange"
+            default: retryDisposition = "afterCorrection"
+            }
+            return planRequestFailure(
                 code: code,
                 category: category,
-                retryDisposition: category == "transientIO"
-                    ? "transientBackoff"
-                    : category == "insufficientResources"
-                        ? "afterConditionsChange" : "afterCorrection",
+                retryDisposition: retryDisposition,
                 operation: "query"
+            )
+        }
+        func ioFailure(_ errorCode: Int32) -> GlifiStudioFailure {
+            failure(
+                "query.ast-unreadable",
+                category: errorCode == EACCES || errorCode == EPERM
+                    ? "authorizationDenied" : "transientIO"
             )
         }
         let descriptor = open(url.path, O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_CLOEXEC)
@@ -912,12 +923,12 @@ enum GlifiCLI {
             if errno == ELOOP {
                 throw failure("query.ast-not-regular-file")
             }
-            throw failure("query.ast-unreadable", category: "transientIO")
+            throw ioFailure(errno)
         }
         defer { close(descriptor) }
         var metadata = stat()
         guard fstat(descriptor, &metadata) == 0 else {
-            throw failure("query.ast-unreadable", category: "transientIO")
+            throw ioFailure(errno)
         }
         guard (metadata.st_mode & S_IFMT) == S_IFREG else {
             throw failure("query.ast-not-regular-file")
@@ -934,7 +945,7 @@ enum GlifiCLI {
                 let readCount = read(descriptor, base.advanced(by: count), buffer.count - count)
                 if readCount < 0 {
                     if errno == EINTR { continue }
-                    throw failure("query.ast-unreadable", category: "transientIO")
+                    throw ioFailure(errno)
                 }
                 if readCount == 0 { break }
                 count += readCount
