@@ -10829,6 +10829,57 @@
           }
         }
       }
+    },
+    "failure.summary.unknown-budget-unit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The summary budget unit is not recognized."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'unità del budget del riassunto non è riconosciuta."
+          }
+        }
+      }
+    },
+    "failure.summary.invalid-budget" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The summary budget must be between 1 and 10 000."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il budget del riassunto deve essere compreso fra 1 e 10 000."
+          }
+        }
+      }
+    },
+    "failure.summary.insufficient-sources" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The extractive summary requires at least one source."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il riassunto estrattivo richiede almeno una fonte."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

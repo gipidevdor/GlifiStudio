@@ -2,7 +2,7 @@
   "schema": "studio.glifi.validation-catalog",
   "schemaVersion": 1,
   "license": "BSD-3-Clause",
-  "updatedAt": "2026-09-16",
+  "updatedAt": "2026-10-03",
   "manifests": [
     {
       "id": "validation-corpus-profile-it-v1",
@@ -17,6 +17,11 @@
     {
       "id": "validation-lexical-diversity-mtld-v1",
       "path": "Fixtures/Validation/v1/lexical-diversity-mtld-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-extractive-summary-v1",
+      "path": "Fixtures/Validation/v1/extractive-summary-v1.json",
       "status": "candidate"
     },
     {

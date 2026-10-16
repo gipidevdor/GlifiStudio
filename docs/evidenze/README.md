@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.10.1 |
+| Versione | 1.11.1 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-10-16 |
@@ -15,6 +15,8 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 ## Indice
 
 - [GS-VER-147 — Permessi dell'ingresso QueryAST](GS-VER-147-permessi-queryast.md) — Parziale; statici superati, verifica nativa pendente
+
+- [GS-VER-146 — Riassunto estrattivo deterministico `SentenceTFIDFMean-v1`](GS-VER-146-riassunto-estrattivo.md) — In verifica sul runner remoto
 
 - [GS-VER-143 — Ingresso QueryAST nel percorso headless](GS-VER-143-ingresso-queryast.md) — Parziale; verifica nativa pendente
 

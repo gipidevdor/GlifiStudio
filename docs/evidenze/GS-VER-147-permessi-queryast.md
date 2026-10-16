@@ -44,7 +44,16 @@ superati su Linux. `make verify` e `make verify-app-store` tentati: exit 2 sul
 controllo disco `df -g`, opzione BSD non disponibile su GNU/Linux.
 Questa VM Linux dispone di Swift 6.2, non di Apple Swift 6.4/macOS 27:
 non può attestare build o test del prodotto. I gate Xcode 27 della PR sono
-l'evidenza richiesta per la verifica dinamica. Il test di permessi induce
+l'evidenza richiesta per la verifica dinamica.
+
+Prima del riallineamento a `main` dopo PR #16, `verify` su Xcode 27 è passato
+per la revisione `5b68987` di [PR #18](https://github.com/gpicchiarelli/GlifiStudio/pull/18),
+job `117215829839`. Il log del 2026-10-16 riporta esplicitamente
+«QueryAST CLI: parità, limiti, file ostili, permessi, argomenti e privacy superati».
+La validazione PDF/A è stata saltata dal gate per assenza di veraPDF; non viene
+attestata. Il preflight App Store e la riverifica integrata restano pendenti.
+
+Il test di permessi induce
 `EACCES`; non induce separatamente un errore `EPERM` da sandbox/ACL né una
 revoca concorrente durante `fstat` o lettura. Nessuna deroga ai gate.
 
