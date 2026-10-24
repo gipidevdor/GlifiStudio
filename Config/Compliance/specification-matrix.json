@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.specification-compliance-matrix",
   "schemaVersion": 1,
-  "updatedAt": "2026-10-06",
+  "updatedAt": "2026-10-16",
   "requiredRequirementCoverage": [
     "RQ-057",
     "RQ-058",
@@ -2150,7 +2150,7 @@
       "fixtures": ["Fixtures/Validation/v1/extractive-summary-v1.json"],
       "evidence": ["docs/evidenze/GS-VER-146-riassunto-estrattivo.md"],
       "gate": "G3",
-      "status": "implemented",
+      "status": "verified",
       "blockingReason": null
     }
   ]

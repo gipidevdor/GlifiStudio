@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VER-146 |
 | Tipo | Evidenza di verifica numerica e di integrazione |
-| Versione | 1.0.0 |
-| Stato | In verifica sul runner remoto |
+| Versione | 1.1.0 |
+| Stato | Superato su runner remoto; controlli opzionali saltati |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-03 |
+| Ultima modifica | 2026-10-16 |
 | Approvazione | GS-DOR-013; richiesta dell'iniziatore di proseguire lo sviluppo |
 | Riferimenti | GS-DOR-013; GS-MET-001-19 § Variante implementata; GS-MET-001-07; RF-042; TV-036; CMP-096 |
 
@@ -60,7 +60,19 @@ seguente.
 
 ## Esecuzione remota
 
-Da registrare al termine del workflow `Verifica` della PR.
+Workflow `Verifica` e `App Store` sul runner GitHub `xcode-27` (macOS 27.0.1, Xcode 27),
+PR #16, revisione `19ca4c7` (branch allineato a `main` `49d31de`):
+
+- `verify` (job 117214603279): superato — compilazione, test Swift di `GlifiCoreTests` inclusi
+  `GlifiExtractiveSummaryTests` (confronto con `expected.txt`, casi limite, persistenza/riuso,
+  round-trip JSON, risoluzione testo) e contract test CLI `glifi summarize --sentences 2`.
+- `app-store-baseline` (job 117214477053): superato.
+- `static-quality` (job 117214477209) e `format-check` (job 117214477383): superati.
+
+Un primo giro sulla revisione `62f945a` era terminato con `GlifiCoreTests … exited with
+unexpected signal code 10` in `verify` e `app-store-baseline`: crash preesistente su `main`
+(stack overflow di un test QueryAST, corretto in #17, `49d31de`) e non attribuibile a questa
+slice; il giro su `19ca4c7` lo conferma. Squash su `main`: `b2bc5c1`.
 
 ## Limiti
 
@@ -73,4 +85,5 @@ Da registrare al termine del workflow `Verifica` della PR.
 
 ## Esito
 
-**In verifica: controlli statici superati; test e contract test in esecuzione sul runner remoto.**
+**Superato su runner remoto.** Oracolo Python, test Swift e contract test CLI superati su `xcode-27`;
+`make check-oracles` (Rscript) resta eseguito solo dal gate locale (GS-VER-141).
