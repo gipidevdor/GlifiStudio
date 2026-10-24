@@ -6,11 +6,11 @@
 | --- | --- |
 | Identificatore | GS-VER-147 |
 | Tipo | Evidenza di regressione headless |
-| Versione | 1.0.0 |
-| Stato | Parziale; statici superati, verifica nativa pendente |
+| Versione | 1.1.0 |
+| Stato | Superato sul runner Xcode 27 con i limiti dichiarati |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-16 |
-| Approvazione | Correzione del contratto GS-DOR-012; verifica pendente |
+| Ultima modifica | 2026-10-24 |
+| Approvazione | Correzione del contratto GS-DOR-012; regressione G3 superata |
 | Riferimenti | GS-VER-143; GS-DOR-012; GS-API-001; RF-080; RQ-044; RQ-046; TV-053; TV-060; CMP-081 |
 
 ## Ambito e correzione
@@ -46,16 +46,20 @@ Questa VM Linux dispone di Swift 6.2, non di Apple Swift 6.4/macOS 27:
 non può attestare build o test del prodotto. I gate Xcode 27 della PR sono
 l'evidenza richiesta per la verifica dinamica.
 
-Prima del riallineamento a `main` dopo PR #16, `verify` su Xcode 27 è passato
-per la revisione `5b68987` di [PR #18](https://github.com/gpicchiarelli/GlifiStudio/pull/18),
-job `117215829839`. Il log del 2026-10-16 riporta esplicitamente
+Sulla revisione finale `f1e112ba5664a7a0bb56d7cb4884eb064b9779cb` di
+[PR #18](https://github.com/gpicchiarelli/GlifiStudio/pull/18), `verify`
+(job `117221998396`) e `app-store-baseline` (job `117221926507`) sono passati
+su macOS 27.0.1, runner `xcode-27-arm64`, insieme a `static-quality` e
+`format-check`. Entrambi i job nativi riportano 246 test Swift superati.
+Il log del 2026-10-16 riporta esplicitamente
 «QueryAST CLI: parità, limiti, file ostili, permessi, argomenti e privacy superati».
 La validazione PDF/A è stata saltata dal gate per assenza di veraPDF; non viene
-attestata. Il preflight App Store e la riverifica integrata restano pendenti.
+attestata. Il preflight App Store non attesta firma, pubblicazione o accettazione
+dello store. Il riepilogo della parità G3 e la promozione di CMP-081 sono in
+[GS-VER-143](GS-VER-143-ingresso-queryast.md).
 
-Il test di permessi induce
-`EACCES`; non induce separatamente un errore `EPERM` da sandbox/ACL né una
-revoca concorrente durante `fstat` o lettura. Nessuna deroga ai gate.
+Il test di permessi induce `EACCES`; non induce separatamente un errore `EPERM`
+da sandbox/ACL né una revoca concorrente durante `fstat` o lettura. Nessuna deroga ai gate.
 
 ## Recupero
 
