@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.11.2 |
+| Versione | 1.12.1 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-10-24 |
@@ -16,7 +16,7 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 - [GS-VER-147 — Permessi dell'ingresso QueryAST](GS-VER-147-permessi-queryast.md) — Superato su Xcode 27; limiti EPERM/ACL dichiarati
 
-- [GS-VER-146 — Riassunto estrattivo deterministico `SentenceTFIDFMean-v1`](GS-VER-146-riassunto-estrattivo.md) — In verifica sul runner remoto
+- [GS-VER-146 — Riassunto estrattivo deterministico `SentenceTFIDFMean-v1`](GS-VER-146-riassunto-estrattivo.md) — Superato su runner remoto; controlli opzionali saltati
 
 - [GS-VER-143 — Ingresso QueryAST nel percorso headless](GS-VER-143-ingresso-queryast.md) — Superato su Xcode 27 nel perimetro G3
 
