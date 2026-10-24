@@ -463,6 +463,11 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Sicurezza
 
+- Verifica export con letture bounded di manifest e payload relative alla radice aperta,
+  controlli sul descriptor e rifiuto di link/file speciali; regressioni su budget,
+  ripristino e preservazione dei dati (GS-VER-148). Formato e pubblicazione invariati;
+  inventario, scritture, ACL e file provider non diventano coperti integralmente.
+
 - Letture di manifest e oggetti del package relative a directory aperte: rifiuto dei link
   intermedi e dei percorsi anomali, mantenimento dei controlli bounded sul file finale e
   regressioni di sostituzione controllata delle directory (GS-VER-142). La garanzia non si

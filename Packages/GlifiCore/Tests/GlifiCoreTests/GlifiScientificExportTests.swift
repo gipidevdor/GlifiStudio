@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
+import Darwin
 import Foundation
 import PDFKit
 import Testing
@@ -220,6 +221,143 @@ func scientificPDFPaginatesLongReport() async throws {
     #expect(pdf.pageCount > 1)
     #expect(pdf.string?.contains("Quali caratteristiche emergono") == true)
     _ = try GlifiScientificExporter.verifyExport(at: destination)
+}
+
+private enum ExportFileDamage: CaseIterable, Sendable {
+    case symbolicLink
+    case hardLink
+    case directory
+    case fifo
+    case oversized
+    case truncated
+}
+
+@Test(
+    "La verifica export rifiuta manifest e payload non sicuri e riprende dopo il ripristino",
+    arguments: ["export-manifest.json", "report.json"], ExportFileDamage.allCases
+)
+private func scientificExportRejectsUnsafeFiles(
+    fileName: String, damage: ExportFileDamage
+) async throws {
+    let fixture = try await exportFixture()
+    defer { try? FileManager.default.removeItem(at: fixture.root) }
+    let destination = fixture.root.appending(path: "Verified.glifiexport")
+    _ = try GlifiScientificExporter().export(
+        snapshot: fixture.snapshot,
+        investigation: fixture.investigation,
+        interpretationRecord: fixture.interpretationRecord,
+        interpretation: fixture.interpretation,
+        request: try GlifiScientificExportRequest(
+            investigationHeadEventID: fixture.investigation.headEventID
+        ),
+        to: destination,
+        environment: deterministicEnvironment
+    )
+    let manifest = try GlifiScientificExporter.verifyExport(at: destination)
+    let fileURL = destination.appending(path: fileName)
+    let originalData = try Data(contentsOf: fileURL)
+    let externalURL = fixture.root.appending(path: "external.json")
+    try originalData.write(to: externalURL)
+    try FileManager.default.removeItem(at: fileURL)
+    switch damage {
+    case .symbolicLink:
+        try FileManager.default.createSymbolicLink(at: fileURL, withDestinationURL: externalURL)
+    case .hardLink:
+        try FileManager.default.linkItem(at: externalURL, to: fileURL)
+    case .directory:
+        try FileManager.default.createDirectory(at: fileURL, withIntermediateDirectories: false)
+    case .fifo:
+        try #require(mkfifo(fileURL.path, mode_t(0o600)) == 0)
+    case .oversized:
+        try Data().write(to: fileURL)
+        let handle = try FileHandle(forWritingTo: fileURL)
+        defer { try? handle.close() }
+        let limit = fileName == "export-manifest.json"
+            ? GlifiProjectPackage.maximumManifestByteCount
+            : GlifiScientificExporter.maximumFileByteCount
+        try handle.truncate(atOffset: UInt64(limit + 1))
+    case .truncated:
+        try originalData.prefix(originalData.count / 2).write(to: fileURL)
+    }
+    do {
+        _ = try GlifiScientificExporter.verifyExport(at: destination)
+        Issue.record("La verifica doveva rifiutare il file non valido")
+    } catch let failure as GlifiFailure {
+        #expect(
+            failure.code == (fileName == "export-manifest.json"
+                ? "export.invalid-manifest" : "export.invalid-file"))
+        #expect(failure.operation == .export)
+        #expect(failure.retryDisposition == .never)
+    }
+    #expect(try Data(contentsOf: externalURL) == originalData)
+    try FileManager.default.removeItem(at: fileURL)
+    try originalData.write(to: fileURL)
+    #expect(try GlifiScientificExporter.verifyExport(at: destination) == manifest)
+    let project = try GlifiProjectPackage.open(at: fixture.root.appending(path: "Export.glifi"))
+    #expect(await project.snapshot() == fixture.snapshot)
+}
+
+@Test(
+    "La lettura export rispetta il budget a ogni confine di chunk",
+    arguments: [0, 1, 65_535, 65_536, 65_537, 131_073]
+)
+func scientificExportReadsBoundedFiles(byteCount: Int) throws {
+    let root = FileManager.default.temporaryDirectory.appending(path: "ExportRead-\(UUID())")
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: false)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let data = Data(repeating: 65, count: byteCount)
+    try data.write(to: root.appending(path: "payload"))
+    let directory = try GlifiPackageDirectory(at: root)
+    #expect(
+        try GlifiScientificExporter.readFile(
+            "payload", in: directory, maximumByteCount: byteCount,
+            expectedByteCount: byteCount, failureCode: "export.invalid-file"
+        ) == data)
+    #expect(throws: GlifiFailure.self) {
+        _ = try GlifiScientificExporter.readFile(
+            "payload", in: directory, maximumByteCount: byteCount - 1,
+            failureCode: "export.invalid-file"
+        )
+    }
+    #expect(throws: GlifiFailure.self) {
+        _ = try GlifiScientificExporter.readFile(
+            "payload", in: directory, maximumByteCount: byteCount + 1,
+            expectedByteCount: byteCount + 1, failureCode: "export.invalid-file"
+        )
+    }
+}
+
+@Test("Le letture export restano ancorate alla radice aperta e rifiutano nuove radici simboliche")
+func scientificExportPinsOpenedRoot() throws {
+    let root = FileManager.default.temporaryDirectory.appending(path: "ExportRoot-\(UUID())")
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: false)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let original = root.appending(path: "original")
+    let moved = root.appending(path: "moved")
+    let external = root.appending(path: "external")
+    try FileManager.default.createDirectory(at: original, withIntermediateDirectories: false)
+    try FileManager.default.createDirectory(at: external, withIntermediateDirectories: false)
+    let originalData = Data("original".utf8)
+    let externalData = Data("external".utf8)
+    try originalData.write(to: original.appending(path: "payload"))
+    try externalData.write(to: external.appending(path: "payload"))
+    let directory = try GlifiPackageDirectory(at: original)
+    try FileManager.default.moveItem(at: original, to: moved)
+    try FileManager.default.createSymbolicLink(at: original, withDestinationURL: external)
+    #expect(
+        try GlifiScientificExporter.readFile(
+            "payload", in: directory, maximumByteCount: originalData.count,
+            failureCode: "export.invalid-file"
+        ) == originalData)
+    do {
+        _ = try GlifiScientificExporter.verifyExport(at: original)
+        Issue.record("La radice simbolica doveva essere rifiutata")
+    } catch let failure as GlifiFailure {
+        #expect(failure.code == "export.invalid-directory")
+        #expect(failure.category == .invalidInput)
+        #expect(failure.operation == .export)
+    }
+    #expect(try Data(contentsOf: external.appending(path: "payload")) == externalData)
 }
 
 private struct ExportFixture {
