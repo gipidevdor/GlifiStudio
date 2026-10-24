@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.86.0 |
+| Versione | 0.86.1 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-16 |
+| Ultima modifica | 2026-10-24 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -179,6 +179,11 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 | [GS-VER-145](evidenze/GS-VER-145-staging-transazioni-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: staging privato, esclusivo e descriptor-relative; regressioni su collisioni, sostituzioni e checkpoint | Verifica dinamica macOS 27 pendente; manifest replacement, cleanup, SQLite e identità globale della radice esclusi |
 
 ## Catalogo delle verifiche pianificate
+
+Incremento [GS-VER-147](evidenze/GS-VER-147-permessi-queryast.md): TV-053 e TV-060,
+RF-080, RQ-044, RQ-046, CMP-081. Permessi negati in `query --ast` classificati
+`authorizationDenied`/`afterUserAction`; test CLI su file non leggibile e file
+mancante. Statici superati, verifica nativa pendente; nessuna promozione di conformità.
 
 Incremento [GS-VER-146](evidenze/GS-VER-146-riassunto-estrattivo.md): prima slice di
 TV-036 con RF-042, GS-DOR-013 e CMP-096 (`implemented`): riassunto estrattivo
