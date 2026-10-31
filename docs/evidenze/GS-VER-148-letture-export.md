@@ -6,8 +6,8 @@
 | --- | --- |
 | Identificatore | GS-VER-148 |
 | Tipo | Evidenza di rafforzamento della verifica export |
-| Versione | 1.1.0 |
-| Stato | Parziale; compilazione Apple superata, verifica dinamica pendente |
+| Versione | 1.2.0 |
+| Stato | Superato su runner remoto nel perimetro dichiarato; preflight locale bloccato |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-10-31 |
 | Approvazione | Richiesta di prosecuzione dell'iniziatore; review pendente |
@@ -61,8 +61,27 @@ delle corse concorrenti fra `fstat` e ogni singola lettura.
   **Test compilati, non eseguiti**; recovery, smoke CLI, build app e packaging non
   raggiunti. Rscript assente. Nessun target o controllo abbassato.
 - Il riallineamento con `main` integra soltanto le evidenze delle PR #19 e #20 e mantiene
-  inalterato il codice Swift compilato sopra. Test effettivi e preflight completi
-  della revisione integrata restano da confermare in CI macOS 27.
+  inalterato il codice Swift compilato sopra.
+
+### Verifica remota del 2026-10-31
+
+La [PR #21](https://github.com/gipidevdor/GlifiStudio/pull/21), head `158db49`, è stata
+verificata come merge di prova `5309973` con `main` `f348553`. Tutti i quattro check
+sono verdi: `static-quality`, `format-check`, `verify` e `app-store-baseline`.
+
+- Runner `xcode-27-arm64`, host macOS 27.0.1; nessuna riduzione dei target.
+- `verify` (job `124563989886`): 25 test GlifiKit e 249 test GlifiCore superati,
+  22 checkpoint process-kill recovery, contratti CLI e build macOS/iPadOS.
+- Le nuove regressioni export sono effettivamente eseguite: 12 combinazioni
+  file/danno, sei confini di chunk e sostituzione deterministica della radice.
+- `app-store-baseline` (job `124563923326`): gate completo e packaging superati.
+- Oracoli numerici R e validazione PDF/A esterna saltati: Rscript e veraPDF assenti
+  sul runner. La CI verde non attesta questi controlli opzionali.
+
+Il risultato remoto non sostituisce il preflight **locale** richiesto da
+`CONTRIBUTING.md`. La PR resta in bozza: nessuna deroga vigente, review o merge
+autorizzati da questa evidenza. La compilazione sul vecchio host resta distinta
+dall'esecuzione sul runner macOS 27.
 
 ## Limiti e recupero
 

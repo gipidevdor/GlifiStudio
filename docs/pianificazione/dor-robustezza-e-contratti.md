@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DOR-004 |
 | Tipo | Scheda Definition of Ready |
-| Versione | 1.1.0 |
+| Versione | 1.1.1 |
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-24 |
+| Ultima modifica | 2026-10-31 |
 | Approvazione | Richiesta dell'iniziatore: procedere con le implementazioni senza interruzioni |
 | Riferimenti | GS-STD-001-07; RQ-044; RQ-045; RQ-058; GS-SEC-001 THR-001, THR-009; GS-API-001 § 8; GS-VAL-001 |
 
@@ -64,4 +64,4 @@ un'approvazione preventiva della scheda né la chiusura della verifica.
 | S1 | Completato | GS-VER-119 |
 | S2 | Completato | GS-VER-120 |
 | S3 | Completato | GS-VER-121 |
-| S4 | Implementato; verifica nativa pendente | GS-VER-148 |
+| S4 | Implementato e verificato su runner remoto; preflight locale bloccato | GS-VER-148 |

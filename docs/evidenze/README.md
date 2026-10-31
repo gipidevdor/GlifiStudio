@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.13.0 |
+| Versione | 1.13.1 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-10-31 |
@@ -14,7 +14,7 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
-- [GS-VER-148 — Letture bounded nella verifica export](GS-VER-148-letture-export.md) — Parziale; compilazione Apple superata, verifica dinamica pendente
+- [GS-VER-148 — Letture bounded nella verifica export](GS-VER-148-letture-export.md) — Superato su runner remoto nel perimetro dichiarato; preflight locale bloccato
 
 - [GS-VER-147 — Permessi dell'ingresso QueryAST](GS-VER-147-permessi-queryast.md) — Superato su Xcode 27; limiti EPERM/ACL dichiarati
 
