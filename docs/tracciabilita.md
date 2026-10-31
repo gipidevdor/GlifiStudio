@@ -7,7 +7,7 @@
 | Versione | 0.86.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-16 |
+| Ultima modifica | 2026-10-24 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -182,7 +182,8 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 Incremento [GS-VER-147](evidenze/GS-VER-147-permessi-queryast.md): TV-053 e TV-060,
 RF-080, RQ-044, RQ-046, CMP-081. Permessi negati in `query --ast` classificati
 `authorizationDenied`/`afterUserAction`; test CLI su file non leggibile e file
-mancante. Statici superati, verifica nativa pendente; nessuna promozione di conformità.
+mancante. Statici e gate Xcode 27 superati in PR #18; concorre alla verifica G3
+di CMP-081. EPERM/ACL e revoca concorrente non riprodotti separatamente.
 
 Incremento [GS-VER-149](evidenze/GS-VER-149-riassunto-centroide.md): seconda slice di
 TV-036 con RF-042 e CMP-097 (`implemented`): variante `CentroidCosine-v1` del riassunto
@@ -197,7 +198,8 @@ esito del gate remoto registrato nell'evidenza.
 
 Incremento [GS-VER-143](evidenze/GS-VER-143-ingresso-queryast.md): TV-053 e TV-060,
 RF-080, RQ-042, RQ-044, RQ-046, CMP-081. Ingresso QueryAST v1 bounded in Core,
-Kit e CLI; parità e input avversari aggiunti al gate. Verifica nativa pendente;
+Kit e CLI; parità e input avversari eseguiti nel gate Xcode 27 di PR #18.
+CMP-081 `verified` per il perimetro G3;
 nessuna estensione della garanzia a indice, streaming o audit su dispositivo.
 
 Incremento [GS-VER-142](evidenze/GS-VER-142-letture-directory-package.md): TV-060, RF-043,

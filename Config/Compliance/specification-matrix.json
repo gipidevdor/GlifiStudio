@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.specification-compliance-matrix",
   "schemaVersion": 1,
-  "updatedAt": "2026-10-16",
+  "updatedAt": "2026-10-24",
   "requiredRequirementCoverage": [
     "RQ-057",
     "RQ-058",
@@ -1871,8 +1871,8 @@
         "docs/evidenze/GS-VER-147-permessi-queryast.md"
       ],
       "gate": "G3",
-      "status": "blocked",
-      "blockingReason": "Parità testuale già verificata in GS-VER-123; nuovo ingresso AST e regressioni aggiunti, verifica nativa Xcode 27 pendente in GS-VER-143."
+      "status": "verified",
+      "blockingReason": null
     },
     {
       "id": "CMP-082",

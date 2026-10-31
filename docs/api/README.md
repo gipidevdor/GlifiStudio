@@ -9,7 +9,7 @@
 | Versione | 1.26.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-10-16 |
+| Ultima modifica | 2026-10-24 |
 | Approvazione | Baseline pre-1.0 proposta; contract test richiesti prima della stabilizzazione |
 | Riferimenti | GS-DOM-001; GS-DAT-001; GS-QRY-001; GS-ANA-001; GS-RUN-001; GS-SEC-001; ADR-0002; ADR-0019 |
 
@@ -212,7 +212,7 @@ chiave (GS-VER-135).
 | elenca indagini | generazione verificata | tutti gli head di ramo in ordine stabile | Implementata in Core, GlifiKit e CLI |
 | analizza | generazione corrente e budget bounded nella slice | profilo corpus, AnalysisNodeID e ArtifactID persistiti | Slice descrittiva implementata con riuso dopo riapertura; l'interpretazione è prodotta dall'esecutore del piano, analisi temporale aperta |
 | confronta keyness | due insiemi espliciti e disgiunti di SourceRevisionID | profili dipendenza e famiglia G-test/effect/BH persistiti | `keyness-gtest-fisher-ha-ci-bh-v2` bounded implementata con riuso dopo riapertura, selezione di Fisher e intervalli di confidenza (GS-VER-118) |
-| interroga | testo `glifi-query-v1` oppure QueryAST v1 JSON, generazione di sessione e limiti | digest QueryAST e KWIC con SourceRevision/offset | Slice bounded TXT/Markdown con `sourceRanges`; ingresso AST in GS-VER-143, verifica nativa pendente; indice, metadati, annotazioni, cursor e streaming aperti |
+| interroga | testo `glifi-query-v1` oppure QueryAST v1 JSON, generazione di sessione e limiti | digest QueryAST e KWIC con SourceRevision/offset | Slice bounded TXT/Markdown con `sourceRanges`; ingresso AST verificato su Xcode 27 in GS-VER-143/147; indice, metadati, annotazioni, cursor e streaming aperti |
 | carica testo fonte | SourceRevisionID della generazione corrente | testo UTF-8 esatto della revisione incorporata | Implementata in GlifiKit per salto UI KWIC→fonte; non espone path interni |
 | esporta | selezione, formato, destinazione | ExportReceipt + manifest | PDF/A-2u, Markdown, CSV e JSON implementati e verificati |
 
