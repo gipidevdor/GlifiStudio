@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.85.1 |
+| Versione | 0.86.2 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-24 |
+| Ultima modifica | 2026-10-31 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -175,6 +175,8 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 | [GS-VER-141](evidenze/GS-VER-141-prima-ci-remota-verde.md) | TV-011, TV-013, TV-049; GS-STD-001-20, GS-REP-005, GS-WVR-001…004 | Superato su runner remoto: `verify` verde su `xcode-27` con 257 test, 22 checkpoint di recovery e build macOS/iPadOS; deroghe budget in rientro | Rscript e veraPDF assenti sul runner; dispositivi, firma e TestFlight non coperti; non conformità 2026-09-22→2026-10-03 registrata |
 | [GS-VER-146](evidenze/GS-VER-146-riassunto-estrattivo.md) | Slice TV-036; RF-042, GS-MET-001-19, CMP-096 | Superato su runner remoto (#16, `19ca4c7`): oracolo Python indipendente, test di persistenza e contract test CLI aggiunti; controlli statici superati | Una sola famiglia; nessuna valutazione ROUGE o umana; Rscript assente sul runner |
 | [GS-VER-142](evidenze/GS-VER-142-letture-directory-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: letture descriptor-relative, regressioni su directory simboliche e sostituzioni controllate; statici, lint e compilazione Apple superati | Test compilati, non eseguiti su host 26.5.2; scritture, SQLite, ACL e file provider esclusi dalla garanzia |
+| [GS-VER-144](evidenze/GS-VER-144-pubblicazione-oggetti-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: pubblicazione descriptor-relative ed esclusiva, regressioni su cinque tipi di oggetto e collisioni; CI integrata verde su `4bd5dde` | Manifest replacement, cleanup e SQLite esclusi; gate da ripetere dopo il riallineamento documentale |
+| [GS-VER-145](evidenze/GS-VER-145-staging-transazioni-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: staging privato, esclusivo e descriptor-relative; regressioni eseguite su macOS 27, CI verde su `4bd5dde` | Manifest replacement, cleanup, SQLite e identità globale della radice esclusi; gate da ripetere dopo il riallineamento documentale |
 
 ## Catalogo delle verifiche pianificate
 
@@ -185,13 +187,29 @@ mancante. Statici e gate Xcode 27 superati in PR #18; concorre alla verifica G3
 di CMP-081. EPERM/ACL e revoca concorrente non riprodotti separatamente.
 
 Incremento [GS-VER-146](evidenze/GS-VER-146-riassunto-estrattivo.md): prima slice di
-TV-036 con RF-042, GS-DOR-013 e CMP-096 (`implemented`): riassunto estrattivo
+TV-036 con RF-042, GS-DOR-013 e CMP-096 (`verified`): riassunto estrattivo
 `SentenceTFIDFMean-v1` con budget, tie-break, lineage della frase e distinzione dal generativo;
 esito del gate remoto registrato nell'evidenza.
+
+Incremento [GS-VER-145](evidenze/GS-VER-145-staging-transazioni-package.md): TV-060,
+RF-043, RQ-044, RQ-057 e CMP-095. Directory di transazione nuove `0700`, file `0600`
+creati esclusivamente tramite descriptor; promozione dalla stessa directory staged.
+Non cambia il commit point; CI macOS 27 verde su `4bd5dde`, con 255 test Swift e
+22 checkpoint di recovery. CMP-095 resta `blocked` e TV-060 aperto.
+
+Incremento [GS-VER-144](evidenze/GS-VER-144-pubblicazione-oggetti-package.md): TV-060,
+RF-043, RQ-044, RQ-057 e CMP-095. Pubblicazione di oggetti immutabili tramite directory
+aperte e rinomina esclusiva; regressioni su cinque tipi di oggetto, collisioni e directory
+sostituite. CI integrata con staging verde su `4bd5dde`; da ripetere dopo
+il riallineamento documentale a `f348553`.
+Manifest replacement, cleanup, SQLite, ACL e file provider non attestati;
+CMP-095 resta `blocked`.
 
 Incremento [GS-VER-143](evidenze/GS-VER-143-ingresso-queryast.md): TV-053 e TV-060,
 RF-080, RQ-042, RQ-044, RQ-046, CMP-081. Ingresso QueryAST v1 bounded in Core,
 Kit e CLI; parità e input avversari eseguiti nel gate Xcode 27 di PR #18.
+Fixture profonda generata direttamente in JSON per evitare il crash dell'encoder
+prima della verifica bounded.
 CMP-081 `verified` per il perimetro G3;
 nessuna estensione della garanzia a indice, streaming o audit su dispositivo.
 
