@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.12.0 |
+| Versione | 1.13.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-10-16 |
@@ -13,6 +13,8 @@
 Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un esito positivo prova soltanto l'ambito dichiarato e non sostituisce l'approvazione dei requisiti o della baseline.
 
 ## Indice
+
+- [GS-VER-149 — Riassunto estrattivo `CentroidCosine-v1`](GS-VER-149-riassunto-centroide.md) — In verifica sul runner remoto; controlli statici superati
 
 - [GS-VER-147 — Permessi dell'ingresso QueryAST](GS-VER-147-permessi-queryast.md) — Parziale; statici superati, verifica nativa pendente
 

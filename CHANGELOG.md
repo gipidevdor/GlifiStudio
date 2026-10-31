@@ -16,6 +16,10 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   tie-break per posizione, intervallo sorgente e ordine della fonte; Artifact
   `corpus-extractive-summary-v1`, `analyzeExtractiveSummary` in GlifiKit e `glifi summarize`
   (GS-VER-146).
+- Variante `CentroidCosine-v1` del riassunto estrattivo (GS-MET-001-19, RF-042): metodo di
+  punteggio come parametro del descrittore (`method`, `--method` in `glifi summarize`), coseno
+  tra il vettore della frase e il centroide del gruppo, vettori nulli esclusi con flag
+  `isEligible` persistito per frase e derivato dai token nei payload precedenti (GS-VER-149).
 - Corpus gold italiano su prosa reale di pubblico dominio (Collodi, «Le avventure di Pinocchio»,
   capitolo 1): 434 token lessicali e 19 frasi annotati da un'implementazione del contratto
   indipendente dal tokenizzatore, in accordo pieno con il prodotto (ADR-0030, GS-VER-138).

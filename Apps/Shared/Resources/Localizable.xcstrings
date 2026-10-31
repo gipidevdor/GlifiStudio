@@ -10847,6 +10847,23 @@
         }
       }
     },
+    "failure.summary.unknown-method" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The summary scoring method is not recognized."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il metodo di punteggio del riassunto non è riconosciuto."
+          }
+        }
+      }
+    },
     "failure.summary.invalid-budget" : {
       "extractionState" : "manual",
       "localizations" : {
