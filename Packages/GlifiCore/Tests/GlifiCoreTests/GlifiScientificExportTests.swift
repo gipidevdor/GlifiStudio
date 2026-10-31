@@ -272,7 +272,8 @@ private func scientificExportRejectsUnsafeFiles(
         try Data().write(to: fileURL)
         let handle = try FileHandle(forWritingTo: fileURL)
         defer { try? handle.close() }
-        let limit = fileName == "export-manifest.json"
+        let limit =
+            fileName == "export-manifest.json"
             ? GlifiProjectPackage.maximumManifestByteCount
             : GlifiScientificExporter.maximumFileByteCount
         try handle.truncate(atOffset: UInt64(limit + 1))
@@ -284,8 +285,9 @@ private func scientificExportRejectsUnsafeFiles(
         Issue.record("La verifica doveva rifiutare il file non valido")
     } catch let failure as GlifiFailure {
         #expect(
-            failure.code == (fileName == "export-manifest.json"
-                ? "export.invalid-manifest" : "export.invalid-file"))
+            failure.code
+                == (fileName == "export-manifest.json"
+                    ? "export.invalid-manifest" : "export.invalid-file"))
         #expect(failure.operation == .export)
         #expect(failure.retryDisposition == .never)
     }

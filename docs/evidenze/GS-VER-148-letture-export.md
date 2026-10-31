@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VER-148 |
 | Tipo | Evidenza di rafforzamento della verifica export |
-| Versione | 1.0.0 |
-| Stato | Parziale; verifica nativa pendente |
+| Versione | 1.1.0 |
+| Stato | Parziale; compilazione Apple superata, verifica dinamica pendente |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-24 |
+| Ultima modifica | 2026-10-31 |
 | Approvazione | Richiesta di prosecuzione dell'iniziatore; review pendente |
 | Riferimenti | GS-DOR-004 S4; GS-SEC-001 §§ 7–8, 11; RQ-044; RQ-061; TV-060; TV-074; CMP-095; ADR-0022; ADR-0023 |
 
@@ -52,14 +52,25 @@ delle corse concorrenti fra `fstat` e ogni singola lettura.
 - Linux: `make format-check` tentato, exit 2 perché Swift non è disponibile.
 - Linux: `make verify` e `make verify-app-store` tentati, exit 2 su `df -g`
   (opzione BSD/macOS non disponibile). Nessun gate modificato per aggirare il limite.
-- Formattazione e compilazione Apple in corso nella sessione macOS autorizzata;
-  test effettivi e preflight completi richiedono il runtime macOS 27 della CI.
+- Apple (2026-10-24): sulla base `c0b472f` con la patch export e due correzioni di
+  formato, Xcode 27.0 (`27A266a`), Swift 6.4 e Python 3.12.14 completano statici,
+  failure checks, `make format-check` e `swift build --build-tests`.
+- Apple: `swift test --filter scientificExport` termina con exit 1 prima delle
+  asserzioni. `make verify` e `make verify-app-store` terminano con exit 2 allo stesso
+  caricamento: host macOS 26.5.2, simbolo CoreGraphics del target macOS 27 assente.
+  **Test compilati, non eseguiti**; recovery, smoke CLI, build app e packaging non
+  raggiunti. Rscript assente. Nessun target o controllo abbassato.
+- Il riallineamento con `main` integra soltanto le evidenze della PR #19 e mantiene
+  inalterato il codice Swift compilato sopra. Test effettivi e preflight completi
+  della revisione integrata restano da confermare in CI macOS 27.
 
 ## Limiti e recupero
 
 La lettura è ancorata alla radice aperta, non alla sua collocazione nominale. Gli antenati
 della radice, l'enumerazione dei nomi tramite `FileManager`, le scritture dello staging e
-il rename finale non sono convertiti a descriptor-relative. Non si garantisce uno snapshot
+il rename finale non sono convertiti a descriptor-relative. L'inventario materializza
+tutti i nomi: il limite sui byte letti non limita il numero delle voci nella directory.
+Non si garantisce uno snapshot
 atomico dell'intero bundle contro writer non cooperanti; manifest e digest non sono firme.
 ACL, mount point, file provider, power-loss, preview UI e audit su dispositivo restano esclusi.
 CMP-095 resta `blocked`; questa evidenza non promuove clausole e non chiude TV-060.
