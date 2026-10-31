@@ -187,7 +187,8 @@ nessuna promozione di clausole o chiusura globale di TV-060.
 Incremento [GS-VER-147](evidenze/GS-VER-147-permessi-queryast.md): TV-053 e TV-060,
 RF-080, RQ-044, RQ-046, CMP-081. Permessi negati in `query --ast` classificati
 `authorizationDenied`/`afterUserAction`; test CLI su file non leggibile e file
-mancante. Statici superati, verifica nativa pendente; nessuna promozione di conformità.
+mancante. Statici e gate Xcode 27 superati in PR #18; concorre alla verifica G3
+di CMP-081. EPERM/ACL e revoca concorrente non riprodotti separatamente.
 
 Incremento [GS-VER-146](evidenze/GS-VER-146-riassunto-estrattivo.md): prima slice di
 TV-036 con RF-042, GS-DOR-013 e CMP-096 (`implemented`): riassunto estrattivo
@@ -196,7 +197,8 @@ esito del gate remoto registrato nell'evidenza.
 
 Incremento [GS-VER-143](evidenze/GS-VER-143-ingresso-queryast.md): TV-053 e TV-060,
 RF-080, RQ-042, RQ-044, RQ-046, CMP-081. Ingresso QueryAST v1 bounded in Core,
-Kit e CLI; parità e input avversari aggiunti al gate. Verifica nativa pendente;
+Kit e CLI; parità e input avversari eseguiti nel gate Xcode 27 di PR #18.
+CMP-081 `verified` per il perimetro G3;
 nessuna estensione della garanzia a indice, streaming o audit su dispositivo.
 
 Incremento [GS-VER-142](evidenze/GS-VER-142-letture-directory-package.md): TV-060, RF-043,

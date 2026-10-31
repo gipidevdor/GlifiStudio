@@ -16,11 +16,11 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 - [GS-VER-148 — Letture bounded nella verifica export](GS-VER-148-letture-export.md) — Parziale; compilazione Apple superata, verifica dinamica pendente
 
-- [GS-VER-147 — Permessi dell'ingresso QueryAST](GS-VER-147-permessi-queryast.md) — Parziale; statici superati, verifica nativa pendente
+- [GS-VER-147 — Permessi dell'ingresso QueryAST](GS-VER-147-permessi-queryast.md) — Superato su Xcode 27; limiti EPERM/ACL dichiarati
 
 - [GS-VER-146 — Riassunto estrattivo deterministico `SentenceTFIDFMean-v1`](GS-VER-146-riassunto-estrattivo.md) — Superato su runner remoto; controlli opzionali saltati
 
-- [GS-VER-143 — Ingresso QueryAST nel percorso headless](GS-VER-143-ingresso-queryast.md) — Parziale; verifica nativa pendente
+- [GS-VER-143 — Ingresso QueryAST nel percorso headless](GS-VER-143-ingresso-queryast.md) — Superato su Xcode 27 nel perimetro G3
 
 - [GS-VER-142 — Letture relative a directory aperte del package](GS-VER-142-letture-directory-package.md) — Parziale; compilazione Apple superata, verifica dinamica pendente
 

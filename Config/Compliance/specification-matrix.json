@@ -1872,8 +1872,8 @@
         "docs/evidenze/GS-VER-147-permessi-queryast.md"
       ],
       "gate": "G3",
-      "status": "blocked",
-      "blockingReason": "Parità testuale già verificata in GS-VER-123; nuovo ingresso AST e regressioni aggiunti, verifica nativa Xcode 27 pendente in GS-VER-143."
+      "status": "verified",
+      "blockingReason": null
     },
     {
       "id": "CMP-082",

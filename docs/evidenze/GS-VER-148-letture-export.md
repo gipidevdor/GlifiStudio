@@ -60,7 +60,7 @@ delle corse concorrenti fra `fstat` e ogni singola lettura.
   caricamento: host macOS 26.5.2, simbolo CoreGraphics del target macOS 27 assente.
   **Test compilati, non eseguiti**; recovery, smoke CLI, build app e packaging non
   raggiunti. Rscript assente. Nessun target o controllo abbassato.
-- Il riallineamento con `main` integra soltanto le evidenze della PR #19 e mantiene
+- Il riallineamento con `main` integra soltanto le evidenze delle PR #19 e #20 e mantiene
   inalterato il codice Swift compilato sopra. Test effettivi e preflight completi
   della revisione integrata restano da confermare in CI macOS 27.
 

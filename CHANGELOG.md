@@ -392,6 +392,9 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Modificato
 
+- Registrati i gate Xcode 27 dell'ingresso QueryAST e della regressione permessi
+  (GS-VER-143/147, PR #18): CMP-081 verificata nel perimetro G3 Core/Kit/CLI;
+  nessuna estensione a GUI su dispositivo, PDF/A o distribuzione firmata.
 - Prima esecuzione remota dei workflow sul runner `xcode-27` dopo il ripristino del budget
   Actions: deroghe GS-WVR-001…004 in rientro tardivo con non conformità registrata,
   badge del repository riportato a privato, stato CI allineato (GS-VER-141).
