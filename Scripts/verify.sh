@@ -650,7 +650,8 @@ mean, centroid = results
 assert [(s["startUTF8"], s["endUTF8"]) for s in mean["sentences"]] == \
     [(s["startUTF8"], s["endUTF8"]) for s in centroid["sentences"]]
 assert all(0.0 <= s["score"] <= 1.0 + 1e-12 for s in centroid["sentences"])
-assert mean["lineage"]["generation"] == centroid["lineage"]["generation"]
+assert mean["lineage"]["sourceGeneration"] == centroid["lineage"]["sourceGeneration"]
+assert mean["lineage"]["artifactID"] != centroid["lineage"]["artifactID"]
 PY
 python3 - "$cli_weighting_output" "$cli_bm25_output" <<'PY'
 import json
