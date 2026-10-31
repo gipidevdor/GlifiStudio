@@ -6,6 +6,13 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Verificato
+
+- Promozione e staging privato del package: CI macOS 27 superata sulla revisione
+  `4bd5dde`, incluse regressioni e recovery; GS-VER-144/145 aggiornate senza
+  promuovere CMP-095. Il riallineamento documentale conserva le verifiche G3
+  QueryAST e riassunto estrattivo e richiede nuovamente i gate prima del merge.
+
 ### Aggiunto
 
 - Ingresso `query --ast <query.json>` in alternativa a `--text`: QueryAST v1 condiviso
@@ -392,6 +399,9 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Modificato
 
+- Registrati i gate Xcode 27 dell'ingresso QueryAST e della regressione permessi
+  (GS-VER-143/147, PR #18): CMP-081 verificata nel perimetro G3 Core/Kit/CLI;
+  nessuna estensione a GUI su dispositivo, PDF/A o distribuzione firmata.
 - Prima esecuzione remota dei workflow sul runner `xcode-27` dopo il ripristino del budget
   Actions: deroghe GS-WVR-001…004 in rientro tardivo con non conformità registrata,
   badge del repository riportato a privato, stato CI allineato (GS-VER-141).

@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.specification-compliance-matrix",
   "schemaVersion": 1,
-  "updatedAt": "2026-10-13",
+  "updatedAt": "2026-10-31",
   "requiredRequirementCoverage": [
     "RQ-057",
     "RQ-058",
@@ -38,7 +38,7 @@
       ],
       "gate": "G2",
       "status": "blocked",
-      "blockingReason": "Letture, pubblicazione e staging degli oggetti descriptor-relative; verifica dinamica dello staging pendente su macOS 27. Restano lettura e replacement del manifest candidato, cleanup e SQLite sotto sostituzioni concorrenti, identità della radice fra accessi, ACL e file provider; nessuna promozione del requisito."
+      "blockingReason": "Letture, pubblicazione e staging degli oggetti descriptor-relative; CI macOS 27 superata su 4bd5dde. Restano lettura e replacement del manifest candidato, cleanup e SQLite sotto sostituzioni concorrenti, identità della radice fra accessi, ACL e file provider; nessuna promozione del requisito."
     },
     {
       "id": "CMP-001",
@@ -1873,8 +1873,8 @@
         "docs/evidenze/GS-VER-147-permessi-queryast.md"
       ],
       "gate": "G3",
-      "status": "blocked",
-      "blockingReason": "Parità testuale già verificata in GS-VER-123; nuovo ingresso AST e regressioni aggiunti, verifica nativa Xcode 27 pendente in GS-VER-143."
+      "status": "verified",
+      "blockingReason": null
     },
     {
       "id": "CMP-082",
@@ -2152,7 +2152,7 @@
       "fixtures": ["Fixtures/Validation/v1/extractive-summary-v1.json"],
       "evidence": ["docs/evidenze/GS-VER-146-riassunto-estrattivo.md"],
       "gate": "G3",
-      "status": "implemented",
+      "status": "verified",
       "blockingReason": null
     }
   ]

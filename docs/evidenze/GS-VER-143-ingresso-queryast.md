@@ -6,11 +6,11 @@
 | --- | --- |
 | Identificatore | GS-VER-143 |
 | Tipo | Evidenza di ingresso headless e parità |
-| Versione | 1.1.0 |
-| Stato | Parziale; verifica nativa pendente |
+| Versione | 1.1.1 |
+| Stato | Superato sul runner Xcode 27 nel perimetro G3 dichiarato |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-13 |
-| Approvazione | Attuazione GS-DOR-012; verifica del nuovo incremento pendente |
+| Ultima modifica | 2026-10-31 |
+| Approvazione | Attuazione GS-DOR-012; esito tecnico G3, non audit G4 |
 | Riferimenti | GS-DOR-012; GS-QRY-001; GS-API-001; RF-080; RQ-042; RQ-044; RQ-046; CMP-081; TV-053; TV-060 |
 
 ## Ambito
@@ -54,9 +54,33 @@ dipendenza, rete o UI.
   `df -g`, opzione BSD/macOS non disponibile su GNU/Linux. Non è stato cambiato
   il gate per aggirare la piattaforma richiesta.
 - `swift test --package-path Packages/GlifiCore --filter queryASTInput` tentato:
-  il toolchain locale 6.2 rifiuta `swift-tools-version: 6.4`. Build, test Core/Kit
-  e smoke CLI aggiunti richiedono esecuzione sui check Xcode 27 della PR; non
-  vengono attestati come superati da questa evidenza locale.
+  il toolchain locale 6.2 rifiuta `swift-tools-version: 6.4`. Nessuna build o
+  esecuzione nativa viene attribuita alla VM Linux.
+
+### Esecuzione remota del 2026-10-16
+
+Sulla revisione `f1e112ba5664a7a0bb56d7cb4884eb064b9779cb` di
+[PR #18](https://github.com/gpicchiarelli/GlifiStudio/pull/18) i quattro check
+`static-quality`, `format-check`, `verify` e `app-store-baseline` sono passati.
+L'ambiente registrato nel log è macOS 27.0.1, immagine `xcode-27-arm64`.
+
+| Check | Job | Esito osservato |
+| --- | --- | --- |
+| `verify` | `117221998396` | 246 test Swift superati; smoke CLI QueryAST superato |
+| `app-store-baseline` | `117221926507` | Preflight superato; 246 test Swift e smoke CLI QueryAST superati |
+
+Il log dello smoke riporta «QueryAST CLI: parità, limiti, file ostili, permessi,
+argomenti e privacy superati». Le regressioni Core/Kit e CLI dell'ingresso AST
+sono quindi eseguite, non soltanto compilate. Il test dell'albero profondo usa
+la costruzione testuale integrata con PR #17, senza ricorsione di `JSONEncoder`
+prima del decoder bounded. La classificazione dei permessi è documentata in
+[GS-VER-147](GS-VER-147-permessi-queryast.md).
+
+CMP-081 passa da `blocked` a `verified` per la parità G3 fra Core, Kit e CLI,
+insieme all'evidenza preesistente [GS-VER-123](GS-VER-123-parita-queryast-client.md).
+Questo esito non estende il perimetro della slice né attesta la validazione
+PDF/A: il gate l'ha saltata per assenza di veraPDF. Il preflight non è
+un'approvazione App Store né una verifica di distribuzione firmata.
 
 ### Correzione della fixture profonda
 
@@ -77,7 +101,8 @@ limite di byte. Nessuna modifica al prodotto, ai target o ai gate.
 Statici, failure taxonomy/messages, formato e compilazione SwiftPM inclusi test
 superati sulla correzione. Il riproduttore isolato non sostituisce i test del
 package: i bundle macOS 27 non si caricano sull'host 26.5.2 per il simbolo
-CoreGraphics mancante. Riverifica dei gate completi su macOS 27 richiesta.
+CoreGraphics mancante. La successiva esecuzione remota descritta sopra verifica
+la fixture corretta nel gate completo macOS 27.
 
 ## Limiti
 

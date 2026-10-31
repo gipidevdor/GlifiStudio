@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VER-144 |
 | Tipo | Evidenza di verifica |
-| Versione | 1.1.0 |
-| Stato | Parziale; CI promozione superata, riverifica integrata pendente |
+| Versione | 1.2.0 |
+| Stato | Parziale; CI integrata superata, confini residui aperti |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-13 |
+| Ultima modifica | 2026-10-31 |
 | Approvazione | Review pendente; non promuove requisiti o clausole |
 | Riferimenti | RF-043, RQ-044, RQ-057, TV-060, CMP-095, GS-DOR-011 |
 
@@ -89,11 +89,27 @@ L'evidenza è rinumerata da GS-VER-143 a GS-VER-144 al riallineamento con `main`
 che ha già assegnato GS-VER-143 all'ingresso QueryAST. Il nuovo staging è registrato
 separatamente in [GS-VER-145](GS-VER-145-staging-transazioni-package.md).
 
+### CI integrata con staging del 2026-10-24
+
+Su [4bd5dde](https://github.com/gpicchiarelli/GlifiStudio/commit/4bd5dde26f52f91679e6aa0daf8da2657b36835f)
+i quattro check della PR #14 sono passati, includendo lo staging privato e la
+baseline QueryAST con gestione dei permessi. I job `verify` `120883416179` e
+`app-store-baseline` `120883351796` registrano macOS 27.0.1, 255 test Swift,
+22 checkpoint di recovery e smoke QueryAST CLI superati. Il secondo registra
+anche analisi statiche e archivi senza firma validi. Le regressioni della
+pubblicazione a quattro livelli sono eseguite, non soltanto compilate.
+
+Rscript e veraPDF restano assenti; nessuna attestazione su PDF/A o distribuzione
+firmata. Il riallineamento documentale a `main` `f348553` conserva gli esiti
+QueryAST e riassunto estrattivo; i required checks devono essere ripetuti sulla
+nuova revisione prima del merge. CMP-095 resta `blocked` per i limiti seguenti.
+
 ## Limiti
 
-Questa evidenza non attesta sicurezza dell'intera transazione. Staging iniziale, lock,
+Questa evidenza non attesta sicurezza dell'intera transazione. Lock,
 sostituzione del manifest, cleanup e SQLite non diventano descriptor-relative con questa
-modifica. Non si garantisce identità della radice fra operazioni separate, né persistenza
+modifica. Lo staging privato è coperto separatamente da GS-VER-145.
+Non si garantisce identità della radice fra operazioni separate, né persistenza
 della collocazione nominale di una directory già aperta che venga spostata. Mutazioni dei
 contenuti da altri writer non cooperanti, ACL, file provider, durabilità ai power loss e
 recovery completa richiedono prove ulteriori. CMP-095 resta `blocked`; TV-060 aperto.

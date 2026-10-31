@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VER-145 |
 | Tipo | Evidenza di verifica |
-| Versione | 1.0.0 |
-| Stato | Parziale; compilazione Apple superata, verifica dinamica pendente |
+| Versione | 1.1.0 |
+| Stato | Parziale; CI macOS 27 superata, confini residui aperti |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-13 |
+| Ultima modifica | 2026-10-31 |
 | Approvazione | Review pendente; non promuove requisiti o clausole |
 | Riferimenti | RF-043, RQ-044, RQ-057, TV-060, CMP-095, GS-DOR-011 |
 
@@ -66,6 +66,25 @@ Il caricamento fallisce sul simbolo CoreGraphics richiesto da macOS 27: nessuna 
 eseguita localmente. Recovery, smoke CLI e build app non raggiunti dal gate locale.
 Rscript e veraPDF non disponibili. Nessun target abbassato, nuovo harness o esito runtime
 dedotto dalla compilazione. La CI macOS 27 deve completare i gate prima del merge.
+
+### Esecuzione remota del 2026-10-24
+
+Su [4bd5dde](https://github.com/gpicchiarelli/GlifiStudio/commit/4bd5dde26f52f91679e6aa0daf8da2657b36835f)
+della [PR #14](https://github.com/gpicchiarelli/GlifiStudio/pull/14) tutti i quattro
+check sono passati. Il job `verify` `120883416179` registra macOS 27.0.1,
+255 test Swift superati, 22 checkpoint di recovery e smoke QueryAST CLI.
+Le regressioni su staging esclusivo, collisioni, permessi e sostituzioni sono
+state eseguite sul runner, non soltanto compilate. Anche `app-store-baseline`
+`120883351796` passa, inclusi analisi e archivi senza firma.
+
+Rscript e veraPDF assenti: i relativi controlli opzionali restano saltati.
+Il riallineamento a `main` `f348553` riguarda evidenze e tracciabilità, senza
+nuove modifiche Swift; richiede comunque i gate verdi sulla nuova revisione.
+Il risultato non estende la garanzia ai confini residui e non promuove CMP-095.
+
+Il preflight locale richiesto da CONTRIBUTING resta bloccato dal runtime 26.5.2:
+CI verde non equivale a una deroga. Il merge resta sospeso fino al superamento
+locale o all'approvazione e registrazione di una deroga esplicita applicabile.
 
 ## Limiti e recupero
 
