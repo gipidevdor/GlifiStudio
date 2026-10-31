@@ -34,6 +34,22 @@ public struct GlifiSummaryBudget: Codable, Equatable, Hashable, Sendable {
     }
 }
 
+/// Versioned sentence-scoring method of an extractive summary (GS-MET-001-19).
+public enum GlifiSummaryScoringMethod: String, CaseIterable, Codable, Sendable {
+    /// Mean of the document TF-IDF weights of the sentence tokens; zero without tokens.
+    case sentenceTFIDFMean = "SentenceTFIDFMean-v1"
+    /// Cosine between the sentence vector and the centroid of the non-null sentence vectors.
+    case centroidCosine = "CentroidCosine-v1"
+
+    /// Eligibility policy: which scored sentences may enter the summary.
+    public var eligibilityPolicy: String {
+        switch self {
+        case .sentenceTFIDFMean: "eligibility.lexical-tokens-required-v1"
+        case .centroidCosine: "eligibility.non-null-vector-v1"
+        }
+    }
+}
+
 /// One candidate sentence of a document: source interval and normalized lexical tokens.
 public struct GlifiSummaryCandidateSentence: Equatable, Sendable {
     /// Exact source interval of the sentence.
@@ -72,23 +88,53 @@ public struct GlifiSummarySentence: Codable, Equatable, Sendable {
     public let range: GlifiUTF8Range
     /// Lexical tokens included in the score.
     public let tokenCount: Int
-    /// `SentenceTFIDFMean-v1` score; zero without lexical tokens.
+    /// Score of the declared method; zero for an ineligible sentence.
     public let score: Double
     /// One-based rank by descending score, ties broken by source position.
     public let rank: Int
+    /// Whether the sentence may be selected under the eligibility policy of the method.
+    public let isEligible: Bool
     /// Whether the sentence enters the summary.
     public let isSelected: Bool
+
+    init(
+        sourceRevisionID: String, sentenceIndex: Int, range: GlifiUTF8Range, tokenCount: Int,
+        score: Double, rank: Int, isEligible: Bool, isSelected: Bool
+    ) {
+        self.sourceRevisionID = sourceRevisionID
+        self.sentenceIndex = sentenceIndex
+        self.range = range
+        self.tokenCount = tokenCount
+        self.score = score
+        self.rank = rank
+        self.isEligible = isEligible
+        self.isSelected = isSelected
+    }
+
+    /// Payloads written before `CentroidCosine-v1` omit `isEligible`: lexical tokens were required.
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        sourceRevisionID = try container.decode(String.self, forKey: .sourceRevisionID)
+        sentenceIndex = try container.decode(Int.self, forKey: .sentenceIndex)
+        range = try container.decode(GlifiUTF8Range.self, forKey: .range)
+        tokenCount = try container.decode(Int.self, forKey: .tokenCount)
+        score = try container.decode(Double.self, forKey: .score)
+        rank = try container.decode(Int.self, forKey: .rank)
+        isEligible =
+            try container.decodeIfPresent(Bool.self, forKey: .isEligible) ?? (tokenCount > 0)
+        isSelected = try container.decode(Bool.self, forKey: .isSelected)
+    }
 }
 
-/// `SentenceTFIDFMean-v1` extractive summary over the sentences of a group.
+/// Extractive summary over the sentences of a group with a declared scoring method.
 public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
     /// Stable artifact payload schema.
     public static let outputSchemaIdentifier =
         "studio.glifi.artifact.corpus-extractive-summary.v1"
     /// Versioned identity of this analysis bundle.
     public static let analysisIdentifier = "corpus-extractive-summary-v1"
-    /// Scoring method identity.
-    public static let methodIdentifier = "SentenceTFIDFMean-v1"
+    /// Default scoring method.
+    public static let standardMethod = GlifiSummaryScoringMethod.sentenceTFIDFMean
     /// Sublinear TF, smoothed IDF, no row normalization: defined for one document too.
     public static let standardScheme = GlifiTermWeightingScheme(
         termFrequency: .sublinear,
@@ -112,7 +158,7 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
     public let redundancyPolicy: String
     /// Tie-break: canonical document order, then sentence position.
     public let tieBreakIdentifier: String
-    /// Eligibility: a sentence without lexical tokens is ranked but never selected.
+    /// Eligibility of the method: an ineligible sentence is ranked at zero but never selected.
     public let eligibilityPolicy: String
     /// Order of `sentences`: canonical document order, then sentence position.
     public let outputOrderIdentifier: String
@@ -137,7 +183,8 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
     public init(
         documents: [GlifiSummaryDocument],
         budget: GlifiSummaryBudget,
-        scheme: GlifiTermWeightingScheme
+        scheme: GlifiTermWeightingScheme,
+        method: GlifiSummaryScoringMethod = standardMethod
     ) throws {
         guard !documents.isEmpty else {
             throw derivedAnalysisFailure(
@@ -177,24 +224,97 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
             let sentenceIndex: Int
             let range: GlifiUTF8Range
             let tokenCount: Int
+            let isEligible: Bool
             let score: Double
         }
         var scored: [Scored] = []
-        for (documentIndex, document) in ordered.enumerated() {
-            for (sentenceIndex, sentence) in document.sentences.enumerated() {
-                let tokenCount = sentence.terms.count
-                var sum = 0.0
-                for term in sentence.terms {
-                    guard let column = columnIndex[term] else { continue }
-                    sum += weights[documentIndex][column] ?? 0
+        switch method {
+        case .sentenceTFIDFMean:
+            for (documentIndex, document) in ordered.enumerated() {
+                for (sentenceIndex, sentence) in document.sentences.enumerated() {
+                    let tokenCount = sentence.terms.count
+                    var sum = 0.0
+                    for term in sentence.terms {
+                        guard let column = columnIndex[term] else { continue }
+                        sum += weights[documentIndex][column] ?? 0
+                    }
+                    scored.append(
+                        Scored(
+                            document: documentIndex,
+                            sentenceIndex: sentenceIndex,
+                            range: sentence.range,
+                            tokenCount: tokenCount,
+                            isEligible: tokenCount > 0,
+                            score: tokenCount == 0 ? 0 : sum / Double(tokenCount)
+                        )
+                    )
+                }
+            }
+        case .centroidCosine:
+            // Sentence vector: token count × document weight per type; the centroid is the
+            // mean of the non-null vectors. Null vectors score zero and are never selected.
+            struct Vector {
+                let document: Int
+                let sentenceIndex: Int
+                let range: GlifiUTF8Range
+                let tokenCount: Int
+                let entries: [(column: Int, value: Double)]
+                let norm: Double
+            }
+            var vectors: [Vector] = []
+            var centroid: [Int: Double] = [:]
+            var centroidCount = 0
+            for (documentIndex, document) in ordered.enumerated() {
+                for (sentenceIndex, sentence) in document.sentences.enumerated() {
+                    var counts: [Int: Int] = [:]
+                    for term in sentence.terms {
+                        guard let column = columnIndex[term] else { continue }
+                        counts[column, default: 0] += 1
+                    }
+                    let entries: [(column: Int, value: Double)] = counts.keys.sorted().compactMap {
+                        column in
+                        let value =
+                            Double(counts[column] ?? 0) * (weights[documentIndex][column] ?? 0)
+                        return value == 0 ? nil : (column: column, value: value)
+                    }
+                    let norm = entries.reduce(0.0) { $0 + $1.value * $1.value }.squareRoot()
+                    if norm > 0 {
+                        centroidCount += 1
+                        for entry in entries {
+                            centroid[entry.column, default: 0] += entry.value
+                        }
+                    }
+                    vectors.append(
+                        Vector(
+                            document: documentIndex, sentenceIndex: sentenceIndex,
+                            range: sentence.range, tokenCount: sentence.terms.count,
+                            entries: entries, norm: norm))
+                }
+            }
+            var centroidNorm = 0.0
+            if centroidCount > 0 {
+                for column in centroid.keys.sorted() {
+                    centroid[column] = (centroid[column] ?? 0) / Double(centroidCount)
+                    centroidNorm += (centroid[column] ?? 0) * (centroid[column] ?? 0)
+                }
+                centroidNorm = centroidNorm.squareRoot()
+            }
+            for vector in vectors {
+                let isEligible = vector.norm > 0 && centroidNorm > 0
+                var dot = 0.0
+                if isEligible {
+                    for entry in vector.entries {
+                        dot += entry.value * (centroid[entry.column] ?? 0)
+                    }
                 }
                 scored.append(
                     Scored(
-                        document: documentIndex,
-                        sentenceIndex: sentenceIndex,
-                        range: sentence.range,
-                        tokenCount: tokenCount,
-                        score: tokenCount == 0 ? 0 : sum / Double(tokenCount)
+                        document: vector.document,
+                        sentenceIndex: vector.sentenceIndex,
+                        range: vector.range,
+                        tokenCount: vector.tokenCount,
+                        isEligible: isEligible,
+                        score: isEligible ? dot / (vector.norm * centroidNorm) : 0
                     )
                 )
             }
@@ -212,7 +332,7 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
         for (position, index) in rankedOrder.enumerated() {
             ranks[index] = position + 1
             let candidate = scored[index]
-            guard candidate.tokenCount > 0 else { continue }
+            guard candidate.isEligible else { continue }
             let cost: Int
             switch budget.unit {
             case .sentences: cost = 1
@@ -224,14 +344,14 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
         }
 
         analysisIdentifier = Self.analysisIdentifier
-        methodIdentifier = Self.methodIdentifier
+        methodIdentifier = method.rawValue
         self.scheme = scheme
         combinedIdentifier = scheme.combinedIdentifier
         self.budget = budget
         consumedBudget = consumed
         redundancyPolicy = "redundancy.none-v1"
         tieBreakIdentifier = "tie-break.source-position-v1"
-        eligibilityPolicy = "eligibility.lexical-tokens-required-v1"
+        eligibilityPolicy = method.eligibilityPolicy
         outputOrderIdentifier = "output-order.source-v1"
         typeMappingIdentifier = "it-token-v1-nfc-lowercase-v1"
         sourceRevisionIDs = ordered.map(\.sourceRevisionID.canonicalValue)
@@ -244,6 +364,7 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
                 tokenCount: candidate.tokenCount,
                 score: candidate.score,
                 rank: ranks[index],
+                isEligible: candidate.isEligible,
                 isSelected: selected[index]
             )
         }

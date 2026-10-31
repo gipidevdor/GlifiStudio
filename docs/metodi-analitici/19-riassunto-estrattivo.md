@@ -6,11 +6,11 @@
 | --- | --- |
 | Identificatore | GS-MET-001-19 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.1.0 |
+| Versione | 1.2.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-10-03 |
-| Approvazione | Architettura approvata; `SentenceTFIDFMean-v1` fissato (GS-VER-146) |
+| Ultima modifica | 2026-10-16 |
+| Approvazione | Architettura approvata; `SentenceTFIDFMean-v1` fissato (GS-VER-146); `CentroidCosine-v1` fissato (GS-VER-149) |
 | Documento padre | [GS-MET-001](README.md) |
 
 ## Contratto
@@ -69,6 +69,33 @@ così:
   flag di selezione, così la vista per rank è derivabile senza ricalcolo.
 
 Il budget in caratteri e le altre famiglie restano candidate.
+
+## Variante implementata: `CentroidCosine-v1`
+
+Seconda variante dello stesso Artifact (`corpus-extractive-summary-v1`, GS-VER-149), scelta
+con il parametro `method` del descrittore; unità, token inclusi, pesi, rank, budget, ridondanza
+e ordine di output sono quelli di `SentenceTFIDFMean-v1`. Cambiano punteggio ed eleggibilità:
+
+- **vettore della frase**: per ogni tipo `t` del vocabolario del gruppo, `v_s[t] = c_{s,t} ·
+  w_{d,t}`, dove `c_{s,t}` è il conteggio del tipo nella frase e `w_{d,t}` il peso
+  `(documento, tipo)` dello schema GS-MET-001-07 dichiarato; una frase senza token, o i cui
+  pesi sono tutti zero (per esempio `IDF-unsmoothed-v1` con un solo documento), ha vettore nullo;
+- **centroide**: media aritmetica dei vettori non nulli di tutte le frasi del gruppo,
+  `c = (1/|S⁺|) Σ_{s∈S⁺} v_s`; se `S⁺` è vuoto il centroide è nullo;
+- **punteggio**: `cos(v_s, c) = (v_s · c) / (‖v_s‖₂ ‖c‖₂)` per le frasi con vettore non nullo e
+  centroide non nullo, in `[0, 1]` perché pesi e conteggi sono non negativi; zero altrimenti.
+  Le somme scorrono il vocabolario in ordine lessicografico, così il risultato è identico tra
+  esecuzioni;
+- **eleggibilità** (`eligibility.non-null-vector-v1`): una frase con vettore nullo è classificata
+  con punteggio zero e `isEligible = false` e non è mai selezionata; il flag è persistito per
+  ogni frase candidata, così l'esclusione resta diagnosticabile senza ricalcolo. I payload
+  scritti prima di questo campo lo derivano dalla presenza di token lessicali, che era la sola
+  regola di eleggibilità;
+- **rank**: punteggio decrescente con `tie-break.source-position-v1`; frasi identiche hanno lo
+  stesso coseno e rank distinti.
+
+Metodi diversi sono nodi di analisi distinti: `method` entra nel descrittore come
+rappresentazione, con l'eleggibilità del metodo tra i parametri.
 
 ## Separazione dalla generazione
 

@@ -470,10 +470,11 @@ enum GlifiCLI {
             case .json:
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
-        case let .summarize(projectURL, sourceRevisionIDs, budget, scheme):
+        case let .summarize(projectURL, sourceRevisionIDs, budget, scheme, method):
             let session = try await service.openProject(at: projectURL)
             let result = try await session.analyzeExtractiveSummary(
-                sourceRevisionIDs: sourceRevisionIDs, budget: budget, scheme: scheme)
+                sourceRevisionIDs: sourceRevisionIDs, budget: budget, scheme: scheme,
+                method: method)
             await session.close()
             switch request.format {
             case .text:
@@ -1154,7 +1155,7 @@ private struct CLIRequest {
           glifi [--format text|json] [--no-progress] weighting <progetto.glifi> --sources <source-revision-id,...> [--tf TF-raw-v1|TF-binary-v1|TF-L1-v1|TF-max-v1|TF-augmented-v1|TF-sublinear-v1] [--idf IDF-none-v1|IDF-unsmoothed-v1|IDF-smooth-v1] [--norm RowNorm-none-v1|RowNorm-L1-v1|RowNorm-L2-v1]
           glifi [--format text|json] [--no-progress] ngrams <progetto.glifi> --sources <source-revision-id,...> --unit form|word|character|character-padded [--n <n>] [--stopwords <forma,...>] [--min-length <n>] [--min-count <n>] [--min-df <n>] [--max-df-proportion <x>] [--max-rows <n>]
           glifi [--format text|json] [--no-progress] diversity <progetto.glifi> --sources <source-revision-id,...> [--threshold <τ>]
-          glifi [--format text|json] [--no-progress] summarize <progetto.glifi> --sources <source-revision-id,...> [--sentences <n> | --tokens <n>] [--tf <TF-*>] [--idf <IDF-*>] [--norm <RowNorm-*>]
+          glifi [--format text|json] [--no-progress] summarize <progetto.glifi> --sources <source-revision-id,...> [--sentences <n> | --tokens <n>] [--method SentenceTFIDFMean-v1|CentroidCosine-v1] [--tf <TF-*>] [--idf <IDF-*>] [--norm <RowNorm-*>]
           glifi [--format text|json] [--no-progress] bm25 <progetto.glifi> --sources <source-revision-id,...> --query <testo> [--k1 <x>] [--b <x>]
           glifi [--format text|json] [--no-progress] dispersion <progetto.glifi> --sources <source-revision-id,...> [--part <source-revision-id,...>]...
           glifi [--format text|json] [--no-progress] group-metric <progetto.glifi> --group <source-revision-id,...> --group <source-revision-id,...>... [--term <termine>] [--confidence <livello>] [--bootstrap <B>] [--permutations <m>] [--seed <n>] [--contrast <c1,c2,...>]...
@@ -1487,7 +1488,9 @@ private struct CLIRequest {
             return .diversity(
                 projectURL, try Self.identifiers(sources), try decimal("--threshold") ?? 0.72)
         case "summarize":
-            try allowed(["--sources", "--sentences", "--tokens", "--tf", "--idf", "--norm"])
+            try allowed([
+                "--sources", "--sentences", "--tokens", "--method", "--tf", "--idf", "--norm",
+            ])
             guard let sources = try single("--sources") else {
                 throw CLIUsageError.invalidArguments
             }
@@ -1512,7 +1515,9 @@ private struct CLIRequest {
                     termFrequency: try single("--tf") ?? "TF-sublinear-v1",
                     inverseDocumentFrequency: try single("--idf") ?? "IDF-smooth-v1",
                     normalization: try single("--norm") ?? "RowNorm-none-v1"
-                )
+                ),
+                try single("--method").map(GlifiStudioSummaryScoringMethod.init(identifier:))
+                    ?? .standard
             )
         case "bm25":
             try allowed(["--sources", "--query", "--k1", "--b"])
@@ -1842,7 +1847,9 @@ private enum CLICommand {
     case weighting(URL, [String], GlifiStudioTermWeightingScheme)
     case bm25(URL, [String], String, Double, Double)
     case diversity(URL, [String], Double)
-    case summarize(URL, [String], GlifiStudioSummaryBudget, GlifiStudioTermWeightingScheme)
+    case summarize(
+        URL, [String], GlifiStudioSummaryBudget, GlifiStudioTermWeightingScheme,
+        GlifiStudioSummaryScoringMethod)
     case qualitativeState(URL)
     case qualitativeAppend(URL, URL)
     case qualitativeAgreement(URL, String, Int, [String])

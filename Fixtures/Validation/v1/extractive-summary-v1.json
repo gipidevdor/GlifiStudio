@@ -4,10 +4,11 @@
   "id": "validation-extractive-summary-v1",
   "capabilityIdentifier": "corpus-extractive-summary-v1",
   "methodIdentifiers": [
-    "SentenceTFIDFMean-v1"
+    "SentenceTFIDFMean-v1",
+    "CentroidCosine-v1"
   ],
   "status": "candidate",
-  "statusReason": "Verifica dinamica eseguita dal runner remoto; promozione a supported dopo la review dell'evidenza GS-VER-146.",
+  "statusReason": "Verifica dinamica eseguita dal runner remoto per SentenceTFIDFMean-v1 (GS-VER-146); CentroidCosine-v1 in verifica (GS-VER-149). Promozione a supported dopo la review delle evidenze.",
   "license": "BSD-3-Clause",
   "toolchain": {
     "swiftLanguageMode": "6",
@@ -24,7 +25,7 @@
     },
     "V1": {
       "status": "pass",
-      "description": "Frase senza token, frasi duplicate, un solo documento, documento senza frasi, budget non valido, gruppo vuoto e fonte duplicata."
+      "description": "Frase senza token, frasi duplicate, un solo documento, documento senza frasi, budget non valido, gruppo vuoto e fonte duplicata. Per CentroidCosine-v1: vettore nullo e centroide nullo (IDF-unsmoothed-v1 su un solo documento), payload precedenti senza isEligible."
     },
     "V2": {
       "status": "pass",
@@ -32,7 +33,7 @@
     },
     "V3": {
       "status": "pass",
-      "description": "Persistenza, riuso, rilettura e parità GlifiCore/Kit/CLI (GS-VER-146)."
+      "description": "Persistenza, riuso, rilettura e parità GlifiCore/Kit/CLI (GS-VER-146); Artifact distinti per metodo (GS-VER-149)."
     },
     "V4": {
       "status": "pass",
@@ -47,21 +48,22 @@
     }
   },
   "limits": [
-    "Una sola famiglia estrattiva; nessuna valutazione ROUGE o umana; oracolo Python, non pacchetto terzo."
+    "Due famiglie estrattive (SentenceTFIDFMean-v1, CentroidCosine-v1); nessuna valutazione ROUGE o umana; oracolo Python, non pacchetto terzo."
   ],
   "evidence": [
-    "docs/evidenze/GS-VER-146-riassunto-estrattivo.md"
+    "docs/evidenze/GS-VER-146-riassunto-estrattivo.md",
+    "docs/evidenze/GS-VER-149-riassunto-centroide.md"
   ],
   "numericAgreement": {
     "comparisonMode": "relativeTolerance",
     "relativeTolerance": 1e-12,
     "oracle": "Packages/GlifiCore/Tests/Oracles/Python/summary.py",
-    "notes": "Media dei pesi TF-IDF per frase; rank e selezioni confrontati come interi esatti."
+    "notes": "Media dei pesi TF-IDF per frase e coseno con il centroide dei vettori non nulli; rank, flag di eleggibilità e selezioni confrontati come interi esatti."
   },
   "review": {
     "reviewer": "Iniziatore del progetto",
     "date": "2026-10-03",
     "kind": "interna",
-    "scope": "GS-DOR-013: variante fissata, oracolo indipendente e tolleranza dichiarata"
+    "scope": "GS-DOR-013: varianti fissate, oracolo indipendente e tolleranza dichiarata"
   }
 }

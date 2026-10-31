@@ -502,12 +502,13 @@ extension GlifiEngine {
         }
     }
 
-    /// Selects the sentences of a group with `SentenceTFIDFMean-v1` within a declared budget.
+    /// Selects the sentences of a group with a declared scoring method within a declared budget.
     public func analyzeExtractiveSummary(
         in project: GlifiProjectPackage,
         sourceRevisionIDs: [SourceRevisionID],
         budget: GlifiSummaryBudget = .standard,
         scheme: GlifiTermWeightingScheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme,
+        method: GlifiSummaryScoringMethod = GlifiCorpusExtractiveSummaryAnalysis.standardMethod,
         corpusOptions: GlifiCorpusAnalysisOptions = .standard
     ) async throws -> GlifiProjectDerivedResult<GlifiCorpusExtractiveSummaryAnalysis> {
         try await guardedDerived {
@@ -529,7 +530,7 @@ extension GlifiEngine {
                 artifactType: "studio.glifi.artifact.corpus-extractive-summary",
                 domain: "extractive-summary-group.v1",
                 unit: "sentence.v1",
-                representation: GlifiCorpusExtractiveSummaryAnalysis.methodIdentifier,
+                representation: method.rawValue,
                 parameters: [
                     "budgetUnit": .text(budget.unit.rawValue),
                     "budgetLimit": .integer(Int64(budget.limit)),
@@ -538,7 +539,7 @@ extension GlifiEngine {
                     "normalization": .text(scheme.normalization.rawValue),
                     "redundancyPolicy": .text("redundancy.none-v1"),
                     "tieBreak": .text("tie-break.source-position-v1"),
-                    "eligibility": .text("eligibility.lexical-tokens-required-v1"),
+                    "eligibility": .text(method.eligibilityPolicy),
                     "outputOrder": .text("output-order.source-v1"),
                 ],
                 snapshot: snapshot,
@@ -553,7 +554,7 @@ extension GlifiEngine {
                 in: project
             ) {
                 try GlifiCorpusExtractiveSummaryAnalysis(
-                    documents: documents, budget: budget, scheme: scheme)
+                    documents: documents, budget: budget, scheme: scheme, method: method)
             }
         }
     }

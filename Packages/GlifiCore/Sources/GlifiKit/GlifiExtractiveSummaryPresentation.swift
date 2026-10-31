@@ -38,6 +38,37 @@ public struct GlifiStudioSummaryBudget: Codable, Equatable, Sendable {
     }
 }
 
+/// Declared sentence-scoring method of an extractive summary, by versioned identifier.
+public struct GlifiStudioSummaryScoringMethod: Codable, Equatable, Sendable {
+    /// `SentenceTFIDFMean-v1`.
+    public static let standard = GlifiStudioSummaryScoringMethod(
+        identifier: GlifiCorpusExtractiveSummaryAnalysis.standardMethod.rawValue)
+    /// Every method identifier accepted by the engine, in declaration order.
+    public static let supportedIdentifiers = GlifiSummaryScoringMethod.allCases.map(\.rawValue)
+
+    /// `SentenceTFIDFMean-v1` or `CentroidCosine-v1`.
+    public let identifier: String
+
+    /// Creates a method from a versioned identifier, validated when used.
+    public init(identifier: String) {
+        self.identifier = identifier
+    }
+
+    func coreValue() throws -> GlifiSummaryScoringMethod {
+        guard let method = GlifiSummaryScoringMethod(rawValue: identifier) else {
+            throw GlifiFailure(
+                code: "summary.unknown-method",
+                category: .invalidInput,
+                operation: .analyze,
+                retryDisposition: .afterCorrection,
+                retainedState: .lastCommittedGeneration,
+                messageKey: "failure.summary.unknown-method"
+            )
+        }
+        return method
+    }
+}
+
 extension GlifiStudioTermWeightingScheme {
     /// `TF-sublinear-v1`, `IDF-smooth-v1`, `RowNorm-none-v1`: the summary default.
     public static let summaryStandard = GlifiStudioTermWeightingScheme(
@@ -60,6 +91,8 @@ public struct GlifiStudioSummarySentence: Codable, Equatable, Sendable {
     public let score: Double
     /// One-based rank by descending score, ties broken by source position.
     public let rank: Int
+    /// Whether the sentence may be selected under the eligibility policy of the method.
+    public let isEligible: Bool
     /// Whether the sentence enters the summary.
     public let isSelected: Bool
 
@@ -71,6 +104,7 @@ public struct GlifiStudioSummarySentence: Codable, Equatable, Sendable {
         tokenCount = value.tokenCount
         score = value.score
         rank = value.rank
+        isEligible = value.isEligible
         isSelected = value.isSelected
     }
 }
@@ -83,7 +117,7 @@ public struct GlifiStudioSelectedSentence: Codable, Equatable, Sendable {
     public let text: String
 }
 
-/// Presentation-independent `SentenceTFIDFMean-v1` extractive summary.
+/// Presentation-independent extractive summary with its declared scoring method.
 public struct GlifiStudioExtractiveSummaryResult: Codable, Equatable, Sendable {
     /// Project and generation lineage.
     public let lineage: GlifiStudioDerivedLineage

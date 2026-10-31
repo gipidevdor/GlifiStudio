@@ -187,3 +187,141 @@ func extractiveSummaryIsPersistedFromText() async throws {
         _ = try await engine.analyzeExtractiveSummary(in: project, sourceRevisionIDs: [])
     }
 }
+
+@Test("CentroidCosine-v1 coincide con l'oracolo Python: punteggi, rank e selezioni")
+func centroidCosineSummaryMatchesPython() throws {
+    let documents = try oracleDocuments()
+    let scheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme
+    let summary = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: GlifiSummaryBudget(unit: .sentences, limit: 2),
+        scheme: scheme, method: .centroidCosine)
+    // Oracle: CENTROID_* lines of expected.txt.
+    let expected = [
+        0.914241630436781, 0, 0.746180682988278, 0.333113335182715, 0.63399246745524,
+    ]
+    let scores = summary.sentences.map(\.score)
+    #expect(scores.count == expected.count)
+    for (score, reference) in zip(scores, expected) {
+        #expect(close(score, reference))
+    }
+    #expect(summary.methodIdentifier == "CentroidCosine-v1")
+    #expect(summary.eligibilityPolicy == "eligibility.non-null-vector-v1")
+    #expect(summary.sentences.map(\.rank) == [1, 5, 2, 4, 3])
+    #expect(summary.sentences.map(\.isEligible) == [true, false, true, true, true])
+    #expect(summary.sentences.map(\.isSelected) == [true, false, true, false, false])
+    #expect(summary.consumedBudget == 2)
+    let tokens = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: GlifiSummaryBudget(unit: .lexicalTokens, limit: 3),
+        scheme: scheme, method: .centroidCosine)
+    #expect(tokens.sentences.map(\.isSelected) == [true, false, false, false, false])
+    #expect(tokens.consumedBudget == 3)
+    // Same units and ranges as the TF-IDF mean: only the score changes.
+    let mean = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: GlifiSummaryBudget(unit: .sentences, limit: 2),
+        scheme: scheme)
+    #expect(mean.methodIdentifier == "SentenceTFIDFMean-v1")
+    #expect(mean.sentences.map(\.range) == summary.sentences.map(\.range))
+    #expect(mean.sentences.map(\.tokenCount) == summary.sentences.map(\.tokenCount))
+}
+
+@Test("CentroidCosine-v1: vettori nulli esclusi con diagnostica, payload senza isEligible")
+func centroidCosineExcludesNullVectors() throws {
+    // IDF-unsmoothed-v1 on a single document: every weight is log(1/1) = 0, every vector is null.
+    let unsmoothed = GlifiTermWeightingScheme(
+        termFrequency: .sublinear, inverseDocumentFrequency: .unsmoothed, normalization: .none)
+    let single = [
+        GlifiSummaryDocument(
+            sourceRevisionID: try revision(1),
+            sentences: [try sentence(0, ["a", "b"]), try sentence(1, []), try sentence(2, ["b"])]
+        )
+    ]
+    let centroid = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: single, budget: .standard, scheme: unsmoothed, method: .centroidCosine)
+    #expect(centroid.sentences.map(\.score) == [0, 0, 0])
+    #expect(centroid.sentences.map(\.isEligible) == [false, false, false])
+    #expect(centroid.sentences.map(\.isSelected) == [false, false, false])
+    #expect(centroid.sentences.map(\.rank) == [1, 2, 3])
+    #expect(centroid.consumedBudget == 0)
+    // The TF-IDF mean ranks the same sentences at zero, but sentences with tokens stay eligible.
+    let mean = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: single, budget: .standard, scheme: unsmoothed)
+    #expect(mean.sentences.map(\.isEligible) == [true, false, true])
+    #expect(mean.sentences.map(\.isSelected) == [true, false, true])
+
+    // Two documents: the sentence equal to the centroid has cosine 1, its duplicate the next rank.
+    let documents = try oracleDocuments()
+    let scored = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: GlifiSummaryBudget(unit: .sentences, limit: 5),
+        scheme: GlifiCorpusExtractiveSummaryAnalysis.standardScheme, method: .centroidCosine)
+    for sentence in scored.sentences where sentence.isEligible {
+        #expect(sentence.score > 0 && sentence.score <= 1 + 1e-12)
+    }
+    #expect(scored.selectedSentences.count == 4)
+    #expect(scored.consumedBudget == 4)
+
+    // Payload persisted before `isEligible`: the flag derives from the lexical tokens.
+    let encoded = try JSONEncoder().encode(scored)
+    let object = try JSONSerialization.jsonObject(with: encoded) as? [String: Any]
+    var sentences = object?["sentences"] as? [[String: Any]] ?? []
+    #expect(sentences.count == 5)
+    for index in sentences.indices {
+        sentences[index].removeValue(forKey: "isEligible")
+    }
+    var legacy = object ?? [:]
+    legacy["sentences"] = sentences
+    let decoded = try JSONDecoder().decode(
+        GlifiCorpusExtractiveSummaryAnalysis.self,
+        from: JSONSerialization.data(withJSONObject: legacy))
+    #expect(decoded.sentences.map(\.isEligible) == [true, false, true, true, true])
+    #expect(decoded.sentences.map(\.isSelected) == scored.sentences.map(\.isSelected))
+    let roundTrip = try JSONDecoder().decode(
+        GlifiCorpusExtractiveSummaryAnalysis.self, from: encoded)
+    #expect(roundTrip == scored)
+}
+
+@Test("Il metodo di punteggio è un parametro del descrittore: Artifact distinti, stesse frasi")
+func centroidCosineSummaryIsPersistedAsDistinctArtifact() async throws {
+    let root = FileManager.default.temporaryDirectory.appending(
+        path: "GlifiCentroidSummary-\(UUID().uuidString)", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let project = try GlifiProjectPackage.create(
+        at: root.appending(path: "P.glifi", directoryHint: .isDirectory))
+    let engine = GlifiEngine()
+    let texts = [
+        "La casa è bella. Il giardino è verde e grande. Sì.",
+        "Il giardino della casa è verde.",
+    ]
+    var ids: [SourceRevisionID] = []
+    for (index, text) in texts.enumerated() {
+        let imported = try GlifiTextImporter().importText(
+            from: Data(text.utf8), format: .plainText, sourceRevisionID: try revision(index + 1))
+        _ = try await project.importText(imported)
+        ids.append(imported.sourceRevisionID)
+    }
+    let budget = GlifiSummaryBudget(unit: .sentences, limit: 2)
+    let mean = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids, budget: budget)
+    let centroid = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids, budget: budget, method: .centroidCosine)
+    #expect(centroid.artifactID != mean.artifactID)
+    #expect(centroid.value.methodIdentifier == "CentroidCosine-v1")
+    #expect(centroid.value.sentences.map(\.range) == mean.value.sentences.map(\.range))
+    #expect(centroid.value.sentences.map(\.isEligible) == [true, true, true, true])
+    #expect(centroid.value.selectedSentences.count == 2)
+    #expect(centroid.value.consumedBudget == 2)
+    let reused = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids.reversed(), budget: budget, method: .centroidCosine)
+    #expect(reused.artifactID == centroid.artifactID)
+    #expect(reused.value == centroid.value)
+    let stored: GlifiProjectDerivedResult<GlifiCorpusExtractiveSummaryAnalysis> =
+        try await engine.storedDerivedResult(
+            GlifiCorpusExtractiveSummaryAnalysis.self, artifactID: centroid.artifactID,
+            in: project)
+    #expect(stored.value == centroid.value)
+    let resolved = try await engine.resolveSummarySentences(centroid.value, in: project)
+    #expect(resolved.map(\.sentence) == centroid.value.selectedSentences)
+    for entry in resolved {
+        #expect(texts.joined(separator: "\n").contains(entry.text))
+    }
+}
