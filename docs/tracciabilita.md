@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.85.1 |
+| Versione | 0.86.1 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-24 |
+| Ultima modifica | 2026-10-31 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -175,8 +175,14 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 | [GS-VER-141](evidenze/GS-VER-141-prima-ci-remota-verde.md) | TV-011, TV-013, TV-049; GS-STD-001-20, GS-REP-005, GS-WVR-001…004 | Superato su runner remoto: `verify` verde su `xcode-27` con 257 test, 22 checkpoint di recovery e build macOS/iPadOS; deroghe budget in rientro | Rscript e veraPDF assenti sul runner; dispositivi, firma e TestFlight non coperti; non conformità 2026-09-22→2026-10-03 registrata |
 | [GS-VER-146](evidenze/GS-VER-146-riassunto-estrattivo.md) | Slice TV-036; RF-042, GS-MET-001-19, CMP-096 | Superato su runner remoto (#16, `19ca4c7`): oracolo Python indipendente, test di persistenza e contract test CLI aggiunti; controlli statici superati | Una sola famiglia; nessuna valutazione ROUGE o umana; Rscript assente sul runner |
 | [GS-VER-142](evidenze/GS-VER-142-letture-directory-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: letture descriptor-relative, regressioni su directory simboliche e sostituzioni controllate; statici, lint e compilazione Apple superati | Test compilati, non eseguiti su host 26.5.2; scritture, SQLite, ACL e file provider esclusi dalla garanzia |
+| [GS-VER-148](evidenze/GS-VER-148-letture-export.md) | Slice TV-060, TV-074; RQ-044, RQ-061, CMP-095 | Superato su runner remoto (#21, `158db49`): letture export bounded/no-follow, regressioni, gate completo e packaging; CMP-095 resta blocked | Preflight locale bloccato; inventario path-based e non bounded; nessuna protezione delle scritture, degli antenati o attestazione ACL/file provider; R e veraPDF saltati |
 
 ## Catalogo delle verifiche pianificate
+
+Incremento [GS-VER-148](evidenze/GS-VER-148-letture-export.md): GS-DOR-004 S4,
+letture di manifest e payload dell'export ancorate alla radice aperta, limiti durante
+la lettura e failure export tipizzate. Formato, inventario e digest invariati;
+nessuna promozione di clausole o chiusura globale di TV-060.
 
 Incremento [GS-VER-147](evidenze/GS-VER-147-permessi-queryast.md): TV-053 e TV-060,
 RF-080, RQ-044, RQ-046, CMP-081. Permessi negati in `query --ast` classificati

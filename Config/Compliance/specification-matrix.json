@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.specification-compliance-matrix",
   "schemaVersion": 1,
-  "updatedAt": "2026-10-24",
+  "updatedAt": "2026-10-31",
   "requiredRequirementCoverage": [
     "RQ-057",
     "RQ-058",
@@ -32,7 +32,8 @@
       "evidence": [
         "docs/evidenze/GS-VER-140-accessi-file-package.md",
         "docs/evidenze/GS-VER-141-prima-ci-remota-verde.md",
-        "docs/evidenze/GS-VER-142-letture-directory-package.md"
+        "docs/evidenze/GS-VER-142-letture-directory-package.md",
+        "docs/evidenze/GS-VER-148-letture-export.md"
       ],
       "gate": "G2",
       "status": "blocked",
