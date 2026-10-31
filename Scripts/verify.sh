@@ -650,7 +650,7 @@ mean, centroid = results
 assert [(s["startUTF8"], s["endUTF8"]) for s in mean["sentences"]] == \
     [(s["startUTF8"], s["endUTF8"]) for s in centroid["sentences"]]
 assert all(0.0 <= s["score"] <= 1.0 + 1e-12 for s in centroid["sentences"])
-# Ogni metodo committa un Artifact distinto: il secondo legge la generazione raggiunta dal primo.
+# Each method commits a distinct Artifact: the second reads the generation reached by the first.
 assert mean["lineage"]["projectID"] == centroid["lineage"]["projectID"]
 assert centroid["lineage"]["sourceGeneration"] >= mean["lineage"]["generation"]
 assert mean["lineage"]["artifactID"] != centroid["lineage"]["artifactID"]

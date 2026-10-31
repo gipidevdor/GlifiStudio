@@ -195,7 +195,7 @@ func centroidCosineSummaryMatchesPython() throws {
     let summary = try GlifiCorpusExtractiveSummaryAnalysis(
         documents: documents, budget: GlifiSummaryBudget(unit: .sentences, limit: 2),
         scheme: scheme, method: .centroidCosine)
-    // Oracolo: righe CENTROID_* di expected.txt.
+    // Oracle: CENTROID_* lines of expected.txt.
     let expected = [
         0.914241630436781, 0, 0.746180682988278, 0.333113335182715, 0.63399246745524,
     ]
@@ -215,7 +215,7 @@ func centroidCosineSummaryMatchesPython() throws {
         scheme: scheme, method: .centroidCosine)
     #expect(tokens.sentences.map(\.isSelected) == [true, false, false, false, false])
     #expect(tokens.consumedBudget == 3)
-    // Stesse unità e intervalli della media TF-IDF: cambia solo il punteggio.
+    // Same units and ranges as the TF-IDF mean: only the score changes.
     let mean = try GlifiCorpusExtractiveSummaryAnalysis(
         documents: documents, budget: GlifiSummaryBudget(unit: .sentences, limit: 2),
         scheme: scheme)
@@ -226,7 +226,7 @@ func centroidCosineSummaryMatchesPython() throws {
 
 @Test("CentroidCosine-v1: vettori nulli esclusi con diagnostica, payload senza isEligible")
 func centroidCosineExcludesNullVectors() throws {
-    // IDF-unsmoothed-v1 su un solo documento: ogni peso vale log(1/1) = 0, ogni vettore è nullo.
+    // IDF-unsmoothed-v1 on a single document: every weight is log(1/1) = 0, every vector is null.
     let unsmoothed = GlifiTermWeightingScheme(
         termFrequency: .sublinear, inverseDocumentFrequency: .unsmoothed, normalization: .none)
     let single = [
@@ -242,13 +242,13 @@ func centroidCosineExcludesNullVectors() throws {
     #expect(centroid.sentences.map(\.isSelected) == [false, false, false])
     #expect(centroid.sentences.map(\.rank) == [1, 2, 3])
     #expect(centroid.consumedBudget == 0)
-    // La media TF-IDF classifica le stesse frasi a zero ma le frasi con token restano eleggibili.
+    // The TF-IDF mean ranks the same sentences at zero, but sentences with tokens stay eligible.
     let mean = try GlifiCorpusExtractiveSummaryAnalysis(
         documents: single, budget: .standard, scheme: unsmoothed)
     #expect(mean.sentences.map(\.isEligible) == [true, false, true])
     #expect(mean.sentences.map(\.isSelected) == [true, false, true])
 
-    // Due documenti: la frase identica al centroide ha coseno 1, la duplicata lo stesso rank+1.
+    // Two documents: the sentence equal to the centroid has cosine 1, its duplicate the next rank.
     let documents = try oracleDocuments()
     let scored = try GlifiCorpusExtractiveSummaryAnalysis(
         documents: documents, budget: GlifiSummaryBudget(unit: .sentences, limit: 5),
@@ -259,7 +259,7 @@ func centroidCosineExcludesNullVectors() throws {
     #expect(scored.selectedSentences.count == 4)
     #expect(scored.consumedBudget == 4)
 
-    // Payload persistito prima di `isEligible`: il flag deriva dai token lessicali.
+    // Payload persisted before `isEligible`: the flag derives from the lexical tokens.
     let encoded = try JSONEncoder().encode(scored)
     let object = try JSONSerialization.jsonObject(with: encoded) as? [String: Any]
     var sentences = object?["sentences"] as? [[String: Any]] ?? []
