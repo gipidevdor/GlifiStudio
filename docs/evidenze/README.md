@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.13.8 |
+| Versione | 1.14.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
@@ -14,6 +14,7 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
+- [GS-VER-151 — Riassunto estrattivo con ridondanza `MMR-v1`](GS-VER-151-riassunto-mmr.md) — In verifica sul runner remoto; controlli statici superati localmente
 - [GS-VER-149 — Riassunto estrattivo `CentroidCosine-v1`](GS-VER-149-riassunto-centroide.md) — Verifica nativa locale superata; CI della head definitiva tracciata nella PR #22
 - [GS-VER-148 — Letture bounded nella verifica export](GS-VER-148-letture-export.md) — Verifiche locale e remota superate su `1883af9`; limiti residui dichiarati
 

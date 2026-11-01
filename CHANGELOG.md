@@ -40,6 +40,10 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   punteggio come parametro del descrittore (`method`, `--method` in `glifi summarize`), coseno
   tra il vettore della frase e il centroide del gruppo, vettori nulli esclusi con flag
   `isEligible` persistito per frase e derivato dai token nei payload precedenti (GS-VER-149).
+- Ridondanza `MMR-v1` del riassunto estrattivo (GS-MET-001-19, RF-042): politica di selezione
+  come parametro del descrittore (`redundancy`, `--mmr <λ>` in `glifi summarize`), obiettivo
+  `λ·rel − (1−λ)·max sim` con similarità coseno tra vettori frase, `λ` validato in `[0, 1]`,
+  `selectionOrder` persistito per frase scelta e assente nei payload precedenti (GS-VER-151).
 - Corpus gold italiano su prosa reale di pubblico dominio (Collodi, «Le avventure di Pinocchio»,
   capitolo 1): 434 token lessicali e 19 frasi annotati da un'implementazione del contratto
   indipendente dal tokenizzatore, in accordo pieno con il prodotto (ADR-0030, GS-VER-138).

@@ -6,11 +6,11 @@
 | --- | --- |
 | Identificatore | GS-DOR-013 |
 | Tipo | Scheda Definition of Ready |
-| Versione | 1.1.0 |
+| Versione | 1.2.0 |
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-16 |
-| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice in verifica (GS-VER-149) |
+| Ultima modifica | 2026-11-01 |
+| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice verificata localmente (GS-VER-149), terza slice in verifica (GS-VER-151) |
 | Riferimenti | GS-MET-001-19; GS-MET-001-07; GS-API-001 § 9; RF-042; RQ-025; RQ-027; TV-036; ADR-0013 |
 
 ## Confini e criteri di accettazione
@@ -19,8 +19,8 @@
 
 | Voce | Evidenza |
 | --- | --- |
-| outcome e confini | Due famiglie sullo stesso Artifact, `SentenceTFIDFMean-v1` e `CentroidCosine-v1`, scelte con `method`, con budget in frasi o token; nessuna generazione di testo, nessuna ridondanza, nessun modello linguistico |
-| failure semantics | Budget non valido, gruppo vuoto o fonte duplicata: `invalidInput`/`insufficientData` con codici `summary.*` tipizzati; intervallo non risolvibile: `invariantViolation` |
+| outcome e confini | Due famiglie sullo stesso Artifact, `SentenceTFIDFMean-v1` e `CentroidCosine-v1`, scelte con `method`, con budget in frasi o token; ridondanza assente per default o `MMR-v1` con `λ` dichiarato, scelta con `redundancy`; nessuna generazione di testo, nessun modello linguistico |
+| failure semantics | Budget non valido, `λ` fuori da `[0, 1]`, politica di ridondanza sconosciuta, gruppo vuoto o fonte duplicata: `invalidInput`/`insufficientData` con codici `summary.*` tipizzati; intervallo non risolvibile: `invariantViolation` |
 
 - Fissare in GS-MET-001-19 unità, token inclusi, pesi, rank, budget, eleggibilità,
   ridondanza e ordine di output della variante, prima del codice.
@@ -36,6 +36,10 @@
   centroide fissati in GS-MET-001-19 prima del codice, flag `isEligible` persistito per frase
   con decodifica dei payload precedenti, oracolo esteso con righe `CENTROID_*`, `--method` in
   CLI; nessuna migrazione.
+- Terza slice (`MMR-v1`): politica di ridondanza come parametro del descrittore con `λ` e
+  similarità dichiarate, fissata in GS-MET-001-19 prima del codice; `selectionOrder` persistito
+  per frase scelta con decodifica dei payload precedenti; oracolo esteso con righe `MMR_*`;
+  `--mmr <λ>` in CLI; nessuna migrazione.
 
 ## Verifica e tracciabilità
 
@@ -44,8 +48,9 @@ Controlli statici e formattazione sulla macchina di sviluppo; compilazione, test
 sono registrati in [GS-VER-146](../evidenze/GS-VER-146-riassunto-estrattivo.md) (prima
 slice, superata sul runner remoto, CMP-096 `verified`) e in
 [GS-VER-149](../evidenze/GS-VER-149-riassunto-centroide.md) (seconda slice, CMP-097
-`implemented` finché il gate remoto non la promuove), nella matrice di tracciabilità (RF-042,
-TV-036). Nessuna nuova decisione architetturale: la variante era
+`implemented` finché il gate remoto non la promuove) e in
+[GS-VER-151](../evidenze/GS-VER-151-riassunto-mmr.md) (terza slice, CMP-106 `implemented`
+finché il gate remoto non la promuove), nella matrice di tracciabilità (RF-042, TV-036). Nessuna nuova decisione architetturale: la variante era
 già candidata in GS-MET-001-19.
 
 ## Rischi e recupero
@@ -54,5 +59,7 @@ Il segmentatore di frasi è quello del contratto linguistico italiano: errori di
 riflettono nel riassunto e sono misurati da GS-VER-137/138, non qui. Con un solo documento
 l'IDF liscio resta definito; con `IDF-unsmoothed-v1` i punteggi sono tutti nulli: la media
 TF-IDF seleziona per posizione, il centroide esclude ogni frase come vettore nullo
-(`isEligible = false`), comportamenti dichiarati e non corretti in silenzio. Rollback
-tramite revert; nessuna migrazione dei package.
+(`isEligible = false`), comportamenti dichiarati e non corretti in silenzio. Con `MMR-v1`
+la similarità fra vettori nulli vale zero: una frase con vettore nullo non è penalizzata ma
+resta ineleggibile se il metodo la esclude. Rollback tramite revert; nessuna migrazione dei
+package.

@@ -1,0 +1,87 @@
+<!-- SPDX-License-Identifier: BSD-3-Clause -->
+
+# GS-VER-151 — Riassunto estrattivo con ridondanza `MMR-v1`
+
+| Campo | Valore |
+| --- | --- |
+| Identificatore | GS-VER-151 |
+| Tipo | Evidenza di verifica numerica e di integrazione |
+| Versione | 1.0.0 |
+| Stato | In verifica sul runner remoto |
+| Responsabile | Iniziatore del progetto |
+| Ultima modifica | 2026-11-01 |
+| Approvazione | GS-DOR-013 (1.2.0); richiesta dell'iniziatore di proseguire lo sviluppo |
+| Riferimenti | GS-DOR-013; GS-MET-001-19 § Ridondanza implementata: `MMR-v1`; GS-MET-001-07; RF-042; TV-036; CMP-106; GS-VER-146; GS-VER-149 |
+
+## Ambito
+
+Terza slice di RF-042 sullo stesso Artifact `corpus-extractive-summary-v1`, fissata in
+GS-MET-001-19 (versione 1.3.0):
+
+- `GlifiSummaryRedundancyPolicy` in GlifiCore (`redundancy.none-v1`, `MMR-v1` con `λ`),
+  parametro `redundancy` di `GlifiCorpusExtractiveSummaryAnalysis` e di
+  `analyzeExtractiveSummary`; la politica, `λ` e la similarità entrano nei parametri del
+  descrittore, quindi politiche o `λ` diversi sono nodi e Artifact distinti;
+- `MMR-v1`: a ogni passo entra la frase eleggibile che rientra nel budget residuo con il massimo
+  di `λ · rel(s) − (1 − λ) · max_{u∈S} sim(s, u)`, `rel` il punteggio del metodo dichiarato e
+  `sim` il coseno tra i vettori frase di `CentroidCosine-v1`
+  (`similarity.sentence-vector-cosine-v1`); parità risolta per posizione nella fonte; `λ` fuori
+  da `[0, 1]` o non finito rifiutato con `summary.invalid-redundancy`;
+- `selectionOrder` persistito per ogni frase scelta, anche con `redundancy.none-v1` (ordine di
+  rank tra le scelte); i payload scritti prima del campo decodificano senza ordine, senza `λ` e
+  senza similarità;
+- `GlifiStudioSummaryRedundancy` in GlifiKit con failure tipizzate `summary.unknown-redundancy`
+  e `summary.invalid-redundancy` (`invalidInput`, `afterCorrection`, messaggi localizzati) e
+  opzione `--mmr <λ>` di `glifi summarize`; `selectionOrder`, `redundancyLambda` e
+  `similarityIdentifier` nei mirror.
+
+## Procedura e risultato
+
+1. `mmrSummaryMatchesPython`: sugli stessi due documenti dell'oracolo, con rilevanza
+   `CentroidCosine-v1` e `λ = 0,5`, gli ordini di accettazione con budget di 2 frasi (`0, 3`), 3
+   frasi (`0, 3, 2`) e 3 token (`0`) coincidono con le righe `MMR_ORDER_*` di
+   `Tests/Oracles/Python/summary.py` registrate in `expected.txt`; `λ = 0` sceglie `0, 3`,
+   `λ = 1` riproduce la scansione per rank (`0, 2`) con lo stesso `selectionOrder`; la soglia
+   `MMR_THRESHOLD_S2 = 0,562024411171168` separa la seconda scelta (frase 3 sotto, frase 2
+   sopra); punteggi e rank identici a quelli senza ridondanza;
+2. `mmrPenalizesDuplicatesAndRejectsInvalidLambda`: due frasi identiche entrano entrambe nella
+   scansione per rank e una sola con `MMR-v1` (coseno 1), sostituita dalla frase diversa;
+   `λ ∈ {−0,1; 1,1; NaN; ∞}` rifiutati; payload senza `selectionOrder`, `redundancyLambda` e
+   `similarityIdentifier` decodificato; round-trip JSON; il risultato senza ridondanza non
+   serializza `λ` né similarità;
+3. `mmrSummaryIsPersistedAsDistinctArtifact`: dal testo importato con una frase duplicata,
+   Artifact distinto da quello senza ridondanza e da quello con `λ = 0,7`, stessi punteggi e rank,
+   riuso con fonti in ordine inverso, rilettura con `storedDerivedResult`, testo risolto uguale
+   alla fonte, `λ = 1,5` rifiutato dal motore;
+4. `summaryPresentationDecodesLegacySelectionOrder` (GlifiKit): messaggio precedente senza
+   `selectionOrder` decodificato, valore esplicito conservato nel round-trip, identificatori
+   supportati;
+5. contract test CLI in `verify.sh`: `glifi summarize --sentences 2 --method CentroidCosine-v1`
+   con e senza `--mmr 0.5`: politica, `λ` e similarità dichiarati, stessi punteggi e rank,
+   `selectionOrder` uno-based e completo tra le frasi scelte e assente nelle altre, Artifact
+   distinti nello stesso progetto; per `redundancy.none-v1` l'ordine segue il rank.
+
+Controlli statici (`make quality-static`, formattazione, documentazione, matrice, fixture,
+localizzazione e oracoli Python) superati sulla macchina di sviluppo Linux. Compilazione, test
+Swift e contract test CLI sono eseguiti dal workflow `Verifica` sul runner `xcode-27`: l'esito è
+registrato nella sezione seguente.
+
+## Esecuzione remota
+
+Da registrare: esito dei job `verify` e `app-store-baseline` sulla head definitiva della PR,
+con i link ai workflow. Fino ad allora CMP-106 resta `implemented`.
+
+## Limiti
+
+- La rilevanza è il punteggio del metodo dichiarato, non normalizzato: con `SentenceTFIDFMean-v1`
+  `rel` non è in `[0, 1]` e `λ` pesa scale diverse; la scelta è dichiarata nel descrittore.
+- La similarità usa i vettori frase sullo stesso schema di ponderazione del punteggio; nessuna
+  similarità alternativa, TextRank o LexRank.
+- L'oracolo è un'implementazione indipendente in Python delle formule dichiarate, non un
+  pacchetto terzo; nessuna valutazione ROUGE o umana.
+- Il runner remoto non dispone di Rscript: `make check-oracles` è eseguito solo dal gate locale
+  (GS-VER-141).
+
+## Esito
+
+**In verifica**: controlli statici superati localmente; gate nativo da registrare.

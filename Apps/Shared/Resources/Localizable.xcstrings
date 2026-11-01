@@ -10847,6 +10847,40 @@
         }
       }
     },
+    "failure.summary.unknown-redundancy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The summary redundancy policy is not recognized."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La politica di ridondanza del riassunto non è riconosciuta."
+          }
+        }
+      }
+    },
+    "failure.summary.invalid-redundancy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The summary redundancy parameter is invalid: λ must be a number in [0, 1] and is admitted only by MMR-v1."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il parametro di ridondanza del riassunto non è valido: λ deve essere un numero in [0, 1] ed è ammesso solo da MMR-v1."
+          }
+        }
+      }
+    },
     "failure.summary.unknown-method" : {
       "extractionState" : "manual",
       "localizations" : {

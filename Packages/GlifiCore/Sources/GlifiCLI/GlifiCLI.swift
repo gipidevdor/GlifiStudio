@@ -470,16 +470,19 @@ enum GlifiCLI {
             case .json:
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
-        case let .summarize(projectURL, sourceRevisionIDs, budget, scheme, method):
+        case let .summarize(projectURL, sourceRevisionIDs, budget, scheme, method, redundancy):
             let session = try await service.openProject(at: projectURL)
             let result = try await session.analyzeExtractiveSummary(
                 sourceRevisionIDs: sourceRevisionIDs, budget: budget, scheme: scheme,
-                method: method)
+                method: method, redundancy: redundancy)
             await session.close()
             switch request.format {
             case .text:
+                let redundancyLabel = result.redundancyLambda.map {
+                    " · \(result.redundancyPolicy) λ=\($0)"
+                }
                 print(
-                    "\(result.methodIdentifier) · \(result.budget.unit)=\(result.budget.limit) · \(result.selected.count) frasi · \(result.sentences.count) candidate"
+                    "\(result.methodIdentifier)\(redundancyLabel ?? "") · \(result.budget.unit)=\(result.budget.limit) · \(result.selected.count) frasi · \(result.sentences.count) candidate"
                 )
                 for selected in result.selected {
                     let sentence = selected.sentence
@@ -1155,7 +1158,7 @@ private struct CLIRequest {
           glifi [--format text|json] [--no-progress] weighting <progetto.glifi> --sources <source-revision-id,...> [--tf TF-raw-v1|TF-binary-v1|TF-L1-v1|TF-max-v1|TF-augmented-v1|TF-sublinear-v1] [--idf IDF-none-v1|IDF-unsmoothed-v1|IDF-smooth-v1] [--norm RowNorm-none-v1|RowNorm-L1-v1|RowNorm-L2-v1]
           glifi [--format text|json] [--no-progress] ngrams <progetto.glifi> --sources <source-revision-id,...> --unit form|word|character|character-padded [--n <n>] [--stopwords <forma,...>] [--min-length <n>] [--min-count <n>] [--min-df <n>] [--max-df-proportion <x>] [--max-rows <n>]
           glifi [--format text|json] [--no-progress] diversity <progetto.glifi> --sources <source-revision-id,...> [--threshold <τ>]
-          glifi [--format text|json] [--no-progress] summarize <progetto.glifi> --sources <source-revision-id,...> [--sentences <n> | --tokens <n>] [--method SentenceTFIDFMean-v1|CentroidCosine-v1] [--tf <TF-*>] [--idf <IDF-*>] [--norm <RowNorm-*>]
+          glifi [--format text|json] [--no-progress] summarize <progetto.glifi> --sources <source-revision-id,...> [--sentences <n> | --tokens <n>] [--method SentenceTFIDFMean-v1|CentroidCosine-v1] [--mmr <λ>] [--tf <TF-*>] [--idf <IDF-*>] [--norm <RowNorm-*>]
           glifi [--format text|json] [--no-progress] bm25 <progetto.glifi> --sources <source-revision-id,...> --query <testo> [--k1 <x>] [--b <x>]
           glifi [--format text|json] [--no-progress] dispersion <progetto.glifi> --sources <source-revision-id,...> [--part <source-revision-id,...>]...
           glifi [--format text|json] [--no-progress] group-metric <progetto.glifi> --group <source-revision-id,...> --group <source-revision-id,...>... [--term <termine>] [--confidence <livello>] [--bootstrap <B>] [--permutations <m>] [--seed <n>] [--contrast <c1,c2,...>]...
@@ -1489,7 +1492,8 @@ private struct CLIRequest {
                 projectURL, try Self.identifiers(sources), try decimal("--threshold") ?? 0.72)
         case "summarize":
             try allowed([
-                "--sources", "--sentences", "--tokens", "--method", "--tf", "--idf", "--norm",
+                "--sources", "--sentences", "--tokens", "--method", "--mmr", "--tf", "--idf",
+                "--norm",
             ])
             guard let sources = try single("--sources") else {
                 throw CLIUsageError.invalidArguments
@@ -1517,6 +1521,8 @@ private struct CLIRequest {
                     normalization: try single("--norm") ?? "RowNorm-none-v1"
                 ),
                 try single("--method").map(GlifiStudioSummaryScoringMethod.init(identifier:))
+                    ?? .standard,
+                try decimal("--mmr").map(GlifiStudioSummaryRedundancy.maximalMarginalRelevance)
                     ?? .standard
             )
         case "bm25":
@@ -1849,7 +1855,7 @@ private enum CLICommand {
     case diversity(URL, [String], Double)
     case summarize(
         URL, [String], GlifiStudioSummaryBudget, GlifiStudioTermWeightingScheme,
-        GlifiStudioSummaryScoringMethod)
+        GlifiStudioSummaryScoringMethod, GlifiStudioSummaryRedundancy)
     case qualitativeState(URL)
     case qualitativeAppend(URL, URL)
     case qualitativeAgreement(URL, String, Int, [String])

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: BSD-3-Clause
 
-"""Independent oracle for `SentenceTFIDFMean-v1` and `CentroidCosine-v1` (GS-MET-001-19).
+"""Independent oracle for `SentenceTFIDFMean-v1`, `CentroidCosine-v1` and `MMR-v1` (GS-MET-001-19).
 
 Two documents given as sentences of normalized tokens. Weights follow GS-MET-001-07 with
 `TF-sublinear-v1`, `IDF-smooth-v1` and `RowNorm-none-v1`. `SentenceTFIDFMean-v1` scores a
@@ -9,7 +9,10 @@ sentence with the mean of the weights of its tokens, repetitions included, zero 
 `CentroidCosine-v1` builds the sentence vector as token count times document weight per type,
 takes the centroid as the mean of the non-null sentence vectors and scores a sentence with the
 cosine to the centroid; a null vector scores zero and is never selected. Ranking is by
-descending score, then document order, then sentence position.
+descending score, then document order, then sentence position. `MMR-v1` selects greedily the
+eligible sentence that fits the residual budget with the largest
+`lambda * score - (1 - lambda) * max cosine to the selected sentences`, first in source order on
+ties; the relevance is the `CentroidCosine-v1` score.
 """
 
 from __future__ import annotations
@@ -83,6 +86,73 @@ def centroid_scores(cells: list[dict[str, float]]) -> list[tuple[int, int, int, 
     return scored
 
 
+def sentence_vectors(cells: list[dict[str, float]]) -> list[dict[str, float]]:
+    """Token count times document weight per type, zero entries dropped."""
+    vectors = []
+    for document_index, document in enumerate(DOCUMENTS):
+        for sentence in document:
+            vector = {
+                term: sentence.count(term) * cells[document_index][term] for term in set(sentence)
+            }
+            vectors.append({term: value for term, value in vector.items() if value != 0.0})
+    return vectors
+
+
+def cosine(left: dict[str, float], right: dict[str, float]) -> float:
+    """Cosine between two sparse vectors; zero when either is null."""
+    if not left or not right:
+        return 0.0
+    dot = sum(value * right.get(term, 0.0) for term, value in left.items())
+    norms = math.sqrt(sum(v * v for v in left.values())) * math.sqrt(sum(v * v for v in right.values()))
+    return dot / norms
+
+
+def mmr_select(
+    scored: list[tuple[int, int, int, bool, float]],
+    vectors: list[dict[str, float]],
+    lam: float,
+    unit: str,
+    limit: int,
+) -> list[int]:
+    """`MMR-v1`: indices in acceptance order."""
+    consumed = 0
+    chosen: list[int] = []
+    while True:
+        best = None
+        best_objective = -math.inf
+        for index, (_, _, tokens, eligible, score) in enumerate(scored):
+            cost = 1 if unit == "sentences" else tokens
+            if not eligible or index in chosen or consumed + cost > limit:
+                continue
+            penalty = max((cosine(vectors[index], vectors[other]) for other in chosen), default=0.0)
+            objective = lam * score - (1 - lam) * penalty
+            if objective > best_objective:
+                best_objective = objective
+                best = index
+        if best is None:
+            return chosen
+        consumed += 1 if unit == "sentences" else scored[best][2]
+        chosen.append(best)
+
+
+def report_mmr(cells: list[dict[str, float]]) -> None:
+    """Print MMR selections over the centroid relevance in acceptance order."""
+    scored = centroid_scores(cells)
+    vectors = sentence_vectors(cells)
+    print("MMR_ORDER_S2_L05 " + " ".join(str(i) for i in mmr_select(scored, vectors, 0.5, "sentences", 2)))
+    print("MMR_ORDER_S3_L05 " + " ".join(str(i) for i in mmr_select(scored, vectors, 0.5, "sentences", 3)))
+    print("MMR_ORDER_T3_L05 " + " ".join(str(i) for i in mmr_select(scored, vectors, 0.5, "tokens", 3)))
+    print("MMR_ORDER_S2_L0 " + " ".join(str(i) for i in mmr_select(scored, vectors, 0.0, "sentences", 2)))
+    print("MMR_ORDER_S2_L1 " + " ".join(str(i) for i in mmr_select(scored, vectors, 1.0, "sentences", 2)))
+    # Smallest lambda for which the second pick with two sentences is sentence 2 instead of 3:
+    # lambda * rel(2) - (1 - lambda) * sim(2, 0) > lambda * rel(3) - (1 - lambda) * sim(3, 0).
+    rel = [score for *_, score in scored]
+    threshold = (cosine(vectors[2], vectors[0]) - cosine(vectors[3], vectors[0])) / (
+        rel[2] - rel[3] + cosine(vectors[2], vectors[0]) - cosine(vectors[3], vectors[0])
+    )
+    print(f"MMR_THRESHOLD_S2 {threshold:.15g}")
+
+
 def report(prefix: str, scored: list[tuple[int, int, int, bool, float]]) -> None:
     """Print scores, ranks and selections for both budget units."""
     order = sorted(range(len(scored)), key=lambda i: (-scored[i][4], scored[i][0], scored[i][1]))
@@ -115,6 +185,7 @@ def main() -> None:
     cells = weights(DOCUMENTS)
     report("SUMMARY", mean_scores(cells))
     report("CENTROID", centroid_scores(cells))
+    report_mmr(cells)
 
 
 if __name__ == "__main__":

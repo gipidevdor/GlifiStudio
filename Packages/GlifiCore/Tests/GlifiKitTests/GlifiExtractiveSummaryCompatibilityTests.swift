@@ -30,3 +30,34 @@ func summaryPresentationDecodesLegacyEligibility(tokenCount: Int) throws {
     let encoded = try JSONEncoder().encode(current)
     #expect(try JSONDecoder().decode(GlifiStudioSummarySentence.self, from: encoded) == current)
 }
+
+@Test("I messaggi di riassunto precedenti non hanno ordine di selezione né politica MMR")
+func summaryPresentationDecodesLegacySelectionOrder() throws {
+    var payload: [String: Any] = [
+        "sourceRevisionID": "synthetic-source-revision",
+        "sentenceIndex": 1,
+        "startUTF8": 0,
+        "endUTF8": 8,
+        "tokenCount": 2,
+        "score": 0.5,
+        "rank": 1,
+        "isEligible": true,
+        "isSelected": true,
+    ]
+    let legacy = try JSONDecoder().decode(
+        GlifiStudioSummarySentence.self, from: JSONSerialization.data(withJSONObject: payload))
+    #expect(legacy.selectionOrder == nil)
+    #expect(legacy.isSelected)
+    payload["selectionOrder"] = 2
+    let current = try JSONDecoder().decode(
+        GlifiStudioSummarySentence.self, from: JSONSerialization.data(withJSONObject: payload))
+    #expect(current.selectionOrder == 2)
+    let encoded = try JSONEncoder().encode(current)
+    #expect(try JSONDecoder().decode(GlifiStudioSummarySentence.self, from: encoded) == current)
+
+    #expect(GlifiStudioSummaryRedundancy.supportedIdentifiers == ["redundancy.none-v1", "MMR-v1"])
+    #expect(GlifiStudioSummaryRedundancy.standard.lambda == nil)
+    let mmr = GlifiStudioSummaryRedundancy.maximalMarginalRelevance(lambda: 0.5)
+    #expect(mmr.identifier == "MMR-v1")
+    #expect(mmr.lambda == 0.5)
+}

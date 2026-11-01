@@ -509,12 +509,16 @@ extension GlifiEngine {
         budget: GlifiSummaryBudget = .standard,
         scheme: GlifiTermWeightingScheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme,
         method: GlifiSummaryScoringMethod = GlifiCorpusExtractiveSummaryAnalysis.standardMethod,
+        redundancy: GlifiSummaryRedundancyPolicy = .none,
         corpusOptions: GlifiCorpusAnalysisOptions = .standard
     ) async throws -> GlifiProjectDerivedResult<GlifiCorpusExtractiveSummaryAnalysis> {
         try await guardedDerived {
             try Task.checkCancellation()
             guard budget.isValid else {
                 throw derivedAnalysisFailure("summary.invalid-budget")
+            }
+            guard redundancy.isValid else {
+                throw derivedAnalysisFailure("summary.invalid-redundancy")
             }
             let snapshot = await project.snapshot()
             let group = try await derivedCorpusGroup(
@@ -525,23 +529,28 @@ extension GlifiEngine {
                 options: corpusOptions,
                 in: project
             )
+            var parameters: [String: GlifiAnalysisValue] = [
+                "budgetUnit": .text(budget.unit.rawValue),
+                "budgetLimit": .integer(Int64(budget.limit)),
+                "termFrequency": .text(scheme.termFrequency.rawValue),
+                "inverseDocumentFrequency": .text(scheme.inverseDocumentFrequency.rawValue),
+                "normalization": .text(scheme.normalization.rawValue),
+                "redundancyPolicy": .text(redundancy.identifier),
+                "tieBreak": .text("tie-break.source-position-v1"),
+                "eligibility": .text(method.eligibilityPolicy),
+                "outputOrder": .text("output-order.source-v1"),
+            ]
+            if let lambda = redundancy.lambda, let similarity = redundancy.similarityIdentifier {
+                parameters["redundancyLambda"] = .decimal(lambda)
+                parameters["similarity"] = .text(similarity)
+            }
             let descriptor = try Self.groupDescriptor(
                 GlifiCorpusExtractiveSummaryAnalysis.self,
                 artifactType: "studio.glifi.artifact.corpus-extractive-summary",
                 domain: "extractive-summary-group.v1",
                 unit: "sentence.v1",
                 representation: method.rawValue,
-                parameters: [
-                    "budgetUnit": .text(budget.unit.rawValue),
-                    "budgetLimit": .integer(Int64(budget.limit)),
-                    "termFrequency": .text(scheme.termFrequency.rawValue),
-                    "inverseDocumentFrequency": .text(scheme.inverseDocumentFrequency.rawValue),
-                    "normalization": .text(scheme.normalization.rawValue),
-                    "redundancyPolicy": .text("redundancy.none-v1"),
-                    "tieBreak": .text("tie-break.source-position-v1"),
-                    "eligibility": .text(method.eligibilityPolicy),
-                    "outputOrder": .text("output-order.source-v1"),
-                ],
+                parameters: parameters,
                 snapshot: snapshot,
                 groups: [group]
             )
@@ -554,7 +563,8 @@ extension GlifiEngine {
                 in: project
             ) {
                 try GlifiCorpusExtractiveSummaryAnalysis(
-                    documents: documents, budget: budget, scheme: scheme, method: method)
+                    documents: documents, budget: budget, scheme: scheme, method: method,
+                    redundancy: redundancy)
             }
         }
     }
