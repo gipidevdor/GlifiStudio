@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import CryptoKit
+import Darwin
 import Foundation
 
 /// Scientific file formats emitted by the bounded export pipeline.
@@ -924,34 +925,32 @@ struct GlifiScientificExporter: Sendable {
     }
 
     static func verifyExport(at exportURL: URL) throws -> GlifiExportManifest {
-        let directory = exportURL.standardizedFileURL
-        let values = try directory.resourceValues(forKeys: [
-            .isDirectoryKey, .isRegularFileKey, .isSymbolicLinkKey,
-        ])
-        guard values.isDirectory == true, values.isSymbolicLink != true else {
+        let directory: GlifiPackageDirectory
+        do {
+            directory = try GlifiPackageDirectory(at: exportURL)
+        } catch {
             throw exportFailure("export.invalid-directory", category: .invalidInput)
         }
-        let manifestURL = directory.appending(path: manifestFileName)
-        let manifestValues = try manifestURL.resourceValues(forKeys: [
-            .fileSizeKey, .isRegularFileKey, .isSymbolicLinkKey,
-        ])
-        guard manifestValues.isRegularFile == true,
-            manifestValues.isSymbolicLink != true,
-            let size = manifestValues.fileSize,
-            size <= GlifiProjectPackage.maximumManifestByteCount
-        else {
+        let data = try readFile(
+            manifestFileName, in: directory,
+            maximumByteCount: GlifiProjectPackage.maximumManifestByteCount,
+            failureCode: "export.invalid-manifest"
+        )
+        let manifest: GlifiExportManifest
+        do {
+            manifest = try JSONDecoder().decode(GlifiExportManifest.self, from: data)
+        } catch let failure as GlifiFailure {
+            throw failure
+        } catch {
             throw exportFailure("export.invalid-manifest")
         }
-        let data = try Data(contentsOf: manifestURL, options: .mappedIfSafe)
-        guard data.count == size else { throw exportFailure("export.invalid-manifest") }
-        let manifest = try JSONDecoder().decode(GlifiExportManifest.self, from: data)
         guard try GlifiExportCanonicalJSON.encode(manifest) == data else {
             throw exportFailure("export.noncanonical-manifest", category: .corruption)
         }
         let expectedNames = Set(manifest.files.map(\.path) + [manifestFileName])
         let actualNames = try Set(
             FileManager.default.contentsOfDirectory(
-                at: directory,
+                at: exportURL,
                 includingPropertiesForKeys: nil,
                 options: []
             ).map(\.lastPathComponent)
@@ -962,19 +961,13 @@ struct GlifiScientificExporter: Sendable {
         var verifiedReport: GlifiReportRevision?
         var csvDataByPath: [String: Data] = [:]
         for record in manifest.files {
-            let fileURL = directory.appending(path: record.path)
-            let fileValues = try fileURL.resourceValues(forKeys: [
-                .fileSizeKey, .isRegularFileKey, .isSymbolicLinkKey,
-            ])
-            guard fileValues.isRegularFile == true,
-                fileValues.isSymbolicLink != true,
-                fileValues.fileSize == record.byteCount,
-                record.byteCount <= maximumFileByteCount
-            else {
-                throw exportFailure("export.invalid-file")
-            }
-            let fileData = try Data(contentsOf: fileURL, options: .mappedIfSafe)
-            guard fileData.count == record.byteCount, digest(fileData) == record.sha256 else {
+            let fileData = try readFile(
+                record.path, in: directory,
+                maximumByteCount: maximumFileByteCount,
+                expectedByteCount: record.byteCount,
+                failureCode: "export.invalid-file"
+            )
+            guard digest(fileData) == record.sha256 else {
                 throw exportFailure("export.digest-mismatch", category: .corruption)
             }
             if record.path == "report.json" {
@@ -1006,6 +999,54 @@ struct GlifiScientificExporter: Sendable {
             }
         }
         return manifest
+    }
+
+    static func readFile(
+        _ relativePath: String,
+        in directory: GlifiPackageDirectory,
+        maximumByteCount: Int,
+        expectedByteCount: Int? = nil,
+        failureCode: String
+    ) throws -> Data {
+        do {
+            guard maximumByteCount >= 0,
+                expectedByteCount.map({ $0 >= 0 && $0 <= maximumByteCount }) ?? true
+            else {
+                throw exportFailure(failureCode)
+            }
+            let handle = try directory.openFile(relativePath: relativePath)
+            defer { try? handle.close() }
+            var status = stat()
+            guard fstat(handle.fileDescriptor, &status) == 0,
+                (status.st_mode & S_IFMT) == S_IFREG,
+                status.st_nlink == 1,
+                status.st_size >= 0,
+                status.st_size <= maximumByteCount,
+                expectedByteCount.map({ status.st_size == $0 }) ?? true
+            else {
+                throw exportFailure(failureCode)
+            }
+            let byteCount = Int(status.st_size)
+            var data = Data()
+            while true {
+                let remaining = byteCount - data.count
+                let chunk = try handle.read(upToCount: min(remaining, 65_535) + 1) ?? Data()
+                if chunk.isEmpty { break }
+                guard chunk.count <= remaining else { throw exportFailure(failureCode) }
+                data.append(chunk)
+            }
+            var finalStatus = stat()
+            guard data.count == byteCount,
+                fstat(handle.fileDescriptor, &finalStatus) == 0,
+                finalStatus.st_size == status.st_size,
+                finalStatus.st_nlink == 1
+            else {
+                throw exportFailure(failureCode)
+            }
+            return data
+        } catch {
+            throw exportFailure(failureCode)
+        }
     }
 
     private func makeManifest(

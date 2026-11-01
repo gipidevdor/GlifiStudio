@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-SEC-001 |
 | Tipo | Specifica normativa di sicurezza |
-| Versione | 1.2.0 |
+| Versione | 1.3.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-16 |
+| Ultima modifica | 2026-10-24 |
 | Approvazione | Baseline proposta; threat review e prove avversarie richieste ai gate G2 e G4 |
 | Riferimenti | GS-STD-001-13; GS-STD-001-14; GS-DAT-001; GS-QRY-001; GS-RUN-001; ADR-0017; ADR-0019 |
 
@@ -219,6 +219,16 @@ PDF è aperto e verificato come documento bounded e taggato; i CSV sono una copp
 indivisibile con payload canonico e neutralizzazione formula-like. File
 inattesi, path assoluti/traversal, link o manomissioni falliscono chiuso. Il report
 contiene ID e strutture selezionate, mai il testo completo delle fonti per default.
+
+Le letture di verifica dell'export mantengono aperta la radice no-follow e aprono
+manifest e payload rispetto al suo descriptor. Tipo regolare, singolo hard link e
+dimensione sono controllati sul file aperto; la lettura a chunk non trattiene byte
+oltre la dimensione ammessa e verifica nuovamente dimensione e numero di link alla
+fine. Un manifest JSON non decodificabile produce una failure export tipizzata.
+La copertura e i limiti sono registrati in [GS-VER-148](../evidenze/GS-VER-148-letture-export.md):
+inventario, scritture e rename non diventano una transazione filesystem ancorata,
+gli antenati della radice non vengono verificati da questo incremento e non si
+attesta protezione da ogni modifica concorrente, ACL o file provider.
 
 ## 12. Piattaforma, privilegi e supply chain
 

@@ -482,6 +482,11 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Sicurezza
 
+- Verifica export con letture bounded di manifest e payload relative alla radice aperta,
+  controlli sul descriptor e rifiuto di link/file speciali; regressioni su budget,
+  ripristino e preservazione dei dati (GS-VER-148). Formato e pubblicazione invariati;
+  inventario, scritture, ACL e file provider non diventano coperti integralmente.
+
 - Staging delle transazioni creato esclusivamente tramite directory aperte: `mkdirat`
   `0700`, file `openat`/`O_EXCL` `0600` e promozione dallo stesso descriptor. Regressioni
   per collisioni, sostituzioni controllate e permessi ai checkpoint (GS-VER-145).
