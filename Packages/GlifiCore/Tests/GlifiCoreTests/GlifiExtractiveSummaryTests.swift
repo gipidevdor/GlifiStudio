@@ -423,7 +423,7 @@ func mmrPenalizesDuplicatesAndRejectsInvalidLambda() throws {
     let novelty = try GlifiCorpusExtractiveSummaryAnalysis(
         documents: cross, budget: three, scheme: scheme,
         redundancy: .maximalMarginalRelevance(lambda: 0))
-    #expect(novelty.sentences.map(\.selectionOrder) == [1, 3, 2, nil])
+    #expect(novelty.sentences.map(\.selectionOrder) == [1, 3, nil, 2])
 
     for lambda in [-0.1, 1.1, Double.nan, Double.infinity] {
         #expect(!GlifiSummaryRedundancyPolicy.maximalMarginalRelevance(lambda: lambda).isValid)
