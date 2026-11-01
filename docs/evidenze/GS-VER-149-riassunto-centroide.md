@@ -7,7 +7,7 @@
 | Identificatore | GS-VER-149 |
 | Tipo | Evidenza di verifica numerica e di integrazione |
 | Versione | 1.1.0 |
-| Stato | Verifica nativa locale superata; CI della revisione integrata da acquisire |
+| Stato | Verifica nativa locale superata; CI riferita alla head della PR #22 |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
 | Approvazione | GS-DOR-013 (1.1.0); richiesta dell'iniziatore di proseguire lo sviluppo |
@@ -58,7 +58,12 @@ dal workflow `Verifica` sul runner `xcode-27`: l'esito è registrato nella sezio
 
 ## Esecuzione remota
 
-Da registrare al termine del workflow `Verifica` della PR.
+La [PR #22](https://github.com/gipidevdor/GlifiStudio/pull/22) registra gli
+esiti dei quattro controlli sulla head definitiva, con i link ai workflow
+`Verifica` e `App Store preflight`. Il merge richiede entrambi i workflow
+superati, oltre al gate locale: questo documento attesta le esecuzioni locali
+descritte di seguito e non attribuisce alla head corrente esiti di revisioni
+precedenti.
 
 ## Limiti
 
@@ -102,8 +107,8 @@ il rafforzamento package della PR #14 e le letture export della PR #21:
 
 I riallineamenti successivi a `main` `b37c183` e `a8a04dd` modificano soltanto documenti,
 registro modifiche e matrice: codice, test, fixture e configurazione eseguibile
-sono identici alla revisione verificata. Il gate remoto sarà riferito alla
-head definitiva della PR.
+sono identici alla revisione verificata. Il gate remoto è riferito alla
+head definitiva della PR, con esito e link registrati nella sua descrizione.
 
 Xcode segnala il framework CoreSimulator locale non aggiornato: le build su
 destinazioni generiche e gli archivi completano il controllo; questa evidenza
@@ -113,5 +118,5 @@ varianti ancora candidate.
 
 ## Esito
 
-**Verifica nativa locale superata nel perimetro dichiarato; CI della revisione
-integrata da acquisire prima del merge.**
+**Verifica nativa locale superata nel perimetro dichiarato. La PR #22 registra
+separatamente l'esito CI della head definitiva prima del merge.**
