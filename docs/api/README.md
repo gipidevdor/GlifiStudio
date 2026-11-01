@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-API-001 |
 | Tipo | Specifica normativa delle interfacce applicative e headless |
-| Versione | 1.27.0 |
+| Versione | 1.28.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-01 |
@@ -464,3 +464,9 @@ abilita rete, entitlement o bypass del sandbox della build applicativa.
 - [Swift API Design Guidelines](https://www.swift.org/documentation/api-design-guidelines/)
 - [Swift — Library Evolution](https://www.swift.org/blog/library-evolution/)
 - [Swift — ABI Stability and More](https://www.swift.org/blog/abi-stability-and-more/)
+
+## 16. Operatori testuali in memoria
+
+Il contratto [GS-API-002](02-richieste-analitiche.md) definisce request tipizzate,
+digest e comando `text-analysis --request` per gli operatori headless RF-087.
+Il risultato è transitorio e non crea Artifact nel package del progetto.

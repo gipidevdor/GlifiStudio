@@ -1,0 +1,519 @@
+{
+  "schema": "studio.glifi.text-analysis-fixtures",
+  "schemaVersion": 1,
+  "license": "BSD-3-Clause",
+  "provenance": "Synthetic cases authored for native request/CLI parity; no third-party corpus.",
+  "numericTolerance": {
+    "absolute": 1e-12,
+    "relative": 1e-12
+  },
+  "cases": [
+    {
+      "id": "mds-classical",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "mds",
+        "matrix": [
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            0
+          ]
+        ],
+        "dimensions": 1,
+        "method": "classical",
+        "seed": 18446744073709551615,
+        "maximumIterations": 50
+      },
+      "methodIdentifier": "MDS-classical-LAPACK-v1",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "mds-metric",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "mds",
+        "matrix": [
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            0
+          ]
+        ],
+        "dimensions": 1,
+        "method": "metric",
+        "seed": 17,
+        "maximumIterations": 50
+      },
+      "methodIdentifier": "MDS-metric-SMACOF-v1",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "mds-kruskal",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "mds",
+        "matrix": [
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            0
+          ]
+        ],
+        "dimensions": 1,
+        "method": "kruskal",
+        "seed": 17,
+        "maximumIterations": 50
+      },
+      "methodIdentifier": "MDS-nonmetric-secondary-ties-Stress1-v2",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "mds-sammon",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "mds",
+        "matrix": [
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            0
+          ]
+        ],
+        "dimensions": 1,
+        "method": "sammon",
+        "seed": 17,
+        "maximumIterations": 50
+      },
+      "methodIdentifier": "MDS-Sammon-v1",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "som",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "som",
+        "matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "width": 1,
+        "height": 1,
+        "seed": 17,
+        "epochs": 4
+      },
+      "expected": {
+        "prototypes": [
+          [
+            1,
+            2
+          ]
+        ],
+        "assignments": [
+          0,
+          0
+        ]
+      },
+      "methodIdentifier": "SOM-batch-gaussian-rectangular-v1",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "clara",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "clara",
+        "matrix": [
+          [
+            0
+          ],
+          [
+            1
+          ],
+          [
+            9
+          ],
+          [
+            10
+          ]
+        ],
+        "clusterCount": 2,
+        "seed": 17,
+        "sampleSize": 4
+      },
+      "expected": {
+        "objective": 2
+      },
+      "methodIdentifier": "CLARA-PAM-Euclidean-v1",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "classify",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "classify",
+        "documents": [
+          [
+            "rosso"
+          ],
+          [
+            "blu"
+          ]
+        ],
+        "labels": [
+          "A",
+          "B"
+        ],
+        "predictionDocuments": [
+          [
+            "rosso"
+          ],
+          [
+            "ignoto"
+          ]
+        ]
+      },
+      "expected": {
+        "labels": [
+          "A",
+          "A"
+        ],
+        "ignoredTokenCounts": [
+          0,
+          1
+        ]
+      },
+      "methodIdentifier": "MultinomialNaiveBayes-Laplace-v1",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "validate-classifier",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "validate-classifier",
+        "documents": [
+          [
+            "rosso"
+          ],
+          [
+            "rosso",
+            "rosso"
+          ],
+          [
+            "blu"
+          ],
+          [
+            "blu",
+            "blu"
+          ]
+        ],
+        "labels": [
+          "A",
+          "A",
+          "B",
+          "B"
+        ],
+        "folds": 2,
+        "seed": 17
+      },
+      "expected": {
+        "accuracy": 1,
+        "confusion": [
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            2
+          ]
+        ]
+      },
+      "methodIdentifier": "MultinomialNaiveBayes-stratified-CV-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "lda",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "lda",
+        "documents": [
+          [
+            "rosso"
+          ],
+          [
+            "blu"
+          ]
+        ],
+        "topicCount": 1,
+        "seed": 17,
+        "burnIn": 0,
+        "sampleCount": 2,
+        "thinning": 1
+      },
+      "expected": {
+        "topicTerms": [
+          [
+            0.5,
+            0.5
+          ]
+        ]
+      },
+      "methodIdentifier": "LDA-collapsed-Gibbs-predictive-mean-v2",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "coding",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "coding",
+        "units": [
+          {
+            "id": "1",
+            "text": "casa"
+          },
+          {
+            "id": "2",
+            "text": "mare"
+          }
+        ],
+        "rules": "*Casa\ncasa"
+      },
+      "expected": {
+        "values": [
+          [
+            1
+          ],
+          [
+            0
+          ]
+        ],
+        "frequencies": [
+          1
+        ]
+      },
+      "methodIdentifier": "KH-coding-compatible-v2",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "code-crosstab",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "code-crosstab",
+        "units": [
+          {
+            "id": "1",
+            "text": "casa"
+          },
+          {
+            "id": "2",
+            "text": "mare"
+          }
+        ],
+        "rules": "*Casa\ncasa",
+        "groups": [
+          "x",
+          null
+        ]
+      },
+      "expected": {
+        "groups": [
+          "x"
+        ],
+        "counts": [
+          [
+            1
+          ]
+        ],
+        "sizes": [
+          1
+        ],
+        "missingCount": 1
+      },
+      "methodIdentifier": "KH-coding-binary-crosstab-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "dissimilarities",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "dissimilarities",
+        "matrix": [
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "metric": "cosine"
+      },
+      "expected": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "methodIdentifier": "Text-distance-cosine-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "correspondence",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "correspondence",
+        "matrix": [
+          [
+            4,
+            1
+          ],
+          [
+            1,
+            4
+          ]
+        ]
+      },
+      "expected": {
+        "totalInertia": 0.36
+      },
+      "methodIdentifier": "CA-SVD-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "hierarchical",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "hierarchical",
+        "matrix": [
+          [
+            0,
+            1,
+            3
+          ],
+          [
+            1,
+            0,
+            2
+          ],
+          [
+            3,
+            2,
+            0
+          ]
+        ]
+      },
+      "expected": {
+        "heights": [
+          1,
+          2.5
+        ],
+        "sizes": [
+          2,
+          3
+        ]
+      },
+      "methodIdentifier": "HAC-dissimilarities-average-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "network",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "network",
+        "matrix": [
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "labels": [
+          "a",
+          "b"
+        ]
+      },
+      "expected": {
+        "endpoints": [
+          [
+            0,
+            1
+          ]
+        ],
+        "weights": [
+          0.5
+        ]
+      },
+      "methodIdentifier": "Column-Jaccard-network-v1",
+      "validationStatus": "candidate"
+    }
+  ]
+}

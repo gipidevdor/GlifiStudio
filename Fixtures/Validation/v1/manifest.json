@@ -2,7 +2,7 @@
   "schema": "studio.glifi.validation-catalog",
   "schemaVersion": 1,
   "license": "BSD-3-Clause",
-  "updatedAt": "2026-10-03",
+  "updatedAt": "2026-11-01",
   "manifests": [
     {
       "id": "validation-corpus-profile-it-v1",
@@ -68,6 +68,41 @@
       "id": "validation-analysis-execution-v1",
       "path": "Fixtures/Validation/v1/analysis-execution-v1.json",
       "status": "candidate"
+    },
+    {
+      "id": "validation-kh-mds-classical-review-v1",
+      "path": "Fixtures/Validation/v1/kh-mds-classical-review-v1.json",
+      "status": "supported"
+    },
+    {
+      "id": "validation-kh-mds-iterative-review-v1",
+      "path": "Fixtures/Validation/v1/kh-mds-iterative-review-v1.json",
+      "status": "supported"
+    },
+    {
+      "id": "validation-kh-som-batch-review-v1",
+      "path": "Fixtures/Validation/v1/kh-som-batch-review-v1.json",
+      "status": "supported"
+    },
+    {
+      "id": "validation-kh-clara-review-v1",
+      "path": "Fixtures/Validation/v1/kh-clara-review-v1.json",
+      "status": "supported"
+    },
+    {
+      "id": "validation-kh-naive-bayes-review-v1",
+      "path": "Fixtures/Validation/v1/kh-naive-bayes-review-v1.json",
+      "status": "supported"
+    },
+    {
+      "id": "validation-kh-lda-review-v1",
+      "path": "Fixtures/Validation/v1/kh-lda-review-v1.json",
+      "status": "supported"
+    },
+    {
+      "id": "validation-kh-coding-review-v1",
+      "path": "Fixtures/Validation/v1/kh-coding-review-v1.json",
+      "status": "supported"
     }
   ]
 }

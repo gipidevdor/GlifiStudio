@@ -6,11 +6,11 @@
 | --- | --- |
 | Identificatore | GS-DOR-013 |
 | Tipo | Scheda Definition of Ready |
-| Versione | 1.2.0 |
+| Versione | 1.2.1 |
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
-| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice verificata localmente (GS-VER-149), terza slice in verifica (GS-VER-151) |
+| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice verificata localmente e in CI (GS-VER-149), terza slice in verifica (GS-VER-151) |
 | Riferimenti | GS-MET-001-19; GS-MET-001-07; GS-API-001 § 9; RF-042; RQ-025; RQ-027; TV-036; ADR-0013 |
 
 ## Confini e criteri di accettazione
@@ -47,8 +47,8 @@ Controlli statici e formattazione sulla macchina di sviluppo; compilazione, test
 `make verify` sul runner `xcode-27` tramite il workflow `Verifica`. Risultati e limiti
 sono registrati in [GS-VER-146](../evidenze/GS-VER-146-riassunto-estrattivo.md) (prima
 slice, superata sul runner remoto, CMP-096 `verified`) e in
-[GS-VER-149](../evidenze/GS-VER-149-riassunto-centroide.md) (seconda slice, CMP-097
-`implemented` finché il gate remoto non la promuove) e in
+[GS-VER-149](../evidenze/GS-VER-149-riassunto-centroide.md) (seconda slice, gate locale e CI
+su `main` superati, CMP-097 `verified`) e in
 [GS-VER-151](../evidenze/GS-VER-151-riassunto-mmr.md) (terza slice, CMP-106 `implemented`
 finché il gate remoto non la promuove), nella matrice di tracciabilità (RF-042, TV-036). Nessuna nuova decisione architetturale: la variante era
 già candidata in GS-MET-001-19.
@@ -64,3 +64,12 @@ la similarità fra vettori nulli vale zero: una frase con vettore nullo non è p
 resta ineleggibile se il metodo la esclude; frasi identiche in documenti diversi hanno pesi
 diversi e similarità minore di 1, come dichiarato in GS-MET-001-19. Rollback tramite revert; nessuna migrazione dei
 package.
+
+## Integrazione autorizzata in main
+
+La richiesta del 2026-11-01 comprende l'integrazione dei branch remoti e la loro
+eliminazione dopo la verifica. La scheda resta **Ready** per riconciliare MMR con
+la base `380965c`, che contiene gli operatori KH Coder e la verifica di
+CentroidCosine. Le evidenze dei metodi restano distinte; CMP-106 resta implemented
+durante la verifica dell'integrazione. Eseguire il gate nativo e il preflight
+App Store sul risultato, pubblicare il commit e attendere i controlli remoti.

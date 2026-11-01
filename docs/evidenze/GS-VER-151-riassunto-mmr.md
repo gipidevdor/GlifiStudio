@@ -6,8 +6,8 @@
 | --- | --- |
 | Identificatore | GS-VER-151 |
 | Tipo | Evidenza di verifica numerica e di integrazione |
-| Versione | 1.0.0 |
-| Stato | In verifica sul runner remoto |
+| Versione | 1.0.1 |
+| Stato | CI originaria superata; integrazione con main in verifica |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
 | Approvazione | GS-DOR-013 (1.2.0); richiesta dell'iniziatore di proseguire lo sviluppo |
@@ -72,8 +72,18 @@ registrato nella sezione seguente.
 
 ## Esecuzione remota
 
-Da registrare: esito dei job `verify` e `app-store-baseline` sulla head definitiva della PR,
-con i link ai workflow. Fino ad allora CMP-106 resta `implemented`.
+La head originaria `d636c67` della [PR #24](https://github.com/gipidevdor/GlifiStudio/pull/24)
+ha superato `static-quality`, `format-check`,
+[`verify`](https://github.com/gipidevdor/GlifiStudio/actions/runs/41303624450/job/124839624335)
+e [`app-store-baseline`](https://github.com/gipidevdor/GlifiStudio/actions/runs/41303624451/job/124839549884).
+
+L'integrazione con `main` `380965c` conserva gli operatori KH Coder e la
+promozione documentale di CentroidCosine. Le risoluzioni dei conflitti riguardano
+manifest, indice delle evidenze, DoR e tracciabilità; il codice è integrato
+automaticamente. Il gate nativo locale e il preflight App Store sono eseguiti sul
+risultato integrato; gli esiti sulla head pubblicata sono registrati nella PR.
+CMP-106 resta `implemented`: questa integrazione non sostituisce la review
+scientifica né introduce una promozione implicita a supported.
 
 ## Limiti
 

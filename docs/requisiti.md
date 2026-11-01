@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-SRS-001 |
 | Tipo | Software requirements specification |
-| Versione | 0.47.0 |
+| Versione | 0.48.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-01 |
@@ -137,6 +137,7 @@ restano requisiti di evoluzione finché una successiva baseline non le classific
 | RF-084 | Ogni vista scientifica **DEVE** derivare da VisualizationSpec e offrire selezione, lineage, alternativa tabellare accessibile ed export con provenance. | NS-002, NS-019, NS-022; GS-VIZ-001 | Must per viste 0.1 | TV-058 | Viste scientifiche da `GlifiStudioVisualization` con selezione, lineage, tabella equivalente accessibile ed export CSV/JSON con manifest di provenienza (GS-VER-114, GS-VER-124); PDF/PNG e audit su dispositivo aperti |
 | RF-085 | Il sistema **DEVE** produrre report PDF/Markdown ed export CSV/JSON con ExportManifest senza includere fonti complete per default. | NS-016, NS-018; GS-DAT-001, GS-PROD-001 | Must 0.1 | TV-059 | PDF/A-2u, Markdown, CSV e JSON verificati con manifest; preview UI aperta |
 | RF-086 | Il prodotto 0.1 **DEVE** completare il percorso Must e **NON DEVE** esporre come stabili le capacità classificate post-MVP da GS-PROD-001. | NS-008, NS-015; GS-PROD-001 | Must 0.1 | TV-061 | Baseline definita |
+| RF-087 | La libreria GlifiCore, attraverso GlifiKit, **DEVE** offrire le famiglie analitiche KH Coder dichiarate in GS-MET-001-23 con varianti native versionate, errori tipizzati, limiti espliciti e verifica numerica indipendente; le ottimizzazioni **NON DEVONO** alterarne la semantica. | Richiesta esplicita 2026-11-01; ADR-0032 | Libreria candidata | TV-087 | Primitive e facciata implementate; request Swift/CLI riproducibile in GS-API-002 (TV-088); oracoli e benchmark in GS-VER-160; promozione scientifica separata secondo ADR-0031 |
 
 ## 6. Requisiti di qualità
 

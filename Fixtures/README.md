@@ -27,3 +27,9 @@ Le fixture ostili devono essere innocue fuori dal test, chiaramente identificate
 Lo stato `seed` è intenzionale: questi casi non costituiscono ancora corpus gold,
 oracolo indipendente approvato, fuzz corpus o baseline di rilascio. La promozione
 richiede review, digest, split/soglie e implementazioni sotto test secondo GS-VAL.
+
+## Trasporto degli operatori testuali
+
+[TextAnalysis/v1](TextAnalysis/v1/cases.json) contiene 15 casi sintetici condivisi
+fra GlifiKit e CLI. Il gate `check-text-analysis-cli.py` confronta l'intero
+risultato e i golden minimi, con tolleranza 1e-12 assoluta e relativa.

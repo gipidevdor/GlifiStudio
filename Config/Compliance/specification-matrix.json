@@ -2219,7 +2219,72 @@
         "docs/evidenze/GS-VER-149-riassunto-centroide.md"
       ],
       "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-160",
+      "clause": "GS-MET-001-23 § Scopo e copertura",
+      "specification": "docs/metodi-analitici/23-operatori-kh-coder.md",
+      "requirements": [
+        "RF-087",
+        "RQ-025",
+        "RQ-048",
+        "RQ-058",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiExploratoryAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiProbabilisticTextAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiCodingRules.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiTextMatrixOperators.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalytics.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHOperatorTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiKHOperatorFacadeTests.swift",
+        "Scripts/check-oracles.py"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Tests/Oracles/R/kh_operators.R"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-160-operatori-analitici-nativi.md",
+        "docs/evidenze/GS-VER-161-revisione-scientifica-operatori.md",
+        "docs/pianificazione/dor-operatori-analitici.md"
+      ],
+      "gate": "G3",
       "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-162",
+      "clause": "GS-API-002 § Contratto",
+      "specification": "docs/api/02-richieste-analitiche.md",
+      "requirements": [
+        "RF-087",
+        "RQ-058",
+        "RQ-060",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalysisRequest.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalysisJSON.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/CLITextAnalysisInput.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiTextAnalysisTransportTests.swift",
+        "Scripts/check-text-analysis-cli.py"
+      ],
+      "fixtures": [
+        "Fixtures/TextAnalysis/v1/cases.json"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-162-parita-operatori-kit-cli.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
       "blockingReason": null
     },
     {

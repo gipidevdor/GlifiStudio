@@ -8,12 +8,20 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Verificato
 
+- Variante `CentroidCosine-v1` del riassunto estrattivo: gate nativo locale e quattro controlli
+  CI `xcode-27` sulla head definitiva di #22 e su `main` `3fa454f`; GS-VER-149 superata,
+  CMP-097 `verified`.
 - Promozione/staging privato del package e letture bounded degli export:
   gate nativi locali e CI superati sulle revisioni `97527ba` e `1883af9`,
   integrate con #14 e #21; GS-VER-144/145/148 aggiornate senza promuovere
   CMP-095. Conservate le verifiche G3 di QueryAST e riassunto estrattivo.
 
 ### Modificato
+
+- Revisione degli operatori nativi: Stress-1 con secondary ties, probabilità LDA
+  come media dei prodotti, log-probabilità Naive Bayes robuste ai subnormali e
+  riferimenti binari ai codici con parole riservate quotate. Varianti MDS/LDA/codifica
+  versionate e stati per metodo collegati a manifest numerici (GS-VER-161).
 
 - La variante di riassunto a centroide conserva la costante pubblica del metodo
   predefinito e decodifica anche nei messaggi GlifiKit i payload precedenti senza
@@ -27,6 +35,14 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   progetto e valori iniziali localizzati in italiano e inglese (GS-VER-150).
 
 ### Aggiunto
+
+- Request analitica Swift/JSON versionata e CLI `text-analysis --request` condivisa
+  con GlifiKit: digest canonico, default espliciti, limiti, failure private e
+  fixture di parità per tutte le nuove operazioni (GS-API-002, GS-VER-162).
+
+- Operatori analitici nativi candidati in GlifiCore/GlifiKit: MDS classica/Kruskal/Sammon,
+  SOM batch, CLARA, Naive Bayes, LDA Gibbs e regole automatiche KH Coder, con matrici
+  condivise per parole e codici, oracoli indipendenti e benchmark Release (ADR-0032, GS-VER-160).
 
 - Ingresso `query --ast <query.json>` in alternativa a `--text`: QueryAST v1 condiviso
   tra Core, GlifiKit e CLI, limiti durante lettura/decodifica, rifiuto di file non

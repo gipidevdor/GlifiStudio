@@ -2,7 +2,7 @@
   "schema": "studio.glifi.fixture-catalog",
   "schemaVersion": 1,
   "license": "BSD-3-Clause",
-  "updatedAt": "2026-09-20",
+  "updatedAt": "2026-11-01",
   "collections": [
     {"id": "it-token-v1-seed", "path": "Fixtures/Linguistics/it-v1/manifest.json", "status": "seed-not-gold"},
     {"id": "it-token-gold-v0", "path": "Fixtures/Linguistics/it-gold-v0/manifest.json", "status": "gold-v0-token"},
@@ -12,6 +12,7 @@
     {"id": "adversarial-v1-descriptors", "path": "Fixtures/Adversarial/v1/manifest.json", "status": "safe-descriptors-only"},
     {"id": "query-v1-seed", "path": "Fixtures/Query/v1/manifest.json", "status": "seed-v1-only"},
     {"id": "markdown-v1-seed", "path": "Fixtures/Markdown/v1/manifest.json", "status": "seed-v1-only"},
-    {"id": "persistence-scenarios", "path": "Fixtures/Persistence/manifest.json", "status": "package-scenarios"}
+    {"id": "persistence-scenarios", "path": "Fixtures/Persistence/manifest.json", "status": "package-scenarios"},
+    {"id": "text-analysis-v1", "path": "Fixtures/TextAnalysis/v1/cases.json", "status": "synthetic-parity-cases"}
   ]
 }

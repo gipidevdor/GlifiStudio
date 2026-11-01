@@ -8,7 +8,7 @@
     "CentroidCosine-v1"
   ],
   "status": "candidate",
-  "statusReason": "Verifica dinamica eseguita dal runner remoto per SentenceTFIDFMean-v1 (GS-VER-146); CentroidCosine-v1 verificato localmente (GS-VER-149); ridondanza MMR-v1 in verifica (GS-VER-151). Promozione a supported dopo la review delle evidenze.",
+  "statusReason": "Verifica dinamica eseguita dal runner remoto per SentenceTFIDFMean-v1 (GS-VER-146) e, con gate nativo locale, per CentroidCosine-v1 (GS-VER-149); ridondanza MMR-v1 in verifica di integrazione (GS-VER-151). Promozione a supported dopo la review delle evidenze.",
   "license": "BSD-3-Clause",
   "toolchain": {
     "swiftLanguageMode": "6",
