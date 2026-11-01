@@ -89,6 +89,10 @@ quality:
 test:
 	./Scripts/test.sh
 
+.PHONY: test-macos
+test-macos:
+	./Scripts/test.sh --macos-app
+
 build-macos:
 	xcodebuild build -workspace GlifiStudio.xcworkspace -scheme GlifiStudio-macOS -configuration Debug -destination 'generic/platform=macOS' CODE_SIGNING_ALLOWED=NO
 

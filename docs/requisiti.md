@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-SRS-001 |
 | Tipo | Software requirements specification |
-| Versione | 0.48.0 |
+| Versione | 0.49.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-01 |
@@ -51,7 +51,7 @@ restano requisiti di evoluzione finché una successiva baseline non le classific
 
 | ID | Requisito | Rationale/fonte | Priorità | Verifica | Stato |
 | --- | --- | --- | --- | --- | --- |
-| RF-001 | Il sistema **DEVE** creare, salvare, chiudere e riaprire un progetto persistente. | NS-004; A1 | Da assegnare | TV-001 | Package `.glifi` + DocumentGroup/`studio.glifi.project` introdotti; recovery/file provider aperti |
+| RF-001 | Il sistema **DEVE** creare, salvare, chiudere e riaprire un progetto persistente. | NS-004; A1 | Da assegnare | TV-001 | Package `.glifi` + DocumentGroup/`studio.glifi.project`; creazione non distruttiva e sessione conservata su apertura fallita nei test macOS GS-VER-163; recovery/file provider aperti |
 | RF-002 | Il sistema **DEVE** importare file di testo semplice UTF-8 valido, con o senza BOM, nel perimetro 0.1. | NS-001; A1; GS-DAT-001 | Must 0.1 | TV-002, TV-051 | Slice bounded incorporata e verificata; streaming aperto |
 | RF-003 | Il sistema **DEVE** importare documenti Markdown preservando contenuto e provenienza. | NS-001; A1 | Da assegnare | TV-002 | Estrazione/SpanMap bounded verificati; document model CommonMark completo aperto |
 | RF-004 | Il sistema **DEVE** estrarre il testo digitale da un PDF e associarlo almeno alla pagina di origine. | NS-001, NS-002; A1 | Da assegnare | TV-002, TV-006 | Baseline candidata |

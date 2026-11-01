@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.87.1 |
+| Versione | 0.87.2 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
@@ -85,6 +85,7 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 
 | Evidenza | Verifiche coperte | Esito | Limite |
 | --- | --- | --- | --- |
+| [GS-VER-163](evidenze/GS-VER-163-integrita-documenti-macos.md) | TV-001, TV-058, TV-071 | Otto test del modello macOS superati; inizializzazione non distruttiva, attacco idempotente e sessione conservata dopo apertura fallita | GUI, sandbox reale, autosave e file provider aperti |
 | [GS-VER-150](evidenze/GS-VER-150-interfaccia-essenziale.md) | TV-015, TV-017–TV-018, TV-039, TV-044, TV-048, TV-058 | Branch UI: make verify, 246 test e oracoli superati | Audit assistivi, contrasto, pseudo-lingua e dispositivi fisici aperti |
 | [GS-VER-001](evidenze/GS-VER-001-bootstrap-ambiente.md) | TV-011 preliminare; TV-013 build baseline | Superato | Non copre flussi funzionali, firma o dispositivi fisici |
 | [GS-VER-002](evidenze/GS-VER-002-baseline-linguistica-italiana.md) | TV-014 configurazione iniziale | Superato | Non copre ancora la qualità delle analisi linguistiche italiane |

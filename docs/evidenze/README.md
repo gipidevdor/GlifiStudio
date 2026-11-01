@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.14.1 |
+| Versione | 1.14.2 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
@@ -178,3 +178,5 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 - [GS-VER-161 — Revisione scientifica degli operatori](GS-VER-161-revisione-scientifica-operatori.md) — Formule, oracoli e manifest per variante
 
 - [GS-VER-162 — Parità degli operatori GlifiKit/CLI](GS-VER-162-parita-operatori-kit-cli.md) — Gate completo superato, 15 fixture e 51 controlli CLI
+
+- [GS-VER-163 — Integrità dei documenti macOS](GS-VER-163-integrita-documenti-macos.md) — Suite del modello macOS; integrazione in verifica

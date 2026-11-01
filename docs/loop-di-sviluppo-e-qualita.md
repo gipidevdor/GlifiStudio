@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DEV-002 |
 | Tipo | Guida controllata del loop di sviluppo |
-| Versione | 1.3.0 |
+| Versione | 1.4.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-20 |
+| Ultima modifica | 2026-11-01 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -25,6 +25,7 @@ sostituire il gate completo `make verify`.
 | --- | --- | --- |
 | `make format` | Prima di commitare sorgenti Swift | Riscrive `Apps` e `Packages` secondo `.swift-format` |
 | `make lint` / `make format-check` | Dopo `format` o in revisione | Controlla lo stile senza modificare i file |
+| `make test-macos` | Iterazione sul ciclo documentale dell'app macOS | Compila app e modello reale dal workspace ed esegue i test Swift Testing senza app host |
 | `make check-swift-dialect` | Sempre nel loop e nel gate | Verifica language mode, concurrency, regole e CI |
 | `make quality-static` | Iterazione senza toolchain Swift | Docs, compliance, segreti, dialetto e baseline statiche |
 | `make quality` | Iterazione locale rapida | `quality-static` + formattazione, senza build Xcode |

@@ -1,6 +1,20 @@
 {
   "sourceLanguage" : "it",
   "strings" : {
+    "action.save-project" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Save project…" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Salva progetto…" } }
+      }
+    },
+    "home.next.save-project" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose where to save the project, then import your sources." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Scegli dove salvare il progetto, poi importa le fonti." } }
+      }
+    },
     "action.analyze-corpus" : {
       "extractionState" : "manual",
       "localizations" : {

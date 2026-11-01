@@ -1147,12 +1147,12 @@ assert final_info["result"]["project"]["artifactCount"] == 19
 assert final_info["result"]["project"]["investigationEventCount"] == 3
 PY
 
-xcodebuild build \
+xcodebuild test \
     -quiet \
     -workspace GlifiStudio.xcworkspace \
     -scheme GlifiStudio-macOS \
     -configuration Debug \
-    -destination "generic/platform=macOS" \
+    -destination "platform=macOS" \
     -derivedDataPath "$build_cache_directory/macOS" \
     CODE_SIGNING_ALLOWED=NO \
     COMPILATION_CACHE_ENABLE_CACHING=NO

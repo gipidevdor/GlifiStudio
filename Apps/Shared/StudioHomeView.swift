@@ -5,6 +5,10 @@ import GlifiKit
 import SwiftUI
 import UniformTypeIdentifiers
 
+#if os(macOS)
+    import AppKit
+#endif
+
 private enum StudioSection: String, CaseIterable, Identifiable {
     case overview
     case project
@@ -50,6 +54,10 @@ struct StudioHomeView: View {
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.locale) private var locale
+    #if os(macOS)
+        @Environment(\.newDocument) private var newDocument
+        @Environment(\.openDocument) private var openDocument
+    #endif
 
     @State private var model = StudioHomeModel()
     @State private var selection: StudioSection? = .overview
@@ -108,7 +116,7 @@ struct StudioHomeView: View {
                 Menu("sidebar.project", systemImage: "folder") {
                     Button("action.new-project", systemImage: "folder.badge.plus") {
                         selection = .project
-                        Task { await model.createProject() }
+                        createProjectDocument()
                     }
                     Button("action.open-project", systemImage: "folder") {
                         isProjectImporterPresented = true
@@ -136,7 +144,7 @@ struct StudioHomeView: View {
         }
         .fileImporter(
             isPresented: $isProjectImporterPresented,
-            allowedContentTypes: [.folder, .package],
+            allowedContentTypes: [.glifiProject],
             allowsMultipleSelection: false
         ) { result in
             guard case let .success(urls) = result, let url = urls.first else {
@@ -147,7 +155,7 @@ struct StudioHomeView: View {
                 return
             }
             selection = .project
-            Task { await model.openProject(at: url) }
+            openProjectDocument(at: url)
         }
         .fileImporter(
             isPresented: $isExportFolderPresented,
@@ -176,6 +184,28 @@ struct StudioHomeView: View {
     private func sidebarRow(_ section: StudioSection) -> some View {
         Label(section.titleKey, systemImage: section.systemImage)
             .tag(section)
+    }
+
+    private func createProjectDocument() {
+        #if os(macOS)
+            newDocument(GlifiStudioDocument())
+        #else
+            Task { await model.createProject() }
+        #endif
+    }
+
+    private func openProjectDocument(at url: URL) {
+        #if os(macOS)
+            Task {
+                do {
+                    try await openDocument(at: url)
+                } catch {
+                    model.reportOpenFailure()
+                }
+            }
+        #else
+            Task { await model.openProject(at: url) }
+        #endif
     }
 
     private var overview: some View {
@@ -261,18 +291,35 @@ struct StudioHomeView: View {
     }
 
     private var nextStepDescription: LocalizedStringKey {
+        if needsInitialDocumentSave { return "home.next.save-project" }
         if model.snapshot == nil { return "home.next.project" }
         if !model.mustPathHasSources { return "home.next.sources" }
         if model.mustPathHasFindings { return "home.next.findings" }
         return "home.next.investigation"
     }
 
+    private var needsInitialDocumentSave: Bool {
+        #if os(macOS)
+            needsPackageInitialization && documentURL == nil
+        #else
+            false
+        #endif
+    }
+
     @ViewBuilder
     private var overviewActions: some View {
-        if model.snapshot == nil {
+        if needsInitialDocumentSave {
+            #if os(macOS)
+                Button("action.save-project", systemImage: "square.and.arrow.down") {
+                    NSApp.sendAction(#selector(NSDocument.save(_:)), to: nil, from: nil)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(model.isBusy)
+            #endif
+        } else if model.snapshot == nil {
             Button("action.new-project", systemImage: "folder.badge.plus") {
                 selection = .project
-                Task { await model.createProject() }
+                createProjectDocument()
             }
             .buttonStyle(.borderedProminent)
             .disabled(model.isBusy)
@@ -354,7 +401,7 @@ struct StudioHomeView: View {
             }
             Section {
                 Button("action.new-project") {
-                    Task { await model.createProject() }
+                    createProjectDocument()
                 }
                 .disabled(model.isBusy)
                 Button("action.open-project") {
@@ -381,7 +428,7 @@ struct StudioHomeView: View {
             } actions: {
                 Button("action.new-project") {
                     selection = .project
-                    Task { await model.createProject() }
+                    createProjectDocument()
                 }
                 .disabled(model.isBusy)
                 .buttonStyle(.borderedProminent)

@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.2 |
+| Versione | 1.6.3 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
@@ -35,3 +35,5 @@ accettato` prima del primo cambiamento implementativo.
 - [GS-DOR-160 — Operatori analitici delle famiglie KH Coder](dor-operatori-analitici.md) — Ambito autorizzato
 
 - [GS-DOR-162 — Richieste analitiche riproducibili](dor-richieste-analitiche.md) — Ready
+
+- [GS-DOR-163 — Integrità dei documenti macOS](dor-documenti-macos.md) — Ready

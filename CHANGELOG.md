@@ -473,6 +473,10 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Corretto
 
+- L'app macOS usa il ciclo documentale nativo per Nuovo/Apri e propone il salvataggio del nuovo
+  progetto prima dell'importazione. L'inizializzazione non cancella package esistenti e un'apertura
+  fallita conserva la sessione precedente; test di regressione in `make test-macos` (GS-VER-163).
+
 - Errori di permesso `EACCES`/`EPERM` in `query --ast` classificati come
   `authorizationDenied` con retry dopo intervento utente, non backoff; exit code
   6 e diagnostica senza percorsi invariati. Test CLI su file non leggibile e

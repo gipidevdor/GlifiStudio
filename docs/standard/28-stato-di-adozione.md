@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-STD-001-28 |
 | Tipo | Capitolo normativo |
-| Versione | 1.12.0 |
+| Versione | 1.13.0 |
 | Stato | Attivo |
 | Responsabile | Amministratore del repository, provvisorio |
-| Ultima modifica | 2026-09-18 |
+| Ultima modifica | 2026-11-01 |
 | Approvazione | Registro operativo; baseline normativa ancora proposta |
 | Documento padre | [GS-STD-001](../standard-di-progetto.md) |
 
@@ -23,6 +23,7 @@
 | Tracciabilità | Matrice machine-readable; DoR operativa (GS-DOR-001, CMP-014) | Aggiungere scheda DoR a ogni nuova vertical slice |
 | Controllo versione | Primo commit pubblicato su `main` nel remote privato canonico | Applicare protezioni server-side quando disponibili |
 | Codice e test | Baseline eseguibile macOS/iPadOS, package condiviso, facciata diagnostica e policy runtime coperte da test | Evolvere per vertical slice guidate dai requisiti |
+| Ciclo documentale macOS | Target Swift Testing del modello reale, senza app host; creazione non distruttiva e conservazione della sessione su apertura fallita (GS-VER-163) | Verifica con `make test-macos` e nel gate; GUI, file coordination e autorizzazioni sandbox reali restano da validare |
 | Toolchain Swift | Apple Swift 6.4, Swift 6 language mode, SwiftPM tools 6.4 e strict concurrency verificati | Rivalutare solo con una toolchain Xcode 27 compatibile o nuova ADR |
 | Sicurezza e privacy | GS-SEC-001 completo per asset, trust boundary e THR-001–THR-020; zero telemetria e logging tipizzato | Assegnare responsabile ed eseguire corpus avversario, fuzz, kill test e audit build |
 | API e CLI | GS-API-001 pre-1.0 definisce lifecycle, async, failure, stream, exit status e compatibilità; solo status è implementato | Implementare vertical slice e contract test senza promettere ABI prematura |
