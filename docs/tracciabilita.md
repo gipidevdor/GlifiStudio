@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.86.2 |
+| Versione | 0.86.3 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-31 |
+| Ultima modifica | 2026-11-01 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -85,6 +85,7 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 
 | Evidenza | Verifiche coperte | Esito | Limite |
 | --- | --- | --- | --- |
+| [GS-VER-150](evidenze/GS-VER-150-interfaccia-essenziale.md) | TV-015, TV-017–TV-018, TV-039, TV-044, TV-048, TV-058 | Branch UI: make verify, 246 test e oracoli superati | Audit assistivi, contrasto, pseudo-lingua e dispositivi fisici aperti |
 | [GS-VER-001](evidenze/GS-VER-001-bootstrap-ambiente.md) | TV-011 preliminare; TV-013 build baseline | Superato | Non copre flussi funzionali, firma o dispositivi fisici |
 | [GS-VER-002](evidenze/GS-VER-002-baseline-linguistica-italiana.md) | TV-014 configurazione iniziale | Superato | Non copre ancora la qualità delle analisi linguistiche italiane |
 | [GS-VER-003](evidenze/GS-VER-003-interfaccia-internazionalizzabile.md) | TV-015 catalogo e build `it`/`en` | Superato | Test UI del cambio lingua richiesti quando esisteranno flussi interattivi |
