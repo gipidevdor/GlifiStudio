@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VER-144 |
 | Tipo | Evidenza di verifica |
-| Versione | 1.2.0 |
+| Versione | 1.2.1 |
 | Stato | Parziale; CI integrata superata, confini residui aperti |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-31 |
+| Ultima modifica | 2026-11-01 |
 | Approvazione | Review pendente; non promuove requisiti o clausole |
 | Riferimenti | RF-043, RQ-044, RQ-057, TV-060, CMP-095, GS-DOR-011 |
 
@@ -113,3 +113,19 @@ Non si garantisce identità della radice fra operazioni separate, né persistenz
 della collocazione nominale di una directory già aperta che venga spostata. Mutazioni dei
 contenuti da altri writer non cooperanti, ACL, file provider, durabilità ai power loss e
 recovery completa richiedono prove ulteriori. CMP-095 resta `blocked`; TV-060 aperto.
+
+## Verifica locale dell'integrazione del 2026-11-01
+
+Riallineamento a main `8d24062`, preservando GS-VER-150, GS-DOR-020 e lo stato
+`blocked` di CMP-095. Nessuna modifica Swift rispetto alla patch già verificata,
+a parte il contenuto già presente su main.
+
+Sul runtime Apple della sessione corrente sono stati **eseguiti e superati**
+255 test Swift, 111 righe di oracoli indipendenti, la validazione veraPDF di due
+PDF/A-2u, 22 checkpoint kill/recovery e i controlli CLI/QueryAST. È quindi
+superato il precedente limite locale che impediva il caricamento dei test.
+
+Build e preflight di packaging proseguono sullo stesso contenuto applicativo;
+il loro esito finale e la CI dell'head aggiornata sono registrati nella
+[PR #14](https://github.com/gipidevdor/GlifiStudio/pull/14) prima del merge.
+Le osservazioni precedenti restano attribuite alle rispettive revisioni.
