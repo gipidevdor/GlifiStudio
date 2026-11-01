@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.13.0 |
+| Versione | 1.13.1 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-24 |
+| Ultima modifica | 2026-11-01 |
 | Approvazione | Non applicabile; registro operativo |
 
 Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un esito positivo prova soltanto l'ambito dichiarato e non sostituisce l'approvazione dei requisiti o della baseline.
@@ -166,3 +166,4 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 - [GS-VER-138 — Corpus gold italiano su prosa reale](GS-VER-138-gold-italiano-su-prosa-reale.md) — Superato localmente
 - [GS-VER-139 — Cache di build riusata e limitata](GS-VER-139-cache-di-build-limitata.md) — Superato localmente
 - [GS-VER-141 — Prima esecuzione remota dei workflow su runner Xcode 27](GS-VER-141-prima-ci-remota-verde.md) — Superato su runner remoto; controlli opzionali saltati
+- [GS-VER-150 — Interfaccia essenziale e presentazione progressiva](GS-VER-150-interfaccia-essenziale.md) — Branch UI: make verify e oracoli superati; audit assistivi e visivi aperti

@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.specification-compliance-matrix",
   "schemaVersion": 1,
-  "updatedAt": "2026-10-24",
+  "updatedAt": "2026-11-01",
   "requiredRequirementCoverage": [
     "RQ-057",
     "RQ-058",
@@ -2154,10 +2154,43 @@
       "blockingReason": null
     },
     {
+      "id": "CMP-105",
+      "clause": "GS-UI-001 § Gerarchia essenziale",
+      "specification": "docs/specifiche-di-design/07-information-architecture-e-interazione.md",
+      "requirements": [
+        "RF-072",
+        "RF-073",
+        "RQ-030",
+        "RQ-032",
+        "RQ-038"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeView.swift",
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/StudioCodingView.swift",
+        "Apps/Shared/StudioVisualizationView.swift",
+        "Apps/Shared/Resources/Localizable.xcstrings"
+      ],
+      "tests": [
+        "Scripts/check-localization.py",
+        "Scripts/check-apple-baseline.py",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-150-interfaccia-essenziale.md"
+      ],
+      "gate": "G4",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
       "id": "CMP-097",
       "clause": "GS-MET-001-19 § Variante implementata: CentroidCosine-v1",
       "specification": "docs/metodi-analitici/19-riassunto-estrattivo.md",
-      "requirements": ["RF-042"],
+      "requirements": [
+        "RF-042"
+      ],
       "code": [
         "Packages/GlifiCore/Sources/GlifiCore/GlifiExtractiveSummaryAnalysis.swift",
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
@@ -2167,12 +2200,17 @@
       ],
       "tests": [
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExtractiveSummaryTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiExtractiveSummaryCompatibilityTests.swift",
         "Packages/GlifiCore/Tests/Oracles/Python/summary.py",
         "Packages/GlifiCore/Tests/Oracles/expected.txt",
         "Scripts/verify.sh"
       ],
-      "fixtures": ["Fixtures/Validation/v1/extractive-summary-v1.json"],
-      "evidence": ["docs/evidenze/GS-VER-149-riassunto-centroide.md"],
+      "fixtures": [
+        "Fixtures/Validation/v1/extractive-summary-v1.json"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-149-riassunto-centroide.md"
+      ],
       "gate": "G3",
       "status": "implemented",
       "blockingReason": null

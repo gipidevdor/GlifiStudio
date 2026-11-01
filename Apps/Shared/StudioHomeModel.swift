@@ -43,7 +43,9 @@ enum StudioIntentOption: String, CaseIterable, Identifiable, Sendable {
     var usesComparisonGroups: Bool {
         switch self {
         case .compareObjects, .findSimilar, .reviewCompletely: true
-        default: false
+        case .understandCollection, .discoverContents, .exploreRelationships, .identifyThemes,
+            .searchSources:
+            false
         }
     }
 }
@@ -98,8 +100,8 @@ final class StudioHomeModel {
     private(set) var editorialSelectedFindingIDs: Set<String> = []
     private(set) var lastProjectBookmark: Data?
 
-    var projectNameDraft = "Indagine"
-    var questionDraft = "Che cosa contiene questa raccolta?"
+    var projectNameDraft = String(localized: "project.default-name")
+    var questionDraft = String(localized: "investigation.default-question")
     var selectedIntent: StudioIntentOption = .understandCollection
     var queryDraft = ""
     var selectedTargetRevisionIDs: Set<String> = []

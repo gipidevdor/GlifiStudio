@@ -87,7 +87,7 @@ public struct GlifiStudioSummarySentence: Codable, Equatable, Sendable {
     public let endUTF8: Int
     /// Lexical tokens included in the score.
     public let tokenCount: Int
-    /// `SentenceTFIDFMean-v1` score.
+    /// Score of the declared sentence-scoring method.
     public let score: Double
     /// One-based rank by descending score, ties broken by source position.
     public let rank: Int
@@ -106,6 +106,21 @@ public struct GlifiStudioSummarySentence: Codable, Equatable, Sendable {
         rank = value.rank
         isEligible = value.isEligible
         isSelected = value.isSelected
+    }
+
+    /// Decodes earlier presentation payloads using their lexical-token eligibility policy.
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        sourceRevisionID = try container.decode(String.self, forKey: .sourceRevisionID)
+        sentenceIndex = try container.decode(Int.self, forKey: .sentenceIndex)
+        startUTF8 = try container.decode(Int.self, forKey: .startUTF8)
+        endUTF8 = try container.decode(Int.self, forKey: .endUTF8)
+        tokenCount = try container.decode(Int.self, forKey: .tokenCount)
+        score = try container.decode(Double.self, forKey: .score)
+        rank = try container.decode(Int.self, forKey: .rank)
+        isEligible =
+            try container.decodeIfPresent(Bool.self, forKey: .isEligible) ?? (tokenCount > 0)
+        isSelected = try container.decode(Bool.self, forKey: .isSelected)
     }
 }
 

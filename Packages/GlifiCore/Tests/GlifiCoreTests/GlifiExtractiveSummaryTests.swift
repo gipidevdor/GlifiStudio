@@ -42,6 +42,7 @@ private func close(_ value: Double, _ reference: Double) -> Bool {
 
 @Test("SentenceTFIDFMean-v1 coincide con l'oracolo Python: punteggi, rank e selezioni")
 func extractiveSummaryMatchesPython() throws {
+    #expect(GlifiCorpusExtractiveSummaryAnalysis.methodIdentifier == "SentenceTFIDFMean-v1")
     let documents = try oracleDocuments()
     let scheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme
     let bySentences = try GlifiCorpusExtractiveSummaryAnalysis(

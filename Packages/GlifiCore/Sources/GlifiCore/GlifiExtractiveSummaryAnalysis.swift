@@ -135,6 +135,8 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
     public static let analysisIdentifier = "corpus-extractive-summary-v1"
     /// Default scoring method.
     public static let standardMethod = GlifiSummaryScoringMethod.sentenceTFIDFMean
+    /// Backward-compatible identity of the default scoring method.
+    public static let methodIdentifier = standardMethod.rawValue
     /// Sublinear TF, smoothed IDF, no row normalization: defined for one document too.
     public static let standardScheme = GlifiTermWeightingScheme(
         termFrequency: .sublinear,

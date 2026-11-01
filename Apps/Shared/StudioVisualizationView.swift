@@ -47,7 +47,7 @@ struct StudioVisualizationView: View {
                 }
             }
             table
-            HStack {
+            Menu("action.export-view", systemImage: "square.and.arrow.up") {
                 Button("action.export-view-csv", systemImage: "tablecells") {
                     exportDocument = StudioTextExportDocument(
                         text: GlifiStudioVisualizationBuilder.csv(visualization),
@@ -67,8 +67,6 @@ struct StudioVisualizationView: View {
                     }
                 }
             }
-            .buttonStyle(.bordered)
-            .font(.caption)
         }
         .fileExporter(
             isPresented: Binding(
@@ -267,11 +265,6 @@ struct StudioVisualizationView: View {
                     Text(axisTitle(axis))
                 }
             }
-            LabeledContent("visual.method") {
-                Text(visualization.methodIdentifier)
-                    .font(.caption.monospaced())
-                    .textSelection(.enabled)
-            }
             LabeledContent("visual.observations") {
                 Text(
                     "\(visualization.visibleObservationCount.formatted()) / "
@@ -279,14 +272,21 @@ struct StudioVisualizationView: View {
                 )
                 .monospacedDigit()
             }
-            if let layout = visualization.layoutIdentifier {
-                LabeledContent("visual.layout") {
-                    Text(layout).font(.caption2.monospaced())
+            DisclosureGroup("visual.method") {
+                LabeledContent("visual.method") {
+                    Text(visualization.methodIdentifier)
+                        .font(.caption.monospaced())
+                        .textSelection(.enabled)
                 }
-            }
-            if let reduction = visualization.reductionIdentifier {
-                LabeledContent("visual.reduction") {
-                    Text(reduction).font(.caption2.monospaced())
+                if let layout = visualization.layoutIdentifier {
+                    LabeledContent("visual.layout") {
+                        Text(layout).font(.caption2.monospaced())
+                    }
+                }
+                if let reduction = visualization.reductionIdentifier {
+                    LabeledContent("visual.reduction") {
+                        Text(reduction).font(.caption2.monospaced())
+                    }
                 }
             }
             if !visualization.excludedLabels.isEmpty {
@@ -321,16 +321,30 @@ struct StudioVisualizationView: View {
                     GridRow {
                         ForEach(Array(row.cells.enumerated()), id: \.offset) { _, cell in
                             cellText(cell)
+                                .frame(minHeight: 44, alignment: .leading)
                         }
                     }
                     .font(.caption)
+                    .fontWeight(row.id == selectedMarkID ? .semibold : .regular)
                     .padding(.vertical, 1)
                     .background(row.id == selectedMarkID ? Color.accentColor.opacity(0.15) : .clear)
                     .contentShape(Rectangle())
                     .onTapGesture {
                         if let mark = marksByID[row.id] { onSelect(mark) }
                     }
+                    .focusable(marksByID[row.id] != nil)
+                    .onKeyPress(.return) {
+                        guard let mark = marksByID[row.id] else { return .ignored }
+                        onSelect(mark)
+                        return .handled
+                    }
+                    .onKeyPress(.space) {
+                        guard let mark = marksByID[row.id] else { return .ignored }
+                        onSelect(mark)
+                        return .handled
+                    }
                     .accessibilityElement(children: .combine)
+                    .accessibilityAddTraits(marksByID[row.id] != nil ? .isButton : [])
                     .accessibilityAddTraits(row.id == selectedMarkID ? .isSelected : [])
                     .accessibilityAction(named: "action.open-mark-source") {
                         if let mark = marksByID[row.id] { onSelect(mark) }

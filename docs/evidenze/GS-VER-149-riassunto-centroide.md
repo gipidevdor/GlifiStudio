@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VER-149 |
 | Tipo | Evidenza di verifica numerica e di integrazione |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | In verifica sul runner remoto |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-16 |
+| Ultima modifica | 2026-11-01 |
 | Approvazione | GS-DOR-013 (1.1.0); richiesta dell'iniziatore di proseguire lo sviluppo |
 | Riferimenti | GS-DOR-013; GS-MET-001-19 § Variante implementata: `CentroidCosine-v1`; GS-MET-001-07; RF-042; TV-036; CMP-097; GS-VER-146 |
 
@@ -72,3 +72,24 @@ Da registrare al termine del workflow `Verifica` della PR.
 ## Esito
 
 **In verifica: controlli statici superati; test e contract test in esecuzione sul runner remoto.**
+
+## Compatibilità nel riallineamento a main del 2026-11-01
+
+La revisione d'integrazione conserva la costante pubblica statica
+`GlifiCorpusExtractiveSummaryAnalysis.methodIdentifier` come identificatore del
+metodo predefinito, oltre al nuovo `standardMethod`. I chiamanti precedenti non
+richiedono una modifica al sorgente.
+
+Anche `GlifiStudioSummarySentence` decodifica i payload precedenti privi di
+`isEligible` con la regola lessicale originale; un valore esplicito corrente
+prevale sul ripiego. Il test
+`GlifiExtractiveSummaryCompatibilityTests.swift` copre frasi con e senza token,
+il valore esplicito false e il round-trip. Il test Core conserva anche la
+compatibilità di compilazione della costante statica. Esiti nativi della
+revisione integrata da acquisire prima del merge.
+
+Riprodotto il difetto senza il decoder GlifiKit: i due casi legacy falliscono
+con `DecodingError.keyNotFound(isEligible)`. Con il decoder corretto entrambi
+passano. I sei test Core del riassunto passano, inclusa la costante statica
+compatibile; l'oracolo indipendente riproduce 115 righe e il collegamento ai
+test Swift. Il gate completo della revisione integrata resta da eseguire.
