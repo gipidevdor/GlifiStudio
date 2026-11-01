@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.86.7 |
+| Versione | 0.86.8 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
@@ -174,12 +174,12 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 | [GS-VER-138](evidenze/GS-VER-138-gold-italiano-su-prosa-reale.md) | Slice TV-013; GS-LNG-001, GS-MET-001-18, ADR-0030 | Superato localmente: gold su 434 token di prosa italiana di pubblico dominio, annotazione indipendente in accordo pieno con il prodotto | Un solo autore ottocentesco; dialogo, lemma, POS e NER esclusi |
 | [GS-VER-139](evidenze/GS-VER-139-cache-di-build-limitata.md) | Slice TV-063; GS-DEV-002 § Cache di build | Superato localmente: picco su disco da ~37 GiB a 1,8 GiB, seconda esecuzione a 303 s contro 773 s, arresto anticipato se lo spazio non basta | Tetto prudenziale non ottimizzato; misure su una sola macchina |
 | [GS-VER-141](evidenze/GS-VER-141-prima-ci-remota-verde.md) | TV-011, TV-013, TV-049; GS-STD-001-20, GS-REP-005, GS-WVR-001…004 | Superato su runner remoto: `verify` verde su `xcode-27` con 257 test, 22 checkpoint di recovery e build macOS/iPadOS; deroghe budget in rientro | Rscript e veraPDF assenti sul runner; dispositivi, firma e TestFlight non coperti; non conformità 2026-09-22→2026-10-03 registrata |
-| [GS-VER-149](evidenze/GS-VER-149-riassunto-centroide.md) | Seconda slice TV-036; RF-042, GS-MET-001-19, CMP-097 | In verifica sul runner remoto: oracolo Python indipendente esteso al centroide, test su vettori nulli e compatibilità dei payload, contract test CLI `--method`; controlli statici superati | Metodo di punteggio come parametro del descrittore; nessuna valutazione ROUGE o umana |
+| [GS-VER-149](evidenze/GS-VER-149-riassunto-centroide.md) | Seconda slice TV-036; RF-042, GS-MET-001-19, CMP-097 | Gate nativo locale superato: 261 test Core e 26 Kit, 115 righe di oracoli Python/R, compatibilità API/payload e CLI; CI della head integrata da acquisire | Metodo di punteggio come parametro del descrittore; nessuna valutazione ROUGE o umana; CMP-097 implemented |
 | [GS-VER-146](evidenze/GS-VER-146-riassunto-estrattivo.md) | Slice TV-036; RF-042, GS-MET-001-19, CMP-096 | Superato su runner remoto (#16, `19ca4c7`): oracolo Python indipendente, test di persistenza e contract test CLI aggiunti; controlli statici superati | Una sola famiglia; nessuna valutazione ROUGE o umana; Rscript assente sul runner |
 | [GS-VER-142](evidenze/GS-VER-142-letture-directory-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: letture descriptor-relative, regressioni su directory simboliche e sostituzioni controllate; statici, lint e compilazione Apple superati | Test compilati, non eseguiti su host 26.5.2; scritture, SQLite, ACL e file provider esclusi dalla garanzia |
-| [GS-VER-148](evidenze/GS-VER-148-letture-export.md) | Slice TV-060, TV-074; RQ-044, RQ-061, CMP-095 | Superato su runner remoto (#21, `158db49`): letture export bounded/no-follow, regressioni, gate completo e packaging; CMP-095 resta blocked | Preflight locale bloccato; inventario path-based e non bounded; nessuna protezione delle scritture, degli antenati o attestazione ACL/file provider; R e veraPDF saltati |
-| [GS-VER-144](evidenze/GS-VER-144-pubblicazione-oggetti-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: pubblicazione descriptor-relative ed esclusiva, regressioni su cinque tipi di oggetto e collisioni; CI integrata verde su `4bd5dde` | Manifest replacement, cleanup e SQLite esclusi; gate da ripetere dopo il riallineamento documentale |
-| [GS-VER-145](evidenze/GS-VER-145-staging-transazioni-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: staging privato, esclusivo e descriptor-relative; regressioni eseguite su macOS 27, CI verde su `4bd5dde` | Manifest replacement, cleanup, SQLite e identità globale della radice esclusi; gate da ripetere dopo il riallineamento documentale |
+| [GS-VER-148](evidenze/GS-VER-148-letture-export.md) | Slice TV-060, TV-074; RQ-044, RQ-061, CMP-095 | Gate locale e CI superati (#21, `1883af9`), inclusi oracoli Python/R e veraPDF locali; letture export bounded/no-follow, regressioni e packaging; CMP-095 resta blocked | Inventario path-based e non bounded; nessuna protezione delle scritture, degli antenati o attestazione ACL/file provider |
+| [GS-VER-144](evidenze/GS-VER-144-pubblicazione-oggetti-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: pubblicazione descriptor-relative ed esclusiva, regressioni su cinque tipi di oggetto e collisioni; gate locale e CI verdi su `97527ba`, integrata con #14 | Manifest replacement, cleanup e SQLite esclusi; CMP-095 resta blocked |
+| [GS-VER-145](evidenze/GS-VER-145-staging-transazioni-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: staging privato, esclusivo e descriptor-relative; gate locale e CI verdi su `97527ba`, integrata con #14 | Manifest replacement, cleanup, SQLite e identità globale della radice esclusi; CMP-095 resta blocked |
 
 ## Catalogo delle verifiche pianificate
 

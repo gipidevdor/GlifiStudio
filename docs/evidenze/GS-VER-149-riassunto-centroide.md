@@ -100,7 +100,7 @@ il rafforzamento package della PR #14 e le letture export della PR #21:
 - contratti CLI, compresi entrambi i metodi del riassunto e QueryAST;
 - build Debug/Release, analisi statica e archivi unsigned macOS/iPadOS validi.
 
-Il riallineamento successivo a `main` `b37c183` modifica soltanto documenti,
+I riallineamenti successivi a `main` `b37c183` e `a8a04dd` modificano soltanto documenti,
 registro modifiche e matrice: codice, test, fixture e configurazione eseguibile
 sono identici alla revisione verificata. Il gate remoto sarà riferito alla
 head definitiva della PR.

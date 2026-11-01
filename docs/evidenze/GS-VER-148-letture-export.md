@@ -6,11 +6,11 @@
 | --- | --- |
 | Identificatore | GS-VER-148 |
 | Tipo | Evidenza di rafforzamento della verifica export |
-| Versione | 1.2.1 |
-| Stato | Superato su runner remoto nel perimetro dichiarato; preflight locale bloccato |
+| Versione | 1.3.0 |
+| Stato | Verifiche locale e remota superate nel perimetro dichiarato |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
-| Approvazione | Richiesta di prosecuzione dell'iniziatore; review pendente |
+| Approvazione | Autorevisione registrata nella PR #21; nessuna promozione di CMP-095 |
 | Riferimenti | GS-DOR-004 S4; GS-SEC-001 §§ 7–8, 11; RQ-044; RQ-061; TV-060; TV-074; CMP-095; ADR-0022; ADR-0023 |
 
 ## Ambito
@@ -79,7 +79,7 @@ sono verdi: `static-quality`, `format-check`, `verify` e `app-store-baseline`.
   sul runner. La CI verde non attesta questi controlli opzionali.
 
 Il risultato remoto non sostituisce il preflight **locale** richiesto da
-`CONTRIBUTING.md`. La PR resta in bozza: nessuna deroga vigente, review o merge
+`CONTRIBUTING.md`. Al 2026-10-31 la PR resta in bozza: nessuna deroga vigente, review o merge
 autorizzati da questa evidenza. La compilazione sul vecchio host resta distinta
 dall'esecuzione sul runner macOS 27.
 
@@ -94,7 +94,8 @@ atomico dell'intero bundle contro writer non cooperanti; manifest e digest non s
 ACL, mount point, file provider, power-loss, preview UI e audit su dispositivo restano esclusi.
 CMP-095 resta `blocked`; questa evidenza non promuove clausole e non chiude TV-060.
 La conformità già registrata per ExportManifest v1 è invariata. Nessuna dipendenza o modifica ai gate.
-Rollback tramite revert, senza migrazione di dati; PR in bozza fino al preflight richiesto.
+Rollback tramite revert, senza migrazione di dati. Il riscontro seguente registra
+il superamento del preflight richiesto.
 
 ## Riscontro locale d'integrazione del 2026-11-01
 
@@ -104,12 +105,18 @@ UI e degli interventi precedenti e mantenendo CMP-095 `blocked`.
 I sei test mirati dell'export passano, compresi i casi su manifest/payload non
 sicuri, dimensioni ai confini dei chunk, sostituzione della radice e ripristino.
 Nella verifica combinata sono eseguiti e superati 258 test Core e 25 test Kit,
-la validazione di due PDF/A-2u, 22 checkpoint kill/recovery e i controlli CLI.
+111 righe di oracoli Python/R, la validazione di due PDF/A-2u,
+22 checkpoint kill/recovery e i controlli CLI.
 Il precedente limite dell'host che impediva l'esecuzione dei test non riguarda
 questa sessione.
 
 Il riallineamento dopo lo squash della #14 cambia soltanto documenti e matrice;
-i sorgenti applicativi e di test coincidono con quelli in verifica. Build e
-packaging proseguono sul medesimo contenuto. L'esito conclusivo del preflight
-locale e i quattro controlli CI dell'head aggiornata sono riportati nella
-[PR #21](https://github.com/gipidevdor/GlifiStudio/pull/21) prima del merge.
+i sorgenti applicativi e di test coincidono con quelli verificati.
+`make verify-app-store` locale completato: build Debug/Release, analisi statica
+e archivi unsigned macOS/iPadOS validi.
+
+Sulla head `1883af9` sono verdi tutti i quattro check remoti
+([Verifica](https://github.com/gipidevdor/GlifiStudio/actions/runs/41298556226),
+[App Store preflight](https://github.com/gipidevdor/GlifiStudio/actions/runs/41298556214)).
+La [PR #21](https://github.com/gipidevdor/GlifiStudio/pull/21) è integrata in
+`main` con squash `a8a04dd`, dopo l'autorevisione e senza deroghe ai gate.

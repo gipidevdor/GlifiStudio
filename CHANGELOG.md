@@ -8,10 +8,10 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Verificato
 
-- Promozione e staging privato del package: CI macOS 27 superata sulla revisione
-  `4bd5dde`, incluse regressioni e recovery; GS-VER-144/145 aggiornate senza
-  promuovere CMP-095. Il riallineamento documentale conserva le verifiche G3
-  QueryAST e riassunto estrattivo e richiede nuovamente i gate prima del merge.
+- Promozione/staging privato del package e letture bounded degli export:
+  gate nativi locali e CI superati sulle revisioni `97527ba` e `1883af9`,
+  integrate con #14 e #21; GS-VER-144/145/148 aggiornate senza promuovere
+  CMP-095. Conservate le verifiche G3 di QueryAST e riassunto estrattivo.
 
 ### Modificato
 
