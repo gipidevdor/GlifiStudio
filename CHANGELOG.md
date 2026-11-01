@@ -6,6 +6,15 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Modificato
+
+- Interfaccia più essenziale: prossima azione contestuale nella panoramica, sidebar
+  orientata alla ricerca, menu di progetto e dettagli tecnici espandibili.
+- Risultati adattivi alle finestre strette e al testo di accessibilità, selezioni
+  di gruppo riconoscibili senza colore e tabelle attivabili da tastiera.
+- Conclusioni con argomenti risolti, stato vuoto con creazione effettiva del
+  progetto e valori iniziali localizzati in italiano e inglese (GS-VER-150).
+
 ### Aggiunto
 
 - Ingresso `query --ast <query.json>` in alternativa a `--text`: QueryAST v1 condiviso

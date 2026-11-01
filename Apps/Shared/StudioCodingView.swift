@@ -43,6 +43,7 @@ struct StudioCodingView: View {
             }
         }
         .formStyle(.grouped)
+        .disabled(model.isBusy || model.snapshot == nil)
         .navigationTitle("sidebar.coding")
         .task { await model.loadQualitativeState() }
     }
