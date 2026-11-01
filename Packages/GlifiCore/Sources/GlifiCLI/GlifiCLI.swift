@@ -39,6 +39,19 @@ enum GlifiCLI {
                         command: request.command.name, result: StatusResult(status: status))
                 )
             }
+        case let .textAnalysis(url):
+            let result = try await GlifiStudioTextAnalytics.executeTextAnalysis(
+                json: CLITextAnalysisInput.read(at: url))
+            switch request.format {
+            case .text:
+                let header =
+                    "Analisi completata · " + result.operation + " · " + result.methodIdentifier
+                    + "\n"
+                try FileHandle.standardOutput.write(contentsOf: Data(header.utf8))
+                try writeJSON(result)
+            case .json:
+                try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
+            }
         case let .projectCreate(projectURL):
             let session = try await service.createProject(at: projectURL)
             let snapshot = try await session.snapshot()
@@ -1138,6 +1151,7 @@ private struct CLIRequest {
           glifi [--format text|json] [--no-progress] status
           glifi [--format text|json] [--no-progress] project create <progetto.glifi>
           glifi [--format text|json] [--no-progress] project info <progetto.glifi>
+          glifi [--format text|json] [--no-progress] text-analysis --request <richiesta.json>
           glifi [--format text|json] [--no-progress] project validate <progetto.glifi>
           glifi [--format text|json] [--no-progress] import <progetto.glifi> <fonte.txt>...
           glifi [--format text|json] [--no-progress] query <progetto.glifi> (--text <query> | --ast <query.json>)
@@ -1217,6 +1231,9 @@ private struct CLIRequest {
 
         if remaining == ["status"] {
             command = .status
+        } else if remaining.count == 3, remaining[0] == "text-analysis", remaining[1] == "--request"
+        {
+            command = .textAnalysis(URL(fileURLWithPath: remaining[2]).standardizedFileURL)
         } else if remaining.count == 3, remaining[0] == "project", remaining[1] == "create" {
             command = .projectCreate(URL(fileURLWithPath: remaining[2]).standardizedFileURL)
         } else if remaining.count == 3, remaining[0] == "project", remaining[1] == "info" {
@@ -1828,6 +1845,7 @@ private enum CLIQueryInput {
 
 private enum CLICommand {
     case status
+    case textAnalysis(URL)
     case projectCreate(URL)
     case projectInfo(URL)
     case projectValidate(URL)
@@ -1871,6 +1889,7 @@ private enum CLICommand {
     var name: String {
         switch self {
         case .status: "status"
+        case .textAnalysis: "text-analysis"
         case .projectCreate: "project.create"
         case .projectInfo: "project.info"
         case .projectValidate: "project.validate"

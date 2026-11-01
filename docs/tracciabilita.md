@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.86.8 |
+| Versione | 0.86.9 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
@@ -349,3 +349,13 @@ nessuna promozione a requisito verificato.
   ogni feature deve aggiungere le proprie righe al gate Definition of Ready.
 - TV-023–TV-025 richiedono una build funzionalmente completa, identità Apple, URL pubblici e attività nei sistemi Apple.
 - La matrice deve essere aggiornata insieme a ogni modifica dei requisiti o dell'architettura.
+
+## Operatori analitici nativi delle famiglie KH Coder
+
+| Verifica | Requisiti | Codice e prova | Evidenza |
+| --- | --- | --- | --- |
+| TV-087 | RF-087; RF-033; RF-037; RF-038; RF-043; RQ-025; RQ-048; RQ-058; RQ-063 | GlifiExploratoryAnalysis, GlifiProbabilisticTextAnalysis, GlifiCodingRules, GlifiTextMatrixOperators, GlifiStudioTextAnalytics; test KHOperator e oracolo R; benchmark Release | [GS-VER-160](evidenze/GS-VER-160-operatori-analitici-nativi.md), GS-MET-001-23, ADR-0032, GS-DOR-160; nuove API candidate |
+
+| [GS-VER-161](evidenze/GS-VER-161-revisione-scientifica-operatori.md) | RF-087; TV-087; ADR-0031 | Correzioni Stress-1/LDA/codifica, oracoli R/Python e sette ValidationManifest per nove varianti; review tecnica automatica, V6 esterno aperto |
+
+| TV-088 | RF-087; RQ-058; RQ-060; RQ-063 | Request analitica tipizzata e dispatcher GlifiKit, CLI text-analysis, fixture condivise e test di input ostili | [GS-VER-162](evidenze/GS-VER-162-parita-operatori-kit-cli.md), GS-API-002, GS-DOR-162; parità e gate completo verificati localmente |

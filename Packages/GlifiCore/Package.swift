@@ -19,6 +19,7 @@ let package = Package(
     targets: [
         .target(
             name: "GlifiCore",
+            cSettings: [.define("ACCELERATE_NEW_LAPACK")],
             linkerSettings: [.linkedLibrary("sqlite3")]
         ),
         .target(name: "GlifiKit", dependencies: ["GlifiCore"]),
