@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.13.8 |
+| Versione | 1.13.9 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
@@ -171,3 +171,9 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 - [GS-VER-139 — Cache di build riusata e limitata](GS-VER-139-cache-di-build-limitata.md) — Superato localmente
 - [GS-VER-141 — Prima esecuzione remota dei workflow su runner Xcode 27](GS-VER-141-prima-ci-remota-verde.md) — Superato su runner remoto; controlli opzionali saltati
 - [GS-VER-150 — Interfaccia essenziale e presentazione progressiva](GS-VER-150-interfaccia-essenziale.md) — Branch UI: make verify e oracoli superati; audit assistivi e visivi aperti
+
+- [GS-VER-160 — Operatori analitici nativi](GS-VER-160-operatori-analitici-nativi.md) — Verifica numerica e benchmark Release
+
+- [GS-VER-161 — Revisione scientifica degli operatori](GS-VER-161-revisione-scientifica-operatori.md) — Formule, oracoli e manifest per variante
+
+- [GS-VER-162 — Parità degli operatori GlifiKit/CLI](GS-VER-162-parita-operatori-kit-cli.md) — Gate completo superato, 15 fixture e 51 controlli CLI

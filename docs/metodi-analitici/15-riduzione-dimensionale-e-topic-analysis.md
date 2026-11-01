@@ -75,3 +75,9 @@ preservate.
 - Deerwester et al., [Indexing by Latent Semantic Analysis](https://doi.org/10.1002/%28SICI%291097-4571%28199009%2941%3A6%3C391%3A%3AAID-ASI1%3E3.0.CO%3B2-9), 1990.
 - Lee e Seung, [Learning the parts of objects by non-negative matrix factorization](https://doi.org/10.1038/44565), 1999.
 - Blei, Ng e Jordan, [Latent Dirichlet Allocation](https://www.jmlr.org/papers/v3/blei03a.html), 2003.
+
+## Varianti native candidate
+
+MDS e LDA sono implementate nella libreria con i contratti, i limiti e lo stato
+candidate di [GS-MET-001-23](23-operatori-kh-coder.md). La promozione scientifica
+resta separata dall'implementazione.

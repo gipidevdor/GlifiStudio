@@ -25,3 +25,12 @@ configurazione e un controllo di correttezza per ciascuna misura:
 Nessuna soglia è ancora vincolante: i valori osservati sono una linea di base da confermare su
 hardware di riferimento in G4 (ADR-0024). I risultati non vengono versionati; le evidenze
 GS-VER-109 e GS-VER-134 riportano le prime osservazioni.
+
+## Operatori delle famiglie KH Coder (GS-VER-160)
+
+Usare `swift run -c release --package-path Packages/GlifiCore GlifiBenchmark --text-operators`
+per il confronto scalare/vDSP e le misure MDS, SOM, classificazione e LDA. Il rapporto
+riporta checksum/diagnostica, hardware, sistema, stato termico, warm-up e cinque
+campioni. L'equivalenza della SOM aggregata è verificata contro la formula diretta;
+il campionatore LDA contro l'integrazione esatta su corpus minimo. Nessuna soglia
+è introdotta senza baseline e hardware di riferimento.
