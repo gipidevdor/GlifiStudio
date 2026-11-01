@@ -2219,7 +2219,7 @@
         "docs/evidenze/GS-VER-149-riassunto-centroide.md"
       ],
       "gate": "G3",
-      "status": "implemented",
+      "status": "verified",
       "blockingReason": null
     },
     {

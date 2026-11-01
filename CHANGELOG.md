@@ -8,6 +8,9 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Verificato
 
+- Variante `CentroidCosine-v1` del riassunto estrattivo: gate nativo locale e quattro controlli
+  CI `xcode-27` sulla head definitiva di #22 e su `main` `3fa454f`; GS-VER-149 superata,
+  CMP-097 `verified`.
 - Promozione/staging privato del package e letture bounded degli export:
   gate nativi locali e CI superati sulle revisioni `97527ba` e `1883af9`,
   integrate con #14 e #21; GS-VER-144/145/148 aggiornate senza promuovere
