@@ -6,6 +6,13 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Verificato
+
+- Promozione e staging privato del package: CI macOS 27 superata sulla revisione
+  `4bd5dde`, incluse regressioni e recovery; GS-VER-144/145 aggiornate senza
+  promuovere CMP-095. Il riallineamento documentale conserva le verifiche G3
+  QueryAST e riassunto estrattivo e richiede nuovamente i gate prima del merge.
+
 ### Modificato
 
 - La variante di riassunto a centroide conserva la costante pubblica del metodo
@@ -482,6 +489,23 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   di `ripgrep`, con fallback `grep` fail-closed.
 
 ### Sicurezza
+
+- Verifica export con letture bounded di manifest e payload relative alla radice aperta,
+  controlli sul descriptor e rifiuto di link/file speciali; regressioni su budget,
+  ripristino e preservazione dei dati (GS-VER-148). Formato e pubblicazione invariati;
+  inventario, scritture, ACL e file provider non diventano coperti integralmente.
+
+- Staging delle transazioni creato esclusivamente tramite directory aperte: `mkdirat`
+  `0700`, file `openat`/`O_EXCL` `0600` e promozione dallo stesso descriptor. Regressioni
+  per collisioni, sostituzioni controllate e permessi ai checkpoint (GS-VER-145).
+  Formato e commit point invariati; accessi path-based al manifest candidato, cleanup,
+  SQLite e identità globale della radice restano fuori dall'incremento.
+
+- Pubblicazione di fonti, Artifact, descriptor ed eventi tramite directory aperte: creazione
+  privata `mkdirat`, attraversamento nofollow e rinomina esclusiva `renameatx_np` senza
+  sovrascrivere oggetti esistenti. Convalida bounded sul descriptor di destinazione e
+  regressioni su collisioni e directory sostituite (GS-VER-144). Nessun cambio al formato;
+  staging iniziale, manifest replacement, cleanup e SQLite restano fuori dall'incremento.
 
 - Letture di manifest e oggetti del package relative a directory aperte: rifiuto dei link
   intermedi e dei percorsi anomali, mantenimento dei controlli bounded sul file finale e

@@ -58,7 +58,9 @@ func queryASTInputBoundsEveryRecursiveEdge() throws {
         try expectASTFailure(
             data, limits: astInputLimits(depth: 0), code: "query.depth-limit-exceeded")
     }
-    try expectASTFailure(deepNotChainJSON(depth: 200), code: "query.depth-limit-exceeded")
+    let deep = deepNotChainJSON(depth: 200)
+    #expect(deep.count < GlifiQueryLimits.standard.maximumQueryByteCount)
+    try expectASTFailure(deep, code: "query.depth-limit-exceeded")
     let wide = GlifiQueryAST(root: .or(Array(repeating: leaf, count: 1_024)))
     try expectASTFailure(wide.canonicalData(), code: "query.node-limit-exceeded")
 }
