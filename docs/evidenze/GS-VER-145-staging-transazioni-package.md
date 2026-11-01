@@ -6,11 +6,11 @@
 | --- | --- |
 | Identificatore | GS-VER-145 |
 | Tipo | Evidenza di verifica |
-| Versione | 1.1.1 |
+| Versione | 1.1.2 |
 | Stato | Parziale; CI macOS 27 superata, confini residui aperti |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
-| Approvazione | Review pendente; non promuove requisiti o clausole |
+| Approvazione | Autorevisione registrata nella PR #14; non promuove requisiti o clausole |
 | Riferimenti | RF-043, RQ-044, RQ-057, TV-060, CMP-095, GS-DOR-011 |
 
 ## Ambito
@@ -103,11 +103,14 @@ Riallineamento a main `8d24062`, preservando GS-VER-150, GS-DOR-020 e lo stato
 a parte il contenuto già presente su main.
 
 Sul runtime Apple della sessione corrente sono stati **eseguiti e superati**
-255 test Swift, 111 righe di oracoli indipendenti, la validazione veraPDF di due
+255 test GlifiCore e 25 test GlifiKit, 111 righe di oracoli indipendenti, la validazione veraPDF di due
 PDF/A-2u, 22 checkpoint kill/recovery e i controlli CLI/QueryAST. È quindi
 superato il precedente limite locale che impediva il caricamento dei test.
 
-Build e preflight di packaging proseguono sullo stesso contenuto applicativo;
-il loro esito finale e la CI dell'head aggiornata sono registrati nella
-[PR #14](https://github.com/gipidevdor/GlifiStudio/pull/14) prima del merge.
+`make verify-app-store` locale completato: build Debug/Release, analisi statica
+e archivi unsigned macOS/iPadOS validi. Sulla head `97527ba` sono verdi tutti i
+quattro check remoti ([Verifica](https://github.com/gipidevdor/GlifiStudio/actions/runs/41296834879),
+[App Store preflight](https://github.com/gipidevdor/GlifiStudio/actions/runs/41296834679)).
+La [PR #14](https://github.com/gipidevdor/GlifiStudio/pull/14) è integrata in
+`main` con squash `b37c183`, dopo l'autorevisione e senza deroghe ai gate.
 Le osservazioni precedenti restano attribuite alle rispettive revisioni.
