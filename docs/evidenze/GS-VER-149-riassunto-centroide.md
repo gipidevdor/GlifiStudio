@@ -6,8 +6,8 @@
 | --- | --- |
 | Identificatore | GS-VER-149 |
 | Tipo | Evidenza di verifica numerica e di integrazione |
-| Versione | 1.0.1 |
-| Stato | In verifica sul runner remoto |
+| Versione | 1.1.0 |
+| Stato | Verifica nativa locale superata; CI della revisione integrata da acquisire |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
 | Approvazione | GS-DOR-013 (1.1.0); richiesta dell'iniziatore di proseguire lo sviluppo |
@@ -69,10 +69,6 @@ Da registrare al termine del workflow `Verifica` della PR.
 - Il runner remoto non dispone di Rscript: `make check-oracles` è eseguito solo dal gate locale
   (GS-VER-141).
 
-## Esito
-
-**In verifica: controlli statici superati; test e contract test in esecuzione sul runner remoto.**
-
 ## Compatibilità nel riallineamento a main del 2026-11-01
 
 La revisione d'integrazione conserva la costante pubblica statica
@@ -85,11 +81,37 @@ Anche `GlifiStudioSummarySentence` decodifica i payload precedenti privi di
 prevale sul ripiego. Il test
 `GlifiExtractiveSummaryCompatibilityTests.swift` copre frasi con e senza token,
 il valore esplicito false e il round-trip. Il test Core conserva anche la
-compatibilità di compilazione della costante statica. Esiti nativi della
-revisione integrata da acquisire prima del merge.
+compatibilità di compilazione della costante statica.
 
 Riprodotto il difetto senza il decoder GlifiKit: i due casi legacy falliscono
 con `DecodingError.keyNotFound(isEligible)`. Con il decoder corretto entrambi
 passano. I sei test Core del riassunto passano, inclusa la costante statica
 compatibile; l'oracolo indipendente riproduce 115 righe e il collegamento ai
-test Swift. Il gate completo della revisione integrata resta da eseguire.
+test Swift.
+
+## Verifica nativa locale del 2026-11-01
+
+`make verify-app-store` completato sulla revisione `0425fe5`, comprendente anche
+il rafforzamento package della PR #14 e le letture export della PR #21:
+
+- 261 test GlifiCore e 26 test GlifiKit superati, compresi i casi legacy;
+- 115 righe di oracoli indipendenti Python/R e collegamento ai test Swift;
+- 2 PDF/A-2u validi e 22 checkpoint process-kill recovery;
+- contratti CLI, compresi entrambi i metodi del riassunto e QueryAST;
+- build Debug/Release, analisi statica e archivi unsigned macOS/iPadOS validi.
+
+Il riallineamento successivo a `main` `b37c183` modifica soltanto documenti,
+registro modifiche e matrice: codice, test, fixture e configurazione eseguibile
+sono identici alla revisione verificata. Il gate remoto sarà riferito alla
+head definitiva della PR.
+
+Xcode segnala il framework CoreSimulator locale non aggiornato: le build su
+destinazioni generiche e gli archivi completano il controllo; questa evidenza
+non attesta test interattivi nel simulatore o una verifica di accessibilità.
+La verifica non promuove CMP-097 oltre `implemented` e non convalida le
+varianti ancora candidate.
+
+## Esito
+
+**Verifica nativa locale superata nel perimetro dichiarato; CI della revisione
+integrata da acquisire prima del merge.**
