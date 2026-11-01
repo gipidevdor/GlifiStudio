@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.specification-compliance-matrix",
   "schemaVersion": 1,
-  "updatedAt": "2026-09-20",
+  "updatedAt": "2026-11-01",
   "requiredRequirementCoverage": [
     "RQ-057",
     "RQ-058",
@@ -2095,6 +2095,127 @@
       "gate": "G3",
       "status": "verified",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-095",
+      "clause": "GS-APL-005 § Creazione e apertura documentale non distruttiva",
+      "specification": "docs/apple/05-documenti-e-accesso-ai-file.md",
+      "requirements": [
+        "RF-001",
+        "RQ-043"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/StudioHomeView.swift"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+        "Scripts/test.sh",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-140-integrita-documenti-macos.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-105",
+      "clause": "GS-UI-001 § Gerarchia essenziale",
+      "specification": "docs/specifiche-di-design/07-information-architecture-e-interazione.md",
+      "requirements": [
+        "RF-072",
+        "RF-073",
+        "RQ-030",
+        "RQ-032",
+        "RQ-038"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeView.swift",
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/StudioCodingView.swift",
+        "Apps/Shared/StudioVisualizationView.swift",
+        "Apps/Shared/Resources/Localizable.xcstrings"
+      ],
+      "tests": [
+        "Scripts/check-localization.py",
+        "Scripts/check-apple-baseline.py",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-150-interfaccia-essenziale.md"
+      ],
+      "gate": "G4",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-160",
+      "clause": "GS-MET-001-23 § Scopo e copertura",
+      "specification": "docs/metodi-analitici/23-operatori-kh-coder.md",
+      "requirements": [
+        "RF-087",
+        "RQ-025",
+        "RQ-048",
+        "RQ-058",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiExploratoryAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiProbabilisticTextAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiCodingRules.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiTextMatrixOperators.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalytics.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHOperatorTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiKHOperatorFacadeTests.swift",
+        "Scripts/check-oracles.py"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Tests/Oracles/R/kh_operators.R"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-160-operatori-analitici-nativi.md",
+        "docs/evidenze/GS-VER-161-revisione-scientifica-operatori.md",
+        "docs/pianificazione/dor-operatori-analitici.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-162",
+      "clause": "GS-API-002 § Contratto",
+      "specification": "docs/api/02-richieste-analitiche.md",
+      "requirements": [
+        "RF-087",
+        "RQ-058",
+        "RQ-060",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalysisRequest.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalysisJSON.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/CLITextAnalysisInput.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiTextAnalysisTransportTests.swift",
+        "Scripts/check-text-analysis-cli.py"
+      ],
+      "fixtures": [
+        "Fixtures/TextAnalysis/v1/cases.json"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-162-parita-operatori-kit-cli.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
     }
-  ]
+]
 }

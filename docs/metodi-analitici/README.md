@@ -9,7 +9,7 @@
 | Versione | 1.1.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-01 |
 | Approvazione | Perimetro scientifico richiesto dall'iniziatore del progetto; baseline da revisionare |
 | Riferimenti | GS-VIS-001; GS-SRS-001; ADR-0013 |
 
@@ -102,3 +102,5 @@ Una nuova variante **DEVE** ricevere una versione logica distinta quando può ca
 il risultato a parità di descrittore. Alias commerciali o nomi di libreria non
 costituiscono versioni scientifiche. Un metodo sperimentale **PUÒ** essere esposto
 soltanto se marcato come tale e sottoposto agli stessi obblighi di provenienza.
+
+- [GS-MET-001-23 — Operatori delle famiglie KH Coder](23-operatori-kh-coder.md)

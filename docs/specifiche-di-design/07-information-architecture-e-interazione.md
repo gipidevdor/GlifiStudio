@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-UI-001 |
 | Tipo | Specifica di design dell'interfaccia |
-| Versione | 1.1.0 |
+| Versione | 1.2.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-01 |
 | Approvazione | Baseline proposta; prototipi e studi richiesti |
 | Riferimenti | GS-UX-001; GS-DOM-001; GS-ANA-001; Apple HIG; ADR-0006; ADR-0016 |
 
@@ -112,6 +112,37 @@ Spaziatura e tipografia usano una scala piccola basata sulle metriche di sistema
 Dynamic Type; non si fissano dimensioni che taglino localizzazioni. Reduce Motion,
 Differentiate Without Color, Increase Contrast e dimensioni di testo sono
 rispettati. Grafici hanno alternativa tabellare GS-VIZ.
+
+## Gerarchia essenziale
+
+La panoramica **DEVE** rendere evidente la prossima azione utile rispetto allo
+stato effettivo del progetto: crearlo o aprirlo, importare testi, formulare una
+domanda oppure esplorare i risultati. Una sola azione riceve enfasi primaria;
+riapertura e azioni secondarie restano disponibili quando applicabili.
+
+Il percorso di ricerca precede gli strumenti trasversali nella sidebar. La
+toolbar privilegia l'importazione contestuale; le azioni sul progetto sono
+raccolte in un menu di sistema. Il riepilogo del percorso è espandibile.
+
+Conteggi, conclusioni, limiti e copertura restano leggibili al primo livello.
+Identificatori, digest, richieste serializzate e contratti di implementazione
+sono raggiungibili tramite disclosure native nello stesso contesto. Il dettaglio
+non può occultare un caveat necessario all'interpretazione.
+
+La barra di stato appare durante il lavoro o in presenza di un errore. Il
+messaggio di errore resta visibile; la causa strutturata è espandibile. Lo stato
+di motore pronto non occupa stabilmente il contenuto del progetto.
+
+Con spazio insufficiente o testo di accessibilità, l'elenco dei risultati e il
+relativo dettaglio **DEVONO** usare un percorso sequenziale; i pulsanti si
+dispongono in verticale prima di troncare le etichette. Una selezione di gruppo
+**DEVE** essere riconoscibile anche da simbolo e valore accessibile. Le tabelle
+interattive **DEVONO** offrire attivazione da tastiera oltre a touch e VoiceOver.
+
+Queste regole applicano GS-UX-001 e GS-STD-001-29 senza cambiare metodi, lineage,
+formato persistente o capacità analitiche. L'evidenza di implementazione e i
+limiti della verifica sono registrati in
+[GS-VER-150](../evidenze/GS-VER-150-interfaccia-essenziale.md).
 
 ## Pattern di stato
 

@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.6.0 |
+| Versione | 1.6.1 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-20 |
+| Ultima modifica | 2026-11-01 |
 | Approvazione | Non applicabile; registro operativo |
 
 Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un esito positivo prova soltanto l'ambito dichiarato e non sostituisce l'approvazione dei requisiti o della baseline.
@@ -153,3 +153,12 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 - [GS-VER-137 — Linea di base della tokenizzazione italiana](GS-VER-137-linea-di-base-tokenizzazione.md) — Superato localmente
 - [GS-VER-138 — Corpus gold italiano su prosa reale](GS-VER-138-gold-italiano-su-prosa-reale.md) — Superato localmente
 - [GS-VER-139 — Cache di build riusata e limitata](GS-VER-139-cache-di-build-limitata.md) — Superato localmente
+- [GS-VER-140 — Integrità dei documenti macOS](GS-VER-140-integrita-documenti-macos.md) — Otto test macOS superati; gate globale non superato sulle modifiche concorrenti
+
+- [GS-VER-150 — Interfaccia essenziale e presentazione progressiva](GS-VER-150-interfaccia-essenziale.md) — Build macOS/iPadOS e controlli mirati superati; verify completo e audit aperti
+
+- [GS-VER-160 — Operatori analitici nativi](GS-VER-160-operatori-analitici-nativi.md) — Verifica numerica e benchmark Release
+
+- [GS-VER-161 — Revisione scientifica degli operatori](GS-VER-161-revisione-scientifica-operatori.md) — Formule, oracoli e manifest per variante
+
+- [GS-VER-162 — Parità degli operatori GlifiKit/CLI](GS-VER-162-parita-operatori-kit-cli.md) — Gate completo superato, 15 fixture e 51 controlli CLI

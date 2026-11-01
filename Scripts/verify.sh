@@ -46,10 +46,20 @@ Scripts/check-swift-dialect.py
 Scripts/format.sh --check
 pdfa_output_directory="$temporary_build_directory/PDFA"
 mkdir -p "$pdfa_output_directory"
+text_analysis_parity_directory="$temporary_build_directory/TextAnalysisParity"
+GLIFI_TEXT_ANALYSIS_PARITY_DIRECTORY="$text_analysis_parity_directory" \
 GLIFI_ORACLE_PDF_DIRECTORY="$pdfa_output_directory" swift test \
     --package-path Packages/GlifiCore \
     --scratch-path "$build_cache_directory/SwiftPM"
 Scripts/check-pdfa.py --directory "$pdfa_output_directory"
+swift build --package-path Packages/GlifiCore \
+    --scratch-path "$build_cache_directory/SwiftPM" --product GlifiCLI
+text_analysis_binary_directory="$(swift build \
+    --package-path Packages/GlifiCore \
+    --scratch-path "$build_cache_directory/SwiftPM" --show-bin-path)"
+python3 Scripts/check-text-analysis-cli.py \
+    --binary "$text_analysis_binary_directory/GlifiCLI" \
+    --parity-directory "$text_analysis_parity_directory"
 
 Scripts/check-recovery-kill.sh "$build_cache_directory/SwiftPM"
 
@@ -1063,12 +1073,12 @@ assert final_info["result"]["project"]["artifactCount"] == 19
 assert final_info["result"]["project"]["investigationEventCount"] == 3
 PY
 
-xcodebuild build \
+xcodebuild test \
     -quiet \
     -workspace GlifiStudio.xcworkspace \
     -scheme GlifiStudio-macOS \
     -configuration Debug \
-    -destination "generic/platform=macOS" \
+    -destination "platform=macOS" \
     -derivedDataPath "$build_cache_directory/macOS" \
     CODE_SIGNING_ALLOWED=NO \
     COMPILATION_CACHE_ENABLE_CACHING=NO

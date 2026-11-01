@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-APL-005 |
 | Tipo | Standard applicativo Apple |
-| Versione | 0.4.0 |
+| Versione | 0.5.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-16 |
+| Ultima modifica | 2026-11-01 |
 | Approvazione | Ciclo DocumentGroup `.glifi` introdotto; conflict/file provider da validare su dispositivo |
 
 ## Regole
@@ -16,6 +16,10 @@
 - Accesso persistente fuori dal container **DEVE** usare i meccanismi security-scoped previsti dalla piattaforma.
 - Letture e scritture coordinate **DEVONO** rispettare modifiche esterne, provider di file e conflitti.
 - Il salvataggio **DEVE** essere atomico o recuperabile e non lasciare un progetto dichiarato valido in stato parziale.
+- L'inizializzazione **NON DEVE** rimuovere un package non vuoto, un file o un link simbolico.
+  Un flag iniziale obsoleto non autorizza a ricreare un progetto già valido.
+- Un'apertura fallita **DEVE** conservare utilizzabile la sessione precedente; l'accesso
+  security-scoped acquisito **DEVE** durare quanto la sessione ed essere poi rilasciato.
 - File ricevuti da provider esterni **DEVONO** essere considerati input non affidabili e validati prima dell'uso.
 - Path visualizzato e identità persistente **NON DEVONO** coincidere.
 - Cache ricostruibili **DEVONO** risiedere in collocazioni appropriate e non essere incluse nei backup senza necessità.

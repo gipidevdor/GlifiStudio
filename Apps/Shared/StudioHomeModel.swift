@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
+import Darwin
 import Foundation
 import GlifiKit
 import Observation
@@ -43,7 +44,9 @@ enum StudioIntentOption: String, CaseIterable, Identifiable, Sendable {
     var usesComparisonGroups: Bool {
         switch self {
         case .compareObjects, .findSimilar, .reviewCompletely: true
-        default: false
+        case .understandCollection, .discoverContents, .exploreRelationships, .identifyThemes,
+            .searchSources:
+            false
         }
     }
 }
@@ -98,8 +101,8 @@ final class StudioHomeModel {
     private(set) var editorialSelectedFindingIDs: Set<String> = []
     private(set) var lastProjectBookmark: Data?
 
-    var projectNameDraft = "Indagine"
-    var questionDraft = "Che cosa contiene questa raccolta?"
+    var projectNameDraft = String(localized: "project.default-name")
+    var questionDraft = String(localized: "investigation.default-question")
     var selectedIntent: StudioIntentOption = .understandCollection
     var queryDraft = ""
     var selectedTargetRevisionIDs: Set<String> = []
@@ -108,9 +111,14 @@ final class StudioHomeModel {
     private let service: GlifiStudioService
     private var session: GlifiStudioProjectSession?
     private var activeExecution: GlifiStudioAnalysisExecution?
+    private var securityScopedProjectURL: URL?
 
     init(service: GlifiStudioService = GlifiStudioService()) {
         self.service = service
+    }
+
+    isolated deinit {
+        securityScopedProjectURL?.stopAccessingSecurityScopedResource()
     }
 
     var isBusy: Bool {
@@ -212,7 +220,7 @@ final class StudioHomeModel {
             try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
             let sanitized = Self.sanitizeFileName(projectNameDraft)
             let url = root.appending(path: "\(sanitized).glifi", directoryHint: .isDirectory)
-            try await initializePackage(at: url, replaceExisting: true)
+            try await initializePackage(at: url, allowsEmptyPlaceholder: false)
         }
     }
 
@@ -220,11 +228,16 @@ final class StudioHomeModel {
         guard let url else {
             return
         }
-        if needsPackageInitialization {
+        guard projectURL?.standardizedFileURL != url.standardizedFileURL || session == nil else {
+            return
+        }
+        if needsPackageInitialization,
+            !FileManager.default.fileExists(atPath: url.appending(path: "manifest.json").path)
+        {
             await run(messageKey: "progress.creating-project") {
-                try await initializePackage(at: url, replaceExisting: true)
+                try await initializePackage(at: url, allowsEmptyPlaceholder: true)
             }
-        } else if projectURL != url {
+        } else {
             await openProject(at: url)
         }
     }
@@ -232,23 +245,14 @@ final class StudioHomeModel {
     func openProject(at url: URL) async {
         await run(messageKey: "progress.opening-project") {
             let accessGranted = url.startAccessingSecurityScopedResource()
-            defer {
+            do {
+                let opened = try await service.openProject(at: url)
+                try await activateSession(opened, at: url, accessGranted: accessGranted)
+            } catch {
                 if accessGranted {
                     url.stopAccessingSecurityScopedResource()
                 }
-            }
-            await closeSession()
-            let opened = try await service.openProject(at: url)
-            session = opened
-            projectURL = url
-            rememberProject(url)
-            snapshot = try await opened.snapshot()
-            clearAnalysisState()
-            let heads = try await opened.investigationHeads()
-            investigationHeads = heads
-            investigation = heads.first
-            if let investigation {
-                editorialSelectedFindingIDs = Set(investigation.selectedFindingIDs)
+                throw error
             }
         }
     }
@@ -760,25 +764,62 @@ final class StudioHomeModel {
         )
     }
 
-    private func initializePackage(at url: URL, replaceExisting: Bool) async throws {
-        if replaceExisting, FileManager.default.fileExists(atPath: url.path) {
-            let manifest = url.appending(path: "manifest.json")
-            let isEmptyPackage =
-                (try? FileManager.default.contentsOfDirectory(atPath: url.path))?.isEmpty == true
-            let isIncomplete = !FileManager.default.fileExists(atPath: manifest.path)
-            if isEmptyPackage || isIncomplete {
-                try FileManager.default.removeItem(at: url)
-            } else if replaceExisting {
-                try FileManager.default.removeItem(at: url)
+    private func initializePackage(at url: URL, allowsEmptyPlaceholder: Bool) async throws {
+        let accessGranted = url.startAccessingSecurityScopedResource()
+        do {
+            if allowsEmptyPlaceholder {
+                await Task.detached(priority: .userInitiated) {
+                    Self.removeEmptyDocumentPlaceholder(at: url)
+                }.value
             }
+            let created = try await service.createProject(at: url)
+            try await activateSession(created, at: url, accessGranted: accessGranted)
+        } catch {
+            if accessGranted {
+                url.stopAccessingSecurityScopedResource()
+            }
+            throw error
+        }
+    }
+
+    /// Removes only an empty system-created directory, atomically refusing files and contents.
+    nonisolated private static func removeEmptyDocumentPlaceholder(at url: URL) {
+        guard url.isFileURL, url.pathExtension.lowercased() == "glifi" else {
+            return
+        }
+        // rmdir refuses nonempty directories and symbolic links, including a concurrent fill.
+        _ = url.withUnsafeFileSystemRepresentation { fileSystemPath in
+            fileSystemPath.map { rmdir($0) }
+        }
+    }
+
+    /// Commits presentation state only after every read of the candidate session succeeds.
+    private func activateSession(
+        _ candidate: GlifiStudioProjectSession,
+        at url: URL,
+        accessGranted: Bool
+    ) async throws {
+        let candidateSnapshot: GlifiStudioProjectSnapshot
+        let heads: [GlifiStudioInvestigation]
+        do {
+            candidateSnapshot = try await candidate.snapshot()
+            heads = try await candidate.investigationHeads()
+        } catch {
+            await candidate.close()
+            throw error
         }
         await closeSession()
-        let created = try await service.createProject(at: url)
-        session = created
+        session = candidate
+        securityScopedProjectURL = accessGranted ? url : nil
         projectURL = url
         rememberProject(url)
-        snapshot = try await created.snapshot()
         clearAnalysisState()
+        snapshot = candidateSnapshot
+        investigationHeads = heads
+        investigation = heads.first
+        if let investigation {
+            editorialSelectedFindingIDs = Set(investigation.selectedFindingIDs)
+        }
     }
 
     private func requireSession() throws -> GlifiStudioProjectSession {
@@ -790,6 +831,13 @@ final class StudioHomeModel {
 
     private func clearAnalysisState() {
         lastProfile = nil
+        qualitativeState = nil
+        codingSegments = []
+        codingSourceRevisionID = nil
+        codingSourceCharacterCount = 0
+        codingPassage = nil
+        codingTexts = [:]
+        storedAgreement = nil
         lastImportedFileName = nil
         planResult = nil
         executionResult = nil
@@ -846,9 +894,12 @@ final class StudioHomeModel {
         activeExecution = nil
         await session?.close()
         session = nil
+        securityScopedProjectURL?.stopAccessingSecurityScopedResource()
+        securityScopedProjectURL = nil
     }
 
     private func run(messageKey: String, operation: () async throws -> Void) async {
+        guard !isBusy else { return }
         busyState = .working(messageKey: messageKey)
         lastFailure = nil
         defer { busyState = .idle }

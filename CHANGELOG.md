@@ -6,7 +6,29 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Modificato
+
+- Revisione degli operatori nativi: Stress-1 con secondary ties, probabilità LDA
+  come media dei prodotti, log-probabilità Naive Bayes robuste ai subnormali e
+  riferimenti binari ai codici con parole riservate quotate. Varianti MDS/LDA/codifica
+  versionate e stati per metodo collegati a manifest numerici (GS-VER-161).
+
+- Interfaccia più essenziale: prossima azione contestuale nella panoramica, sidebar
+  orientata alla ricerca, menu di progetto e dettagli tecnici espandibili.
+- Risultati adattivi alle finestre strette e al testo di accessibilità, selezioni
+  di gruppo riconoscibili senza colore e tabelle attivabili da tastiera.
+- Conclusioni con argomenti risolti, stato vuoto con creazione effettiva del
+  progetto e valori iniziali localizzati in italiano e inglese (GS-VER-150).
+
 ### Aggiunto
+
+- Request analitica Swift/JSON versionata e CLI `text-analysis --request` condivisa
+  con GlifiKit: digest canonico, default espliciti, limiti, failure private e
+  fixture di parità per tutte le nuove operazioni (GS-API-002, GS-VER-162).
+
+- Operatori analitici nativi candidati in GlifiCore/GlifiKit: MDS classica/Kruskal/Sammon,
+  SOM batch, CLARA, Naive Bayes, LDA Gibbs e regole automatiche KH Coder, con matrici
+  condivise per parole e codici, oracoli indipendenti e benchmark Release (ADR-0032, GS-VER-160).
 
 - Corpus gold italiano su prosa reale di pubblico dominio (Collodi, «Le avventure di Pinocchio»,
   capitolo 1): 434 token lessicali e 19 frasi annotati da un'implementazione del contratto
@@ -413,6 +435,10 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   che rimane valido.
 
 ### Corretto
+
+- L'app macOS usa il ciclo documentale nativo per Nuovo/Apri e propone il salvataggio del nuovo
+  progetto prima dell'importazione. L'inizializzazione non cancella package esistenti e un'apertura
+  fallita conserva la sessione precedente; test di regressione in `make test-macos` (GS-VER-140).
 
 - Gli script di qualità creavano una cache di compilazione nuova a ogni esecuzione: nulla veniva
   riusato e ogni giro riscriveva circa 37 GiB, fino a riempire il disco e far morire il gate con

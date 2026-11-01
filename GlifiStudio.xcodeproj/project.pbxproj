@@ -29,6 +29,12 @@
 		B10000000000000000000010 /* GlifiStudioDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000012 /* GlifiStudioDocument.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildFile section for macOS tests */
+		B20000000000000000000001 /* StudioDocumentLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* StudioDocumentLifecycleTests.swift */; };
+		B20000000000000000000002 /* StudioHomeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000E /* StudioHomeModel.swift */; };
+		B20000000000000000000003 /* GlifiKit in Frameworks */ = {isa = PBXBuildFile; productRef = J20000000000000000000001 /* GlifiKit */; };
+/* End PBXBuildFile section for macOS tests */
+
 /* Begin PBXFileReference section */
 		A10000000000000000000001 /* StudioHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioHomeView.swift; sourceTree = "<group>"; };
 		A10000000000000000000020 /* StudioVisualizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioVisualizationView.swift; sourceTree = "<group>"; };
@@ -53,6 +59,12 @@
 		A10000000000000000000013 /* GlifiStudio-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GlifiStudio-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileReference section for macOS tests */
+		A20000000000000000000001 /* StudioDocumentLifecycleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/StudioDocumentLifecycleTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000002 /* GlifiStudioMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GlifiStudioMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000003 /* macOS-Tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "macOS-Tests.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section for macOS tests */
+
 /* Begin PBXFrameworksBuildPhase section */
 		D10000000000000000000002 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -71,6 +83,15 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXFrameworksBuildPhase section for macOS tests */
+		D20000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (B20000000000000000000003 /* GlifiKit in Frameworks */,);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section for macOS tests */
 
 /* Begin PBXGroup section */
 		C10000000000000000000001 = {
@@ -109,6 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				A10000000000000000000002 /* GlifiStudioMacApp.swift */,
+				A20000000000000000000001 /* StudioDocumentLifecycleTests.swift */,
 			);
 			path = macOS;
 			sourceTree = "<group>";
@@ -131,6 +153,7 @@
 				A1000000000000000000000A /* macOS-Release.xcconfig */,
 				A1000000000000000000000B /* iPadOS-Debug.xcconfig */,
 				A1000000000000000000000C /* iPadOS-Release.xcconfig */,
+				A20000000000000000000003 /* macOS-Tests.xcconfig */,
 				A10000000000000000000010 /* GlifiStudio-macOS.entitlements */,
 				A10000000000000000000013 /* GlifiStudio-Info.plist */,
 			);
@@ -142,6 +165,7 @@
 			children = (
 				A10000000000000000000004 /* GlifiStudio.app */,
 				A10000000000000000000005 /* GlifiStudio.app */,
+				A20000000000000000000002 /* GlifiStudioMacTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -201,6 +225,21 @@
 		};
 /* End PBXNativeTarget section */
 
+/* Begin PBXNativeTarget section for macOS tests */
+		E20000000000000000000001 /* GlifiStudioMacTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = H20000000000000000000001;
+			buildPhases = (D20000000000000000000001, D20000000000000000000002,);
+			buildRules = ();
+			dependencies = ();
+			name = GlifiStudioMacTests;
+			packageProductDependencies = (J20000000000000000000001 /* GlifiKit */,);
+			productName = GlifiStudioMacTests;
+			productReference = A20000000000000000000002 /* GlifiStudioMacTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section for macOS tests */
+
 /* Begin PBXProject section */
 		F10000000000000000000001 /* Project object */ = {
 			isa = PBXProject;
@@ -246,6 +285,7 @@
 			targets = (
 				E10000000000000000000001 /* GlifiStudio-macOS */,
 				E10000000000000000000002 /* GlifiStudio-iPadOS */,
+				E20000000000000000000001 /* GlifiStudioMacTests */,
 			);
 		};
 /* End PBXProject section */
@@ -302,6 +342,18 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXSourcesBuildPhase section for macOS tests */
+		D20000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B20000000000000000000001 /* StudioDocumentLifecycleTests.swift in Sources */,
+				B20000000000000000000002 /* StudioHomeModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section for macOS tests */
+
 /* Begin XCBuildConfiguration section */
 		G10000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -347,6 +399,21 @@
 		};
 /* End XCBuildConfiguration section */
 
+/* Begin XCBuildConfiguration section for macOS tests */
+		G20000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A20000000000000000000003 /* macOS-Tests.xcconfig */;
+			buildSettings = {};
+			name = Debug;
+		};
+		G20000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A20000000000000000000003 /* macOS-Tests.xcconfig */;
+			buildSettings = {};
+			name = Release;
+		};
+/* End XCBuildConfiguration section for macOS tests */
+
 /* Begin XCConfigurationList section */
 		H10000000000000000000001 /* Build configuration list for PBXProject "GlifiStudio" */ = {
 			isa = XCConfigurationList;
@@ -377,6 +444,15 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCConfigurationList section for macOS tests */
+		H20000000000000000000001 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (G20000000000000000000001, G20000000000000000000002,);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section for macOS tests */
+
 /* Begin XCLocalSwiftPackageReference section */
 		I10000000000000000000001 /* XCLocalSwiftPackageReference "Packages/GlifiCore" */ = {
 			isa = XCLocalSwiftPackageReference;
@@ -396,6 +472,13 @@
 			productName = GlifiKit;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCSwiftPackageProductDependency section for macOS tests */
+		J20000000000000000000001 /* GlifiKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GlifiKit;
+		};
+/* End XCSwiftPackageProductDependency section for macOS tests */
 	};
 	rootObject = F10000000000000000000001 /* Project object */;
 }

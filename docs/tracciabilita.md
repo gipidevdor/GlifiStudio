@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.79.0 |
+| Versione | 0.82.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-20 |
+| Ultima modifica | 2026-11-01 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -85,6 +85,8 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 
 | Evidenza | Verifiche coperte | Esito | Limite |
 | --- | --- | --- | --- |
+| [GS-VER-140](evidenze/GS-VER-140-integrita-documenti-macos.md) | TV-001, TV-058, TV-071 | Otto test del modello macOS superati; inizializzazione non distruttiva, attacco idempotente e sessione conservata dopo apertura fallita | GUI, sandbox reale, autosave e file provider aperti |
+| [GS-VER-150](evidenze/GS-VER-150-interfaccia-essenziale.md) | TV-015, TV-017–TV-018, TV-039, TV-044, TV-048, TV-058 | Build Debug macOS/iPadOS e controlli mirati superati | `make verify` fermo su GS-DOR-011 concorrente; audit assistivi e visivi aperti |
 | [GS-VER-001](evidenze/GS-VER-001-bootstrap-ambiente.md) | TV-011 preliminare; TV-013 build baseline | Superato | Non copre flussi funzionali, firma o dispositivi fisici |
 | [GS-VER-002](evidenze/GS-VER-002-baseline-linguistica-italiana.md) | TV-014 configurazione iniziale | Superato | Non copre ancora la qualità delle analisi linguistiche italiane |
 | [GS-VER-003](evidenze/GS-VER-003-interfaccia-internazionalizzabile.md) | TV-015 catalogo e build `it`/`en` | Superato | Test UI del cambio lingua richiesti quando esisteranno flussi interattivi |
@@ -277,3 +279,13 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
   ogni feature deve aggiungere le proprie righe al gate Definition of Ready.
 - TV-023–TV-025 richiedono una build funzionalmente completa, identità Apple, URL pubblici e attività nei sistemi Apple.
 - La matrice deve essere aggiornata insieme a ogni modifica dei requisiti o dell'architettura.
+
+## Operatori analitici nativi delle famiglie KH Coder
+
+| Verifica | Requisiti | Codice e prova | Evidenza |
+| --- | --- | --- | --- |
+| TV-087 | RF-087; RF-033; RF-037; RF-038; RF-043; RQ-025; RQ-048; RQ-058; RQ-063 | GlifiExploratoryAnalysis, GlifiProbabilisticTextAnalysis, GlifiCodingRules, GlifiTextMatrixOperators, GlifiStudioTextAnalytics; test KHOperator e oracolo R; benchmark Release | [GS-VER-160](evidenze/GS-VER-160-operatori-analitici-nativi.md), GS-MET-001-23, ADR-0032, GS-DOR-160; nuove API candidate |
+
+| [GS-VER-161](evidenze/GS-VER-161-revisione-scientifica-operatori.md) | RF-087; TV-087; ADR-0031 | Correzioni Stress-1/LDA/codifica, oracoli R/Python e sette ValidationManifest per nove varianti; review tecnica automatica, V6 esterno aperto |
+
+| TV-088 | RF-087; RQ-058; RQ-060; RQ-063 | Request analitica tipizzata e dispatcher GlifiKit, CLI text-analysis, fixture condivise e test di input ostili | [GS-VER-162](evidenze/GS-VER-162-parita-operatori-kit-cli.md), GS-API-002, GS-DOR-162; parità e gate completo verificati localmente |

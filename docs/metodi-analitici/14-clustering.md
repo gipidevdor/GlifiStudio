@@ -69,3 +69,9 @@ Fixture includono singleton, duplicati, parità, cluster separati, scale differe
 input degenere. Si verificano monotonia delle fusioni quando prevista, obiettivo non
 crescente per Lloyd, riproducibilità del seed, equivalenza delle etichette dopo
 canonicalizzazione e confronto con implementazione indipendente.
+
+## Varianti native candidate
+
+CLARA-PAM e SOM batch completano le famiglie di clustering della libreria secondo
+[GS-MET-001-23](23-operatori-kh-coder.md). Restano candidate; Ward su dissimilarità
+non euclidee continua a essere rifiutato.
