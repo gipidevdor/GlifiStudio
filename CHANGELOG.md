@@ -8,12 +8,16 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Verificato
 
-- Promozione e staging privato del package: CI macOS 27 superata sulla revisione
-  `4bd5dde`, incluse regressioni e recovery; GS-VER-144/145 aggiornate senza
-  promuovere CMP-095. Il riallineamento documentale conserva le verifiche G3
-  QueryAST e riassunto estrattivo e richiede nuovamente i gate prima del merge.
+- Promozione/staging privato del package e letture bounded degli export:
+  gate nativi locali e CI superati sulle revisioni `97527ba` e `1883af9`,
+  integrate con #14 e #21; GS-VER-144/145/148 aggiornate senza promuovere
+  CMP-095. Conservate le verifiche G3 di QueryAST e riassunto estrattivo.
 
 ### Modificato
+
+- La variante di riassunto a centroide conserva la costante pubblica del metodo
+  predefinito e decodifica anche nei messaggi GlifiKit i payload precedenti senza
+  `isEligible`, con test di compatibilità dedicati (GS-VER-149).
 
 - Interfaccia più essenziale: prossima azione contestuale nella panoramica, sidebar
   orientata alla ricerca, menu di progetto e dettagli tecnici espandibili.
@@ -32,6 +36,10 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   tie-break per posizione, intervallo sorgente e ordine della fonte; Artifact
   `corpus-extractive-summary-v1`, `analyzeExtractiveSummary` in GlifiKit e `glifi summarize`
   (GS-VER-146).
+- Variante `CentroidCosine-v1` del riassunto estrattivo (GS-MET-001-19, RF-042): metodo di
+  punteggio come parametro del descrittore (`method`, `--method` in `glifi summarize`), coseno
+  tra il vettore della frase e il centroide del gruppo, vettori nulli esclusi con flag
+  `isEligible` persistito per frase e derivato dai token nei payload precedenti (GS-VER-149).
 - Corpus gold italiano su prosa reale di pubblico dominio (Collodi, «Le avventure di Pinocchio»,
   capitolo 1): 434 token lessicali e 19 frasi annotati da un'implementazione del contratto
   indipendente dal tokenizzatore, in accordo pieno con il prodotto (ADR-0030, GS-VER-138).

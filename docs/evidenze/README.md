@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.13.5 |
+| Versione | 1.13.8 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
@@ -14,14 +14,15 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
-- [GS-VER-148 — Letture bounded nella verifica export](GS-VER-148-letture-export.md) — Superato su runner remoto nel perimetro dichiarato; preflight locale bloccato
+- [GS-VER-149 — Riassunto estrattivo `CentroidCosine-v1`](GS-VER-149-riassunto-centroide.md) — Verifica nativa locale superata; CI della head definitiva tracciata nella PR #22
+- [GS-VER-148 — Letture bounded nella verifica export](GS-VER-148-letture-export.md) — Verifiche locale e remota superate su `1883af9`; limiti residui dichiarati
 
 - [GS-VER-147 — Permessi dell'ingresso QueryAST](GS-VER-147-permessi-queryast.md) — Superato su Xcode 27; limiti EPERM/ACL dichiarati
 
 - [GS-VER-146 — Riassunto estrattivo deterministico `SentenceTFIDFMean-v1`](GS-VER-146-riassunto-estrattivo.md) — Superato su runner remoto; controlli opzionali saltati
 
-- [GS-VER-145 — Staging privato delle transazioni](GS-VER-145-staging-transazioni-package.md) — Parziale; CI macOS 27 superata su `4bd5dde`, confini residui aperti
-- [GS-VER-144 — Pubblicazione degli oggetti del package](GS-VER-144-pubblicazione-oggetti-package.md) — Parziale; CI integrata superata su `4bd5dde`, confini residui aperti
+- [GS-VER-145 — Staging privato delle transazioni](GS-VER-145-staging-transazioni-package.md) — Parziale; gate locale e CI superati su `97527ba`, confini residui aperti
+- [GS-VER-144 — Pubblicazione degli oggetti del package](GS-VER-144-pubblicazione-oggetti-package.md) — Parziale; gate locale e CI superati su `97527ba`, confini residui aperti
 
 - [GS-VER-143 — Ingresso QueryAST nel percorso headless](GS-VER-143-ingresso-queryast.md) — Superato su Xcode 27 nel perimetro G3
 
