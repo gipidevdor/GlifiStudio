@@ -437,8 +437,11 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
         case let .maximalMarginalRelevance(lambda):
             // Greedy: each step takes the eligible, unselected sentence that fits the residual
             // budget with the largest `λ·score − (1−λ)·max cosine to the selected`; the first in
-            // source order wins a tie; the loop stops when no sentence fits.
-            var chosen: [Int] = []
+            // source order wins a tie; the loop stops when no sentence fits. The penalty of every
+            // candidate is the running maximum over the accepted sentences, updated once per
+            // acceptance: `k` accepted sentences cost `k·n` cosines.
+            var penalties = Array(repeating: 0.0, count: scored.count)
+            var accepted = 0
             while true {
                 var best: Int?
                 var bestObjective = -Double.infinity
@@ -447,11 +450,7 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
                     guard candidate.isEligible, !selected[index],
                         consumed + cost(candidate) <= budget.limit
                     else { continue }
-                    var penalty = 0.0
-                    for other in chosen {
-                        penalty = max(penalty, cosine(vectors[index], vectors[other]))
-                    }
-                    let objective = lambda * candidate.score - (1 - lambda) * penalty
+                    let objective = lambda * candidate.score - (1 - lambda) * penalties[index]
                     if objective > bestObjective {
                         bestObjective = objective
                         best = index
@@ -459,9 +458,15 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
                 }
                 guard let best else { break }
                 consumed += cost(scored[best])
+                accepted += 1
                 selected[best] = true
-                chosen.append(best)
-                order[best] = chosen.count
+                order[best] = accepted
+                if lambda < 1 {
+                    for index in scored.indices where !selected[index] && scored[index].isEligible {
+                        penalties[index] = max(
+                            penalties[index], cosine(vectors[index], vectors[best]))
+                    }
+                }
             }
         }
 

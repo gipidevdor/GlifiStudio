@@ -109,13 +109,18 @@ selezione e la sua diagnostica:
   `CentroidCosine-v1`), così com'è persistito in `score`;
 - **similarità** (`similarity.sentence-vector-cosine-v1`): `sim(s, u) = cos(v_s, v_u)` tra i
   vettori frase `v_s[t] = c_{s,t} · w_{d,t}` dello schema GS-MET-001-07 dichiarato, gli stessi
-  di `CentroidCosine-v1`; vale zero se uno dei due vettori è nullo; frasi identiche hanno
-  similarità 1;
+  di `CentroidCosine-v1`; vale zero se uno dei due vettori è nullo; frasi con la stessa
+  sequenza di token nello stesso documento, o comunque con vettori proporzionali, hanno
+  similarità 1, mentre la stessa sequenza in documenti diversi usa pesi `(documento, tipo)`
+  diversi e può avere similarità minore di 1;
 - **selezione**: a ogni passo, tra le frasi eleggibili non ancora scelte che rientrano nel
   budget residuo, entra quella con il massimo di
   `λ · rel(s) − (1 − λ) · max_{u∈S} sim(s, u)`, con `S` l'insieme già scelto (penalità zero al
   primo passo); a parità di obiettivo vince la prima nell'ordine della fonte
-  (`tie-break.source-position-v1`); la selezione termina quando nessuna frase rientra nel budget;
+  (`tie-break.source-position-v1`); la selezione termina quando nessuna frase rientra nel budget.
+  La penalità di ogni candidata è il massimo corrente sulle frasi accettate, aggiornato una volta
+  per accettazione: `k` frasi scelte su `n` candidate costano `k · n` coseni, nessuno con
+  `λ = 1`;
 - **parametro**: `λ` finito in `[0, 1]`, dichiarato nella richiesta e nel descrittore
   (`redundancyLambda`); `λ = 1` riproduce la scansione per rank di `redundancy.none-v1`,
   `λ = 0` premia soltanto la novità; valori fuori dall'intervallo sono rifiutati con failure

@@ -61,5 +61,6 @@ l'IDF liscio resta definito; con `IDF-unsmoothed-v1` i punteggi sono tutti nulli
 TF-IDF seleziona per posizione, il centroide esclude ogni frase come vettore nullo
 (`isEligible = false`), comportamenti dichiarati e non corretti in silenzio. Con `MMR-v1`
 la similarità fra vettori nulli vale zero: una frase con vettore nullo non è penalizzata ma
-resta ineleggibile se il metodo la esclude. Rollback tramite revert; nessuna migrazione dei
+resta ineleggibile se il metodo la esclude; frasi identiche in documenti diversi hanno pesi
+diversi e similarità minore di 1, come dichiarato in GS-MET-001-19. Rollback tramite revert; nessuna migrazione dei
 package.

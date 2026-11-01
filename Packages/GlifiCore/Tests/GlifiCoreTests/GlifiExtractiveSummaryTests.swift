@@ -399,6 +399,32 @@ func mmrPenalizesDuplicatesAndRejectsInvalidLambda() throws {
     #expect(mmr.sentences.map(\.rank) == walk.sentences.map(\.rank))
     #expect(mmr.sentences.map(\.score) == walk.sentences.map(\.score))
 
+    // The same token sequence in two documents has different weights, so its cosine is below 1
+    // (MMR_INFO_CROSS_DOCUMENT_SIMILARITY): both copies may enter. Oracle: MMR_CROSS_ORDER_*.
+    let cross = [
+        GlifiSummaryDocument(
+            sourceRevisionID: try revision(1),
+            sentences: [
+                try sentence(0, ["a", "b"]), try sentence(1, Array(repeating: "a", count: 99)),
+            ]
+        ),
+        GlifiSummaryDocument(
+            sourceRevisionID: try revision(2),
+            sentences: [
+                try sentence(0, ["a", "b"]), try sentence(1, Array(repeating: "b", count: 99)),
+            ]
+        ),
+    ]
+    let three = GlifiSummaryBudget(unit: .sentences, limit: 3)
+    let balanced = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: cross, budget: three, scheme: scheme,
+        redundancy: .maximalMarginalRelevance(lambda: 0.5))
+    #expect(balanced.sentences.map(\.selectionOrder) == [3, 1, nil, 2])
+    let novelty = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: cross, budget: three, scheme: scheme,
+        redundancy: .maximalMarginalRelevance(lambda: 0))
+    #expect(novelty.sentences.map(\.selectionOrder) == [1, 3, 2, nil])
+
     for lambda in [-0.1, 1.1, Double.nan, Double.infinity] {
         #expect(!GlifiSummaryRedundancyPolicy.maximalMarginalRelevance(lambda: lambda).isValid)
         #expect(throws: GlifiFailure.self) {

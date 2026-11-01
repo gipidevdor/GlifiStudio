@@ -44,8 +44,12 @@ GS-MET-001-19 (versione 1.3.0):
    `λ = 1` riproduce la scansione per rank (`0, 2`) con lo stesso `selectionOrder`; la soglia
    `MMR_THRESHOLD_S2 = 0,562024411171168` separa la seconda scelta (frase 3 sotto, frase 2
    sopra); punteggi e rank identici a quelli senza ridondanza;
-2. `mmrPenalizesDuplicatesAndRejectsInvalidLambda`: due frasi identiche entrano entrambe nella
-   scansione per rank e una sola con `MMR-v1` (coseno 1), sostituita dalla frase diversa;
+2. `mmrPenalizesDuplicatesAndRejectsInvalidLambda`: due frasi identiche dello stesso documento
+   entrano entrambe nella scansione per rank e una sola con `MMR-v1` (coseno 1), sostituita
+   dalla frase diversa; la stessa sequenza in due documenti con pesi diversi ha coseno
+   `0,345806761841798` (`MMR_INFO_CROSS_DOCUMENT_SIMILARITY`) e gli ordini di accettazione con
+   budget di 3 frasi, `λ = 0,5` (`1 3 0`) e `λ = 0` (`0 3 1`), coincidono con le righe
+   `MMR_CROSS_ORDER_*`;
    `λ ∈ {−0,1; 1,1; NaN; ∞}` rifiutati; payload senza `selectionOrder`, `redundancyLambda` e
    `similarityIdentifier` decodificato; round-trip JSON; il risultato senza ridondanza non
    serializza `λ` né similarità;
@@ -76,7 +80,8 @@ con i link ai workflow. Fino ad allora CMP-106 resta `implemented`.
 - La rilevanza è il punteggio del metodo dichiarato, non normalizzato: con `SentenceTFIDFMean-v1`
   `rel` non è in `[0, 1]` e `λ` pesa scale diverse; la scelta è dichiarata nel descrittore.
 - La similarità usa i vettori frase sullo stesso schema di ponderazione del punteggio; nessuna
-  similarità alternativa, TextRank o LexRank.
+  similarità alternativa, TextRank o LexRank. La penalità è un massimo incrementale (`k · n`
+  coseni per `k` frasi scelte): nessun benchmark Swift è attestato.
 - L'oracolo è un'implementazione indipendente in Python delle formule dichiarate, non un
   pacchetto terzo; nessuna valutazione ROUGE o umana.
 - Il runner remoto non dispone di Rscript: `make check-oracles` è eseguito solo dal gate locale

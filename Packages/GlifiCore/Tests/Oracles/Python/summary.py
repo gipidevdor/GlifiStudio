@@ -153,6 +153,27 @@ def report_mmr(cells: list[dict[str, float]]) -> None:
     print(f"MMR_THRESHOLD_S2 {threshold:.15g}")
 
 
+CROSS_DOCUMENTS = [
+    [["a", "b"], ["a"] * 99],
+    [["a", "b"], ["b"] * 99],
+]
+
+
+def report_cross_documents() -> None:
+    """The same token sequence in two documents has different weights: cosine below 1."""
+    cells = weights(CROSS_DOCUMENTS)
+    scored = []
+    vectors = []
+    for document_index, document in enumerate(CROSS_DOCUMENTS):
+        for sentence_index, sentence in enumerate(document):
+            total = sum(cells[document_index][term] for term in sentence)
+            scored.append((document_index, sentence_index, len(sentence), True, total / len(sentence)))
+            vectors.append({term: sentence.count(term) * cells[document_index][term] for term in set(sentence)})
+    print(f"MMR_INFO_CROSS_DOCUMENT_SIMILARITY {cosine(vectors[0], vectors[2]):.15g}")
+    print("MMR_CROSS_ORDER_S3_L05 " + " ".join(str(i) for i in mmr_select(scored, vectors, 0.5, "sentences", 3)))
+    print("MMR_CROSS_ORDER_S3_L0 " + " ".join(str(i) for i in mmr_select(scored, vectors, 0.0, "sentences", 3)))
+
+
 def report(prefix: str, scored: list[tuple[int, int, int, bool, float]]) -> None:
     """Print scores, ranks and selections for both budget units."""
     order = sorted(range(len(scored)), key=lambda i: (-scored[i][4], scored[i][0], scored[i][1]))
@@ -186,6 +207,7 @@ def main() -> None:
     report("SUMMARY", mean_scores(cells))
     report("CENTROID", centroid_scores(cells))
     report_mmr(cells)
+    report_cross_documents()
 
 
 if __name__ == "__main__":
