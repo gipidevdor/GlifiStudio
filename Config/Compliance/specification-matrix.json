@@ -13,6 +13,39 @@
   ],
   "entries": [
     {
+      "id": "CMP-095",
+      "clause": "GS-SEC-001 § 8 Path, package e file temporanei",
+      "specification": "docs/sicurezza/README.md",
+      "requirements": [
+        "RQ-044",
+        "RQ-057",
+        "RF-043"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiProjectPackage.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiPackageDirectory.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiScientificExport.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiProjectPackageTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPackageDirectoryTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiQualitativePersistenceTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiScientificExportTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-140-accessi-file-package.md",
+        "docs/evidenze/GS-VER-141-prima-ci-remota-verde.md",
+        "docs/evidenze/GS-VER-142-letture-directory-package.md",
+        "docs/evidenze/GS-VER-144-pubblicazione-oggetti-package.md",
+        "docs/evidenze/GS-VER-145-staging-transazioni-package.md",
+        "docs/evidenze/GS-VER-148-letture-export.md"
+      ],
+      "gate": "G2",
+      "status": "blocked",
+      "blockingReason": "Letture, pubblicazione e staging degli oggetti descriptor-relative; CI macOS 27 superata su 4bd5dde. Restano lettura e replacement del manifest candidato, cleanup e SQLite sotto sostituzioni concorrenti, identità della radice fra accessi, ACL e file provider; nessuna promozione del requisito."
+    },
+    {
       "id": "CMP-001",
       "clause": "GS-SEC-001 § 5 Confini di fiducia",
       "specification": "docs/sicurezza/README.md",
@@ -1822,19 +1855,27 @@
       "id": "CMP-081",
       "clause": "GS-QRY-001 § Parità della QueryAST fra client",
       "specification": "docs/specifiche-di-design/04-ricerca-e-linguaggio-di-query.md",
-      "requirements": ["RF-080"],
+      "requirements": ["RF-080", "RQ-042", "RQ-044", "RQ-046"],
       "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryModel.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryEvaluator.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
-        "Scripts/verify.sh"
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
-        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiQueryParityTests.swift"
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiQueryASTInputTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiQueryParityTests.swift",
+        "Scripts/check-query-ast.py",
+        "Scripts/verify.sh"
       ],
       "fixtures": [
         "Fixtures/Query/v1/cases.json"
       ],
       "evidence": [
-        "docs/evidenze/GS-VER-123-parita-queryast-client.md"
+        "docs/evidenze/GS-VER-123-parita-queryast-client.md",
+        "docs/evidenze/GS-VER-143-ingresso-queryast.md",
+        "docs/evidenze/GS-VER-147-permessi-queryast.md"
       ],
       "gate": "G3",
       "status": "verified",
@@ -2097,28 +2138,26 @@
       "blockingReason": null
     },
     {
-      "id": "CMP-095",
-      "clause": "GS-APL-005 § Creazione e apertura documentale non distruttiva",
-      "specification": "docs/apple/05-documenti-e-accesso-ai-file.md",
-      "requirements": [
-        "RF-001",
-        "RQ-043"
-      ],
+      "id": "CMP-096",
+      "clause": "GS-MET-001-19 § Variante implementata: SentenceTFIDFMean-v1",
+      "specification": "docs/metodi-analitici/19-riassunto-estrattivo.md",
+      "requirements": ["RF-042"],
       "code": [
-        "Apps/Shared/StudioHomeModel.swift",
-        "Apps/Shared/StudioHomeView.swift"
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiExtractiveSummaryAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiExtractiveSummaryPresentation.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
-        "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
-        "Scripts/test.sh",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExtractiveSummaryTests.swift",
+        "Packages/GlifiCore/Tests/Oracles/Python/summary.py",
+        "Packages/GlifiCore/Tests/Oracles/expected.txt",
         "Scripts/verify.sh"
       ],
-      "fixtures": [],
-      "evidence": [
-        "docs/evidenze/GS-VER-140-integrita-documenti-macos.md"
-      ],
+      "fixtures": ["Fixtures/Validation/v1/extractive-summary-v1.json"],
+      "evidence": ["docs/evidenze/GS-VER-146-riassunto-estrattivo.md"],
       "gate": "G3",
-      "status": "implemented",
+      "status": "verified",
       "blockingReason": null
     },
     {
@@ -2150,6 +2189,37 @@
       ],
       "gate": "G4",
       "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-097",
+      "clause": "GS-MET-001-19 § Variante implementata: CentroidCosine-v1",
+      "specification": "docs/metodi-analitici/19-riassunto-estrattivo.md",
+      "requirements": [
+        "RF-042"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiExtractiveSummaryAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiExtractiveSummaryPresentation.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExtractiveSummaryTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiExtractiveSummaryCompatibilityTests.swift",
+        "Packages/GlifiCore/Tests/Oracles/Python/summary.py",
+        "Packages/GlifiCore/Tests/Oracles/expected.txt",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [
+        "Fixtures/Validation/v1/extractive-summary-v1.json"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-149-riassunto-centroide.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
       "blockingReason": null
     },
     {
@@ -2216,6 +2286,62 @@
       "gate": "G3",
       "status": "verified",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-106",
+      "clause": "GS-MET-001-19 § Ridondanza implementata: MMR-v1",
+      "specification": "docs/metodi-analitici/19-riassunto-estrattivo.md",
+      "requirements": [
+        "RF-042"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiExtractiveSummaryAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiExtractiveSummaryPresentation.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExtractiveSummaryTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiExtractiveSummaryCompatibilityTests.swift",
+        "Packages/GlifiCore/Tests/Oracles/Python/summary.py",
+        "Packages/GlifiCore/Tests/Oracles/expected.txt",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [
+        "Fixtures/Validation/v1/extractive-summary-v1.json"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-151-riassunto-mmr.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-107",
+      "clause": "GS-APL-005 § Creazione e apertura documentale non distruttiva",
+      "specification": "docs/apple/05-documenti-e-accesso-ai-file.md",
+      "requirements": [
+        "RF-001",
+        "RQ-043"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/StudioHomeView.swift"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+        "Scripts/test.sh",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-163-integrita-documenti-macos.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
     }
-]
+  ]
 }

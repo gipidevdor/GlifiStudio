@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.5.0 |
+| Versione | 1.6.3 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
@@ -28,8 +28,12 @@ accettato` prima del primo cambiamento implementativo.
 - [GS-DOR-008 — Codifica qualitativa nelle app](dor-codifica-nelle-app.md) — Ready con rischio accettato
 - [GS-DOR-009 — Selezione libera del passaggio](dor-selezione-libera-del-passaggio.md) — Ready con rischio accettato
 - [GS-DOR-010 — Invalidazione selettiva alla reimportazione (ADR-0028)](dor-invalidazione-selettiva.md) — Ready con rischio accettato
-- [GS-DOR-011 — Integrità dei documenti macOS](dor-documenti-macos.md) — Ready
+- [GS-DOR-011 — Accessi ai file persistiti del package](dor-accessi-file-package.md) — Ready
+- [GS-DOR-013 — Riassunto estrattivo deterministico (GS-MET-001-19)](dor-riassunto-estrattivo.md) — Ready
+- [GS-DOR-020 — Interfaccia essenziale](dor-interfaccia-essenziale.md) — Ready con rischio accettato; registrazione per integrazione
 
 - [GS-DOR-160 — Operatori analitici delle famiglie KH Coder](dor-operatori-analitici.md) — Ambito autorizzato
 
 - [GS-DOR-162 — Richieste analitiche riproducibili](dor-richieste-analitiche.md) — Ready
+
+- [GS-DOR-163 — Integrità dei documenti macOS](dor-documenti-macos.md) — Ready

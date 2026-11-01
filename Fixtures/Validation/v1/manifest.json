@@ -20,6 +20,11 @@
       "status": "candidate"
     },
     {
+      "id": "validation-extractive-summary-v1",
+      "path": "Fixtures/Validation/v1/extractive-summary-v1.json",
+      "status": "candidate"
+    },
+    {
       "id": "validation-ngram-frequencies-v1",
       "path": "Fixtures/Validation/v1/ngram-frequencies-v1.json",
       "status": "candidate"

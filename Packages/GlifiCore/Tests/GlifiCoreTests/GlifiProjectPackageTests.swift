@@ -1,10 +1,442 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
+import CryptoKit
+import Darwin
 import Foundation
 import SQLite3
 import Testing
 
 @testable import GlifiCore
+
+private enum PromotionKind: CaseIterable, Sendable {
+    case source, artifact, descriptor, investigation, qualitative
+}
+
+@Test(
+    "La pubblicazione non scrive attraverso directory simboliche a nessun livello",
+    arguments: PromotionKind.allCases, [0, 1, 2, 3]
+)
+private func projectPromotionRejectsLinkedDirectories(kind: PromotionKind, depth: Int) async throws
+{
+    try await withTemporaryProject { packageURL in
+        let project = try GlifiProjectPackage.create(at: packageURL)
+        let operation = try await promotionOperation(kind, project: project)
+        let snapshot = await project.snapshot()
+        let manifestURL = packageURL.appending(path: "manifest.json")
+        let manifest = try Data(contentsOf: manifestURL)
+        let databaseURL = packageURL.appending(path: "store/project.sqlite")
+        let database = try Data(contentsOf: databaseURL)
+        let components = operation.path.split(separator: "/")
+        let directoryURL = packageURL.appending(
+            path: components.prefix(depth + 1).joined(separator: "/"))
+        try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+        let parent = packageURL.deletingLastPathComponent()
+        let detachedURL = parent.appending(path: "detached")
+        let externalURL = parent.appending(path: "external")
+        try FileManager.default.createDirectory(at: externalURL, withIntermediateDirectories: false)
+        let sentinel = Data("external sentinel".utf8)
+        try sentinel.write(to: externalURL.appending(path: "sentinel"))
+        try FileManager.default.moveItem(at: directoryURL, to: detachedURL)
+        try FileManager.default.createSymbolicLink(
+            at: directoryURL, withDestinationURL: externalURL)
+
+        do {
+            _ = try await operation.perform()
+            Issue.record("Expected rejection before writing through a linked directory")
+        } catch let failure as GlifiFailure {
+            #expect(failure.category == .corruption)
+            #expect(failure.retryDisposition == .never)
+        }
+        #expect(await project.snapshot() == snapshot)
+        #expect(try Data(contentsOf: manifestURL) == manifest)
+        #expect(try Data(contentsOf: databaseURL) == database)
+        #expect(
+            try FileManager.default.contentsOfDirectory(atPath: externalURL.path) == ["sentinel"])
+        #expect(try Data(contentsOf: externalURL.appending(path: "sentinel")) == sentinel)
+
+        try FileManager.default.removeItem(at: directoryURL)
+        try FileManager.default.moveItem(at: detachedURL, to: directoryURL)
+        #expect(try await GlifiProjectPackage.open(at: packageURL).snapshot() == snapshot)
+        let transactionsURL = packageURL.appending(path: "transactions")
+        let pendingTransactions = Set(
+            try FileManager.default.contentsOfDirectory(atPath: transactionsURL.path))
+        let committed = try await operation.perform()
+        #expect(committed.generation == snapshot.generation + 1)
+        #expect(try await GlifiProjectPackage.open(at: packageURL).snapshot() == committed)
+        let transactions = Set(
+            try FileManager.default.contentsOfDirectory(atPath: transactionsURL.path))
+        #expect(transactions == pendingTransactions)
+    }
+}
+
+@Test(
+    "Una collisione nella pubblicazione conserva file esterni e ultima generazione",
+    arguments: [
+        "regular", "symbolicLink", "danglingLink", "hardLink", "fifo", "directory", "valid",
+    ]
+)
+func projectPromotionPreservesExistingObject(kind: String) async throws {
+    try await withTemporaryProject { packageURL in
+        let project = try GlifiProjectPackage.create(at: packageURL)
+        let imported = try GlifiTextImporter().importText(
+            from: Data("Synthetic source".utf8), format: .plainText)
+        let hex = String(imported.contentDigest.dropFirst(7))
+        let objectURL = packageURL.appending(path: "sources/objects/sha256/\(hex.prefix(2))/\(hex)")
+        try FileManager.default.createDirectory(
+            at: objectURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        let externalURL = packageURL.deletingLastPathComponent().appending(path: "external")
+        if kind != "danglingLink" { try imported.bytes.write(to: externalURL) }
+        switch kind {
+        case "regular": try Data("invalid".utf8).write(to: objectURL)
+        case "valid": try imported.bytes.write(to: objectURL)
+        case "symbolicLink", "danglingLink":
+            try FileManager.default.createSymbolicLink(
+                at: objectURL, withDestinationURL: externalURL)
+        case "hardLink": try FileManager.default.linkItem(at: externalURL, to: objectURL)
+        case "fifo": try #require(mkfifo(objectURL.path, 0o600) == 0)
+        case "directory":
+            try FileManager.default.createDirectory(
+                at: objectURL, withIntermediateDirectories: false)
+        default: Issue.record("Unknown test case")
+        }
+        let snapshot = await project.snapshot()
+        let manifest = try Data(contentsOf: packageURL.appending(path: "manifest.json"))
+        var before = stat()
+        try #require(lstat(objectURL.path, &before) == 0)
+        if kind == "valid" {
+            let committed = try await project.importText(imported)
+            #expect(committed.generation == snapshot.generation + 1)
+            #expect(try await project.sourceData(for: imported.sourceRevisionID) == imported.bytes)
+            #expect(try await GlifiProjectPackage.open(at: packageURL).snapshot() == committed)
+            let transactions = try FileManager.default.contentsOfDirectory(
+                atPath: packageURL.appending(path: "transactions").path)
+            #expect(transactions.allSatisfy { $0 == ".writer.lock" })
+        } else {
+            do {
+                _ = try await project.importText(imported)
+                Issue.record("Expected rejection of an invalid existing object")
+            } catch let failure as GlifiFailure {
+                #expect(failure.category == .corruption)
+                #expect(failure.retryDisposition == .never)
+            }
+            #expect(await project.snapshot() == snapshot)
+            #expect(try Data(contentsOf: packageURL.appending(path: "manifest.json")) == manifest)
+            #expect(try await GlifiProjectPackage.open(at: packageURL).snapshot() == snapshot)
+        }
+        var after = stat()
+        try #require(lstat(objectURL.path, &after) == 0)
+        #expect(after.st_ino == before.st_ino && after.st_mode == before.st_mode)
+        if kind == "regular" { #expect(try Data(contentsOf: objectURL) == Data("invalid".utf8)) }
+        if kind == "danglingLink" {
+            #expect(!FileManager.default.fileExists(atPath: externalURL.path))
+        } else {
+            #expect(try Data(contentsOf: externalURL) == imported.bytes)
+        }
+    }
+}
+
+private func promotionOperation(
+    _ kind: PromotionKind, project: GlifiProjectPackage,
+    interruption: GlifiProjectCommitInterruption? = nil
+) async throws -> (path: String, perform: @Sendable () async throws -> GlifiProjectSnapshot) {
+    let snapshot = await project.snapshot()
+    let descriptor = try projectDescriptor(
+        named: "promotion", corpusDigest: snapshot.sourceRootDigest)
+    let payload = ProjectTestArtifactPayload(value: "synthetic")
+    switch kind {
+    case .source:
+        let imported = try GlifiTextImporter().importText(
+            from: Data("Synthetic source".utf8), format: .plainText)
+        let hex = String(imported.contentDigest.dropFirst(7))
+        return (
+            "sources/objects/sha256/\(hex.prefix(2))/\(hex)",
+            {
+                try await project.importText(
+                    imported, sourceID: SourceID(), interruption: interruption)
+            }
+        )
+    case .artifact, .descriptor:
+        let data = try JSONEncoder().encode(payload)
+        let hex =
+            kind == .descriptor
+            ? String(try descriptor.canonicalDigest().dropFirst(7))
+            : SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+        let path =
+            kind == .descriptor
+            ? "artifacts/descriptors/sha256/\(hex.prefix(2))/\(hex).json"
+            : "artifacts/objects/sha256/\(hex.prefix(2))/\(hex)"
+        return (
+            path,
+            {
+                try await project.storeArtifact(
+                    payload, descriptor: descriptor, interruption: interruption)
+            }
+        )
+    case .investigation:
+        let artifacts = try await project.storeArtifact(payload, descriptor: descriptor)
+        let artifact = try #require(artifacts.artifacts.first)
+        let event = try GlifiInvestigationEvent(
+            investigationID: InvestigationID(), predecessorEventID: nil,
+            recordedAtUnixMilliseconds: 1, actor: .localPerson,
+            payload: .created(
+                question: "Synthetic question", languageCode: "it", intent: .understandCollection,
+                planArtifactID: artifact.artifactID, interpretationArtifactID: artifact.artifactID,
+                availableFindingIDs: [], selectedFindingIDs: []))
+        let hex = String(try event.eventID().digest.dropFirst(7))
+        return (
+            "investigations/events/sha256/\(hex.prefix(2))/\(hex).json",
+            { try await project.appendInvestigationEvent(event) }
+        )
+    case .qualitative:
+        let event = try GlifiQualitativeEvent(
+            predecessorEventID: nil, recordedAtUnixMilliseconds: 1,
+            payload: .codebookRevised(
+                codebookID: "synthetic", revision: 1,
+                categories: [
+                    GlifiCodebookCategory(
+                        categoryID: "theme", label: "Tema", definition: "Tema sintetico")
+                ]))
+        let hex = String(try event.eventID().dropFirst(7))
+        return (
+            "qualitative/events/sha256/\(hex.prefix(2))/\(hex).json",
+            {
+                try await project.appendQualitativeEvent(
+                    event, interruption: interruption, interruptionBehavior: .throwFailure)
+            }
+        )
+    }
+}
+
+@Test(
+    "Le transazioni interrotte conservano staging e file privati senza pubblicare il manifest",
+    arguments: [PromotionKind.source, .artifact, .qualitative],
+    [GlifiProjectCommitInterruption.staged, .manifestPrepared]
+)
+private func projectTransactionStagingIsPrivate(
+    kind: PromotionKind, interruption: GlifiProjectCommitInterruption
+) async throws {
+    try await withTemporaryProject { packageURL in
+        let project = try GlifiProjectPackage.create(at: packageURL)
+        let operation = try await promotionOperation(
+            kind, project: project, interruption: interruption)
+        let snapshot = await project.snapshot()
+        let manifest = try Data(contentsOf: packageURL.appending(path: "manifest.json"))
+        await #expect(throws: GlifiFailure.self) { _ = try await operation.perform() }
+        #expect(await project.snapshot() == snapshot)
+        #expect(try Data(contentsOf: packageURL.appending(path: "manifest.json")) == manifest)
+        let transactionsURL = packageURL.appending(path: "transactions")
+        let entries = try FileManager.default.contentsOfDirectory(atPath: transactionsURL.path)
+            .filter { $0 != ".writer.lock" }
+        try #require(entries.count == 1)
+        let stagingURL = transactionsURL.appending(path: try #require(entries.first))
+        var status = stat()
+        try #require(lstat(stagingURL.path, &status) == 0)
+        #expect((status.st_mode & S_IFMT) == S_IFDIR)
+        #expect(status.st_mode & 0o777 == 0o700)
+        let files = Set(try FileManager.default.contentsOfDirectory(atPath: stagingURL.path))
+        let expected: Set<String> =
+            interruption == .manifestPrepared
+            ? ["transaction.json", "manifest.json"]
+            : (kind == .qualitative
+                ? ["transaction.json", "qualitative-event"] : ["transaction.json"])
+        #expect(files == expected)
+        for name in files {
+            try #require(lstat(stagingURL.appending(path: name).path, &status) == 0)
+            #expect((status.st_mode & S_IFMT) == S_IFREG)
+            #expect(status.st_mode & 0o777 == 0o600)
+            #expect(status.st_nlink == 1)
+        }
+        #expect(try await GlifiProjectPackage.open(at: packageURL).snapshot() == snapshot)
+    }
+}
+
+@Test(
+    "Le letture del package rifiutano directory simboliche a ogni livello",
+    arguments: ["source", "artifact", "descriptor", "investigation"], [0, 1, 2, 3]
+)
+func projectPackageRejectsLinkedObjectDirectories(kind: String, depth: Int) async throws {
+    try await withTemporaryProject { packageURL in
+        let project = try GlifiProjectPackage.create(at: packageURL)
+        let imported = try GlifiTextImporter().importText(
+            from: Data("Synthetic source".utf8), format: .plainText)
+        let corpus = try await project.importText(imported)
+        let artifacts = try await project.storeArtifact(
+            ProjectTestArtifactPayload(value: "synthetic"),
+            descriptor: projectDescriptor(named: "paths", corpusDigest: corpus.sourceRootDigest))
+        let artifact = try #require(artifacts.artifacts.first)
+        let event = try GlifiInvestigationEvent(
+            investigationID: InvestigationID(), predecessorEventID: nil,
+            recordedAtUnixMilliseconds: 1, actor: .localPerson,
+            payload: .created(
+                question: "Synthetic question", languageCode: "it", intent: .understandCollection,
+                planArtifactID: artifact.artifactID, interpretationArtifactID: artifact.artifactID,
+                availableFindingIDs: [], selectedFindingIDs: []))
+        let snapshot = try await project.appendInvestigationEvent(event)
+        let paths = [
+            "source": try #require(snapshot.sources.first).objectPath,
+            "artifact": artifact.objectPath,
+            "descriptor": artifact.descriptorObjectPath,
+            "investigation": try #require(snapshot.investigationEvents.first).objectPath,
+        ]
+        let path = try #require(paths[kind])
+        let components = path.split(separator: "/")
+        let directoryURL = packageURL.appending(
+            path: components.prefix(depth + 1).joined(separator: "/"))
+        let externalURL = packageURL.deletingLastPathComponent().appending(path: "external")
+        let original = try Data(contentsOf: packageURL.appending(path: path))
+        let manifest = try Data(contentsOf: packageURL.appending(path: "manifest.json"))
+        try FileManager.default.moveItem(at: directoryURL, to: externalURL)
+        try FileManager.default.createSymbolicLink(
+            at: directoryURL, withDestinationURL: externalURL)
+
+        do {
+            _ = try GlifiProjectPackage.open(at: packageURL)
+            Issue.record("Expected rejection of a linked object directory")
+        } catch let failure as GlifiFailure {
+            #expect(failure.category == .corruption)
+            #expect(failure.retryDisposition == .never)
+        }
+        switch kind {
+        case "source":
+            await #expect(throws: GlifiFailure.self) {
+                _ = try await project.sourceData(for: imported.sourceRevisionID)
+            }
+        case "artifact":
+            await #expect(throws: GlifiFailure.self) {
+                _ = try await project.artifactData(for: artifact.artifactID)
+            }
+        case "investigation":
+            await #expect(throws: GlifiFailure.self) {
+                _ = try await project.investigationEvent(for: event.eventID())
+            }
+        case "descriptor":
+            break
+        default:
+            Issue.record("Unknown test case")
+        }
+        #expect(await project.snapshot() == snapshot)
+        #expect(try Data(contentsOf: packageURL.appending(path: "manifest.json")) == manifest)
+        let externalObject = externalURL.appending(
+            path: components.dropFirst(depth + 1).joined(separator: "/"))
+        #expect(try Data(contentsOf: externalObject) == original)
+
+        try FileManager.default.removeItem(at: directoryURL)
+        try FileManager.default.moveItem(at: externalURL, to: directoryURL)
+        #expect(try await GlifiProjectPackage.open(at: packageURL).snapshot() == snapshot)
+        #expect(try await project.sourceData(for: imported.sourceRevisionID) == imported.bytes)
+    }
+}
+
+@Test("Il manifest non accetta hard link anche se i byte sono validi")
+func projectPackageRejectsHardLinkedManifest() async throws {
+    try await withTemporaryProject { packageURL in
+        let project = try GlifiProjectPackage.create(at: packageURL)
+        let snapshot = await project.snapshot()
+        let manifestURL = packageURL.appending(path: "manifest.json")
+        let original = try Data(contentsOf: manifestURL)
+        let externalURL = packageURL.deletingLastPathComponent().appending(
+            path: "manifest-copy.json")
+        try FileManager.default.linkItem(at: manifestURL, to: externalURL)
+        #expect(throws: GlifiFailure.self) { _ = try GlifiProjectPackage.open(at: packageURL) }
+        #expect(throws: GlifiFailure.self) {
+            _ = try GlifiProjectPackage.openReadOnlyRecovery(at: packageURL)
+        }
+        #expect(try Data(contentsOf: externalURL) == original)
+        try FileManager.default.removeItem(at: externalURL)
+        #expect(try await GlifiProjectPackage.open(at: packageURL).snapshot() == snapshot)
+    }
+}
+
+@Test(
+    "Il writer rifiuta lock non regolari senza modificare la generazione",
+    arguments: ["symbolicLink", "danglingLink", "hardLink", "fifo", "directory"]
+)
+func projectWriterRejectsUnsafeLockFiles(kind: String) async throws {
+    try await withTemporaryProject { packageURL in
+        let project = try GlifiProjectPackage.create(at: packageURL)
+        let snapshot = await project.snapshot()
+        let lockURL = packageURL.appending(path: "transactions/.writer.lock")
+        let externalURL = packageURL.deletingLastPathComponent().appending(path: "external-lock")
+        let original = Data("synthetic lock target".utf8)
+        if kind != "danglingLink" {
+            try original.write(to: externalURL)
+        }
+        switch kind {
+        case "symbolicLink", "danglingLink":
+            try FileManager.default.createSymbolicLink(at: lockURL, withDestinationURL: externalURL)
+        case "hardLink":
+            try FileManager.default.linkItem(at: externalURL, to: lockURL)
+        case "fifo":
+            try #require(mkfifo(lockURL.path, 0o600) == 0)
+        case "directory":
+            try FileManager.default.createDirectory(at: lockURL, withIntermediateDirectories: false)
+        default:
+            Issue.record("Caso di test sconosciuto")
+        }
+        let imported = try GlifiTextImporter().importText(
+            from: Data("Una fonte sintetica.".utf8), format: .plainText)
+        do {
+            _ = try await project.importText(imported)
+            Issue.record("Era atteso il rifiuto del lock non sicuro")
+        } catch let failure as GlifiFailure {
+            #expect(failure.category == .corruption)
+            #expect(failure.code == "project.invalid-writer-lock")
+        }
+        #expect(await project.snapshot() == snapshot)
+        #expect(try await GlifiProjectPackage.open(at: packageURL).snapshot() == snapshot)
+        if kind == "danglingLink" {
+            #expect(!FileManager.default.fileExists(atPath: externalURL.path))
+        } else {
+            #expect(try Data(contentsOf: externalURL) == original)
+        }
+        try FileManager.default.removeItem(at: lockURL)
+        let committed = try await project.importText(imported)
+        #expect(committed.generation == snapshot.generation + 1)
+    }
+}
+
+@Test("Nuovi package e file autorevoli hanno permessi privati")
+func projectPackageCreatesPrivateFiles() async throws {
+    try await withTemporaryProject { packageURL in
+        let project = try GlifiProjectPackage.create(at: packageURL)
+        let imported = try GlifiTextImporter().importText(
+            from: Data("Contenuto sintetico privato.".utf8), format: .plainText)
+        let snapshot = try await project.importText(imported)
+        let source = try #require(snapshot.sources.first)
+        for (url, expected) in [
+            (packageURL, 0o700),
+            (packageURL.appending(path: "manifest.json"), 0o600),
+            (packageURL.appending(path: source.objectPath), 0o600),
+            (packageURL.appending(path: "transactions/.writer.lock"), 0o600),
+        ] {
+            let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
+            let permissions = try #require(attributes[.posixPermissions] as? NSNumber)
+            #expect(permissions.intValue & 0o777 == expected)
+        }
+        #expect(try await GlifiProjectPackage.open(at: packageURL).snapshot() == snapshot)
+    }
+}
+
+@Test("Il writer non segue link nella directory delle transazioni")
+func projectWriterRejectsLinkedTransactionDirectory() async throws {
+    try await withTemporaryProject { packageURL in
+        let project = try GlifiProjectPackage.create(at: packageURL)
+        let snapshot = await project.snapshot()
+        let transactionsURL = packageURL.appending(path: "transactions")
+        let externalURL = packageURL.deletingLastPathComponent().appending(path: "external")
+        try FileManager.default.moveItem(at: transactionsURL, to: externalURL)
+        try FileManager.default.createSymbolicLink(
+            at: transactionsURL, withDestinationURL: externalURL)
+        let imported = try GlifiTextImporter().importText(
+            from: Data("Fonte sintetica.".utf8), format: .plainText)
+        await #expect(throws: GlifiFailure.self) { _ = try await project.importText(imported) }
+        #expect(await project.snapshot() == snapshot)
+        #expect(try FileManager.default.contentsOfDirectory(atPath: externalURL.path).isEmpty)
+        try FileManager.default.removeItem(at: transactionsURL)
+        try FileManager.default.moveItem(at: externalURL, to: transactionsURL)
+        #expect(try await project.importText(imported).generation == snapshot.generation + 1)
+    }
+}
 
 @Test("Il package .glifi conserva una fonte e riapre la stessa generazione")
 func projectPackageRoundTrip() async throws {

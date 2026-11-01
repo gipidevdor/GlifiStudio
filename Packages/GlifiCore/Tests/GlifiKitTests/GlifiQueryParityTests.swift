@@ -44,6 +44,7 @@ func queryParityBetweenCoreAndKit() async throws {
     let imported = try GlifiTextImporter().importText(
         from: Data(fixture.source.utf8), format: .plainText)
     let tokenization = try GlifiItalianTokenizer().tokenize(imported.text)
+    let generation = try await session.snapshot().generation
     #expect(fixture.cases.count >= 7)
     for testCase in fixture.cases {
         switch testCase.outcome {
@@ -52,6 +53,8 @@ func queryParityBetweenCoreAndKit() async throws {
             let core = try GlifiQueryEvaluator().evaluate(
                 ast, in: imported, tokenization: tokenization)
             let kit = try await session.query(testCase.query)
+            let astKit = try await session.query(canonicalAST: ast.canonicalData())
+            #expect(astKit == kit, "\(testCase.id)")
             #expect(kit.queryDigest == (try ast.canonicalDigest()), "\(testCase.id)")
             let coreRanges = core.matches.map { [$0.range.start, $0.range.end] }
             let kitRanges = kit.matches.map { [$0.startUTF8, $0.endUTF8] }
@@ -76,5 +79,22 @@ func queryParityBetweenCoreAndKit() async throws {
             }
         }
     }
+    do {
+        _ = try await session.query(canonicalAST: Data("ZQXCANARY42".utf8))
+        Issue.record("Malformed AST was accepted")
+    } catch let failure as GlifiStudioFailure {
+        #expect(failure.code == "query.invalid-ast")
+        #expect(failure.category == "invalidInput")
+        #expect(failure.operation == "query")
+        #expect(failure.arguments.isEmpty)
+        #expect(!String(describing: failure).contains("ZQXCANARY42"))
+    }
+    #expect(try await session.snapshot().generation == generation)
     await session.close()
+    do {
+        _ = try await session.query(canonicalAST: GlifiQueryAST(root: .matchAll).canonicalData())
+        Issue.record("Closed session accepted an AST query")
+    } catch let failure as GlifiStudioFailure {
+        #expect(failure.code == "project.session-closed")
+    }
 }

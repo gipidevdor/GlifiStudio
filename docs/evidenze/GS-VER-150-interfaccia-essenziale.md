@@ -7,11 +7,11 @@
 | Identificatore | GS-VER-150 |
 | Tipo | Evidenza di verifica |
 | Versione | 1.0.0 |
-| Stato | Verifica parziale |
+| Stato | Superato localmente; audit UI aperti |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
 | Approvazione | Non applicabile; registro operativo |
-| Riferimenti | GS-UI-001; GS-STD-001-15; GS-STD-001-29; ADR-0014; ADR-0024 |
+| Riferimenti | GS-UI-001; GS-STD-001-15; GS-STD-001-29; ADR-0014; ADR-0024; GS-DOR-020 |
 
 ## Ambito
 
@@ -27,36 +27,42 @@ iniziale passano dal catalogo italiano/inglese. Le azioni sullo stato vuoto
 creano effettivamente il progetto e i controlli di codifica sono disabilitati
 in assenza di progetto o durante operazioni in corso.
 
-## Controlli osservati
+## Consegna e controlli osservati
 
-1. `make check-localization check-apple check-failure-messages
-   check-swift-dialect check-compliance format-check`, con Python 3.12:
-   **superato**. Il lint Swift completo è passato.
-2. Build Debug macOS dal workspace con Xcode 27.1, Swift 6.4,
-   `CODE_SIGNING_ALLOWED=NO` e cache isolata in
-   `/private/tmp/GlifiStudioUIBuild/macOS`: **superata** dopo l'estrazione di
-   `StudioDetailsSection` e l'aggiornamento di localizzazione e RTL.
-3. Build Debug iPadOS, destinazione generica iOS Simulator, dal medesimo workspace
-   e cache isolata in `/private/tmp/GlifiStudioUIBuild/iPadOS`: **superata**.
-   Xcode emette un warning relativo alla dichiarazione di apertura dei documenti
-   in place, pertinente al ciclo documentale seguito dall'altra sessione.
-4. `make verify`, con Python 3.12 e cache separata
-   `/private/tmp/GlifiStudioUIVerify`: **non superato**, arrestato dal controllo
-   documentale sulla scheda `GS-DOR-011` aggiunta contemporaneamente dall'altra
-   sessione; manca il marker di stato `**Ready`. I controlli successivi del
-   comando, inclusi i test completi, non sono quindi eseguiti da questa revisione.
-5. `git diff --check`: superato prima della registrazione finale.
+La [scheda GS-DOR-020](../pianificazione/dor-interfaccia-essenziale.md) registra
+confini e rischi durante la preparazione dell'integrazione; dichiara esplicitamente
+la propria registrazione successiva all'implementazione.
 
-Il primo tentativo con Python di sistema si è arrestato perché `zip(strict=)`
-richiede Python 3.10 o successivo; i controlli sopra usano il Python 3.12 già
-presente nell'ambiente. Un primo tentativo iPadOS era stato bloccato dal `deinit`
-non isolato del modello condiviso; l'altra sessione lo ha corretto prima delle
-build finali sopra riportate.
+La consegna è isolata nel branch `refactor/essential-native-interface`, basato su
+`origin/main` alla revisione `f348553`, nel worktree
+`/private/tmp/GlifiStudio-ui-commit`. Include soltanto la revisione UI; il ciclo
+documentale macOS e la modifica preesistente allo schema iPadOS restano nella
+copia di lavoro originale dell'altra sessione.
 
-L'ispezione visiva tramite automazione nativa non è eseguibile perché il Mac è
-bloccato. Xcode segnala inoltre CoreSimulator 1171.7.0 precedente alla versione
-1174.9.2 richiesta: la build generica riesce, ma non costituisce prova
-interattiva nel simulatore.
+1. `make verify`, con Xcode 27.1, Apple Swift 6.4, Python 3.12 e cache separata
+   `/private/tmp/GlifiStudioUICommitVerify`: **superato**, codice di uscita 0.
+   La verifica comprende controlli statici e documentali, lint Swift, **246 test**,
+   validazione veraPDF di **2 PDF/A-2u**, recovery su **22 checkpoint**, smoke test
+   CLI e QueryAST, build **Debug e Release macOS e iPadOS** dal workspace con
+   firma disabilitata.
+2. `Scripts/check-oracles.py --require`, con il percorso di Rscript già installato
+   incluso nel PATH: **superato**, **111 righe** riprodotte e collegate ai test
+   Swift. La verifica è esplicita perché il PATH ristretto della prima invocazione
+   di `make verify` non individuava Rscript.
+3. `git diff --check`: **superato**. I soli documenti di esito vengono aggiornati
+   dopo la verifica; controllo documentale e di conformità sono ripetuti prima
+   del commit.
+
+I tentativi iniziali nella copia condivisa erano stati fermati da una scheda DoR
+in lavorazione e da un `deinit` del modello aggiunto dall'altra sessione. Nessuno
+di questi problemi appartiene al branch UI isolato; non sono stati aggirati
+controlli né incluse modifiche documentali concorrenti per ottenere l'esito.
+
+L'ispezione visiva tramite automazione nativa non è stata eseguita perché il Mac
+è bloccato. Xcode segnala CoreSimulator 1171.7.0 precedente alla versione
+1174.9.2 richiesta: le build generiche riescono, ma non costituiscono prove
+interattive nel simulatore. Le build iPadOS segnalano inoltre il warning già
+presente sulla dichiarazione di apertura dei documenti in place.
 
 ## Limiti
 

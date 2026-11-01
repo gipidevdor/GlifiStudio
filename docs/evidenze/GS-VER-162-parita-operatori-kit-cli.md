@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-VER-162 |
 | Tipo | Evidenza di verifica del contratto headless |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | Superato localmente; limiti dichiarati |
 | Responsabile | Codex, esecuzione automatizzata interna |
 | Ultima modifica | 2026-11-01 |
@@ -36,9 +36,9 @@ identificatori, digest, indici, interi e stringhe. L'evidenza scientifica resta
 quella dei manifest GS-VER-161: la parità di trasporto non è una nuova promozione.
 La revisione esterna V6 e le prove su dispositivo iPadOS rimangono aperte.
 
-## Esito
+## Esito nella copia di sviluppo condivisa
 
-Gate completo `make verify` terminato con **exit 0** sullo stato definitivo.
+Gate completo `make verify` terminato con **exit 0** sullo stato della copia di sviluppo condivisa.
 I metadati della consegna sono stati ricontrollati separatamente dopo il gate;
 la scheda DoR resta nella tracciabilità e non è classificata come rapporto di test.
 
@@ -72,3 +72,23 @@ UI su dispositivo iPadOS. Nessun file delle app o configurazione dei servizi è
 stato modificato da questo incremento. La revisione scientifica esterna V6 e le
 soglie prestazionali su hardware di riferimento restano separate da questa
 verifica del trasporto.
+
+## Verifica del branch di pubblicazione
+
+Il branch di pubblicazione è stato ricostruito in un worktree isolato sulla base
+remota `3fa454feb5711d4533b31e62ce31deb85a3dad63`, preservando i quattordici commit
+remoti successivi alla copia di sviluppo. Sono state riportate soltanto le
+modifiche della libreria, dei suoi strumenti, dei test e della documentazione
+pertinente; il checkout condiviso non è stato modificato.
+
+`make verify` ripetuto sul contenuto integrato: **exit 0**, **326 test Core/Kit**
+(290 Core, 36 Kit), **128 righe di oracoli**, **51 controlli CLI** su 15 fixture,
+verifiche QueryAST CLI, **22 checkpoint di recovery** e **due PDF/A-2u** conformi.
+Build macOS e iPadOS Debug/Release tutte completate; i medesimi avvisi dell'host
+restano non bloccanti. I controlli statici e i metadati sono stati ricontrollati
+prima del commit.
+
+Gli otto test macOS dello stato precedente appartengono alle modifiche
+applicative concorrenti della copia condivisa: non fanno parte di questo delta.
+Il branch riproduce il gate applicativo presente su main, che esegue le build.
+La revisione scientifica esterna V6 e le prove su dispositivo restano aperte.

@@ -1416,11 +1416,30 @@ public actor GlifiEngine {
         in project: GlifiProjectPackage,
         limits: GlifiQueryLimits = .standard
     ) async throws -> GlifiProjectQueryResult {
+        try await executeQuery(in: project, limits: limits) {
+            try GlifiQueryParser(tokenizer: textTokenizer).parse(queryText, limits: limits)
+        }
+    }
+
+    /// Decodes and executes bounded QueryAST v1 JSON through the textual query's execution path.
+    public func query(
+        canonicalAST data: Data,
+        in project: GlifiProjectPackage,
+        limits: GlifiQueryLimits = .standard
+    ) async throws -> GlifiProjectQueryResult {
+        try await executeQuery(in: project, limits: limits) {
+            try GlifiQueryAST.decode(data, limits: limits)
+        }
+    }
+
+    private func executeQuery(
+        in project: GlifiProjectPackage,
+        limits: GlifiQueryLimits,
+        makeQuery: () throws -> GlifiQueryAST
+    ) async throws -> GlifiProjectQueryResult {
         do {
-            let query = try GlifiQueryParser(tokenizer: textTokenizer).parse(
-                queryText,
-                limits: limits
-            )
+            let query = try makeQuery()
+            try GlifiQueryEvaluator().validate(query, limits: limits)
             let queryDigest = try query.canonicalDigest()
             let snapshot = await project.snapshot()
             guard !snapshot.sources.isEmpty else {

@@ -119,6 +119,10 @@ cli_markdown_query_output="$(swift run \
     --scratch-path "$build_cache_directory/SwiftPM" \
     --skip-build \
     GlifiCLI --format json query "$cli_project_path" --text "normalized:fonte")"
+cli_binary_directory="$(swift build --package-path Packages/GlifiCore \
+    --scratch-path "$build_cache_directory/SwiftPM" --show-bin-path)"
+python3 Scripts/check-query-ast.py --executable "$cli_binary_directory/GlifiCLI" \
+    --project "$cli_project_path"
 cli_analysis_output="$(swift run \
     --package-path Packages/GlifiCore \
     --scratch-path "$build_cache_directory/SwiftPM" \
@@ -462,6 +466,18 @@ cli_bm25_output="$(swift run --package-path Packages/GlifiCore \
 cli_diversity_output="$(swift run --package-path Packages/GlifiCore \
     --scratch-path "$build_cache_directory/SwiftPM" --skip-build \
     GlifiCLI --format json diversity "$cli_visual_project_path" --sources "$cli_visual_sources")"
+cli_summarize_output="$(swift run --package-path Packages/GlifiCore \
+    --scratch-path "$build_cache_directory/SwiftPM" --skip-build \
+    GlifiCLI --format json summarize "$cli_visual_project_path" --sources "$cli_visual_sources" \
+    --sentences 2)"
+cli_centroid_summary_output="$(swift run --package-path Packages/GlifiCore \
+    --scratch-path "$build_cache_directory/SwiftPM" --skip-build \
+    GlifiCLI --format json summarize "$cli_visual_project_path" --sources "$cli_visual_sources" \
+    --sentences 2 --method CentroidCosine-v1)"
+cli_mmr_summary_output="$(swift run --package-path Packages/GlifiCore \
+    --scratch-path "$build_cache_directory/SwiftPM" --skip-build \
+    GlifiCLI --format json summarize "$cli_visual_project_path" --sources "$cli_visual_sources" \
+    --sentences 2 --method CentroidCosine-v1 --mmr 0.5)"
 # ADR-0027: storia qualitativa dalla CLI.
 cli_codebook_request="$temporary_build_directory/codebook.json"
 print -r -- '{"codebookRevised":{"codebookID":"temi","revision":1,"categories":[{"categoryID":"fonte","label":"Fonte","definition":"Riferimenti alla fonte."}]}}' \
@@ -612,6 +628,64 @@ assert len(result["documents"]) == 2
 for document in result["documents"]:
     value = document["mtld"]["value"]
     assert value == "+Infinity" or value > 0
+PY
+python3 - "$cli_summarize_output" "$cli_centroid_summary_output" "$cli_mmr_summary_output" <<'PY'
+import json
+import sys
+
+expected_methods = {
+    "SentenceTFIDFMean-v1": "eligibility.lexical-tokens-required-v1",
+    "CentroidCosine-v1": "eligibility.non-null-vector-v1",
+}
+results = []
+for payload, (method, eligibility) in zip(sys.argv[1:3], expected_methods.items()):
+    summary = json.loads(payload)
+    assert summary["command"] == "summarize"
+    result = summary["result"]
+    assert result["methodIdentifier"] == method
+    assert result["eligibilityPolicy"] == eligibility
+    assert result["budget"] == {"unit": "Budget-sentences-v1", "limit": 2}
+    assert result["outputOrderIdentifier"] == "output-order.source-v1"
+    sentences = result["sentences"]
+    assert len(result["sourceRevisionIDs"]) == 2
+    assert sorted(s["rank"] for s in sentences) == list(range(1, len(sentences) + 1))
+    ranked = sorted(sentences, key=lambda s: s["rank"])
+    assert all(a["score"] >= b["score"] for a, b in zip(ranked, ranked[1:]))
+    assert all(s["isEligible"] == (s["tokenCount"] > 0) for s in sentences)
+    assert all(not s["isSelected"] or s["isEligible"] for s in sentences)
+    assert result["redundancyPolicy"] == "redundancy.none-v1"
+    assert result.get("redundancyLambda") is None and result.get("similarityIdentifier") is None
+    # Without redundancy control the selection order follows the rank among the selected.
+    walk = sorted((s for s in sentences if s["isSelected"]), key=lambda s: s["rank"])
+    assert [s["selectionOrder"] for s in walk] == list(range(1, len(walk) + 1))
+    assert all(s.get("selectionOrder") is None for s in sentences if not s["isSelected"])
+    selected = [s for s in sentences if s["isSelected"]]
+    assert len(selected) == min(2, sum(1 for s in sentences if s["isEligible"]))
+    assert result["consumedBudget"] == len(selected)
+    assert [entry["sentence"] for entry in result["selected"]] == selected
+    assert all(entry["text"] and entry["sentence"]["endUTF8"] > entry["sentence"]["startUTF8"]
+               for entry in result["selected"])
+    results.append(result)
+mean, centroid = results
+assert [(s["startUTF8"], s["endUTF8"]) for s in mean["sentences"]] == \
+    [(s["startUTF8"], s["endUTF8"]) for s in centroid["sentences"]]
+assert all(0.0 <= s["score"] <= 1.0 + 1e-12 for s in centroid["sentences"])
+# Each method commits a distinct Artifact: the second reads the generation reached by the first.
+assert mean["lineage"]["projectID"] == centroid["lineage"]["projectID"]
+assert centroid["lineage"]["sourceGeneration"] >= mean["lineage"]["generation"]
+# MMR-v1 over the centroid relevance: same scores and ranks, distinct Artifact, acceptance order.
+mmr = json.loads(sys.argv[3])["result"]
+assert mmr["methodIdentifier"] == "CentroidCosine-v1"
+assert mmr["redundancyPolicy"] == "MMR-v1" and mmr["redundancyLambda"] == 0.5
+assert mmr["similarityIdentifier"] == "similarity.sentence-vector-cosine-v1"
+assert [s["score"] for s in mmr["sentences"]] == [s["score"] for s in centroid["sentences"]]
+assert [s["rank"] for s in mmr["sentences"]] == [s["rank"] for s in centroid["sentences"]]
+orders = sorted(s["selectionOrder"] for s in mmr["sentences"] if s["isSelected"])
+assert orders == list(range(1, len(orders) + 1)) and len(orders) == mmr["consumedBudget"]
+assert all(s.get("selectionOrder") is None for s in mmr["sentences"] if not s["isSelected"])
+assert mmr["lineage"]["artifactID"] != centroid["lineage"]["artifactID"]
+assert mmr["lineage"]["projectID"] == centroid["lineage"]["projectID"]
+assert mean["lineage"]["artifactID"] != centroid["lineage"]["artifactID"]
 PY
 python3 - "$cli_weighting_output" "$cli_bm25_output" <<'PY'
 import json

@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-REP-005 |
 | Tipo | Descrizione della pipeline |
-| Versione | 1.5.0 |
-| Stato | Configurato localmente |
+| Versione | 1.6.0 |
+| Stato | Eseguito sul runner remoto |
 | Responsabile | Responsabile tecnico, da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-10-03 |
 | Approvazione | Baseline operativa richiesta dal promotore |
 
 ## Pipeline
@@ -70,6 +70,15 @@ Sul primo push GitHub ha creato entrambi i job, ma non ha avviato step perché i
 budget Actions dell'account impedisce ulteriore utilizzo. Questa condizione è un
 blocco infrastrutturale: la CI non è verificata e non deve essere marcata verde o
 sostituita da Xcode precedente. L'evidenza è [GS-VER-010](../evidenze/GS-VER-010-attivazione-github-privato.md).
+
+## Prima esecuzione remota
+
+Il 2026-10-03, dopo il ripristino del budget, il runner `xcode-27` (macOS 27.0, immagine
+`xcode-27-arm64`) ha eseguito `static-quality`, `format-check`, `verify` e
+`app-store-baseline` sulla PR #11. `verify` è verde in circa 8,5 minuti senza cache.
+Il runner non dispone di `Rscript` né di veraPDF: oracoli numerici e validazione
+PDF/A sono saltati in remoto e restano a carico del gate locale. Dettagli in
+[GS-VER-141](../evidenze/GS-VER-141-prima-ci-remota-verde.md).
 
 ## Riferimenti operativi
 

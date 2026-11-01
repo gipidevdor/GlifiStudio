@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-DEV-001 |
 | Tipo | Guida controllata dell'ambiente di sviluppo |
-| Versione | 1.0.0 |
+| Versione | 1.1.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-10-03 |
 | Approvazione | Non ancora approvato |
 
 ## Prerequisiti
@@ -138,8 +138,9 @@ Developer Account; team di firma e profili devono ancora essere assegnati.
 
 ## Stato della baseline
 
-La baseline è compilabile e testata localmente. Signing, provisioning, matrice dei
-dispositivi fisici ed esecuzione della CI remota restano da completare prima di una
+La baseline è compilabile e testata localmente e, dal 2026-10-03, sul runner remoto
+`xcode-27` ([GS-VER-141](evidenze/GS-VER-141-prima-ci-remota-verde.md)). Signing,
+provisioning e matrice dei dispositivi fisici restano da completare prima di una
 distribuzione. Gli esiti iniziali sono conservati in
 [GS-VER-001](evidenze/GS-VER-001-bootstrap-ambiente.md) e nel
 [preflight App Store](evidenze/GS-VER-009-preflight-app-store.md).

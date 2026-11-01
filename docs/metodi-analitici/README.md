@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-MET-001 |
 | Tipo | Specifica normativa ingegneristico-scientifica |
-| Versione | 1.1.0 |
+| Versione | 1.2.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-01 |

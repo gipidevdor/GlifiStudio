@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-WVR-004 |
 | Tipo | Deroga controllata |
-| Versione | 1.0.0 |
-| Stato | Approvata, temporanea |
+| Versione | 1.1.0 |
+| Stato | Scaduta il 2026-09-22; rientro in corso, chiusura dopo entrambi i workflow verdi |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-16 |
+| Ultima modifica | 2026-10-03 |
 | Approvazione | Evidenza operativa dell'iniziatore del progetto |
 | Regole interessate | GS-STD-001-20; integrazione con check remoti verdi |
 | Ambito | PR #7 `cursor/percorso-produttivita-0-1-a9b8` |
@@ -55,6 +55,15 @@ annotazione di budget.
 2. rieseguire entrambi i workflow sul tip (o sul merge commit);
 3. correggere o revertire se emerge una divergenza reale;
 4. chiudere questa deroga soltanto dopo check verdi.
+
+## Rientro
+
+Il budget Actions è stato ripristinato dopo la scadenza. Il 2026-10-03 i workflow sono stati
+eseguiti sul runner `xcode-27` per la [PR #11](https://github.com/gpicchiarelli/GlifiStudio/pull/11)
+(`main` a `4463b7e`, superinsieme dei commit in ambito): `Verifica` verde,
+`App Store preflight` ancora in esecuzione al momento della stesura ([GS-VER-141](../evidenze/GS-VER-141-prima-ci-remota-verde.md)).
+Le revisioni storiche non sono state rieseguite singolarmente. Il periodo tra la
+scadenza e il rientro resta registrato come non conformità in GS-VER-141.
 
 ## Riferimenti
 

@@ -305,6 +305,19 @@ public actor GlifiStudioProjectSession {
         }
     }
 
+    /// Executes QueryAST v1 JSON (at most 64 KiB) with the same limits and results as textual queries.
+    ///
+    /// Rejects incompatible schemas and malformed input without exposing decoder details.
+    public func query(canonicalAST data: Data) async throws -> GlifiStudioProjectQueryResult {
+        try ensureOpen()
+        do {
+            return try await GlifiStudioProjectQueryResult(
+                engine.query(canonicalAST: data, in: project))
+        } catch {
+            throw Self.map(error, operation: .query)
+        }
+    }
+
     /// Loads the exact UTF-8 text of one immutable source revision for source jump.
     public func sourceText(sourceRevisionID: String) async throws -> GlifiStudioSourceText {
         try ensureOpen()
@@ -758,6 +771,33 @@ public actor GlifiStudioProjectSession {
                     corpusOptions: corpusOptions.coreValue
                 )
             )
+        }
+    }
+
+    /// Selects sentences with `SentenceTFIDFMean-v1` within a declared budget and resolves
+    /// their source text.
+    public func analyzeExtractiveSummary(
+        sourceRevisionIDs: [String],
+        budget: GlifiStudioSummaryBudget = .standard,
+        scheme: GlifiStudioTermWeightingScheme = .summaryStandard,
+        method: GlifiStudioSummaryScoringMethod = .standard,
+        redundancy: GlifiStudioSummaryRedundancy = .standard,
+        corpusOptions: GlifiStudioCorpusAnalysisOptions = .standard
+    ) async throws -> GlifiStudioExtractiveSummaryResult {
+        try await derivedOperation {
+            let ids = try sourceRevisionIDs.map(SourceRevisionID.init(canonicalValue:))
+            let result = try await engine.analyzeExtractiveSummary(
+                in: project,
+                sourceRevisionIDs: ids,
+                budget: try budget.coreValue(),
+                scheme: try scheme.coreValue(),
+                method: try method.coreValue(),
+                redundancy: try redundancy.coreValue(),
+                corpusOptions: corpusOptions.coreValue
+            )
+            let resolved = try await engine.resolveSummarySentences(
+                result.value, in: project, corpusOptions: corpusOptions.coreValue)
+            return GlifiStudioExtractiveSummaryResult(result, resolved: resolved)
         }
     }
 

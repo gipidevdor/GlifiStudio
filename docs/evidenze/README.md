@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.6.1 |
+| Versione | 1.14.2 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
@@ -13,6 +13,23 @@
 Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un esito positivo prova soltanto l'ambito dichiarato e non sostituisce l'approvazione dei requisiti o della baseline.
 
 ## Indice
+
+- [GS-VER-151 — Riassunto estrattivo con ridondanza `MMR-v1`](GS-VER-151-riassunto-mmr.md) — CI originaria superata; integrazione con main in verifica
+- [GS-VER-149 — Riassunto estrattivo `CentroidCosine-v1`](GS-VER-149-riassunto-centroide.md) — Superato: gate nativo locale e CI `xcode-27` su `main` `3fa454f`; CMP-097 verified
+- [GS-VER-148 — Letture bounded nella verifica export](GS-VER-148-letture-export.md) — Verifiche locale e remota superate su `1883af9`; limiti residui dichiarati
+
+- [GS-VER-147 — Permessi dell'ingresso QueryAST](GS-VER-147-permessi-queryast.md) — Superato su Xcode 27; limiti EPERM/ACL dichiarati
+
+- [GS-VER-146 — Riassunto estrattivo deterministico `SentenceTFIDFMean-v1`](GS-VER-146-riassunto-estrattivo.md) — Superato su runner remoto; controlli opzionali saltati
+
+- [GS-VER-145 — Staging privato delle transazioni](GS-VER-145-staging-transazioni-package.md) — Parziale; gate locale e CI superati su `97527ba`, confini residui aperti
+- [GS-VER-144 — Pubblicazione degli oggetti del package](GS-VER-144-pubblicazione-oggetti-package.md) — Parziale; gate locale e CI superati su `97527ba`, confini residui aperti
+
+- [GS-VER-143 — Ingresso QueryAST nel percorso headless](GS-VER-143-ingresso-queryast.md) — Superato su Xcode 27 nel perimetro G3
+
+- [GS-VER-142 — Letture relative a directory aperte del package](GS-VER-142-letture-directory-package.md) — Parziale; compilazione Apple superata, verifica dinamica pendente
+
+- [GS-VER-140 — Accessi ai file persistiti del package](GS-VER-140-accessi-file-package.md) — Parziale; verifica dinamica bloccata dal runtime
 
 - [GS-VER-001 — Bootstrap dell'ambiente Xcode](GS-VER-001-bootstrap-ambiente.md) — Superato; baseline sostituita
 - [GS-VER-002 — Baseline linguistica italiana](GS-VER-002-baseline-linguistica-italiana.md) — Superato; baseline UI sostituita
@@ -153,12 +170,13 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 - [GS-VER-137 — Linea di base della tokenizzazione italiana](GS-VER-137-linea-di-base-tokenizzazione.md) — Superato localmente
 - [GS-VER-138 — Corpus gold italiano su prosa reale](GS-VER-138-gold-italiano-su-prosa-reale.md) — Superato localmente
 - [GS-VER-139 — Cache di build riusata e limitata](GS-VER-139-cache-di-build-limitata.md) — Superato localmente
-- [GS-VER-140 — Integrità dei documenti macOS](GS-VER-140-integrita-documenti-macos.md) — Otto test macOS superati; gate globale non superato sulle modifiche concorrenti
-
-- [GS-VER-150 — Interfaccia essenziale e presentazione progressiva](GS-VER-150-interfaccia-essenziale.md) — Build macOS/iPadOS e controlli mirati superati; verify completo e audit aperti
+- [GS-VER-141 — Prima esecuzione remota dei workflow su runner Xcode 27](GS-VER-141-prima-ci-remota-verde.md) — Superato su runner remoto; controlli opzionali saltati
+- [GS-VER-150 — Interfaccia essenziale e presentazione progressiva](GS-VER-150-interfaccia-essenziale.md) — Branch UI: make verify e oracoli superati; audit assistivi e visivi aperti
 
 - [GS-VER-160 — Operatori analitici nativi](GS-VER-160-operatori-analitici-nativi.md) — Verifica numerica e benchmark Release
 
 - [GS-VER-161 — Revisione scientifica degli operatori](GS-VER-161-revisione-scientifica-operatori.md) — Formule, oracoli e manifest per variante
 
 - [GS-VER-162 — Parità degli operatori GlifiKit/CLI](GS-VER-162-parita-operatori-kit-cli.md) — Gate completo superato, 15 fixture e 51 controlli CLI
+
+- [GS-VER-163 — Integrità dei documenti macOS](GS-VER-163-integrita-documenti-macos.md) — Suite del modello macOS; integrazione in verifica

@@ -24,7 +24,7 @@
   <a href="docs/apple/README.md"><img alt="Piattaforme: macOS 27 e iPadOS 27" src="https://img.shields.io/badge/piattaforme-macOS%2027%20%7C%20iPadOS%2027-315CFF.svg?logo=apple&logoColor=white"></a>
   <a href="docs/internazionalizzazione-interfaccia.md"><img alt="Interfaccia: italiano e inglese" src="https://img.shields.io/badge/interfaccia-it%20%7C%20en-6c63d9.svg"></a>
   <a href="docs/app-store/README.md"><img alt="Distribuzione: App Store non in elenco" src="https://img.shields.io/badge/distribuzione-App%20Store%20non%20in%20elenco-4f5eb8.svg?logo=appstore&logoColor=white"></a>
-  <a href="docs/repository/README.md"><img alt="Repository pubblico" src="https://img.shields.io/badge/repository-pubblico-238636.svg?logo=github&logoColor=white"></a>
+  <a href="docs/repository/README.md"><img alt="Repository privato" src="https://img.shields.io/badge/repository-privato-6e7681.svg?logo=github&logoColor=white"></a>
   <a href="LICENSE"><img alt="Licenza BSD 3-Clause" src="https://img.shields.io/badge/licenza-BSD--3--Clause-214237.svg"></a>
 </p>
 
@@ -65,7 +65,7 @@ La documentazione è una baseline controllata: requisiti, architettura e decisio
 | `GlifiKit` | `ProjectSession` actor-isolated con progetto/import, query, planner, analisi persistenti, Investigation ed export scientifico; espone interpretazione, progresso e receipt senza tipi interni |
 | `GlifiCore` | Motore actor-based con import strict, `md-extract-v1`/SpanMap, package `.glifi`/SQLite generazionale, tokenizer italiano, `QueryAST`/KWIC, planner/esecutore, AnalysisDescriptor/DAG/Artifact, Evidence/Finding/Caveat, ReportRevision ed ExportManifest content-addressed |
 | `GlifiCLI` | Status, create/info/validate/import, query, piano/esecuzione, Investigation create/select/list, analyze, keyness ed export PDF/Markdown/CSV/JSON testuali/JSON v1 |
-| Qualità | Gate riproducibile con Apple Swift 6.4, test/build, controlli Apple/App Store, zero telemetria e matrice di conformità automatica |
+| Qualità | Gate riproducibile con Apple Swift 6.4, test/build, controlli Apple/App Store, zero telemetria e matrice di conformità automatica; `verify` eseguito sul runner `xcode-27` (GS-VER-141) |
 | Design implementativo | GS-DOM/DAT/LNG/QRY/ANA/RUN/UI/VIZ/VAL/PROD definiti come baseline candidata; nessuna funzione è dichiarata implementata per questo solo fatto |
 | Distribuzione | Preparazione controllata per App Store non in elenco; firma, dispositivi, materiali e approvazioni reali restano fail-closed |
 

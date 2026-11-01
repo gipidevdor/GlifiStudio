@@ -6,12 +6,26 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Verificato
+
+- Variante `CentroidCosine-v1` del riassunto estrattivo: gate nativo locale e quattro controlli
+  CI `xcode-27` sulla head definitiva di #22 e su `main` `3fa454f`; GS-VER-149 superata,
+  CMP-097 `verified`.
+- Promozione/staging privato del package e letture bounded degli export:
+  gate nativi locali e CI superati sulle revisioni `97527ba` e `1883af9`,
+  integrate con #14 e #21; GS-VER-144/145/148 aggiornate senza promuovere
+  CMP-095. Conservate le verifiche G3 di QueryAST e riassunto estrattivo.
+
 ### Modificato
 
 - Revisione degli operatori nativi: Stress-1 con secondary ties, probabilità LDA
   come media dei prodotti, log-probabilità Naive Bayes robuste ai subnormali e
   riferimenti binari ai codici con parole riservate quotate. Varianti MDS/LDA/codifica
   versionate e stati per metodo collegati a manifest numerici (GS-VER-161).
+
+- La variante di riassunto a centroide conserva la costante pubblica del metodo
+  predefinito e decodifica anche nei messaggi GlifiKit i payload precedenti senza
+  `isEligible`, con test di compatibilità dedicati (GS-VER-149).
 
 - Interfaccia più essenziale: prossima azione contestuale nella panoramica, sidebar
   orientata alla ricerca, menu di progetto e dettagli tecnici espandibili.
@@ -30,6 +44,22 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   SOM batch, CLARA, Naive Bayes, LDA Gibbs e regole automatiche KH Coder, con matrici
   condivise per parole e codici, oracoli indipendenti e benchmark Release (ADR-0032, GS-VER-160).
 
+- Ingresso `query --ast <query.json>` in alternativa a `--text`: QueryAST v1 condiviso
+  tra Core, GlifiKit e CLI, limiti durante lettura/decodifica, rifiuto di file non
+  regolari e diagnostiche senza contenuto o path (GS-VER-143).
+- Riassunto estrattivo deterministico `SentenceTFIDFMean-v1` (GS-MET-001-19, RF-042): frasi
+  esistenti selezionate per media dei pesi TF-IDF entro un budget in frasi o token, con rank,
+  tie-break per posizione, intervallo sorgente e ordine della fonte; Artifact
+  `corpus-extractive-summary-v1`, `analyzeExtractiveSummary` in GlifiKit e `glifi summarize`
+  (GS-VER-146).
+- Variante `CentroidCosine-v1` del riassunto estrattivo (GS-MET-001-19, RF-042): metodo di
+  punteggio come parametro del descrittore (`method`, `--method` in `glifi summarize`), coseno
+  tra il vettore della frase e il centroide del gruppo, vettori nulli esclusi con flag
+  `isEligible` persistito per frase e derivato dai token nei payload precedenti (GS-VER-149).
+- Ridondanza `MMR-v1` del riassunto estrattivo (GS-MET-001-19, RF-042): politica di selezione
+  come parametro del descrittore (`redundancy`, `--mmr <λ>` in `glifi summarize`), obiettivo
+  `λ·rel − (1−λ)·max sim` con similarità coseno tra vettori frase, `λ` validato in `[0, 1]`,
+  `selectionOrder` persistito per frase scelta e assente nei payload precedenti (GS-VER-151).
 - Corpus gold italiano su prosa reale di pubblico dominio (Collodi, «Le avventure di Pinocchio»,
   capitolo 1): 434 token lessicali e 19 frasi annotati da un'implementazione del contratto
   indipendente dal tokenizzatore, in accordo pieno con il prodotto (ADR-0030, GS-VER-138).
@@ -406,6 +436,13 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Modificato
 
+- Registrati i gate Xcode 27 dell'ingresso QueryAST e della regressione permessi
+  (GS-VER-143/147, PR #18): CMP-081 verificata nel perimetro G3 Core/Kit/CLI;
+  nessuna estensione a GUI su dispositivo, PDF/A o distribuzione firmata.
+- Prima esecuzione remota dei workflow sul runner `xcode-27` dopo il ripristino del budget
+  Actions: deroghe GS-WVR-001…004 in rientro tardivo con non conformità registrata,
+  badge del repository riportato a privato, stato CI allineato (GS-VER-141).
+
 - I ValidationManifest dichiarano la tolleranza numerica, l'oracolo e la review: sette capacità
   passano a `supported`, cinque restano `candidate` perché il loro oracolo è un test del prodotto.
   Il gate impedisce di dichiarare `supported` senza averne i requisiti (ADR-0031, GS-VER-136).
@@ -438,8 +475,17 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 - L'app macOS usa il ciclo documentale nativo per Nuovo/Apri e propone il salvataggio del nuovo
   progetto prima dell'importazione. L'inizializzazione non cancella package esistenti e un'apertura
-  fallita conserva la sessione precedente; test di regressione in `make test-macos` (GS-VER-140).
+  fallita conserva la sessione precedente; test di regressione in `make test-macos` (GS-VER-163).
 
+- Errori di permesso `EACCES`/`EPERM` in `query --ast` classificati come
+  `authorizationDenied` con retry dopo intervento utente, non backoff; exit code
+  6 e diagnostica senza percorsi invariati. Test CLI su file non leggibile e
+  correzione della disponibilità AST nel contratto headless (GS-VER-147).
+- Il test del budget di decodifica QueryAST costruiva un albero `not` di 200 livelli e lo
+  codificava con `JSONEncoder` sullo stack limitato di un thread di test: dal merge di GS-VER-143
+  `GlifiCoreTests` terminava con segnale 10 (SIGBUS) su `verify` e `app-store-baseline`. L'input
+  profondo è ora JSON costruito testualmente; il decodificatore sotto test resta bounded dal budget
+  di profondità.
 - Gli script di qualità creavano una cache di compilazione nuova a ogni esecuzione: nulla veniva
   riusato e ogni giro riscriveva circa 37 GiB, fino a riempire il disco e far morire il gate con
   «No space left on device». Le cache vivono ora in `~/Library/Caches/GlifiStudio/verify`, riusate
@@ -468,6 +514,31 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Sicurezza
 
+- Verifica export con letture bounded di manifest e payload relative alla radice aperta,
+  controlli sul descriptor e rifiuto di link/file speciali; regressioni su budget,
+  ripristino e preservazione dei dati (GS-VER-148). Formato e pubblicazione invariati;
+  inventario, scritture, ACL e file provider non diventano coperti integralmente.
+
+- Staging delle transazioni creato esclusivamente tramite directory aperte: `mkdirat`
+  `0700`, file `openat`/`O_EXCL` `0600` e promozione dallo stesso descriptor. Regressioni
+  per collisioni, sostituzioni controllate e permessi ai checkpoint (GS-VER-145).
+  Formato e commit point invariati; accessi path-based al manifest candidato, cleanup,
+  SQLite e identità globale della radice restano fuori dall'incremento.
+
+- Pubblicazione di fonti, Artifact, descriptor ed eventi tramite directory aperte: creazione
+  privata `mkdirat`, attraversamento nofollow e rinomina esclusiva `renameatx_np` senza
+  sovrascrivere oggetti esistenti. Convalida bounded sul descriptor di destinazione e
+  regressioni su collisioni e directory sostituite (GS-VER-144). Nessun cambio al formato;
+  staging iniziale, manifest replacement, cleanup e SQLite restano fuori dall'incremento.
+
+- Letture di manifest e oggetti del package relative a directory aperte: rifiuto dei link
+  intermedi e dei percorsi anomali, mantenimento dei controlli bounded sul file finale e
+  regressioni di sostituzione controllata delle directory (GS-VER-142). La garanzia non si
+  estende alle scritture o a SQLite; CMP-095 resta bloccata.
+
+- Letture, creazione e permessi dei file persistiti rafforzati, con regressioni sintetiche
+  per package ed export; verifica dinamica su macOS 27 ancora necessaria
+  ([GS-VER-140](docs/evidenze/GS-VER-140-accessi-file-package.md)).
 - Controllo locale di credenziali, materiale di firma e riferimenti immutabili delle azioni CI.
 
 ## Politica di compilazione

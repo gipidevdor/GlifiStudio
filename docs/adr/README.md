@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-ADR-IDX-001 |
 | Tipo | Registro delle decisioni architetturali |
-| Versione | 0.29.0 |
+| Versione | 0.29.1 |
 | Stato | Attivo |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-01 |

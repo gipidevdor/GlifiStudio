@@ -1,16 +1,16 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# GS-VER-140 — Integrità dei documenti macOS
+# GS-VER-163 — Integrità dei documenti macOS
 
 | Campo | Valore |
 | --- | --- |
-| Identificatore | GS-VER-140 |
+| Identificatore | GS-VER-163 |
 | Tipo | Evidenza di correzione e verifica |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | Superato per il modello macOS; gate globale non superato |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
-| Approvazione | GS-DOR-011; RF-001; RQ-043; GS-APL-005 |
+| Approvazione | GS-DOR-163; RF-001; RQ-043; GS-APL-005 |
 
 ## Difetti e correzioni
 
@@ -66,3 +66,12 @@ Le cache dedicate dei due tentativi sono state rimosse dai trap degli script.
 
 I test coprono modello e package sintetici, non interazione GUI, autorizzazioni sandbox reali,
 file coordination, autosave del wrapper, conflitti e VoiceOver su dispositivo. G4 resta aperto.
+
+## Identità dell'integrazione
+
+La copia locale completa è conservata nel commit `7b040d1`. In fase di
+riallineamento con main questa evidenza è rinumerata da GS-VER-140 a GS-VER-163:
+GS-VER-140 identifica già una verifica degli accessi al package pubblicata.
+La scheda associata diventa GS-DOR-163 e la clausola CMP-107. La rinumerazione
+preserva entrambe le provenienze; gli esiti storici sopra non sono attribuiti
+alla nuova integrazione. Gli esiti sulla head consolidata sono registrati nella PR.

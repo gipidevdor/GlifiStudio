@@ -108,10 +108,26 @@ enum GlifiCLI {
                     )
                 )
             }
-        case let .query(projectURL, queryText):
+        case let .query(projectURL, input):
+            let astData: Data?
+            switch input {
+            case .text: astData = nil
+            case let .ast(url): astData = try readQueryAST(at: url)
+            }
             let session = try await service.openProject(at: projectURL)
-            let result = try await session.query(queryText)
-            await session.close()
+            let result: GlifiStudioProjectQueryResult
+            do {
+                switch input {
+                case let .text(text): result = try await session.query(text)
+                case .ast:
+                    guard let astData else { throw CLIError.internalFailure }
+                    result = try await session.query(canonicalAST: astData)
+                }
+                await session.close()
+            } catch {
+                await session.close()
+                throw error
+            }
             switch request.format {
             case .text:
                 for match in result.matches {
@@ -463,6 +479,29 @@ enum GlifiCLI {
                 for document in result.documents {
                     let value = document.mtld.map { "\($0.value.doubleValue)" } ?? "non definito"
                     print("\(document.sourceRevisionID)\t\(value)")
+                }
+            case .json:
+                try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
+            }
+        case let .summarize(projectURL, sourceRevisionIDs, budget, scheme, method, redundancy):
+            let session = try await service.openProject(at: projectURL)
+            let result = try await session.analyzeExtractiveSummary(
+                sourceRevisionIDs: sourceRevisionIDs, budget: budget, scheme: scheme,
+                method: method, redundancy: redundancy)
+            await session.close()
+            switch request.format {
+            case .text:
+                let redundancyLabel = result.redundancyLambda.map {
+                    " · \(result.redundancyPolicy) λ=\($0)"
+                }
+                print(
+                    "\(result.methodIdentifier)\(redundancyLabel ?? "") · \(result.budget.unit)=\(result.budget.limit) · \(result.selected.count) frasi · \(result.sentences.count) candidate"
+                )
+                for selected in result.selected {
+                    let sentence = selected.sentence
+                    print(
+                        "\(sentence.rank)\t\(sentence.sourceRevisionID)\t\(sentence.sentenceIndex)\t\(sentence.startUTF8)–\(sentence.endUTF8)\t\(sentence.score)\t\(selected.text)"
+                    )
                 }
             case .json:
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
@@ -871,6 +910,71 @@ enum GlifiCLI {
         }
     }
 
+    private static func readQueryAST(at url: URL) throws -> Data {
+        try Task.checkCancellation()
+        let maximumByteCount = 65_536
+        func failure(_ code: String, category: String = "invalidInput") -> GlifiStudioFailure {
+            let retryDisposition: String
+            switch category {
+            case "authorizationDenied": retryDisposition = "afterUserAction"
+            case "transientIO": retryDisposition = "transientBackoff"
+            case "insufficientResources": retryDisposition = "afterConditionsChange"
+            default: retryDisposition = "afterCorrection"
+            }
+            return planRequestFailure(
+                code: code,
+                category: category,
+                retryDisposition: retryDisposition,
+                operation: "query"
+            )
+        }
+        func ioFailure(_ errorCode: Int32) -> GlifiStudioFailure {
+            failure(
+                "query.ast-unreadable",
+                category: errorCode == EACCES || errorCode == EPERM
+                    ? "authorizationDenied" : "transientIO"
+            )
+        }
+        let descriptor = open(url.path, O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_CLOEXEC)
+        guard descriptor >= 0 else {
+            if errno == ELOOP {
+                throw failure("query.ast-not-regular-file")
+            }
+            throw ioFailure(errno)
+        }
+        defer { close(descriptor) }
+        var metadata = stat()
+        guard fstat(descriptor, &metadata) == 0 else {
+            throw ioFailure(errno)
+        }
+        guard (metadata.st_mode & S_IFMT) == S_IFREG else {
+            throw failure("query.ast-not-regular-file")
+        }
+        guard metadata.st_size >= 0, metadata.st_size <= maximumByteCount else {
+            throw failure("query.byte-limit-exceeded", category: "insufficientResources")
+        }
+        var data = Data(count: maximumByteCount + 1)
+        var count = 0
+        try data.withUnsafeMutableBytes { buffer in
+            guard let base = buffer.baseAddress else { throw CLIError.internalFailure }
+            while count < buffer.count {
+                try Task.checkCancellation()
+                let readCount = read(descriptor, base.advanced(by: count), buffer.count - count)
+                if readCount < 0 {
+                    if errno == EINTR { continue }
+                    throw ioFailure(errno)
+                }
+                if readCount == 0 { break }
+                count += readCount
+            }
+        }
+        guard count <= maximumByteCount else {
+            throw failure("query.byte-limit-exceeded", category: "insufficientResources")
+        }
+        data.count = count
+        return data
+    }
+
     private static func readPlanRequest(
         at url: URL,
         operation: String = "plan"
@@ -1053,7 +1157,7 @@ private struct CLIRequest {
           glifi [--format text|json] [--no-progress] text-analysis --request <richiesta.json>
           glifi [--format text|json] [--no-progress] project validate <progetto.glifi>
           glifi [--format text|json] [--no-progress] import <progetto.glifi> <fonte.txt>...
-          glifi [--format text|json] [--no-progress] query <progetto.glifi> --text <query>
+          glifi [--format text|json] [--no-progress] query <progetto.glifi> (--text <query> | --ast <query.json>)
           glifi [--format text|json] [--no-progress] plan <progetto.glifi> --request <richiesta.json>
           glifi [--format text|json] [--no-progress] execute <progetto.glifi> --request <richiesta.json>
           glifi [--format text|json] [--no-progress] visualize <progetto.glifi> --request <richiesta.json>
@@ -1068,6 +1172,7 @@ private struct CLIRequest {
           glifi [--format text|json] [--no-progress] weighting <progetto.glifi> --sources <source-revision-id,...> [--tf TF-raw-v1|TF-binary-v1|TF-L1-v1|TF-max-v1|TF-augmented-v1|TF-sublinear-v1] [--idf IDF-none-v1|IDF-unsmoothed-v1|IDF-smooth-v1] [--norm RowNorm-none-v1|RowNorm-L1-v1|RowNorm-L2-v1]
           glifi [--format text|json] [--no-progress] ngrams <progetto.glifi> --sources <source-revision-id,...> --unit form|word|character|character-padded [--n <n>] [--stopwords <forma,...>] [--min-length <n>] [--min-count <n>] [--min-df <n>] [--max-df-proportion <x>] [--max-rows <n>]
           glifi [--format text|json] [--no-progress] diversity <progetto.glifi> --sources <source-revision-id,...> [--threshold <τ>]
+          glifi [--format text|json] [--no-progress] summarize <progetto.glifi> --sources <source-revision-id,...> [--sentences <n> | --tokens <n>] [--method SentenceTFIDFMean-v1|CentroidCosine-v1] [--mmr <λ>] [--tf <TF-*>] [--idf <IDF-*>] [--norm <RowNorm-*>]
           glifi [--format text|json] [--no-progress] bm25 <progetto.glifi> --sources <source-revision-id,...> --query <testo> [--k1 <x>] [--b <x>]
           glifi [--format text|json] [--no-progress] dispersion <progetto.glifi> --sources <source-revision-id,...> [--part <source-revision-id,...>]...
           glifi [--format text|json] [--no-progress] group-metric <progetto.glifi> --group <source-revision-id,...> --group <source-revision-id,...>... [--term <termine>] [--confidence <livello>] [--bootstrap <B>] [--permutations <m>] [--seed <n>] [--contrast <c1,c2,...>]...
@@ -1156,11 +1261,13 @@ private struct CLIRequest {
             command = .importSources(projectURL, sourceURLs)
         } else if remaining.count == 4,
             remaining[0] == "query",
-            remaining[2] == "--text"
+            ["--text", "--ast"].contains(remaining[2])
         {
             command = .query(
                 URL(fileURLWithPath: remaining[1]).standardizedFileURL,
-                remaining[3]
+                remaining[2] == "--text"
+                    ? .text(remaining[3])
+                    : .ast(URL(fileURLWithPath: remaining[3]).standardizedFileURL)
             )
         } else if remaining.count == 2, remaining[0] == "analyze" {
             command = .analyze(URL(fileURLWithPath: remaining[1]).standardizedFileURL)
@@ -1317,7 +1424,7 @@ private struct CLIRequest {
                 "association", "dispersion", "group-metric", "collocations", "window-collocations",
                 "window-network",
                 "correlate", "paired", "posthoc", "network", "agreement", "multivariate",
-                "weighting", "bm25", "diversity", "ngrams",
+                "weighting", "bm25", "diversity", "summarize", "ngrams",
             ]
             .contains(remaining[0])
         else {
@@ -1400,6 +1507,41 @@ private struct CLIRequest {
             }
             return .diversity(
                 projectURL, try Self.identifiers(sources), try decimal("--threshold") ?? 0.72)
+        case "summarize":
+            try allowed([
+                "--sources", "--sentences", "--tokens", "--method", "--mmr", "--tf", "--idf",
+                "--norm",
+            ])
+            guard let sources = try single("--sources") else {
+                throw CLIUsageError.invalidArguments
+            }
+            let sentenceLimit = try integer("--sentences")
+            let tokenLimit = try integer("--tokens")
+            let budget: GlifiStudioSummaryBudget
+            switch (sentenceLimit, tokenLimit) {
+            case (nil, nil):
+                budget = .standard
+            case let (limit?, nil):
+                budget = GlifiStudioSummaryBudget(unit: "Budget-sentences-v1", limit: limit)
+            case let (nil, limit?):
+                budget = GlifiStudioSummaryBudget(unit: "Budget-lexical-tokens-v1", limit: limit)
+            case (_?, _?):
+                throw CLIUsageError.invalidArguments
+            }
+            return .summarize(
+                projectURL,
+                try Self.identifiers(sources),
+                budget,
+                GlifiStudioTermWeightingScheme(
+                    termFrequency: try single("--tf") ?? "TF-sublinear-v1",
+                    inverseDocumentFrequency: try single("--idf") ?? "IDF-smooth-v1",
+                    normalization: try single("--norm") ?? "RowNorm-none-v1"
+                ),
+                try single("--method").map(GlifiStudioSummaryScoringMethod.init(identifier:))
+                    ?? .standard,
+                try decimal("--mmr").map(GlifiStudioSummaryRedundancy.maximalMarginalRelevance)
+                    ?? .standard
+            )
         case "bm25":
             try allowed(["--sources", "--query", "--k1", "--b"])
             guard let sources = try single("--sources"), let query = try single("--query") else {
@@ -1702,6 +1844,11 @@ private struct CLIWindowFlags {
     }
 }
 
+private enum CLIQueryInput {
+    case text(String)
+    case ast(URL)
+}
+
 private enum CLICommand {
     case status
     case textAnalysis(URL)
@@ -1709,7 +1856,7 @@ private enum CLICommand {
     case projectInfo(URL)
     case projectValidate(URL)
     case importSources(URL, [URL])
-    case query(URL, String)
+    case query(URL, CLIQueryInput)
     case plan(URL, URL)
     case executePlan(URL, URL)
     case visualize(URL, URL)
@@ -1724,6 +1871,9 @@ private enum CLICommand {
     case weighting(URL, [String], GlifiStudioTermWeightingScheme)
     case bm25(URL, [String], String, Double, Double)
     case diversity(URL, [String], Double)
+    case summarize(
+        URL, [String], GlifiStudioSummaryBudget, GlifiStudioTermWeightingScheme,
+        GlifiStudioSummaryScoringMethod, GlifiStudioSummaryRedundancy)
     case qualitativeState(URL)
     case qualitativeAppend(URL, URL)
     case qualitativeAgreement(URL, String, Int, [String])
@@ -1765,6 +1915,7 @@ private enum CLICommand {
         case .weighting: "weighting"
         case .bm25: "bm25"
         case .diversity: "diversity"
+        case .summarize: "summarize"
         case .qualitativeState: "qualitative.state"
         case .qualitativeAppend: "qualitative.append"
         case .qualitativeAgreement: "qualitative.agreement"

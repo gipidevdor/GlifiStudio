@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-API-001 |
 | Tipo | Specifica normativa delle interfacce applicative e headless |
-| Versione | 1.25.0 |
+| Versione | 1.28.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-01 |
@@ -212,7 +212,7 @@ chiave (GS-VER-135).
 | elenca indagini | generazione verificata | tutti gli head di ramo in ordine stabile | Implementata in Core, GlifiKit e CLI |
 | analizza | generazione corrente e budget bounded nella slice | profilo corpus, AnalysisNodeID e ArtifactID persistiti | Slice descrittiva implementata con riuso dopo riapertura; l'interpretazione è prodotta dall'esecutore del piano, analisi temporale aperta |
 | confronta keyness | due insiemi espliciti e disgiunti di SourceRevisionID | profili dipendenza e famiglia G-test/effect/BH persistiti | `keyness-gtest-fisher-ha-ci-bh-v2` bounded implementata con riuso dopo riapertura, selezione di Fisher e intervalli di confidenza (GS-VER-118) |
-| interroga | testo `glifi-query-v1`, generazione di sessione e limiti | digest QueryAST e KWIC con SourceRevision/offset | Slice bounded TXT/Markdown con `sourceRanges` implementata e verificata; indice, metadati, annotazioni, cursor e streaming aperti |
+| interroga | testo `glifi-query-v1` oppure QueryAST v1 JSON, generazione di sessione e limiti | digest QueryAST e KWIC con SourceRevision/offset | Slice bounded TXT/Markdown con `sourceRanges`; ingresso AST verificato su Xcode 27 in GS-VER-143/147; indice, metadati, annotazioni, cursor e streaming aperti |
 | carica testo fonte | SourceRevisionID della generazione corrente | testo UTF-8 esatto della revisione incorporata | Implementata in GlifiKit per salto UI KWIC→fonte; non espone path interni |
 | esporta | selezione, formato, destinazione | ExportReceipt + manifest | PDF/A-2u, Markdown, CSV e JSON implementati e verificati |
 
@@ -239,6 +239,7 @@ CLI con envelope JSON v1.
 | `analyzeNGramFrequencies` | `ngrams --unit [--n] [filtri]` | `corpus-ngram-frequencies-v1` | GS-VER-117 |
 | `analyzeLexicalDiversity` | `diversity [--threshold]` | `corpus-lexical-diversity-mtld-v1` | GS-VER-116 |
 | `rankDocumentsBM25` | `bm25 --query [--k1 --b]` | `corpus-bm25-ranking-v1` | GS-VER-115 |
+| `analyzeExtractiveSummary` | `summarize [--sentences n] [--tokens n] [--method m] [--mmr λ] [--tf --idf --norm]` | `corpus-extractive-summary-v1` | GS-VER-146, GS-VER-149, GS-VER-151 |
 | `analyzeMultivariate` | `multivariate --method` | `corpus-document-term-multivariate-v2` | GS-VER-102, GS-VER-108 |
 | `assessCodingAgreement` | `agreement` | `coding-agreement-v2` | GS-VER-092, GS-VER-103 |
 
@@ -299,7 +300,7 @@ glifi investigation select <project> --request <json-file>
 glifi investigation list <project>
 glifi analyze <project>
 glifi keyness <project> --target <source-revision-id,...> --reference <source-revision-id,...>
-glifi query <project> --text <query>
+glifi query <project> (--text <query> | --ast <query.json>)
 glifi export <project> --request <json-file> --output <path>
 glifi qualitative state|append|agreement <project> [opzioni]
 glifi qualitative segments <project> --source <source-revision-id>
@@ -307,7 +308,7 @@ glifi qualitative passage <project> --source <source-revision-id> --sentences <p
 ```
 
 Sono disponibili `status`, `project create`, `project info`, `project validate`,
-`import` per TXT/Markdown, `query --text`, `plan --request`, `execute --request`,
+`import` per TXT/Markdown, `query --text|--ast`, `plan --request`, `execute --request`,
 `investigation create|select|list`, `analyze`, `keyness` ed `export`. Accettano
 `--format text|json`;
 l'envelope JSON ha `cliProtocolVersion = 1`. La query JSON include generazione,
@@ -330,7 +331,8 @@ bounded a 1 MiB e usano soltanto ID canonici; `list` restituisce ogni head di ra
 `export` riceve head, formati, locale e fuso in una request bounded, crea una nuova
 directory con il sottoinsieme richiesto di `report.json`, `report.md`, `report.pdf`,
 `findings.csv`/`evidence.csv` ed `export-manifest.json` e restituisce un receipt
-soltanto dopo la verifica dei digest. File QueryAST, streaming generale e
+soltanto dopo la verifica dei digest. I file QueryAST sono accettati da `query --ast`
+secondo il contratto bounded sotto riportato; streaming generale e
 sovrascrittura di export restano fail-closed. L'invocazione senza
 argomenti resta alias temporaneo dello smoke test e stampa `GlifiCore pronto`;
 prima del protocollo CLI 1.0 deve diventare `help` o essere rimossa con nota di
@@ -379,6 +381,37 @@ I codici 12–69 sono riservati. Una pipe chiusa non converte un'operazione già
 committata in failure scientifica, ma la CLI termina con errore di output.
 
 ## 11. Determinismo e riproducibilità
+
+### Ingresso QueryAST
+
+`GlifiStudioProjectSession.query(canonicalAST: Data)` e `query --ast <file.json>`
+riusano il QueryAST `studio.glifi.query-ast`, versione 1, grammatica
+`glifi-query-v1`. `--ast` e `--text` sono alternative esclusive; nessuna delle due
+modifica la generazione del progetto. L'input JSON può avere spazi o chiavi in
+ordine diverso: il digest deriva sempre dalla ricodifica canonica del Core.
+
+Il limite è 64 KiB di JSON, 1.024 nodi e profondità 32 (radice a zero). La CLI
+richiede un file regolare, rifiuta symlink terminali e FIFO e limita la lettura
+anche se il file cresce. JSON malformato/struttura non decodificabile produce
+`query.invalid-ast` (exit 3); schema/versioni incompatibili
+`query.incompatible-ast` (10); budget ecceduto mantiene la failure specifica
+`query.*-limit-exceeded` (7). File non regolare produce
+`query.ast-not-regular-file` (3), errore I/O `query.ast-unreadable` (6).
+Per `EACCES` e `EPERM`, quest'ultima failure ha categoria `authorizationDenied`
+e retry `afterUserAction`; gli altri errori I/O mantengono `transientIO` e
+`transientBackoff`. Stato preservato `lastCommittedGeneration` e argomenti diagnostici vuoti.
+Queste failure non riportano path, contenuto né dettagli del decoder.
+Vedere [GS-VER-143](../evidenze/GS-VER-143-ingresso-queryast.md) per copertura e
+limiti della verifica, e [GS-VER-147](../evidenze/GS-VER-147-permessi-queryast.md)
+per la regressione dei permessi.
+
+Esempio equivalente a `--text normalized:due`:
+
+```json
+{"schema":"studio.glifi.query-ast","schemaVersion":1,"grammarVersion":"glifi-query-v1","root":{"type":"term","field":"normalized","value":"due","matchMode":"exact"}}
+```
+
+### Identità dei risultati
 
 Ogni comando macchina accetta request versionata e può emettere il piano canonico
 prima dell'esecuzione. A parità di input, capability e policy, piano, ordine e

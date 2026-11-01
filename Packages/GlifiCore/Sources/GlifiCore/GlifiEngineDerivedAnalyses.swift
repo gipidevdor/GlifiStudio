@@ -502,6 +502,161 @@ extension GlifiEngine {
         }
     }
 
+    /// Selects the sentences of a group with a declared scoring method within a declared budget.
+    public func analyzeExtractiveSummary(
+        in project: GlifiProjectPackage,
+        sourceRevisionIDs: [SourceRevisionID],
+        budget: GlifiSummaryBudget = .standard,
+        scheme: GlifiTermWeightingScheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme,
+        method: GlifiSummaryScoringMethod = GlifiCorpusExtractiveSummaryAnalysis.standardMethod,
+        redundancy: GlifiSummaryRedundancyPolicy = .none,
+        corpusOptions: GlifiCorpusAnalysisOptions = .standard
+    ) async throws -> GlifiProjectDerivedResult<GlifiCorpusExtractiveSummaryAnalysis> {
+        try await guardedDerived {
+            try Task.checkCancellation()
+            guard budget.isValid else {
+                throw derivedAnalysisFailure("summary.invalid-budget")
+            }
+            guard redundancy.isValid else {
+                throw derivedAnalysisFailure("summary.invalid-redundancy")
+            }
+            let snapshot = await project.snapshot()
+            let group = try await derivedCorpusGroup(
+                sourceRevisionIDs,
+                minimumCount: 1,
+                code: "summary",
+                snapshot: snapshot,
+                options: corpusOptions,
+                in: project
+            )
+            var parameters: [String: GlifiAnalysisValue] = [
+                "budgetUnit": .text(budget.unit.rawValue),
+                "budgetLimit": .integer(Int64(budget.limit)),
+                "termFrequency": .text(scheme.termFrequency.rawValue),
+                "inverseDocumentFrequency": .text(scheme.inverseDocumentFrequency.rawValue),
+                "normalization": .text(scheme.normalization.rawValue),
+                "redundancyPolicy": .text(redundancy.identifier),
+                "tieBreak": .text("tie-break.source-position-v1"),
+                "eligibility": .text(method.eligibilityPolicy),
+                "outputOrder": .text("output-order.source-v1"),
+            ]
+            if let lambda = redundancy.lambda, let similarity = redundancy.similarityIdentifier {
+                parameters["redundancyLambda"] = .decimal(lambda)
+                parameters["similarity"] = .text(similarity)
+            }
+            let descriptor = try Self.groupDescriptor(
+                GlifiCorpusExtractiveSummaryAnalysis.self,
+                artifactType: "studio.glifi.artifact.corpus-extractive-summary",
+                domain: "extractive-summary-group.v1",
+                unit: "sentence.v1",
+                representation: method.rawValue,
+                parameters: parameters,
+                snapshot: snapshot,
+                groups: [group]
+            )
+            let documents = try await summaryDocuments(
+                descriptor: descriptor, group: group, snapshot: snapshot,
+                corpusOptions: corpusOptions, in: project)
+            return try await derivedArtifact(
+                descriptor: descriptor,
+                sourceSnapshot: snapshot,
+                in: project
+            ) {
+                try GlifiCorpusExtractiveSummaryAnalysis(
+                    documents: documents, budget: budget, scheme: scheme, method: method,
+                    redundancy: redundancy)
+            }
+        }
+    }
+
+    /// Resolves the selected sentences of a summary against the stored source texts.
+    ///
+    /// The payload keeps only intervals: the text is read from the sources of the
+    /// current generation and returned unchanged, in source order.
+    public func resolveSummarySentences(
+        _ summary: GlifiCorpusExtractiveSummaryAnalysis,
+        in project: GlifiProjectPackage,
+        corpusOptions: GlifiCorpusAnalysisOptions = .standard
+    ) async throws -> [GlifiResolvedSummarySentence] {
+        try await guardedDerived {
+            let selected = summary.selectedSentences
+            guard !selected.isEmpty else { return [] }
+            let snapshot = await project.snapshot()
+            let recordsByID = Dictionary(
+                uniqueKeysWithValues: snapshot.sources.map { ($0.sourceRevisionID, $0) }
+            )
+            let ids = try Array(Set(selected.map(\.sourceRevisionID)))
+                .map(SourceRevisionID.init(canonicalValue:))
+            let sources = try await importedSources(
+                try selectedRecords(ids, recordsByID: recordsByID),
+                from: project,
+                maximumSourceByteCount: corpusOptions.maximumSourceByteCount
+            )
+            let textByID = Dictionary(
+                uniqueKeysWithValues: sources.map { ($0.sourceRevisionID.canonicalValue, $0.text) }
+            )
+            return try selected.map { sentence in
+                guard let text = textByID[sentence.sourceRevisionID],
+                    let resolved = sentence.range.text(in: text)
+                else {
+                    throw derivedAnalysisFailure(
+                        "summary.sentence-range-invalid", category: .invariantViolation)
+                }
+                return GlifiResolvedSummarySentence(sentence: sentence, text: resolved)
+            }
+        }
+    }
+
+    /// Sentences with normalized tokens of the group, read only if the node is not yet stored.
+    private func summaryDocuments(
+        descriptor: GlifiAnalysisDescriptor,
+        group: DerivedCorpusGroup,
+        snapshot: GlifiProjectSnapshot,
+        corpusOptions: GlifiCorpusAnalysisOptions,
+        in project: GlifiProjectPackage
+    ) async throws -> [GlifiSummaryDocument] {
+        let nodeID = try descriptor.nodeID()
+        guard !snapshot.artifacts.contains(where: { $0.node.id == nodeID }) else {
+            return group.sourceRevisionIDs.map {
+                GlifiSummaryDocument(sourceRevisionID: $0, sentences: [])
+            }
+        }
+        let recordsByID = Dictionary(
+            uniqueKeysWithValues: snapshot.sources.map { ($0.sourceRevisionID, $0) }
+        )
+        let sources = try await importedSources(
+            try selectedRecords(group.sourceRevisionIDs, recordsByID: recordsByID),
+            from: project,
+            maximumSourceByteCount: corpusOptions.maximumSourceByteCount
+        )
+        let locale = Locale(identifier: "it_IT")
+        return try sources.map { source in
+            try Task.checkCancellation()
+            let tokenization = try textTokenizer.tokenize(source.text)
+            var tokenIndex = 0
+            let sentences = tokenization.sentences.map { sentence in
+                var terms: [String] = []
+                while tokenIndex < tokenization.tokens.count,
+                    tokenization.tokens[tokenIndex].range.start < sentence.range.end
+                {
+                    let token = tokenization.tokens[tokenIndex]
+                    tokenIndex += 1
+                    guard token.range.start >= sentence.range.start,
+                        token.kind.contributesToLexicalStatistics,
+                        let surface = token.range.text(in: source.text)
+                    else {
+                        continue
+                    }
+                    terms.append(
+                        surface.precomposedStringWithCanonicalMapping.lowercased(with: locale))
+                }
+                return GlifiSummaryCandidateSentence(range: sentence.range, terms: terms)
+            }
+            return GlifiSummaryDocument(
+                sourceRevisionID: source.sourceRevisionID, sentences: sentences)
+        }
+    }
+
     /// Counts forms, word n-grams or character n-grams and applies declared filters.
     public func analyzeNGramFrequencies(
         in project: GlifiProjectPackage,

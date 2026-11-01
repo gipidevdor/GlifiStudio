@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.82.0 |
+| Versione | 0.87.2 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
@@ -85,8 +85,8 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 
 | Evidenza | Verifiche coperte | Esito | Limite |
 | --- | --- | --- | --- |
-| [GS-VER-140](evidenze/GS-VER-140-integrita-documenti-macos.md) | TV-001, TV-058, TV-071 | Otto test del modello macOS superati; inizializzazione non distruttiva, attacco idempotente e sessione conservata dopo apertura fallita | GUI, sandbox reale, autosave e file provider aperti |
-| [GS-VER-150](evidenze/GS-VER-150-interfaccia-essenziale.md) | TV-015, TV-017–TV-018, TV-039, TV-044, TV-048, TV-058 | Build Debug macOS/iPadOS e controlli mirati superati | `make verify` fermo su GS-DOR-011 concorrente; audit assistivi e visivi aperti |
+| [GS-VER-163](evidenze/GS-VER-163-integrita-documenti-macos.md) | TV-001, TV-058, TV-071 | Otto test del modello macOS superati; inizializzazione non distruttiva, attacco idempotente e sessione conservata dopo apertura fallita | GUI, sandbox reale, autosave e file provider aperti |
+| [GS-VER-150](evidenze/GS-VER-150-interfaccia-essenziale.md) | TV-015, TV-017–TV-018, TV-039, TV-044, TV-048, TV-058 | Branch UI: make verify, 246 test e oracoli superati | Audit assistivi, contrasto, pseudo-lingua e dispositivi fisici aperti |
 | [GS-VER-001](evidenze/GS-VER-001-bootstrap-ambiente.md) | TV-011 preliminare; TV-013 build baseline | Superato | Non copre flussi funzionali, firma o dispositivi fisici |
 | [GS-VER-002](evidenze/GS-VER-002-baseline-linguistica-italiana.md) | TV-014 configurazione iniziale | Superato | Non copre ancora la qualità delle analisi linguistiche italiane |
 | [GS-VER-003](evidenze/GS-VER-003-interfaccia-internazionalizzabile.md) | TV-015 catalogo e build `it`/`en` | Superato | Test UI del cambio lingua richiesti quando esisteranno flussi interattivi |
@@ -174,8 +174,81 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 | [GS-VER-137](evidenze/GS-VER-137-linea-di-base-tokenizzazione.md) | Slice TV-013; GS-MET-001-18, ADR-0030 | Superato localmente: P/R/F1 sui confini con linea di base legata al digest del corpus, regressione bloccata nel gate | Gold ancora sintetico (19 token): la misura non dice nulla sulla lingua reale |
 | [GS-VER-138](evidenze/GS-VER-138-gold-italiano-su-prosa-reale.md) | Slice TV-013; GS-LNG-001, GS-MET-001-18, ADR-0030 | Superato localmente: gold su 434 token di prosa italiana di pubblico dominio, annotazione indipendente in accordo pieno con il prodotto | Un solo autore ottocentesco; dialogo, lemma, POS e NER esclusi |
 | [GS-VER-139](evidenze/GS-VER-139-cache-di-build-limitata.md) | Slice TV-063; GS-DEV-002 § Cache di build | Superato localmente: picco su disco da ~37 GiB a 1,8 GiB, seconda esecuzione a 303 s contro 773 s, arresto anticipato se lo spazio non basta | Tetto prudenziale non ottimizzato; misure su una sola macchina |
+| [GS-VER-141](evidenze/GS-VER-141-prima-ci-remota-verde.md) | TV-011, TV-013, TV-049; GS-STD-001-20, GS-REP-005, GS-WVR-001…004 | Superato su runner remoto: `verify` verde su `xcode-27` con 257 test, 22 checkpoint di recovery e build macOS/iPadOS; deroghe budget in rientro | Rscript e veraPDF assenti sul runner; dispositivi, firma e TestFlight non coperti; non conformità 2026-09-22→2026-10-03 registrata |
+| [GS-VER-151](evidenze/GS-VER-151-riassunto-mmr.md) | Terza slice TV-036; RF-042, GS-MET-001-19, CMP-106 | In verifica sul runner remoto: oracolo Python esteso (`MMR_*`), test Core/Kit e contract test CLI aggiunti; controlli statici superati | Ridondanza come parametro del descrittore; rilevanza non normalizzata; nessuna valutazione ROUGE o umana; CMP-106 implemented |
+| [GS-VER-149](evidenze/GS-VER-149-riassunto-centroide.md) | Seconda slice TV-036; RF-042, GS-MET-001-19, CMP-097 | Superato: gate nativo locale (261 test Core e 26 Kit, 115 righe di oracoli Python/R, compatibilità API/payload e CLI) e quattro controlli CI `xcode-27` sulla head definitiva della PR #22 e su `main` `3fa454f` | Metodo di punteggio come parametro del descrittore; nessuna valutazione ROUGE o umana; CMP-097 verified |
+| [GS-VER-146](evidenze/GS-VER-146-riassunto-estrattivo.md) | Slice TV-036; RF-042, GS-MET-001-19, CMP-096 | Superato su runner remoto (#16, `19ca4c7`): oracolo Python indipendente, test di persistenza e contract test CLI aggiunti; controlli statici superati | Una sola famiglia; nessuna valutazione ROUGE o umana; Rscript assente sul runner |
+| [GS-VER-142](evidenze/GS-VER-142-letture-directory-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: letture descriptor-relative, regressioni su directory simboliche e sostituzioni controllate; statici, lint e compilazione Apple superati | Test compilati, non eseguiti su host 26.5.2; scritture, SQLite, ACL e file provider esclusi dalla garanzia |
+| [GS-VER-148](evidenze/GS-VER-148-letture-export.md) | Slice TV-060, TV-074; RQ-044, RQ-061, CMP-095 | Gate locale e CI superati (#21, `1883af9`), inclusi oracoli Python/R e veraPDF locali; letture export bounded/no-follow, regressioni e packaging; CMP-095 resta blocked | Inventario path-based e non bounded; nessuna protezione delle scritture, degli antenati o attestazione ACL/file provider |
+| [GS-VER-144](evidenze/GS-VER-144-pubblicazione-oggetti-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: pubblicazione descriptor-relative ed esclusiva, regressioni su cinque tipi di oggetto e collisioni; gate locale e CI verdi su `97527ba`, integrata con #14 | Manifest replacement, cleanup e SQLite esclusi; CMP-095 resta blocked |
+| [GS-VER-145](evidenze/GS-VER-145-staging-transazioni-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: staging privato, esclusivo e descriptor-relative; gate locale e CI verdi su `97527ba`, integrata con #14 | Manifest replacement, cleanup, SQLite e identità globale della radice esclusi; CMP-095 resta blocked |
 
 ## Catalogo delle verifiche pianificate
+
+Incremento [GS-VER-148](evidenze/GS-VER-148-letture-export.md): GS-DOR-004 S4,
+letture di manifest e payload dell'export ancorate alla radice aperta, limiti durante
+la lettura e failure export tipizzate. Formato, inventario e digest invariati;
+nessuna promozione di clausole o chiusura globale di TV-060.
+
+Incremento [GS-VER-147](evidenze/GS-VER-147-permessi-queryast.md): TV-053 e TV-060,
+RF-080, RQ-044, RQ-046, CMP-081. Permessi negati in `query --ast` classificati
+`authorizationDenied`/`afterUserAction`; test CLI su file non leggibile e file
+mancante. Statici e gate Xcode 27 superati in PR #18; concorre alla verifica G3
+di CMP-081. EPERM/ACL e revoca concorrente non riprodotti separatamente.
+
+Incremento [GS-VER-151](evidenze/GS-VER-151-riassunto-mmr.md): terza slice di TV-036 con
+RF-042 e CMP-106 (`implemented`): politica di ridondanza `MMR-v1` del riassunto estrattivo,
+`λ` e similarità coseno tra vettori frase nel descrittore, `selectionOrder` persistito per frase
+scelta e `--mmr` in `glifi summarize`. Esito del gate remoto da registrare nell'evidenza.
+
+Incremento [GS-VER-149](evidenze/GS-VER-149-riassunto-centroide.md): seconda slice di
+TV-036 con RF-042 e CMP-097 (`verified`): variante `CentroidCosine-v1` del riassunto
+estrattivo, coseno tra vettore della frase e centroide del gruppo, vettori nulli esclusi con
+flag `isEligible` persistito; metodo di punteggio come parametro del descrittore e `--method`
+in `glifi summarize`. Gate locale e CI su `main` `3fa454f` registrati nell'evidenza.
+
+Incremento [GS-VER-146](evidenze/GS-VER-146-riassunto-estrattivo.md): prima slice di
+TV-036 con RF-042, GS-DOR-013 e CMP-096 (`verified`): riassunto estrattivo
+`SentenceTFIDFMean-v1` con budget, tie-break, lineage della frase e distinzione dal generativo;
+esito del gate remoto registrato nell'evidenza.
+
+Incremento [GS-VER-145](evidenze/GS-VER-145-staging-transazioni-package.md): TV-060,
+RF-043, RQ-044, RQ-057 e CMP-095. Directory di transazione nuove `0700`, file `0600`
+creati esclusivamente tramite descriptor; promozione dalla stessa directory staged.
+Non cambia il commit point; CI macOS 27 verde su `4bd5dde`, con 255 test Swift e
+22 checkpoint di recovery. CMP-095 resta `blocked` e TV-060 aperto.
+
+Incremento [GS-VER-144](evidenze/GS-VER-144-pubblicazione-oggetti-package.md): TV-060,
+RF-043, RQ-044, RQ-057 e CMP-095. Pubblicazione di oggetti immutabili tramite directory
+aperte e rinomina esclusiva; regressioni su cinque tipi di oggetto, collisioni e directory
+sostituite. CI integrata con staging verde su `4bd5dde`; da ripetere dopo
+il riallineamento documentale a `f348553`.
+Manifest replacement, cleanup, SQLite, ACL e file provider non attestati;
+CMP-095 resta `blocked`.
+
+Incremento [GS-VER-143](evidenze/GS-VER-143-ingresso-queryast.md): TV-053 e TV-060,
+RF-080, RQ-042, RQ-044, RQ-046, CMP-081. Ingresso QueryAST v1 bounded in Core,
+Kit e CLI; parità e input avversari eseguiti nel gate Xcode 27 di PR #18.
+Fixture profonda generata direttamente in JSON per evitare il crash dell'encoder
+prima della verifica bounded.
+CMP-081 `verified` per il perimetro G3;
+nessuna estensione della garanzia a indice, streaming o audit su dispositivo.
+
+Incremento [GS-VER-142](evidenze/GS-VER-142-letture-directory-package.md): TV-060, RF-043,
+RQ-044 e RQ-057, CMP-095. Letture descriptor-relative con regressioni sui link intermedi e
+sostituzioni controllate delle directory. Statici, lint e compilazione Apple superati; verifica
+dinamica del nuovo incremento pendente su macOS 27. Scritture, SQLite, ACL e file provider
+non attestati; CMP-095 resta `blocked`.
+
+Incremento [GS-VER-141](evidenze/GS-VER-141-prima-ci-remota-verde.md): prima CI remota
+verde su runner Xcode 27, GS-WVR-001…004 in rientro tardivo (chiusura dopo App Store preflight verde). I test aggiunti da
+GS-VER-140 sono stati eseguiti dal runner; CMP-095 resta `blocked` finché la review
+non li promuove.
+
+Incremento [GS-VER-140](evidenze/GS-VER-140-accessi-file-package.md): TV-060, RF-043,
+RQ-044 e RQ-057, CMP-095. Controlli statici superati; test degli accessi ai file e dei
+permessi aggiunti ma non ancora eseguiti. Verifica nativa bloccata dal runtime macOS 26.5.2;
+nessuna promozione a requisito verificato.
 
 | ID | Metodo | Evidenza attesa |
 | --- | --- | --- |
@@ -265,11 +338,15 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 - TV-009, TV-010 e TV-019 richiedono dataset, soglie e hardware di riferimento.
 - TV-020 e TV-021 richiedono funzioni di prodotto e contratti persistenti ancora da implementare.
 - TV-026–TV-036 restano parziali: GS-VER-022 prova una slice di TV-029/TV-030 con
-  seed indipendente, ma corpus gold, review, streaming e le altre famiglie mancano.
+  seed indipendente, GS-VER-146 e GS-VER-149 due slice di TV-036 (due famiglie estrattive,
+  `SentenceTFIDFMean-v1` e `CentroidCosine-v1`), ma corpus gold, review, streaming e le
+  altre famiglie mancano.
 - TV-037–TV-048 richiedono prototipi, utenti rappresentativi, soglie UX, dispositivi
   e tecnologie assistive; la revisione GS-UX valida soltanto contratti e coerenza.
 - TV-050–TV-061 richiedono implementazione, fixture, prototipi, benchmark,
   dispositivi e approvazioni; GS-VER-015 valida soltanto struttura e integrazione.
+- Il runner `xcode-27` non dispone di Rscript né veraPDF: oracoli numerici e PDF/A
+  sono verificati solo dal gate locale (GS-VER-141).
 - TV-063, TV-066–TV-069 richiedono flussi reali, corpus canary, build di rilascio e
   hardware; la baseline corrente copre soltanto policy, audit statico e test unitari.
 - TV-070–TV-074 e TV-076 restano verifiche parziali: le evidenze correnti provano

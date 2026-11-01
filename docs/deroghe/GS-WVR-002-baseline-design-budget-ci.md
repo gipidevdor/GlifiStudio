@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-WVR-002 |
 | Tipo | Deroga controllata |
-| Versione | 1.0.0 |
-| Stato | Approvata, temporanea |
+| Versione | 1.1.0 |
+| Stato | Scaduta il 2026-09-22; rientro in corso, chiusura dopo entrambi i workflow verdi |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-10-03 |
 | Approvazione | Richiesta dell'iniziatore di operare, committare e pubblicare direttamente la baseline nel repository privato |
 | Regole interessate | GS-REP-002; GS-STD-001-20; integrazione tramite pull request e con check remoti verdi |
 | Ambito | Commit `6df92ca` della baseline di design e follow-up documentale che registra questa deroga |
@@ -63,6 +63,15 @@ assegnazione del runner (`steps: []`, `runner_id: 0`) per budget.
 
 Se il budget non viene ripristinato entro la scadenza, la deroga diventa una non
 conformità da riesaminare prima di ulteriori integrazioni.
+
+## Rientro
+
+Il budget Actions è stato ripristinato dopo la scadenza. Il 2026-10-03 i workflow sono stati
+eseguiti sul runner `xcode-27` per la [PR #11](https://github.com/gpicchiarelli/GlifiStudio/pull/11)
+(`main` a `4463b7e`, superinsieme dei commit in ambito): `Verifica` verde,
+`App Store preflight` ancora in esecuzione al momento della stesura ([GS-VER-141](../evidenze/GS-VER-141-prima-ci-remota-verde.md)).
+Le revisioni storiche non sono state rieseguite singolarmente. Il periodo tra la
+scadenza e il rientro resta registrato come non conformità in GS-VER-141.
 
 ## Riferimenti
 

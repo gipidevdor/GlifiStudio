@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-WVR-003 |
 | Tipo | Deroga controllata |
-| Versione | 1.0.0 |
-| Stato | Approvata, temporanea |
+| Versione | 1.1.0 |
+| Stato | Scaduta il 2026-09-22; rientro in corso, chiusura dopo entrambi i workflow verdi |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-10-03 |
 | Approvazione | Richiesta esplicita dell'iniziatore di unire i branch verso `main`, eliminare i branch non `main` e allineare il repository |
 | Regole interessate | GS-REP-002; GS-STD-001-20; merge soltanto con check remoti verdi |
 | Ambito | PR #4, commit `bb5201c` e `5a3a0be`, più il commit documentale che registra questa deroga |
@@ -70,6 +70,15 @@ use”. Il fallimento remoto è quindi infrastrutturale, non un esito dei test.
 
 Se il budget non viene ripristinato entro la scadenza, la deroga diventa una non
 conformità da riesaminare prima della successiva integrazione.
+
+## Rientro
+
+Il budget Actions è stato ripristinato dopo la scadenza. Il 2026-10-03 i workflow sono stati
+eseguiti sul runner `xcode-27` per la [PR #11](https://github.com/gpicchiarelli/GlifiStudio/pull/11)
+(`main` a `4463b7e`, superinsieme dei commit in ambito): `Verifica` verde,
+`App Store preflight` ancora in esecuzione al momento della stesura ([GS-VER-141](../evidenze/GS-VER-141-prima-ci-remota-verde.md)).
+Le revisioni storiche non sono state rieseguite singolarmente. Il periodo tra la
+scadenza e il rientro resta registrato come non conformità in GS-VER-141.
 
 ## Riferimenti
 

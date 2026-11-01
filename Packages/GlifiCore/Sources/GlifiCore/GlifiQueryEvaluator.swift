@@ -61,6 +61,21 @@ public struct GlifiQueryEvaluator: Sendable {
     /// Creates a stateless bounded evaluator.
     public init() {}
 
+    /// Checks schema, semantic invariants, and resource limits without reading source text.
+    public func validate(
+        _ query: GlifiQueryAST,
+        limits: GlifiQueryLimits = .standard
+    ) throws {
+        guard query.schema == GlifiQueryAST.schema,
+            query.schemaVersion == GlifiQueryAST.schemaVersion,
+            query.grammarVersion == GlifiQueryAST.grammarVersion
+        else {
+            throw queryExecutionFailure("query.incompatible-ast", category: .incompatibleVersion)
+        }
+        var validation = QueryValidation(limits: limits)
+        try validation.validate(query.root, depth: 0)
+    }
+
     /// Evaluates a query using the positional tokenization of the same source snapshot.
     public func evaluate(
         _ query: GlifiQueryAST,
@@ -68,15 +83,10 @@ public struct GlifiQueryEvaluator: Sendable {
         tokenization: GlifiTokenization,
         limits: GlifiQueryLimits = .standard
     ) throws -> GlifiQueryResult {
-        guard query.schema == GlifiQueryAST.schema,
-            query.schemaVersion == GlifiQueryAST.schemaVersion,
-            query.grammarVersion == GlifiQueryAST.grammarVersion,
-            tokenization.sourceUTF8Length == importedText.text.utf8.count
-        else {
+        try validate(query, limits: limits)
+        guard tokenization.sourceUTF8Length == importedText.text.utf8.count else {
             throw queryExecutionFailure("query.incompatible-ast", category: .incompatibleVersion)
         }
-        var validation = QueryValidation(limits: limits)
-        try validation.validate(query.root, depth: 0)
 
         let context = QueryEvaluationContext(
             source: importedText,
@@ -111,6 +121,7 @@ private struct QueryValidation {
     var nodeCount = 0
 
     mutating func validate(_ node: GlifiQueryNode, depth: Int) throws {
+        try Task.checkCancellation()
         nodeCount += 1
         guard nodeCount <= limits.maximumNodeCount else {
             throw queryExecutionFailure(
@@ -143,8 +154,11 @@ private struct QueryValidation {
             else {
                 throw queryExecutionFailure("query.invalid-phrase")
             }
-        case let .regex(field, pattern, _):
+        case let .regex(field, pattern, flags):
             try validate(field)
+            guard flags.subtracting([.caseInsensitive, .canonicalEquivalence]).isEmpty else {
+                throw queryExecutionFailure("query.regex-rejected")
+            }
             guard !pattern.isEmpty, pattern.utf8.count <= limits.maximumRegexByteCount else {
                 throw queryExecutionFailure("query.regex-limit-exceeded")
             }
@@ -672,7 +686,7 @@ private struct SafeTokenPattern {
 
 }
 
-private func queryExecutionFailure(
+func queryExecutionFailure(
     _ code: String,
     category: GlifiFailureCategory = .invalidInput
 ) -> GlifiFailure {

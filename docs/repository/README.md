@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-REP-IDX-001 |
 | Tipo | Indice operativo del repository |
-| Versione | 1.3.0 |
+| Versione | 1.4.0 |
 | Stato | Attivo |
 | Responsabile | Amministratore del repository, provvisorio |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-10-03 |
 | Approvazione | Baseline operativa richiesta dal promotore |
 
 Questa sezione traduce lo standard di progetto in una configurazione concreta per
@@ -33,7 +33,9 @@ quelli che richiedono un piano o budget GitHub diverso.
 Il repository remoto privato, il primo commit, le impostazioni conservative, le
 etichette e Dependabot sono attivi. Ruleset, auto-merge, Secret Scanning e push
 protection non sono disponibili sul piano corrente; i profili restano versionati.
-La CI Xcode 27 è configurata ma non parte finché il budget Actions è bloccato. Non
-sono presenti segreti, certificati o workflow di rilascio.
+La CI Xcode 27 ha eseguito per la prima volta i workflow sul runner ospitato il
+2026-10-03 ([GS-VER-141](../evidenze/GS-VER-141-prima-ci-remota-verde.md)); il budget
+Actions resta una condizione osservata, non garantita. Non sono presenti segreti,
+certificati o workflow di rilascio.
 
 `CODEOWNERS` non è attivato finché non esiste un handle o team GitHub verificato. Il template e il generatore sono pronti; inserire un proprietario fittizio produrrebbe una protezione solo apparente.
