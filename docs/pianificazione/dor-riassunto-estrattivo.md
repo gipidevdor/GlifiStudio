@@ -6,11 +6,11 @@
 | --- | --- |
 | Identificatore | GS-DOR-013 |
 | Tipo | Scheda Definition of Ready |
-| Versione | 1.1.0 |
+| Versione | 1.1.1 |
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-16 |
-| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice in verifica (GS-VER-149) |
+| Ultima modifica | 2026-11-01 |
+| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice verificata (GS-VER-149) |
 | Riferimenti | GS-MET-001-19; GS-MET-001-07; GS-API-001 § 9; RF-042; RQ-025; RQ-027; TV-036; ADR-0013 |
 
 ## Confini e criteri di accettazione
@@ -43,9 +43,8 @@ Controlli statici e formattazione sulla macchina di sviluppo; compilazione, test
 `make verify` sul runner `xcode-27` tramite il workflow `Verifica`. Risultati e limiti
 sono registrati in [GS-VER-146](../evidenze/GS-VER-146-riassunto-estrattivo.md) (prima
 slice, superata sul runner remoto, CMP-096 `verified`) e in
-[GS-VER-149](../evidenze/GS-VER-149-riassunto-centroide.md) (seconda slice, CMP-097
-`implemented` finché il gate remoto non la promuove), nella matrice di tracciabilità (RF-042,
-TV-036). Nessuna nuova decisione architetturale: la variante era
+[GS-VER-149](../evidenze/GS-VER-149-riassunto-centroide.md) (seconda slice, gate locale e CI
+su `main` superati, CMP-097 `verified`), nella matrice di tracciabilità (RF-042, TV-036). Nessuna nuova decisione architetturale: la variante era
 già candidata in GS-MET-001-19.
 
 ## Rischi e recupero

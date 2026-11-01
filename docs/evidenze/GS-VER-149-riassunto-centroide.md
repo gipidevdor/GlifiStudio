@@ -6,8 +6,8 @@
 | --- | --- |
 | Identificatore | GS-VER-149 |
 | Tipo | Evidenza di verifica numerica e di integrazione |
-| Versione | 1.1.0 |
-| Stato | Verifica nativa locale superata; CI riferita alla head della PR #22 |
+| Versione | 1.2.0 |
+| Stato | Superato: verifica nativa locale e CI `xcode-27` su `main` `3fa454f` |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
 | Approvazione | GS-DOR-013 (1.1.0); richiesta dell'iniziatore di proseguire lo sviluppo |
@@ -59,11 +59,17 @@ dal workflow `Verifica` sul runner `xcode-27`: l'esito è registrato nella sezio
 ## Esecuzione remota
 
 La [PR #22](https://github.com/gipidevdor/GlifiStudio/pull/22) registra gli
-esiti dei quattro controlli sulla head definitiva, con i link ai workflow
-`Verifica` e `App Store preflight`. Il merge richiede entrambi i workflow
-superati, oltre al gate locale: questo documento attesta le esecuzioni locali
-descritte di seguito e non attribuisce alla head corrente esiti di revisioni
-precedenti.
+esiti dei quattro controlli sulla head definitiva `73c76a8`, con i link ai workflow
+`Verifica` e `App Store preflight`. Dopo lo squash su `main` (`3fa454f`,
+2026-11-01) i quattro controlli sono stati rieseguiti sul commit integrato con
+esito positivo: `format-check`, `static-quality`,
+[`verify`](https://github.com/gipidevdor/GlifiStudio/actions/runs/41301793148/job/124834181536)
+e
+[`app-store-baseline`](https://github.com/gipidevdor/GlifiStudio/actions/runs/41301793135/job/124834168188)
+sul runner `xcode-27` (macOS 27.0.1, immagine `xcode-27-arm64`), comprensivi dei test Core e
+Kit del riassunto, dell'oracolo Python e del contract test CLI con entrambi i metodi.
+Rscript e veraPDF restano assenti sul runner e sono coperti dal gate locale descritto sotto.
+Questo documento non attribuisce al commit integrato esiti di revisioni precedenti.
 
 ## Limiti
 
@@ -113,10 +119,11 @@ head definitiva della PR, con esito e link registrati nella sua descrizione.
 Xcode segnala il framework CoreSimulator locale non aggiornato: le build su
 destinazioni generiche e gli archivi completano il controllo; questa evidenza
 non attesta test interattivi nel simulatore o una verifica di accessibilità.
-La verifica non promuove CMP-097 oltre `implemented` e non convalida le
-varianti ancora candidate.
+Con il gate locale e la CI sul commit integrato, CMP-097 è promossa a `verified`
+nel perimetro G3; le varianti ancora candidate non sono convalidate.
 
 ## Esito
 
-**Verifica nativa locale superata nel perimetro dichiarato. La PR #22 registra
-separatamente l'esito CI della head definitiva prima del merge.**
+**Superato nel perimetro dichiarato: gate nativo locale (`make verify-app-store`) e
+quattro controlli CI `xcode-27` sulla head definitiva della PR #22 e su `main`
+`3fa454f`. CMP-097 `verified`.**
