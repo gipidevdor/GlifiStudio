@@ -100,3 +100,13 @@ scientifica né introduce una promozione implicita a supported.
 ## Esito
 
 **In verifica**: controlli statici superati localmente; gate nativo da registrare.
+
+## Regressione numerica dell'integrazione
+
+Il gate locale completo ha individuato la mancanza del confronto Swift con
+`MMR_INFO_CROSS_DOCUMENT_SIMILARITY` (0,345806761841798). La regressione ora
+confronta il coseno delle frasi identiche fra documenti, calcolato dagli
+operatori nativi sulle ponderazioni TF-IDF, con l'oracolo Python entro 1e-12.
+Verifica inoltre il cambio effettivo della seconda frase scelta da MMR ai due
+lati della soglia derivata da quel coseno, con scarto 1e-8 sul parametro lambda.
+Il controllo lega così il valore numerico al comportamento del selettore.

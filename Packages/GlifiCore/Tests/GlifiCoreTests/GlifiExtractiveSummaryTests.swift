@@ -415,6 +415,32 @@ func mmrPenalizesDuplicatesAndRejectsInvalidLambda() throws {
             ]
         ),
     ]
+
+    // Bind the independent cosine oracle and MMR's decision boundary to this fixture.
+    let crossWeights = try GlifiTermWeighting.weigh(
+        rows: [[0: 100, 1: 1], [0: 1, 1: 100]], columnCount: 2, scheme: scheme)
+    let crossVectors = crossWeights.map { [$0[0] ?? 0, $0[1] ?? 0] } + [[0, 1]]
+    let crossDistances = try GlifiTextMatrixOperators.dissimilarities(
+        crossVectors, metric: .cosine)
+    let duplicateCosine = 0.345806761841798
+    #expect(abs(1 - crossDistances[0][1] - duplicateCosine) < 1e-12)
+    let centroid = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: cross, budget: two, scheme: scheme, method: .centroidCosine)
+    let penaltyDifference = duplicateCosine - (1 - crossDistances[0][2])
+    let crossThreshold =
+        penaltyDifference
+        / (centroid.sentences[2].score - centroid.sentences[3].score + penaltyDifference)
+    let transitions: [(Double, [Int?])] = [
+        (crossThreshold - 1e-8, [1, nil, nil, 2]),
+        (crossThreshold + 1e-8, [1, nil, 2, nil]),
+    ]
+    for (lambda, expectedOrder) in transitions {
+        let boundary = try GlifiCorpusExtractiveSummaryAnalysis(
+            documents: cross, budget: two, scheme: scheme, method: .centroidCosine,
+            redundancy: .maximalMarginalRelevance(lambda: lambda))
+        #expect(boundary.sentences.map(\.selectionOrder) == expectedOrder)
+    }
+
     let three = GlifiSummaryBudget(unit: .sentences, limit: 3)
     let balanced = try GlifiCorpusExtractiveSummaryAnalysis(
         documents: cross, budget: three, scheme: scheme,
