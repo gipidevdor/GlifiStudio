@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-19 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.2.0 |
+| Versione | 1.3.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-10-16 |
+| Ultima modifica | 2026-11-01 |
 | Approvazione | Architettura approvata; `SentenceTFIDFMean-v1` fissato (GS-VER-146); `CentroidCosine-v1` fissato (GS-VER-149) |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -64,11 +64,12 @@ così:
   include ogni frase che rientra nel budget residuo, saltando quelle che lo supererebbero;
 - **eleggibilità**: una frase senza token lessicali è classificata con punteggio zero ma non
   è mai selezionata (`eligibility.lexical-tokens-required-v1`);
-- **ridondanza**: nessuna (`redundancy.none-v1`); frasi identiche possono entrare entrambe;
+- **ridondanza**: nessuna per default (`redundancy.none-v1`); frasi identiche possono entrare
+  entrambe; `MMR-v1` è selezionabile con il parametro `redundancy` (sezione dedicata);
 - **ordine di output**: `output-order.source-v1`; ogni frase candidata conserva punteggio, rank e
   flag di selezione, così la vista per rank è derivabile senza ricalcolo.
 
-Il budget in caratteri e le altre famiglie restano candidate.
+Il budget in caratteri e le altre famiglie di punteggio restano candidate.
 
 ## Variante implementata: `CentroidCosine-v1`
 
@@ -97,6 +98,42 @@ e ordine di output sono quelli di `SentenceTFIDFMean-v1`. Cambiano punteggio ed 
 Metodi diversi sono nodi di analisi distinti: `method` entra nel descrittore come
 rappresentazione, con l'eleggibilità del metodo tra i parametri.
 
+## Ridondanza implementata: `MMR-v1`
+
+Politica di selezione dello stesso Artifact (`corpus-extractive-summary-v1`, GS-VER-151),
+scelta con il parametro `redundancy` del descrittore e applicabile a entrambi i metodi di
+punteggio; punteggi, rank, eleggibilità, budget e ordine di output non cambiano. Cambiano la
+selezione e la sua diagnostica:
+
+- **rilevanza**: `rel(s)` è il punteggio del metodo dichiarato (`SentenceTFIDFMean-v1` o
+  `CentroidCosine-v1`), così com'è persistito in `score`;
+- **similarità** (`similarity.sentence-vector-cosine-v1`): `sim(s, u) = cos(v_s, v_u)` tra i
+  vettori frase `v_s[t] = c_{s,t} · w_{d,t}` dello schema GS-MET-001-07 dichiarato, gli stessi
+  di `CentroidCosine-v1`; vale zero se uno dei due vettori è nullo; frasi con la stessa
+  sequenza di token nello stesso documento, o comunque con vettori proporzionali, hanno
+  similarità 1, mentre la stessa sequenza in documenti diversi usa pesi `(documento, tipo)`
+  diversi e può avere similarità minore di 1;
+- **selezione**: a ogni passo, tra le frasi eleggibili non ancora scelte che rientrano nel
+  budget residuo, entra quella con il massimo di
+  `λ · rel(s) − (1 − λ) · max_{u∈S} sim(s, u)`, con `S` l'insieme già scelto (penalità zero al
+  primo passo); a parità di obiettivo vince la prima nell'ordine della fonte
+  (`tie-break.source-position-v1`); la selezione termina quando nessuna frase rientra nel budget.
+  La penalità di ogni candidata è il massimo corrente sulle frasi accettate, aggiornato una volta
+  per accettazione: `k` frasi scelte su `n` candidate costano `k · n` coseni, nessuno con
+  `λ = 1`;
+- **parametro**: `λ` finito in `[0, 1]`, dichiarato nella richiesta e nel descrittore
+  (`redundancyLambda`); `λ = 1` riproduce la scansione per rank di `redundancy.none-v1`,
+  `λ = 0` premia soltanto la novità; valori fuori dall'intervallo sono rifiutati con failure
+  tipizzata, mai corretti in silenzio;
+- **diagnostica**: ogni frase scelta conserva `selectionOrder`, l'ordine uno-based di
+  accettazione (per `redundancy.none-v1` coincide con l'ordine di rank tra le frasi scelte);
+  le frasi non scelte non lo hanno. I payload scritti prima di questo campo non hanno
+  `selectionOrder`, `redundancyLambda` né `similarityIdentifier`: decodificano come
+  `redundancy.none-v1`.
+
+Politiche diverse, o lo stesso `MMR-v1` con `λ` diversi, sono nodi di analisi e Artifact
+distinti. TextRank, LexRank e il budget in caratteri restano candidati.
+
 ## Separazione dalla generazione
 
 Foundation Models o altri modelli che producono nuovo testo appartengono alla
@@ -115,4 +152,6 @@ variante, riferimenti e protocollo propri; non provano da sole correttezza fattu
 
 - Mihalcea e Tarau, [TextRank](https://aclanthology.org/W04-3252/), 2004.
 - Erkan e Radev, [LexRank](https://doi.org/10.1613/jair.1523), 2004.
+- Carbonell e Goldstein, [The Use of MMR, Diversity-Based Reranking for Reordering Documents and
+  Producing Summaries](https://doi.org/10.1145/290941.291025), 1998.
 - Carbonell e Goldstein, [Maximal Marginal Relevance](https://doi.org/10.1145/290941.291025), 1998.

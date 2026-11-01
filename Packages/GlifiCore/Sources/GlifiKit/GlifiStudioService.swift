@@ -781,6 +781,7 @@ public actor GlifiStudioProjectSession {
         budget: GlifiStudioSummaryBudget = .standard,
         scheme: GlifiStudioTermWeightingScheme = .summaryStandard,
         method: GlifiStudioSummaryScoringMethod = .standard,
+        redundancy: GlifiStudioSummaryRedundancy = .standard,
         corpusOptions: GlifiStudioCorpusAnalysisOptions = .standard
     ) async throws -> GlifiStudioExtractiveSummaryResult {
         try await derivedOperation {
@@ -791,6 +792,7 @@ public actor GlifiStudioProjectSession {
                 budget: try budget.coreValue(),
                 scheme: try scheme.coreValue(),
                 method: try method.coreValue(),
+                redundancy: try redundancy.coreValue(),
                 corpusOptions: corpusOptions.coreValue
             )
             let resolved = try await engine.resolveSummarySentences(

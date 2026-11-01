@@ -326,3 +326,223 @@ func centroidCosineSummaryIsPersistedAsDistinctArtifact() async throws {
         #expect(texts.joined(separator: "\n").contains(entry.text))
     }
 }
+
+@Test("MMR-v1 coincide con l'oracolo Python: ordine di selezione, λ agli estremi e soglia")
+func mmrSummaryMatchesPython() throws {
+    let documents = try oracleDocuments()
+    let scheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme
+    let two = GlifiSummaryBudget(unit: .sentences, limit: 2)
+    func summary(
+        _ budget: GlifiSummaryBudget, lambda: Double?
+    ) throws -> GlifiCorpusExtractiveSummaryAnalysis {
+        try GlifiCorpusExtractiveSummaryAnalysis(
+            documents: documents, budget: budget, scheme: scheme, method: .centroidCosine,
+            redundancy: lambda.map { .maximalMarginalRelevance(lambda: $0) } ?? .none)
+    }
+    // Oracle: MMR_* lines of expected.txt; relevance and ranks are those of CentroidCosine-v1.
+    let mmr = try summary(two, lambda: 0.5)
+    #expect(mmr.redundancyPolicy == "MMR-v1")
+    #expect(mmr.redundancyLambda == 0.5)
+    #expect(mmr.similarityIdentifier == "similarity.sentence-vector-cosine-v1")
+    #expect(mmr.sentences.map(\.rank) == [1, 5, 2, 4, 3])
+    #expect(mmr.sentences.map(\.isSelected) == [true, false, false, true, false])
+    #expect(mmr.sentences.map(\.selectionOrder) == [1, nil, nil, 2, nil])
+    #expect(mmr.consumedBudget == 2)
+    let three = try summary(GlifiSummaryBudget(unit: .sentences, limit: 3), lambda: 0.5)
+    #expect(three.sentences.map(\.selectionOrder) == [1, nil, 3, 2, nil])
+    let tokens = try summary(GlifiSummaryBudget(unit: .lexicalTokens, limit: 3), lambda: 0.5)
+    #expect(tokens.sentences.map(\.selectionOrder) == [1, nil, nil, nil, nil])
+    #expect(tokens.consumedBudget == 3)
+    // λ = 0 rewards novelty only; λ = 1 reproduces the rank walk, including the selection order.
+    #expect(try summary(two, lambda: 0).sentences.map(\.selectionOrder) == [1, nil, nil, 2, nil])
+    let relevance = try summary(two, lambda: 1)
+    let walk = try summary(two, lambda: nil)
+    #expect(relevance.sentences.map(\.isSelected) == walk.sentences.map(\.isSelected))
+    #expect(relevance.sentences.map(\.selectionOrder) == [1, nil, 2, nil, nil])
+    #expect(walk.sentences.map(\.selectionOrder) == [1, nil, 2, nil, nil])
+    #expect(walk.redundancyPolicy == "redundancy.none-v1")
+    #expect(walk.redundancyLambda == nil)
+    #expect(walk.similarityIdentifier == nil)
+    #expect(walk.sentences.map(\.score) == mmr.sentences.map(\.score))
+    // MMR_THRESHOLD_S2: just below the threshold the second pick is sentence 3, just above it 2.
+    let threshold = 0.562024411171168
+    #expect(
+        try summary(two, lambda: threshold - 1e-6).sentences.map(\.selectionOrder)
+            == [1, nil, nil, 2, nil])
+    #expect(
+        try summary(two, lambda: threshold + 1e-6).sentences.map(\.selectionOrder)
+            == [1, nil, 2, nil, nil])
+}
+
+@Test("MMR-v1 penalizza i duplicati, rifiuta λ fuori da [0, 1], decodifica payload senza ordine")
+func mmrPenalizesDuplicatesAndRejectsInvalidLambda() throws {
+    let scheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme
+    let documents = [
+        GlifiSummaryDocument(
+            sourceRevisionID: try revision(1),
+            sentences: [
+                try sentence(0, ["a", "b"]), try sentence(1, ["a", "b"]),
+                try sentence(2, ["c", "d"]),
+            ]
+        )
+    ]
+    let two = GlifiSummaryBudget(unit: .sentences, limit: 2)
+    // Rank walk: both identical sentences enter; MMR replaces the duplicate (cosine 1).
+    let walk = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: two, scheme: scheme)
+    #expect(walk.sentences.map(\.isSelected) == [true, true, false])
+    let mmr = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: two, scheme: scheme,
+        redundancy: .maximalMarginalRelevance(lambda: 0.5))
+    #expect(mmr.sentences.map(\.isSelected) == [true, false, true])
+    #expect(mmr.sentences.map(\.selectionOrder) == [1, nil, 2])
+    #expect(mmr.sentences.map(\.rank) == walk.sentences.map(\.rank))
+    #expect(mmr.sentences.map(\.score) == walk.sentences.map(\.score))
+
+    // The same token sequence in two documents has different weights, so its cosine is below 1
+    // (MMR_INFO_CROSS_DOCUMENT_SIMILARITY): both copies may enter. Oracle: MMR_CROSS_ORDER_*.
+    let cross = [
+        GlifiSummaryDocument(
+            sourceRevisionID: try revision(1),
+            sentences: [
+                try sentence(0, ["a", "b"]), try sentence(1, Array(repeating: "a", count: 99)),
+            ]
+        ),
+        GlifiSummaryDocument(
+            sourceRevisionID: try revision(2),
+            sentences: [
+                try sentence(0, ["a", "b"]), try sentence(1, Array(repeating: "b", count: 99)),
+            ]
+        ),
+    ]
+
+    // Bind the independent cosine oracle and MMR's decision boundary to this fixture.
+    let crossWeights = try GlifiTermWeighting.weigh(
+        rows: [[0: 100, 1: 1], [0: 1, 1: 100]], columnCount: 2, scheme: scheme)
+    let crossVectors = crossWeights.map { [$0[0] ?? 0, $0[1] ?? 0] } + [[0, 1]]
+    let crossDistances = try GlifiTextMatrixOperators.dissimilarities(
+        crossVectors, metric: .cosine)
+    let duplicateCosine = 0.345806761841798
+    #expect(abs(1 - crossDistances[0][1] - duplicateCosine) < 1e-12)
+    let centroid = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: cross, budget: two, scheme: scheme, method: .centroidCosine)
+    let penaltyDifference = duplicateCosine - (1 - crossDistances[0][2])
+    let crossThreshold =
+        penaltyDifference
+        / (centroid.sentences[2].score - centroid.sentences[3].score + penaltyDifference)
+    let transitions: [(Double, [Int?])] = [
+        (crossThreshold - 1e-8, [1, nil, nil, 2]),
+        (crossThreshold + 1e-8, [1, nil, 2, nil]),
+    ]
+    for (lambda, expectedOrder) in transitions {
+        let boundary = try GlifiCorpusExtractiveSummaryAnalysis(
+            documents: cross, budget: two, scheme: scheme, method: .centroidCosine,
+            redundancy: .maximalMarginalRelevance(lambda: lambda))
+        #expect(boundary.sentences.map(\.selectionOrder) == expectedOrder)
+    }
+
+    let three = GlifiSummaryBudget(unit: .sentences, limit: 3)
+    let balanced = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: cross, budget: three, scheme: scheme,
+        redundancy: .maximalMarginalRelevance(lambda: 0.5))
+    #expect(balanced.sentences.map(\.selectionOrder) == [3, 1, nil, 2])
+    let novelty = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: cross, budget: three, scheme: scheme,
+        redundancy: .maximalMarginalRelevance(lambda: 0))
+    #expect(novelty.sentences.map(\.selectionOrder) == [1, 3, nil, 2])
+
+    for lambda in [-0.1, 1.1, Double.nan, Double.infinity] {
+        #expect(!GlifiSummaryRedundancyPolicy.maximalMarginalRelevance(lambda: lambda).isValid)
+        #expect(throws: GlifiFailure.self) {
+            _ = try GlifiCorpusExtractiveSummaryAnalysis(
+                documents: documents, budget: two, scheme: scheme,
+                redundancy: .maximalMarginalRelevance(lambda: lambda))
+        }
+    }
+
+    // Payload persisted before `MMR-v1`: no selection order, no lambda, no similarity.
+    let encoded = try JSONEncoder().encode(mmr)
+    #expect(
+        try JSONDecoder().decode(GlifiCorpusExtractiveSummaryAnalysis.self, from: encoded) == mmr)
+    var object = try JSONSerialization.jsonObject(with: encoded) as? [String: Any] ?? [:]
+    var sentences = object["sentences"] as? [[String: Any]] ?? []
+    for index in sentences.indices {
+        sentences[index].removeValue(forKey: "selectionOrder")
+    }
+    object["sentences"] = sentences
+    object.removeValue(forKey: "redundancyLambda")
+    object.removeValue(forKey: "similarityIdentifier")
+    object["redundancyPolicy"] = "redundancy.none-v1"
+    let legacy = try JSONDecoder().decode(
+        GlifiCorpusExtractiveSummaryAnalysis.self,
+        from: JSONSerialization.data(withJSONObject: object))
+    #expect(legacy.sentences.map(\.selectionOrder) == [nil, nil, nil])
+    #expect(legacy.sentences.map(\.isSelected) == mmr.sentences.map(\.isSelected))
+    #expect(legacy.redundancyLambda == nil)
+    #expect(legacy.similarityIdentifier == nil)
+    let walkEncoded = try JSONEncoder().encode(walk)
+    let walkObject = try JSONSerialization.jsonObject(with: walkEncoded) as? [String: Any]
+    #expect(walkObject?["redundancyLambda"] == nil)
+    #expect(walkObject?["similarityIdentifier"] == nil)
+}
+
+@Test("La ridondanza è un parametro del descrittore: Artifact distinti, stessi punteggi")
+func mmrSummaryIsPersistedAsDistinctArtifact() async throws {
+    let root = FileManager.default.temporaryDirectory.appending(
+        path: "GlifiMMRSummary-\(UUID().uuidString)", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let project = try GlifiProjectPackage.create(
+        at: root.appending(path: "P.glifi", directoryHint: .isDirectory))
+    let engine = GlifiEngine()
+    let texts = [
+        "La casa è bella. La casa è bella. Il giardino è verde e grande.",
+        "Il giardino della casa è verde.",
+    ]
+    var ids: [SourceRevisionID] = []
+    for (index, text) in texts.enumerated() {
+        let imported = try GlifiTextImporter().importText(
+            from: Data(text.utf8), format: .plainText, sourceRevisionID: try revision(index + 1))
+        _ = try await project.importText(imported)
+        ids.append(imported.sourceRevisionID)
+    }
+    let budget = GlifiSummaryBudget(unit: .sentences, limit: 2)
+    let walk = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids, budget: budget, method: .centroidCosine)
+    let mmr = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids, budget: budget, method: .centroidCosine,
+        redundancy: .maximalMarginalRelevance(lambda: 0.5))
+    #expect(mmr.artifactID != walk.artifactID)
+    #expect(mmr.value.redundancyPolicy == "MMR-v1")
+    #expect(mmr.value.redundancyLambda == 0.5)
+    #expect(mmr.value.sentences.map(\.score) == walk.value.sentences.map(\.score))
+    #expect(mmr.value.sentences.map(\.rank) == walk.value.sentences.map(\.rank))
+    // The duplicated first sentence enters the rank walk twice and the MMR summary once.
+    #expect(walk.value.sentences.map(\.isSelected) == [true, true, false, false])
+    #expect(mmr.value.sentences.map(\.isSelected) == [true, false, true, false])
+    #expect(mmr.value.sentences.map(\.selectionOrder) == [1, nil, 2, nil])
+    #expect(mmr.value.consumedBudget == 2)
+    let reused = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids.reversed(), budget: budget, method: .centroidCosine,
+        redundancy: .maximalMarginalRelevance(lambda: 0.5))
+    #expect(reused.artifactID == mmr.artifactID)
+    #expect(reused.value == mmr.value)
+    let other = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids, budget: budget, method: .centroidCosine,
+        redundancy: .maximalMarginalRelevance(lambda: 0.7))
+    #expect(other.artifactID != mmr.artifactID)
+    let stored: GlifiProjectDerivedResult<GlifiCorpusExtractiveSummaryAnalysis> =
+        try await engine.storedDerivedResult(
+            GlifiCorpusExtractiveSummaryAnalysis.self, artifactID: mmr.artifactID, in: project)
+    #expect(stored.value == mmr.value)
+    let resolved = try await engine.resolveSummarySentences(mmr.value, in: project)
+    #expect(resolved.map(\.sentence) == mmr.value.selectedSentences)
+    for entry in resolved {
+        #expect(texts.joined(separator: "\n").contains(entry.text))
+    }
+    await #expect(throws: GlifiFailure.self) {
+        _ = try await engine.analyzeExtractiveSummary(
+            in: project, sourceRevisionIDs: ids, budget: budget,
+            redundancy: .maximalMarginalRelevance(lambda: 1.5))
+    }
+}

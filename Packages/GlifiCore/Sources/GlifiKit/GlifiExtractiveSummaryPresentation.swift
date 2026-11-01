@@ -69,6 +69,60 @@ public struct GlifiStudioSummaryScoringMethod: Codable, Equatable, Sendable {
     }
 }
 
+/// Declared redundancy policy of an extractive summary, by versioned identifier.
+public struct GlifiStudioSummaryRedundancy: Codable, Equatable, Sendable {
+    /// `redundancy.none-v1`: selection walks the rank.
+    public static let standard = GlifiStudioSummaryRedundancy(
+        identifier: GlifiSummaryRedundancyPolicy.noneIdentifier, lambda: nil)
+    /// Every policy identifier accepted by the engine.
+    public static let supportedIdentifiers = [
+        GlifiSummaryRedundancyPolicy.noneIdentifier,
+        GlifiSummaryRedundancyPolicy.maximalMarginalRelevanceIdentifier,
+    ]
+
+    /// `redundancy.none-v1` or `MMR-v1`.
+    public let identifier: String
+    /// Trade-off `λ` of `MMR-v1` in `[0, 1]`; absent without redundancy control.
+    public let lambda: Double?
+
+    /// Creates a policy from a versioned identifier, validated when used.
+    public init(identifier: String, lambda: Double?) {
+        self.identifier = identifier
+        self.lambda = lambda
+    }
+
+    /// `MMR-v1` with the given trade-off.
+    public static func maximalMarginalRelevance(lambda: Double) -> GlifiStudioSummaryRedundancy {
+        GlifiStudioSummaryRedundancy(
+            identifier: GlifiSummaryRedundancyPolicy.maximalMarginalRelevanceIdentifier,
+            lambda: lambda)
+    }
+
+    func coreValue() throws -> GlifiSummaryRedundancyPolicy {
+        switch identifier {
+        case GlifiSummaryRedundancyPolicy.noneIdentifier:
+            guard lambda == nil else { throw Self.failure("summary.invalid-redundancy") }
+            return .none
+        case GlifiSummaryRedundancyPolicy.maximalMarginalRelevanceIdentifier:
+            guard let lambda else { throw Self.failure("summary.invalid-redundancy") }
+            return .maximalMarginalRelevance(lambda: lambda)
+        default:
+            throw Self.failure("summary.unknown-redundancy")
+        }
+    }
+
+    private static func failure(_ code: String) -> GlifiFailure {
+        GlifiFailure(
+            code: code,
+            category: .invalidInput,
+            operation: .analyze,
+            retryDisposition: .afterCorrection,
+            retainedState: .lastCommittedGeneration,
+            messageKey: "failure.\(code)"
+        )
+    }
+}
+
 extension GlifiStudioTermWeightingScheme {
     /// `TF-sublinear-v1`, `IDF-smooth-v1`, `RowNorm-none-v1`: the summary default.
     public static let summaryStandard = GlifiStudioTermWeightingScheme(
@@ -95,6 +149,8 @@ public struct GlifiStudioSummarySentence: Codable, Equatable, Sendable {
     public let isEligible: Bool
     /// Whether the sentence enters the summary.
     public let isSelected: Bool
+    /// One-based order in which the selection accepted the sentence; nil when not selected.
+    public let selectionOrder: Int?
 
     init(_ value: GlifiSummarySentence) {
         sourceRevisionID = value.sourceRevisionID
@@ -106,9 +162,11 @@ public struct GlifiStudioSummarySentence: Codable, Equatable, Sendable {
         rank = value.rank
         isEligible = value.isEligible
         isSelected = value.isSelected
+        selectionOrder = value.selectionOrder
     }
 
-    /// Decodes earlier presentation payloads using their lexical-token eligibility policy.
+    /// Decodes earlier presentation payloads using their lexical-token eligibility policy and
+    /// without a selection order.
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         sourceRevisionID = try container.decode(String.self, forKey: .sourceRevisionID)
@@ -121,6 +179,7 @@ public struct GlifiStudioSummarySentence: Codable, Equatable, Sendable {
         isEligible =
             try container.decodeIfPresent(Bool.self, forKey: .isEligible) ?? (tokenCount > 0)
         isSelected = try container.decode(Bool.self, forKey: .isSelected)
+        selectionOrder = try container.decodeIfPresent(Int.self, forKey: .selectionOrder)
     }
 }
 
@@ -150,6 +209,10 @@ public struct GlifiStudioExtractiveSummaryResult: Codable, Equatable, Sendable {
     public let consumedBudget: Int
     /// Redundancy policy.
     public let redundancyPolicy: String
+    /// Trade-off `λ` of `MMR-v1`; absent without redundancy control.
+    public let redundancyLambda: Double?
+    /// Similarity used by the redundancy penalty; absent without redundancy control.
+    public let similarityIdentifier: String?
     /// Tie-break policy.
     public let tieBreakIdentifier: String
     /// Eligibility policy.
@@ -176,6 +239,8 @@ public struct GlifiStudioExtractiveSummaryResult: Codable, Equatable, Sendable {
         budget = GlifiStudioSummaryBudget(value.budget)
         consumedBudget = value.consumedBudget
         redundancyPolicy = value.redundancyPolicy
+        redundancyLambda = value.redundancyLambda
+        similarityIdentifier = value.similarityIdentifier
         tieBreakIdentifier = value.tieBreakIdentifier
         eligibilityPolicy = value.eligibilityPolicy
         outputOrderIdentifier = value.outputOrderIdentifier

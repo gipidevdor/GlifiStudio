@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.86.9 |
+| Versione | 0.87.1 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
@@ -174,6 +174,7 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 | [GS-VER-138](evidenze/GS-VER-138-gold-italiano-su-prosa-reale.md) | Slice TV-013; GS-LNG-001, GS-MET-001-18, ADR-0030 | Superato localmente: gold su 434 token di prosa italiana di pubblico dominio, annotazione indipendente in accordo pieno con il prodotto | Un solo autore ottocentesco; dialogo, lemma, POS e NER esclusi |
 | [GS-VER-139](evidenze/GS-VER-139-cache-di-build-limitata.md) | Slice TV-063; GS-DEV-002 § Cache di build | Superato localmente: picco su disco da ~37 GiB a 1,8 GiB, seconda esecuzione a 303 s contro 773 s, arresto anticipato se lo spazio non basta | Tetto prudenziale non ottimizzato; misure su una sola macchina |
 | [GS-VER-141](evidenze/GS-VER-141-prima-ci-remota-verde.md) | TV-011, TV-013, TV-049; GS-STD-001-20, GS-REP-005, GS-WVR-001…004 | Superato su runner remoto: `verify` verde su `xcode-27` con 257 test, 22 checkpoint di recovery e build macOS/iPadOS; deroghe budget in rientro | Rscript e veraPDF assenti sul runner; dispositivi, firma e TestFlight non coperti; non conformità 2026-09-22→2026-10-03 registrata |
+| [GS-VER-151](evidenze/GS-VER-151-riassunto-mmr.md) | Terza slice TV-036; RF-042, GS-MET-001-19, CMP-106 | In verifica sul runner remoto: oracolo Python esteso (`MMR_*`), test Core/Kit e contract test CLI aggiunti; controlli statici superati | Ridondanza come parametro del descrittore; rilevanza non normalizzata; nessuna valutazione ROUGE o umana; CMP-106 implemented |
 | [GS-VER-149](evidenze/GS-VER-149-riassunto-centroide.md) | Seconda slice TV-036; RF-042, GS-MET-001-19, CMP-097 | Superato: gate nativo locale (261 test Core e 26 Kit, 115 righe di oracoli Python/R, compatibilità API/payload e CLI) e quattro controlli CI `xcode-27` sulla head definitiva della PR #22 e su `main` `3fa454f` | Metodo di punteggio come parametro del descrittore; nessuna valutazione ROUGE o umana; CMP-097 verified |
 | [GS-VER-146](evidenze/GS-VER-146-riassunto-estrattivo.md) | Slice TV-036; RF-042, GS-MET-001-19, CMP-096 | Superato su runner remoto (#16, `19ca4c7`): oracolo Python indipendente, test di persistenza e contract test CLI aggiunti; controlli statici superati | Una sola famiglia; nessuna valutazione ROUGE o umana; Rscript assente sul runner |
 | [GS-VER-142](evidenze/GS-VER-142-letture-directory-package.md) | Slice TV-060; RF-043, RQ-044, RQ-057, CMP-095 | Parziale: letture descriptor-relative, regressioni su directory simboliche e sostituzioni controllate; statici, lint e compilazione Apple superati | Test compilati, non eseguiti su host 26.5.2; scritture, SQLite, ACL e file provider esclusi dalla garanzia |
@@ -193,6 +194,11 @@ RF-080, RQ-044, RQ-046, CMP-081. Permessi negati in `query --ast` classificati
 `authorizationDenied`/`afterUserAction`; test CLI su file non leggibile e file
 mancante. Statici e gate Xcode 27 superati in PR #18; concorre alla verifica G3
 di CMP-081. EPERM/ACL e revoca concorrente non riprodotti separatamente.
+
+Incremento [GS-VER-151](evidenze/GS-VER-151-riassunto-mmr.md): terza slice di TV-036 con
+RF-042 e CMP-106 (`implemented`): politica di ridondanza `MMR-v1` del riassunto estrattivo,
+`λ` e similarità coseno tra vettori frase nel descrittore, `selectionOrder` persistito per frase
+scelta e `--mmr` in `glifi summarize`. Esito del gate remoto da registrare nell'evidenza.
 
 Incremento [GS-VER-149](evidenze/GS-VER-149-riassunto-centroide.md): seconda slice di
 TV-036 con RF-042 e CMP-097 (`verified`): variante `CentroidCosine-v1` del riassunto
