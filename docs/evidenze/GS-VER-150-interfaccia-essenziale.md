@@ -11,7 +11,7 @@
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-01 |
 | Approvazione | Non applicabile; registro operativo |
-| Riferimenti | GS-UI-001; GS-STD-001-15; GS-STD-001-29; ADR-0014; ADR-0024 |
+| Riferimenti | GS-UI-001; GS-STD-001-15; GS-STD-001-29; ADR-0014; ADR-0024; GS-DOR-020 |
 
 ## Ambito
 
@@ -28,6 +28,10 @@ creano effettivamente il progetto e i controlli di codifica sono disabilitati
 in assenza di progetto o durante operazioni in corso.
 
 ## Consegna e controlli osservati
+
+La [scheda GS-DOR-020](../pianificazione/dor-interfaccia-essenziale.md) registra
+confini e rischi durante la preparazione dell'integrazione; dichiara esplicitamente
+la propria registrazione successiva all'implementazione.
 
 La consegna è isolata nel branch `refactor/essential-native-interface`, basato su
 `origin/main` alla revisione `f348553`, nel worktree
