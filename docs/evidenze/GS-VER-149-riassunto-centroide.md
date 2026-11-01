@@ -50,7 +50,9 @@ GS-MET-001-19 (versione 1.2.0):
 4. contract test CLI in `verify.sh`: `glifi summarize --sentences 2` con e senza
    `--method CentroidCosine-v1`: metodo ed eleggibilità dichiarati, rank completi e monotoni,
    `isEligible` coerente con i token, nessuna frase scelta ineleggibile, stessi intervalli tra i
-   due metodi, coseni in `[0, 1]`, stessa generazione di lineage.
+   due metodi, coseni in `[0, 1]`, stesso `projectID`, Artifact distinti e `sourceGeneration` del
+   secondo metodo non inferiore alla `generation` raggiunta dal primo (ogni analisi committa un
+   Artifact e avanza la generazione).
 
 Controlli statici (`make quality-static`, formattazione, documentazione e matrice) superati
 sulla macchina di sviluppo Linux. Compilazione, test Swift e contract test CLI sono eseguiti
