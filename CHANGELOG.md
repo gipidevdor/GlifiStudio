@@ -8,6 +8,11 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Verificato
 
+- Ridondanza `MMR-v1` del riassunto estrattivo: quattro controlli CI `xcode-27` sulla head
+  definitiva di #24 e su `main` `dfdcdbe` e `a86a53b`; GS-VER-151 superata, CMP-106 `verified`.
+- Creazione e apertura documentale non distruttiva su macOS: gate CI `xcode-27` (`verify`,
+  `app-store-baseline`) su `main` `a86a53b`, compreso `xcodebuild test` di `GlifiStudio-macOS`;
+  GS-VER-163 superata, CMP-107 `verified`.
 - Variante `CentroidCosine-v1` del riassunto estrattivo: gate nativo locale e quattro controlli
   CI `xcode-27` sulla head definitiva di #22 e su `main` `3fa454f`; GS-VER-149 superata,
   CMP-097 `verified`.

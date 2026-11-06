@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VER-151 |
 | Tipo | Evidenza di verifica numerica e di integrazione |
-| Versione | 1.0.1 |
-| Stato | CI originaria superata; integrazione con main in verifica |
+| Versione | 1.1.0 |
+| Stato | Superato: CI `xcode-27` sulla head definitiva di #24 e su `main` `dfdcdbe` e `a86a53b` |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-01 |
+| Ultima modifica | 2026-11-06 |
 | Approvazione | GS-DOR-013 (1.2.0); richiesta dell'iniziatore di proseguire lo sviluppo |
 | Riferimenti | GS-DOR-013; GS-MET-001-19 § Ridondanza implementata: `MMR-v1`; GS-MET-001-07; RF-042; TV-036; CMP-106; GS-VER-146; GS-VER-149 |
 
@@ -82,7 +82,32 @@ promozione documentale di CentroidCosine. Le risoluzioni dei conflitti riguardan
 manifest, indice delle evidenze, DoR e tracciabilità; il codice è integrato
 automaticamente. Il gate nativo locale e il preflight App Store sono eseguiti sul
 risultato integrato; gli esiti sulla head pubblicata sono registrati nella PR.
-CMP-106 resta `implemented`: questa integrazione non sostituisce la review
+Gli esiti di quel gate locale non sono riportati in questa evidenza.
+
+### Head definitiva e `main`
+
+I quattro controlli CI `xcode-27` (`static-quality`, `format-check`, `verify`,
+`app-store-baseline`) sono superati su tre revisioni:
+
+- head definitiva `56586e9` di #24:
+  [`verify`](https://github.com/gipidevdor/GlifiStudio/actions/runs/41330432823/job/124919372456),
+  [`app-store-baseline`](https://github.com/gipidevdor/GlifiStudio/actions/runs/41330432886/job/124919260472);
+- `main` `dfdcdbe`, commit di integrazione di #24:
+  [`verify`](https://github.com/gipidevdor/GlifiStudio/actions/runs/41332793120/job/124926330767),
+  [`app-store-baseline`](https://github.com/gipidevdor/GlifiStudio/actions/runs/41332793072/job/124926233308);
+- `main` `a86a53b` (#27), che conserva il codice MMR invariato:
+  [`verify`](https://github.com/gipidevdor/GlifiStudio/actions/runs/41336171753/job/124936428913),
+  [`app-store-baseline`](https://github.com/gipidevdor/GlifiStudio/actions/runs/41336171695/job/124936354278).
+
+Nei log `verify` di `dfdcdbe` e `a86a53b` risultano superati i test delle procedure 1–4
+(`MMR-v1 coincide con l'oracolo Python…`, `MMR-v1 penalizza i duplicati…`,
+`La ridondanza è un parametro del descrittore…`, `I messaggi di riassunto precedenti non
+hanno ordine di selezione né politica MMR`), all'interno di 293 test Core e 37 test Kit,
+seguiti dai contract test CLI di `verify.sh` (procedura 5) e dai 22 checkpoint di
+process-kill recovery. Rscript e veraPDF sono assenti sul runner: oracoli R e
+validazione PDF/A risultano saltati, senza effetto sulle righe `MMR_*` dell'oracolo Python.
+
+CMP-106 passa a `verified` sul gate G3. La promozione non sostituisce la review
 scientifica né introduce una promozione implicita a supported.
 
 ## Limiti
@@ -99,7 +124,8 @@ scientifica né introduce una promozione implicita a supported.
 
 ## Esito
 
-**In verifica**: controlli statici superati localmente; gate nativo da registrare.
+**Superato**: controlli statici locali e quattro controlli CI `xcode-27` sulla head definitiva
+di #24 e su `main` `dfdcdbe` e `a86a53b`; CMP-106 `verified`.
 
 ## Regressione numerica dell'integrazione
 

@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DOR-163 |
 | Tipo | Scheda Definition of Ready |
-| Versione | 1.0.1 |
+| Versione | 1.0.2 |
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-01 |
+| Ultima modifica | 2026-11-06 |
 | Approvazione | Prosecuzione dello sviluppo con focus macOS richiesta dall'iniziatore |
 | Riferimenti | GS-STD-001-07; RF-001; RQ-043; GS-APL-005; GS-UX-001-12; ADR-0006 |
 
@@ -48,3 +48,7 @@ Implementazione e otto test macOS completati (GS-VER-163). Il gate globale è st
 resta non superato sui nuovi sorgenti analitici modificati contemporaneamente da un'altra
 sessione; il preflight di packaging non è quindi completato. Nessuna modifica di quel
 programma analitico viene dichiarata verificata da questa scheda.
+
+Sul commit integrato `main` `a86a53b` (#27) i controlli CI `verify` e `app-store-baseline`
+sul runner `xcode-27` sono superati, compreso il passo `xcodebuild test` dello schema
+`GlifiStudio-macOS`; CMP-107 è `verified` sul gate G3 (GS-VER-163). Le prove G4 sopra restano aperte.
