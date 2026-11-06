@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.14.3 |
+| Versione | 1.15.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-06 |
@@ -14,6 +14,7 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
+- [GS-VER-164 — Riassunto estrattivo `LexRankSentence-v1`](GS-VER-164-riassunto-lexrank.md) — In verifica: statici locali superati; test Swift e CLI sul runner `xcode-27`; CMP-163 implemented
 - [GS-VER-151 — Riassunto estrattivo con ridondanza `MMR-v1`](GS-VER-151-riassunto-mmr.md) — Superato: CI `xcode-27` sulla head definitiva di #24 e su `main` `dfdcdbe`/`a86a53b`; CMP-106 verified
 - [GS-VER-149 — Riassunto estrattivo `CentroidCosine-v1`](GS-VER-149-riassunto-centroide.md) — Superato: gate nativo locale e CI `xcode-27` su `main` `3fa454f`; CMP-097 verified
 - [GS-VER-148 — Letture bounded nella verifica export](GS-VER-148-letture-export.md) — Verifiche locale e remota superate su `1883af9`; limiti residui dichiarati

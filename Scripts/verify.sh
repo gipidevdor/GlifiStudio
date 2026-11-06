@@ -478,6 +478,10 @@ cli_mmr_summary_output="$(swift run --package-path Packages/GlifiCore \
     --scratch-path "$build_cache_directory/SwiftPM" --skip-build \
     GlifiCLI --format json summarize "$cli_visual_project_path" --sources "$cli_visual_sources" \
     --sentences 2 --method CentroidCosine-v1 --mmr 0.5)"
+cli_lexrank_summary_output="$(swift run --package-path Packages/GlifiCore \
+    --scratch-path "$build_cache_directory/SwiftPM" --skip-build \
+    GlifiCLI --format json summarize "$cli_visual_project_path" --sources "$cli_visual_sources" \
+    --sentences 2 --method LexRankSentence-v1)"
 # ADR-0027: storia qualitativa dalla CLI.
 cli_codebook_request="$temporary_build_directory/codebook.json"
 print -r -- '{"codebookRevised":{"codebookID":"temi","revision":1,"categories":[{"categoryID":"fonte","label":"Fonte","definition":"Riferimenti alla fonte."}]}}' \
@@ -629,7 +633,8 @@ for document in result["documents"]:
     value = document["mtld"]["value"]
     assert value == "+Infinity" or value > 0
 PY
-python3 - "$cli_summarize_output" "$cli_centroid_summary_output" "$cli_mmr_summary_output" <<'PY'
+python3 - "$cli_summarize_output" "$cli_centroid_summary_output" "$cli_mmr_summary_output" \
+    "$cli_lexrank_summary_output" <<'PY'
 import json
 import sys
 
@@ -686,6 +691,23 @@ assert all(s.get("selectionOrder") is None for s in mmr["sentences"] if not s["i
 assert mmr["lineage"]["artifactID"] != centroid["lineage"]["artifactID"]
 assert mmr["lineage"]["projectID"] == centroid["lineage"]["projectID"]
 assert mean["lineage"]["artifactID"] != centroid["lineage"]["artifactID"]
+# LexRankSentence-v1: same units and eligibility as the centroid, stationary probabilities.
+lexrank = json.loads(sys.argv[4])["result"]
+assert lexrank["methodIdentifier"] == "LexRankSentence-v1"
+assert lexrank["eligibilityPolicy"] == "eligibility.non-null-vector-v1"
+assert lexrank["redundancyPolicy"] == "redundancy.none-v1"
+assert [(s["startUTF8"], s["endUTF8"]) for s in lexrank["sentences"]] == \
+    [(s["startUTF8"], s["endUTF8"]) for s in centroid["sentences"]]
+assert [s["isEligible"] for s in lexrank["sentences"]] == \
+    [s["isEligible"] for s in centroid["sentences"]]
+assert all(s["score"] > 0 for s in lexrank["sentences"] if s["isEligible"])
+assert all(s["score"] == 0 for s in lexrank["sentences"] if not s["isEligible"])
+assert abs(sum(s["score"] for s in lexrank["sentences"]) - 1) <= 1e-9
+ranked = sorted(lexrank["sentences"], key=lambda s: s["rank"])
+assert all(a["score"] >= b["score"] for a, b in zip(ranked, ranked[1:]))
+assert lexrank["consumedBudget"] == 2 == len(lexrank["selected"])
+assert lexrank["lineage"]["artifactID"] not in {
+    mean["lineage"]["artifactID"], centroid["lineage"]["artifactID"], mmr["lineage"]["artifactID"]}
 PY
 python3 - "$cli_weighting_output" "$cli_bm25_output" <<'PY'
 import json

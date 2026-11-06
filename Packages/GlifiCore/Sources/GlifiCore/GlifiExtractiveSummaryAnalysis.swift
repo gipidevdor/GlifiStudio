@@ -40,12 +40,14 @@ public enum GlifiSummaryScoringMethod: String, CaseIterable, Codable, Sendable {
     case sentenceTFIDFMean = "SentenceTFIDFMean-v1"
     /// Cosine between the sentence vector and the centroid of the non-null sentence vectors.
     case centroidCosine = "CentroidCosine-v1"
+    /// Stationary probability of the continuous cosine graph of the non-null sentence vectors.
+    case lexRank = "LexRankSentence-v1"
 
     /// Eligibility policy: which scored sentences may enter the summary.
     public var eligibilityPolicy: String {
         switch self {
         case .sentenceTFIDFMean: "eligibility.lexical-tokens-required-v1"
-        case .centroidCosine: "eligibility.non-null-vector-v1"
+        case .centroidCosine, .lexRank: "eligibility.non-null-vector-v1"
         }
     }
 }
@@ -190,6 +192,14 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
     public static let standardMethod = GlifiSummaryScoringMethod.sentenceTFIDFMean
     /// Backward-compatible identity of the default scoring method.
     public static let methodIdentifier = standardMethod.rawValue
+    /// Damping factor `d` of `LexRankSentence-v1`.
+    public static let lexRankDamping = 0.85
+    /// Largest L1 change between iterations at which `LexRankSentence-v1` has converged.
+    public static let lexRankTolerance = 1e-12
+    /// Power iterations after which `LexRankSentence-v1` fails closed.
+    public static let lexRankMaximumIterations = 1_000
+    /// Largest number of graph nodes, the non-null sentence vectors, of `LexRankSentence-v1`.
+    public static let lexRankMaximumNodes = 2_000
     /// Sublinear TF, smoothed IDF, no row normalization: defined for one document too.
     public static let standardScheme = GlifiTermWeightingScheme(
         termFrequency: .sublinear,
@@ -400,6 +410,40 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
                     )
                 }
             }
+        case .lexRank:
+            // Nodes are the non-null vectors; null vectors score zero and are never selected.
+            let nodes = vectors.indices.filter { vectors[$0].norm > 0 }
+            guard nodes.count <= Self.lexRankMaximumNodes else {
+                throw derivedAnalysisFailure(
+                    "summary.graph-limit-exceeded", category: .insufficientResources)
+            }
+            let transition = nodes.map { source in
+                let row = nodes.map { target in cosine(vectors[source], vectors[target]) }
+                let total = row.reduce(0, +)
+                return row.map { $0 / total }
+            }
+            let stationary = try Self.lexRankStationary(transition)
+            var centrality = Array(repeating: Double?.none, count: vectors.count)
+            for (node, probability) in zip(nodes, stationary) {
+                centrality[node] = probability
+            }
+            var position = 0
+            for (documentIndex, document) in ordered.enumerated() {
+                for (sentenceIndex, sentence) in document.sentences.enumerated() {
+                    let probability = centrality[position]
+                    position += 1
+                    scored.append(
+                        Scored(
+                            document: documentIndex,
+                            sentenceIndex: sentenceIndex,
+                            range: sentence.range,
+                            tokenCount: sentence.terms.count,
+                            isEligible: probability != nil,
+                            score: probability ?? 0
+                        )
+                    )
+                }
+            }
         }
         let rankedOrder = scored.indices.sorted { lhs, rhs in
             let left = scored[lhs]
@@ -498,6 +542,33 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
                 selectionOrder: order[index]
             )
         }
+    }
+
+    /// Power iteration `p ← (1 − d) / N + d · Mᵀp` from the uniform vector over a
+    /// row-stochastic transition matrix; fails closed without convergence.
+    static func lexRankStationary(_ transition: [[Double]]) throws -> [Double] {
+        let count = transition.count
+        guard count > 0 else { return [] }
+        let teleport = (1 - lexRankDamping) / Double(count)
+        var probabilities = Array(repeating: 1 / Double(count), count: count)
+        for _ in 0..<lexRankMaximumIterations {
+            var next = Array(repeating: 0.0, count: count)
+            for target in 0..<count {
+                var sum = 0.0
+                for source in 0..<count {
+                    sum += transition[source][target] * probabilities[source]
+                }
+                next[target] = teleport + lexRankDamping * sum
+            }
+            var change = 0.0
+            for index in 0..<count {
+                change += abs(next[index] - probabilities[index])
+            }
+            probabilities = next
+            if change <= lexRankTolerance { return probabilities }
+        }
+        throw derivedAnalysisFailure(
+            "summary.centrality-not-converged", category: .invariantViolation)
     }
 }
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: BSD-3-Clause
 
-"""Independent oracle for `SentenceTFIDFMean-v1`, `CentroidCosine-v1` and `MMR-v1` (GS-MET-001-19).
+"""Independent oracle for the extractive-summary variants of GS-MET-001-19.
 
 Two documents given as sentences of normalized tokens. Weights follow GS-MET-001-07 with
 `TF-sublinear-v1`, `IDF-smooth-v1` and `RowNorm-none-v1`. `SentenceTFIDFMean-v1` scores a
@@ -12,7 +12,10 @@ cosine to the centroid; a null vector scores zero and is never selected. Ranking
 descending score, then document order, then sentence position. `MMR-v1` selects greedily the
 eligible sentence that fits the residual budget with the largest
 `lambda * score - (1 - lambda) * max cosine to the selected sentences`, first in source order on
-ties; the relevance is the `CentroidCosine-v1` score.
+ties; the relevance is the `CentroidCosine-v1` score. `LexRankSentence-v1` builds the graph of
+the non-null sentence vectors with continuous cosine edges, self-loops included, normalizes the
+rows and iterates `p = (1 - d) / N + d * M^T p` from the uniform vector with `d = 0.85` until the
+L1 change is at most `1e-12`; a null vector scores zero and is never selected.
 """
 
 from __future__ import annotations
@@ -174,6 +177,45 @@ def report_cross_documents() -> None:
     print("MMR_CROSS_ORDER_S3_L0 " + " ".join(str(i) for i in mmr_select(scored, vectors, 0.0, "sentences", 3)))
 
 
+def lexrank_scores(
+    cells: list[dict[str, float]], documents: list[list[list[str]]] | None = None
+) -> tuple[list[tuple[int, int, int, bool, float]], int]:
+    """`LexRankSentence-v1`: (document, sentence, tokens, eligible, score) and iterations."""
+    documents = DOCUMENTS if documents is None else documents
+    vectors = []
+    for document_index, document in enumerate(documents):
+        for sentence in document:
+            vector = {
+                term: sentence.count(term) * cells[document_index][term] for term in set(sentence)
+            }
+            vectors.append({term: value for term, value in vector.items() if value != 0.0})
+    nodes = [index for index, vector in enumerate(vectors) if vector]
+    n = len(nodes)
+    matrix = [[cosine(vectors[i], vectors[j]) for j in nodes] for i in nodes]
+    matrix = [[value / sum(row) for value in row] for row in matrix]
+    damping = 0.85
+    p = [1.0 / n] * n
+    iterations = 0
+    while True:
+        iterations += 1
+        q = [(1 - damping) / n + damping * sum(matrix[i][j] * p[i] for i in range(n)) for j in range(n)]
+        change = sum(abs(a - b) for a, b in zip(q, p))
+        p = q
+        if change <= 1e-12:
+            break
+    stationary = dict(zip(nodes, p))
+    scored = []
+    position = 0
+    for document_index, document in enumerate(documents):
+        for sentence_index, sentence in enumerate(document):
+            eligible = position in stationary
+            scored.append(
+                (document_index, sentence_index, len(sentence), eligible, stationary.get(position, 0.0))
+            )
+            position += 1
+    return scored, iterations
+
+
 def report(prefix: str, scored: list[tuple[int, int, int, bool, float]]) -> None:
     """Print scores, ranks and selections for both budget units."""
     order = sorted(range(len(scored)), key=lambda i: (-scored[i][4], scored[i][0], scored[i][1]))
@@ -208,6 +250,12 @@ def main() -> None:
     report("CENTROID", centroid_scores(cells))
     report_mmr(cells)
     report_cross_documents()
+    lexrank, iterations = lexrank_scores(cells)
+    report("LEXRANK", lexrank)
+    print(f"LEXRANK_INFO_SCORE_SUM {sum(score for *_, score in lexrank):.15g}")
+    print(f"LEXRANK_INFO_ITERATIONS {iterations}")
+    print("LEXRANK_MMR_ORDER_S3_L05 " + " ".join(
+        str(i) for i in mmr_select(lexrank, sentence_vectors(cells), 0.5, "sentences", 3)))
 
 
 if __name__ == "__main__":

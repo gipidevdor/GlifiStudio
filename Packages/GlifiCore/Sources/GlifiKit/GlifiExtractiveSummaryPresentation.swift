@@ -46,7 +46,7 @@ public struct GlifiStudioSummaryScoringMethod: Codable, Equatable, Sendable {
     /// Every method identifier accepted by the engine, in declaration order.
     public static let supportedIdentifiers = GlifiSummaryScoringMethod.allCases.map(\.rawValue)
 
-    /// `SentenceTFIDFMean-v1` or `CentroidCosine-v1`.
+    /// `SentenceTFIDFMean-v1`, `CentroidCosine-v1` or `LexRankSentence-v1`.
     public let identifier: String
 
     /// Creates a method from a versioned identifier, validated when used.

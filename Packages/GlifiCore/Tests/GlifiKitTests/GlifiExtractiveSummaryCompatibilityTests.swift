@@ -56,6 +56,10 @@ func summaryPresentationDecodesLegacySelectionOrder() throws {
     #expect(try JSONDecoder().decode(GlifiStudioSummarySentence.self, from: encoded) == current)
 
     #expect(GlifiStudioSummaryRedundancy.supportedIdentifiers == ["redundancy.none-v1", "MMR-v1"])
+    #expect(
+        GlifiStudioSummaryScoringMethod.supportedIdentifiers == [
+            "SentenceTFIDFMean-v1", "CentroidCosine-v1", "LexRankSentence-v1",
+        ])
     #expect(GlifiStudioSummaryRedundancy.standard.lambda == nil)
     let mmr = GlifiStudioSummaryRedundancy.maximalMarginalRelevance(lambda: 0.5)
     #expect(mmr.identifier == "MMR-v1")
