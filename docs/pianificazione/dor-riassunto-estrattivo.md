@@ -6,11 +6,11 @@
 | --- | --- |
 | Identificatore | GS-DOR-013 |
 | Tipo | Scheda Definition of Ready |
-| Versione | 1.2.1 |
+| Versione | 1.2.2 |
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-01 |
-| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice verificata localmente e in CI (GS-VER-149), terza slice in verifica (GS-VER-151) |
+| Ultima modifica | 2026-11-06 |
+| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice verificata localmente e in CI (GS-VER-149), terza slice verificata in CI sulla head definitiva e su `main` (GS-VER-151) |
 | Riferimenti | GS-MET-001-19; GS-MET-001-07; GS-API-001 § 9; RF-042; RQ-025; RQ-027; TV-036; ADR-0013 |
 
 ## Confini e criteri di accettazione
@@ -49,8 +49,8 @@ sono registrati in [GS-VER-146](../evidenze/GS-VER-146-riassunto-estrattivo.md) 
 slice, superata sul runner remoto, CMP-096 `verified`) e in
 [GS-VER-149](../evidenze/GS-VER-149-riassunto-centroide.md) (seconda slice, gate locale e CI
 su `main` superati, CMP-097 `verified`) e in
-[GS-VER-151](../evidenze/GS-VER-151-riassunto-mmr.md) (terza slice, CMP-106 `implemented`
-finché il gate remoto non la promuove), nella matrice di tracciabilità (RF-042, TV-036). Nessuna nuova decisione architetturale: la variante era
+[GS-VER-151](../evidenze/GS-VER-151-riassunto-mmr.md) (terza slice, CI su `main` `dfdcdbe` e `a86a53b`
+superata, CMP-106 `verified`), nella matrice di tracciabilità (RF-042, TV-036). Nessuna nuova decisione architetturale: la variante era
 già candidata in GS-MET-001-19.
 
 ## Rischi e recupero
@@ -73,3 +73,6 @@ la base `380965c`, che contiene gli operatori KH Coder e la verifica di
 CentroidCosine. Le evidenze dei metodi restano distinte; CMP-106 resta implemented
 durante la verifica dell'integrazione. Eseguire il gate nativo e il preflight
 App Store sul risultato, pubblicare il commit e attendere i controlli remoti.
+
+Esito: l'integrazione è in `main` con `dfdcdbe` (#24) e i quattro controlli CI `xcode-27`
+sono superati su quel commit e su `a86a53b`; CMP-106 è `verified` (GS-VER-151).

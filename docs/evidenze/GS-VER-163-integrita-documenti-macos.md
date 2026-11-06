@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VER-163 |
 | Tipo | Evidenza di correzione e verifica |
-| Versione | 1.0.1 |
-| Stato | Superato per il modello macOS; gate globale non superato |
+| Versione | 1.1.0 |
+| Stato | Superato: modello macOS in locale e gate CI `xcode-27` su `main` `a86a53b` |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-01 |
+| Ultima modifica | 2026-11-06 |
 | Approvazione | GS-DOR-163; RF-001; RQ-043; GS-APL-005 |
 
 ## Difetti e correzioni
@@ -75,3 +75,20 @@ GS-VER-140 identifica già una verifica degli accessi al package pubblicata.
 La scheda associata diventa GS-DOR-163 e la clausola CMP-107. La rinumerazione
 preserva entrambe le provenienze; gli esiti storici sopra non sono attribuiti
 alla nuova integrazione. Gli esiti sulla head consolidata sono registrati nella PR.
+
+## Esecuzione remota su `main`
+
+Il commit integrato `main` `a86a53b` (#27) supera i quattro controlli CI `xcode-27`:
+[`verify`](https://github.com/gipidevdor/GlifiStudio/actions/runs/41336171753/job/124936428913) e
+[`app-store-baseline`](https://github.com/gipidevdor/GlifiStudio/actions/runs/41336171695/job/124936354278), oltre a `static-quality` e
+`format-check`. `verify.sh` (con `set -euo pipefail`) esegue `xcodebuild test` sullo schema
+`GlifiStudio-macOS`, il cui unico testable è `GlifiStudioMacTests`, dopo 293 test Core,
+37 test Kit, i contract test CLI e i 22 checkpoint di recovery, e prosegue con le build
+Release macOS e Debug/Release iPadOS; `verify-app-store.sh` ripete la stessa sequenza con
+baseline Apple/App Store e packaging. Con `-quiet` il log non riporta il conteggio dei test
+macOS: l'esito è l'uscita con stato 0 del passo, non un riepilogo `.xcresult`. Rscript e
+veraPDF sono assenti sul runner e i relativi controlli risultano saltati.
+
+Il gate globale, non superato nei tentativi locali descritti sopra, risulta superato sul
+runner remoto per la revisione integrata. CMP-107 passa a `verified` sul gate G3; i limiti
+sopra restano aperti e G4 non è dichiarato.

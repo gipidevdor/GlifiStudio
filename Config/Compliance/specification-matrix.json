@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.specification-compliance-matrix",
   "schemaVersion": 1,
-  "updatedAt": "2026-11-01",
+  "updatedAt": "2026-11-06",
   "requiredRequirementCoverage": [
     "RQ-057",
     "RQ-058",
@@ -2315,7 +2315,7 @@
         "docs/evidenze/GS-VER-151-riassunto-mmr.md"
       ],
       "gate": "G3",
-      "status": "implemented",
+      "status": "verified",
       "blockingReason": null
     },
     {
@@ -2340,7 +2340,7 @@
         "docs/evidenze/GS-VER-163-integrita-documenti-macos.md"
       ],
       "gate": "G3",
-      "status": "implemented",
+      "status": "verified",
       "blockingReason": null
     }
   ]
