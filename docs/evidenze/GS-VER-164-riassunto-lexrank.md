@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VER-164 |
 | Tipo | Evidenza di verifica numerica e di integrazione |
-| Versione | 1.1.0 |
-| Stato | Superato sulla head `c3f7bab` della PR #29 (CI `xcode-27`); in attesa della CI su `main` |
+| Versione | 1.2.0 |
+| Stato | Superato sulla head `c3f7bab` della PR #29 e su `main` `aaf8ff3` (CI `xcode-27`) |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-06 |
+| Ultima modifica | 2026-11-07 |
 | Approvazione | GS-DOR-013 (1.3.0); richiesta dell'iniziatore di proseguire lo sviluppo |
 | Riferimenti | GS-DOR-013; GS-MET-001-19 § Variante implementata: `LexRankSentence-v1`; GS-MET-001-07; RF-042; TV-036; CMP-163; GS-VER-146; GS-VER-149; GS-VER-151 |
 
@@ -74,6 +74,14 @@ contract test CLI di `verify.sh` (procedura 5). Rscript e veraPDF sono assenti s
 oracoli R e validazione PDF/A risultano saltati, senza effetto sulle righe `LEXRANK_*`
 dell'oracolo Python, confrontate in locale.
 
+Dopo l'integrazione squash di #29 su `main` (`aaf8ff3`) gli stessi quattro controlli CI
+`xcode-27` (`static-quality`, `format-check`,
+[`verify`](https://github.com/gipidevdor/GlifiStudio/actions/runs/42349150040/job/128333416081),
+[`app-store-baseline`](https://github.com/gipidevdor/GlifiStudio/actions/runs/42349150079/job/128333350224))
+sono superati. Nel log `verify` risultano di nuovo superati i tre test LexRank entro 296 test
+Core e 37 test Kit, seguiti dai contract test CLI; Rscript e veraPDF restano assenti e i
+relativi controlli saltati. CMP-163 è promossa a `verified`.
+
 ## Limiti
 
 - Una sola variante LexRank, continua e senza soglia; TextRank, LexRank con soglia e budget in
@@ -81,4 +89,5 @@ dell'oracolo Python, confrontate in locale.
 - Grafo denso limitato a 2 000 nodi: gruppi più grandi richiedono una variante sparsa o
   approssimata, con nuovo identificatore.
 - Nessuna valutazione ROUGE o umana; oracolo Python indipendente, non pacchetto terzo.
-- CMP-163 resta `implemented` fino alla CI su `main` dopo l'integrazione.
+- `make verify-app-store` non è stato eseguito su una macchina locale macOS 27; il gate
+  equivalente è il job remoto `app-store-baseline`.

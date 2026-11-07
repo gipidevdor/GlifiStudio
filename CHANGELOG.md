@@ -15,6 +15,8 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Verificato
 
+- Metodo `LexRankSentence-v1` del riassunto estrattivo: quattro controlli CI `xcode-27` sulla
+  head di #29 e su `main` `aaf8ff3`; GS-VER-164 superata, CMP-163 `verified`.
 - Ridondanza `MMR-v1` del riassunto estrattivo: quattro controlli CI `xcode-27` sulla head
   definitiva di #24 e su `main` `dfdcdbe` e `a86a53b`; GS-VER-151 superata, CMP-106 `verified`.
 - Creazione e apertura documentale non distruttiva su macOS: gate CI `xcode-27` (`verify`,
