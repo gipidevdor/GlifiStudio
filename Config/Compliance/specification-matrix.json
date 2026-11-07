@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.specification-compliance-matrix",
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06",
+  "updatedAt": "2026-11-07",
   "requiredRequirementCoverage": [
     "RQ-057",
     "RQ-058",
@@ -2371,7 +2371,7 @@
         "docs/evidenze/GS-VER-164-riassunto-lexrank.md"
       ],
       "gate": "G3",
-      "status": "implemented",
+      "status": "verified",
       "blockingReason": null
     }
   ]
