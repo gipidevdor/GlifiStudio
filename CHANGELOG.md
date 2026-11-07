@@ -8,6 +8,9 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Aggiunto
 
+- Unità di budget `Budget-characters-v1` del riassunto estrattivo: costo in scalari Unicode del
+  testo sorgente esatto di ogni frase, stessa selezione delle altre unità e `--characters <n>`
+  in `glifi summarize`; nessun nuovo campo nel payload; GS-VER-165, CMP-164 `implemented`.
 - Metodo `LexRankSentence-v1` del riassunto estrattivo: centralità stazionaria del grafo coseno
   continuo dei vettori frase (damping 0,85, tolleranza `10⁻¹²`), limiti fail-closed su 2 000
   nodi e 1 000 iterazioni, `--method LexRankSentence-v1` in `glifi summarize`; GS-VER-164,

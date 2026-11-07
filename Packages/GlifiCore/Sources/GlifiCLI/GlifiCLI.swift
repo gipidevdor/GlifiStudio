@@ -1172,7 +1172,7 @@ private struct CLIRequest {
           glifi [--format text|json] [--no-progress] weighting <progetto.glifi> --sources <source-revision-id,...> [--tf TF-raw-v1|TF-binary-v1|TF-L1-v1|TF-max-v1|TF-augmented-v1|TF-sublinear-v1] [--idf IDF-none-v1|IDF-unsmoothed-v1|IDF-smooth-v1] [--norm RowNorm-none-v1|RowNorm-L1-v1|RowNorm-L2-v1]
           glifi [--format text|json] [--no-progress] ngrams <progetto.glifi> --sources <source-revision-id,...> --unit form|word|character|character-padded [--n <n>] [--stopwords <forma,...>] [--min-length <n>] [--min-count <n>] [--min-df <n>] [--max-df-proportion <x>] [--max-rows <n>]
           glifi [--format text|json] [--no-progress] diversity <progetto.glifi> --sources <source-revision-id,...> [--threshold <τ>]
-          glifi [--format text|json] [--no-progress] summarize <progetto.glifi> --sources <source-revision-id,...> [--sentences <n> | --tokens <n>] [--method SentenceTFIDFMean-v1|CentroidCosine-v1|LexRankSentence-v1] [--mmr <λ>] [--tf <TF-*>] [--idf <IDF-*>] [--norm <RowNorm-*>]
+          glifi [--format text|json] [--no-progress] summarize <progetto.glifi> --sources <source-revision-id,...> [--sentences <n> | --tokens <n> | --characters <n>] [--method SentenceTFIDFMean-v1|CentroidCosine-v1|LexRankSentence-v1] [--mmr <λ>] [--tf <TF-*>] [--idf <IDF-*>] [--norm <RowNorm-*>]
           glifi [--format text|json] [--no-progress] bm25 <progetto.glifi> --sources <source-revision-id,...> --query <testo> [--k1 <x>] [--b <x>]
           glifi [--format text|json] [--no-progress] dispersion <progetto.glifi> --sources <source-revision-id,...> [--part <source-revision-id,...>]...
           glifi [--format text|json] [--no-progress] group-metric <progetto.glifi> --group <source-revision-id,...> --group <source-revision-id,...>... [--term <termine>] [--confidence <livello>] [--bootstrap <B>] [--permutations <m>] [--seed <n>] [--contrast <c1,c2,...>]...
@@ -1509,23 +1509,26 @@ private struct CLIRequest {
                 projectURL, try Self.identifiers(sources), try decimal("--threshold") ?? 0.72)
         case "summarize":
             try allowed([
-                "--sources", "--sentences", "--tokens", "--method", "--mmr", "--tf", "--idf",
-                "--norm",
+                "--sources", "--sentences", "--tokens", "--characters", "--method", "--mmr",
+                "--tf", "--idf", "--norm",
             ])
             guard let sources = try single("--sources") else {
                 throw CLIUsageError.invalidArguments
             }
             let sentenceLimit = try integer("--sentences")
             let tokenLimit = try integer("--tokens")
+            let characterLimit = try integer("--characters")
             let budget: GlifiStudioSummaryBudget
-            switch (sentenceLimit, tokenLimit) {
-            case (nil, nil):
+            switch (sentenceLimit, tokenLimit, characterLimit) {
+            case (nil, nil, nil):
                 budget = .standard
-            case let (limit?, nil):
+            case let (limit?, nil, nil):
                 budget = GlifiStudioSummaryBudget(unit: "Budget-sentences-v1", limit: limit)
-            case let (nil, limit?):
+            case let (nil, limit?, nil):
                 budget = GlifiStudioSummaryBudget(unit: "Budget-lexical-tokens-v1", limit: limit)
-            case (_?, _?):
+            case let (nil, nil, limit?):
+                budget = GlifiStudioSummaryBudget(unit: "Budget-characters-v1", limit: limit)
+            case (_?, _?, _), (_?, _, _?), (_, _?, _?):
                 throw CLIUsageError.invalidArguments
             }
             return .summarize(

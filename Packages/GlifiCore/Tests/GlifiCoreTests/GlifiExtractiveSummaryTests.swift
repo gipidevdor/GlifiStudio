@@ -11,9 +11,12 @@ private func revision(_ index: Int) throws -> SourceRevisionID {
         canonicalValue: "source-revision:00000000-0000-0000-0000-00000000000\(index)")
 }
 
-private func sentence(_ index: Int, _ terms: [String]) throws -> GlifiSummaryCandidateSentence {
+private func sentence(
+    _ index: Int, _ terms: [String], characters: Int = 5
+) throws -> GlifiSummaryCandidateSentence {
     GlifiSummaryCandidateSentence(
-        range: try GlifiUTF8Range(start: index * 10, end: index * 10 + 5), terms: terms)
+        range: try GlifiUTF8Range(start: index * 10, end: index * 10 + 5), terms: terms,
+        characterCount: characters)
 }
 
 private func oracleDocuments() throws -> [GlifiSummaryDocument] {
@@ -21,16 +24,16 @@ private func oracleDocuments() throws -> [GlifiSummaryDocument] {
         GlifiSummaryDocument(
             sourceRevisionID: try revision(1),
             sentences: [
-                try sentence(0, ["casa", "bella", "casa"]),
-                try sentence(1, []),
-                try sentence(2, ["bella", "giardino"]),
+                try sentence(0, ["casa", "bella", "casa"], characters: 17),
+                try sentence(1, [], characters: 2),
+                try sentence(2, ["bella", "giardino"], characters: 16),
             ]
         ),
         GlifiSummaryDocument(
             sourceRevisionID: try revision(2),
             sentences: [
-                try sentence(0, ["giardino", "verde"]),
-                try sentence(1, ["casa"]),
+                try sentence(0, ["giardino", "verde"], characters: 15),
+                try sentence(1, ["casa"], characters: 5),
             ]
         ),
     ]
@@ -689,4 +692,115 @@ func lexRankSummaryIsPersistedAsDistinctArtifact() async throws {
             GlifiCorpusExtractiveSummaryAnalysis.self, artifactID: lexRank.artifactID,
             in: project)
     #expect(stored.value == lexRank.value)
+}
+
+@Test("Budget-characters-v1 coincide con l'oracolo Python per ogni metodo e per MMR-v1")
+func characterBudgetMatchesPython() throws {
+    // Oracle: *_SELECTED_C40 and MMR_ORDER_C40_L05 lines of expected.txt; the sentence lengths
+    // are the Unicode scalars of TEXTS in summary.py.
+    let documents = try oracleDocuments()
+    let scheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme
+    let budget = GlifiSummaryBudget(unit: .characters, limit: 40)
+    #expect(budget.unit.rawValue == "Budget-characters-v1")
+    for method in GlifiSummaryScoringMethod.allCases {
+        let summary = try GlifiCorpusExtractiveSummaryAnalysis(
+            documents: documents, budget: budget, scheme: scheme, method: method)
+        // Rank walk: 17 + 16 fit, the third ranked sentence (15) would exceed 40, the fourth (5)
+        // fits the residual budget.
+        #expect(summary.sentences.map(\.isSelected) == [true, false, true, false, true])
+        #expect(summary.consumedBudget == 38)
+        #expect(summary.budget == budget)
+        let bySentences = try GlifiCorpusExtractiveSummaryAnalysis(
+            documents: documents, budget: GlifiSummaryBudget(unit: .sentences, limit: 2),
+            scheme: scheme, method: method)
+        #expect(summary.sentences.map(\.score) == bySentences.sentences.map(\.score))
+        #expect(summary.sentences.map(\.rank) == bySentences.sentences.map(\.rank))
+    }
+    let mmr = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: budget, scheme: scheme, method: .centroidCosine,
+        redundancy: .maximalMarginalRelevance(lambda: 0.5))
+    #expect(mmr.sentences.map(\.selectionOrder) == [1, nil, nil, 2, 3])
+    #expect(mmr.consumedBudget == 37)
+}
+
+@Test("Budget-characters-v1: frase più lunga del budget mai scelta, limiti del budget")
+func characterBudgetBounds() throws {
+    let scheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme
+    let documents = [
+        GlifiSummaryDocument(
+            sourceRevisionID: try revision(1),
+            sentences: [
+                try sentence(0, ["a", "a"], characters: 12),
+                try sentence(1, ["a"], characters: 4),
+                try sentence(2, [], characters: 3),
+            ]
+        )
+    ]
+    let summary = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: GlifiSummaryBudget(unit: .characters, limit: 10),
+        scheme: scheme)
+    // The top-ranked sentence exceeds the whole budget and is skipped; the sentence without
+    // lexical tokens fits but stays ineligible.
+    #expect(summary.sentences.map(\.isSelected) == [false, true, false])
+    #expect(summary.consumedBudget == 4)
+    let tight = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: GlifiSummaryBudget(unit: .characters, limit: 3),
+        scheme: scheme)
+    #expect(tight.selectedSentences.isEmpty)
+    #expect(tight.consumedBudget == 0)
+    for limit in [0, GlifiSummaryBudget.maximumLimit + 1] {
+        #expect(throws: GlifiFailure.self) {
+            try GlifiCorpusExtractiveSummaryAnalysis(
+                documents: documents, budget: GlifiSummaryBudget(unit: .characters, limit: limit),
+                scheme: scheme)
+        }
+    }
+    #expect(GlifiSummaryBudget(unit: .characters, limit: GlifiSummaryBudget.maximumLimit).isValid)
+}
+
+@Test("Budget-characters-v1 conta gli scalari Unicode del testo sorgente e dà un Artifact distinto")
+func characterBudgetCountsSourceScalars() async throws {
+    let root = FileManager.default.temporaryDirectory.appending(
+        path: "GlifiCharacterBudgetSummary-\(UUID().uuidString)", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let project = try GlifiProjectPackage.create(
+        at: root.appending(path: "P.glifi", directoryHint: .isDirectory))
+    let engine = GlifiEngine()
+    // Decomposed accents: one grapheme, two Unicode scalars each.
+    let text = "La citta\u{0300} e\u{0300} bella. Il giardino e\u{0300} verde. Sì."
+    let imported = try GlifiTextImporter().importText(
+        from: Data(text.utf8), format: .plainText, sourceRevisionID: try revision(1))
+    _ = try await project.importText(imported)
+    let ids = [imported.sourceRevisionID]
+    let bySentences = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids, budget: GlifiSummaryBudget(unit: .sentences, limit: 3))
+    let all = try await engine.resolveSummarySentences(bySentences.value, in: project)
+    let lengths = all.map(\.text.unicodeScalars.count)
+    #expect(all.count == bySentences.value.sentences.filter(\.isEligible).count)
+    #expect(all.contains { $0.text.unicodeScalars.count > $0.text.count })
+
+    let limit = lengths.reduce(0, +)
+    let byCharacters = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids,
+        budget: GlifiSummaryBudget(unit: .characters, limit: limit))
+    #expect(byCharacters.artifactID != bySentences.artifactID)
+    #expect(byCharacters.value.budget.unit == .characters)
+    #expect(byCharacters.value.consumedBudget == limit)
+    #expect(
+        byCharacters.value.sentences.map(\.isSelected)
+            == bySentences.value.sentences.map(\.isSelected))
+    // One scalar less than the selected sentences: the selection must drop at least one.
+    let short = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids,
+        budget: GlifiSummaryBudget(unit: .characters, limit: limit - 1))
+    let resolved = try await engine.resolveSummarySentences(short.value, in: project)
+    #expect(short.value.selectedSentences.count < all.count)
+    #expect(short.value.consumedBudget == resolved.map(\.text.unicodeScalars.count).reduce(0, +))
+    #expect(short.value.consumedBudget < limit)
+    let stored: GlifiProjectDerivedResult<GlifiCorpusExtractiveSummaryAnalysis> =
+        try await engine.storedDerivedResult(
+            GlifiCorpusExtractiveSummaryAnalysis.self, artifactID: byCharacters.artifactID,
+            in: project)
+    #expect(stored.value == byCharacters.value)
 }

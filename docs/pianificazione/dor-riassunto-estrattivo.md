@@ -6,11 +6,11 @@
 | --- | --- |
 | Identificatore | GS-DOR-013 |
 | Tipo | Scheda Definition of Ready |
-| Versione | 1.3.1 |
+| Versione | 1.4.0 |
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-07 |
-| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice verificata localmente e in CI (GS-VER-149), terza slice verificata in CI sulla head definitiva e su `main` (GS-VER-151); quarta slice verificata in CI sulla head della PR #29 e su `main` (GS-VER-164) |
+| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice verificata localmente e in CI (GS-VER-149), terza slice verificata in CI sulla head definitiva e su `main` (GS-VER-151); quarta slice verificata in CI sulla head della PR #29 e su `main` (GS-VER-164); quinta slice in verifica (GS-VER-165) |
 | Riferimenti | GS-MET-001-19; GS-MET-001-07; GS-API-001 § 9; RF-042; RQ-025; RQ-027; TV-036; ADR-0013 |
 
 ## Confini e criteri di accettazione
@@ -19,7 +19,7 @@
 
 | Voce | Evidenza |
 | --- | --- |
-| outcome e confini | Tre famiglie sullo stesso Artifact, `SentenceTFIDFMean-v1`, `CentroidCosine-v1` e `LexRankSentence-v1`, scelte con `method`, con budget in frasi o token; ridondanza assente per default o `MMR-v1` con `λ` dichiarato, scelta con `redundancy`; nessuna generazione di testo, nessun modello linguistico |
+| outcome e confini | Tre famiglie sullo stesso Artifact, `SentenceTFIDFMean-v1`, `CentroidCosine-v1` e `LexRankSentence-v1`, scelte con `method`, con budget in frasi, token o caratteri; ridondanza assente per default o `MMR-v1` con `λ` dichiarato, scelta con `redundancy`; nessuna generazione di testo, nessun modello linguistico |
 | failure semantics | Budget non valido, `λ` fuori da `[0, 1]`, politica di ridondanza sconosciuta, gruppo vuoto o fonte duplicata: `invalidInput`/`insufficientData` con codici `summary.*` tipizzati; grafo LexRank oltre 2 000 nodi: `insufficientResources`; intervallo non risolvibile o centralità non convergente: `invariantViolation` |
 
 - Fissare in GS-MET-001-19 unità, token inclusi, pesi, rank, budget, eleggibilità,
@@ -44,6 +44,10 @@
   limiti fissati in GS-MET-001-19 prima del codice; stessi vettori frase di
   `CentroidCosine-v1`; limiti fail-closed su nodi e iterazioni con failure localizzate; oracolo
   esteso con righe `LEXRANK_*`; nessuna nuova opzione CLI né migrazione.
+- Quinta slice (`Budget-characters-v1`): costo in scalari Unicode del testo sorgente esatto
+  fissato in GS-MET-001-19 prima del codice; stessa selezione delle altre unità; oracolo esteso
+  con righe `*_SELECTED_C40` e `MMR_ORDER_C40_L05`; `--characters <n>` in CLI; nessuna
+  migrazione.
 
 ## Verifica e tracciabilità
 
@@ -56,7 +60,9 @@ su `main` superati, CMP-097 `verified`) e in
 [GS-VER-151](../evidenze/GS-VER-151-riassunto-mmr.md) (terza slice, CI su `main` `dfdcdbe` e `a86a53b`
 superata, CMP-106 `verified`) e in
 [GS-VER-164](../evidenze/GS-VER-164-riassunto-lexrank.md) (quarta slice, CI su `main` `aaf8ff3`
-superata, CMP-163 `verified`), nella matrice di tracciabilità (RF-042, TV-036). Nessuna nuova decisione architetturale: la variante era
+superata, CMP-163 `verified`) e in
+[GS-VER-165](../evidenze/GS-VER-165-riassunto-budget-caratteri.md) (quinta slice, in verifica,
+CMP-164 `implemented`), nella matrice di tracciabilità (RF-042, TV-036). Nessuna nuova decisione architetturale: la variante era
 già candidata in GS-MET-001-19.
 
 ## Rischi e recupero

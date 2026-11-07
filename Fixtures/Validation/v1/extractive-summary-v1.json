@@ -9,7 +9,7 @@
     "LexRankSentence-v1"
   ],
   "status": "candidate",
-  "statusReason": "Verifica dinamica eseguita dal runner remoto per SentenceTFIDFMean-v1 (GS-VER-146) e, con gate nativo locale, per CentroidCosine-v1 (GS-VER-149); per la ridondanza MMR-v1 sulla head definitiva e su main (GS-VER-151). LexRankSentence-v1 (GS-VER-164) sulla head della PR e su main. Promozione a supported dopo la review delle evidenze.",
+  "statusReason": "Verifica dinamica eseguita dal runner remoto per SentenceTFIDFMean-v1 (GS-VER-146) e, con gate nativo locale, per CentroidCosine-v1 (GS-VER-149); per la ridondanza MMR-v1 sulla head definitiva e su main (GS-VER-151). LexRankSentence-v1 (GS-VER-164) sulla head della PR e su main. Budget-characters-v1 (GS-VER-165) in verifica sul runner remoto. Promozione a supported dopo la review delle evidenze.",
   "license": "BSD-3-Clause",
   "toolchain": {
     "swiftLanguageMode": "6",
@@ -26,7 +26,7 @@
     },
     "V1": {
       "status": "pass",
-      "description": "Frase senza token, frasi duplicate, un solo documento, documento senza frasi, budget non valido, gruppo vuoto e fonte duplicata. Per CentroidCosine-v1: vettore nullo e centroide nullo (IDF-unsmoothed-v1 su un solo documento), payload precedenti senza isEligible. Per MMR-v1: frasi duplicate, lambda fuori da [0, 1] o non finito, lambda agli estremi, payload precedenti senza selectionOrder. Per LexRankSentence-v1: grafo vuoto, frasi duplicate, limite di 2 000 nodi e mancata convergenza fail-closed."
+      "description": "Frase senza token, frasi duplicate, un solo documento, documento senza frasi, budget non valido, gruppo vuoto e fonte duplicata. Per CentroidCosine-v1: vettore nullo e centroide nullo (IDF-unsmoothed-v1 su un solo documento), payload precedenti senza isEligible. Per MMR-v1: frasi duplicate, lambda fuori da [0, 1] o non finito, lambda agli estremi, payload precedenti senza selectionOrder. Per LexRankSentence-v1: grafo vuoto, frasi duplicate, limite di 2 000 nodi e mancata convergenza fail-closed. Per Budget-characters-v1: frase più lunga del budget, selezione vuota, limiti del budget e accenti decomposti contati come scalari Unicode."
     },
     "V2": {
       "status": "pass",
@@ -49,13 +49,14 @@
     }
   },
   "limits": [
-    "Tre famiglie estrattive (SentenceTFIDFMean-v1, CentroidCosine-v1, LexRankSentence-v1 continua fino a 2 000 nodi) e una politica di ridondanza (MMR-v1 con rilevanza non normalizzata); nessuna valutazione ROUGE o umana; oracolo Python, non pacchetto terzo."
+    "Tre famiglie estrattive (SentenceTFIDFMean-v1, CentroidCosine-v1, LexRankSentence-v1 continua fino a 2 000 nodi) e una politica di ridondanza (MMR-v1 con rilevanza non normalizzata); budget in frasi, token lessicali o scalari Unicode (non grafemi); nessuna valutazione ROUGE o umana; oracolo Python, non pacchetto terzo."
   ],
   "evidence": [
     "docs/evidenze/GS-VER-146-riassunto-estrattivo.md",
     "docs/evidenze/GS-VER-149-riassunto-centroide.md",
     "docs/evidenze/GS-VER-151-riassunto-mmr.md",
-    "docs/evidenze/GS-VER-164-riassunto-lexrank.md"
+    "docs/evidenze/GS-VER-164-riassunto-lexrank.md",
+    "docs/evidenze/GS-VER-165-riassunto-budget-caratteri.md"
   ],
   "numericAgreement": {
     "comparisonMode": "relativeTolerance",

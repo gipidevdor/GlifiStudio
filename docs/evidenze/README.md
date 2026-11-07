@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.15.1 |
+| Versione | 1.16.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-07 |
@@ -14,6 +14,7 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
+- [GS-VER-165 — Budget del riassunto estrattivo in caratteri](GS-VER-165-riassunto-budget-caratteri.md) — In verifica: controlli statici locali superati, CI `xcode-27` attesa; CMP-164 implemented
 - [GS-VER-164 — Riassunto estrattivo `LexRankSentence-v1`](GS-VER-164-riassunto-lexrank.md) — Superato: CI `xcode-27` sulla head `c3f7bab` di #29 e su `main` `aaf8ff3`; CMP-163 verified
 - [GS-VER-151 — Riassunto estrattivo con ridondanza `MMR-v1`](GS-VER-151-riassunto-mmr.md) — Superato: CI `xcode-27` sulla head definitiva di #24 e su `main` `dfdcdbe`/`a86a53b`; CMP-106 verified
 - [GS-VER-149 — Riassunto estrattivo `CentroidCosine-v1`](GS-VER-149-riassunto-centroide.md) — Superato: gate nativo locale e CI `xcode-27` su `main` `3fa454f`; CMP-097 verified

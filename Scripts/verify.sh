@@ -482,6 +482,10 @@ cli_lexrank_summary_output="$(swift run --package-path Packages/GlifiCore \
     --scratch-path "$build_cache_directory/SwiftPM" --skip-build \
     GlifiCLI --format json summarize "$cli_visual_project_path" --sources "$cli_visual_sources" \
     --sentences 2 --method LexRankSentence-v1)"
+cli_character_summary_output="$(swift run --package-path Packages/GlifiCore \
+    --scratch-path "$build_cache_directory/SwiftPM" --skip-build \
+    GlifiCLI --format json summarize "$cli_visual_project_path" --sources "$cli_visual_sources" \
+    --characters 60)"
 # ADR-0027: storia qualitativa dalla CLI.
 cli_codebook_request="$temporary_build_directory/codebook.json"
 print -r -- '{"codebookRevised":{"codebookID":"temi","revision":1,"categories":[{"categoryID":"fonte","label":"Fonte","definition":"Riferimenti alla fonte."}]}}' \
@@ -634,7 +638,7 @@ for document in result["documents"]:
     assert value == "+Infinity" or value > 0
 PY
 python3 - "$cli_summarize_output" "$cli_centroid_summary_output" "$cli_mmr_summary_output" \
-    "$cli_lexrank_summary_output" <<'PY'
+    "$cli_lexrank_summary_output" "$cli_character_summary_output" <<'PY'
 import json
 import sys
 
@@ -708,6 +712,19 @@ assert all(a["score"] >= b["score"] for a, b in zip(ranked, ranked[1:]))
 assert lexrank["consumedBudget"] == 2 == len(lexrank["selected"])
 assert lexrank["lineage"]["artifactID"] not in {
     mean["lineage"]["artifactID"], centroid["lineage"]["artifactID"], mmr["lineage"]["artifactID"]}
+# Budget-characters-v1: same scores and ranks as the sentence budget; the cost of a selected
+# sentence is the Unicode scalars of its exact source text, Python code points.
+characters = json.loads(sys.argv[5])["result"]
+assert characters["methodIdentifier"] == "SentenceTFIDFMean-v1"
+assert characters["budget"] == {"unit": "Budget-characters-v1", "limit": 60}
+assert [s["score"] for s in characters["sentences"]] == [s["score"] for s in mean["sentences"]]
+assert [s["rank"] for s in characters["sentences"]] == [s["rank"] for s in mean["sentences"]]
+lengths = [len(entry["text"]) for entry in characters["selected"]]
+assert characters["consumedBudget"] == sum(lengths) <= 60
+assert [entry["sentence"] for entry in characters["selected"]] == \
+    [s for s in characters["sentences"] if s["isSelected"]]
+assert all(not s["isSelected"] or s["isEligible"] for s in characters["sentences"])
+assert characters["lineage"]["artifactID"] != mean["lineage"]["artifactID"]
 PY
 python3 - "$cli_weighting_output" "$cli_bm25_output" <<'PY'
 import json

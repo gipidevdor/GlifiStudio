@@ -8,6 +8,9 @@ public enum GlifiSummaryBudgetUnit: String, Codable, Sendable {
     case sentences = "Budget-sentences-v1"
     /// Maximum total number of lexical tokens in the selected sentences.
     case lexicalTokens = "Budget-lexical-tokens-v1"
+    /// Maximum total number of Unicode scalars in the exact source intervals of the selected
+    /// sentences.
+    case characters = "Budget-characters-v1"
 }
 
 /// Declared budget of an extractive summary.
@@ -100,17 +103,20 @@ public enum GlifiSummaryRedundancyPolicy: Equatable, Hashable, Sendable {
     }
 }
 
-/// One candidate sentence of a document: source interval and normalized lexical tokens.
+/// One candidate sentence of a document: source interval, length and normalized lexical tokens.
 public struct GlifiSummaryCandidateSentence: Equatable, Sendable {
     /// Exact source interval of the sentence.
     public let range: GlifiUTF8Range
     /// Normalized lexical forms in source order, repetitions included.
     public let terms: [String]
+    /// Unicode scalars of the exact source text of `range`, the `Budget-characters-v1` cost.
+    public let characterCount: Int
 
-    /// Creates a candidate from its interval and normalized tokens.
-    public init(range: GlifiUTF8Range, terms: [String]) {
+    /// Creates a candidate from its interval, its length in Unicode scalars and normalized tokens.
+    public init(range: GlifiUTF8Range, terms: [String], characterCount: Int) {
         self.range = range
         self.terms = terms
+        self.characterCount = characterCount
     }
 }
 
@@ -297,6 +303,7 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
             let sentenceIndex: Int
             let range: GlifiUTF8Range
             let tokenCount: Int
+            let characterCount: Int
             let isEligible: Bool
             let score: Double
         }
@@ -361,6 +368,7 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
                             sentenceIndex: sentenceIndex,
                             range: sentence.range,
                             tokenCount: tokenCount,
+                            characterCount: sentence.characterCount,
                             isEligible: tokenCount > 0,
                             score: tokenCount == 0 ? 0 : sum / Double(tokenCount)
                         )
@@ -404,6 +412,7 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
                             sentenceIndex: sentenceIndex,
                             range: sentence.range,
                             tokenCount: sentence.terms.count,
+                            characterCount: sentence.characterCount,
                             isEligible: isEligible,
                             score: isEligible ? dot / (vector.norm * centroidNorm) : 0
                         )
@@ -438,6 +447,7 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
                             sentenceIndex: sentenceIndex,
                             range: sentence.range,
                             tokenCount: sentence.terms.count,
+                            characterCount: sentence.characterCount,
                             isEligible: probability != nil,
                             score: probability ?? 0
                         )
@@ -460,6 +470,7 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
             switch budget.unit {
             case .sentences: 1
             case .lexicalTokens: candidate.tokenCount
+            case .characters: candidate.characterCount
             }
         }
         for (position, index) in rankedOrder.enumerated() {
