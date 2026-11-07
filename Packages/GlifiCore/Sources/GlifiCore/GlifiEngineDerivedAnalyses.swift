@@ -634,7 +634,11 @@ extension GlifiEngine {
             try Task.checkCancellation()
             let tokenization = try textTokenizer.tokenize(source.text)
             var tokenIndex = 0
-            let sentences = tokenization.sentences.map { sentence in
+            let sentences = try tokenization.sentences.map { sentence in
+                guard let sentenceText = sentence.range.text(in: source.text) else {
+                    throw derivedAnalysisFailure(
+                        "summary.sentence-range-invalid", category: .invariantViolation)
+                }
                 var terms: [String] = []
                 while tokenIndex < tokenization.tokens.count,
                     tokenization.tokens[tokenIndex].range.start < sentence.range.end
@@ -650,7 +654,9 @@ extension GlifiEngine {
                     terms.append(
                         surface.precomposedStringWithCanonicalMapping.lowercased(with: locale))
                 }
-                return GlifiSummaryCandidateSentence(range: sentence.range, terms: terms)
+                return GlifiSummaryCandidateSentence(
+                    range: sentence.range, terms: terms,
+                    characterCount: sentenceText.unicodeScalars.count)
             }
             return GlifiSummaryDocument(
                 sourceRevisionID: source.sourceRevisionID, sentences: sentences)

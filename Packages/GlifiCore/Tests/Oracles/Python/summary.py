@@ -16,6 +16,8 @@ ties; the relevance is the `CentroidCosine-v1` score. `LexRankSentence-v1` build
 the non-null sentence vectors with continuous cosine edges, self-loops included, normalizes the
 rows and iterates `p = (1 - d) / N + d * M^T p` from the uniform vector with `d = 0.85` until the
 L1 change is at most `1e-12`; a null vector scores zero and is never selected.
+`Budget-characters-v1` costs each sentence the code points, that is the Unicode scalars, of its
+exact source text and walks the rank like the other budget units.
 """
 
 from __future__ import annotations
@@ -26,6 +28,10 @@ DOCUMENTS = [
     [["casa", "bella", "casa"], [], ["bella", "giardino"]],
     [["giardino", "verde"], ["casa"]],
 ]
+
+# Exact source text of every sentence of DOCUMENTS, in the same order.
+TEXTS = ["Casa bella, casa.", "?!", "Bella: giardino.", "Giardino verde.", "Casa."]
+CHARACTERS = [len(text) for text in TEXTS]
 
 
 def weights(documents: list[list[list[str]]]) -> list[dict[str, float]]:
@@ -118,13 +124,17 @@ def mmr_select(
     limit: int,
 ) -> list[int]:
     """`MMR-v1`: indices in acceptance order."""
+
+    def unit_cost(index: int) -> int:
+        return {"sentences": 1, "tokens": scored[index][2], "characters": CHARACTERS[index]}[unit]
+
     consumed = 0
     chosen: list[int] = []
     while True:
         best = None
         best_objective = -math.inf
-        for index, (_, _, tokens, eligible, score) in enumerate(scored):
-            cost = 1 if unit == "sentences" else tokens
+        for index, (_, _, _, eligible, score) in enumerate(scored):
+            cost = unit_cost(index)
             if not eligible or index in chosen or consumed + cost > limit:
                 continue
             penalty = max((cosine(vectors[index], vectors[other]) for other in chosen), default=0.0)
@@ -134,7 +144,7 @@ def mmr_select(
                 best = index
         if best is None:
             return chosen
-        consumed += 1 if unit == "sentences" else scored[best][2]
+        consumed += unit_cost(best)
         chosen.append(best)
 
 
@@ -147,6 +157,7 @@ def report_mmr(cells: list[dict[str, float]]) -> None:
     print("MMR_ORDER_T3_L05 " + " ".join(str(i) for i in mmr_select(scored, vectors, 0.5, "tokens", 3)))
     print("MMR_ORDER_S2_L0 " + " ".join(str(i) for i in mmr_select(scored, vectors, 0.0, "sentences", 2)))
     print("MMR_ORDER_S2_L1 " + " ".join(str(i) for i in mmr_select(scored, vectors, 1.0, "sentences", 2)))
+    print("MMR_ORDER_C40_L05 " + " ".join(str(i) for i in mmr_select(scored, vectors, 0.5, "characters", 40)))
     # Smallest lambda for which the second pick with two sentences is sentence 2 instead of 3:
     # lambda * rel(2) - (1 - lambda) * sim(2, 0) > lambda * rel(3) - (1 - lambda) * sim(3, 0).
     rel = [score for *_, score in scored]
@@ -227,10 +238,9 @@ def report(prefix: str, scored: list[tuple[int, int, int, bool, float]]) -> None
         consumed = 0
         chosen = []
         for index in order:
-            tokens = scored[index][2]
             if not scored[index][3]:
                 continue
-            cost = 1 if unit == "sentences" else tokens
+            cost = {"sentences": 1, "tokens": scored[index][2], "characters": CHARACTERS[index]}[unit]
             if consumed + cost > limit:
                 continue
             consumed += cost
@@ -241,6 +251,7 @@ def report(prefix: str, scored: list[tuple[int, int, int, bool, float]]) -> None
     print(f"{prefix}_RANKS " + " ".join(str(r) for r in ranks))
     print(f"{prefix}_SELECTED_S2 " + " ".join(str(i) for i in select("sentences", 2)))
     print(f"{prefix}_SELECTED_T3 " + " ".join(str(i) for i in select("tokens", 3)))
+    print(f"{prefix}_SELECTED_C40 " + " ".join(str(i) for i in select("characters", 40)))
 
 
 def main() -> None:

@@ -7,7 +7,7 @@ public struct GlifiStudioSummaryBudget: Codable, Equatable, Sendable {
     /// Three sentences.
     public static let standard = GlifiStudioSummaryBudget(unit: "Budget-sentences-v1", limit: 3)
 
-    /// `Budget-sentences-v1` or `Budget-lexical-tokens-v1`.
+    /// `Budget-sentences-v1`, `Budget-lexical-tokens-v1` or `Budget-characters-v1`.
     public let unit: String
     /// Positive limit in `unit`.
     public let limit: Int

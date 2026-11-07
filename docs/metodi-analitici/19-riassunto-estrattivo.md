@@ -6,11 +6,11 @@
 | --- | --- |
 | Identificatore | GS-MET-001-19 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.4.0 |
+| Versione | 1.5.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-06 |
-| Approvazione | Architettura approvata; `SentenceTFIDFMean-v1` fissato (GS-VER-146); `CentroidCosine-v1` fissato (GS-VER-149); `MMR-v1` fissato (GS-VER-151); `LexRankSentence-v1` fissato (GS-VER-164) |
+| Ultima modifica | 2026-11-07 |
+| Approvazione | Architettura approvata; `SentenceTFIDFMean-v1` fissato (GS-VER-146); `CentroidCosine-v1` fissato (GS-VER-149); `MMR-v1` fissato (GS-VER-151); `LexRankSentence-v1` fissato (GS-VER-164); `Budget-characters-v1` fissato (GS-VER-165) |
 | Documento padre | [GS-MET-001](README.md) |
 
 ## Contratto
@@ -69,7 +69,8 @@ così:
 - **ordine di output**: `output-order.source-v1`; ogni frase candidata conserva punteggio, rank e
   flag di selezione, così la vista per rank è derivabile senza ricalcolo.
 
-Il budget in caratteri e le altre famiglie di punteggio restano candidate.
+Il budget in caratteri è fissato in una sezione dedicata; le altre famiglie di punteggio
+restano candidate.
 
 ## Variante implementata: `CentroidCosine-v1`
 
@@ -165,7 +166,29 @@ e ordine di output sono quelli già fissati. La variante è la LexRank continua 
 
 Frasi con la stessa sequenza di token nello stesso documento hanno lo stesso vettore e la stessa
 centralità: il tie-break per posizione le ordina, `MMR-v1` le distingue. Con un solo nodo il
-punteggio vale 1. La variante con soglia, TextRank e il budget in caratteri restano candidati.
+punteggio vale 1. La variante con soglia e TextRank restano candidati.
+
+## Budget implementato: `Budget-characters-v1`
+
+Terza unità di budget dello stesso Artifact (GS-VER-165), indipendente dal metodo di punteggio e
+dalla politica di ridondanza:
+
+- **costo**: il numero di scalari Unicode del testo sorgente esatto dell'intervallo UTF-8 della
+  frase, senza normalizzazione, rimozione di spazi o copia del testo nell'Artifact; un accento
+  decomposto conta due scalari, come i code point di Python; i cluster di grafemi non sono usati
+  perché la loro segmentazione dipende dalla versione Unicode della piattaforma;
+- **limite**: lo stesso intervallo `1…10 000` delle altre unità, fuori dal quale l'analisi
+  fallisce con `summary.invalid-budget`;
+- **selezione**: identica alle altre unità: senza ridondanza la selezione scorre il rank e
+  include ogni frase eleggibile che rientra nel budget residuo, saltando quelle che lo
+  supererebbero; con `MMR-v1` il vincolo è lo stesso a ogni passo; una frase più lunga del
+  budget non è mai selezionata e non è troncata;
+- **intervallo non risolvibile**: se l'intervallo della frase non corrisponde al testo sorgente
+  l'analisi fallisce con `summary.sentence-range-invalid` (`invariantViolation`), senza Artifact;
+- **persistenza**: `budgetUnit` è già un parametro del descrittore, quindi l'unità produce un
+  Artifact distinto; `consumedBudget` registra gli scalari consumati. Il payload non aggiunge
+  campi e non richiede migrazioni: il costo di ogni frase si ricava dall'intervallo e dal testo
+  sorgente.
 
 ## Separazione dalla generazione
 
