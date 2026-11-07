@@ -6,6 +6,13 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Aggiunto
+
+- Metodo `LexRankSentence-v1` del riassunto estrattivo: centralità stazionaria del grafo coseno
+  continuo dei vettori frase (damping 0,85, tolleranza `10⁻¹²`), limiti fail-closed su 2 000
+  nodi e 1 000 iterazioni, `--method LexRankSentence-v1` in `glifi summarize`; GS-VER-164,
+  CMP-163 `implemented`.
+
 ### Verificato
 
 - Ridondanza `MMR-v1` del riassunto estrattivo: quattro controlli CI `xcode-27` sulla head

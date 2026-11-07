@@ -6,11 +6,11 @@
 | --- | --- |
 | Identificatore | GS-MET-001-19 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.3.0 |
+| Versione | 1.4.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-01 |
-| Approvazione | Architettura approvata; `SentenceTFIDFMean-v1` fissato (GS-VER-146); `CentroidCosine-v1` fissato (GS-VER-149) |
+| Ultima modifica | 2026-11-06 |
+| Approvazione | Architettura approvata; `SentenceTFIDFMean-v1` fissato (GS-VER-146); `CentroidCosine-v1` fissato (GS-VER-149); `MMR-v1` fissato (GS-VER-151); `LexRankSentence-v1` fissato (GS-VER-164) |
 | Documento padre | [GS-MET-001](README.md) |
 
 ## Contratto
@@ -105,8 +105,8 @@ scelta con il parametro `redundancy` del descrittore e applicabile a entrambi i 
 punteggio; punteggi, rank, eleggibilità, budget e ordine di output non cambiano. Cambiano la
 selezione e la sua diagnostica:
 
-- **rilevanza**: `rel(s)` è il punteggio del metodo dichiarato (`SentenceTFIDFMean-v1` o
-  `CentroidCosine-v1`), così com'è persistito in `score`;
+- **rilevanza**: `rel(s)` è il punteggio del metodo dichiarato (`SentenceTFIDFMean-v1`,
+  `CentroidCosine-v1` o `LexRankSentence-v1`), così com'è persistito in `score`;
 - **similarità** (`similarity.sentence-vector-cosine-v1`): `sim(s, u) = cos(v_s, v_u)` tra i
   vettori frase `v_s[t] = c_{s,t} · w_{d,t}` dello schema GS-MET-001-07 dichiarato, gli stessi
   di `CentroidCosine-v1`; vale zero se uno dei due vettori è nullo; frasi con la stessa
@@ -132,7 +132,40 @@ selezione e la sua diagnostica:
   `redundancy.none-v1`.
 
 Politiche diverse, o lo stesso `MMR-v1` con `λ` diversi, sono nodi di analisi e Artifact
-distinti. TextRank, LexRank e il budget in caratteri restano candidati.
+distinti.
+
+## Variante implementata: `LexRankSentence-v1`
+
+Terzo metodo di punteggio dello stesso Artifact (`corpus-extractive-summary-v1`, GS-VER-164),
+scelto con il parametro `method`; unità, token inclusi, pesi, rank, tie-break, budget, ridondanza
+e ordine di output sono quelli già fissati. La variante è la LexRank continua di Erkan e Radev:
+
+- **nodi**: le frasi con vettore frase `v_s[t] = c_{s,t} · w_{d,t}` non nullo, gli stessi vettori
+  di `CentroidCosine-v1` e di `similarity.sentence-vector-cosine-v1`, in ordine della fonte;
+  le frasi con vettore nullo non sono nodi, hanno punteggio zero e non sono eleggibili
+  (`eligibility.non-null-vector-v1`);
+- **archi**: grafo continuo, nessuna soglia: il peso dell'arco da `s` a `u` è
+  `cos(v_s, v_u) ≥ 0`, autoanello compreso (`cos(v_s, v_s) = 1`); ogni riga è divisa per la
+  propria somma, che vale almeno 1, quindi la matrice `M` è stocastica e nessun nodo è
+  pendente: non serve una dangling policy;
+- **centralità**: iterazione delle potenze `p ← (1 − d)/N + d · Mᵀ p` dal vettore uniforme
+  `1/N`, con `N` il numero di nodi e damping `d = 0,85`; si arresta alla prima iterazione con
+  variazione L1 non superiore a `10⁻¹²`. La contrazione di fattore `d` garantisce la convergenza
+  in circa 170 iterazioni; oltre 1 000 iterazioni la stima fallisce chiusa con
+  `summary.centrality-not-converged` (`invariantViolation`), senza Artifact;
+- **punteggio**: `score` è la probabilità stazionaria del nodo; i punteggi delle frasi
+  eleggibili sommano a 1 entro l'arrotondamento e il rank segue il tie-break dichiarato;
+- **limite**: il grafo è denso e costa `N²` coseni e `N²` celle per iterazione; oltre
+  2 000 nodi l'analisi fallisce con `summary.graph-limit-exceeded`
+  (`insufficientResources`), mai su un sottoinsieme scelto in silenzio;
+- **parametri**: damping, tolleranza, limite di iterazioni e di nodi sono fissati
+  dall'identificatore versionato `LexRankSentence-v1`; valori diversi richiedono un nuovo
+  identificatore e producono Artifact distinti. Il payload non aggiunge campi e non richiede
+  migrazioni.
+
+Frasi con la stessa sequenza di token nello stesso documento hanno lo stesso vettore e la stessa
+centralità: il tie-break per posizione le ordina, `MMR-v1` le distingue. Con un solo nodo il
+punteggio vale 1. La variante con soglia, TextRank e il budget in caratteri restano candidati.
 
 ## Separazione dalla generazione
 

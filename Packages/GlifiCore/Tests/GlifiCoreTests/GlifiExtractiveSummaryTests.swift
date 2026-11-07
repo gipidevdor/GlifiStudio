@@ -546,3 +546,147 @@ func mmrSummaryIsPersistedAsDistinctArtifact() async throws {
             redundancy: .maximalMarginalRelevance(lambda: 1.5))
     }
 }
+
+@Test("LexRankSentence-v1 coincide con l'oracolo Python: centralità, rank, selezioni e MMR")
+func lexRankSummaryMatchesPython() throws {
+    let documents = try oracleDocuments()
+    let scheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme
+    let summary = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: GlifiSummaryBudget(unit: .sentences, limit: 2),
+        scheme: scheme, method: .lexRank)
+    // Oracle: LEXRANK_* lines of expected.txt.
+    let expected = [
+        0.301767474209051, 0, 0.248867874201183, 0.211108705743267, 0.238255945846499,
+    ]
+    let scores = summary.sentences.map(\.score)
+    #expect(scores.count == expected.count)
+    for (score, reference) in zip(scores, expected) {
+        #expect(close(score, reference))
+    }
+    #expect(close(scores.reduce(0, +), 1))
+    #expect(summary.methodIdentifier == "LexRankSentence-v1")
+    #expect(summary.eligibilityPolicy == "eligibility.non-null-vector-v1")
+    #expect(summary.sentences.map(\.rank) == [1, 5, 2, 4, 3])
+    #expect(summary.sentences.map(\.isEligible) == [true, false, true, true, true])
+    #expect(summary.sentences.map(\.isSelected) == [true, false, true, false, false])
+    #expect(summary.sentences.map(\.selectionOrder) == [1, nil, 2, nil, nil])
+    let tokens = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: GlifiSummaryBudget(unit: .lexicalTokens, limit: 3),
+        scheme: scheme, method: .lexRank)
+    #expect(tokens.sentences.map(\.isSelected) == [true, false, false, false, false])
+    #expect(tokens.consumedBudget == 3)
+    let mmr = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: GlifiSummaryBudget(unit: .sentences, limit: 3),
+        scheme: scheme, method: .lexRank, redundancy: .maximalMarginalRelevance(lambda: 0.5))
+    #expect(mmr.sentences.map(\.selectionOrder) == [1, nil, 3, 2, nil])
+    #expect(mmr.sentences.map(\.score) == summary.sentences.map(\.score))
+}
+
+@Test("LexRankSentence-v1: vettori nulli esclusi, simmetria, limite del grafo, convergenza")
+func lexRankBoundsAndFailsClosed() throws {
+    // IDF-unsmoothed-v1 on a single document: every vector is null, the graph is empty.
+    let unsmoothed = GlifiTermWeightingScheme(
+        termFrequency: .sublinear, inverseDocumentFrequency: .unsmoothed, normalization: .none)
+    let single = [
+        GlifiSummaryDocument(
+            sourceRevisionID: try revision(1),
+            sentences: [try sentence(0, ["a", "b"]), try sentence(1, []), try sentence(2, ["b"])]
+        )
+    ]
+    let empty = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: single, budget: .standard, scheme: unsmoothed, method: .lexRank)
+    #expect(empty.sentences.map(\.score) == [0, 0, 0])
+    #expect(empty.sentences.map(\.isEligible) == [false, false, false])
+    #expect(empty.consumedBudget == 0)
+
+    // Duplicate sentences share the centrality (0.336511 against 0.326979 for the bridging
+    // sentence); the tie is broken by source position.
+    let scheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme
+    let duplicates = [
+        GlifiSummaryDocument(
+            sourceRevisionID: try revision(1),
+            sentences: [
+                try sentence(0, ["x"]), try sentence(1, ["x", "y"]), try sentence(2, ["x"]),
+            ]
+        )
+    ]
+    let tied = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: duplicates, budget: GlifiSummaryBudget(unit: .sentences, limit: 1),
+        scheme: scheme, method: .lexRank)
+    #expect(tied.sentences[0].score == tied.sentences[2].score)
+    #expect(tied.sentences[0].score > tied.sentences[1].score)
+    #expect(tied.sentences.map(\.rank) == [1, 3, 2])
+    #expect(tied.sentences.map(\.isSelected) == [true, false, false])
+
+    // At the node limit the uniform graph is accepted; one node more fails closed.
+    let limit = GlifiCorpusExtractiveSummaryAnalysis.lexRankMaximumNodes
+    func uniform(_ count: Int) throws -> [GlifiSummaryDocument] {
+        [
+            GlifiSummaryDocument(
+                sourceRevisionID: try revision(1),
+                sentences: try (0..<count).map { try sentence($0, ["a"]) })
+        ]
+    }
+    let bounded = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: try uniform(limit), budget: .standard, scheme: scheme, method: .lexRank)
+    #expect(bounded.sentences.allSatisfy { close($0.score, 1 / Double(limit)) })
+    #expect(bounded.sentences.prefix(3).map(\.rank) == [1, 2, 3])
+    let tooLarge = #expect(throws: GlifiFailure.self) {
+        _ = try GlifiCorpusExtractiveSummaryAnalysis(
+            documents: try uniform(limit + 1), budget: .standard, scheme: scheme,
+            method: .lexRank)
+    }
+    #expect(tooLarge?.code == "summary.graph-limit-exceeded")
+    #expect(tooLarge?.category == .insufficientResources)
+
+    // A non-stochastic matrix diverges: the iteration bound fails closed.
+    #expect(try GlifiCorpusExtractiveSummaryAnalysis.lexRankStationary([]) == [])
+    #expect(try GlifiCorpusExtractiveSummaryAnalysis.lexRankStationary([[1]]) == [1])
+    let diverging = #expect(throws: GlifiFailure.self) {
+        _ = try GlifiCorpusExtractiveSummaryAnalysis.lexRankStationary([[2]])
+    }
+    #expect(diverging?.code == "summary.centrality-not-converged")
+    #expect(diverging?.category == .invariantViolation)
+}
+
+@Test("LexRankSentence-v1 si persiste come Artifact distinto e si riusa")
+func lexRankSummaryIsPersistedAsDistinctArtifact() async throws {
+    let root = FileManager.default.temporaryDirectory.appending(
+        path: "GlifiLexRankSummary-\(UUID().uuidString)", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let project = try GlifiProjectPackage.create(
+        at: root.appending(path: "P.glifi", directoryHint: .isDirectory))
+    let engine = GlifiEngine()
+    let texts = [
+        "La casa è bella. Il giardino è verde e grande. Sì.",
+        "Il giardino della casa è verde.",
+    ]
+    var ids: [SourceRevisionID] = []
+    for (index, text) in texts.enumerated() {
+        let imported = try GlifiTextImporter().importText(
+            from: Data(text.utf8), format: .plainText, sourceRevisionID: try revision(index + 1))
+        _ = try await project.importText(imported)
+        ids.append(imported.sourceRevisionID)
+    }
+    let budget = GlifiSummaryBudget(unit: .sentences, limit: 2)
+    let centroid = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids, budget: budget, method: .centroidCosine)
+    let lexRank = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids, budget: budget, method: .lexRank)
+    #expect(lexRank.artifactID != centroid.artifactID)
+    #expect(lexRank.value.methodIdentifier == "LexRankSentence-v1")
+    #expect(lexRank.value.sentences.map(\.range) == centroid.value.sentences.map(\.range))
+    #expect(lexRank.value.sentences.map(\.isEligible) == centroid.value.sentences.map(\.isEligible))
+    #expect(close(lexRank.value.sentences.map(\.score).reduce(0, +), 1))
+    #expect(lexRank.value.selectedSentences.count == 2)
+    let reused = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids.reversed(), budget: budget, method: .lexRank)
+    #expect(reused.artifactID == lexRank.artifactID)
+    #expect(reused.value == lexRank.value)
+    let stored: GlifiProjectDerivedResult<GlifiCorpusExtractiveSummaryAnalysis> =
+        try await engine.storedDerivedResult(
+            GlifiCorpusExtractiveSummaryAnalysis.self, artifactID: lexRank.artifactID,
+            in: project)
+    #expect(stored.value == lexRank.value)
+}
