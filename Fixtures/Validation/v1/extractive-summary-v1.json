@@ -9,7 +9,7 @@
     "LexRankSentence-v1"
   ],
   "status": "candidate",
-  "statusReason": "Verifica dinamica eseguita dal runner remoto per SentenceTFIDFMean-v1 (GS-VER-146) e, con gate nativo locale, per CentroidCosine-v1 (GS-VER-149); per la ridondanza MMR-v1 sulla head definitiva e su main (GS-VER-151). LexRankSentence-v1 (GS-VER-164) sulla head della PR e su main. Budget-characters-v1 (GS-VER-165) in verifica sul runner remoto. Promozione a supported dopo la review delle evidenze.",
+  "statusReason": "Verifica dinamica eseguita dal runner remoto per SentenceTFIDFMean-v1 (GS-VER-146) e, con gate nativo locale, per CentroidCosine-v1 (GS-VER-149); per la ridondanza MMR-v1 sulla head definitiva e su main (GS-VER-151). LexRankSentence-v1 (GS-VER-164) sulla head della PR e su main. Budget-characters-v1 (GS-VER-165) sulla head della PR. Promozione a supported dopo la review delle evidenze.",
   "license": "BSD-3-Clause",
   "toolchain": {
     "swiftLanguageMode": "6",

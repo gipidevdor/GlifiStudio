@@ -10,7 +10,7 @@
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-07 |
-| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice verificata localmente e in CI (GS-VER-149), terza slice verificata in CI sulla head definitiva e su `main` (GS-VER-151); quarta slice verificata in CI sulla head della PR #29 e su `main` (GS-VER-164); quinta slice in verifica (GS-VER-165) |
+| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice verificata localmente e in CI (GS-VER-149), terza slice verificata in CI sulla head definitiva e su `main` (GS-VER-151); quarta slice verificata in CI sulla head della PR #29 e su `main` (GS-VER-164); quinta slice verificata in CI sulla head della PR #31 (GS-VER-165) |
 | Riferimenti | GS-MET-001-19; GS-MET-001-07; GS-API-001 § 9; RF-042; RQ-025; RQ-027; TV-036; ADR-0013 |
 
 ## Confini e criteri di accettazione
@@ -61,7 +61,7 @@ su `main` superati, CMP-097 `verified`) e in
 superata, CMP-106 `verified`) e in
 [GS-VER-164](../evidenze/GS-VER-164-riassunto-lexrank.md) (quarta slice, CI su `main` `aaf8ff3`
 superata, CMP-163 `verified`) e in
-[GS-VER-165](../evidenze/GS-VER-165-riassunto-budget-caratteri.md) (quinta slice, in verifica,
+[GS-VER-165](../evidenze/GS-VER-165-riassunto-budget-caratteri.md) (quinta slice, CI della PR #31 superata,
 CMP-164 `implemented`), nella matrice di tracciabilità (RF-042, TV-036). Nessuna nuova decisione architetturale: la variante era
 già candidata in GS-MET-001-19.
 

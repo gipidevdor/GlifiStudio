@@ -6,8 +6,8 @@
 | --- | --- |
 | Identificatore | GS-VER-165 |
 | Tipo | Evidenza di verifica numerica e di integrazione |
-| Versione | 1.0.0 |
-| Stato | In verifica: controlli statici locali superati, CI `xcode-27` attesa |
+| Versione | 1.1.0 |
+| Stato | Superato in CI `xcode-27` sulla head della PR #31; CI su `main` attesa |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-07 |
 | Approvazione | GS-DOR-013 (1.4.0); richiesta dell'iniziatore di proseguire lo sviluppo |
@@ -53,6 +53,17 @@ Sulla macchina di sviluppo Linux sono superati `make quality-static`, il lint `s
 dei file modificati, `git diff --check` e l'oracolo Python, confrontato con `expected.txt`.
 GlifiCore non è compilato in locale: compilazione, test Swift, contract test CLI e gate
 `make verify` sono affidati al workflow `Verifica` sul runner `xcode-27`.
+
+## Esecuzione remota
+
+Sulla head `3c3cfef` della [PR #31](https://github.com/gipidevdor/GlifiStudio/pull/31) i quattro
+controlli CI `xcode-27` (`static-quality`, `format-check`,
+[`verify`](https://github.com/gipidevdor/GlifiStudio/actions/runs/42352882717/job/128344655540),
+[`app-store-baseline`](https://github.com/gipidevdor/GlifiStudio/actions/runs/42352882791/job/128344593322))
+sono superati. Nel log `verify` risultano superati i tre test `Budget-characters-v1` delle
+procedure 1–3 all'interno di 299 test Core, seguiti dai contract test CLI di `verify.sh`
+(procedura 4). Rscript e veraPDF sono assenti sul runner: oracoli R e validazione PDF/A
+risultano saltati, senza effetto sulle righe `*_C40` dell'oracolo Python, confrontate in locale.
 
 ## Limiti
 
