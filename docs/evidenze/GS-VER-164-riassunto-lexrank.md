@@ -6,8 +6,8 @@
 | --- | --- |
 | Identificatore | GS-VER-164 |
 | Tipo | Evidenza di verifica numerica e di integrazione |
-| Versione | 1.0.0 |
-| Stato | In verifica: controlli statici superati in locale; compilazione e test Swift affidati al runner `xcode-27` |
+| Versione | 1.1.0 |
+| Stato | Superato sulla head `c3f7bab` della PR #29 (CI `xcode-27`); in attesa della CI su `main` |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-06 |
 | Approvazione | GS-DOR-013 (1.3.0); richiesta dell'iniziatore di proseguire lo sviluppo |
@@ -60,7 +60,19 @@ Sulla macchina di sviluppo Linux sono superati `make quality-static` (documentaz
 fixture, localizzazione, tassonomia delle failure e messaggi), il lint `swift format` dei file
 modificati e l'oracolo Python. GlifiCore non è compilato in locale: compilazione, test Swift,
 contract test CLI e gate `make verify` sono affidati al workflow `Verifica` sul runner
-`xcode-27`; l'esito sarà registrato in una revisione di questa evidenza.
+`xcode-27`.
+
+## Esecuzione remota
+
+Sulla head `c3f7bab` della [PR #29](https://github.com/gipidevdor/GlifiStudio/pull/29) i quattro
+controlli CI `xcode-27` (`static-quality`, `format-check`,
+[`verify`](https://github.com/gipidevdor/GlifiStudio/actions/runs/42315281725/job/128226356582),
+[`app-store-baseline`](https://github.com/gipidevdor/GlifiStudio/actions/runs/42315281726/job/128226259143))
+sono superati. Nel log `verify` risultano superati i tre test LexRank delle procedure 1–3
+all'interno di 296 test Core e il test GlifiKit della procedura 4 tra 37 test Kit, seguiti dai
+contract test CLI di `verify.sh` (procedura 5). Rscript e veraPDF sono assenti sul runner:
+oracoli R e validazione PDF/A risultano saltati, senza effetto sulle righe `LEXRANK_*`
+dell'oracolo Python, confrontate in locale.
 
 ## Limiti
 
@@ -69,4 +81,4 @@ contract test CLI e gate `make verify` sono affidati al workflow `Verifica` sul 
 - Grafo denso limitato a 2 000 nodi: gruppi più grandi richiedono una variante sparsa o
   approssimata, con nuovo identificatore.
 - Nessuna valutazione ROUGE o umana; oracolo Python indipendente, non pacchetto terzo.
-- CMP-163 resta `implemented` fino al gate remoto.
+- CMP-163 resta `implemented` fino alla CI su `main` dopo l'integrazione.

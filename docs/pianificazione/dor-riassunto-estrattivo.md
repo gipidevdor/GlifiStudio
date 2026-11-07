@@ -10,7 +10,7 @@
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-06 |
-| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice verificata localmente e in CI (GS-VER-149), terza slice verificata in CI sulla head definitiva e su `main` (GS-VER-151); quarta slice in verifica (GS-VER-164) |
+| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice verificata localmente e in CI (GS-VER-149), terza slice verificata in CI sulla head definitiva e su `main` (GS-VER-151); quarta slice verificata in CI sulla head della PR #29 (GS-VER-164) |
 | Riferimenti | GS-MET-001-19; GS-MET-001-07; GS-API-001 § 9; RF-042; RQ-025; RQ-027; TV-036; ADR-0013 |
 
 ## Confini e criteri di accettazione
@@ -55,8 +55,8 @@ slice, superata sul runner remoto, CMP-096 `verified`) e in
 su `main` superati, CMP-097 `verified`) e in
 [GS-VER-151](../evidenze/GS-VER-151-riassunto-mmr.md) (terza slice, CI su `main` `dfdcdbe` e `a86a53b`
 superata, CMP-106 `verified`) e in
-[GS-VER-164](../evidenze/GS-VER-164-riassunto-lexrank.md) (quarta slice, in verifica,
-CMP-163 `implemented`), nella matrice di tracciabilità (RF-042, TV-036). Nessuna nuova decisione architetturale: la variante era
+[GS-VER-164](../evidenze/GS-VER-164-riassunto-lexrank.md) (quarta slice, CI sulla head di #29 superata,
+CMP-163 `implemented` fino alla CI su `main`), nella matrice di tracciabilità (RF-042, TV-036). Nessuna nuova decisione architetturale: la variante era
 già candidata in GS-MET-001-19.
 
 ## Rischi e recupero
