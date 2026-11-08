@@ -45,11 +45,14 @@ public enum GlifiSummaryScoringMethod: String, CaseIterable, Codable, Sendable {
     case centroidCosine = "CentroidCosine-v1"
     /// Stationary probability of the continuous cosine graph of the non-null sentence vectors.
     case lexRank = "LexRankSentence-v1"
+    /// Stationary probability of the token-overlap graph of Mihalcea and Tarau over the
+    /// sentences with lexical tokens.
+    case textRank = "TextRankSentence-v1"
 
     /// Eligibility policy: which scored sentences may enter the summary.
     public var eligibilityPolicy: String {
         switch self {
-        case .sentenceTFIDFMean: "eligibility.lexical-tokens-required-v1"
+        case .sentenceTFIDFMean, .textRank: "eligibility.lexical-tokens-required-v1"
         case .centroidCosine, .lexRank: "eligibility.non-null-vector-v1"
         }
     }
@@ -204,8 +207,15 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
     public static let lexRankTolerance = 1e-12
     /// Power iterations after which `LexRankSentence-v1` fails closed.
     public static let lexRankMaximumIterations = 1_000
-    /// Largest number of graph nodes, the non-null sentence vectors, of `LexRankSentence-v1`.
+    /// Largest number of graph nodes, the non-null sentence vectors, of `LexRankSentence-v1`;
+    /// `TextRankSentence-v1` shares the node, tolerance and iteration limits.
     public static let lexRankMaximumNodes = 2_000
+    /// Damping factor `d` of `TextRankSentence-v1`.
+    public static let textRankDamping = 0.85
+    /// Edge weight of `TextRankSentence-v1`: shared types over the sum of the log token counts.
+    public static let textRankSimilarityIdentifier = "similarity.textrank-overlap-v1"
+    /// Dangling policy of `TextRankSentence-v1`: a node without edges jumps uniformly.
+    public static let textRankDanglingIdentifier = "dangling.uniform-v1"
     /// Sublinear TF, smoothed IDF, no row normalization: defined for one document too.
     public static let standardScheme = GlifiTermWeightingScheme(
         termFrequency: .sublinear,
@@ -419,6 +429,65 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
                     )
                 }
             }
+        case .textRank:
+            // Nodes are the sentences with lexical tokens; the edge weight is the number of
+            // shared types over `log|s| + log|u|` (zero when both have one token), without
+            // self-loops; a node without edges jumps uniformly (dangling.uniform-v1).
+            var position = 0
+            var nodes: [(index: Int, types: Set<String>, count: Int)] = []
+            for document in ordered {
+                for sentence in document.sentences {
+                    if !sentence.terms.isEmpty {
+                        nodes.append(
+                            (
+                                index: position, types: Set(sentence.terms),
+                                count: sentence.terms.count
+                            ))
+                    }
+                    position += 1
+                }
+            }
+            guard nodes.count <= Self.lexRankMaximumNodes else {
+                throw derivedAnalysisFailure(
+                    "summary.graph-limit-exceeded", category: .insufficientResources)
+            }
+            let transition = nodes.indices.map { source in
+                let row = nodes.indices.map { target -> Double in
+                    guard source != target else { return 0 }
+                    let overlap = nodes[source].types.intersection(nodes[target].types).count
+                    let denominator =
+                        log(Double(nodes[source].count)) + log(Double(nodes[target].count))
+                    return overlap > 0 && denominator > 0 ? Double(overlap) / denominator : 0
+                }
+                let total = row.reduce(0, +)
+                return total > 0
+                    ? row.map { $0 / total }
+                    : Array(repeating: 1 / Double(nodes.count), count: nodes.count)
+            }
+            let stationary = try Self.centralityStationary(
+                transition, damping: Self.textRankDamping)
+            var centrality = Array(repeating: Double?.none, count: vectors.count)
+            for (node, probability) in zip(nodes, stationary) {
+                centrality[node.index] = probability
+            }
+            position = 0
+            for (documentIndex, document) in ordered.enumerated() {
+                for (sentenceIndex, sentence) in document.sentences.enumerated() {
+                    let probability = centrality[position]
+                    position += 1
+                    scored.append(
+                        Scored(
+                            document: documentIndex,
+                            sentenceIndex: sentenceIndex,
+                            range: sentence.range,
+                            tokenCount: sentence.terms.count,
+                            characterCount: sentence.characterCount,
+                            isEligible: probability != nil,
+                            score: probability ?? 0
+                        )
+                    )
+                }
+            }
         case .lexRank:
             // Nodes are the non-null vectors; null vectors score zero and are never selected.
             let nodes = vectors.indices.filter { vectors[$0].norm > 0 }
@@ -558,9 +627,17 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
     /// Power iteration `p ← (1 − d) / N + d · Mᵀp` from the uniform vector over a
     /// row-stochastic transition matrix; fails closed without convergence.
     static func lexRankStationary(_ transition: [[Double]]) throws -> [Double] {
+        try centralityStationary(transition, damping: lexRankDamping)
+    }
+
+    /// Power iteration with the given damping; shared by `LexRankSentence-v1` and
+    /// `TextRankSentence-v1`, which also share tolerance and iteration limit.
+    static func centralityStationary(_ transition: [[Double]], damping: Double) throws
+        -> [Double]
+    {
         let count = transition.count
         guard count > 0 else { return [] }
-        let teleport = (1 - lexRankDamping) / Double(count)
+        let teleport = (1 - damping) / Double(count)
         var probabilities = Array(repeating: 1 / Double(count), count: count)
         for _ in 0..<lexRankMaximumIterations {
             var next = Array(repeating: 0.0, count: count)
@@ -569,7 +646,7 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
                 for source in 0..<count {
                     sum += transition[source][target] * probabilities[source]
                 }
-                next[target] = teleport + lexRankDamping * sum
+                next[target] = teleport + damping * sum
             }
             var change = 0.0
             for index in 0..<count {

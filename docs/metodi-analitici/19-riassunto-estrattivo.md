@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-19 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.5.0 |
+| Versione | 1.6.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-07 |
+| Ultima modifica | 2026-11-08 |
 | Approvazione | Architettura approvata; `SentenceTFIDFMean-v1` fissato (GS-VER-146); `CentroidCosine-v1` fissato (GS-VER-149); `MMR-v1` fissato (GS-VER-151); `LexRankSentence-v1` fissato (GS-VER-164); `Budget-characters-v1` fissato (GS-VER-165) |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -166,7 +166,39 @@ e ordine di output sono quelli già fissati. La variante è la LexRank continua 
 
 Frasi con la stessa sequenza di token nello stesso documento hanno lo stesso vettore e la stessa
 centralità: il tie-break per posizione le ordina, `MMR-v1` le distingue. Con un solo nodo il
-punteggio vale 1. La variante con soglia e TextRank restano candidati.
+punteggio vale 1. La variante con soglia resta candidata; TextRank è fissato nella sezione seguente.
+
+## Variante implementata: `TextRankSentence-v1`
+
+Quarto metodo di punteggio dello stesso Artifact (`corpus-extractive-summary-v1`, GS-VER-166),
+scelto con il parametro `method`; unità, token inclusi, rank, tie-break, budget, ridondanza e
+ordine di output sono quelli già fissati. La variante segue Mihalcea e Tarau sul grafo di
+sovrapposizione lessicale, resa stocastica come `LexRankSentence-v1`:
+
+- **nodi**: le frasi con almeno un token lessicale, in ordine della fonte; le frasi senza token
+  non sono nodi, hanno punteggio zero e non sono eleggibili
+  (`eligibility.lexical-tokens-required-v1`); lo schema di ponderazione GS-MET-001-07 non entra
+  nel grafo, resta dichiarato nel descrittore e serve soltanto alla similarità di `MMR-v1`;
+- **archi** (`similarity.textrank-overlap-v1`): il peso fra `s ≠ u` è
+  `|T(s) ∩ T(u)| / (ln|s| + ln|u|)`, con `T` l'insieme dei tipi della frase e `|s|` il numero
+  dei suoi token, ripetizioni comprese; senza tipi comuni, o se entrambe le frasi hanno un solo
+  token (`ln 1 + ln 1 = 0`), il peso è zero; nessun autoanello; soglia zero: entra ogni arco di
+  peso positivo;
+- **nodi pendenti** (`dangling.uniform-v1`): ogni riga è divisa per la propria somma; una frase
+  senza archi salta uniformemente su tutti gli `N` nodi, così la matrice `M` resta stocastica;
+- **centralità**: iterazione delle potenze `p ← (1 − d)/N + d · Mᵀ p` dal vettore uniforme con
+  `d = 0,85`, tolleranza L1 `10⁻¹²`, limiti di 1 000 iterazioni e 2 000 nodi condivisi con
+  `LexRankSentence-v1`, con le stesse failure `summary.centrality-not-converged` e
+  `summary.graph-limit-exceeded`;
+- **punteggio**: `score` è la probabilità stazionaria del nodo; i punteggi delle frasi
+  eleggibili sommano a 1 entro l'arrotondamento;
+- **parametri**: similarità, soglia, politica dei nodi pendenti, damping, tolleranza e limiti
+  sono fissati dall'identificatore versionato; il payload non aggiunge campi e non richiede
+  migrazioni.
+
+Due frasi identiche a un solo token non si collegano e ricevono la stessa centralità uniforme;
+frasi identiche con più token hanno peso `|T| / (2 ln|s|)` e la stessa centralità, ordinate dal
+tie-break per posizione. La LexRank con soglia resta candidata.
 
 ## Budget implementato: `Budget-characters-v1`
 

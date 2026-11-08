@@ -10901,13 +10901,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The sentence graph of LexRankSentence-v1 exceeds 2,000 nodes: reduce the selected sources."
+            "value" : "The sentence graph of the centrality method (LexRankSentence-v1, TextRankSentence-v1) exceeds 2,000 nodes: reduce the selected sources."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il grafo di frasi di LexRankSentence-v1 supera 2.000 nodi: riduci le fonti selezionate."
+            "value" : "Il grafo di frasi del metodo di centralità (LexRankSentence-v1, TextRankSentence-v1) supera 2.000 nodi: riduci le fonti selezionate."
           }
         }
       }
@@ -10918,13 +10918,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The centrality of LexRankSentence-v1 did not converge within the declared iterations: no summary was recorded."
+            "value" : "The centrality of the graph method (LexRankSentence-v1, TextRankSentence-v1) did not converge within the declared iterations: no summary was recorded."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La centralità di LexRankSentence-v1 non è giunta a convergenza entro le iterazioni dichiarate: nessun riassunto è stato registrato."
+            "value" : "La centralità del metodo a grafo (LexRankSentence-v1, TextRankSentence-v1) non è giunta a convergenza entro le iterazioni dichiarate: nessun riassunto è stato registrato."
           }
         }
       }
