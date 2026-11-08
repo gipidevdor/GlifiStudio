@@ -41,9 +41,9 @@ GS-MET-001-19 (versione 1.6.0):
 2. `textRankDanglingNodesAndBounds`: frase a un token senza tipi comuni come nodo pendente
    (`TEXTRANK_DANGLING_SCORES`: `0,465116279069734`, `0,0697674418605318`,
    `0,465116279069734`, rank `1 3 2`); due frasi identiche a un token senza arco e con
-   centralità uniforme `0,5` in un grafo di soli nodi pendenti, frase senza token ineleggibile;
-   con una terza frase `a a` che ne condivide il tipo gli unigrammi restano uguali ma non
-   uniformi (`TEXTRANK_UNIGRAM_SCORES`: `0,256756756756863`, `0,256756756756863`,
+   centralità uniforme `0,5` quando il grafo è fatto solo di esse (entrambe pendenti), frase
+   senza token ineleggibile; con una terza frase `a a` ciascun unigramma ha un unico arco verso
+   di essa: gli unigrammi restano uguali e il bigramma li supera (`TEXTRANK_UNIGRAM_SCORES`: `0,256756756756863`, `0,256756756756863`,
    `0,486486486486274`, rank `2 3 1`); grafo di 2 000 nodi accettato con
    punteggio `1/2 000`, un nodo in più rifiutato con `summary.graph-limit-exceeded`; matrice non
    stocastica rifiutata con `summary.centrality-not-converged`;
