@@ -867,8 +867,8 @@ func textRankDanglingNodesAndBounds() throws {
     }
     #expect(dangling.sentences.map(\.rank) == [1, 3, 2])
     #expect(dangling.sentences.map(\.isSelected) == [true, false, false])
-    // Two identical single-token sentences: `log 1 + log 1 = 0`, no edge; the centrality is
-    // uniform only in a graph of dangling nodes; a sentence without tokens is not a node.
+    // Two identical single-token sentences: `log 1 + log 1 = 0`, no edge between them; alone
+    // they are both dangling and uniform; a sentence without tokens is not a node.
     let singles = try GlifiCorpusExtractiveSummaryAnalysis(
         documents: [
             GlifiSummaryDocument(
@@ -880,8 +880,8 @@ func textRankDanglingNodesAndBounds() throws {
     #expect(singles.sentences.map(\.isEligible) == [true, false, true])
     #expect(singles.sentences.map(\.rank) == [1, 3, 2])
     #expect(singles.consumedBudget == 2)
-    // Oracle: TEXTRANK_UNIGRAM_SCORES: equal unigrams, yet the bigram sharing their type
-    // collects their uniform jumps and ranks first.
+    // Oracle: TEXTRANK_UNIGRAM_SCORES: with a bigram sharing their type each unigram has a
+    // single edge to it; the unigrams stay equal and the bigram ranks first.
     let unigrams = try GlifiCorpusExtractiveSummaryAnalysis(
         documents: [
             GlifiSummaryDocument(
