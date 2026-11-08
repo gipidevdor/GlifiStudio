@@ -867,8 +867,8 @@ func textRankDanglingNodesAndBounds() throws {
     }
     #expect(dangling.sentences.map(\.rank) == [1, 3, 2])
     #expect(dangling.sentences.map(\.isSelected) == [true, false, false])
-    // Two identical single-token sentences: `log 1 + log 1 = 0`, no edge, uniform centrality;
-    // a sentence without tokens is not a node, scores zero and is never selected.
+    // Two identical single-token sentences: `log 1 + log 1 = 0`, no edge; the centrality is
+    // uniform only in a graph of dangling nodes; a sentence without tokens is not a node.
     let singles = try GlifiCorpusExtractiveSummaryAnalysis(
         documents: [
             GlifiSummaryDocument(
@@ -880,6 +880,22 @@ func textRankDanglingNodesAndBounds() throws {
     #expect(singles.sentences.map(\.isEligible) == [true, false, true])
     #expect(singles.sentences.map(\.rank) == [1, 3, 2])
     #expect(singles.consumedBudget == 2)
+    // Oracle: TEXTRANK_UNIGRAM_SCORES: equal unigrams, yet the bigram sharing their type
+    // collects their uniform jumps and ranks first.
+    let unigrams = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: [
+            GlifiSummaryDocument(
+                sourceRevisionID: try revision(1),
+                sentences: [
+                    try sentence(0, ["a"]), try sentence(1, ["a"]), try sentence(2, ["a", "a"]),
+                ])
+        ],
+        budget: .standard, scheme: scheme, method: .textRank)
+    let unigramExpected = [0.256756756756863, 0.256756756756863, 0.486486486486274]
+    for (score, reference) in zip(unigrams.sentences.map(\.score), unigramExpected) {
+        #expect(close(score, reference))
+    }
+    #expect(unigrams.sentences.map(\.rank) == [2, 3, 1])
     // At the node limit the graph is accepted; one node more fails closed.
     let limit = GlifiCorpusExtractiveSummaryAnalysis.lexRankMaximumNodes
     func uniform(_ count: Int) throws -> [GlifiSummaryDocument] {
