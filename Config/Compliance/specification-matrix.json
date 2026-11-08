@@ -2401,7 +2401,7 @@
         "docs/evidenze/GS-VER-165-riassunto-budget-caratteri.md"
       ],
       "gate": "G3",
-      "status": "implemented",
+      "status": "verified",
       "blockingReason": null
     }
   ]
