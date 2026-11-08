@@ -758,6 +758,70 @@ func characterBudgetBounds() throws {
     #expect(GlifiSummaryBudget(unit: .characters, limit: GlifiSummaryBudget.maximumLimit).isValid)
 }
 
+@Test("Il costo in caratteri non positivo è rifiutato prima dello scoring")
+func summaryRejectsNonpositiveCharacterCounts() throws {
+    let policies: [GlifiSummaryRedundancyPolicy] = [
+        .none, .maximalMarginalRelevance(lambda: 0),
+        .maximalMarginalRelevance(lambda: 0.5), .maximalMarginalRelevance(lambda: 1),
+    ]
+    for count in [Int.min, -1, 0] {
+        for terms in [[String](), ["a"]] {
+            let documents = [
+                GlifiSummaryDocument(
+                    sourceRevisionID: try revision(1),
+                    sentences: [try sentence(0, terms, characters: count)])
+            ]
+            for unit in [GlifiSummaryBudgetUnit.sentences, .lexicalTokens, .characters] {
+                for method in GlifiSummaryScoringMethod.allCases {
+                    for policy in policies {
+                        let failure = #expect(throws: GlifiFailure.self) {
+                            try GlifiCorpusExtractiveSummaryAnalysis(
+                                documents: documents,
+                                budget: GlifiSummaryBudget(unit: unit, limit: 2),
+                                scheme: GlifiCorpusExtractiveSummaryAnalysis.standardScheme,
+                                method: method, redundancy: policy)
+                        }
+                        #expect(failure?.code == "summary.invalid-character-count")
+                        #expect(failure?.category == .invalidInput)
+                        #expect(failure?.messageKey == "failure.summary.invalid-character-count")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Test("Il costo in caratteri estremo è saltato senza overflow dopo una selezione")
+func characterBudgetSkipsExtremeCostsWithoutOverflow() throws {
+    let documents = [
+        GlifiSummaryDocument(
+            sourceRevisionID: try revision(1),
+            sentences: [
+                try sentence(0, ["a"], characters: 1),
+                try sentence(1, ["a"], characters: Int.max),
+                try sentence(2, ["a"], characters: 1),
+            ])
+    ]
+    let policies: [GlifiSummaryRedundancyPolicy] = [
+        .none, .maximalMarginalRelevance(lambda: 0),
+        .maximalMarginalRelevance(lambda: 0.5), .maximalMarginalRelevance(lambda: 1),
+    ]
+    for method in GlifiSummaryScoringMethod.allCases {
+        for policy in policies {
+            for limit in [1, 2] {
+                let summary = try GlifiCorpusExtractiveSummaryAnalysis(
+                    documents: documents,
+                    budget: GlifiSummaryBudget(unit: .characters, limit: limit),
+                    scheme: GlifiCorpusExtractiveSummaryAnalysis.standardScheme,
+                    method: method, redundancy: policy)
+                #expect(summary.sentences.map(\.isSelected) == [true, false, limit == 2])
+                #expect(summary.sentences.map(\.selectionOrder) == [1, nil, limit == 2 ? 2 : nil])
+                #expect(summary.consumedBudget == limit)
+            }
+        }
+    }
+}
+
 @Test("Budget-characters-v1 conta gli scalari Unicode del testo sorgente e dà un Artifact distinto")
 func characterBudgetCountsSourceScalars() async throws {
     let root = FileManager.default.temporaryDirectory.appending(
