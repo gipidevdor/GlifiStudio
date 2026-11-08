@@ -323,6 +323,9 @@ def main() -> None:
     # Dangling node: the single-token sentence shares no type and jumps uniformly.
     dangling, _ = textrank_scores([[["a", "b"], ["c"], ["b", "d"]]])
     print("TEXTRANK_DANGLING_SCORES " + " ".join(f"{s[4]:.15g}" for s in dangling))
+    # Identical unigrams are dangling and equal, yet not uniform once a bigram shares their type.
+    unigram, _ = textrank_scores([[["a"], ["a"], ["a", "a"]]])
+    print("TEXTRANK_UNIGRAM_SCORES " + " ".join(f"{s[4]:.15g}" for s in unigram))
     print("TEXTRANK_DANGLING_RANKS " + " ".join(
         str(r) for r in [sorted(range(3), key=lambda i: (-dangling[i][4], i)).index(i) + 1 for i in range(3)]))
 

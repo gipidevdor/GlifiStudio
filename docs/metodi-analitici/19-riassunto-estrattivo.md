@@ -196,9 +196,11 @@ sovrapposizione lessicale, resa stocastica come `LexRankSentence-v1`:
   sono fissati dall'identificatore versionato; il payload non aggiunge campi e non richiede
   migrazioni.
 
-Due frasi identiche a un solo token non si collegano e ricevono la stessa centralità uniforme;
-frasi identiche con più token hanno peso `|T| / (2 ln|s|)` e la stessa centralità, ordinate dal
-tie-break per posizione. La LexRank con soglia resta candidata.
+Due frasi identiche a un solo token non si collegano fra loro e hanno la stessa centralità; essa
+è uniforme soltanto se il grafo è fatto di soli nodi pendenti, mentre una terza frase con tipi
+comuni e più token riceve la massa dei loro salti uniformi e le supera (oracolo
+`TEXTRANK_UNIGRAM_SCORES`); frasi identiche con più token hanno peso `|T| / (2 ln|s|)` e la
+stessa centralità, ordinate dal tie-break per posizione. La LexRank con soglia resta candidata.
 
 ## Budget implementato: `Budget-characters-v1`
 
