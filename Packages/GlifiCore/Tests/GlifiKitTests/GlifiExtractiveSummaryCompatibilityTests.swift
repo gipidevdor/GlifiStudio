@@ -59,6 +59,7 @@ func summaryPresentationDecodesLegacySelectionOrder() throws {
     #expect(
         GlifiStudioSummaryScoringMethod.supportedIdentifiers == [
             "SentenceTFIDFMean-v1", "CentroidCosine-v1", "LexRankSentence-v1",
+            "TextRankSentence-v1",
         ])
     #expect(GlifiStudioSummaryRedundancy.standard.lambda == nil)
     let mmr = GlifiStudioSummaryRedundancy.maximalMarginalRelevance(lambda: 0.5)

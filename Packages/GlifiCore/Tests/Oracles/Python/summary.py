@@ -227,6 +227,53 @@ def lexrank_scores(
     return scored, iterations
 
 
+def textrank_scores(
+    documents: list[list[list[str]]] | None = None,
+) -> tuple[list[tuple[int, int, int, bool, float]], int]:
+    """`TextRankSentence-v1`: (document, sentence, tokens, eligible, score) and iterations.
+
+    Nodes are the sentences with tokens; the edge weight is the number of shared types over
+    `log|s| + log|u|` (zero when both sentences have one token), without self-loops; a node
+    without edges jumps uniformly; damping 0.85 from the uniform vector, L1 tolerance 1e-12.
+    """
+    documents = DOCUMENTS if documents is None else documents
+    flat = [sentence for document in documents for sentence in document]
+    nodes = [index for index, sentence in enumerate(flat) if sentence]
+    n = len(nodes)
+
+    def weight(i: int, j: int) -> float:
+        if i == j:
+            return 0.0
+        overlap = len(set(flat[i]) & set(flat[j]))
+        denominator = math.log(len(flat[i])) + math.log(len(flat[j]))
+        return overlap / denominator if overlap > 0 and denominator > 0 else 0.0
+
+    matrix = [[weight(i, j) for j in nodes] for i in nodes]
+    matrix = [
+        [value / sum(row) for value in row] if sum(row) > 0 else [1.0 / n] * n for row in matrix
+    ]
+    damping = 0.85
+    p = [1.0 / n] * n
+    iterations = 0
+    while True:
+        iterations += 1
+        q = [(1 - damping) / n + damping * sum(matrix[i][j] * p[i] for i in range(n)) for j in range(n)]
+        change = sum(abs(a - b) for a, b in zip(q, p))
+        p = q
+        if change <= 1e-12:
+            break
+    stationary = dict(zip(nodes, p))
+    scored = []
+    position = 0
+    for document_index, document in enumerate(documents):
+        for sentence_index, sentence in enumerate(document):
+            scored.append(
+                (document_index, sentence_index, len(sentence), position in stationary, stationary.get(position, 0.0))
+            )
+            position += 1
+    return scored, iterations
+
+
 def report(prefix: str, scored: list[tuple[int, int, int, bool, float]]) -> None:
     """Print scores, ranks and selections for both budget units."""
     order = sorted(range(len(scored)), key=lambda i: (-scored[i][4], scored[i][0], scored[i][1]))
@@ -267,6 +314,17 @@ def main() -> None:
     print(f"LEXRANK_INFO_ITERATIONS {iterations}")
     print("LEXRANK_MMR_ORDER_S3_L05 " + " ".join(
         str(i) for i in mmr_select(lexrank, sentence_vectors(cells), 0.5, "sentences", 3)))
+    textrank, textrank_iterations = textrank_scores()
+    report("TEXTRANK", textrank)
+    print(f"TEXTRANK_INFO_SCORE_SUM {sum(score for *_, score in textrank):.15g}")
+    print(f"TEXTRANK_INFO_ITERATIONS {textrank_iterations}")
+    print("TEXTRANK_MMR_ORDER_S3_L05 " + " ".join(
+        str(i) for i in mmr_select(textrank, sentence_vectors(cells), 0.5, "sentences", 3)))
+    # Dangling node: the single-token sentence shares no type and jumps uniformly.
+    dangling, _ = textrank_scores([[["a", "b"], ["c"], ["b", "d"]]])
+    print("TEXTRANK_DANGLING_SCORES " + " ".join(f"{s[4]:.15g}" for s in dangling))
+    print("TEXTRANK_DANGLING_RANKS " + " ".join(
+        str(r) for r in [sorted(range(3), key=lambda i: (-dangling[i][4], i)).index(i) + 1 for i in range(3)]))
 
 
 if __name__ == "__main__":
