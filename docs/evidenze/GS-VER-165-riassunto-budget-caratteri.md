@@ -6,8 +6,8 @@
 | --- | --- |
 | Identificatore | GS-VER-165 |
 | Tipo | Evidenza di verifica numerica e di integrazione |
-| Versione | 1.1.0 |
-| Stato | Superato in CI `xcode-27` sulla head della PR #31; CI su `main` attesa |
+| Versione | 1.2.0 |
+| Stato | Superato in CI `xcode-27` sulla head `3c3cfef` della PR #31 e su `main` `4c59a50` |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-07 |
 | Approvazione | GS-DOR-013 (1.4.0); richiesta dell'iniziatore di proseguire lo sviluppo |
@@ -64,6 +64,16 @@ sono superati. Nel log `verify` risultano superati i tre test `Budget-characters
 procedure 1–3 all'interno di 299 test Core, seguiti dai contract test CLI di `verify.sh`
 (procedura 4). Rscript e veraPDF sono assenti sul runner: oracoli R e validazione PDF/A
 risultano saltati, senza effetto sulle righe `*_C40` dell'oracolo Python, confrontate in locale.
+La head definitiva `1e0a70b`, che registra soltanto questa esecuzione, ha superato di nuovo i
+quattro controlli.
+
+Dopo l'integrazione squash di #31 su `main` (`4c59a50`) gli stessi quattro controlli CI
+`xcode-27` (`static-quality`, `format-check`,
+[`verify`](https://github.com/gipidevdor/GlifiStudio/actions/runs/42369635596/job/128394974447),
+[`app-store-baseline`](https://github.com/gipidevdor/GlifiStudio/actions/runs/42369635527/job/128394889305))
+sono superati. Nel log `verify` risultano di nuovo superati i tre test `Budget-characters-v1`
+entro 299 test Core, seguiti dai contract test CLI; Rscript e veraPDF restano assenti e i
+relativi controlli saltati. CMP-164 è promossa a `verified`.
 
 ## Limiti
 
@@ -72,4 +82,5 @@ risultano saltati, senza effetto sulle righe `*_C40` dell'oracolo Python, confro
 - Il budget conta il testo esatto dell'intervallo, inclusi gli eventuali spazi o segni che il
   segmentatore assegna alla frase.
 - Nessuna valutazione ROUGE o umana; oracolo Python indipendente, non pacchetto terzo.
-- CMP-164 resta `implemented` fino alla CI su `main` dopo l'integrazione.
+- `make verify-app-store` non è stato eseguito su una macchina locale macOS 27; il gate
+  equivalente è il job remoto `app-store-baseline`.

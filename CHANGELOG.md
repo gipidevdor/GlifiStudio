@@ -18,6 +18,8 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Verificato
 
+- Unità di budget `Budget-characters-v1` del riassunto estrattivo: quattro controlli CI
+  `xcode-27` sulla head di #31 e su `main` `4c59a50`; GS-VER-165 superata, CMP-164 `verified`.
 - Metodo `LexRankSentence-v1` del riassunto estrattivo: quattro controlli CI `xcode-27` sulla
   head di #29 e su `main` `aaf8ff3`; GS-VER-164 superata, CMP-163 `verified`.
 - Ridondanza `MMR-v1` del riassunto estrattivo: quattro controlli CI `xcode-27` sulla head
