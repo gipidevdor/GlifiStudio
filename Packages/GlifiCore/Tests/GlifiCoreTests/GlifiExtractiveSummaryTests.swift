@@ -804,3 +804,163 @@ func characterBudgetCountsSourceScalars() async throws {
             in: project)
     #expect(stored.value == byCharacters.value)
 }
+
+@Test("TextRankSentence-v1 coincide con l'oracolo Python: centralità, rank, selezioni e MMR")
+func textRankSummaryMatchesPython() throws {
+    let documents = try oracleDocuments()
+    let scheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme
+    let summary = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: GlifiSummaryBudget(unit: .sentences, limit: 2),
+        scheme: scheme, method: .textRank)
+    // Oracle: TEXTRANK_* lines of expected.txt (40 iterations, sum 1).
+    let expected = [
+        0.322225312423944, 0, 0.292712942260428, 0.177774687576056, 0.207287057739572,
+    ]
+    let scores = summary.sentences.map(\.score)
+    #expect(scores.count == expected.count)
+    for (score, reference) in zip(scores, expected) {
+        #expect(close(score, reference))
+    }
+    #expect(close(scores.reduce(0, +), 1))
+    #expect(summary.methodIdentifier == "TextRankSentence-v1")
+    #expect(summary.eligibilityPolicy == "eligibility.lexical-tokens-required-v1")
+    #expect(summary.sentences.map(\.rank) == [1, 5, 2, 4, 3])
+    #expect(summary.sentences.map(\.isEligible) == [true, false, true, true, true])
+    #expect(summary.sentences.map(\.isSelected) == [true, false, true, false, false])
+    #expect(summary.sentences.map(\.selectionOrder) == [1, nil, 2, nil, nil])
+    let tokens = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: GlifiSummaryBudget(unit: .lexicalTokens, limit: 3),
+        scheme: scheme, method: .textRank)
+    #expect(tokens.sentences.map(\.isSelected) == [true, false, false, false, false])
+    #expect(tokens.consumedBudget == 3)
+    let mmr = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: GlifiSummaryBudget(unit: .sentences, limit: 3),
+        scheme: scheme, method: .textRank, redundancy: .maximalMarginalRelevance(lambda: 0.5))
+    #expect(mmr.sentences.map(\.selectionOrder) == [1, nil, 3, 2, nil])
+    #expect(mmr.sentences.map(\.score) == summary.sentences.map(\.score))
+    // The scheme does not enter the overlap graph: another weighting gives the same scores.
+    let unsmoothed = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: documents, budget: GlifiSummaryBudget(unit: .sentences, limit: 2),
+        scheme: GlifiTermWeightingScheme(
+            termFrequency: .raw, inverseDocumentFrequency: .unsmoothed, normalization: .none),
+        method: .textRank)
+    #expect(unsmoothed.sentences.map(\.score) == scores)
+}
+
+@Test("TextRankSentence-v1: nodi pendenti uniformi, frasi a un token, limite del grafo")
+func textRankDanglingNodesAndBounds() throws {
+    let scheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme
+    // Oracle: TEXTRANK_DANGLING_*: the single-token sentence shares no type and jumps uniformly.
+    let dangling = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: [
+            GlifiSummaryDocument(
+                sourceRevisionID: try revision(1),
+                sentences: [
+                    try sentence(0, ["a", "b"]), try sentence(1, ["c"]),
+                    try sentence(2, ["b", "d"]),
+                ])
+        ],
+        budget: GlifiSummaryBudget(unit: .sentences, limit: 1), scheme: scheme, method: .textRank)
+    let expected = [0.465116279069734, 0.0697674418605318, 0.465116279069734]
+    for (score, reference) in zip(dangling.sentences.map(\.score), expected) {
+        #expect(close(score, reference))
+    }
+    #expect(dangling.sentences.map(\.rank) == [1, 3, 2])
+    #expect(dangling.sentences.map(\.isSelected) == [true, false, false])
+    // Two identical single-token sentences: `log 1 + log 1 = 0`, no edge between them; alone
+    // they are both dangling and uniform; a sentence without tokens is not a node.
+    let singles = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: [
+            GlifiSummaryDocument(
+                sourceRevisionID: try revision(1),
+                sentences: [try sentence(0, ["a"]), try sentence(1, []), try sentence(2, ["a"])])
+        ],
+        budget: .standard, scheme: scheme, method: .textRank)
+    #expect(singles.sentences.map(\.score).map { close($0, 0.5) } == [true, false, true])
+    #expect(singles.sentences.map(\.isEligible) == [true, false, true])
+    #expect(singles.sentences.map(\.rank) == [1, 3, 2])
+    #expect(singles.consumedBudget == 2)
+    // Oracle: TEXTRANK_UNIGRAM_SCORES: with a bigram sharing their type each unigram has a
+    // single edge to it; the unigrams stay equal and the bigram ranks first.
+    let unigrams = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: [
+            GlifiSummaryDocument(
+                sourceRevisionID: try revision(1),
+                sentences: [
+                    try sentence(0, ["a"]), try sentence(1, ["a"]), try sentence(2, ["a", "a"]),
+                ])
+        ],
+        budget: .standard, scheme: scheme, method: .textRank)
+    let unigramExpected = [0.256756756756863, 0.256756756756863, 0.486486486486274]
+    for (score, reference) in zip(unigrams.sentences.map(\.score), unigramExpected) {
+        #expect(close(score, reference))
+    }
+    #expect(unigrams.sentences.map(\.rank) == [2, 3, 1])
+    // At the node limit the graph is accepted; one node more fails closed.
+    let limit = GlifiCorpusExtractiveSummaryAnalysis.lexRankMaximumNodes
+    func uniform(_ count: Int) throws -> [GlifiSummaryDocument] {
+        [
+            GlifiSummaryDocument(
+                sourceRevisionID: try revision(1),
+                sentences: try (0..<count).map { try sentence($0, ["a", "b"]) })
+        ]
+    }
+    let bounded = try GlifiCorpusExtractiveSummaryAnalysis(
+        documents: try uniform(limit), budget: .standard, scheme: scheme, method: .textRank)
+    #expect(bounded.sentences.allSatisfy { close($0.score, 1 / Double(limit)) })
+    let tooLarge = #expect(throws: GlifiFailure.self) {
+        _ = try GlifiCorpusExtractiveSummaryAnalysis(
+            documents: try uniform(limit + 1), budget: .standard, scheme: scheme,
+            method: .textRank)
+    }
+    #expect(tooLarge?.code == "summary.graph-limit-exceeded")
+    let diverging = #expect(throws: GlifiFailure.self) {
+        _ = try GlifiCorpusExtractiveSummaryAnalysis.centralityStationary(
+            [[2]], damping: GlifiCorpusExtractiveSummaryAnalysis.textRankDamping)
+    }
+    #expect(diverging?.code == "summary.centrality-not-converged")
+}
+
+@Test("TextRankSentence-v1 si persiste come Artifact distinto e si riusa")
+func textRankSummaryIsPersistedAsDistinctArtifact() async throws {
+    let root = FileManager.default.temporaryDirectory.appending(
+        path: "GlifiTextRankSummary-\(UUID().uuidString)", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let project = try GlifiProjectPackage.create(
+        at: root.appending(path: "P.glifi", directoryHint: .isDirectory))
+    let engine = GlifiEngine()
+    let texts = [
+        "La casa è bella. Il giardino è verde e grande. Sì.",
+        "Il giardino della casa è verde.",
+    ]
+    var ids: [SourceRevisionID] = []
+    for (index, text) in texts.enumerated() {
+        let imported = try GlifiTextImporter().importText(
+            from: Data(text.utf8), format: .plainText, sourceRevisionID: try revision(index + 1))
+        _ = try await project.importText(imported)
+        ids.append(imported.sourceRevisionID)
+    }
+    let budget = GlifiSummaryBudget(unit: .sentences, limit: 2)
+    let lexRank = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids, budget: budget, method: .lexRank)
+    let textRank = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids, budget: budget, method: .textRank)
+    #expect(textRank.artifactID != lexRank.artifactID)
+    #expect(textRank.value.methodIdentifier == "TextRankSentence-v1")
+    #expect(textRank.value.sentences.map(\.range) == lexRank.value.sentences.map(\.range))
+    #expect(
+        textRank.value.sentences.map(\.isEligible)
+            == textRank.value.sentences.map { $0.tokenCount > 0 })
+    #expect(close(textRank.value.sentences.map(\.score).reduce(0, +), 1))
+    #expect(textRank.value.selectedSentences.count == 2)
+    let reused = try await engine.analyzeExtractiveSummary(
+        in: project, sourceRevisionIDs: ids.reversed(), budget: budget, method: .textRank)
+    #expect(reused.artifactID == textRank.artifactID)
+    #expect(reused.value == textRank.value)
+    let stored: GlifiProjectDerivedResult<GlifiCorpusExtractiveSummaryAnalysis> =
+        try await engine.storedDerivedResult(
+            GlifiCorpusExtractiveSummaryAnalysis.self, artifactID: textRank.artifactID,
+            in: project)
+    #expect(stored.value == textRank.value)
+}

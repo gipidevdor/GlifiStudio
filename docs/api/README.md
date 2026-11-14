@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-API-001 |
 | Tipo | Specifica normativa delle interfacce applicative e headless |
-| Versione | 1.28.0 |
+| Versione | 1.29.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-01 |
+| Ultima modifica | 2026-11-08 |
 | Approvazione | Baseline pre-1.0 proposta; contract test richiesti prima della stabilizzazione |
 | Riferimenti | GS-DOM-001; GS-DAT-001; GS-QRY-001; GS-ANA-001; GS-RUN-001; GS-SEC-001; ADR-0002; ADR-0019 |
 
@@ -239,7 +239,7 @@ CLI con envelope JSON v1.
 | `analyzeNGramFrequencies` | `ngrams --unit [--n] [filtri]` | `corpus-ngram-frequencies-v1` | GS-VER-117 |
 | `analyzeLexicalDiversity` | `diversity [--threshold]` | `corpus-lexical-diversity-mtld-v1` | GS-VER-116 |
 | `rankDocumentsBM25` | `bm25 --query [--k1 --b]` | `corpus-bm25-ranking-v1` | GS-VER-115 |
-| `analyzeExtractiveSummary` | `summarize [--sentences n] [--tokens n] [--method m] [--mmr λ] [--tf --idf --norm]` | `corpus-extractive-summary-v1` | GS-VER-146, GS-VER-149, GS-VER-151 |
+| `analyzeExtractiveSummary` | `summarize [--sentences n] [--tokens n] [--method m] [--mmr λ] [--tf --idf --norm]` | `corpus-extractive-summary-v1` | GS-VER-146, GS-VER-149, GS-VER-151, GS-VER-164, GS-VER-165, GS-VER-166 |
 | `analyzeMultivariate` | `multivariate --method` | `corpus-document-term-multivariate-v2` | GS-VER-102, GS-VER-108 |
 | `assessCodingAgreement` | `agreement` | `coding-agreement-v2` | GS-VER-092, GS-VER-103 |
 

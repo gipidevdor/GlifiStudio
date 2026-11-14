@@ -6,11 +6,11 @@
 | --- | --- |
 | Identificatore | GS-DOR-013 |
 | Tipo | Scheda Definition of Ready |
-| Versione | 1.4.1 |
+| Versione | 1.5.0 |
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-07 |
-| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice verificata localmente e in CI (GS-VER-149), terza slice verificata in CI sulla head definitiva e su `main` (GS-VER-151); quarta slice verificata in CI sulla head della PR #29 e su `main` (GS-VER-164); quinta slice verificata in CI sulla head della PR #31 e su `main` (GS-VER-165) |
+| Ultima modifica | 2026-11-14 |
+| Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo; prima slice verificata (GS-VER-146), seconda slice verificata localmente e in CI (GS-VER-149), terza slice verificata in CI sulla head definitiva e su `main` (GS-VER-151); quarta slice verificata in CI sulla head della PR #29 e su `main` (GS-VER-164); quinta slice verificata in CI sulla head della PR #31 e su `main` (GS-VER-165); sesta slice in verifica (GS-VER-166) |
 | Riferimenti | GS-MET-001-19; GS-MET-001-07; GS-API-001 § 9; RF-042; RQ-025; RQ-027; TV-036; ADR-0013 |
 
 ## Confini e criteri di accettazione
@@ -19,8 +19,8 @@
 
 | Voce | Evidenza |
 | --- | --- |
-| outcome e confini | Tre famiglie sullo stesso Artifact, `SentenceTFIDFMean-v1`, `CentroidCosine-v1` e `LexRankSentence-v1`, scelte con `method`, con budget in frasi, token o caratteri; ridondanza assente per default o `MMR-v1` con `λ` dichiarato, scelta con `redundancy`; nessuna generazione di testo, nessun modello linguistico |
-| failure semantics | Budget non valido, `λ` fuori da `[0, 1]`, politica di ridondanza sconosciuta, gruppo vuoto o fonte duplicata: `invalidInput`/`insufficientData` con codici `summary.*` tipizzati; grafo LexRank oltre 2 000 nodi: `insufficientResources`; intervallo non risolvibile o centralità non convergente: `invariantViolation` |
+| outcome e confini | Quattro famiglie sullo stesso Artifact, `SentenceTFIDFMean-v1`, `CentroidCosine-v1`, `LexRankSentence-v1` e `TextRankSentence-v1`, scelte con `method`, con budget in frasi, token o caratteri; ridondanza assente per default o `MMR-v1` con `λ` dichiarato, scelta con `redundancy`; nessuna generazione di testo, nessun modello linguistico |
+| failure semantics | Budget non valido, `λ` fuori da `[0, 1]`, politica di ridondanza sconosciuta, gruppo vuoto o fonte duplicata: `invalidInput`/`insufficientData` con codici `summary.*` tipizzati; grafo LexRank o TextRank oltre 2 000 nodi: `insufficientResources`; intervallo non risolvibile o centralità non convergente: `invariantViolation` |
 
 - Fissare in GS-MET-001-19 unità, token inclusi, pesi, rank, budget, eleggibilità,
   ridondanza e ordine di output della variante, prima del codice.
@@ -48,6 +48,9 @@
   fissato in GS-MET-001-19 prima del codice; stessa selezione delle altre unità; oracolo esteso
   con righe `*_SELECTED_C40` e `MMR_ORDER_C40_L05`; `--characters <n>` in CLI; nessuna
   migrazione.
+- Sesta slice (`TextRankSentence-v1`): grafo di sovrapposizione lessicale con pesi, soglia zero,
+  nodi pendenti uniformi, damping e limiti condivisi con LexRank fissati in GS-MET-001-19 prima
+  del codice; oracolo esteso con righe `TEXTRANK_*`; nessuna nuova opzione CLI né migrazione.
 
 ## Verifica e tracciabilità
 
@@ -62,7 +65,9 @@ superata, CMP-106 `verified`) e in
 [GS-VER-164](../evidenze/GS-VER-164-riassunto-lexrank.md) (quarta slice, CI su `main` `aaf8ff3`
 superata, CMP-163 `verified`) e in
 [GS-VER-165](../evidenze/GS-VER-165-riassunto-budget-caratteri.md) (quinta slice, CI su `main` `4c59a50`
-superata, CMP-164 `verified`), nella matrice di tracciabilità (RF-042, TV-036). Nessuna nuova decisione architetturale: la variante era
+superata, CMP-164 `verified`) e in
+[GS-VER-166](../evidenze/GS-VER-166-riassunto-textrank.md) (sesta slice, in verifica,
+CMP-165 `implemented`), nella matrice di tracciabilità (RF-042, TV-036). Nessuna nuova decisione architetturale: la variante era
 già candidata in GS-MET-001-19.
 
 ## Rischi e recupero
