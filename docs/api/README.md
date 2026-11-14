@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-API-001 |
 | Tipo | Specifica normativa delle interfacce applicative e headless |
-| Versione | 1.28.0 |
+| Versione | 1.28.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-01 |
+| Ultima modifica | 2026-11-08 |
 | Approvazione | Baseline pre-1.0 proposta; contract test richiesti prima della stabilizzazione |
 | Riferimenti | GS-DOM-001; GS-DAT-001; GS-QRY-001; GS-ANA-001; GS-RUN-001; GS-SEC-001; ADR-0002; ADR-0019 |
 
@@ -239,13 +239,20 @@ CLI con envelope JSON v1.
 | `analyzeNGramFrequencies` | `ngrams --unit [--n] [filtri]` | `corpus-ngram-frequencies-v1` | GS-VER-117 |
 | `analyzeLexicalDiversity` | `diversity [--threshold]` | `corpus-lexical-diversity-mtld-v1` | GS-VER-116 |
 | `rankDocumentsBM25` | `bm25 --query [--k1 --b]` | `corpus-bm25-ranking-v1` | GS-VER-115 |
-| `analyzeExtractiveSummary` | `summarize [--sentences n] [--tokens n] [--method m] [--mmr λ] [--tf --idf --norm]` | `corpus-extractive-summary-v1` | GS-VER-146, GS-VER-149, GS-VER-151 |
+| `analyzeExtractiveSummary` | `summarize [--sentences n / --tokens n / --characters n] [--method m] [--mmr λ] [--tf --idf --norm]` | `corpus-extractive-summary-v1` | GS-VER-146, GS-VER-149, GS-VER-151, GS-VER-165, GS-VER-167 |
 | `analyzeMultivariate` | `multivariate --method` | `corpus-document-term-multivariate-v2` | GS-VER-102, GS-VER-108 |
 | `assessCodingAgreement` | `agreement` | `coding-agreement-v2` | GS-VER-092, GS-VER-103 |
 
 Parametri non validi falliscono con `GlifiStudioFailure` tipizzata; nessuna operazione corregge
 parametri in silenzio. Seed, numero di ricampionamenti e soglie sono parte della richiesta o
 costanti dichiarate nel risultato.
+
+Per il riassunto, le opzioni di budget sono mutuamente esclusive. `--characters` conta
+gli scalari Unicode del testo esatto, non i grafemi; il motore calcola i costi dalle fonti.
+Chi usa direttamente `GlifiSummaryCandidateSentence` nel Core deve fornire conteggi
+positivi: zero e negativi sono rifiutati prima dello scoring con
+`summary.invalid-character-count` (`invalidInput`), anche per le altre unità di budget.
+Un costo positivo superiore al budget residuo è saltato senza overflow (GS-VER-167).
 
 ### 9.2 Viste dei risultati estesi
 

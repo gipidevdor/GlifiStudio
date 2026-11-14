@@ -492,6 +492,10 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Corretto
 
+- Costi del riassunto estrattivo: l'API Core rifiuta conteggi di caratteri non positivi con
+  `summary.invalid-character-count`; selezione per rank e MMR confrontano il costo con il
+  budget residuo, evitando overflow per costi estremi. Formula e payload invariati;
+  regressioni ed evidenza GS-VER-167, CMP-164 torna `implemented` fino alla CI su `main`.
 - L'app macOS usa il ciclo documentale nativo per Nuovo/Apri e propone il salvataggio del nuovo
   progetto prima dell'importazione. L'inizializzazione non cancella package esistenti e un'apertura
   fallita conserva la sessione precedente; test di regressione in `make test-macos` (GS-VER-163).
