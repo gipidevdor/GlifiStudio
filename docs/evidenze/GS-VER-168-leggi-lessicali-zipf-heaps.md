@@ -6,8 +6,8 @@
 | --- | --- |
 | Identificatore | GS-VER-168 |
 | Tipo | Evidenza di verifica numerica e di integrazione |
-| Versione | 1.0.0 |
-| Stato | In verifica: controlli locali superati, CI `xcode-27` in attesa |
+| Versione | 1.1.0 |
+| Stato | Superato in CI `xcode-27` sulla head `b3e9926` di #38; preflight locale da eseguire |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-21 |
 | Approvazione | Richiesta dell'iniziatore di proseguire lo sviluppo |
@@ -56,6 +56,16 @@ eseguibile Swift 6.2 che compila `GlifiLexicalLawsAnalysis.swift` con stub minim
 riproduce le righe `LAWS_*`. GlifiCore completo non è compilato in locale: compilazione,
 test Swift, contract test CLI e gate `make verify` sono affidati al workflow `Verifica` sul
 runner `xcode-27`.
+
+## Esecuzione remota
+
+Sulla head `b3e9926` della PR #38 sono superati i quattro controlli del runner
+`xcode-27-arm64` (macOS 27.0.1, Xcode 27.1, Apple Swift 6.4): `static-quality`,
+`format-check`, `app-store-baseline` e `verify`. In `verify` passano 304 test Core, fra cui
+i tre test delle leggi lessicali, e 37 test Kit, oltre al contract test CLI `laws`. Nel runner
+manca `Rscript`, quindi il confronto automatico degli oracoli con `expected.txt` viene
+saltato: la parità con l'oracolo Python poggia sui letterali dei test Swift e sul confronto
+locale.
 
 ## Limiti
 

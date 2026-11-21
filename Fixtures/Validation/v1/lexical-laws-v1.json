@@ -9,7 +9,7 @@
     "HeapsLogOLS-v1"
   ],
   "status": "candidate",
-  "statusReason": "Oracolo Python superato in locale; test Swift e contract test CLI in attesa della CI xcode-27 (GS-VER-168). Promozione a supported dopo la verifica remota e la review delle evidenze.",
+  "statusReason": "Oracolo Python superato in locale; test Swift e contract test CLI superati in CI xcode-27 (GS-VER-168). Promozione a supported dopo il preflight locale e la review delle evidenze.",
   "license": "BSD-3-Clause",
   "toolchain": {
     "swiftLanguageMode": "6",

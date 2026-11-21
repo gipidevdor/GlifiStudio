@@ -14,7 +14,7 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
-- [GS-VER-168 — Osservazioni lessicali, `ZipfLogOLS-v1` e `HeapsLogOLS-v1`](GS-VER-168-leggi-lessicali-zipf-heaps.md) — In verifica: controlli locali superati, CI `xcode-27` in attesa; CMP-166 implemented
+- [GS-VER-168 — Osservazioni lessicali, `ZipfLogOLS-v1` e `HeapsLogOLS-v1`](GS-VER-168-leggi-lessicali-zipf-heaps.md) — Superato: CI `xcode-27` sulla head `b3e9926` di #38; preflight locale da eseguire; CMP-166 implemented
 - [GS-VER-167 — Validazione dei costi del riassunto](GS-VER-167-costi-riassunto.md) — Difetti riprodotti in isolamento; regressioni native e preflight da eseguire; CMP-164 torna implemented
 - [GS-VER-165 — Budget del riassunto estrattivo in caratteri](GS-VER-165-riassunto-budget-caratteri.md) — Superato: CI `xcode-27` sulla head `3c3cfef` di #31 e su `main` `4c59a50`; CMP-164 verified
 - [GS-VER-164 — Riassunto estrattivo `LexRankSentence-v1`](GS-VER-164-riassunto-lexrank.md) — Superato: CI `xcode-27` sulla head `c3f7bab` di #29 e su `main` `aaf8ff3`; CMP-163 verified
