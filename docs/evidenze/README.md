@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.17.1 |
+| Versione | 1.17.2 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-21 |
@@ -18,6 +18,7 @@ Le evidenze GS-VER-168/169/170 si riferiscono ai rispettivi snapshot storici del
 working tree sorgente. La nuova integrazione sulla base `fe6f654` ha verifica
 separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 
+- [GS-VER-172 — Query sparse e qualità del clustering](GS-VER-172-query-sparse-e-silhouette.md) — Superato: venti confronti finali, 440 test e 185 righe di oracoli; gate completo, nessuna promozione
 - [GS-VER-171 — Integrazione e pubblicazione degli algoritmi](GS-VER-171-integrazione-algoritmi.md) — Superato: 425 test, 177 righe di oracoli e gate completo sulla base upstream `fe6f654`
 - [GS-VER-170 — Raffinamento di memoria e calcolo analitico](GS-VER-170-raffinamento-algoritmi.md) — Superato nello snapshot storico sorgente: 14 confronti Release, 480 test e gate completo; limiti numerici e compromessi dichiarati
 - [GS-VER-169 — Ottimizzazione misurata degli algoritmi](GS-VER-169-ottimizzazione-algoritmi.md) — Superato nello snapshot storico sorgente: 13 confronti Release, 447 test e gate completo; compromessi dichiarati

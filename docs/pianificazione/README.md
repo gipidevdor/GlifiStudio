@@ -18,6 +18,9 @@ accettato` prima del primo cambiamento implementativo.
 
 ## Indice
 
+- [GS-DOR-172 — Query sparse e qualità del clustering](dor-query-sparse-e-silhouette.md) — Ready
+
+
 - [GS-DOR-171 — Integrazione e pubblicazione degli algoritmi](dor-integrazione-algoritmi.md) — Ready
 - [GS-DOR-170 — Raffinamento di memoria e calcolo analitico](dor-raffinamento-algoritmi.md) — Ready
 - [GS-DOR-169 — Ottimizzazione misurata degli algoritmi](dor-ottimizzazione-algoritmi.md) — Ready

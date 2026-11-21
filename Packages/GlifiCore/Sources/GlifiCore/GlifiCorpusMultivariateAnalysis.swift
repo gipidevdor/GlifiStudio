@@ -206,9 +206,16 @@ public struct GlifiCorpusMultivariateAnalyzer: Sendable {
             kMeans = result
             clusters = result.assignments
         }
-        let silhouette = silhouetteSource.flatMap { points in
-            clusters.flatMap {
-                try? GlifiMultivariateMethods.silhouette(points, assignments: $0).average
+        var silhouette: Double?
+        if let points = silhouetteSource, let clusters {
+            do {
+                silhouette = try GlifiMultivariateMethods.silhouette(
+                    points, assignments: clusters
+                ).average
+            } catch let failure as GlifiFailure
+                where failure.code == "clustering.silhouette-undefined"
+            {
+                silhouette = nil
             }
         }
         return GlifiCorpusMultivariateAnalysis(

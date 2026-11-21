@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-MET-001-14 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.1.1 |
+| Versione | 1.1.2 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-21 |
@@ -89,6 +89,49 @@ Silhouette, stabilità bootstrap o altri indici sono artefatti separati con form
 sampling versionati. Non stabiliscono da soli il “vero” numero di cluster. Una
 visualizzazione non deve nascondere punti non assegnati, cluster vuoti o arresto per
 limite.
+
+### Silhouette euclidea
+
+Per un punto `i` non singleton, `a(i)` è la media delle distanze euclidee dagli
+altri membri del proprio cluster; `b(i)` è il minimo, sugli altri cluster,
+della distanza media dai rispettivi membri. Il coefficiente è
+`s(i)=(b(i)-a(i))/max(a(i),b(i))`; se entrambe le medie sono zero vale zero.
+Un singleton ha coefficiente zero. La silhouette complessiva è la media
+aritmetica dei coefficienti, nell'ordine dei punti in ingresso; richiede
+almeno due punti e due cluster non vuoti.
+
+Il raffinamento candidato GS-DOR-172 preindicizza i membri in spazio lineare,
+conservando l'ordine originale dei membri e l'ordine crescente delle etichette
+dei cluster, incluse etichette intere non consecutive. Non richiede una cache
+quadratica delle distanze. Il percorso ordinario **DEVE** conservare la
+sequenza delle distanze e delle somme della formula diretta.
+
+Righe vuote o di dimensione differente, valori non finiti e superamenti dei
+budget standard di celle/lavoro **DEVONO** produrre failure tipizzate, con
+controlli di dimensione senza overflow. La cancellazione **DEVE** interrompere
+anche indicizzazione e riduzioni. Quando un intermedio va in overflow o
+underflow, il recupero numerico **DEVE** conservare le medie scalate fino al
+rapporto finale; una distanza realmente non rappresentabile resta una failure
+tipizzata. La verifica e le misure del raffinamento sono registrate in
+[GS-VER-172](../evidenze/GS-VER-172-query-sparse-e-silhouette.md).
+
+Il kernel candidato valida al massimo 5.000.000 celle e stima il lavoro come
+`A×(n−1)×p`, dove `A` è il numero di punti in cluster non singleton e `p` il
+numero di dimensioni, entro 500.000.000 unità di lavoro. La partizione composta
+soltanto da singleton restituisce zeri dopo la validazione; non viene
+addebitato un calcolo delle distanze che non avviene. Il chiamante del profilo
+corpus converte in silhouette assente soltanto
+`clustering.silhouette-undefined`; cancellazione e altre failure si propagano.
+
+Il percorso ordinario senza controlli numerici per coordinata è ammesso
+soltanto dopo una prova conservativa sull'input già validato:
+`minULP(nonzero)≥2×sqrt(Double.leastNormalMagnitude)` e
+`maxAbs≤sqrt(Double.max/(8p))`. Gli zeri non abbassano la prima stima. Questi
+vincoli garantiscono quadrati non nulli normali e somma dei quadrati finita;
+entro il limite di celle anche somme e medie delle distanze sono
+rappresentabili. Negli altri casi resta il percorso con rilevazione degli
+intermedi estremi. Soglie e valori adiacenti **DEVONO** essere verificati con fixture
+dedicate, senza modificare la formula o le riduzioni.
 
 ## Verifica
 

@@ -227,6 +227,17 @@ public enum GlifiTermWeighting {
         queryColumns: Set<Int>,
         parameters: GlifiBM25Parameters
     ) throws -> [Double] {
+        try bm25(
+            rows: rows, columnCount: columnCount, documentLengths: documentLengths,
+            queryColumns: queryColumns, parameters: parameters, postingsPolicy: .standard)
+    }
+
+    // The allocation policy is internal so tests can exercise bounded fallback without
+    // changing the public API or constructing a million-hit fixture.
+    static func bm25(
+        rows: [[Int: Int]], columnCount: Int, documentLengths: [Int], queryColumns: Set<Int>,
+        parameters: GlifiBM25Parameters, postingsPolicy: GlifiBM25PostingsPolicy
+    ) throws -> [Double] {
         guard !rows.isEmpty, documentLengths.count == rows.count else {
             throw weightingFailure("bm25.empty-collection")
         }
@@ -250,10 +261,43 @@ public enum GlifiTermWeighting {
         let lengthFactors = documentLengths.map {
             1 - parameters.b + parameters.b * Double($0) / averageLength
         }
+        let postings: GlifiBM25QueryPostings?
+        if columns.count >= 128 {
+            postings = try GlifiBM25QueryPostings.build(
+                rows: rows, columns: columns, policy: postingsPolicy)
+        } else {
+            postings = nil
+        }
+        guard let postings else {
+            return try bm25Direct(
+                rows: rows, columns: columns, lengthFactors: lengthFactors, parameters: parameters)
+        }
+        var scores = [Double](repeating: 0, count: rows.count)
+        for position in columns.indices {
+            try Task.checkCancellation()
+            let start = postings.offsets[position]
+            let end = postings.offsets[position + 1]
+            let idf = bm25InverseDocumentFrequency(
+                documentFrequency: end - start, documentCount: rows.count)
+            for posting in start..<end {
+                if posting.isMultiple(of: 256) { try Task.checkCancellation() }
+                let row = postings.rowIndices[posting]
+                scores[row] += bm25Contribution(
+                    frequency: postings.frequencies[posting], idf: idf,
+                    lengthFactor: lengthFactors[row], parameters: parameters)
+            }
+        }
+        guard scores.allSatisfy(\.isFinite) else { throw weightingFailure("bm25.non-finite-score") }
+        try Task.checkCancellation()
+        return scores
+    }
+
+    private static func bm25Direct(
+        rows: [[Int: Int]], columns: [Int], lengthFactors: [Double],
+        parameters: GlifiBM25Parameters
+    ) throws -> [Double] {
         var frequencies = [Int](repeating: 0, count: rows.count)
         var scores = [Double](repeating: 0, count: rows.count)
-        // A column reuses its observed counts for DF and scoring. Each row still
-        // accumulates contributions in ascending query-column order.
         for column in columns {
             try Task.checkCancellation()
             var documentFrequency = 0
@@ -269,27 +313,28 @@ public enum GlifiTermWeighting {
             for (index, frequency) in frequencies.enumerated() {
                 if index.isMultiple(of: 256) { try Task.checkCancellation() }
                 guard frequency > 0 else { continue }
-                let f = Double(frequency)
-                let numerator = idf * f * (parameters.k1 + 1)
-                let denominator = f + parameters.k1 * lengthFactors[index]
-                let contribution: Double
-                if numerator.isFinite, denominator.isFinite {
-                    contribution = numerator / denominator
-                } else {
-                    // Scale only the overflowing path, preserving the ordinary formula's
-                    // exact operation sequence and the finite large-k1 limit.
-                    let scale = max(f, parameters.k1)
-                    let scaledK1 = parameters.k1 / scale
-                    contribution =
-                        (idf * f) * (scaledK1 + 1 / scale)
-                        / (f / scale + scaledK1 * lengthFactors[index])
-                }
-                scores[index] += contribution
+                scores[index] += bm25Contribution(
+                    frequency: frequency, idf: idf, lengthFactor: lengthFactors[index],
+                    parameters: parameters)
             }
         }
         guard scores.allSatisfy(\.isFinite) else { throw weightingFailure("bm25.non-finite-score") }
         try Task.checkCancellation()
         return scores
+    }
+
+    private static func bm25Contribution(
+        frequency: Int, idf: Double, lengthFactor: Double, parameters: GlifiBM25Parameters
+    ) -> Double {
+        let f = Double(frequency)
+        let numerator = idf * f * (parameters.k1 + 1)
+        let denominator = f + parameters.k1 * lengthFactor
+        if numerator.isFinite, denominator.isFinite { return numerator / denominator }
+        // Preserve the ordinary operation sequence and scale only the overflow path.
+        let scale = max(f, parameters.k1)
+        let scaledK1 = parameters.k1 / scale
+        return (idf * f) * (scaledK1 + 1 / scale)
+            / (f / scale + scaledK1 * lengthFactor)
     }
 
     static func weightingFailure(_ code: String) -> GlifiFailure {

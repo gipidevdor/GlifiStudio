@@ -2686,6 +2686,41 @@
       "gate": "G3",
       "status": "implemented",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-176",
+      "clause": "GS-MET-001-07 § Raffinamento candidato delle query sparse; GS-MET-001-14 § Silhouette euclidea; GS-STD-001-17 § Confronti prima/dopo",
+      "specification": "docs/metodi-analitici/07-ponderazione-termini-e-bm25.md",
+      "requirements": [
+        "RF-030",
+        "RF-037",
+        "RQ-008",
+        "RQ-009",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiTermWeighting.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiBM25QueryPostings.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiSupportPolicies.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiSilhouetteComputation.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiCorpusMultivariateAnalysis.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiBM25SparseOptimizationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSilhouetteOptimizationTests.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiBM25SparseOptimizationBenchmarks.swift",
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiSilhouetteOptimizationBenchmarks.swift",
+        "Packages/GlifiCore/Tests/Oracles/Python/silhouette_extremes.py"
+      ],
+      "evidence": [
+        "docs/pianificazione/dor-query-sparse-e-silhouette.md",
+        "docs/evidenze/GS-VER-172-query-sparse-e-silhouette.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }

@@ -36,7 +36,8 @@ func graphOptimizationMeasurements() throws -> [Measurement] {
         documents.map {
             GraphBenchmarkSummaryInput(
                 sourceRevisionID: $0.sourceRevisionID.canonicalValue,
-                ranges: $0.sentences.map(\.range), terms: $0.sentences.map(\.terms))
+                ranges: $0.sentences.map(\.range), terms: $0.sentences.map(\.terms),
+                characterCounts: $0.sentences.map(\.characterCount))
         })
     var measurements: [Measurement] = []
     for (identifier, method) in [
@@ -115,6 +116,7 @@ private struct GraphBenchmarkSummaryInput: Encodable {
     let sourceRevisionID: String
     let ranges: [GlifiUTF8Range]
     let terms: [[String]]
+    let characterCounts: [Int]
 }
 
 private struct GraphBenchmarkGraphInput: Encodable {

@@ -2,6 +2,37 @@
 
 # Benchmark
 
+## Query sparse e silhouette (GS-VER-172)
+
+```sh
+swift run -c release --package-path Packages/GlifiCore \
+  --scratch-path /tmp/GlifiAlgorithms172/SwiftPM \
+  GlifiBenchmark --sparse-analysis-optimization
+```
+
+Aggiungere `bm25` o `silhouette` per isolare una sezione; senza sezione vengono
+eseguiti dieci casi. Questa modalità rifiuta la configurazione Debug. Il
+confronto candidato copre sette distribuzioni di query BM25 e tre partizioni
+per silhouette, su generatori sintetici deterministici. Ogni caso prevede un
+batch di warm-up e cinque batch misurati; il tempo è normalizzato per chiamata
+e la dimensione fissa del batch è registrata nella ricetta. Setup, digest
+input/configurazione e controlli completi del risultato restano fuori timer.
+Il digest SHA-256 dell'output copre tutti i bit dei punteggi BM25 o delle
+silhouette e della loro media, sull'ultima chiamata dell'ultimo batch;
+warm-up e chiamate precedenti non sono confrontati singolarmente. Input e
+configurazioni sono nei digest o nella ricetta esplicita del caso.
+
+Conservare eseguibile e inventari della baseline prima dei cambi ai kernel,
+poi eseguire baseline e candidato in sequenza senza build o misure concorrenti.
+Registrare mediana, minimo, massimo, hardware, toolchain e stato termico;
+`/usr/bin/time -l` per sezione misura il picco dell'intero processo, inclusi
+generatori e digest. GS-VER-172 riporta due passate incontese con tutti i
+controlli identici: BM25 per query grandi migliora 5,88–24,44× e silhouette
+1,86–15,02× nei casi misurati. Query piccole/OOV non mostrano un beneficio
+stabile; picco RSS BM25 +0,734 MiB e silhouette −0,203 MiB. Il primo tentativo
+con regressione silhouette è conservato; il gate completo resta in corso.
+Nessuna soglia locale diventa gate.
+
 ## Raffinamento numerico e memoria (GS-VER-170)
 
 ```sh

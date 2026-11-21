@@ -267,40 +267,6 @@ extension GlifiMultivariateMethods {
         _ points: [[Double]],
         assignments: [Int]
     ) throws -> (widths: [Double], average: Double) {
-        guard points.count == assignments.count, points.count >= 2,
-            Set(assignments).count >= 2
-        else {
-            throw GlifiFailure(
-                code: "clustering.silhouette-undefined",
-                category: .insufficientData,
-                operation: .analyze,
-                retryDisposition: .afterCorrection,
-                retainedState: .lastCommittedGeneration,
-                messageKey: "failure.clustering.silhouette-undefined"
-            )
-        }
-        func distance(_ left: Int, _ right: Int) -> Double {
-            var total = 0.0
-            for index in points[left].indices {
-                let difference = points[left][index] - points[right][index]
-                total += difference * difference
-            }
-            return total.squareRoot()
-        }
-        let clusters = Set(assignments).sorted()
-        let widths = points.indices.map { point -> Double in
-            let own = assignments[point]
-            let mates = points.indices.filter { $0 != point && assignments[$0] == own }
-            guard !mates.isEmpty else { return 0 }
-            let a = mates.reduce(0) { $0 + distance(point, $1) } / Double(mates.count)
-            let b =
-                clusters.filter { $0 != own }.map { cluster -> Double in
-                    let members = points.indices.filter { assignments[$0] == cluster }
-                    return members.reduce(0) { $0 + distance(point, $1) } / Double(members.count)
-                }.min() ?? 0
-            let denominator = max(a, b)
-            return denominator > 0 ? (b - a) / denominator : 0
-        }
-        return (widths, widths.reduce(0, +) / Double(widths.count))
+        try GlifiSilhouetteComputation.calculate(points, assignments: assignments)
     }
 }

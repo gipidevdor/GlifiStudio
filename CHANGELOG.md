@@ -8,7 +8,7 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 Le voci GS-VER-168/169/170 conservano gli esiti dei rispettivi snapshot del
 working tree sorgente; la verifica della nuova integrazione su `fe6f654`
-è separata e ancora da eseguire in GS-VER-171. La variante parametrizzabile
+è registrata separatamente in GS-VER-171 e pubblicata con `2386787`. La variante parametrizzabile
 conserva l’identità candidata distinta `TextRankSentence-configurable-v1`,
 preservando i metodi upstream già pubblicati.
 
@@ -55,6 +55,11 @@ preservando i metodi upstream già pubblicati.
   CMP-095. Conservate le verifiche G3 di QueryAST e riassunto estrattivo.
 
 ### Modificato
+
+- Posting BM25 adattivi bounded e membri silhouette preindicizzati, con
+  conservazione delle somme ordinarie e recupero numerico
+  degli estremi. Confronto Release e gate da acquisire in GS-VER-172;
+  nessuna promozione o soglia prestazionale introdotta.
 
 - Welch ANOVA conserva la varianza interna anche per gruppi con offset molto
   differenti tramite traslazione locale e scale comuni; regressione Decimal,

@@ -76,6 +76,36 @@ if CommandLine.arguments.contains("--text-operators") {
     exit(0)
 }
 
+if CommandLine.arguments.contains("--sparse-analysis-optimization") {
+    #if DEBUG
+        throw SparseBenchmarkConfigurationFailure.releaseRequired
+    #else
+        let section = CommandLine.arguments.last ?? "all"
+        let initialThermalState = String(describing: ProcessInfo.processInfo.thermalState)
+        let measurements: [Measurement]
+        switch section {
+        case "bm25": measurements = try bm25SparseOptimizationMeasurements()
+        case "silhouette": measurements = try silhouetteOptimizationMeasurements()
+        default:
+            measurements =
+                try bm25SparseOptimizationMeasurements() + silhouetteOptimizationMeasurements()
+        }
+        let report = Report(
+            device: hardwareModel(),
+            operatingSystem: ProcessInfo.processInfo.operatingSystemVersionString,
+            thermalStateAtStart: initialThermalState,
+            configuration: "Release, GlifiBenchmark --sparse-analysis-optimization \(section)",
+            warmUpRuns: 1, samples: 5,
+            statistic: "median, min, max wall-clock seconds per call, with fixed batches",
+            threshold: "observational before/after comparison; no release gate",
+            measurements: measurements)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        FileHandle.standardOutput.write(try encoder.encode(report) + Data("\n".utf8))
+        exit(0)
+    #endif
+}
+
 if CommandLine.arguments.contains("--analysis-refinement") {
     let section = CommandLine.arguments.last ?? "all"
     let initialThermalState = String(describing: ProcessInfo.processInfo.thermalState)
@@ -316,3 +346,7 @@ let encoder = JSONEncoder()
 encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
 // Output strutturato: solo il documento JSON su standard output.
 FileHandle.standardOutput.write(try encoder.encode(report) + Data("\n".utf8))
+
+private enum SparseBenchmarkConfigurationFailure: Error {
+    case releaseRequired
+}

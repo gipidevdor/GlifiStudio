@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-MET-001-07 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.1.1 |
+| Versione | 1.1.2 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-21 |
@@ -116,11 +116,37 @@ l'ordine delle operazioni; se numeratore o denominatore non sono finiti, il
 contributo viene riscalato con `max(f,k1)` prima della divisione. Questo conserva
 il limite finito per `k1` estremo, evitando punteggi nulli o NaN causati soltanto
 dagli intermedi. Un punteggio finale non finito produce failure tipizzata.
-Un buffer di conteggi per documento è riutilizzato a ogni colonna query per
-DF e score, mantenendo le somme nell’ordine delle colonne e memoria extra
-`O(N)`, senza cache documento × query o proporzionale al vocabolario.
+Il percorso diretto riutilizza un buffer di conteggi per documento a ogni
+colonna query per DF e score, mantenendo le somme nell'ordine delle colonne e
+memoria extra `O(N)`, senza cache documento × query o proporzionale al vocabolario.
 Il confronto indipendente Decimal a 400 cifre include questi casi (GS-VER-170).
 La cancellazione è osservata prima del lavoro e durante le scansioni.
+
+## Raffinamento candidato delle query sparse
+
+Il contratto GS-DOR-172 ammette un percorso adattivo a posting per query grandi
+quando la stima del lavoro ne giustifica la costruzione. DF **DEVE** contare
+soltanto frequenze positive; ogni posting **DEVE** mantenere l'ordine delle
+righe e l'accumulo dei punteggi **DEVE** seguire le colonne crescenti della
+query deduplicata. La sequenza aritmetica ordinaria, la validazione dei conteggi
+interrogati e il recupero degli intermedi estremi restano invariati.
+
+I posting **DEVONO** rispettare una stima conservativa massima di 32 MiB e
+**NON DEVONO** imporre nuovi rifiuti: se la stima supera il limite, si rilasciano
+le strutture parziali e si usa il percorso diretto. Termini fuori vocabolario
+e celle zero non generano hit. La cancellazione si applica alla costruzione
+e al calcolo. Il confronto misurato e le verifiche sono separati in
+[GS-VER-172](../evidenze/GS-VER-172-query-sparse-e-silhouette.md).
+
+La politica interna candidata considera `128≤Q≤32.768`, dove `Q` comprende
+soltanto le colonne query valide, e richiede `D×Q>4C`, con `C` pari a tutte le
+celle memorizzate, inclusi zeri e colonne estranee alla query. Il confronto è
+esatto a larghezza intera completa, senza prodotti troncati. La stima è
+`256Q+16H` byte, con `H≤1.000.000` posting positivi; la prima scansione conta
+DF/hit, i prefissi definiscono gli offset e la seconda riempie i buffer
+contigui nell'ordine delle righe.
+Questi limiti selezionano il percorso interno e non sono nuovi parametri
+scientifici o soglie di ammissione del metodo.
 
 ## Riferimento scientifico
 
