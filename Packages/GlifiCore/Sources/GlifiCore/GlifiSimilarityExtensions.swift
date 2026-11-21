@@ -11,28 +11,31 @@ extension GlifiVectorSimilarity {
     /// Computes `WeightedJaccard-v1`; both vectors must be non-negative and not both zero.
     public static func weightedJaccard(_ x: [Double], _ y: [Double]) throws -> Double {
         try validateNonNegative(x, y)
-        let minimum = zip(x, y).reduce(0) { $0 + min($1.0, $1.1) }
-        let maximum = zip(x, y).reduce(0) { $0 + max($1.0, $1.1) }
-        guard maximum > 0 else {
+        let scale = max(x.max() ?? 0, y.max() ?? 0)
+        guard scale > 0 else {
             throw similarityExtensionFailure("similarity.zero-vectors")
         }
+        let minimum = zip(x, y).reduce(0) { $0 + min($1.0, $1.1) / scale }
+        let maximum = zip(x, y).reduce(0) { $0 + max($1.0, $1.1) / scale }
         return minimum / maximum
     }
 
     /// Computes `MultisetDice-v1`; both vectors must be non-negative and not both zero.
     public static func multisetDice(_ x: [Double], _ y: [Double]) throws -> Double {
         try validateNonNegative(x, y)
-        let minimum = zip(x, y).reduce(0) { $0 + min($1.0, $1.1) }
-        let total = x.reduce(0, +) + y.reduce(0, +)
-        guard total > 0 else {
+        let scale = max(x.max() ?? 0, y.max() ?? 0)
+        guard scale > 0 else {
             throw similarityExtensionFailure("similarity.zero-vectors")
         }
-        return 2 * minimum / total
+        let minimum = zip(x, y).reduce(0) { $0 + min($1.0, $1.1) / scale }
+        let total = x.reduce(0) { $0 + $1 / scale } + y.reduce(0) { $0 + $1 / scale }
+        return 2 * (minimum / total)
     }
 
     private static func validateNonNegative(_ x: [Double], _ y: [Double]) throws {
         guard x.count == y.count, !x.isEmpty,
-            (x + y).allSatisfy({ $0.isFinite && $0 >= 0 })
+            x.allSatisfy({ $0.isFinite && $0 >= 0 }),
+            y.allSatisfy({ $0.isFinite && $0 >= 0 })
         else {
             throw similarityExtensionFailure("similarity.invalid-vectors")
         }
@@ -52,8 +55,14 @@ extension GlifiProbabilityDivergence {
         else {
             throw similarityExtensionFailure("similarity.invalid-smoothing")
         }
-        let total = counts.reduce(0, +) + alpha * Double(counts.count)
-        return counts.map { ($0 + alpha) / total }
+        let scale = max(counts.max() ?? 0, alpha)
+        let scaledAlpha = alpha / scale
+        let numerators = counts.map { count in
+            let combined = count + alpha
+            return combined.isFinite ? combined / scale : count / scale + scaledAlpha
+        }
+        let total = numerators.reduce(0, +)
+        return numerators.map { $0 / total }
     }
 }
 

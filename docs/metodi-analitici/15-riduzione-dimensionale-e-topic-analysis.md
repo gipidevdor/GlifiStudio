@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-15 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.0.0 |
+| Versione | 1.1.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -39,6 +39,31 @@ normalizzazione o un valore di `k`.
 regolarizzazione, tolleranza e iterazioni **DEVONO** essere dichiarati. È P1 e può
 convergere a minimi differenti; topic ed etichette restano interpretazioni, non dati
 osservati.
+
+La tolleranza NMF in libreria è finita e strettamente positiva. Celle e lavoro
+iterativo sono bounded; fattori e obiettivo non finiti sono rifiutati con failure
+tipizzata, senza consegnare un risultato parziale come fattorizzazione valida.
+
+Il backend scalare contiguo conserva una trasposta immutabile di `X` fra i
+restart e mantiene le trasposte di `W` e `H` con gli stessi valori binary64
+scritti nei fattori. I prodotti riusano buffer di risultato e leggono righe
+contigue, conservando l'ordine crescente dell'indice interno di ogni prodotto
+scalare. L'obiettivo accumula i residui durante il calcolo di ciascuna cella,
+senza materializzare `WH`; restano invariati l'ordine delle somme per riga e
+fra righe. La rivalutazione dell'obiettivo iniziale non viene eseguita quando
+la storia contiene già il valore finale. La contiguità richiede memoria per
+la trasposta di `X` e gli specchi dei fattori: celle aggiuntive dell'ordine di
+`N×V + (N+V)×rank`, oltre ai buffer dei prodotti. I limiti di celle/lavoro non
+costituiscono da soli una soglia RSS; le misure dichiarano le forme effettive.
+
+Queste ottimizzazioni non cambiano inizializzazione e seed, aggiornamento di
+`H` prima di `W`, incremento `1e-12` dei denominatori, stopping, storia,
+selezione dei restart o formato del risultato. I kernel controllano la
+cancellazione anche durante i prodotti e il calcolo dei residui. GS-VER-170
+registra benchmark Release con checksum canonici di input e output e
+confronti bit per bit con la definizione scalare diretta su forme, seed,
+righe/colonne nulle e criteri di arresto diversi; restano applicabili gli
+oracoli numerici indipendenti già previsti per la variante.
 
 ## Latent Dirichlet Allocation
 

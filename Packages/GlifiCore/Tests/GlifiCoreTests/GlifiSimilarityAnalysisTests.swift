@@ -116,3 +116,57 @@ func probabilityDivergenceMatchesClosedFormCases() throws {
         #expect(failure.code == "similarity.dimension-mismatch")
     }
 }
+
+@Test("Jensen-Shannon conserva il segnale quadratico vicino a distribuzioni identiche")
+func jensenShannonNearIdentityMatchesHighPrecision() throws {
+    // Independent Decimal(120) evaluation of the defining log-ratio formula on the
+    // exact binary64 inputs, without the implementation's delta transformation or series.
+    let references: [(Double, Double, Double)] = [
+        (1e-6, 7.2134752044676603902078015e-13, 8.4932180028936384238403436e-7),
+        (1e-7, 7.2134752008554752118363581e-15, 8.4932180007671269074793027e-8),
+        (1e-8, 7.2134752368939389538913915e-17, 8.4932180219831510892370232e-9),
+        (1e-9, 7.2134751968511134913282227e-19, 8.4932179984097390948138442e-10),
+        (1e-10, 7.2134763981360956371182477e-21, 8.4932187056121989617249406e-11),
+    ]
+    for (epsilon, divergence, distance) in references {
+        let p = [0.5, 0.5]
+        let q = [0.5 + epsilon, 0.5 - epsilon]
+        let observedDivergence = try GlifiProbabilityDivergence.jensenShannonDivergence(p, q)
+        let observedDistance = try GlifiProbabilityDivergence.jensenShannonDistance(p, q)
+        #expect(abs(observedDivergence - divergence) <= divergence * 1e-12)
+        #expect(abs(observedDistance - distance) <= distance * 1e-12)
+        #expect(
+            abs(try GlifiProbabilityDivergence.jensenShannonDistance(q, p) - distance)
+                <= distance * 1e-12)
+    }
+}
+
+@Test("Jensen-Shannon conserva distanze rappresentabili con contributi subnormali")
+func jensenShannonSubnormalDistanceRemainsDefined() throws {
+    let tiny = Double.leastNonzeroMagnitude
+    // Two disjoint tails contribute tiny/2 each; accumulating each product first
+    // would round both to zero although their sum and the distance are representable.
+    let p = [1, tiny, 0]
+    let q = [1, 0, tiny]
+    let divergence = try GlifiProbabilityDivergence.jensenShannonDivergence(p, q)
+    let distance = try GlifiProbabilityDivergence.jensenShannonDistance(p, q)
+    #expect(divergence == tiny)
+    #expect(abs(distance / tiny.squareRoot() - 1) <= 1e-12)
+    let oneTail = try GlifiProbabilityDivergence.jensenShannonDistance([1, tiny], [1, 0])
+    #expect(abs(oneTail / (tiny.squareRoot() / 2.0.squareRoot()) - 1) <= 1e-12)
+}
+
+@Test("Hellinger e Lidstone conservano contributi subnormali con risultati rappresentabili")
+func probabilityTransformsPreserveRepresentableSubnormals() throws {
+    let tiny = Double.leastNonzeroMagnitude
+    let distance = try GlifiProbabilityDivergence.hellinger([1, tiny], [1, 2 * tiny])
+    // The unit coordinate cancels; the remaining closed-form root difference is finite
+    // even though its square is smaller than the least representable positive Double.
+    let expected = ((2 * tiny).squareRoot() - tiny.squareRoot()) / 2.0.squareRoot()
+    #expect(distance > 0)
+    #expect(abs(distance / expected - 1) <= 1e-12)
+    // (tiny + tiny)/(2 + 3*tiny) rounds to tiny. Scaling the two numerator
+    // addends independently would underflow both halves before adding them.
+    let smoothed = try GlifiProbabilityDivergence.lidstone([2, tiny], alpha: tiny)
+    #expect(smoothed == [1, tiny])
+}

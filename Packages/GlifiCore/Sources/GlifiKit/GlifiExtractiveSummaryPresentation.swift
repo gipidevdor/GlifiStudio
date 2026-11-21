@@ -46,7 +46,7 @@ public struct GlifiStudioSummaryScoringMethod: Codable, Equatable, Sendable {
     /// Every method identifier accepted by the engine, in declaration order.
     public static let supportedIdentifiers = GlifiSummaryScoringMethod.allCases.map(\.rawValue)
 
-    /// `SentenceTFIDFMean-v1`, `CentroidCosine-v1`, `LexRankSentence-v1` or `TextRankSentence-v1`.
+    /// Versioned fixed or configurable sentence-scoring variant.
     public let identifier: String
 
     /// Creates a method from a versioned identifier, validated when used.
@@ -66,6 +66,75 @@ public struct GlifiStudioSummaryScoringMethod: Codable, Equatable, Sendable {
             )
         }
         return method
+    }
+}
+
+/// Explicit sentence-graph parameters accepted by the extractive-summary engine.
+public struct GlifiStudioSummaryGraphConfiguration: Codable, Equatable, Sendable {
+    /// Standard damping, tolerance, iteration bound and cosine threshold.
+    public static let standard = GlifiStudioSummaryGraphConfiguration()
+    /// PageRank continuation probability in `[0, 1)`.
+    public let damping: Double
+    /// Positive finite L1 stopping tolerance.
+    public let tolerance: Double
+    /// Maximum power-iteration steps, in `1...10_000`.
+    public let maximumIterations: Int
+    /// Strict threshold for binary LexRank edges, in `[0, 1]`.
+    public let similarityThreshold: Double
+
+    /// Creates declared parameters; domain checks happen before analysis.
+    public init(
+        damping: Double = 0.85, tolerance: Double = 1e-12,
+        maximumIterations: Int = 1_000, similarityThreshold: Double = 0.1
+    ) {
+        self.damping = damping
+        self.tolerance = tolerance
+        self.maximumIterations = maximumIterations
+        self.similarityThreshold = similarityThreshold
+    }
+
+    init(_ value: GlifiSummaryGraphConfiguration) {
+        self.init(
+            damping: value.damping, tolerance: value.tolerance,
+            maximumIterations: value.maximumIterations,
+            similarityThreshold: value.similarityThreshold)
+    }
+
+    var coreValue: GlifiSummaryGraphConfiguration {
+        GlifiSummaryGraphConfiguration(
+            damping: damping, tolerance: tolerance, maximumIterations: maximumIterations,
+            similarityThreshold: similarityThreshold)
+    }
+}
+
+/// Graph provenance and convergence of a TextRank or LexRank summary.
+public struct GlifiStudioSummaryGraphDiagnostics: Codable, Equatable, Sendable {
+    /// Resolved configuration, including defaults.
+    public let configuration: GlifiStudioSummaryGraphConfiguration
+    /// Versioned edge similarity.
+    public let similarityIdentifier: String
+    /// Versioned centrality implementation.
+    public let centralityIdentifier: String
+    /// Declared dangling-node policy.
+    public let danglingPolicyIdentifier: String
+    /// Eligible graph nodes, including isolated sentences.
+    public let nodeCount: Int
+    /// Undirected positive edges, without self-loops.
+    public let edgeCount: Int
+    /// Power-iteration steps performed.
+    public let iterations: Int
+    /// Whether the stopping tolerance was reached.
+    public let converged: Bool
+
+    init(_ value: GlifiSummaryGraphDiagnostics) {
+        configuration = GlifiStudioSummaryGraphConfiguration(value.configuration)
+        similarityIdentifier = value.similarityIdentifier
+        centralityIdentifier = value.centralityIdentifier
+        danglingPolicyIdentifier = value.danglingPolicyIdentifier
+        nodeCount = value.nodeCount
+        edgeCount = value.edgeCount
+        iterations = value.iterations
+        converged = value.converged
     }
 }
 
@@ -223,6 +292,8 @@ public struct GlifiStudioExtractiveSummaryResult: Codable, Equatable, Sendable {
     public let sourceRevisionIDs: [String]
     /// Every candidate sentence in source order.
     public let sentences: [GlifiStudioSummarySentence]
+    /// Configuration and convergence of configurable graph variants; absent for legacy methods.
+    public let graphDiagnostics: GlifiStudioSummaryGraphDiagnostics?
     /// Selected sentences in source order with their text.
     public let selected: [GlifiStudioSelectedSentence]
 
@@ -246,6 +317,7 @@ public struct GlifiStudioExtractiveSummaryResult: Codable, Equatable, Sendable {
         outputOrderIdentifier = value.outputOrderIdentifier
         sourceRevisionIDs = value.sourceRevisionIDs
         sentences = value.sentences.map(GlifiStudioSummarySentence.init)
+        graphDiagnostics = value.graphDiagnostics.map(GlifiStudioSummaryGraphDiagnostics.init)
         selected = resolved.map {
             GlifiStudioSelectedSentence(
                 sentence: GlifiStudioSummarySentence($0.sentence), text: $0.text)

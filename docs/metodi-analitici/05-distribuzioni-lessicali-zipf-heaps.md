@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-05 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.0.0 |
+| Versione | 1.1.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -60,6 +60,45 @@ Ogni analisi di legge empirica **DEVE** mostrare separatamente:
 6. avviso che l'adattamento non stabilisce una legge esatta o un meccanismo causale.
 
 ## Scalabilità e verifica
+
+`GlifiLexicalDistributionAnalysis` implementa le osservazioni
+`LexicalDistribution-ordered-v1` e i fitting `ZipfLogOLS-v1` e `HeapsLogOLS-v1`.
+L'input è una sequenza ordinata di documenti con identità univoca e chiavi lessicali
+già preprocessate; l'identificatore di preprocessing è obbligatorio. Il risultato
+serializzabile conserva ordine, lunghezze dei documenti, ranghi, spectrum e tutti
+i checkpoint richiesti. La parità di conteggio non implica parità della crescita
+quando cambia l'ordine dei documenti.
+
+I checkpoint sono positivi, strettamente crescenti e interni al numero di token.
+Il fitting Heaps rifiuta curve impossibili (type decrescenti, più type che token,
+o incrementi dei type superiori ai nuovi token). Il fitting Zipf richiede un
+intervallo inclusivo esplicito di ranghi. Entrambi richiedono almeno due punti;
+una stima fuori dal dominio del modello produce una failure di dati insufficienti,
+senza alterare le osservazioni. RMSE usa denominatore `n`; i residui sono
+`log(osservato) - log(previsto)`. Il risultato resta diagnostico e non contiene
+estrapolazioni o intervalli d'incertezza impliciti.
+Numericamente OLS usa logaritmi dei rapporti rispetto al primo punto e ricostruisce
+l'intercetta nella scala originale: è la stessa regressione con una traslazione
+degli assi logaritmici, senza clipping di stime al bordo `β=1`.
+
+Il profilo in memoria ammette al massimo 100.000 documenti, 1.000.000 token e
+checkpoint, e 64 MiB aggregati per identità, chiavi e identificatore di
+preprocessing. I conteggi e la crescita sono incrementali; solo il riepilogo per
+type viene ordinato alla fine. GlifiKit esegue il calcolo fuori dall'actor chiamante.
+Queste API non estendono il planner o il formato persistente. Le varianti di
+Zipf–Mandelbrot e crescita media su permutazioni richiedono ancora contratti propri.
+
+I test di GS-VER-168 confrontano OLS con `stats::lm` di R, verificano spectrum,
+tie, ordine, dominio, cancellazione e parità della facciata.
+
+La struttura ottimizzata valida ogni chiave e aggiorna conteggi e crescita nello
+stesso passaggio sui token, nell'ordine dichiarato, senza pubblicare un risultato
+prima del completamento di tutte le verifiche. Il riepilogo per type e lo spectrum
+mantengono gli ordinamenti canonici. La capacità iniziale della crescita è
+riservata entro un limite contenuto; il fitting riserva l'output noto e riutilizza
+il logaritmo invariato dell'origine. Formule OLS, ordine delle riduzioni, supporto,
+checkpoint, budget, failure e cancellazione restano invariati. GS-VER-169 raccoglie
+le misure riproducibili e il confronto dei risultati prima e dopo l'ottimizzazione.
 
 Frequenze, spectrum e crescita ai checkpoint **DEVONO** essere calcolabili in modo
 incrementale; l'ordinamento finale può operare esternamente alla memoria. Le fixture

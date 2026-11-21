@@ -53,7 +53,7 @@ public enum GlifiStatisticalFoundation {
         degreesOfFreedom: Double,
         alternative: GlifiAlternativeHypothesis
     ) throws -> Double {
-        guard statistic.isFinite, degreesOfFreedom > 0 else {
+        guard statistic.isFinite, degreesOfFreedom.isFinite, degreesOfFreedom > 0 else {
             throw statisticalFailure(
                 "statistics.invalid-distribution-parameters",
                 category: .invalidInput
@@ -82,6 +82,7 @@ public enum GlifiStatisticalFoundation {
         denominatorDegreesOfFreedom: Double
     ) throws -> Double {
         guard statistic.isFinite, statistic >= 0,
+            numeratorDegreesOfFreedom.isFinite, denominatorDegreesOfFreedom.isFinite,
             numeratorDegreesOfFreedom > 0, denominatorDegreesOfFreedom > 0
         else {
             throw statisticalFailure(

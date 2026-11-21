@@ -510,6 +510,7 @@ extension GlifiEngine {
         scheme: GlifiTermWeightingScheme = GlifiCorpusExtractiveSummaryAnalysis.standardScheme,
         method: GlifiSummaryScoringMethod = GlifiCorpusExtractiveSummaryAnalysis.standardMethod,
         redundancy: GlifiSummaryRedundancyPolicy = .none,
+        graphConfiguration: GlifiSummaryGraphConfiguration? = nil,
         corpusOptions: GlifiCorpusAnalysisOptions = .standard
     ) async throws -> GlifiProjectDerivedResult<GlifiCorpusExtractiveSummaryAnalysis> {
         try await guardedDerived {
@@ -519,6 +520,12 @@ extension GlifiEngine {
             }
             guard redundancy.isValid else {
                 throw derivedAnalysisFailure("summary.invalid-redundancy")
+            }
+            guard graphConfiguration == nil || method.supportsGraphConfiguration else {
+                throw derivedAnalysisFailure("summary.graph-configuration-without-method")
+            }
+            if method.supportsGraphConfiguration, !(graphConfiguration ?? .standard).isValid {
+                throw derivedAnalysisFailure("summary.invalid-graph-configuration")
             }
             let snapshot = await project.snapshot()
             let group = try await derivedCorpusGroup(
@@ -544,6 +551,16 @@ extension GlifiEngine {
                 parameters["redundancyLambda"] = .decimal(lambda)
                 parameters["similarity"] = .text(similarity)
             }
+            if method.supportsGraphConfiguration {
+                let graph = graphConfiguration ?? .standard
+                parameters["graphDamping"] = .decimal(graph.damping)
+                parameters["graphTolerance"] = .decimal(graph.tolerance)
+                parameters["graphMaximumIterations"] = .integer(Int64(graph.maximumIterations))
+                parameters["graphSimilarityThreshold"] = .decimal(graph.similarityThreshold)
+                parameters["graphCentrality"] = .text("PageRank-v1")
+                parameters["graphDangling"] = .text("dangling.uniform-v1")
+                parameters["graphSelfLoops"] = .text("self-loops.excluded-v1")
+            }
             let descriptor = try Self.groupDescriptor(
                 GlifiCorpusExtractiveSummaryAnalysis.self,
                 artifactType: "studio.glifi.artifact.corpus-extractive-summary",
@@ -564,7 +581,7 @@ extension GlifiEngine {
             ) {
                 try GlifiCorpusExtractiveSummaryAnalysis(
                     documents: documents, budget: budget, scheme: scheme, method: method,
-                    redundancy: redundancy)
+                    redundancy: redundancy, graphConfiguration: graphConfiguration)
             }
         }
     }

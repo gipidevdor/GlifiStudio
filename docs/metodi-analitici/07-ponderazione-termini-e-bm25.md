@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-07 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.1.0 |
+| Versione | 1.1.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-19 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -93,6 +93,34 @@ Le operazioni persistite sono `corpus-term-weighting-v1` (matrice documento × t
 `corpus-bm25-ranking-v1`, in cui la query è normalizzata con lo stesso tokenizer e la stessa
 normalizzazione del profilo corpus e ridotta ai termini unici; i termini fuori vocabolario sono
 conservati con contributo zero (GS-VER-115).
+
+## Dominio numerico e implementazione bounded
+
+`weigh` accetta conteggi interi non negativi e al massimo 1.000.000 colonne,
+prima di allocare la cache densa delle frequenze documentali. Il limite è
+superiore al vocabolario del profilo corpus standard. Le configurazioni custom
+restano soggette al budget specifico della ponderazione; il superamento produce
+`weighting.column-limit` (`insufficientResources`). Colonne positive fuori
+intervallo, conteggi negativi e overflow della somma di riga producono failure
+tipizzate, senza risultato parziale. Le celle a zero restano omesse.
+
+La visita dei conteggi condivide validazione, frequenze documentali, somma e
+massimo di riga. Le righe senza normalizzazione evitano l'ordinamento; le altre
+riducono la norma nell'ordine crescente delle colonne, conservando la sequenza
+aritmetica e i pesi di `TFIDF-v1`. Il calcolo IDF smoothed evita l'addizione
+intera che può traboccare al limite di `Int`.
+
+BM25 rifiuta lunghezze negative, somma delle lunghezze non rappresentabile e
+conteggi negativi osservati nella query. Le formule ordinarie conservano
+l'ordine delle operazioni; se numeratore o denominatore non sono finiti, il
+contributo viene riscalato con `max(f,k1)` prima della divisione. Questo conserva
+il limite finito per `k1` estremo, evitando punteggi nulli o NaN causati soltanto
+dagli intermedi. Un punteggio finale non finito produce failure tipizzata.
+Un buffer di conteggi per documento è riutilizzato a ogni colonna query per
+DF e score, mantenendo le somme nell’ordine delle colonne e memoria extra
+`O(N)`, senza cache documento × query o proporzionale al vocabolario.
+Il confronto indipendente Decimal a 400 cifre include questi casi (GS-VER-170).
+La cancellazione è osservata prima del lavoro e durante le scansioni.
 
 ## Riferimento scientifico
 

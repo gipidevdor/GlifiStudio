@@ -390,13 +390,16 @@ public enum GlifiMultivariateMethods {
             throw multivariateFailure("nmf.invalid-matrix", category: .invalidInput)
         }
         guard rank >= 1, rank <= min(matrix.count, width), (1...20).contains(restarts),
-            (1...100_000).contains(maximumIterations)
+            (1...100_000).contains(maximumIterations), tolerance.isFinite, tolerance > 0
         else {
             throw multivariateFailure("nmf.invalid-parameters", category: .invalidInput)
         }
+        try validateIterativeWork(
+            rows: matrix.count, columns: width, factors: [rank, restarts, maximumIterations])
         guard matrix.contains(where: { $0.contains { $0 > 0 } }) else {
             throw multivariateFailure("nmf.zero-matrix")
         }
+        let transposedMatrix = GlifiLinearAlgebra.transpose(matrix)
         var best: GlifiNonNegativeFactorization?
         for restart in 0..<restarts {
             try Task.checkCancellation()
@@ -409,15 +412,22 @@ public enum GlifiMultivariateMethods {
                 initialW: initialW,
                 initialH: initialH,
                 maximumIterations: maximumIterations,
-                tolerance: tolerance
+                tolerance: tolerance,
+                transposedMatrix: transposedMatrix
             )
             let (w, h, history, converged) = (run.w, run.h, run.history, run.converged)
-            let previous = objective(matrix, initialW, initialH)
+            let finalObjective: Double
+            if let last = history.last {
+                finalObjective = last
+            } else {
+                finalObjective = try objective(
+                    matrix, initialW, transposedH: GlifiLinearAlgebra.transpose(initialH))
+            }
             let candidate = GlifiNonNegativeFactorization(
                 rank: rank,
                 w: w,
                 h: h,
-                objective: history.last ?? previous,
+                objective: finalObjective,
                 objectiveHistory: history,
                 iterations: history.count,
                 converged: converged,
@@ -441,35 +451,66 @@ public enum GlifiMultivariateMethods {
         initialW: [[Double]],
         initialH: [[Double]],
         maximumIterations: Int,
-        tolerance: Double
+        tolerance: Double,
+        transposedMatrix: [[Double]]? = nil
     ) throws -> (w: [[Double]], h: [[Double]], history: [Double], converged: Bool) {
         var w = initialW
         var h = initialH
         let rank = h.count
         let width = matrix.first?.count ?? 0
+        let matrixColumns = transposedMatrix ?? GlifiLinearAlgebra.transpose(matrix)
+        // Mirrors are updated with the same binary64 value as each factor entry.
+        // All products can then read contiguous rows without changing reduction order.
+        var wt = GlifiLinearAlgebra.transpose(w)
+        var ht = GlifiLinearAlgebra.transpose(h)
+        var numeratorH = [[Double]](repeating: [Double](repeating: 0, count: width), count: rank)
+        var denominatorH = numeratorH
+        var gramW = [[Double]](repeating: [Double](repeating: 0, count: rank), count: rank)
+        var gramH = gramW
+        var transposedGramH = gramW
+        var numeratorW = [[Double]](repeating: [Double](repeating: 0, count: rank), count: w.count)
+        var denominatorW = numeratorW
         var history: [Double] = []
         var converged = false
-        var previous = objective(matrix, w, h)
-        for iteration in 0..<maximumIterations {
-            if iteration.isMultiple(of: 256) { try Task.checkCancellation() }
-            let wt = GlifiLinearAlgebra.transpose(w)
-            let numeratorH = multiply(wt, matrix)
-            let denominatorH = multiply(multiply(wt, w), h)
+        var previous = try objective(matrix, w, transposedH: ht)
+        guard previous.isFinite else {
+            throw multivariateFailure("nmf.numeric-overflow", category: .invalidInput)
+        }
+        for _ in 0..<maximumIterations {
+            try Task.checkCancellation()
+            try multiply(wt, transposedRight: matrixColumns, into: &numeratorH)
+            try multiply(wt, transposedRight: wt, into: &gramW)
+            try multiply(gramW, transposedRight: ht, into: &denominatorH)
             for factor in 0..<rank {
                 for column in 0..<width {
-                    h[factor][column] *=
-                        numeratorH[factor][column] / (denominatorH[factor][column] + 1e-12)
+                    let value =
+                        h[factor][column]
+                        * (numeratorH[factor][column] / (denominatorH[factor][column] + 1e-12))
+                    h[factor][column] = value
+                    ht[column][factor] = value
                 }
             }
-            let ht = GlifiLinearAlgebra.transpose(h)
-            let numeratorW = multiply(matrix, ht)
-            let denominatorW = multiply(w, multiply(h, ht))
+            try multiply(matrix, transposedRight: h, into: &numeratorW)
+            try multiply(h, transposedRight: h, into: &gramH)
+            for factor in 0..<rank {
+                for other in 0..<rank { transposedGramH[other][factor] = gramH[factor][other] }
+            }
+            try multiply(w, transposedRight: transposedGramH, into: &denominatorW)
             for row in w.indices {
                 for factor in 0..<rank {
-                    w[row][factor] *= numeratorW[row][factor] / (denominatorW[row][factor] + 1e-12)
+                    let value =
+                        w[row][factor]
+                        * (numeratorW[row][factor] / (denominatorW[row][factor] + 1e-12))
+                    w[row][factor] = value
+                    wt[factor][row] = value
                 }
             }
-            let current = objective(matrix, w, h)
+            let current = try objective(matrix, w, transposedH: ht)
+            guard current.isFinite, w.allSatisfy({ $0.allSatisfy(\.isFinite) }),
+                h.allSatisfy({ $0.allSatisfy(\.isFinite) })
+            else {
+                throw multivariateFailure("nmf.numeric-overflow", category: .invalidInput)
+            }
             history.append(current)
             if abs(previous - current) <= tolerance * max(previous, 1e-300) {
                 converged = true
@@ -488,74 +529,123 @@ public enum GlifiMultivariateMethods {
         _ points: [[Double]],
         linkage: GlifiLinkage
     ) throws -> GlifiHierarchicalClustering {
-        guard points.count >= 2, points.count <= 2_000, let width = points.first?.count,
+        guard points.count >= 2, points.count <= 2_000, let width = points.first?.count, width > 0,
             points.allSatisfy({ $0.count == width && $0.allSatisfy(\.isFinite) })
         else {
             throw multivariateFailure("hac.invalid-points", category: .invalidInput)
         }
+        guard points.count <= GlifiLinearAlgebra.maximumTruncatedCellCount / width else {
+            throw multivariateFailure(
+                "multivariate.resource-limit", category: .insufficientResources)
+        }
+        try Task.checkCancellation()
         let count = points.count
-        func distance(_ left: Int, _ right: Int) -> Double {
-            zip(points[left], points[right]).reduce(0) { $0 + ($1.0 - $1.1) * ($1.0 - $1.1) }
-                .squareRoot()
+        // Reuse the lower original slot for every merged cluster. Unchanged cluster
+        // pairs keep their exact computed value; there is no recurrence rounding.
+        func index(_ left: Int, _ right: Int) -> Int {
+            let lower = min(left, right)
+            let upper = max(left, right)
+            return upper * (upper - 1) / 2 + lower
         }
-        let pairwise = (0..<count).map { left in (0..<count).map { distance(left, $0) } }
-        var clusters: [(identity: Int, members: [Int], centroid: [Double])] = (0..<count).map {
-            ($0, [$0], points[$0])
+        func squared(_ left: [Double], _ right: [Double]) -> Double {
+            zip(left, right).reduce(0.0) { $0 + ($1.0 - $1.1) * ($1.0 - $1.1) }
         }
+        var distances = [Double](repeating: 0, count: count * (count - 1) / 2)
+        for right in 1..<count {
+            try Task.checkCancellation()
+            for left in 0..<right {
+                let square = squared(points[left], points[right])
+                let value = linkage == .ward ? 0.5 * square : square.squareRoot()
+                guard value.isFinite else {
+                    throw multivariateFailure("hac.numeric-overflow", category: .invalidInput)
+                }
+                distances[index(left, right)] = value
+            }
+        }
+        // Average linkage keeps the original pair distances to preserve the direct
+        // definition's reduction order exactly, rather than using a rounded recurrence.
+        // Both condensed tables together occupy the same number of cells as the old
+        // full square table. Single/complete/Ward retain just one condensed table.
+        let originalDistances = linkage == .average ? distances : []
+        var active = Array(0..<count)
+        var identities = active
+        var members = points.indices.map { [$0] }
+        var centroids = points
         var merges: [GlifiMerge] = []
-        func dissimilarity(_ left: [Int], _ right: [Int]) -> Double {
-            switch linkage {
-            case .single:
-                return left.flatMap { a in right.map { pairwise[a][$0] } }.min() ?? 0
-            case .complete:
-                return left.flatMap { a in right.map { pairwise[a][$0] } }.max() ?? 0
-            case .average:
-                return left.reduce(0) { total, a in total + right.reduce(0) { $0 + pairwise[a][$1] }
-                }
-                    / Double(left.count * right.count)
-            case .ward:
-                return 0
-            }
-        }
+        merges.reserveCapacity(count - 1)
         for step in 0..<(count - 1) {
-            if step.isMultiple(of: 64) { try Task.checkCancellation() }
-            var bestPair = (0, 1)
+            try Task.checkCancellation()
+            var bestPositions = (0, 1)
             var bestValue = Double.infinity
-            for left in 0..<clusters.count {
-                for right in (left + 1)..<clusters.count {
-                    let value: Double
-                    if linkage == .ward {
-                        let a = Double(clusters[left].members.count)
-                        let b = Double(clusters[right].members.count)
-                        let squared = zip(clusters[left].centroid, clusters[right].centroid)
-                            .reduce(0) { $0 + ($1.0 - $1.1) * ($1.0 - $1.1) }
-                        value = a * b / (a + b) * squared
-                    } else {
-                        value = dissimilarity(clusters[left].members, clusters[right].members)
-                    }
-                    if !bestValue.isFinite || value < bestValue - 1e-15 * max(1, bestValue) {
+            var bestIdentities = (Int.max, Int.max)
+            for leftPosition in active.indices {
+                if leftPosition.isMultiple(of: 64) { try Task.checkCancellation() }
+                let left = active[leftPosition]
+                for rightPosition in (leftPosition + 1)..<active.count {
+                    let right = active[rightPosition]
+                    let value = distances[index(left, right)]
+                    let pair = (
+                        min(identities[left], identities[right]),
+                        max(identities[left], identities[right])
+                    )
+                    if value < bestValue || (value == bestValue && pair < bestIdentities) {
                         bestValue = value
-                        bestPair = (left, right)
+                        bestPositions = (leftPosition, rightPosition)
+                        bestIdentities = pair
                     }
                 }
             }
-            let left = clusters[bestPair.0]
-            let right = clusters[bestPair.1]
-            let members = left.members + right.members
-            let centroid = (0..<width).map { column in
-                members.reduce(0) { $0 + points[$1][column] } / Double(members.count)
+            let kept = active[bestPositions.0]
+            let removed = active[bestPositions.1]
+            members[kept] += members[removed]
+            if linkage == .ward {
+                centroids[kept] = (0..<width).map { column in
+                    members[kept].reduce(0.0) {
+                        $0 + points[$1][column] / Double(members[kept].count)
+                    }
+                }
+            }
+            let height = linkage == .ward ? (2 * bestValue).squareRoot() : bestValue
+            guard height.isFinite, centroids[kept].allSatisfy(\.isFinite) else {
+                throw multivariateFailure("hac.numeric-overflow", category: .invalidInput)
             }
             merges.append(
-                GlifiMerge(
-                    first: min(left.identity, right.identity),
-                    second: max(left.identity, right.identity),
-                    height: linkage == .ward ? (2 * bestValue).squareRoot() : bestValue,
-                    wardIncrement: linkage == .ward ? bestValue : nil,
-                    size: members.count
-                )
-            )
-            clusters.remove(at: bestPair.1)
-            clusters[bestPair.0] = (count + step, members, centroid)
+                .init(
+                    first: bestIdentities.0, second: bestIdentities.1, height: height,
+                    wardIncrement: linkage == .ward ? bestValue : nil, size: members[kept].count))
+            identities[kept] = count + step
+            active.remove(at: bestPositions.1)
+            for other in active where other != kept {
+                let value: Double
+                switch linkage {
+                case .single:
+                    value = min(distances[index(kept, other)], distances[index(removed, other)])
+                case .complete:
+                    value = max(distances[index(kept, other)], distances[index(removed, other)])
+                case .average:
+                    let left = min(kept, other)
+                    let right = max(kept, other)
+                    value =
+                        members[left].reduce(0.0) { total, row in
+                            total
+                                + members[right].reduce(0.0) {
+                                    $0 + originalDistances[index(row, $1)]
+                                }
+                        } / Double(members[left].count * members[right].count)
+                case .ward:
+                    let a = Double(members[min(kept, other)].count)
+                    let b = Double(members[max(kept, other)].count)
+                    value =
+                        a * b / (a + b)
+                        * squared(centroids[min(kept, other)], centroids[max(kept, other)])
+                }
+                guard value.isFinite else {
+                    throw multivariateFailure("hac.numeric-overflow", category: .invalidInput)
+                }
+                distances[index(kept, other)] = value
+            }
+            members[removed] = []
+            centroids[removed] = []
         }
         return GlifiHierarchicalClustering(linkage: linkage, merges: merges)
     }
@@ -566,7 +656,8 @@ public enum GlifiMultivariateMethods {
         pointCount: Int,
         clusterCount: Int
     ) throws -> [Int] {
-        guard (1...pointCount).contains(clusterCount), tree.merges.count == pointCount - 1 else {
+        try validateTree(tree, pointCount: pointCount)
+        guard (1...pointCount).contains(clusterCount) else {
             throw multivariateFailure("hac.invalid-cut", category: .invalidInput)
         }
         var parent = Array(0..<(2 * pointCount - 1))
@@ -588,6 +679,65 @@ public enum GlifiMultivariateMethods {
         }
     }
 
+    /// Cuts `HAC-v1` at an inclusive, finite, non-negative merge height.
+    ///
+    /// Every merge at or below `maximumHeight` is retained, including tied merges.
+    /// Labels follow first appearance in input order. Malformed or non-monotone trees
+    /// are rejected before traversing their identities; the operation is linear in the tree size.
+    public static func cut(
+        _ tree: GlifiHierarchicalClustering,
+        pointCount: Int,
+        maximumHeight: Double
+    ) throws -> [Int] {
+        try validateTree(tree, pointCount: pointCount)
+        guard maximumHeight.isFinite, maximumHeight >= 0 else {
+            throw multivariateFailure("hac.invalid-cut", category: .invalidInput)
+        }
+        let mergeCount = tree.merges.prefix { $0.height <= maximumHeight }.count
+        return try cut(tree, pointCount: pointCount, clusterCount: pointCount - mergeCount)
+    }
+
+    private static func validateTree(
+        _ tree: GlifiHierarchicalClustering,
+        pointCount: Int
+    ) throws {
+        guard (1...2_000).contains(pointCount), tree.merges.count == pointCount - 1 else {
+            throw multivariateFailure("hac.invalid-cut", category: .invalidInput)
+        }
+        var sizes = [Int](repeating: 1, count: 2 * pointCount - 1)
+        var active = [Bool](repeating: false, count: sizes.count)
+        for point in 0..<pointCount { active[point] = true }
+        var previousHeight = 0.0
+        for (step, merge) in tree.merges.enumerated() {
+            let identity = pointCount + step
+            guard (0..<identity).contains(merge.first), (0..<identity).contains(merge.second),
+                merge.first != merge.second, active[merge.first], active[merge.second],
+                merge.size == sizes[merge.first] + sizes[merge.second],
+                merge.height.isFinite, merge.height >= previousHeight
+            else {
+                throw multivariateFailure("hac.invalid-tree", category: .invalidInput)
+            }
+            switch tree.linkage {
+            case .ward:
+                guard let increment = merge.wardIncrement, increment.isFinite, increment >= 0,
+                    (2 * increment).isFinite,
+                    abs(merge.height - (2 * increment).squareRoot()) <= 1e-12 * max(1, merge.height)
+                else {
+                    throw multivariateFailure("hac.invalid-tree", category: .invalidInput)
+                }
+            case .single, .complete, .average:
+                guard merge.wardIncrement == nil else {
+                    throw multivariateFailure("hac.invalid-tree", category: .invalidInput)
+                }
+            }
+            sizes[identity] = merge.size
+            active[merge.first] = false
+            active[merge.second] = false
+            active[identity] = true
+            previousHeight = merge.height
+        }
+    }
+
     /// Computes `KMeans-Lloyd-v1` with `k-means++-v1` initialization and seeded restarts.
     public static func kMeans(
         _ points: [[Double]],
@@ -601,19 +751,26 @@ public enum GlifiMultivariateMethods {
         else {
             throw multivariateFailure("kmeans.invalid-points", category: .invalidInput)
         }
-        guard (1...points.count).contains(clusterCount), (1...50).contains(restarts) else {
+        guard (1...points.count).contains(clusterCount), (1...50).contains(restarts),
+            (1...100_000).contains(maximumIterations)
+        else {
             throw multivariateFailure("kmeans.invalid-parameters", category: .invalidInput)
         }
+        try validateIterativeWork(
+            rows: points.count, columns: width,
+            factors: [clusterCount, restarts, maximumIterations])
         var best: GlifiKMeansResult?
         for restart in 0..<restarts {
             try Task.checkCancellation()
             var generator = GlifiSplitMix64(seed: seed &+ UInt64(restart))
             var centers = [points[generator.index(below: points.count)]]
+            var nearestDistances = points.map { squaredDistance($0, centers[0]) }
             while centers.count < clusterCount {
-                let weights = points.map { point in
-                    centers.map { squaredDistance(point, $0) }.min() ?? 0
-                }
+                let weights = nearestDistances
                 let total = weights.reduce(0, +)
+                guard total.isFinite else {
+                    throw multivariateFailure("kmeans.numeric-overflow", category: .invalidInput)
+                }
                 guard total > 0 else {
                     throw multivariateFailure("kmeans.insufficient-distinct-points")
                 }
@@ -629,6 +786,13 @@ public enum GlifiMultivariateMethods {
                     }
                 }
                 centers.append(points[chosen])
+                if centers.count < clusterCount {
+                    for point in points.indices {
+                        if point.isMultiple(of: 1_024) { try Task.checkCancellation() }
+                        nearestDistances[point] = min(
+                            nearestDistances[point], squaredDistance(points[point], points[chosen]))
+                    }
+                }
             }
             let candidate = try lloyd(
                 points, initialCenters: centers, maximumIterations: maximumIterations)
@@ -657,18 +821,32 @@ public enum GlifiMultivariateMethods {
     ) throws -> (
         assignments: [Int], centers: [[Double]], objective: Double, iterations: Int, converged: Bool
     ) {
+        guard let width = points.first?.count, width > 0, !initialCenters.isEmpty,
+            maximumIterations > 0,
+            (points + initialCenters).allSatisfy({
+                $0.count == width && $0.allSatisfy(\.isFinite)
+            })
+        else {
+            throw multivariateFailure("kmeans.invalid-parameters", category: .invalidInput)
+        }
         var centers = initialCenters
         var assignments = [Int](repeating: -1, count: points.count)
         var iterations = 0
         var converged = false
         while iterations < maximumIterations {
+            try Task.checkCancellation()
             iterations += 1
             let next = points.map { point in
-                centers.indices.min {
-                    let left = squaredDistance(point, centers[$0])
-                    let right = squaredDistance(point, centers[$1])
-                    return left == right ? $0 < $1 : left < right
-                } ?? 0
+                var closest = 0
+                var bestDistance = squaredDistance(point, centers[0])
+                for center in centers.indices.dropFirst() {
+                    let distance = squaredDistance(point, centers[center])
+                    if distance < bestDistance {
+                        bestDistance = distance
+                        closest = center
+                    }
+                }
+                return closest
             }
             // Come R (kmeans, Lloyd), il passo finale senza cambiamenti è contato.
             if next == assignments {
@@ -676,47 +854,85 @@ public enum GlifiMultivariateMethods {
                 break
             }
             assignments = next
+            var clusterMembers = [[Int]](repeating: [], count: centers.count)
+            for point in points.indices { clusterMembers[assignments[point]].append(point) }
             for cluster in centers.indices {
-                let members = points.indices.filter { assignments[$0] == cluster }
+                let members = clusterMembers[cluster]
                 guard !members.isEmpty else {
                     throw multivariateFailure("kmeans.empty-cluster")
                 }
                 centers[cluster] = centers[cluster].indices.map { column in
-                    members.reduce(0) { $0 + points[$1][column] } / Double(members.count)
+                    members.reduce(0) { $0 + points[$1][column] / Double(members.count) }
                 }
             }
         }
         let objective = points.indices.reduce(0) {
             $0 + squaredDistance(points[$1], centers[assignments[$1]])
         }
-        return (assignments, centers, objective, iterations, converged)
+        guard objective.isFinite, centers.allSatisfy({ $0.allSatisfy(\.isFinite) }) else {
+            throw multivariateFailure("kmeans.numeric-overflow", category: .invalidInput)
+        }
+        var labels: [Int: Int] = [:]
+        var canonicalCenters: [[Double]] = []
+        let canonicalAssignments = assignments.map { cluster in
+            if let label = labels[cluster] { return label }
+            let label = labels.count
+            labels[cluster] = label
+            canonicalCenters.append(centers[cluster])
+            return label
+        }
+        return (canonicalAssignments, canonicalCenters, objective, iterations, converged)
+    }
+
+    private static func validateIterativeWork(
+        rows: Int, columns: Int, factors: [Int]
+    ) throws {
+        let limits = GlifiExploratoryLimits.standard
+        guard rows <= limits.maximumCells / columns else {
+            throw multivariateFailure(
+                "multivariate.resource-limit", category: .insufficientResources)
+        }
+        try requireWork([rows, columns] + factors, limits)
     }
 
     private static func squaredDistance(_ left: [Double], _ right: [Double]) -> Double {
         zip(left, right).reduce(0) { $0 + ($1.0 - $1.1) * ($1.0 - $1.1) }
     }
 
-    private static func multiply(_ left: [[Double]], _ right: [[Double]]) -> [[Double]] {
-        let inner = right.count
-        let width = right.first?.count ?? 0
-        return left.map { row in
-            (0..<width).map { column in
+    private static func multiply(
+        _ left: [[Double]], transposedRight: [[Double]], into result: inout [[Double]]
+    ) throws {
+        for row in left.indices {
+            if row.isMultiple(of: 64) { try Task.checkCancellation() }
+            let leftRow = left[row]
+            for column in transposedRight.indices {
+                let rightColumn = transposedRight[column]
                 var total = 0.0
-                for index in 0..<inner { total += row[index] * right[index][column] }
-                return total
+                for index in leftRow.indices { total += leftRow[index] * rightColumn[index] }
+                result[row][column] = total
             }
         }
     }
 
-    private static func objective(_ matrix: [[Double]], _ w: [[Double]], _ h: [[Double]]) -> Double
-    {
-        let product = multiply(w, h)
-        return matrix.indices.reduce(0) { total, row in
-            total
-                + matrix[row].indices.reduce(0) {
-                    $0 + (matrix[row][$1] - product[row][$1]) * (matrix[row][$1] - product[row][$1])
-                }
+    private static func objective(
+        _ matrix: [[Double]], _ w: [[Double]], transposedH: [[Double]]
+    ) throws -> Double {
+        var total = 0.0
+        for row in matrix.indices {
+            if row.isMultiple(of: 64) { try Task.checkCancellation() }
+            let observed = matrix[row]
+            let factors = w[row]
+            var rowTotal = 0.0
+            for column in observed.indices {
+                let rightColumn = transposedH[column]
+                var product = 0.0
+                for factor in factors.indices { product += factors[factor] * rightColumn[factor] }
+                let residual = observed[column] - product
+                rowTotal += residual * residual
+            }
+            total += rowTotal
         }
+        return total
     }
 }
 

@@ -782,6 +782,7 @@ public actor GlifiStudioProjectSession {
         scheme: GlifiStudioTermWeightingScheme = .summaryStandard,
         method: GlifiStudioSummaryScoringMethod = .standard,
         redundancy: GlifiStudioSummaryRedundancy = .standard,
+        graphConfiguration: GlifiStudioSummaryGraphConfiguration? = nil,
         corpusOptions: GlifiStudioCorpusAnalysisOptions = .standard
     ) async throws -> GlifiStudioExtractiveSummaryResult {
         try await derivedOperation {
@@ -793,6 +794,7 @@ public actor GlifiStudioProjectSession {
                 scheme: try scheme.coreValue(),
                 method: try method.coreValue(),
                 redundancy: try redundancy.coreValue(),
+                graphConfiguration: graphConfiguration?.coreValue,
                 corpusOptions: corpusOptions.coreValue
             )
             let resolved = try await engine.resolveSummarySentences(

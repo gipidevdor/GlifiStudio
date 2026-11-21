@@ -264,3 +264,102 @@ func corpusMultivariateReproducesRMatrix() throws {
             corpus, method: .correspondence, maximumTermCount: 1)
     }
 }
+
+@Test("Il taglio HAC a soglia include tutte le fusioni a pari altezza")
+func hierarchicalHeightCutKeepsTies() throws {
+    let tree = try GlifiMultivariateMethods.hierarchicalClustering(
+        [[0], [1], [3], [4]], linkage: .single)
+    #expect(
+        try GlifiMultivariateMethods.cut(tree, pointCount: 4, maximumHeight: 0) == [0, 1, 2, 3])
+    #expect(
+        try GlifiMultivariateMethods.cut(tree, pointCount: 4, maximumHeight: 1) == [0, 0, 1, 1])
+    #expect(
+        try GlifiMultivariateMethods.cut(tree, pointCount: 4, maximumHeight: 2) == [0, 0, 0, 0])
+    for height in [-1.0, .nan, .infinity] {
+        #expect(throws: GlifiFailure.self) {
+            try GlifiMultivariateMethods.cut(tree, pointCount: 4, maximumHeight: height)
+        }
+    }
+}
+
+@Test("Le parità HAC seguono le identità canoniche anche dopo una fusione")
+func hierarchicalTiesUseCanonicalClusterIdentities() throws {
+    let tree = try GlifiMultivariateMethods.hierarchicalClustering(
+        [[0], [1], [2], [3]], linkage: .single)
+    #expect(tree.merges.map { [$0.first, $0.second] } == [[0, 1], [2, 3], [4, 5]])
+    #expect(tree.merges.map(\.height) == [1, 1, 1])
+}
+
+@Test("Il taglio HAC rifiuta alberi corrotti prima di attraversarne le identità")
+func hierarchicalCutValidatesTheEntireTree() throws {
+    let malformed: [[GlifiMerge]] = [
+        [.init(first: -1, second: 1, height: 1, wardIncrement: nil, size: 2)],
+        [.init(first: 0, second: 2, height: 1, wardIncrement: nil, size: 2)],
+        [.init(first: 0, second: 0, height: 1, wardIncrement: nil, size: 2)],
+        [.init(first: 0, second: 1, height: 1, wardIncrement: nil, size: 3)],
+        [.init(first: 0, second: 1, height: .nan, wardIncrement: nil, size: 2)],
+    ]
+    for merges in malformed {
+        let tree = GlifiHierarchicalClustering(linkage: .single, merges: merges)
+        #expect(throws: GlifiFailure.self) {
+            try GlifiMultivariateMethods.cut(tree, pointCount: 2, clusterCount: 2)
+        }
+    }
+    let reused = GlifiHierarchicalClustering(
+        linkage: .single,
+        merges: [
+            .init(first: 0, second: 1, height: 1, wardIncrement: nil, size: 2),
+            .init(first: 0, second: 2, height: 2, wardIncrement: nil, size: 2),
+        ])
+    #expect(throws: GlifiFailure.self) {
+        try GlifiMultivariateMethods.cut(reused, pointCount: 3, clusterCount: 1)
+    }
+    for pointCount in [0, -1, Int.max] {
+        #expect(throws: GlifiFailure.self) {
+            try GlifiMultivariateMethods.cut(reused, pointCount: pointCount, clusterCount: 1)
+        }
+    }
+    let inconsistentWard = GlifiHierarchicalClustering(
+        linkage: .ward,
+        merges: [.init(first: 0, second: 1, height: 1, wardIncrement: 4, size: 2)])
+    #expect(throws: GlifiFailure.self) {
+        try GlifiMultivariateMethods.cut(inconsistentWard, pointCount: 2, clusterCount: 1)
+    }
+}
+
+@Test("Lloyd rinumera centri e assegnazioni per prima apparizione e rifiuta limiti non validi")
+func lloydCanonicalizesAndValidatesLimits() throws {
+    let result = try GlifiMultivariateMethods.lloyd(
+        [[0], [1], [10]], initialCenters: [[10], [0]], maximumIterations: 10)
+    #expect(result.assignments == [0, 0, 1])
+    #expect(result.centers == [[0.5], [10]])
+    #expect(abs(result.objective - 0.5) < 1e-15)
+    for maximumIterations in [0, -1, Int.max] {
+        #expect(throws: GlifiFailure.self) {
+            try GlifiMultivariateMethods.kMeans(
+                [[0], [1]], clusterCount: 1, seed: 0, maximumIterations: maximumIterations)
+        }
+    }
+}
+
+@Test("NMF, HAC e KMeans rifiutano overflow e parametri di arresto non finiti")
+func multivariateMethodsRejectUnrepresentableResults() throws {
+    for tolerance in [0.0, -1, .nan, .infinity] {
+        #expect(throws: GlifiFailure.self) {
+            try GlifiMultivariateMethods.nonNegativeFactorization(
+                [[1]], rank: 1, seed: 0, tolerance: tolerance)
+        }
+    }
+    #expect(throws: GlifiFailure.self) {
+        try GlifiMultivariateMethods.nonNegativeFactorization([[1e308]], rank: 1, seed: 0)
+    }
+    #expect(throws: GlifiFailure.self) {
+        try GlifiMultivariateMethods.kMeans([[-1e308], [1e308]], clusterCount: 2, seed: 0)
+    }
+    for linkage in [GlifiLinkage.single, .complete, .average, .ward] {
+        #expect(throws: GlifiFailure.self) {
+            try GlifiMultivariateMethods.hierarchicalClustering(
+                [[-1e308], [1e308]], linkage: linkage)
+        }
+    }
+}

@@ -108,6 +108,84 @@ func pageRankConservesTotalMass() throws {
     #expect(result.scores.values.allSatisfy { $0 >= 0 })
 }
 
+@Test("PageRank mantiene la massa anche con pesi finiti estremi e tolleranze validate")
+func pageRankHandlesExtremeWeightsAndInvalidTolerance() throws {
+    let ordinary = try GlifiDirectedGraph(
+        nodes: [0, 1, 2],
+        edges: [GlifiGraphEdge(source: 0, target: 1), GlifiGraphEdge(source: 0, target: 2)])
+    let expected = try GlifiNetworkAnalysis.pageRank(ordinary)
+    for scale in [Double.greatestFiniteMagnitude, Double.leastNonzeroMagnitude] {
+        let graph = try GlifiDirectedGraph(
+            nodes: [0, 1, 2],
+            edges: [
+                GlifiGraphEdge(source: 0, target: 1, weight: scale),
+                GlifiGraphEdge(source: 0, target: 2, weight: scale),
+            ])
+        let result = try GlifiNetworkAnalysis.pageRank(graph)
+        #expect(result.scores == expected.scores)
+        #expect(abs(result.scores.values.reduce(0, +) - 1) < 1e-12)
+    }
+    for tolerance in [0, -1, Double.nan, Double.infinity] {
+        #expect(throws: GlifiFailure.self) {
+            try GlifiNetworkAnalysis.pageRank(ordinary, tolerance: tolerance)
+        }
+    }
+}
+
+@Test(
+    "PageRank conserva ordine dei nodi, multiarchi, self-loop e dangling nella rappresentazione sparsa"
+)
+func pageRankSparseRowsPreserveGraphSemantics() throws {
+    let graph = try GlifiDirectedGraph(
+        nodes: ["z", "m", "a", "d"],
+        edges: [
+            GlifiGraphEdge(source: "z", target: "a", weight: 2),
+            GlifiGraphEdge(source: "m", target: "z", weight: 1),
+            GlifiGraphEdge(source: "z", target: "a", weight: 3),
+            GlifiGraphEdge(source: "a", target: "a", weight: 4),
+            GlifiGraphEdge(source: "d", target: "m", weight: 0),
+            GlifiGraphEdge(source: "m", target: "a", weight: 2),
+            GlifiGraphEdge(source: "z", target: "z", weight: 1),
+        ])
+    let result = try GlifiNetworkAnalysis.pageRank(graph, tolerance: 1e-14)
+    // With d=17/20 the dangling node obeys π_d=(1-d)/4+d*π_d/4=1/21.
+    // π_m=π_d; π_z=π_d+d*(π_m/3+π_z/6)=154/2163; the remainder is π_a.
+    #expect(abs((result.scores["d"] ?? 0) - 1.0 / 21) < 1e-13)
+    #expect(abs((result.scores["m"] ?? 0) - 1.0 / 21) < 1e-13)
+    #expect(abs((result.scores["z"] ?? 0) - 154.0 / 2163) < 1e-13)
+    #expect(abs((result.scores["a"] ?? 0) - 601.0 / 721) < 1e-13)
+    #expect(result.converged)
+    let teleportOnly = try GlifiNetworkAnalysis.pageRank(graph, damping: 0)
+    #expect(teleportOnly.iterations == 1)
+    #expect(graph.nodes.allSatisfy { teleportOnly.scores[$0] == 0.25 })
+}
+
+private struct CollidingGraphNode: Hashable, Sendable {
+    let value: Int
+
+    func hash(into hasher: inout Hasher) { hasher.combine(0) }
+}
+
+@Test("PageRank risolve identità con hash in collisione e rispetta cancellazione")
+func pageRankSparseRowsHandleHashCollisionsAndCancellation() async throws {
+    let nodes = [2, 0, 1].map(CollidingGraphNode.init(value:))
+    let graph = try GlifiDirectedGraph(
+        nodes: nodes,
+        edges: [
+            GlifiGraphEdge(source: nodes[0], target: nodes[1]),
+            GlifiGraphEdge(source: nodes[1], target: nodes[2]),
+            GlifiGraphEdge(source: nodes[2], target: nodes[0]),
+        ])
+    let result = try GlifiNetworkAnalysis.pageRank(graph)
+    let expected = 1.0 / 3.0
+    #expect(nodes.allSatisfy { abs((result.scores[$0] ?? 0) - expected) < 1e-15 })
+    let cancelled = Task {
+        withUnsafeCurrentTask { $0?.cancel() }
+        return try GlifiNetworkAnalysis.pageRank(graph)
+    }
+    await #expect(throws: CancellationError.self) { try await cancelled.value }
+}
+
 @Test("Il grafo e PageRank rifiutano forme, riferimenti e parametri non validi")
 func networkRejectsInvalidInputs() throws {
     do {

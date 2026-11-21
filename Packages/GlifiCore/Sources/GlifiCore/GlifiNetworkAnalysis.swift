@@ -143,53 +143,83 @@ public enum GlifiNetworkAnalysis {
         guard maximumIterations > 0 else {
             throw networkFailure("network.invalid-iteration-bound", category: .invalidInput)
         }
-
-        let nodeCount = Double(graph.nodes.count)
-        let teleport = 1 / nodeCount
-        var outWeight: [Node: Double] = Dictionary(
-            uniqueKeysWithValues: graph.nodes.map { ($0, 0.0) }
-        )
-        var adjacency: [Node: [(target: Node, weight: Double)]] = Dictionary(
-            uniqueKeysWithValues: graph.nodes.map { ($0, []) }
-        )
-        for edge in graph.edges {
-            outWeight[edge.source, default: 0] += edge.weight
-            adjacency[edge.source, default: []].append((edge.target, edge.weight))
+        guard tolerance.isFinite, tolerance > 0 else {
+            throw networkFailure("network.invalid-tolerance", category: .invalidInput)
         }
 
-        var scores = Dictionary(uniqueKeysWithValues: graph.nodes.map { ($0, teleport) })
+        let count = graph.nodes.count
+        let teleport = 1 / Double(count)
+        // Resolve generic identities once; power iteration uses contiguous CSR rows.
+        // Row and edge orders are unchanged, including parallel edges and zero weights.
+        let nodeIndex = Dictionary(
+            uniqueKeysWithValues: graph.nodes.enumerated().map { ($0.element, $0.offset) })
+        var rowCounts = [Int](repeating: 0, count: count)
+        var rowScale = [Double](repeating: 0, count: count)
+        // Row scaling cancels in transition probabilities and prevents the sum of finite
+        // outgoing weights from overflowing (or a subnormal row from losing its mass).
+        for (position, edge) in graph.edges.enumerated() {
+            if position.isMultiple(of: 4_096) { try Task.checkCancellation() }
+            guard let source = nodeIndex[edge.source] else {
+                throw networkFailure("network.unknown-edge-endpoint")
+            }
+            rowCounts[source] += 1
+            rowScale[source] = max(rowScale[source], edge.weight)
+        }
+        var rowOffsets = [Int](repeating: 0, count: count + 1)
+        for node in 0..<count { rowOffsets[node + 1] = rowOffsets[node] + rowCounts[node] }
+        var cursor = Array(rowOffsets.dropLast())
+        var targets = [Int](repeating: 0, count: graph.edges.count)
+        var weights = [Double](repeating: 0, count: graph.edges.count)
+        var outWeight = [Double](repeating: 0, count: count)
+        for (position, edge) in graph.edges.enumerated() {
+            if position.isMultiple(of: 4_096) { try Task.checkCancellation() }
+            guard let source = nodeIndex[edge.source], let target = nodeIndex[edge.target] else {
+                throw networkFailure("network.unknown-edge-endpoint")
+            }
+            let scale = rowScale[source]
+            let weight = scale > 0 ? edge.weight / scale : 0
+            outWeight[source] += weight
+            targets[cursor[source]] = target
+            weights[cursor[source]] = weight
+            cursor[source] += 1
+        }
+
+        var scores = [Double](repeating: teleport, count: count)
+        var next = [Double](repeating: 0, count: count)
         var converged = false
         var iterationsUsed = 0
         for iteration in 1...maximumIterations {
+            try Task.checkCancellation()
             iterationsUsed = iteration
-            var next = Dictionary(
-                uniqueKeysWithValues: graph.nodes.map { ($0, (1 - damping) * teleport) }
-            )
+            for node in 0..<count { next[node] = (1 - damping) * teleport }
             var danglingMass = 0.0
-            for node in graph.nodes {
-                let total = outWeight[node] ?? 0
-                let score = scores[node] ?? 0
+            for node in 0..<count {
+                let total = outWeight[node]
+                let score = scores[node]
                 guard total > 0 else {
                     danglingMass += score
                     continue
                 }
                 let contribution = score / total
-                for edge in adjacency[node] ?? [] {
-                    next[edge.target, default: 0] += damping * edge.weight * contribution
+                for edge in rowOffsets[node]..<rowOffsets[node + 1] {
+                    next[targets[edge]] += damping * weights[edge] * contribution
                 }
             }
             let danglingContribution = damping * danglingMass * teleport
-            for node in graph.nodes {
-                next[node, default: 0] += danglingContribution
+            for node in 0..<count {
+                next[node] += danglingContribution
             }
-            let delta = graph.nodes.reduce(0.0) { $0 + abs((next[$1] ?? 0) - (scores[$1] ?? 0)) }
-            scores = next
+            let delta = (0..<count).reduce(0.0) { $0 + abs(next[$1] - scores[$1]) }
+            swap(&scores, &next)
             if delta < tolerance {
                 converged = true
                 break
             }
         }
-        return GlifiPageRankResult(scores: scores, iterations: iterationsUsed, converged: converged)
+        let identifiedScores = Dictionary(
+            uniqueKeysWithValues: graph.nodes.enumerated().map { ($0.element, scores[$0.offset]) })
+        return GlifiPageRankResult(
+            scores: identifiedScores, iterations: iterationsUsed, converged: converged)
     }
 
     /// Computes `Betweenness-v1` over unweighted, directed hop-distance

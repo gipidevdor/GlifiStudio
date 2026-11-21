@@ -48,12 +48,28 @@ public enum GlifiSummaryScoringMethod: String, CaseIterable, Codable, Sendable {
     /// Stationary probability of the token-overlap graph of Mihalcea and Tarau over the
     /// sentences with lexical tokens.
     case textRank = "TextRankSentence-v1"
+    /// Configurable overlap graph and uniform-teleport PageRank, with convergence diagnostics.
+    case textRankConfigurable = "TextRankSentence-configurable-v1"
+    /// Configurable cosine graph without self-loops, followed by uniform-teleport PageRank.
+    case lexRankContinuous = "LexRankSentence-continuous-v1"
+    /// Configurable binary graph above a strict cosine threshold, without self-loops.
+    case lexRankThreshold = "LexRankSentence-threshold-v1"
+
+    /// Whether the method accepts explicit graph parameters rather than fixed legacy settings.
+    public var supportsGraphConfiguration: Bool {
+        switch self {
+        case .sentenceTFIDFMean, .centroidCosine, .lexRank, .textRank: false
+        case .textRankConfigurable, .lexRankContinuous, .lexRankThreshold: true
+        }
+    }
 
     /// Eligibility policy: which scored sentences may enter the summary.
     public var eligibilityPolicy: String {
         switch self {
-        case .sentenceTFIDFMean, .textRank: "eligibility.lexical-tokens-required-v1"
-        case .centroidCosine, .lexRank: "eligibility.non-null-vector-v1"
+        case .sentenceTFIDFMean, .textRank, .textRankConfigurable:
+            "eligibility.lexical-tokens-required-v1"
+        case .centroidCosine, .lexRank, .lexRankContinuous, .lexRankThreshold:
+            "eligibility.non-null-vector-v1"
         }
     }
 }
@@ -254,6 +270,8 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
     public let sourceRevisionIDs: [String]
     /// Every candidate sentence in source order, scored and ranked.
     public let sentences: [GlifiSummarySentence]
+    /// Configuration and convergence of configurable graph variants; absent for legacy methods.
+    public let graphDiagnostics: GlifiSummaryGraphDiagnostics?
 
     /// Selected sentences in source order.
     public var selectedSentences: [GlifiSummarySentence] {
@@ -271,7 +289,8 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
         budget: GlifiSummaryBudget,
         scheme: GlifiTermWeightingScheme,
         method: GlifiSummaryScoringMethod = standardMethod,
-        redundancy: GlifiSummaryRedundancyPolicy = .none
+        redundancy: GlifiSummaryRedundancyPolicy = .none,
+        graphConfiguration: GlifiSummaryGraphConfiguration? = nil
     ) throws {
         guard !documents.isEmpty else {
             throw derivedAnalysisFailure(
@@ -282,6 +301,19 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
         }
         guard redundancy.isValid else {
             throw derivedAnalysisFailure("summary.invalid-redundancy")
+        }
+        guard graphConfiguration == nil || method.supportsGraphConfiguration else {
+            throw derivedAnalysisFailure("summary.graph-configuration-without-method")
+        }
+        if method.supportsGraphConfiguration {
+            guard (graphConfiguration ?? .standard).isValid else {
+                throw derivedAnalysisFailure("summary.invalid-graph-configuration")
+            }
+            let sentenceCount = documents.reduce(0) { $0 + $1.sentences.count }
+            guard sentenceCount <= GlifiSummaryGraphConfiguration.maximumSentenceCount else {
+                throw derivedAnalysisFailure(
+                    "summary.graph-sentence-limit", category: .insufficientResources)
+            }
         }
         let ordered = documents.sorted {
             $0.sourceRevisionID.canonicalValue < $1.sourceRevisionID.canonicalValue
@@ -327,21 +359,31 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
             let entries: [(column: Int, value: Double)]
             let norm: Double
         }
+        let needsVectors: Bool
+        switch method {
+        case .centroidCosine, .lexRank, .textRank, .lexRankContinuous, .lexRankThreshold:
+            needsVectors = true
+        case .sentenceTFIDFMean, .textRankConfigurable:
+            needsVectors = redundancy.lambda.map { $0 < 1 } ?? false
+        }
         var vectors: [Vector] = []
-        for (documentIndex, document) in ordered.enumerated() {
-            for sentence in document.sentences {
-                var counts: [Int: Int] = [:]
-                for term in sentence.terms {
-                    guard let column = columnIndex[term] else { continue }
-                    counts[column, default: 0] += 1
+        if needsVectors {
+            for (documentIndex, document) in ordered.enumerated() {
+                for sentence in document.sentences {
+                    var counts: [Int: Int] = [:]
+                    for term in sentence.terms {
+                        guard let column = columnIndex[term] else { continue }
+                        counts[column, default: 0] += 1
+                    }
+                    let entries: [(column: Int, value: Double)] = counts.keys.sorted().compactMap {
+                        column in
+                        let value =
+                            Double(counts[column] ?? 0) * (weights[documentIndex][column] ?? 0)
+                        return value == 0 ? nil : (column: column, value: value)
+                    }
+                    let norm = entries.reduce(0.0) { $0 + $1.value * $1.value }.squareRoot()
+                    vectors.append(Vector(entries: entries, norm: norm))
                 }
-                let entries: [(column: Int, value: Double)] = counts.keys.sorted().compactMap {
-                    column in
-                    let value = Double(counts[column] ?? 0) * (weights[documentIndex][column] ?? 0)
-                    return value == 0 ? nil : (column: column, value: value)
-                }
-                let norm = entries.reduce(0.0) { $0 + $1.value * $1.value }.squareRoot()
-                vectors.append(Vector(entries: entries, norm: norm))
             }
         }
         func cosine(_ lhs: Vector, _ rhs: Vector) -> Double {
@@ -366,6 +408,7 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
         }
 
         var scored: [Scored] = []
+        var graphDiagnostics: GlifiSummaryGraphDiagnostics?
         switch method {
         case .sentenceTFIDFMean:
             for (documentIndex, document) in ordered.enumerated() {
@@ -527,6 +570,25 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
                     )
                 }
             }
+        case .textRankConfigurable, .lexRankContinuous, .lexRankThreshold:
+            let graph = try summaryGraphScores(
+                terms: ordered.flatMap { $0.sentences.map(\.terms) },
+                nonNullVectors: vectors.map { $0.norm > 0 }, method: method,
+                configuration: graphConfiguration ?? .standard,
+                cosine: { cosine(vectors[$0], vectors[$1]) })
+            graphDiagnostics = graph.diagnostics
+            var position = 0
+            for (documentIndex, document) in ordered.enumerated() {
+                for (sentenceIndex, sentence) in document.sentences.enumerated() {
+                    scored.append(
+                        Scored(
+                            document: documentIndex, sentenceIndex: sentenceIndex,
+                            range: sentence.range, tokenCount: sentence.terms.count,
+                            characterCount: sentence.characterCount,
+                            isEligible: graph.eligibility[position], score: graph.scores[position]))
+                    position += 1
+                }
+            }
         }
         let rankedOrder = scored.indices.sorted { lhs, rhs in
             let left = scored[lhs]
@@ -612,6 +674,7 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
         outputOrderIdentifier = "output-order.source-v1"
         typeMappingIdentifier = "it-token-v1-nfc-lowercase-v1"
         sourceRevisionIDs = ordered.map(\.sourceRevisionID.canonicalValue)
+        self.graphDiagnostics = graphDiagnostics
         sentences = scored.indices.map { index in
             let candidate = scored[index]
             return GlifiSummarySentence(

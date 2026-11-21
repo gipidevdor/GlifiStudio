@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-13 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.0.0 |
+| Versione | 1.1.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -65,6 +65,50 @@ distanza. Hellinger e JSdist sono metriche nelle condizioni dichiarate. Smoothin
 rinormalizzazione sono trasformazioni separate, mai implicite.
 
 ## Proprietà e verifica
+
+### Estremi numerici del backend Double
+
+I vettori reali devono avere componenti finite. Il coseno scala separatamente
+ogni vettore per il proprio massimo valore assoluto prima delle riduzioni;
+questa trasformazione algebrica preserva il coseno e impedisce overflow di
+prodotti e norme. La distanza euclidea accumula la norma con `hypot`, senza
+quadrare direttamente componenti grandi o subnormali. Se il valore finale
+di Euclidean o Manhattan supera il dominio finito di Double, l'operazione
+fallisce con `similarity.numeric-overflow`, senza restituire infinito.
+
+Le varianti non negative `WeightedJaccard-v1` e `MultisetDice-v1` usano una
+scala comune per le somme; `Lidstone-v1` scala conteggi e prior prima della
+normalizzazione, sommando prima il numeratore quando la somma è finita per
+preservare contributi subnormali rappresentabili. Hellinger accumula con `hypot`
+le differenze delle radici, evitando l'underflow dei loro quadrati.
+L'input nullo resta soggetto alle precondizioni dichiarate:
+il riscalamento non introduce smoothing nelle similarità.
+
+KL calcola `log2(p_i) - log2(q_i)` evitando il rapporto che può superare
+Double anche quando il logaritmo è finito. JS usa la forma simmetrica positiva,
+con `s=p_i+q_i` e `d=|p_i-q_i|/s`:
+
+```text
+g(d) = [(1+d)ln(1+d) + (1-d)ln(1-d)] / (4 ln 2)
+contributo JSdiv = s × g(d)
+g(d) = Σ_(k≥1) d^(2k) / [4 ln 2 × k(2k−1)]
+```
+
+Per `d≤1/8` la serie positiva conserva il segnale quadratico vicino
+all'identità; altrove il calcolo usa `log1p`, con limite `g(1)=1/2` esplicito.
+La norma dei contributi `sqrt(s) × sqrt(g(d))` è accumulata tramite `hypot`.
+JSdist non passa per una divergenza già arrotondata: una distanza rappresentabile
+resta disponibile anche quando il suo quadrato è subnormale o arrotondato a zero.
+JSdiv è il quadrato della stessa norma. Non si materializza una miscela
+subnormale arrotondata a zero. Dopo validazione, il clamp del coseno a `[-1,1]`
+e quello della norma JS al massimo `1` preservano i limiti teorici contro
+l'arrotondamento. L'oracolo eseguibile `Python/similarity.py` usa `Decimal` con
+120 cifre sulla formula log-ratio originale, senza condividere trasformazione,
+serie o accumulazione del backend. I test verificano l'errore relativo anche
+per perturbazioni da `1e-6` a `1e-10`. Identità, disgiunzione, massa di
+probabilità e omogeneità delle similarità sono verificate anche con
+`Double.greatestFiniteMagnitude` e `Double.leastNonzeroMagnitude`
+(GS-VER-168).
 
 Ogni implementazione dichiara range, simmetria e proprietà metriche. Le fixture
 coprono identità, disgiunzione, zeri, dimensioni non allineate e probabilità non

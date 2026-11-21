@@ -59,10 +59,45 @@ func summaryPresentationDecodesLegacySelectionOrder() throws {
     #expect(
         GlifiStudioSummaryScoringMethod.supportedIdentifiers == [
             "SentenceTFIDFMean-v1", "CentroidCosine-v1", "LexRankSentence-v1",
-            "TextRankSentence-v1",
+            "TextRankSentence-v1", "TextRankSentence-configurable-v1",
+            "LexRankSentence-continuous-v1", "LexRankSentence-threshold-v1",
         ])
     #expect(GlifiStudioSummaryRedundancy.standard.lambda == nil)
     let mmr = GlifiStudioSummaryRedundancy.maximalMarginalRelevance(lambda: 0.5)
     #expect(mmr.identifier == "MMR-v1")
     #expect(mmr.lambda == 0.5)
+}
+
+@Test("GlifiKit trasporta configurazione, convergenza, lineage e testo di TextRank/LexRank")
+func summaryGraphPresentationPreservesContract() async throws {
+    let root = FileManager.default.temporaryDirectory.appending(
+        path: "GlifiKitSummaryGraph-\(UUID().uuidString)", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let source = root.appending(path: "source.txt")
+    let text = "Casa bella. Bella verde. Casa."
+    try Data(text.utf8).write(to: source)
+    let session = try await GlifiStudioService().createProject(at: root.appending(path: "P.glifi"))
+    let imported = try await session.importText(at: source, format: .plainText)
+    let sourceID = try #require(imported.project.sources.first?.sourceRevisionID)
+    for method in [
+        "TextRankSentence-configurable-v1", "LexRankSentence-continuous-v1",
+        "LexRankSentence-threshold-v1",
+    ] {
+        #expect(GlifiStudioSummaryScoringMethod.supportedIdentifiers.contains(method))
+        let result = try await session.analyzeExtractiveSummary(
+            sourceRevisionIDs: [sourceID],
+            method: GlifiStudioSummaryScoringMethod(identifier: method),
+            graphConfiguration: GlifiStudioSummaryGraphConfiguration(damping: 0.5))
+        #expect(result.methodIdentifier == method)
+        #expect(result.graphDiagnostics?.configuration.damping == 0.5)
+        #expect(result.graphDiagnostics?.converged == true)
+        #expect(result.graphDiagnostics?.nodeCount == result.sentences.count)
+        #expect(result.selected.allSatisfy { text.contains($0.text) })
+        let encoded = try JSONEncoder().encode(result)
+        #expect(
+            try JSONDecoder().decode(GlifiStudioExtractiveSummaryResult.self, from: encoded)
+                == result)
+    }
+    await session.close()
 }

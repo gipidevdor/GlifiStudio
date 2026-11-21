@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.specification-compliance-matrix",
   "schemaVersion": 1,
-  "updatedAt": "2026-11-14",
+  "updatedAt": "2026-11-21",
   "requiredRequirementCoverage": [
     "RQ-057",
     "RQ-058",
@@ -1048,16 +1048,23 @@
       "id": "CMP-048",
       "clause": "GS-MET-001-13 § Vettori reali",
       "specification": "docs/metodi-analitici/13-similarita-e-distanze.md",
-      "requirements": ["RF-036"],
+      "requirements": [
+        "RF-036"
+      ],
       "code": [
-        "Packages/GlifiCore/Sources/GlifiCore/GlifiSimilarityAnalysis.swift"
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiSimilarityAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiSimilarityExtensions.swift"
       ],
       "tests": [
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSimilarityAnalysisTests.swift"
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSimilarityAnalysisTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSimilarityNumericalRangeTests.swift"
       ],
-      "fixtures": [],
+      "fixtures": [
+        "Packages/GlifiCore/Tests/Oracles/Python/similarity.py"
+      ],
       "evidence": [
-        "docs/evidenze/GS-VER-086-similarita-insiemi-vettori-distribuzioni.md"
+        "docs/evidenze/GS-VER-086-similarita-insiemi-vettori-distribuzioni.md",
+        "docs/evidenze/GS-VER-168-completamento-algoritmi.md"
       ],
       "gate": "G2",
       "status": "verified",
@@ -1122,7 +1129,9 @@
       "id": "CMP-052",
       "clause": "GS-MET-001-16 § Primitive",
       "specification": "docs/metodi-analitici/16-reti-lessicali.md",
-      "requirements": ["RF-039"],
+      "requirements": [
+        "RF-039"
+      ],
       "code": [
         "Packages/GlifiCore/Sources/GlifiCore/GlifiNetworkAnalysis.swift"
       ],
@@ -1130,7 +1139,10 @@
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiNetworkAnalysisTests.swift"
       ],
       "fixtures": [],
-      "evidence": ["docs/evidenze/GS-VER-090-grafo-degree-pagerank.md"],
+      "evidence": [
+        "docs/evidenze/GS-VER-090-grafo-degree-pagerank.md",
+        "docs/evidenze/GS-VER-168-completamento-algoritmi.md"
+      ],
       "gate": "G2",
       "status": "verified",
       "blockingReason": null
@@ -2430,6 +2442,246 @@
       ],
       "evidence": [
         "docs/evidenze/GS-VER-166-riassunto-textrank.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-168",
+      "clause": "GS-MET-001-04/05 § Descrittive e osservazioni/fitting lessicali",
+      "specification": "docs/metodi-analitici/05-distribuzioni-lessicali-zipf-heaps.md",
+      "requirements": [
+        "RF-026",
+        "RF-028",
+        "RQ-008",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiLexicalDistributionAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiDescriptiveStatistics.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioLexicalStatistics.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLexicalDistributionTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiLexicalStatisticsFacadeTests.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Tests/Oracles/R/lexical_distributions.R"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-168-completamento-algoritmi.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-169",
+      "clause": "GS-MET-001-17 § Aggregazione temporale osservata",
+      "specification": "docs/metodi-analitici/17-analisi-temporale-e-metadata-first.md",
+      "requirements": [
+        "RF-040",
+        "RQ-008",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiTemporalAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiTemporalAnalysisPresentation.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTemporalAnalysisTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiTemporalAnalysisPresentationTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-168-completamento-algoritmi.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-170",
+      "clause": "GS-MET-001-18 § Metriche di valutazione esatta",
+      "specification": "docs/metodi-analitici/18-valutazione-servizi-linguistici.md",
+      "requirements": [
+        "RF-041",
+        "RQ-008",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiLinguisticEvaluation.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioLinguisticEvaluation.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLinguisticEvaluationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiLinguisticEvaluationFacadeTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-168-completamento-algoritmi.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-171",
+      "clause": "GS-MET-001-21 § Welch ANOVA e correlazioni finite",
+      "specification": "docs/metodi-analitici/21-fondazione-statistica.md",
+      "requirements": [
+        "RF-045",
+        "RQ-008",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiWelchANOVA.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEffectSizeStatistics.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiRankAndCorrelationStatistics.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioWelchANOVA.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiWelchANOVATests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiLinguisticEvaluationFacadeTests.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Tests/Oracles/R/welch_anova.R",
+        "Packages/GlifiCore/Tests/Oracles/Python/welch_precision.py"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-168-completamento-algoritmi.md",
+        "docs/evidenze/GS-VER-171-integrazione-algoritmi.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-172",
+      "clause": "GS-MET-001-19 § Varianti implementate a grafo",
+      "specification": "docs/metodi-analitici/19-riassunto-estrattivo.md",
+      "requirements": [
+        "RF-042",
+        "RQ-008",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiSummaryGraphScoring.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiExtractiveSummaryAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiExtractiveSummaryPresentation.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSummaryGraphTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiExtractiveSummaryCompatibilityTests.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Tests/Oracles/Python/summary_graph.py"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-168-completamento-algoritmi.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-173",
+      "clause": "GS-MET-001-14/15 § Contratti di clustering e fattorizzazione",
+      "specification": "docs/metodi-analitici/14-clustering.md",
+      "requirements": [
+        "RF-037",
+        "RF-038",
+        "RQ-008",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiMultivariateMethods.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiMultivariateMethodsTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-168-completamento-algoritmi.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-174",
+      "clause": "GS-STD-001-17 § Benchmark prima/dopo; GS-MET-001-03 § Riduzioni deterministiche",
+      "specification": "docs/standard/17-benchmark-e-regressioni-prestazionali.md",
+      "requirements": [
+        "RQ-008",
+        "RQ-009",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiMultivariateMethods.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiNetworkAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiSummaryGraphScoring.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiExtractiveSummaryAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiTemporalAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiLinguisticEvaluation.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiLexicalDistributionAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiDescriptiveStatistics.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiClusteringOptimizationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiMultivariateMethodsTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiNetworkAnalysisTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSummaryGraphTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTemporalAnalysisTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLinguisticEvaluationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLexicalDistributionTests.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiMultivariateOptimizationBenchmarks.swift",
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiGraphOptimizationBenchmarks.swift",
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiMetadataOptimizationBenchmarks.swift",
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiLexicalOptimizationBenchmarks.swift"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-169-ottimizzazione-algoritmi.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-175",
+      "clause": "GS-STD-001-17 § Confronti prima/dopo; GS-MET-001-04/07/15/17 § Correttezza numerica e memoria bounded",
+      "specification": "docs/standard/17-benchmark-e-regressioni-prestazionali.md",
+      "requirements": [
+        "RQ-008",
+        "RQ-009",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiDescriptiveStatistics.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiTermWeighting.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiMultivariateMethods.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiTemporalAnalysis.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLexicalDistributionTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiWeightingRefinementTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiFactorizationRefinementTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTemporalAnalysisTests.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiDescriptiveRefinementBenchmarks.swift",
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiWeightingRefinementBenchmarks.swift",
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiFactorizationRefinementBenchmarks.swift",
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiTemporalRefinementBenchmarks.swift",
+        "Packages/GlifiCore/Tests/Oracles/Python/weighting_refinement.py"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-170-raffinamento-algoritmi.md"
       ],
       "gate": "G3",
       "status": "implemented",

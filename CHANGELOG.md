@@ -6,7 +6,21 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+Le voci GS-VER-168/169/170 conservano gli esiti dei rispettivi snapshot del
+working tree sorgente; la verifica della nuova integrazione su `fe6f654`
+è separata e ancora da eseguire in GS-VER-171. La variante parametrizzabile
+conserva l’identità candidata distinta `TextRankSentence-configurable-v1`,
+preservando i metodi upstream già pubblicati.
+
 ### Aggiunto
+
+- Completamento delle primitive analitiche specificate: distribuzioni lessicali,
+  fitting diagnostico Zipf/Heaps, statistiche descrittive Q7, Welch ANOVA,
+  aggregazioni temporali con esposizione e metriche di valutazione linguistica.
+  Nuove facciate GlifiKit concorrenti; contratti headless candidati (GS-VER-168).
+- Riassunti TextRank e LexRank continuo/a soglia nel percorso Core/Kit/CLI,
+  con parametri persistiti e diagnostica di convergenza; taglio HAC a soglia
+  e contratti numerici più robusti per K-means, NMF, Pearson e PageRank (GS-VER-168).
 
 - Metodo `TextRankSentence-v1` del riassunto estrattivo: centralità stazionaria del grafo di
   sovrapposizione lessicale (`|T(s) ∩ T(u)| / (ln|s| + ln|u|)`, soglia zero, nodi pendenti
@@ -41,6 +55,21 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   CMP-095. Conservate le verifiche G3 di QueryAST e riassunto estrattivo.
 
 ### Modificato
+
+- Welch ANOVA conserva la varianza interna anche per gruppi con offset molto
+  differenti tramite traslazione locale e scale comuni; regressione Decimal,
+  trasformazioni estreme e compatibilità upstream verificate in GS-VER-171.
+
+- Raffinamento analitico: NMF con prodotti contigui e obiettivo senza matrice
+  temporanea, partizioni temporali indicizzate e ordinamento bounded per
+  descrittive a bassa cardinalità. TF-IDF/BM25 con meno allocazioni e failure
+  tipizzate per overflow; BM25 conserva risultati finiti con `k1` estremo.
+  Confronti completi e compromessi misurati in GS-VER-170.
+
+- Ottimizzazione misurata dei kernel analitici: cache condensata HAC, distanze
+  incrementali K-means++, buffer contigui PageRank e riduzione di visite e
+  allocazioni per lessico, tempo, linguistica e riassunti. Formule, seed,
+  ordinamenti e tolleranze invariati; benchmark Release riproducibili (GS-VER-169).
 
 - Revisione degli operatori nativi: Stress-1 con secondary ties, probabilità LDA
   come media dei prodotti, log-probabilità Naive Bayes robuste ai subnormali e

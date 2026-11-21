@@ -6,14 +6,30 @@
 | --- | --- |
 | Identificatore | GS-MET-001-14 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.0.0 |
+| Versione | 1.1.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
 ## Contratto comune
+
+L'implementazione ottimizzata in GS-VER-169 conserva le distanze dei cluster
+invariati in una tabella triangolare. Single/complete aggiornano soltanto le
+relazioni del cluster fuso; Ward ricalcola soltanto le distanze del nuovo
+centroide. Average conserva le distanze originali e la stessa somma diretta
+ordinata sui membri, evitando variazioni di arrotondamento da ricorrenze.
+I pareggi continuano a usare le identità correnti. Le due tabelle condensate
+di average occupano al massimo le celle della precedente tabella quadrata;
+gli altri linkage ne usano una sola. La ricerca della coppia minima resta
+cubica nel caso peggiore; non è dichiarata una complessità quadratica generale.
+
+K-means++ aggiorna incrementalmente il minimo delle distanze dai centri già
+scelti; Lloyd calcola una sola distanza per centro e raggruppa i membri in un
+solo passaggio. Seed, consumo del PRNG, ordine delle somme, pareggi e numero
+di iterazioni restano invariati. Non sono introdotte approssimazioni o
+parallelizzazioni delle riduzioni.
 
 Un risultato **DEVE** registrare unità in ingresso, rappresentazione, preprocessing,
 metrica/dissimilarità, algoritmo e versione, parametri, inizializzazione, seed,
@@ -39,6 +55,12 @@ spazio euclideo con distanza euclidea quadratica e centroidi definiti. Non può
 essere combinato con Jaccard, Manhattan o divergenze. L'output conserva l'intero albero di fusioni, altezze e appartenenze;
 un taglio a `k` o a soglia è un'operazione separata.
 
+Il taglio a soglia include tutte le fusioni con altezza minore o uguale alla
+soglia, comprese le parità; la soglia è finita e non negativa. Entrambi i tagli
+validano l'intero albero, incluse identità attive, dimensioni, altezze finite e
+monotone e incrementi Ward, prima di seguirne i riferimenti. Le etichette sono
+rinumerate per prima apparizione nell'ordine delle unità in ingresso.
+
 ## K-means
 
 `KMeans-Lloyd-v1` minimizza `Σ_i ||x_i-μ_{c_i}||₂²` per `1≤k≤n`, usando iterazioni
@@ -49,6 +71,11 @@ cluster vuoti. `k-means++-v1`, se scelto, estrae il primo centro uniformemente t
 le unità e i successivi con probabilità proporzionale alla distanza euclidea
 quadratica dal centro già scelto più vicino. Il run scelto minimizza l'obiettivo,
 con tie-break deterministico. È P1 e non accetta distanze arbitrarie.
+
+La variante in libreria usa stabilità delle assegnazioni e limite esplicito di
+iterazioni (`1…100.000`), rifiuta cluster vuoti e canonicalizza insieme centri ed
+etichette per prima apparizione. Overflow delle distanze o dell'obiettivo produce
+failure tipizzata; i limiti di celle e lavoro sono controllati prima dei restart.
 
 ## K-medoids
 

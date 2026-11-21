@@ -10912,6 +10912,91 @@
         }
       }
     },
+    "failure.summary.graph-configuration-without-method" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This method does not accept graph parameters: choose a configurable graph variant."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo metodo non accetta parametri del grafo: scegli una variante a grafo configurabile."
+          }
+        }
+      }
+    },
+    "failure.summary.invalid-graph-configuration" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The graph parameters are invalid: check damping, tolerance, iteration limit and similarity threshold."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I parametri del grafo non sono validi: controlla damping, tolleranza, limite di iterazioni e soglia di similarità."
+          }
+        }
+      }
+    },
+    "failure.summary.graph-sentence-limit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The configurable graph exceeds 2,048 candidate sentences: reduce the selected sources."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il grafo configurabile supera 2.048 frasi candidate: riduci le fonti selezionate."
+          }
+        }
+      }
+    },
+    "failure.summary.graph-work-limit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The graph exceeds the declared computation budget: reduce the selected sources or iteration limit."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il grafo supera il budget di calcolo dichiarato: riduci le fonti selezionate o il limite di iterazioni."
+          }
+        }
+      }
+    },
+    "failure.summary.non-finite-graph-weight" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A finite graph weight could not be calculated from the selected sentences."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è possibile calcolare un peso finito del grafo dalle frasi selezionate."
+          }
+        }
+      }
+    },
     "failure.summary.graph-limit-exceeded" : {
       "extractionState" : "manual",
       "localizations" : {

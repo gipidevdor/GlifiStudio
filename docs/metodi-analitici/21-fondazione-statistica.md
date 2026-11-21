@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-21 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.0.1 |
+| Versione | 1.1.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -69,6 +69,52 @@ indipendenti, residui compatibili con il modello e varianza comune per l'inferen
 Un risultato omnibus significativo non identifica da solo i gruppi differenti;
 post-hoc e relativa famiglia multipla sono nodi separati.
 
+### ANOVA di Welch headless
+
+`WelchOneWayANOVA-v1` estende il confronto a `k≥2` gruppi indipendenti di popolazioni
+normali senza assumere varianze uguali. Ogni gruppo richiede `n_g≥2`, osservazioni
+finite e varianza campionaria strettamente positiva; non si escludono osservazioni.
+Con `w_g=n_g/s_g²`, `W=Σw_g`, `m=Σw_g x̄_g/W`:
+
+```text
+A = Σ_g (1-w_g/W)²/(n_g-1)
+F = [Σ_g w_g(x̄_g-m)²/(k-1)] / [1+2(k-2)A/(k²-1)]
+df1 = k-1
+df2 = (k²-1)/(3A)
+p = P(F_df1,df2 ≥ F)
+```
+
+Il risultato conserva F, entrambi i gradi di libertà e p; non identifica gruppi
+specifici né produce confronti post-hoc impliciti. La primitiva Core lavora in
+memoria con costo lineare nelle osservazioni e spazio aggiuntivo lineare nei gruppi.
+La richiesta è limitata a 100.000 gruppi e un milione di osservazioni totali;
+superamenti falliscono con `statistics.limit-exceeded`. La cancellazione viene
+verificata all'ingresso e ogni 1.024 valori nelle scansioni. GlifiKit espone la
+stessa variante con `@concurrent` e DTO propri.
+Il calcolo sottrae un anchor osservato comune prima di medie e scaling per
+preservare piccole variazioni su grandi offset. Una scala comune esatta in
+potenze di due evita overflow nei quadrati; se la sottrazione dell'anchor può
+eccedere binary64 (valori estremi di segno opposto), un riscalamento preliminare
+precede la sottrazione. Intermedi
+non rappresentabili falliscono con `statistics.non-finite-result`. Varianze non
+positive falliscono con `statistics.non-positive-variance`. L'oracolo è
+`stats::oneway.test(var.equal=FALSE)` di R e, per due gruppi, l'identità `F=t_Welch²`.
+Una traslazione locale per gruppo precede il calcolo della varianza, prima
+della divisione per le stesse scale comuni. Le medie sono poi ricostruite nelle
+coordinate comuni per i contrasti: un grande offset fra gruppi non deve
+cancellare lo spread interno. Se la sottrazione locale di estremi opposti
+trabocca, si sottraggono le coordinate comuni bounded. GS-VER-171 registra un
+riferimento Decimal a 80 cifre, trasformazioni di scala/offset e il controesempio
+con varianze 1 e 1/3, F circa 2,25×10³⁰ e df2=3,2.
+La variante resta `candidate`: questa implementazione non promuove il planner o
+la persistenza né sostituisce un ValidationManifest per variante.
+
+Pearson sottrae un anchor osservato separato per variabile prima di medie e
+riscalamento in potenze di due; soltanto una sottrazione potenzialmente in overflow
+richiede il riscalamento preliminare. Questo conserva piccole variazioni su grandi
+offset oltre alla correlazione per dati finiti di scala estrema.
+Spearman esatto rifiuta esplicitamente NaN e infinito prima del ranking.
+
 ## Intervalli, bootstrap e permutation test
 
 Ogni intervallo di confidenza dichiara parametro, livello, metodo e assunzioni.
@@ -125,3 +171,5 @@ errore di tipo I, coverage o potenza quando appropriato.
 ## Riferimento scientifico
 
 - Benjamini e Hochberg, [Controlling the False Discovery Rate](https://doi.org/10.1111/j.2517-6161.1995.tb02031.x), 1995.
+- Welch, [On the Comparison of Several Mean Values: An Alternative Approach](https://doi.org/10.2307/2332579), 1951;
+  [contratto dell'oracolo R](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/oneway.test.html).

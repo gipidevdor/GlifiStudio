@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.90.0 |
+| Versione | 0.90.1 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-14 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -27,10 +27,10 @@ La matrice collega le fonti iniziali alle necessità degli stakeholder, ai requi
 | NS-007 Ottenere risultati corretti e riproducibili | RF-022, RF-041, RF-045, RF-076, RF-081–RF-083, RQ-003, RQ-007–RQ-018, RQ-023–RQ-029, RQ-043–RQ-062, CV-014, CV-016 | VA-03–VA-06, GS-DAT-001, GS-ANA-001, GS-VAL-001, GS-SEC-001, GS-API-001, GS-APL-014–GS-APL-015, ADR-0006, ADR-0008, ADR-0013, ADR-0016–ADR-0019 | TV-004, TV-008, TV-009, TV-012, TV-016, TV-018–TV-020, TV-026–TV-033, TV-051, TV-054–TV-075 | Descriptor/DAG e prime analisi hanno prove riproducibili; validazione completa, hardware e studi restano incompleti |
 | NS-008 Lavorare in app native macOS e iPadOS | RF-024, RF-072–RF-073, RF-083, RF-086, RQ-012, RQ-019–RQ-022, RQ-032, RQ-034, RQ-037–RQ-039, RQ-047, RQ-049–RQ-056, CV-001–CV-020 | VA-01, VA-02, VA-04, VA-05, VA-07, GS-UI-001, GS-PROD-001, GS-APL-014–GS-APL-015, ADR-0001, ADR-0003, ADR-0005, ADR-0006, ADR-0008, ADR-0011, ADR-0014–ADR-0018 | TV-013, TV-015–TV-025, TV-044, TV-048–TV-049, TV-058, TV-061–TV-069 | Percorso Must UI condiviso su Kit (GS-VER-035); audit dispositivo e App Store aperti |
 | NS-009 Comprendere metodi e limiti | RF-026–RF-038, RF-042, RF-044–RF-046, RQ-023, RQ-025–RQ-028 | VA-06, ADR-0013, GS-MET-001 | TV-026–TV-032, TV-034–TV-036 | Profilo corpus e keyness bounded verificati; restanti metodi e review scientifica esterna aperti |
-| NS-010 Analizzare metadati e tempo | RF-029, RF-031, RF-032, RF-035, RF-040 | VA-03, VA-06, GS-MET-001-17 | TV-027, TV-029–TV-031 | Contratto definito; implementazione mancante |
+| NS-010 Analizzare metadati e tempo | RF-029, RF-031, RF-032, RF-035, RF-040 | VA-03, VA-06, GS-MET-001-17 | TV-027, TV-029–TV-031 | Aggregazione temporale headless realizzata (GS-VER-168); metadati persistenti e planner aperti |
 | NS-011 Esplorare strutture multivariate e reti | RF-029, RF-033, RF-036–RF-039, RF-046 | VA-06, GS-MET-001-06, GS-MET-001-10, GS-MET-001-13–16, GS-MET-001-22 | TV-030, TV-032, TV-035 | CA/PCA/LSA, HAC, reti e viste dedicate (GS-VER-099–114); audit su dispositivo aperto |
 | NS-012 Eseguire content analysis manuale | RF-043, RF-044, RQ-023, RQ-028 | VA-03, VA-06, GS-MET-001-20 | TV-027, TV-034 | Perimetro confermato; flusso MVP da decidere |
-| NS-013 Valutare la qualità linguistica | RF-010, RF-041, RQ-027, RQ-029 | VA-02, VA-05, VA-06, ADR-0004, GS-MET-001-18 | TV-014, TV-026, TV-033 | Gold token V0 con split (GS-VER-036); lemma/POS/NER aperti |
+| NS-013 Valutare la qualità linguistica | RF-010, RF-041, RQ-027, RQ-029 | VA-02, VA-05, VA-06, ADR-0004, GS-MET-001-18 | TV-014, TV-026, TV-033 | Gold token V0 con split (GS-VER-036); metriche headless lemma/POS/NER/morfologia realizzate (GS-VER-168), backend e gold avanzati aperti |
 | NS-014 Sintesi e topic classici riproducibili | RF-038, RF-042, RQ-025, RQ-028, CV-014 | VA-06, ADR-0008, ADR-0013, GS-MET-001-15, GS-MET-001-19, GS-PROD-001 | TV-028, TV-032, TV-036 | Specificati come evoluzione post-MVP |
 | NS-015 Iniziare da domanda e intenzione | RF-049–RF-050, RF-063, RF-066, RF-074 | VA-07, ADR-0014, GS-UX-001-01, GS-UX-001-07 | TV-038, TV-039, TV-042, TV-045 | Domanda/intenzione/piano in UI Must; studi UX aperti |
 | NS-016 Sviluppare indagini persistenti | RF-047–RF-048, RF-070–RF-071, RF-075–RF-076, RF-085, RQ-033, RQ-040, RQ-043 | VA-03, VA-07, GS-DOM-001, GS-DAT-001, ADR-0014, ADR-0016, ADR-0021–ADR-0023 | TV-037, TV-047, TV-050–TV-051, TV-059 | Storia append-only, selezione e proiezione Report PDF/Markdown/CSV/JSON verificate; altri eventi, autosave e UI aperti |
@@ -85,6 +85,10 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 
 | Evidenza | Verifiche coperte | Esito | Limite |
 | --- | --- | --- | --- |
+| [GS-VER-171](evidenze/GS-VER-171-integrazione-algoritmi.md) | TV-008, TV-009, TV-029, TV-032, TV-033, TV-036; RQ-008, RQ-063 | Superato: integrazione isolata, correzione Welch, 425 test e 177 righe di oracoli sulla base upstream `fe6f654` | Evidenze storiche GS-VER-168/169/170 conservate; nuovo gate completo eseguito sulla proiezione integrata |
+| [GS-VER-170](evidenze/GS-VER-170-raffinamento-algoritmi.md) | TV-008, TV-009, TV-029, TV-032, TV-033, TV-036; RQ-008, RQ-009, RQ-063 | Superato nello snapshot storico sorgente: 14 confronti Release, 480 test e gate completo; riferimenti diretti e oracolo degli estremi BM25 | Nessuna promozione scientifica o soglia; costi dei fallback e memoria dichiarati |
+| [GS-VER-169](evidenze/GS-VER-169-ottimizzazione-algoritmi.md) | TV-008, TV-009, TV-029, TV-032, TV-033, TV-036; RQ-008, RQ-009, RQ-063 | Superato nello snapshot storico sorgente: 13 confronti Release prima/dopo, controlli input/output invariati, 447 test e gate completo; cache HAC, K-means incrementale, CSR PageRank e visite ridotte | Misure locali informative; compromessi dichiarati, formule/tolleranze e stati scientifici invariati |
+| [GS-VER-168](evidenze/GS-VER-168-completamento-algoritmi.md) | TV-008, TV-029, TV-032, TV-033, TV-036; RF-026, RF-028, RF-037, RF-038, RF-040, RF-041, RF-042, RF-045 | Superato nello snapshot storico sorgente: distribuzioni/OLS, descrittive, Welch ANOVA, HAC/NMF, tempo, metriche linguistiche e riassunti a grafo; 431 test, 152 righe di oracoli, CLI/recovery e build macOS/iPadOS | Primitive nuove candidate; planner/UI e validazione empirica restano separati |
 | [GS-VER-163](evidenze/GS-VER-163-integrita-documenti-macos.md) | TV-001, TV-058, TV-071 | Superato: otto test del modello macOS in locale e gate CI `xcode-27` (`verify`, `app-store-baseline`) su `main` `a86a53b`; inizializzazione non distruttiva, attacco idempotente e sessione conservata dopo apertura fallita | Conteggio dei test macOS non visibile nel log remoto (`-quiet`); GUI, sandbox reale, autosave e file provider aperti; CMP-107 verified |
 | [GS-VER-150](evidenze/GS-VER-150-interfaccia-essenziale.md) | TV-015, TV-017–TV-018, TV-039, TV-044, TV-048, TV-058 | Branch UI: make verify, 246 test e oracoli superati | Audit assistivi, contrasto, pseudo-lingua e dispositivi fisici aperti |
 | [GS-VER-001](evidenze/GS-VER-001-bootstrap-ambiente.md) | TV-011 preliminare; TV-013 build baseline | Superato | Non copre flussi funzionali, firma o dispositivi fisici |

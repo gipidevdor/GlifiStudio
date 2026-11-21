@@ -4,15 +4,24 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.17.0 |
+| Versione | 1.17.1 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-14 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Non applicabile; registro operativo |
 
 Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un esito positivo prova soltanto l'ambito dichiarato e non sostituisce l'approvazione dei requisiti o della baseline.
 
 ## Indice
+
+Le evidenze GS-VER-168/169/170 si riferiscono ai rispettivi snapshot storici del
+working tree sorgente. La nuova integrazione sulla base `fe6f654` ha verifica
+separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
+
+- [GS-VER-171 — Integrazione e pubblicazione degli algoritmi](GS-VER-171-integrazione-algoritmi.md) — Superato: 425 test, 177 righe di oracoli e gate completo sulla base upstream `fe6f654`
+- [GS-VER-170 — Raffinamento di memoria e calcolo analitico](GS-VER-170-raffinamento-algoritmi.md) — Superato nello snapshot storico sorgente: 14 confronti Release, 480 test e gate completo; limiti numerici e compromessi dichiarati
+- [GS-VER-169 — Ottimizzazione misurata degli algoritmi](GS-VER-169-ottimizzazione-algoritmi.md) — Superato nello snapshot storico sorgente: 13 confronti Release, 447 test e gate completo; compromessi dichiarati
+- [GS-VER-168 — Completamento degli algoritmi analitici](GS-VER-168-completamento-algoritmi.md) — Superato nello snapshot storico sorgente: 431 test, 152 righe di oracoli e gate completo; limiti scientifici dichiarati
 
 - [GS-VER-167 — Validazione dei costi del riassunto](GS-VER-167-costi-riassunto.md) — Difetti riprodotti in isolamento; regressioni native e preflight da eseguire; CMP-164 torna implemented
 - [GS-VER-166 — Riassunto estrattivo `TextRankSentence-v1`](GS-VER-166-riassunto-textrank.md) — In verifica sul runner remoto; controlli statici superati localmente; CMP-165 implemented

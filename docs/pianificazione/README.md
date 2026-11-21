@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.3 |
+| Versione | 1.6.4 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-01 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Non applicabile; registro operativo |
 
 Le schede DoR sono gate di ingresso al coding (GS-STD-001-07). Ogni unità di
@@ -17,6 +17,11 @@ lavoro sostanziale **DEVE** avere una scheda `Ready` o `Ready con rischio
 accettato` prima del primo cambiamento implementativo.
 
 ## Indice
+
+- [GS-DOR-171 — Integrazione e pubblicazione degli algoritmi](dor-integrazione-algoritmi.md) — Ready
+- [GS-DOR-170 — Raffinamento di memoria e calcolo analitico](dor-raffinamento-algoritmi.md) — Ready
+- [GS-DOR-169 — Ottimizzazione misurata degli algoritmi](dor-ottimizzazione-algoritmi.md) — Ready
+- [GS-DOR-168 — Completamento degli algoritmi analitici](dor-completamento-algoritmi.md) — Ready
 
 - [GS-DOR-001 — Percorso produttivo 0.1](dor-percorso-produttivita-0-1.md) — Ready
 - [GS-DOR-002 — Programma dell'incremento analitico post-0.1](dor-incremento-analitico-post-0-1.md) — Ready con rischio accettato

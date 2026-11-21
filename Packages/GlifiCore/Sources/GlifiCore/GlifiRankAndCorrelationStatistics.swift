@@ -325,14 +325,18 @@ extension GlifiStatisticalFoundation {
         alternative: GlifiAlternativeHypothesis
     ) throws -> GlifiCorrelationResult {
         let count = Double(x.count)
-        let meanX = x.reduce(0, +) / count
-        let meanY = y.reduce(0, +) / count
+        // Translate by an observed anchor before taking means: scaling raw values alone
+        // cannot preserve a small variance in the presence of a large common offset.
+        let scaleX = try correlationScale(x)
+        let scaleY = try correlationScale(y)
+        let meanX = x.reduce(0.0) { $0 + correlationCoordinate($1, scale: scaleX) } / count
+        let meanY = y.reduce(0.0) { $0 + correlationCoordinate($1, scale: scaleY) } / count
         var sumXY = 0.0
         var sumXX = 0.0
         var sumYY = 0.0
         for (valueX, valueY) in zip(x, y) {
-            let deviationX = valueX - meanX
-            let deviationY = valueY - meanY
+            let deviationX = correlationCoordinate(valueX, scale: scaleX) - meanX
+            let deviationY = correlationCoordinate(valueY, scale: scaleY) - meanY
             sumXY += deviationX * deviationY
             sumXX += deviationX * deviationX
             sumYY += deviationY * deviationY
@@ -369,6 +373,34 @@ extension GlifiStatisticalFoundation {
             pValue: pValue,
             alternative: alternative
         )
+    }
+
+    private static func correlationScale(
+        _ values: [Double]
+    ) throws -> (input: Double, offset: Double, anchor: Double) {
+        let anchor = values.first ?? 0
+        let largest = values.reduce(0.0) { max($0, abs($1)) }
+        // Opposite signs close to binary64's maximum may overflow subtraction. Only
+        // that case needs a preliminary common power-of-two scale before translation.
+        let needsPrescaling = values.contains { !($0 - anchor).isFinite }
+        let input =
+            needsPrescaling
+            ? Double(sign: .plus, exponent: largest.exponent, significand: 1) : 1
+        let scaledAnchor = anchor / input
+        let largestOffset = values.reduce(0.0) { max($0, abs($1 / input - scaledAnchor)) }
+        guard largestOffset > 0 else {
+            throw rankStatisticsFailure("statistics.non-positive-variance")
+        }
+        return (
+            input, Double(sign: .plus, exponent: largestOffset.exponent, significand: 1),
+            scaledAnchor
+        )
+    }
+
+    private static func correlationCoordinate(
+        _ value: Double, scale: (input: Double, offset: Double, anchor: Double)
+    ) -> Double {
+        (value / scale.input - scale.anchor) / scale.offset
     }
 
     private static func continuityShift(

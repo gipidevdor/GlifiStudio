@@ -2,7 +2,7 @@
   "schema": "studio.glifi.validation-catalog",
   "schemaVersion": 1,
   "license": "BSD-3-Clause",
-  "updatedAt": "2026-11-01",
+  "updatedAt": "2026-11-21",
   "manifests": [
     {
       "id": "validation-corpus-profile-it-v1",
@@ -103,6 +103,31 @@
       "id": "validation-kh-coding-review-v1",
       "path": "Fixtures/Validation/v1/kh-coding-review-v1.json",
       "status": "supported"
+    },
+    {
+      "id": "validation-lexical-statistics-v1",
+      "path": "Fixtures/Validation/v1/lexical-statistics-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-linguistic-evaluation-v1",
+      "path": "Fixtures/Validation/v1/linguistic-evaluation-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-summary-graph-v1",
+      "path": "Fixtures/Validation/v1/summary-graph-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-temporal-calendar-v1",
+      "path": "Fixtures/Validation/v1/temporal-calendar-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-welch-anova-v1",
+      "path": "Fixtures/Validation/v1/welch-anova-v1.json",
+      "status": "candidate"
     }
   ]
 }

@@ -128,6 +128,9 @@ extension GlifiStatisticalFoundation {
         guard (3...maximumExactSpearmanCount).contains(x.count) else {
             throw effectSizeFailure("statistics.exact-sample-too-large", category: .invalidInput)
         }
+        guard x.allSatisfy(\.isFinite), y.allSatisfy(\.isFinite) else {
+            throw effectSizeFailure("statistics.non-finite-value", category: .invalidInput)
+        }
         let rankX = midranks(x)
         let rankY = midranks(y)
         guard rankX.tieGroupSizes.isEmpty, rankY.tieGroupSizes.isEmpty else {

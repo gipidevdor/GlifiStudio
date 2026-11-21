@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-16 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -53,6 +53,21 @@ Il grafo logico è indipendente da liste di adiacenza, CSR o backend Metal. Prim
 esatte devono supportare componenti e degree in streaming/blocchi quando possibile.
 Approssimazioni di centralità dichiarano sampling, bound ed errore. Layout grafico e
 community sono nodi distinti dal grafo e dalle sue misure.
+
+Il backend CPU di `PageRank-v1` risolve le identità generiche in indici una sola
+volta e conserva le adiacenze in righe sparse contigue (CSR). L'ordine degli
+indici coincide con quello dichiarato dei nodi; dentro ogni riga resta l'ordine
+originario degli archi, inclusi multiarchi, self-loop e pesi nulli. Non viene
+introdotto un ordinamento implicito delle identità.
+
+L'iterazione riusa due buffer contigui di punteggi. Riscalamento dei pesi per riga,
+contributi degli archi, massa dangling e riduzione della norma L1 conservano
+sequenza e operazioni aritmetiche della variante precedente; formula,
+teleportazione, criteri di arresto e diagnostica non cambiano. Le prove
+di GS-VER-169 confrontano input e output tramite checksum canonici, oltre a
+grafi con identità in collisione hash, archi ripetuti, self-loop, pesi estremi,
+dangling node e cancellazione. Le misure di prestazione sono evidenze del
+backend e non una nuova variante scientifica.
 
 ## Verifica
 

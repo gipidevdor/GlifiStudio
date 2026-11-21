@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-19 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.6.0 |
+| Versione | 1.7.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-08 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Architettura approvata; `SentenceTFIDFMean-v1` fissato (GS-VER-146); `CentroidCosine-v1` fissato (GS-VER-149); `MMR-v1` fissato (GS-VER-151); `LexRankSentence-v1` fissato (GS-VER-164); `Budget-characters-v1` fissato (GS-VER-165) |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -230,6 +230,69 @@ dalla politica di ridondanza:
   Artifact distinto; `consumedBudget` registra gli scalari consumati. Il payload non aggiunge
   campi e non richiede migrazioni: il costo di ogni frase si ricava dall'intervallo e dal testo
   sorgente.
+
+## Varianti a grafo configurabili
+
+GS-DOR-171 integra tre primitive headless distinte dalle varianti fisse già
+approvate: `TextRankSentence-configurable-v1`, `LexRankSentence-continuous-v1`
+e `LexRankSentence-threshold-v1`. Le API, i parametri fissi, gli autoanelli,
+le failure di mancata convergenza e gli Artifact di `LexRankSentence-v1` e
+`TextRankSentence-v1` restano invariati. Un parametro del grafo esplicito su
+un metodo fisso è rifiutato; non viene applicato implicitamente a quel metodo.
+
+Le nuove varianti condividono identità delle frasi, tie-break, eleggibilità,
+budget in frasi, token o scalari Unicode, MMR e ordine della fonte. Cambiano
+la costruzione e il contratto operativo del grafo:
+
+- `TextRankSentence-configurable-v1`: nodi con almeno un token, peso fra
+  frasi distinte pari a `|T(s)∩T(u)| / (ln|s|+ln|u|)`, zero se entrambe
+  hanno un solo token. Nessuno smoothing o filtro implicito. Identità della
+  similarità: `similarity.sentence-overlap-log-length-v1`.
+- `LexRankSentence-continuous-v1`: nodi con vettore frase non nullo;
+  peso coseno continuo fra frasi distinte, senza autoanelli. Questo grafo
+  differisce da `LexRankSentence-v1`, che include autoanelli.
+- `LexRankSentence-threshold-v1`: stessi vettori e nodi, arco di peso uno
+  esattamente quando il coseno supera strettamente la soglia dichiarata.
+  La soglia non misura significatività; a soglia uno non esistono archi.
+
+Le due varianti coseno correggono il solo arrotondamento agli estremi
+`[0,1]` dopo aver verificato la finitezza. Ogni arco non orientato positivo
+genera due archi diretti di uguale peso per `PageRank-v1`; non ci sono
+autoanelli. Inizializzazione, teleportazione e redistribuzione dangling
+sono uniformi sui soli nodi eleggibili (`dangling.uniform-v1`). I parametri
+risolti, inclusi i default, sono nel descrittore e nella diagnostica:
+`damping=0,85` in `[0,1)`, tolleranza L1 `1e-12` finita e positiva,
+`maximumIterations=1000` in `1…10000`, soglia coseno `0,1` in `[0,1]`.
+La soglia è registrata anche quando non viene applicata.
+
+La diagnostica opzionale `graphDiagnostics` conserva configurazione,
+identità di similarità/centralità/dangling, nodi eleggibili, archi positivi
+non orientati, iterazioni e `converged`. Al limite di iterazioni il risultato
+conserva l'ultima stima con `converged=false`; questo comportamento non
+sostituisce il rifiuto fail-closed delle varianti fisse. Senza nodi eleggibili,
+tutti gli score sono zero, nessuna frase è selezionata e le iterazioni sono
+zero. I payload precedenti, e quelli dei metodi fissi, non richiedono la
+diagnostica; i descrittori fissi non ricevono nuovi parametri del grafo.
+
+Prima delle allocazioni il numero totale di frasi candidate è al massimo
+`2048`. Prima del PageRank deve valere
+`(archi diretti + nodi eleggibili) × maximumIterations ≤ 100000000`.
+Le violazioni producono failure tipizzate di risorse, senza Artifact parziale.
+Non sono autorizzati campionamento o pruning impliciti. TextRank usa liste
+inverse da type a frasi e un buffer di conteggi interi lungo quanto il numero
+di frasi; le celle sono azzerate dopo la visita di ogni coppia nell'ordine
+canonico. Non sono allocati insiemi di intersezione per coppia né tabelle
+quadratiche dei conteggi. La cancellazione è controllata durante costruzione,
+lettura delle liste e iterazione di centralità.
+
+Kit e CLI espongono i tre identificatori, i parametri e la diagnostica;
+le opzioni `--graph-damping`, `--graph-tolerance`, `--graph-iterations` e
+`--graph-threshold` si applicano soltanto a queste varianti. GS-VER-171
+registra l'integrazione con oracolo stazionario indipendente, confronto
+bitwise con overlap diretto, fixture upstream, compatibilità dei payload,
+budget scalari, limiti e parità di trasporto. Le evidenze GS-VER-168/169/170
+restano registrazioni storiche della linea di lavoro, non sostituiscono le
+verifiche d'integrazione o la promozione scientifica per variante.
 
 ## Separazione dalla generazione
 

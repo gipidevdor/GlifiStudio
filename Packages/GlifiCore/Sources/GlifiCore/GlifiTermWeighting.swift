@@ -86,6 +86,9 @@ public struct GlifiBM25Parameters: Codable, Equatable, Hashable, Sendable {
 
 /// Pure implementations of the GS-MET-001-07 formulas over sparse rows.
 public enum GlifiTermWeighting {
+    /// Maximum columns admitted by the dense document-frequency cache of `weigh`.
+    public static let maximumWeightingColumnCount = 1_000_000
+
     /// Term frequency of one cell given its row sum and row maximum.
     public static func termFrequency(
         _ count: Int,
@@ -125,7 +128,10 @@ public enum GlifiTermWeighting {
             }
             return log(Double(documentCount) / Double(df))
         case .smooth:
-            return log(Double(documentCount + 1) / Double(df + 1)) + 1
+            let numerator =
+                documentCount == Int.max ? Double(documentCount) + 1 : Double(documentCount + 1)
+            let denominator = df == Int.max ? Double(df) + 1 : Double(df + 1)
+            return log(numerator / denominator) + 1
         }
     }
 
@@ -135,47 +141,71 @@ public enum GlifiTermWeighting {
         columnCount: Int,
         scheme: GlifiTermWeightingScheme
     ) throws -> [[Int: Double]] {
-        var documentFrequency = Array(repeating: 0, count: columnCount)
-        for row in rows {
-            for (column, count) in row where count > 0 {
+        try Task.checkCancellation()
+        guard columnCount >= 0 else { throw weightingFailure("weighting.invalid-column") }
+        guard columnCount <= maximumWeightingColumnCount else {
+            throw derivedAnalysisFailure("weighting.column-limit", category: .insufficientResources)
+        }
+        var documentFrequency = [Int](repeating: 0, count: columnCount)
+        var statistics: [(sum: Int, maximum: Int, positiveCount: Int)] = []
+        statistics.reserveCapacity(rows.count)
+        for (rowIndex, row) in rows.enumerated() {
+            if rowIndex.isMultiple(of: 256) { try Task.checkCancellation() }
+            var sum = 0
+            var maximum = 0
+            var positiveCount = 0
+            for (column, count) in row {
+                guard count >= 0 else { throw weightingFailure("weighting.negative-count") }
+                guard count > 0 else { continue }
                 guard column >= 0, column < columnCount else {
                     throw weightingFailure("weighting.invalid-column")
                 }
+                let addition = sum.addingReportingOverflow(count)
+                guard !addition.overflow else { throw weightingFailure("weighting.count-overflow") }
+                sum = addition.partialValue
+                maximum = max(maximum, count)
+                positiveCount += 1
                 documentFrequency[column] += 1
             }
+            statistics.append((sum, maximum, positiveCount))
         }
         let idf = try documentFrequency.map {
             try inverseDocumentFrequency(
-                documentFrequency: $0,
-                documentCount: rows.count,
-                variant: scheme.inverseDocumentFrequency
-            )
+                documentFrequency: $0, documentCount: rows.count,
+                variant: scheme.inverseDocumentFrequency)
         }
-        return rows.map { row in
-            let positive = row.filter { $0.value > 0 }
-            let rowSum = positive.values.reduce(0, +)
-            let rowMaximum = positive.values.max() ?? 0
-            var weighted = [Int: Double]()
-            for (column, count) in positive {
-                weighted[column] =
-                    termFrequency(
-                        count, rowSum: rowSum, rowMaximum: rowMaximum,
-                        variant: scheme.termFrequency) * idf[column]
+        return try rows.enumerated().map { rowIndex, row in
+            if rowIndex.isMultiple(of: 256) { try Task.checkCancellation() }
+            let rowStatistics = statistics[rowIndex]
+            var weighted: [Int: Double] = [:]
+            weighted.reserveCapacity(rowStatistics.positiveCount)
+            func weight(_ count: Int, column: Int) -> Double {
+                termFrequency(
+                    count, rowSum: rowStatistics.sum, rowMaximum: rowStatistics.maximum,
+                    variant: scheme.termFrequency) * idf[column]
             }
-            let norm: Double
-            switch scheme.normalization {
-            case .none:
-                norm = 1
-            case .l1:
-                norm = orderedSum(weighted.map { abs($0.value) }, keys: weighted.map(\.key))
-            case .l2:
-                norm = orderedSum(weighted.map { $0.value * $0.value }, keys: weighted.map(\.key))
-                    .squareRoot()
-            }
-            // Riga nulla: resta nulla, nessuna divisione per zero.
-            guard norm > 0, scheme.normalization != .none else {
+            // Unnormalized rows need no ordering or temporary filtered dictionary.
+            guard scheme.normalization != .none else {
+                for (column, count) in row where count > 0 {
+                    weighted[column] = weight(count, column: column)
+                }
                 return weighted
             }
+            let entries = row.compactMap { column, count in
+                count > 0 ? (column: column, count: count) : nil
+            }.sorted { $0.column < $1.column }
+            var norm = 0.0
+            for (column, count) in entries {
+                let value = weight(count, column: column)
+                weighted[column] = value
+                switch scheme.normalization {
+                case .none: break
+                case .l1: norm += abs(value)
+                case .l2: norm += value * value
+                }
+            }
+            if scheme.normalization == .l2 { norm = norm.squareRoot() }
+            guard norm > 0 else { return weighted }
             return weighted.mapValues { $0 / norm }
         }
     }
@@ -200,44 +230,66 @@ public enum GlifiTermWeighting {
         guard !rows.isEmpty, documentLengths.count == rows.count else {
             throw weightingFailure("bm25.empty-collection")
         }
+        guard columnCount >= 0 else { throw weightingFailure("bm25.invalid-column") }
         guard parameters.k1 > 0, parameters.k1.isFinite, parameters.b >= 0, parameters.b <= 1
         else {
             throw weightingFailure("bm25.invalid-parameters")
         }
-        let averageLength =
-            Double(documentLengths.reduce(0, +)) / Double(documentLengths.count)
-        guard averageLength > 0 else {
-            throw weightingFailure("bm25.empty-collection")
+        try Task.checkCancellation()
+        var totalLength = 0
+        for (index, length) in documentLengths.enumerated() {
+            if index.isMultiple(of: 256) { try Task.checkCancellation() }
+            guard length >= 0 else { throw weightingFailure("bm25.invalid-document-length") }
+            let addition = totalLength.addingReportingOverflow(length)
+            guard !addition.overflow else { throw weightingFailure("bm25.length-overflow") }
+            totalLength = addition.partialValue
         }
+        let averageLength = Double(totalLength) / Double(documentLengths.count)
+        guard averageLength > 0 else { throw weightingFailure("bm25.empty-collection") }
         let columns = queryColumns.filter { $0 >= 0 && $0 < columnCount }.sorted()
-        let idf = Dictionary(
-            uniqueKeysWithValues: columns.map { column in
-                (
-                    column,
-                    bm25InverseDocumentFrequency(
-                        documentFrequency: rows.filter { ($0[column] ?? 0) > 0 }.count,
-                        documentCount: rows.count
-                    )
-                )
-            })
-        return rows.indices.map { index in
-            let lengthFactor =
-                1 - parameters.b + parameters.b * Double(documentLengths[index]) / averageLength
-            return columns.reduce(0.0) { score, column in
-                let f = Double(rows[index][column] ?? 0)
-                guard f > 0 else {
-                    return score
+        let lengthFactors = documentLengths.map {
+            1 - parameters.b + parameters.b * Double($0) / averageLength
+        }
+        var frequencies = [Int](repeating: 0, count: rows.count)
+        var scores = [Double](repeating: 0, count: rows.count)
+        // A column reuses its observed counts for DF and scoring. Each row still
+        // accumulates contributions in ascending query-column order.
+        for column in columns {
+            try Task.checkCancellation()
+            var documentFrequency = 0
+            for (index, row) in rows.enumerated() {
+                if index.isMultiple(of: 256) { try Task.checkCancellation() }
+                let frequency = row[column] ?? 0
+                guard frequency >= 0 else { throw weightingFailure("bm25.negative-count") }
+                frequencies[index] = frequency
+                if frequency > 0 { documentFrequency += 1 }
+            }
+            let idf = bm25InverseDocumentFrequency(
+                documentFrequency: documentFrequency, documentCount: rows.count)
+            for (index, frequency) in frequencies.enumerated() {
+                if index.isMultiple(of: 256) { try Task.checkCancellation() }
+                guard frequency > 0 else { continue }
+                let f = Double(frequency)
+                let numerator = idf * f * (parameters.k1 + 1)
+                let denominator = f + parameters.k1 * lengthFactors[index]
+                let contribution: Double
+                if numerator.isFinite, denominator.isFinite {
+                    contribution = numerator / denominator
+                } else {
+                    // Scale only the overflowing path, preserving the ordinary formula's
+                    // exact operation sequence and the finite large-k1 limit.
+                    let scale = max(f, parameters.k1)
+                    let scaledK1 = parameters.k1 / scale
+                    contribution =
+                        (idf * f) * (scaledK1 + 1 / scale)
+                        / (f / scale + scaledK1 * lengthFactors[index])
                 }
-                return score
-                    + (idf[column] ?? 0) * f * (parameters.k1 + 1)
-                    / (f + parameters.k1 * lengthFactor)
+                scores[index] += contribution
             }
         }
-    }
-
-    /// Sum in ascending column order, independent of dictionary iteration order.
-    private static func orderedSum(_ values: [Double], keys: [Int]) -> Double {
-        zip(keys, values).sorted { $0.0 < $1.0 }.reduce(0) { $0 + $1.1 }
+        guard scores.allSatisfy(\.isFinite) else { throw weightingFailure("bm25.non-finite-score") }
+        try Task.checkCancellation()
+        return scores
     }
 
     static func weightingFailure(_ code: String) -> GlifiFailure {
@@ -247,7 +299,7 @@ public enum GlifiTermWeighting {
 
 // MARK: - Persisted analyses
 
-/// One non-zero weighted cell.
+/// One observed cell with a positive count; its weight may be zero.
 public struct GlifiWeightedTermCell: Codable, Equatable, Sendable {
     /// Row index into `sourceRevisionIDs`.
     public let rowIndex: Int
@@ -280,7 +332,7 @@ public struct GlifiCorpusTermWeightingAnalysis: GlifiDerivedAnalysisResult {
     public let terms: [String]
     /// Document frequency per term.
     public let documentFrequencies: [Int]
-    /// Non-zero weighted cells ordered by row, then column.
+    /// Observed cells ordered by row, then column, including zero weights.
     public let cells: [GlifiWeightedTermCell]
 
     /// Weighs the matrix of one corpus profile.

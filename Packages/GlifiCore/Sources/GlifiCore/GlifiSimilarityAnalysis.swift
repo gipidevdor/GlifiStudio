@@ -44,13 +44,17 @@ public enum GlifiVectorSimilarity {
     /// Throws for misaligned dimensions or a zero-norm vector.
     public static func cosine(_ x: [Double], _ y: [Double]) throws -> Double {
         try validateAligned(x, y)
-        let dotProduct = zip(x, y).reduce(0.0) { $0 + $1.0 * $1.1 }
-        let normX = x.reduce(0.0) { $0 + $1 * $1 }.squareRoot()
-        let normY = y.reduce(0.0) { $0 + $1 * $1 }.squareRoot()
-        guard normX > 0, normY > 0 else {
+        let scaleX = x.reduce(0.0) { max($0, abs($1)) }
+        let scaleY = y.reduce(0.0) { max($0, abs($1)) }
+        guard scaleX > 0, scaleY > 0 else {
             throw similarityFailure("similarity.zero-vector", category: .insufficientData)
         }
-        return dotProduct / (normX * normY)
+        let dotProduct = zip(x, y).reduce(0.0) { $0 + ($1.0 / scaleX) * ($1.1 / scaleY) }
+        let normX = x.reduce(0.0) { $0 + ($1 / scaleX) * ($1 / scaleX) }.squareRoot()
+        let normY = y.reduce(0.0) { $0 + ($1 / scaleY) * ($1 / scaleY) }.squareRoot()
+        let similarity = dotProduct / (normX * normY)
+        guard similarity.isFinite else { throw similarityFailure("similarity.numeric-overflow") }
+        return min(1, max(-1, similarity))
     }
 
     /// `Euclidean-v1` distance.
@@ -58,10 +62,12 @@ public enum GlifiVectorSimilarity {
     /// Throws for misaligned dimensions.
     public static func euclidean(_ x: [Double], _ y: [Double]) throws -> Double {
         try validateAligned(x, y)
-        return zip(x, y).reduce(0.0) { result, pair in
+        let distance = zip(x, y).reduce(0.0) { result, pair in
             let difference = pair.0 - pair.1
-            return result + difference * difference
-        }.squareRoot()
+            return hypot(result, difference)
+        }
+        guard distance.isFinite else { throw similarityFailure("similarity.numeric-overflow") }
+        return distance
     }
 
     /// `Manhattan-v1` distance.
@@ -69,7 +75,9 @@ public enum GlifiVectorSimilarity {
     /// Throws for misaligned dimensions.
     public static func manhattan(_ x: [Double], _ y: [Double]) throws -> Double {
         try validateAligned(x, y)
-        return zip(x, y).reduce(0.0) { $0 + abs($1.0 - $1.1) }
+        let distance = zip(x, y).reduce(0.0) { $0 + abs($1.0 - $1.1) }
+        guard distance.isFinite else { throw similarityFailure("similarity.numeric-overflow") }
+        return distance
     }
 
     private static func validateAligned(_ x: [Double], _ y: [Double]) throws {
@@ -107,25 +115,58 @@ public enum GlifiProbabilityDivergence {
             guard qValue > 0 else {
                 throw similarityFailure("similarity.kl-undefined", category: .insufficientData)
             }
-            result += pValue * log2(pValue / qValue)
+            result += pValue * (log2(pValue) - log2(qValue))
         }
         return result
     }
 
     /// Computes `JSdiv-v1`, always finite for two valid distributions.
     public static func jensenShannonDivergence(_ p: [Double], _ q: [Double]) throws -> Double {
-        try validateDistribution(p)
-        try validateDistribution(q)
-        try validateAlignedDistributions(p, q)
-        let mixture = zip(p, q).map { ($0 + $1) / 2 }
-        let divergence =
-            0.5 * (try klDivergence(p, mixture)) + 0.5 * (try klDivergence(q, mixture))
-        return max(0, divergence)
+        let distance = try jensenShannonNorm(p, q)
+        return distance * distance
     }
 
     /// Computes `JSdist-v1 = sqrt(JSdiv-v1)`.
     public static func jensenShannonDistance(_ p: [Double], _ q: [Double]) throws -> Double {
-        try jensenShannonDivergence(p, q).squareRoot()
+        try jensenShannonNorm(p, q)
+    }
+
+    private static func jensenShannonNorm(_ p: [Double], _ q: [Double]) throws -> Double {
+        try validateDistribution(p)
+        try validateDistribution(q)
+        try validateAlignedDistributions(p, q)
+        var norm = 0.0
+        for (left, right) in zip(p, q) {
+            let sum = left + right
+            guard sum > 0 else { continue }
+            let delta = abs(left - right) / sum
+            let information: Double
+            if delta >= 1 {
+                information = 0.5
+            } else if delta <= 0.125 {
+                // g(d) = (1+d)ln(1+d)+(1-d)ln(1-d)
+                //      = sum(k>=1) d^(2k)/(k(2k-1)).
+                // Positive terms preserve the quadratic signal near identical distributions.
+                let squared = delta * delta
+                var power = squared
+                var series = 0.0
+                for order in 1...64 {
+                    let term = power / Double(order * (2 * order - 1))
+                    series += term
+                    if term <= Double.ulpOfOne * series { break }
+                    power *= squared
+                }
+                information = series / (4 * log(2.0))
+            } else {
+                information =
+                    ((1 + delta) * log1p(delta) + (1 - delta) * log1p(-delta))
+                    / (4 * log(2.0))
+            }
+            // Accumulate square roots so a representable distance survives even when its
+            // squared divergence or an individual information contribution is subnormal.
+            norm = hypot(norm, sum.squareRoot() * information.squareRoot())
+        }
+        return min(1, norm)
     }
 
     /// Computes `Hellinger-v1`.
@@ -133,11 +174,11 @@ public enum GlifiProbabilityDivergence {
         try validateDistribution(p)
         try validateDistribution(q)
         try validateAlignedDistributions(p, q)
-        let sumOfSquares = zip(p, q).reduce(0.0) { result, pair in
+        let norm = zip(p, q).reduce(0.0) { result, pair in
             let difference = pair.0.squareRoot() - pair.1.squareRoot()
-            return result + difference * difference
+            return hypot(result, difference)
         }
-        return sumOfSquares.squareRoot() / 2.0.squareRoot()
+        return norm / 2.0.squareRoot()
     }
 
     private static func validateDistribution(_ distribution: [Double]) throws {

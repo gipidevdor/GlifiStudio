@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-API-001 |
 | Tipo | Specifica normativa delle interfacce applicative e headless |
-| Versione | 1.29.0 |
+| Versione | 1.29.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-08 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Baseline pre-1.0 proposta; contract test richiesti prima della stabilizzazione |
 | Riferimenti | GS-DOM-001; GS-DAT-001; GS-QRY-001; GS-ANA-001; GS-RUN-001; GS-SEC-001; ADR-0002; ADR-0019 |
 
@@ -253,6 +253,24 @@ Chi usa direttamente `GlifiSummaryCandidateSentence` nel Core deve fornire conte
 positivi: zero e negativi sono rifiutati prima dello scoring con
 `summary.invalid-character-count` (`invalidInput`), anche per le altre unità di budget.
 Un costo positivo superiore al budget residuo è saltato senza overflow (GS-VER-167).
+
+Le varianti configurabili aggiungono `--graph-damping`, `--graph-tolerance`,
+`--graph-iterations` e `--graph-threshold`, corrispondenti alla richiesta
+`GlifiStudioSummaryGraphConfiguration`. Sono ammesse soltanto con
+`TextRankSentence-configurable-v1`, `LexRankSentence-continuous-v1` o
+`LexRankSentence-threshold-v1`; gli identificatori legacy conservano i propri
+parametri e le proprie failure. Le varianti configurabili espongono convergenza
+e configurazione risolta nella diagnostica, senza reinterpretare i payload legacy.
+
+Le primitive headless aggiunte in GS-VER-168 sono esposte separatamente dalle
+operazioni persistite, come candidati scientifici con limiti espliciti:
+`GlifiStudioLexicalStatistics` per osservazioni lessicali, fitting Zipf/Heaps e
+sintesi descrittive; `GlifiStudioTextAnalytics.temporalFrequencies` per bucket
+calendariali con mancanti/esclusioni; `GlifiStudioLinguisticEvaluation` per
+classificazione, lemmi, confini, entità e morfologia;
+`GlifiStudioTextAnalytics.welchOneWayANOVA` per ANOVA eteroschedastica. Queste API sono asincrone `@concurrent`, non richiedono UI,
+restituiscono failure tipizzate e non promettono Artifact o comandi CLI dedicati
+finché non esiste la relativa integrazione (GS-VER-171).
 
 ### 9.2 Viste dei risultati estesi
 

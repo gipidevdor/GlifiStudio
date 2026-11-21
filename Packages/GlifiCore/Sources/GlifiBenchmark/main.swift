@@ -76,6 +76,64 @@ if CommandLine.arguments.contains("--text-operators") {
     exit(0)
 }
 
+if CommandLine.arguments.contains("--analysis-refinement") {
+    let section = CommandLine.arguments.last ?? "all"
+    let initialThermalState = String(describing: ProcessInfo.processInfo.thermalState)
+    let measurements: [Measurement]
+    switch section {
+    case "descriptive": measurements = try descriptiveRefinementMeasurements()
+    case "temporal": measurements = try temporalRefinementMeasurements()
+    case "factorization": measurements = try factorizationRefinementMeasurements()
+    case "weighting": measurements = try weightingRefinementMeasurements()
+    default:
+        measurements =
+            try descriptiveRefinementMeasurements() + temporalRefinementMeasurements()
+            + factorizationRefinementMeasurements() + weightingRefinementMeasurements()
+    }
+    let report = Report(
+        device: hardwareModel(),
+        operatingSystem: ProcessInfo.processInfo.operatingSystemVersionString,
+        thermalStateAtStart: initialThermalState,
+        configuration: "Release, GlifiBenchmark --analysis-refinement \(section)",
+        warmUpRuns: 1, samples: 5, statistic: "median, min, max wall-clock seconds",
+        threshold: "observational before/after comparison; no release gate",
+        measurements: measurements)
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+    FileHandle.standardOutput.write(try encoder.encode(report) + Data("\n".utf8))
+    exit(0)
+}
+
+if CommandLine.arguments.contains("--analysis-optimization") {
+    let section = CommandLine.arguments.last ?? "all"
+    let initialThermalState = String(describing: ProcessInfo.processInfo.thermalState)
+    var measurements: [Measurement] = []
+    if section == "--analysis-optimization" || section == "multivariate" {
+        measurements += try multivariateOptimizationMeasurements()
+    }
+    if section == "--analysis-optimization" || section == "lexical" {
+        measurements += try lexicalOptimizationMeasurements()
+    }
+    if section == "--analysis-optimization" || section == "metadata" {
+        measurements += try metadataOptimizationMeasurements()
+    }
+    if section == "--analysis-optimization" || section == "graph" {
+        measurements += try graphOptimizationMeasurements()
+    }
+    let report = Report(
+        device: hardwareModel(),
+        operatingSystem: ProcessInfo.processInfo.operatingSystemVersionString,
+        thermalStateAtStart: initialThermalState,
+        configuration: "Release, GlifiBenchmark --analysis-optimization \(section)",
+        warmUpRuns: 1, samples: 5, statistic: "median, min, max wall-clock seconds",
+        threshold: "observational before/after comparison; no release gate",
+        measurements: measurements)
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+    FileHandle.standardOutput.write(try encoder.encode(report) + Data("\n".utf8))
+    exit(0)
+}
+
 let thermal: String = {
     switch ProcessInfo.processInfo.thermalState {
     case .nominal: "nominal"
