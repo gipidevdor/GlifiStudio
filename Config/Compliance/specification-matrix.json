@@ -2398,10 +2398,11 @@
         "Fixtures/Validation/v1/extractive-summary-v1.json"
       ],
       "evidence": [
-        "docs/evidenze/GS-VER-165-riassunto-budget-caratteri.md"
+        "docs/evidenze/GS-VER-165-riassunto-budget-caratteri.md",
+        "docs/evidenze/GS-VER-167-costi-riassunto.md"
       ],
       "gate": "G3",
-      "status": "verified",
+      "status": "implemented",
       "blockingReason": null
     },
     {
