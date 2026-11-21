@@ -17,7 +17,11 @@ Il repository è privato: può contribuire soltanto chi è stato autorizzato dal
 - Mantenere ogni modifica focalizzata e integrare spesso `main` senza riscrivere la storia condivisa.
 - Aprire una pull request in bozza appena il contesto è abbastanza chiaro.
 - Compilare integralmente il modello di pull request e collegare requisiti, ADR, issue ed evidenze applicabili.
-- Richiedere revisione solo dopo il superamento locale di `make verify-app-store`.
+- Richiedere revisione solo dopo il superamento locale di `make verify-app-store`. Deroga
+  dell'iniziatore (2026-11-21): quando nessuna macchina macOS locale è disponibile, il
+  preflight è soddisfatto dai job `verify` e `app-store-baseline` del workflow `Verifica` sul
+  runner `xcode-27`, tutti verdi sulla head definitiva della PR; il body della PR deve
+  dichiarare che il preflight è remoto e il limite va registrato nell'evidenza GS-VER.
 - Integrare soltanto con controlli verdi, conversazioni risolte e approvazioni richieste dalla ruleset.
 
 ## Commit
