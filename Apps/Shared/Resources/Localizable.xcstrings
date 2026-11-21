@@ -10878,6 +10878,23 @@
         }
       }
     },
+    "failure.summary.invalid-character-count" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A sentence's character count must be positive."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il conteggio dei caratteri di una frase deve essere positivo."
+          }
+        }
+      }
+    },
     "failure.summary.invalid-redundancy" : {
       "extractionState" : "manual",
       "localizations" : {

@@ -109,7 +109,8 @@ public struct GlifiSummaryCandidateSentence: Equatable, Sendable {
     public let range: GlifiUTF8Range
     /// Normalized lexical forms in source order, repetitions included.
     public let terms: [String]
-    /// Unicode scalars of the exact source text of `range`, the `Budget-characters-v1` cost.
+    /// Positive Unicode scalar count of the exact source text of `range`, the
+    /// `Budget-characters-v1` cost; validated when the summary is computed.
     public let characterCount: Int
 
     /// Creates a candidate from its interval, its length in Unicode scalars and normalized tokens.
@@ -277,6 +278,9 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
         }
         guard Set(ordered.map(\.sourceRevisionID)).count == ordered.count else {
             throw derivedAnalysisFailure("summary.duplicate-source")
+        }
+        guard ordered.allSatisfy({ $0.sentences.allSatisfy { $0.characterCount > 0 } }) else {
+            throw derivedAnalysisFailure("summary.invalid-character-count")
         }
 
         let vocabulary = Array(
@@ -481,7 +485,7 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
             var accepted = 0
             for index in rankedOrder {
                 let candidate = scored[index]
-                guard candidate.isEligible, consumed + cost(candidate) <= budget.limit else {
+                guard candidate.isEligible, cost(candidate) <= budget.limit - consumed else {
                     continue
                 }
                 consumed += cost(candidate)
@@ -503,7 +507,7 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
                 for index in scored.indices {
                     let candidate = scored[index]
                     guard candidate.isEligible, !selected[index],
-                        consumed + cost(candidate) <= budget.limit
+                        cost(candidate) <= budget.limit - consumed
                     else { continue }
                     let objective = lambda * candidate.score - (1 - lambda) * penalties[index]
                     if objective > bestObjective {
