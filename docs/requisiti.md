@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-SRS-001 |
 | Tipo | Software requirements specification |
-| Versione | 0.49.0 |
+| Versione | 0.50.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-01 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Non ancora approvato |
 | Riferimento | ISO/IEC/IEEE 29148:2018; ISO/IEC 25010:2023, profilo tailored |
 
@@ -78,7 +78,7 @@ restano requisiti di evoluzione finché una successiva baseline non le classific
 | RF-025 | Il sistema **DEVE** offrire la configurazione linguistica italiana nel perimetro `Must` del primo rilascio. | NS-001; ADR-0004 | Must | TV-014 | Approvato |
 | RF-026 | Il sistema **DEVE** produrre conteggi e statistiche descrittive di documenti, caratteri, segmenti, frasi, token e type secondo GS-MET-001-04. | NS-001, NS-009; MET | Da assegnare | TV-029 | Conteggi corpus D/C/S/N/V verificati; segmenti e distribuzioni complete aperti |
 | RF-027 | Il sistema **DEVE** calcolare diversità lessicale soltanto mediante varianti e finestre definite in GS-MET-001-04. | NS-001, NS-009; MET | Da assegnare | TV-029 | TTR-v1, MSTTR-v1 e MATTR-v1 bounded verificati; `MTLD-bidirectional-v1` per documento e concatenato verificato contro R e persistito con parità GlifiCore/Kit/CLI (GS-VER-116) |
-| RF-028 | Il sistema **DEVE** distinguere osservazioni, modelli, fitting e bontà dell'adattamento nelle analisi di frequenza, vocabulary growth, Zipf e Heaps. | NS-009; MET | Da assegnare | TV-029 | Baseline candidata |
+| RF-028 | Il sistema **DEVE** distinguere osservazioni, modelli, fitting e bontà dell'adattamento nelle analisi di frequenza, vocabulary growth, Zipf e Heaps. | NS-009; MET | Da assegnare | TV-029 | Baseline candidata; osservazioni, `ZipfLogOLS-v1` e `HeapsLogOLS-v1` realizzati sul gruppo (GS-VER-168, in verifica) |
 | RF-029 | Il sistema **DEVE** rappresentare conteggi e trasformazioni mediante matrici unità-termine sparse con identità e lineage di righe, colonne e celle. | NS-002, NS-003, NS-010, NS-011; MET | Da assegnare | TV-030 | Matrice documento-termine sparsa bounded con lineage di riga verificata; celle→occorrenze e spill aperti |
 | RF-030 | Il sistema **DEVE** offrire le ponderazioni TF, TF-IDF e BM25 soltanto con formule, smoothing e normalizzazioni versionati. | NS-001, NS-009; MET | Da assegnare | TV-029 | Tutte le varianti TF, IDF non smussata e smussata, normalizzazioni di riga e `BM25-v1` verificate contro R e persistite con parità GlifiCore/Kit/CLI (GS-VER-115) |
 | RF-031 | Il sistema **DEVE** confrontare gruppi mediante keyness conservando popolazioni, frequenze, test, effect size e correzione per confronti multipli. | NS-005, NS-009, NS-010; MET | Da assegnare | TV-031 | `keyness-gtest-fisher-ha-ci-bh-v2`: G-test, selezione pre-registrata di Fisher (attesa < 5), effect size HA con IC di Katz e Woolf, BH e Artifact con dipendenze persistiti (GS-VER-118) |

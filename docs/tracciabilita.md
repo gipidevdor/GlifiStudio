@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.89.1 |
+| Versione | 0.90.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-07 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -175,6 +175,7 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 | [GS-VER-138](evidenze/GS-VER-138-gold-italiano-su-prosa-reale.md) | Slice TV-013; GS-LNG-001, GS-MET-001-18, ADR-0030 | Superato localmente: gold su 434 token di prosa italiana di pubblico dominio, annotazione indipendente in accordo pieno con il prodotto | Un solo autore ottocentesco; dialogo, lemma, POS e NER esclusi |
 | [GS-VER-139](evidenze/GS-VER-139-cache-di-build-limitata.md) | Slice TV-063; GS-DEV-002 § Cache di build | Superato localmente: picco su disco da ~37 GiB a 1,8 GiB, seconda esecuzione a 303 s contro 773 s, arresto anticipato se lo spazio non basta | Tetto prudenziale non ottimizzato; misure su una sola macchina |
 | [GS-VER-141](evidenze/GS-VER-141-prima-ci-remota-verde.md) | TV-011, TV-013, TV-049; GS-STD-001-20, GS-REP-005, GS-WVR-001…004 | Superato su runner remoto: `verify` verde su `xcode-27` con 257 test, 22 checkpoint di recovery e build macOS/iPadOS; deroghe budget in rientro | Rscript e veraPDF assenti sul runner; dispositivi, firma e TestFlight non coperti; non conformità 2026-09-22→2026-10-03 registrata |
+| [GS-VER-168](evidenze/GS-VER-168-leggi-lessicali-zipf-heaps.md) | Prima slice TV-029; RF-028, GS-MET-001-05, CMP-166 | In verifica: oracolo Python `lexical_laws.py` (`LAWS_*`) superato in locale; tre test Core e contract test CLI in attesa della CI `xcode-27` | Fit OLS log-log descrittivo senza incertezza; una sola sequenza del gruppo; nessuna presentazione nelle app |
 | [GS-VER-165](evidenze/GS-VER-165-riassunto-budget-caratteri.md) | Quinta slice TV-036; RF-042, GS-MET-001-19, CMP-164 | Superato in CI `xcode-27` sulla head `3c3cfef` di #31 e su `main` `4c59a50`: oracolo Python esteso (`*_SELECTED_C40`, `MMR_ORDER_C40_L05`), tre test Core su 299 e contract test CLI | Costo in scalari Unicode, non grafemi; nessuna valutazione ROUGE o umana; CMP-164 verified |
 | [GS-VER-164](evidenze/GS-VER-164-riassunto-lexrank.md) | Quarta slice TV-036; RF-042, GS-MET-001-19, CMP-163 | Superato: oracolo Python esteso (`LEXRANK_*`), test Core/Kit (296 Core, 37 Kit) e contract test CLI nei quattro controlli CI `xcode-27` sulla head `c3f7bab` di #29 e su `main` `aaf8ff3` | Variante continua senza soglia; grafo denso fino a 2 000 nodi; nessuna valutazione ROUGE o umana; CMP-163 verified |
 | [GS-VER-151](evidenze/GS-VER-151-riassunto-mmr.md) | Terza slice TV-036; RF-042, GS-MET-001-19, CMP-106 | Superato: oracolo Python esteso (`MMR_*`), test Core/Kit e contract test CLI nei quattro controlli CI `xcode-27` sulla head definitiva di #24 e su `main` `dfdcdbe` e `a86a53b` | Ridondanza come parametro del descrittore; rilevanza non normalizzata; nessuna valutazione ROUGE o umana; Rscript assente sul runner; CMP-106 verified |
@@ -197,6 +198,11 @@ RF-080, RQ-044, RQ-046, CMP-081. Permessi negati in `query --ast` classificati
 `authorizationDenied`/`afterUserAction`; test CLI su file non leggibile e file
 mancante. Statici e gate Xcode 27 superati in PR #18; concorre alla verifica G3
 di CMP-081. EPERM/ACL e revoca concorrente non riprodotti separatamente.
+
+Incremento [GS-VER-168](evidenze/GS-VER-168-leggi-lessicali-zipf-heaps.md): prima slice di TV-029
+per RF-028 con CMP-166 (`implemented`): rank-frequency, spectrum e vocabulary growth separati
+dai fit `ZipfLogOLS-v1` e `HeapsLogOLS-v1` con residui e avviso descrittivo, persistiti come
+Artifact `corpus-lexical-laws-v1` e disponibili in GlifiKit e `glifi laws`.
 
 Incremento [GS-VER-165](evidenze/GS-VER-165-riassunto-budget-caratteri.md): quinta slice di TV-036
 con RF-042 e CMP-164 (`verified`): unità di budget `Budget-characters-v1` del riassunto

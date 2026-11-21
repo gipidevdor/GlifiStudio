@@ -678,6 +678,34 @@
         }
       }
     },
+    "failure.laws.invalid-checkpoints" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The checkpoint count must be between 2 and 10 000." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Il numero di checkpoint deve essere compreso fra 2 e 10 000." } }
+      }
+    },
+    "failure.laws.invalid-rank-range" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The Zipf rank range must start at 1 or above and span at least two ranks." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "L'intervallo di ranghi di Zipf deve partire da 1 o oltre e contenere almeno due ranghi." } }
+      }
+    },
+    "failure.laws.invalid-row-limit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The row limit must be between 1 and 100 000." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Il limite di righe deve essere compreso fra 1 e 100 000." } }
+      }
+    },
+    "failure.laws.insufficient-sources" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Select at least one document for the lexical laws." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Seleziona almeno un documento per le leggi lessicali." } }
+      }
+    },
     "failure.ngrams.unknown-unit" : {
       "extractionState" : "manual",
       "localizations" : {

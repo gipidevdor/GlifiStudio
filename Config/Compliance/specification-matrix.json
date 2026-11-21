@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.specification-compliance-matrix",
   "schemaVersion": 1,
-  "updatedAt": "2026-11-07",
+  "updatedAt": "2026-11-21",
   "requiredRequirementCoverage": [
     "RQ-057",
     "RQ-058",
@@ -2402,6 +2402,36 @@
       ],
       "gate": "G3",
       "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-166",
+      "clause": "GS-MET-001-05 § Variante implementata: corpus-lexical-laws-v1",
+      "specification": "docs/metodi-analitici/05-distribuzioni-lessicali-zipf-heaps.md",
+      "requirements": [
+        "RF-028"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiLexicalLawsAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiLexicalLawsPresentation.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLexicalLawsTests.swift",
+        "Packages/GlifiCore/Tests/Oracles/Python/lexical_laws.py",
+        "Packages/GlifiCore/Tests/Oracles/expected.txt",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [
+        "Fixtures/Validation/v1/lexical-laws-v1.json"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-168-leggi-lessicali-zipf-heaps.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
       "blockingReason": null
     }
   ]

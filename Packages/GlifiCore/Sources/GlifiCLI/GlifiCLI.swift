@@ -483,6 +483,28 @@ enum GlifiCLI {
             case .json:
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
+        case let .laws(projectURL, sourceRevisionIDs, parameters):
+            let session = try await service.openProject(at: projectURL)
+            let result = try await session.analyzeLexicalLaws(
+                sourceRevisionIDs: sourceRevisionIDs, parameters: parameters)
+            await session.close()
+            switch request.format {
+            case .text:
+                print("Leggi lessicali · N=\(result.tokenCount) · V=\(result.typeCount)")
+                for law in [result.zipf, result.heaps] {
+                    if let fit = law.fit {
+                        let rSquared = fit.rSquared.map { "\($0)" } ?? "non definito"
+                        print(
+                            "\(law.methodIdentifier)\tcoefficiente \(fit.coefficient)\tesponente \(fit.exponent)\tR² \(rSquared)\tRMSE log \(fit.rootMeanSquaredLogError)"
+                        )
+                    } else {
+                        print("\(law.methodIdentifier)\tnon definito")
+                    }
+                }
+                print("Adattamento descrittivo: non stabilisce una legge esatta né un meccanismo.")
+            case .json:
+                try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
+            }
         case let .summarize(projectURL, sourceRevisionIDs, budget, scheme, method, redundancy):
             let session = try await service.openProject(at: projectURL)
             let result = try await session.analyzeExtractiveSummary(
@@ -1172,6 +1194,7 @@ private struct CLIRequest {
           glifi [--format text|json] [--no-progress] weighting <progetto.glifi> --sources <source-revision-id,...> [--tf TF-raw-v1|TF-binary-v1|TF-L1-v1|TF-max-v1|TF-augmented-v1|TF-sublinear-v1] [--idf IDF-none-v1|IDF-unsmoothed-v1|IDF-smooth-v1] [--norm RowNorm-none-v1|RowNorm-L1-v1|RowNorm-L2-v1]
           glifi [--format text|json] [--no-progress] ngrams <progetto.glifi> --sources <source-revision-id,...> --unit form|word|character|character-padded [--n <n>] [--stopwords <forma,...>] [--min-length <n>] [--min-count <n>] [--min-df <n>] [--max-df-proportion <x>] [--max-rows <n>]
           glifi [--format text|json] [--no-progress] diversity <progetto.glifi> --sources <source-revision-id,...> [--threshold <τ>]
+          glifi [--format text|json] [--no-progress] laws <progetto.glifi> --sources <source-revision-id,...> [--checkpoints <K>] [--zipf-min-rank <r>] [--zipf-max-rank <r>] [--max-rows <n>]
           glifi [--format text|json] [--no-progress] summarize <progetto.glifi> --sources <source-revision-id,...> [--sentences <n> | --tokens <n> | --characters <n>] [--method SentenceTFIDFMean-v1|CentroidCosine-v1|LexRankSentence-v1] [--mmr <λ>] [--tf <TF-*>] [--idf <IDF-*>] [--norm <RowNorm-*>]
           glifi [--format text|json] [--no-progress] bm25 <progetto.glifi> --sources <source-revision-id,...> --query <testo> [--k1 <x>] [--b <x>]
           glifi [--format text|json] [--no-progress] dispersion <progetto.glifi> --sources <source-revision-id,...> [--part <source-revision-id,...>]...
@@ -1424,7 +1447,7 @@ private struct CLIRequest {
                 "association", "dispersion", "group-metric", "collocations", "window-collocations",
                 "window-network",
                 "correlate", "paired", "posthoc", "network", "agreement", "multivariate",
-                "weighting", "bm25", "diversity", "summarize", "ngrams",
+                "weighting", "bm25", "diversity", "laws", "summarize", "ngrams",
             ]
             .contains(remaining[0])
         else {
@@ -1500,6 +1523,20 @@ private struct CLIRequest {
                 ),
                 try integer("--max-rows") ?? 1_000
             )
+        case "laws":
+            try allowed([
+                "--sources", "--checkpoints", "--zipf-min-rank", "--zipf-max-rank", "--max-rows",
+            ])
+            guard let sources = try single("--sources") else {
+                throw CLIUsageError.invalidArguments
+            }
+            return .laws(
+                projectURL, try Self.identifiers(sources),
+                GlifiStudioLexicalLawsParameters(
+                    checkpointCount: try integer("--checkpoints") ?? 20,
+                    zipfFirstRank: try integer("--zipf-min-rank") ?? 1,
+                    zipfLastRank: try integer("--zipf-max-rank"),
+                    rankRowLimit: try integer("--max-rows") ?? 1_000))
         case "diversity":
             try allowed(["--sources", "--threshold"])
             guard let sources = try single("--sources") else {
@@ -1874,6 +1911,7 @@ private enum CLICommand {
     case weighting(URL, [String], GlifiStudioTermWeightingScheme)
     case bm25(URL, [String], String, Double, Double)
     case diversity(URL, [String], Double)
+    case laws(URL, [String], GlifiStudioLexicalLawsParameters)
     case summarize(
         URL, [String], GlifiStudioSummaryBudget, GlifiStudioTermWeightingScheme,
         GlifiStudioSummaryScoringMethod, GlifiStudioSummaryRedundancy)
@@ -1918,6 +1956,7 @@ private enum CLICommand {
         case .weighting: "weighting"
         case .bm25: "bm25"
         case .diversity: "diversity"
+        case .laws: "laws"
         case .summarize: "summarize"
         case .qualitativeState: "qualitative.state"
         case .qualitativeAppend: "qualitative.append"

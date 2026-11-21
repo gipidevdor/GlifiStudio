@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-05 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.0.0 |
+| Versione | 1.1.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -47,6 +47,40 @@ Il modello candidato è `V(n)=K n^β` per `K>0`, `0<β≤1`. `HeapsLogOLS-v1` ap
 OLS a `ln V(n)=ln K+β ln n` sui checkpoint positivi esplicitamente registrati e
 restituisce `K`, `β`, `R²`, RMSE logaritmico e residui. Non autorizza estrapolazioni
 oltre l'intervallo osservato senza intervallo d'incertezza e avviso.
+
+## Variante implementata: `corpus-lexical-laws-v1`
+
+Prima variante completamente fissata, sull'insieme di documenti selezionato (GS-VER-168):
+
+- **sequenza**: token lessicali `it-token-v1` in forma NFC minuscola, concatenati
+  nell'ordine canonico delle `SourceRevisionID` (`source-revision-order-concatenation-v1`);
+  `N` token e `V` type;
+- **rank-frequency**: righe `(r, type, f_r)` per frequenza decrescente, tie-break per ordine
+  crescente dei byte UTF-8 del type (equivalente all'ordine dei code point); sono persistite
+  le prime `L` righe (`rankRowLimit`, default 1 000, ammesso 1…100 000) con indicatore di
+  troncamento;
+- **spectrum**: coppie `(k, V_k)` complete in ordine crescente di `k`, con
+  `Σ_k V_k = V` e `Σ_k kV_k = N`;
+- **vocabulary growth**: `GrowthCheckpoints-linear-v1` pone `n_i = ⌈i·N/K⌉` per
+  `i = 1…K` senza duplicati (`K` default 20, ammesso 2…10 000) e registra `V(n_i)`;
+  l'ultimo checkpoint coincide con `(N, V)`;
+- **`ZipfLogOLS-v1`**: tutti i ranghi osservati nell'intervallo dichiarato
+  `[r_min, r_max]` (default `[1, V]`), anche oltre le righe persistite;
+- **`HeapsLogOLS-v1`**: tutti i checkpoint registrati;
+- **OLS**: somme centrate su `x = ln(predittore)` e `y = ln(conteggio)`; il risultato
+  registra numerosità, primo e ultimo predittore, `β₀`, `β₁`, coefficiente `exp(β₀)`,
+  esponente (`α = -β₁` per Zipf, `β = β₁` per Heaps), `R² = 1 - SSE/SST` (assente se
+  `SST = 0`), RMSE logaritmico `√(SSE/n)`, residui `y - ŷ` nell'ordine del predittore e
+  l'appartenenza dell'esponente al dominio della famiglia (`α > 0`; `0 < β ≤ 1`); con meno
+  di due predittori distinti il fit è assente con motivo `fit.insufficient-points`;
+- ogni risultato porta l'avviso `caveat.lexical-law-fit-is-descriptive-v1`; nessuna
+  estrapolazione né intervallo d'incertezza è prodotto.
+
+Parametri fuori dominio falliscono con `laws.invalid-checkpoints`,
+`laws.invalid-rank-range` (`r_min < 1` o `r_max ≤ r_min`) e `laws.invalid-row-limit`
+(`invalidInput`); una selezione vuota con `laws.insufficient-sources`. Restano candidati
+Zipf–Mandelbrot, estimator di massima verosimiglianza, curve per documento e
+l'incertezza dei parametri.
 
 ## Separazione obbligatoria
 

@@ -8,6 +8,11 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Aggiunto
 
+- Osservazioni lessicali e leggi empiriche `corpus-lexical-laws-v1`: rank-frequency con
+  troncamento dichiarato, spectrum, vocabulary growth `GrowthCheckpoints-linear-v1` e fit
+  `ZipfLogOLS-v1`/`HeapsLogOLS-v1` separati, con residui, dominio dell'esponente e avviso
+  descrittivo; `analyzeLexicalLaws` in GlifiKit e `glifi laws`; GS-VER-168, CMP-166
+  `implemented`.
 - Unità di budget `Budget-characters-v1` del riassunto estrattivo: costo in scalari Unicode del
   testo sorgente esatto di ogni frase, stessa selezione delle altre unità e `--characters <n>`
   in `glifi summarize`; nessun nuovo campo nel payload; GS-VER-165, CMP-164 `implemented`.

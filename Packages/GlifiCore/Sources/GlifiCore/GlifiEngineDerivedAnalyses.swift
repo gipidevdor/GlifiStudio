@@ -502,6 +502,61 @@ extension GlifiEngine {
         }
     }
 
+    /// Observes rank-frequency, spectrum and vocabulary growth of the pooled sequence and fits
+    /// `ZipfLogOLS-v1` and `HeapsLogOLS-v1`.
+    public func analyzeLexicalLaws(
+        in project: GlifiProjectPackage,
+        sourceRevisionIDs: [SourceRevisionID],
+        parameters: GlifiLexicalLawsParameters = .standard,
+        corpusOptions: GlifiCorpusAnalysisOptions = .standard
+    ) async throws -> GlifiProjectDerivedResult<GlifiCorpusLexicalLawsAnalysis> {
+        try await guardedDerived {
+            try Task.checkCancellation()
+            try parameters.validate()
+            let snapshot = await project.snapshot()
+            let group = try await derivedCorpusGroup(
+                sourceRevisionIDs,
+                minimumCount: 1,
+                code: "laws",
+                snapshot: snapshot,
+                options: corpusOptions,
+                in: project
+            )
+            var declared: [String: GlifiAnalysisValue] = [
+                "checkpointPolicy": .text(GlifiLexicalLaws.checkpointPolicyIdentifier),
+                "checkpointCount": .integer(Int64(parameters.checkpointCount)),
+                "zipfFirstRank": .integer(Int64(parameters.zipfFirstRank)),
+                "rankRowLimit": .integer(Int64(parameters.rankRowLimit)),
+                "sequencePolicy": .text("source-revision-order-concatenation-v1"),
+                "zipfMethod": .text(GlifiLexicalLaws.zipfIdentifier),
+                "heapsMethod": .text(GlifiLexicalLaws.heapsIdentifier),
+            ]
+            if let lastRank = parameters.zipfLastRank {
+                declared["zipfLastRank"] = .integer(Int64(lastRank))
+            }
+            let descriptor = try Self.groupDescriptor(
+                GlifiCorpusLexicalLawsAnalysis.self,
+                artifactType: "studio.glifi.artifact.corpus-lexical-laws",
+                domain: "lexical-laws-group.v1",
+                unit: "lexical-token-sequence.v1",
+                representation: "it-token-v1-nfc-lowercase-v1",
+                parameters: declared,
+                snapshot: snapshot,
+                groups: [group]
+            )
+            let sequences = try await normalizedSequences(
+                descriptor: descriptor, group: group, snapshot: snapshot,
+                corpusOptions: corpusOptions, in: project)
+            return try await derivedArtifact(
+                descriptor: descriptor,
+                sourceSnapshot: snapshot,
+                in: project
+            ) {
+                try GlifiCorpusLexicalLawsAnalysis(sequences: sequences, parameters: parameters)
+            }
+        }
+    }
+
     /// Selects the sentences of a group with a declared scoring method within a declared budget.
     public func analyzeExtractiveSummary(
         in project: GlifiProjectPackage,
