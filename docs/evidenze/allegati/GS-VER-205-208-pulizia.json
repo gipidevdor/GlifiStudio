@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-21",
+  "removedDirectory": "/tmp/GlifiStudioDomain205-cache",
+  "allocatedKiBBeforeRemoval": 3277504,
+  "allocatedGiBBeforeRemoval": 3.125671,
+  "directoryAbsentAfterRemoval": true,
+  "openFilesObservedBeforeRemoval": 0,
+  "preserved": [
+    "Allegati, campioni grezzi, inventari, log sanificati e audit",
+    "Archivio verificato di sorgenti baseline, strutture e candidato",
+    "Toolchain e dipendenze attive",
+    "Modifiche e cache delle altre chat"
+  ],
+  "measurementScope": "Dimensione allocata del solo percorso prima della rimozione; non delta di spazio libero APFS"
+}

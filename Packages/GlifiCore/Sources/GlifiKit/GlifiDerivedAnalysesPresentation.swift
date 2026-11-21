@@ -1783,10 +1783,12 @@ public struct GlifiStudioMultivariateResult: Codable, Equatable, Sendable {
             axisShares = ca.inertias.map { $0 / ca.totalInertia }
             rows = ca.rowCoordinates
             columns = ca.columnCoordinates
+            let includedRows = Set(ca.includedRows)
+            let includedColumns = Set(ca.includedColumns)
             excludedDocuments = value.sourceRevisionIDs.indices
-                .filter { !ca.includedRows.contains($0) }.map { value.sourceRevisionIDs[$0] }
+                .filter { !includedRows.contains($0) }.map { value.sourceRevisionIDs[$0] }
             excludedTerms = value.terms.indices
-                .filter { !ca.includedColumns.contains($0) }.map { value.terms[$0] }
+                .filter { !includedColumns.contains($0) }.map { value.terms[$0] }
         } else if let pca = value.principalComponents {
             axisValues = pca.variances
             axisShares = pca.varianceShares

@@ -73,10 +73,7 @@ public struct GlifiDigestIdentifier<Kind: GlifiDigestIdentifierKind>:
     }
 
     private static func isValidDigest(_ value: String) -> Bool {
-        guard value.hasPrefix("sha256:"), value.count == 71 else { return false }
-        return value.dropFirst(7).allSatisfy { character in
-            "0123456789abcdef".contains(character)
-        }
+        isCanonicalSHA256Digest(value)
     }
 }
 

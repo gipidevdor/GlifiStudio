@@ -476,10 +476,6 @@ public actor GlifiProjectPackage {
                 messageKey: "failure.project.source-not-found"
             )
         }
-        _ = try GlifiProjectPackageIO.validatedObjectURL(
-            for: source,
-            in: packageURL
-        )
         return try GlifiProjectPackageIO.readValidatedObject(source, in: packageURL)
     }
 
@@ -561,7 +557,9 @@ public actor GlifiProjectPackage {
     }
 
     func appendInvestigationEvent(
-        _ event: GlifiInvestigationEvent
+        _ event: GlifiInvestigationEvent,
+        interruption: GlifiProjectCommitInterruption? = nil,
+        interruptionBehavior: GlifiProjectCommitInterruptionBehavior = .throwFailure
     ) throws -> GlifiProjectSnapshot {
         let expectedSnapshot = currentSnapshot
         var coordinatedError: Error?
@@ -577,7 +575,9 @@ public actor GlifiProjectPackage {
                 result = try GlifiProjectPackageIO.commitInvestigationEvent(
                     event,
                     at: coordinatedURL,
-                    expectedSnapshot: expectedSnapshot
+                    expectedSnapshot: expectedSnapshot,
+                    interruption: interruption,
+                    interruptionBehavior: interruptionBehavior
                 )
             } catch {
                 coordinatedError = error
@@ -779,10 +779,6 @@ extension GlifiProjectPackage {
                     messageKey: "failure.project.source-not-found"
                 )
             }
-            _ = try GlifiProjectPackageIO.validatedObjectURL(
-                for: source,
-                in: packageURL
-            )
             return try GlifiProjectPackageIO.readValidatedObject(source, in: packageURL)
         }
 
@@ -841,6 +837,7 @@ enum GlifiProjectCommitInterruption: String, Sendable, CaseIterable {
 enum GlifiProjectCommitInterruptionBehavior: Sendable {
     case throwFailure
     case invoke(@Sendable () -> Never)
+    case observe(@Sendable () throws -> Void)
 }
 
 struct GlifiStoredProjectArtifactRecord: Equatable, Sendable {
@@ -1446,14 +1443,9 @@ private enum GlifiProjectPackageIO {
             qualitativeEventCount: observedSnapshot.qualitativeEvents.count
         )
         let candidateURL = transactionURL.appending(path: "manifest.json")
-        try transactionDirectory.writeFile(
-            try GlifiCanonicalJSON.encode(manifest), named: "manifest.json")
-        let decodedCandidate = try JSONDecoder().decode(
-            GlifiProjectManifest.self,
-            from: Data(contentsOf: candidateURL)
-        )
-        try validate(decodedCandidate)
-        try interruptIfRequested(.manifestPrepared, interruption, behavior: interruptionBehavior)
+        try prepareCandidateManifest(
+            manifest, in: transactionDirectory,
+            interruption: interruption, interruptionBehavior: interruptionBehavior)
 
         let rootManifestURL = manifestURL(in: packageURL)
         _ = try fileManager.replaceItemAt(rootManifestURL, withItemAt: candidateURL)
@@ -1664,14 +1656,9 @@ private enum GlifiProjectPackageIO {
             qualitativeEventCount: observedSnapshot.qualitativeEvents.count
         )
         let candidateURL = transactionURL.appending(path: "manifest.json")
-        try transactionDirectory.writeFile(
-            try GlifiCanonicalJSON.encode(manifest), named: "manifest.json")
-        let decodedCandidate = try JSONDecoder().decode(
-            GlifiProjectManifest.self,
-            from: Data(contentsOf: candidateURL)
-        )
-        try validate(decodedCandidate)
-        try interruptIfRequested(.manifestPrepared, interruption, behavior: interruptionBehavior)
+        try prepareCandidateManifest(
+            manifest, in: transactionDirectory,
+            interruption: interruption, interruptionBehavior: interruptionBehavior)
 
         _ = try fileManager.replaceItemAt(manifestURL(in: packageURL), withItemAt: candidateURL)
         try interruptIfRequested(.manifestReplaced, interruption, behavior: interruptionBehavior)
@@ -1819,15 +1806,9 @@ private enum GlifiProjectPackageIO {
             qualitativeEventCount: records.count
         )
         let candidateURL = transactionURL.appending(path: "manifest.json")
-        try transactionDirectory.writeFile(
-            try GlifiCanonicalJSON.encode(manifest), named: "manifest.json")
-        try validate(
-            JSONDecoder().decode(
-                GlifiProjectManifest.self,
-                from: Data(contentsOf: candidateURL)
-            )
-        )
-        try interruptIfRequested(.manifestPrepared, interruption, behavior: interruptionBehavior)
+        try prepareCandidateManifest(
+            manifest, in: transactionDirectory,
+            interruption: interruption, interruptionBehavior: interruptionBehavior)
         _ = try fileManager.replaceItemAt(manifestURL(in: packageURL), withItemAt: candidateURL)
         try interruptIfRequested(.manifestReplaced, interruption, behavior: interruptionBehavior)
         try database.markCommitted(generation: targetGeneration)
@@ -1839,7 +1820,9 @@ private enum GlifiProjectPackageIO {
     static func commitInvestigationEvent(
         _ event: GlifiInvestigationEvent,
         at packageURL: URL,
-        expectedSnapshot: GlifiProjectSnapshot
+        expectedSnapshot: GlifiProjectSnapshot,
+        interruption: GlifiProjectCommitInterruption? = nil,
+        interruptionBehavior: GlifiProjectCommitInterruptionBehavior = .throwFailure
     ) throws -> GlifiProjectSnapshot {
         let writerLease = try GlifiProjectWriterLease.acquire(in: packageURL)
         defer { writerLease.release() }
@@ -1998,14 +1981,9 @@ private enum GlifiProjectPackageIO {
             qualitativeEventCount: observedSnapshot.qualitativeEvents.count
         )
         let candidateURL = transactionURL.appending(path: "manifest.json")
-        try transactionDirectory.writeFile(
-            try GlifiCanonicalJSON.encode(manifest), named: "manifest.json")
-        try validate(
-            JSONDecoder().decode(
-                GlifiProjectManifest.self,
-                from: Data(contentsOf: candidateURL)
-            )
-        )
+        try prepareCandidateManifest(
+            manifest, in: transactionDirectory,
+            interruption: interruption, interruptionBehavior: interruptionBehavior)
         _ = try fileManager.replaceItemAt(manifestURL(in: packageURL), withItemAt: candidateURL)
         try database.markCommitted(generation: targetGeneration)
         try? fileManager.removeItem(at: transactionURL)
@@ -2013,6 +1991,21 @@ private enum GlifiProjectPackageIO {
     }
 
     static func validatedObjectURL(
+        for source: GlifiProjectSourceRecord,
+        in packageURL: URL
+    ) throws -> URL {
+        let objectURL = try sourceObjectReferenceURL(for: source, in: packageURL)
+        let observation = try digestFile(
+            source.objectPath, in: packageURL, maximumByteCount: source.byteCount)
+        guard observation.byteCount == source.byteCount,
+            observation.digest == source.contentDigest
+        else {
+            throw corruption("project.object-digest-mismatch")
+        }
+        return objectURL
+    }
+
+    private static func sourceObjectReferenceURL(
         for source: GlifiProjectSourceRecord,
         in packageURL: URL
     ) throws -> URL {
@@ -2028,13 +2021,6 @@ private enum GlifiProjectPackageIO {
         let standardizedRoot = packageURL.standardizedFileURL.path + "/"
         guard objectURL.standardizedFileURL.path.hasPrefix(standardizedRoot) else {
             throw corruption("project.object-path-escape")
-        }
-        let observation = try digestFile(
-            source.objectPath, in: packageURL, maximumByteCount: source.byteCount)
-        guard observation.byteCount == source.byteCount,
-            observation.digest == source.contentDigest
-        else {
-            throw corruption("project.object-digest-mismatch")
         }
         return objectURL
     }
@@ -2096,14 +2082,7 @@ private enum GlifiProjectPackageIO {
         for artifact: GlifiProjectArtifactRecord,
         in packageURL: URL
     ) throws -> URL {
-        guard artifact.objectPath == (try artifactObjectPath(for: artifact.contentDigest)),
-            artifact.artifactID.digest == artifact.contentDigest,
-            artifact.byteCount >= 0,
-            artifact.byteCount <= GlifiProjectPackage.maximumArtifactByteCount
-        else {
-            throw corruption("project.illegal-artifact-reference")
-        }
-        let objectURL = try containedObjectURL(relativePath: artifact.objectPath, in: packageURL)
+        let objectURL = try artifactObjectReferenceURL(for: artifact, in: packageURL)
         let observation = try digestFile(
             artifact.objectPath, in: packageURL, maximumByteCount: artifact.byteCount)
         guard observation.byteCount == artifact.byteCount,
@@ -2112,6 +2091,20 @@ private enum GlifiProjectPackageIO {
             throw corruption("project.artifact-digest-mismatch")
         }
         return objectURL
+    }
+
+    private static func artifactObjectReferenceURL(
+        for artifact: GlifiProjectArtifactRecord,
+        in packageURL: URL
+    ) throws -> URL {
+        guard artifact.objectPath == (try artifactObjectPath(for: artifact.contentDigest)),
+            artifact.artifactID.digest == artifact.contentDigest,
+            artifact.byteCount >= 0,
+            artifact.byteCount <= GlifiProjectPackage.maximumArtifactByteCount
+        else {
+            throw corruption("project.illegal-artifact-reference")
+        }
+        return try containedObjectURL(relativePath: artifact.objectPath, in: packageURL)
     }
 
     private static func containedObjectURL(relativePath: String, in packageURL: URL) throws -> URL {
@@ -2133,6 +2126,7 @@ private enum GlifiProjectPackageIO {
         _ source: GlifiProjectSourceRecord,
         in packageURL: URL
     ) throws -> Data {
+        _ = try sourceObjectReferenceURL(for: source, in: packageURL)
         let observation = try readFile(
             source.objectPath, in: packageURL,
             maximumByteCount: source.byteCount,
@@ -2151,7 +2145,7 @@ private enum GlifiProjectPackageIO {
         _ artifact: GlifiProjectArtifactRecord,
         in packageURL: URL
     ) throws -> Data {
-        _ = try validatedArtifactObjectURL(for: artifact, in: packageURL)
+        _ = try artifactObjectReferenceURL(for: artifact, in: packageURL)
         let observation = try readFile(
             artifact.objectPath, in: packageURL,
             maximumByteCount: artifact.byteCount,
@@ -2488,6 +2482,83 @@ private enum GlifiProjectPackageIO {
         )
     }
 
+    private static func prepareCandidateManifest(
+        _ manifest: GlifiProjectManifest,
+        in transactionDirectory: GlifiPackageDirectory,
+        interruption: GlifiProjectCommitInterruption?,
+        interruptionBehavior: GlifiProjectCommitInterruptionBehavior
+    ) throws {
+        let expectedData = try GlifiCanonicalJSON.encode(manifest)
+        guard expectedData.count <= GlifiProjectPackage.maximumManifestByteCount else {
+            throw GlifiFailure(
+                code: "project.manifest-too-large",
+                category: .insufficientResources,
+                operation: .persistProject,
+                retryDisposition: .afterConditionsChange,
+                retainedState: .unchanged,
+                messageKey: "failure.project.manifest-too-large"
+            )
+        }
+        try transactionDirectory.writeFile(expectedData, named: "manifest.json")
+        // Returning test observers can alter the candidate before verification. The
+        // production failure/termination checkpoints remain after verification.
+        switch interruptionBehavior {
+        case .observe:
+            try interruptIfRequested(
+                .manifestPrepared, interruption, behavior: interruptionBehavior)
+        case .throwFailure, .invoke:
+            break
+        }
+
+        let handle = try transactionDirectory.openFile(relativePath: "manifest.json")
+        defer { try? handle.close() }
+        var status = stat()
+        guard fstat(handle.fileDescriptor, &status) == 0,
+            (status.st_mode & S_IFMT) == S_IFREG,
+            status.st_nlink == 1,
+            status.st_size == expectedData.count
+        else {
+            throw corruption("project.invalid-manifest-candidate")
+        }
+        var observedData = Data(capacity: expectedData.count)
+        while true {
+            try Task.checkCancellation()
+            let remainingWithSentinel = expectedData.count - observedData.count + 1
+            guard
+                let chunk = try handle.read(upToCount: min(65_536, remainingWithSentinel)),
+                !chunk.isEmpty
+            else {
+                break
+            }
+            guard chunk.count <= expectedData.count - observedData.count else {
+                throw corruption("project.manifest-candidate-mismatch")
+            }
+            observedData.append(chunk)
+        }
+        guard fstat(handle.fileDescriptor, &status) == 0,
+            (status.st_mode & S_IFMT) == S_IFREG,
+            status.st_nlink == 1,
+            status.st_size == expectedData.count,
+            observedData == expectedData
+        else {
+            throw corruption("project.manifest-candidate-mismatch")
+        }
+        let decodedCandidate = try JSONDecoder().decode(
+            GlifiProjectManifest.self, from: observedData)
+        guard decodedCandidate == manifest else {
+            throw corruption("project.manifest-candidate-mismatch")
+        }
+        try validate(decodedCandidate)
+
+        switch interruptionBehavior {
+        case .observe:
+            break
+        case .throwFailure, .invoke:
+            try interruptIfRequested(
+                .manifestPrepared, interruption, behavior: interruptionBehavior)
+        }
+    }
+
     private static func durableWrite(_ data: Data, to url: URL) throws {
         let directory = try GlifiPackageDirectory(at: url.deletingLastPathComponent())
         try directory.writeFile(data, named: url.lastPathComponent)
@@ -2535,6 +2606,7 @@ private enum GlifiProjectPackageIO {
         else {
             throw corruption("project.invalid-object-file")
         }
+        try Task.checkCancellation()
         var hasher = SHA256()
         var byteCount = 0
         var retainedData = retainBytes ? Data(capacity: Int(status.st_size)) : nil
@@ -2580,6 +2652,9 @@ private enum GlifiProjectPackageIO {
             break
         case .invoke(let action):
             action()
+        case .observe(let action):
+            try action()
+            return
         }
         throw GlifiFailure(
             code: "test.interrupted-commit",

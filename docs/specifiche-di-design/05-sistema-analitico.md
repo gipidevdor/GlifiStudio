@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-ANA-001 |
 | Tipo | Specifica di design del sistema analitico |
-| Versione | 1.7.0 |
+| Versione | 1.7.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-19 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Baseline proposta; policy e regole MVP da convalidare |
 | Riferimenti | GS-MET-001; GS-UX-001-03–08; GS-DOM-001; GS-DAT-001; ADR-0013; ADR-0016 |
 
@@ -98,6 +98,20 @@ o `cancelled`; `stale` non viene mostrato come risultato corrente.
 Materializzazione e lazy evaluation sono proprietà del piano. Checkpoint includono
 ID nodo, partizione, schema, input digest e checksum; una partizione incompatibile
 è scartata. Il garbage collector usa raggiungibilità da piani, report e storia.
+
+### Identità del descrittore e admission del riuso keyness
+
+Per `keyness-gtest-fisher-ha-ci-bh-v2`, il livello di confidenza è un parametro
+scientifico risolto del descrittore e **DEVE** corrispondere al risultato anche
+nel percorso di riuso. Il limite della famiglia è invece un budget di admission:
+**DEVE** essere rispettato anche dagli Artifact già materializzati e resta fuori
+dall'identità semantica del nodo. Un budget diverso ma sufficiente consente
+quindi il riuso; uno inferiore alla cardinalità fallisce con la failure di limite
+esistente, senza ridefinire o troncare la famiglia.
+
+I nuovi descrittori che includono il livello possono produrre un nuovo nodo;
+gli Artifact keyness v2 con il descrittore precedente restano leggibili e conservati. GS-DOR-199 corregge
+questi metadati e controlli senza modificare formule, schema o formato package.
 
 ## Motore interpretativo
 

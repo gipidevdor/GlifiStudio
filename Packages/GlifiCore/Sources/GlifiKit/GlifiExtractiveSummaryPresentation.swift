@@ -204,9 +204,9 @@ public struct GlifiStudioSummarySentence: Codable, Equatable, Sendable {
     public let sourceRevisionID: String
     /// Zero-based position among the sentences of the document.
     public let sentenceIndex: Int
-    /// Inclusive UTF-8 start offset in the source.
+    /// Inclusive UTF-8 start offset in the extracted text, not the original source.
     public let startUTF8: Int
-    /// Exclusive UTF-8 end offset in the source.
+    /// Exclusive UTF-8 end offset in the extracted text, not the original source.
     public let endUTF8: Int
     /// Lexical tokens included in the score.
     public let tokenCount: Int
@@ -252,12 +252,35 @@ public struct GlifiStudioSummarySentence: Codable, Equatable, Sendable {
     }
 }
 
-/// One selected sentence with its exact source text.
+/// One selected sentence with its extracted text and mapped original-source intervals.
 public struct GlifiStudioSelectedSentence: Codable, Equatable, Sendable {
     /// Scored sentence.
     public let sentence: GlifiStudioSummarySentence
-    /// Exact source text of the interval, unchanged.
+    /// Exact extracted text of the interval, unchanged.
     public let text: String
+    /// Original-source UTF-8 intervals contributing to the extracted sentence.
+    ///
+    ///
+    /// Empty when mapping is unavailable, including earlier presentation messages.
+    public let sourceRanges: [GlifiStudioUTF8Range]
+
+    init(
+        sentence: GlifiStudioSummarySentence, text: String,
+        sourceRanges: [GlifiStudioUTF8Range]
+    ) {
+        self.sentence = sentence
+        self.text = text
+        self.sourceRanges = sourceRanges
+    }
+
+    /// Decodes earlier messages without substituting extracted offsets for source mapping.
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        sentence = try container.decode(GlifiStudioSummarySentence.self, forKey: .sentence)
+        text = try container.decode(String.self, forKey: .text)
+        sourceRanges =
+            try container.decodeIfPresent([GlifiStudioUTF8Range].self, forKey: .sourceRanges) ?? []
+    }
 }
 
 /// Presentation-independent extractive summary with its declared scoring method.
@@ -320,7 +343,8 @@ public struct GlifiStudioExtractiveSummaryResult: Codable, Equatable, Sendable {
         graphDiagnostics = value.graphDiagnostics.map(GlifiStudioSummaryGraphDiagnostics.init)
         selected = resolved.map {
             GlifiStudioSelectedSentence(
-                sentence: GlifiStudioSummarySentence($0.sentence), text: $0.text)
+                sentence: GlifiStudioSummarySentence($0.sentence), text: $0.text,
+                sourceRanges: $0.sourceRanges.map(GlifiStudioUTF8Range.init))
         }
     }
 }

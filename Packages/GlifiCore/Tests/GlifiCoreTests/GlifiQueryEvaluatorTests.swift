@@ -45,6 +45,84 @@ func queryEvaluatorProducesPositionalMatches() throws {
     #expect(slop.matches.first?.range.text(in: source.text) == "Casa, casa")
 }
 
+@Test("I termini Unicode conservano campi, forma esatta, digest e coordinate KWIC")
+func queryEvaluatorPreservesUnicodeTermFieldsAndKWIC() throws {
+    let fixture = try queryTermUnicodeFixture()
+    let evaluator = GlifiQueryEvaluator()
+    let limits = queryTermLimits(maximumResultCount: 1_000)
+    let cases: [(field: GlifiQueryField, value: String, indices: [Int])] = [
+        (.normalized, "E\u{0300}", [0, 1, 2]),
+        (.normalized, "È", [0, 1, 2]),
+        (.form, "È", [0, 2]),
+        (.text, "E\u{0300}", [0, 2]),
+        (.normalized, "CITTA\u{0300}", [3, 4, 5]),
+        (.form, "CITTÀ", [3, 5]),
+        (.text, "città", [4]),
+        (.normalized, "NAÏVE", [6, 7]),
+        (.form, "naïve", [6]),
+        (.normalized, "ASSENTE\u{0300}", []),
+    ]
+    for (field, value, indices) in cases {
+        let query = GlifiQueryAST(root: .term(field: field, value: value, matchMode: .exact))
+        let expected = try GlifiQueryResult(
+            queryDigest: query.canonicalDigest(),
+            sourceRevisionID: fixture.source.sourceRevisionID,
+            matchedScope: !indices.isEmpty,
+            matches: queryTermExpectedMatches(
+                indices, ranges: fixture.ranges, sourceRevisionID: fixture.source.sourceRevisionID),
+            isTruncated: false)
+        let result = try evaluator.evaluate(
+            query, in: fixture.source, tokenization: fixture.tokenization, limits: limits)
+        #expect(result == expected)
+        let decoded = try GlifiQueryAST.decode(query.canonicalData(), limits: limits)
+        #expect(
+            try evaluator.evaluate(
+                decoded, in: fixture.source, tokenization: fixture.tokenization, limits: limits)
+                == expected)
+    }
+}
+
+@Test("La normalizzazione del termine conserva troncatura zero, parziale e completa")
+func queryEvaluatorPreservesNormalizedTermTruncation() throws {
+    let fixture = try queryTermUnicodeFixture()
+    let query = GlifiQueryAST(
+        root: .term(field: .normalized, value: "E\u{0300}", matchMode: .exact))
+    for maximumResultCount in [0, 1, 2, 3, 4] {
+        let indices = Array([0, 1, 2].prefix(maximumResultCount))
+        let result = try GlifiQueryEvaluator().evaluate(
+            query, in: fixture.source, tokenization: fixture.tokenization,
+            limits: queryTermLimits(maximumResultCount: maximumResultCount))
+        #expect(
+            result
+                == GlifiQueryResult(
+                    queryDigest: try query.canonicalDigest(),
+                    sourceRevisionID: fixture.source.sourceRevisionID,
+                    matchedScope: true,
+                    matches: queryTermExpectedMatches(
+                        indices, ranges: fixture.ranges,
+                        sourceRevisionID: fixture.source.sourceRevisionID),
+                    isTruncated: maximumResultCount < 3))
+    }
+}
+
+@Test("Una valutazione di termine già cancellata non avvia la scansione")
+func queryEvaluatorPreservesTermCancellation() async throws {
+    let fixture = try queryTermUnicodeFixture()
+    let query = GlifiQueryAST(
+        root: .term(field: .normalized, value: "CITTA\u{0300}", matchMode: .exact))
+    let task = Task {
+        withUnsafeCurrentTask { $0?.cancel() }
+        return try GlifiQueryEvaluator().evaluate(
+            query, in: fixture.source, tokenization: fixture.tokenization)
+    }
+    do {
+        _ = try await task.value
+        Issue.record("A cancelled term evaluation succeeded")
+    } catch is CancellationError {
+        // Cancellation remains observable before any term comparison.
+    }
+}
+
 @Test("Booleani e prossimità usano lo scope e l'ordine canonici")
 func queryEvaluatorAppliesBooleanAndProximitySemantics() throws {
     let source = try imported("Casa, casa sul mare. La casa guarda il mare.")
@@ -219,6 +297,47 @@ func engineQueriesMarkdownWithSourceLineage() async throws {
     #expect(match.range.text(in: imported.text) == "casa sul mare")
     #expect(match.sourceRanges.count == 3)
     #expect(reconstructed == "casa sul mare")
+}
+
+private func queryTermUnicodeFixture() throws -> (
+    source: GlifiImportedText, tokenization: GlifiTokenization, ranges: [GlifiUTF8Range]
+) {
+    let source = try imported("È è E\u{0300} CITTÀ città CITTA\u{0300} naïve NAÏVE prova.")
+    let tokenization = try GlifiItalianTokenizer().tokenize(source.text)
+    let ranges = try [
+        (0, 2), (3, 5), (6, 9), (10, 16), (17, 23),
+        (24, 31), (32, 38), (39, 45), (46, 51), (51, 52),
+    ].map { try GlifiUTF8Range(start: $0.0, end: $0.1) }
+    #expect(tokenization.tokens.map(\.range) == ranges)
+    return (source, tokenization, ranges)
+}
+
+private func queryTermExpectedMatches(
+    _ indices: [Int], ranges: [GlifiUTF8Range], sourceRevisionID: SourceRevisionID
+) -> [GlifiQueryMatch] {
+    indices.map { index in
+        GlifiQueryMatch(
+            sourceRevisionID: sourceRevisionID,
+            range: ranges[index],
+            leftContextRange: index > 0 ? ranges[index - 1] : nil,
+            rightContextRange: index + 1 < ranges.count ? ranges[index + 1] : nil)
+    }
+}
+
+private func queryTermLimits(maximumResultCount: Int) -> GlifiQueryLimits {
+    let standard = GlifiQueryLimits.standard
+    return GlifiQueryLimits(
+        maximumQueryByteCount: standard.maximumQueryByteCount,
+        maximumDepth: standard.maximumDepth,
+        maximumNodeCount: standard.maximumNodeCount,
+        maximumPhraseTokenCount: standard.maximumPhraseTokenCount,
+        maximumProximityDistance: standard.maximumProximityDistance,
+        maximumRegexByteCount: standard.maximumRegexByteCount,
+        maximumRegexInputByteCount: standard.maximumRegexInputByteCount,
+        maximumSourceCount: standard.maximumSourceCount,
+        maximumScannedByteCount: standard.maximumScannedByteCount,
+        maximumResultCount: maximumResultCount,
+        contextTokenCount: 1)
 }
 
 private func imported(_ text: String) throws -> GlifiImportedText {

@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.17.2 |
+| Versione | 1.17.3 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-21 |
@@ -29,6 +29,52 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 - [GS-VER-165 — Budget del riassunto estrattivo in caratteri](GS-VER-165-riassunto-budget-caratteri.md) — Superato: CI `xcode-27` sulla head `3c3cfef` di #31 e su `main` `4c59a50`; CMP-164 verified
 - [GS-VER-164 — Riassunto estrattivo `LexRankSentence-v1`](GS-VER-164-riassunto-lexrank.md) — Superato: CI `xcode-27` sulla head `c3f7bab` di #29 e su `main` `aaf8ff3`; CMP-163 verified
 - [GS-VER-151 — Riassunto estrattivo con ridondanza `MMR-v1`](GS-VER-151-riassunto-mmr.md) — Superato: CI `xcode-27` sulla head definitiva di #24 e su `main` `dfdcdbe`/`a86a53b`; CMP-106 verified
+
+- [GS-VER-205 — Coda del DAG](GS-VER-205-coda-dag.md) — Misure, regressioni e gate completo superati
+- [GS-VER-206 — Proiezione CA](GS-VER-206-proiezione-ca.md) — Misure, regressioni e gate completo superati
+- [GS-VER-207 — Codifica digest](GS-VER-207-codifica-digest.md) — Misure, regressioni e gate completo superati
+- [GS-VER-208 — Supporto dei benchmark dei test](GS-VER-208-supporto-benchmark-test.md) — Protocollo, guard Debug e gate completo superati
+
+- [GS-VER-198 — Confronto keyness completo nel client macOS](GS-VER-198-keyness-macos.md) — 67 nuove esecuzioni client e gate/preflight macOS superati sullo snapshot 0ed9b459 di 854 file
+- [GS-VER-199 — Identità e limiti del riuso keyness](GS-VER-199-identita-keyness.md) — Due RED, quattro test Core e gate macOS superati; compatibilità provata per payload v2 e descrittore precedente
+
+- [GS-VER-202 — SpanMap indicizzata](GS-VER-202-spanmap-indicizzata.md) — A/B Release, regressioni e gate completo superati
+- [GS-VER-203 — Token speciali](GS-VER-203-token-speciali.md) — A/B Release, regressioni e gate completo superati
+- [GS-VER-204 — Indice dei riferimenti CSV](GS-VER-204-indice-export-csv.md) — A/B Release, regressioni e gate completo superati
+
+- [GS-VER-197 — Ponderazione TF/TF-IDF nel laboratorio macOS](GS-VER-197-ponderazione-termini-macos.md) — 78 esecuzioni dedicate e gate/preflight macOS superati sullo snapshot 58d18024
+- [GS-VER-196 — Collegamento dei documenti macOS dopo operazioni occupate](GS-VER-196-collegamento-documenti-macos.md) — RED riprodotto, cinque regressioni e gate/preflight macOS superati; snapshot di 830 file conservato
+
+- [GS-VER-200 — Letture verificate a passata unica](GS-VER-200-letture-verificate-passata-unica.md) — A/B Release, regressioni e gate globale superati nel perimetro dichiarato
+- [GS-VER-201 — Normalizzazione costante del termine query](GS-VER-201-normalizzazione-query.md) — A/B Release, regressioni e gate globale superati nel perimetro dichiarato
+
+- [GS-VER-195 — Cancellazione delle analisi dirette macOS](GS-VER-195-cancellazione-analisi-dirette-macos.md) — Superato nel profilo automatico macOS; gate e preflight verificati
+
+- [GS-VER-183 — Verifica bounded del manifest candidato](GS-VER-183-manifest-candidato.md) — Superato: verifiche mirate e gate globale nativo; limiti dichiarati
+
+- [GS-VER-182 — Runtime macOS guidato dagli eventi](GS-VER-182-runtime-eventi-macos.md) — Superato: verifiche mirate e gate globale nativo; limiti dichiarati
+
+- [GS-VER-194 — Anteprima export macOS fuori dal Main Actor](GS-VER-194-anteprima-export-macos.md) — Superato nel profilo automatico macOS; gate e preflight verificati
+- [GS-VER-193 — Contenuto accessibile delle fonti e dell’anteprima macOS](GS-VER-193-contenuto-accessibile-macos.md) — Superato per correzione statica e build macOS; VoiceOver aperto
+
+- [GS-VER-192 — Frequenze, n-grammi e MTLD nel laboratorio macOS](GS-VER-192-frequenze-mtld-macos.md) — Superato nel profilo automatico macOS; gate e preflight verificati
+- [GS-VER-191 — Ranking BM25 nel laboratorio macOS](GS-VER-191-bm25-macos.md) — Superato nel profilo automatico macOS; gate e preflight verificati
+
+- [GS-VER-184 — Riconciliazione degli stati documentali](GS-VER-184-riconciliazione-documentale.md) — Verifica documentale superata; nessuna promozione GUI o scientifica
+
+- [GS-VER-190 — Riassunto estrattivo nel laboratorio macOS](GS-VER-190-riassunto-macos.md) — Superato nel profilo automatico macOS; gate e preflight verificati
+
+- [GS-VER-181 — Profondità delle query testuali](GS-VER-181-profondita-query-testuale.md) — Superato: regressioni prima/dopo, 20 test Core e parità Kit; gate finale separato
+
+- [GS-VER-180 — Feedback statico delle failure](GS-VER-180-feedback-statico-failure.md) — Superato nel perimetro statico; confronto positivo/negativo prima e dopo
+
+- [GS-VER-188 — Profilo esplicito di verifica macOS](GS-VER-188-gate-macos.md) — Superato nel profilo automatico macOS; gate e preflight verificati
+- [GS-VER-187 — Riapertura attraverso il ciclo documentale macOS](GS-VER-187-riapertura-nativa-macos.md) — Superato nel profilo automatico macOS; gate e preflight verificati
+
+- [GS-VER-186 — Ownership della cancellazione nel modello macOS](GS-VER-186-cancellazione-modello-macos.md) — Superato nel profilo automatico macOS; gate e preflight verificati
+
+- [GS-VER-185 — Stato coerente dopo un'importazione parziale](GS-VER-185-importazione-parziale.md) — Superato localmente: gate, packaging e prova integrativa PDF/A-2u; CMP-108 verified
+
 - [GS-VER-149 — Riassunto estrattivo `CentroidCosine-v1`](GS-VER-149-riassunto-centroide.md) — Superato: gate nativo locale e CI `xcode-27` su `main` `3fa454f`; CMP-097 verified
 - [GS-VER-148 — Letture bounded nella verifica export](GS-VER-148-letture-export.md) — Verifiche locale e remota superate su `1883af9`; limiti residui dichiarati
 

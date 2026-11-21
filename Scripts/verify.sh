@@ -6,12 +6,18 @@ set -euo pipefail
 script_directory="${0:A:h}"
 project_directory="${script_directory:h}"
 temporary_root="${TMPDIR:-/tmp}"
+source "$script_directory/build-cache.sh"
+verification_scope="$(glifi_verification_scope "$@")"
+if [[ "$verification_scope" == "macos" ]]; then
+    print "Verification profile: macOS only; iPadOS builds deferred"
+else
+    print "Verification profile: macOS and iPadOS"
+fi
 
 # Gli artefatti della singola esecuzione (progetti .glifi, export, richieste JSON) sono usa e
 # getta e vengono rimossi all'uscita. Le cache di compilazione no: se ogni esecuzione ne creasse
 # una nuova, ricompilerebbe tutto da zero e riscriverebbe decine di gigabyte a ogni giro.
 temporary_build_directory="$(mktemp -d "${temporary_root%/}/GlifiStudioVerify.XXXXXX")"
-source "$script_directory/build-cache.sh"
 build_cache_directory="$(glifi_build_cache_directory)"
 
 cleanup() {
@@ -1227,22 +1233,24 @@ xcodebuild build \
     CODE_SIGNING_ALLOWED=NO \
     COMPILATION_CACHE_ENABLE_CACHING=NO
 
-xcodebuild build \
-    -quiet \
-    -workspace GlifiStudio.xcworkspace \
-    -scheme GlifiStudio-iPadOS \
-    -configuration Debug \
-    -destination "generic/platform=iOS Simulator" \
-    -derivedDataPath "$build_cache_directory/iPadOS" \
-    CODE_SIGNING_ALLOWED=NO \
-    COMPILATION_CACHE_ENABLE_CACHING=NO
+if [[ "$verification_scope" == "all" ]]; then
+    xcodebuild build \
+        -quiet \
+        -workspace GlifiStudio.xcworkspace \
+        -scheme GlifiStudio-iPadOS \
+        -configuration Debug \
+        -destination "generic/platform=iOS Simulator" \
+        -derivedDataPath "$build_cache_directory/iPadOS" \
+        CODE_SIGNING_ALLOWED=NO \
+        COMPILATION_CACHE_ENABLE_CACHING=NO
 
-xcodebuild build \
-    -quiet \
-    -workspace GlifiStudio.xcworkspace \
-    -scheme GlifiStudio-iPadOS \
-    -configuration Release \
-    -destination "generic/platform=iOS Simulator" \
-    -derivedDataPath "$build_cache_directory/iPadOS" \
-    CODE_SIGNING_ALLOWED=NO \
-    COMPILATION_CACHE_ENABLE_CACHING=NO
+    xcodebuild build \
+        -quiet \
+        -workspace GlifiStudio.xcworkspace \
+        -scheme GlifiStudio-iPadOS \
+        -configuration Release \
+        -destination "generic/platform=iOS Simulator" \
+        -derivedDataPath "$build_cache_directory/iPadOS" \
+        CODE_SIGNING_ALLOWED=NO \
+        COMPILATION_CACHE_ENABLE_CACHING=NO
+fi

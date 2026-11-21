@@ -357,7 +357,8 @@ enum GlifiAnalysisArtifactDescriptorFactory {
             linguisticProfileIdentifiers: linguisticProfileIdentifiers,
             representationIdentifier: "keyness-multiple-comparison-table-v1",
             resolvedParameters: [
-                "lowExpectedCountThreshold": .decimal(options.lowExpectedCountThreshold)
+                "confidenceLevel": .decimal(options.confidenceLevel),
+                "lowExpectedCountThreshold": .decimal(options.lowExpectedCountThreshold),
             ],
             seedPolicyIdentifier: "none-v1",
             backendIdentifier: "swift-reference-v1",

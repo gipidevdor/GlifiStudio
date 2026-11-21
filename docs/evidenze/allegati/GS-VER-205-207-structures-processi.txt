@@ -1,0 +1,53 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Invocazioni seriali Release; time-l comprende setup, riferimenti e runner.
+# Graph
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test "La costruzione del DAG coincide con Kahn scalare e misura soltanto workload espliciti" started.
+✔ Test "La costruzione del DAG coincide con Kahn scalare e misura soltanto workload espliciti" passed after 21.222 seconds.
+✔ Test run with 1 test in 0 suites passed after 21.223 seconds.
+       23.27 real        22.66 user         0.45 sys
+           131907584  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               67614  page reclaims
+                1795  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 307  voluntary context switches
+                2202  involuntary context switches
+          4641105697  instructions retired
+          1281990634  cycles elapsed
+            25183072  peak memory footprint
+
+# Projection
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test "La proiezione Kit coincide con il riferimento e misura soltanto workload espliciti" started.
+✔ Test "La proiezione Kit coincide con il riferimento e misura soltanto workload espliciti" passed after 0.817 seconds.
+✔ Test run with 1 test in 0 suites passed after 0.817 seconds.
+        2.23 real         1.98 user         0.30 sys
+            73547776  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               46866  page reclaims
+                 880  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  52  voluntary context switches
+                1200  involuntary context switches
+          4561298891  instructions retired
+          1214636167  cycles elapsed
+            25199480  peak memory footprint

@@ -1,0 +1,194 @@
+{
+  "baselineExit": 0,
+  "baselineMetadata": {
+    "cachePolicy": "warm OS page cache; setup and one untimed warm-up; no cache flush",
+    "device": "Mac16,3",
+    "lowPowerModeAtEnd": true,
+    "lowPowerModeAtStart": true,
+    "operatingSystem": "Version 27.2.1 (Build 26B131)",
+    "thermalStateAtEnd": "nominal",
+    "thermalStateAtStart": "nominal"
+  },
+  "candidateExit": 0,
+  "candidateMetadata": {
+    "cachePolicy": "warm OS page cache; setup and one untimed warm-up; no cache flush",
+    "device": "Mac16,3",
+    "lowPowerModeAtEnd": true,
+    "lowPowerModeAtStart": true,
+    "operatingSystem": "Version 27.2.1 (Build 26B131)",
+    "thermalStateAtEnd": "nominal",
+    "thermalStateAtStart": "nominal"
+  },
+  "fixtureChecksIdentical": true,
+  "maximumResidentSetBytesWholeProcess": {
+    "baseline": 2884009984,
+    "candidate": 1848049664
+  },
+  "measurements": [
+    {
+      "baselineMedianSeconds": 0.002032375,
+      "baselineRangeSeconds": [
+        0.002013667,
+        0.002060458
+      ],
+      "candidateMedianSeconds": 0.001049625,
+      "candidateRangeSeconds": [
+        0.001034917,
+        0.001068666
+      ],
+      "check": "bytes=1048576; sha256:aab84e946fcc8447394011ade53d5e165ac6daf962023bc8df00cff89af7715a; sourceID=source:00000000-0000-0000-0000-000000000001; root=sha256:a032d5fa092a6362d1c83a210fc75ad83829a50ca939a1afced7c43681c4214e; exact equality 8/8 reads",
+      "identifier": "validated-source-read-1mib",
+      "reductionPercent": 48.3547573651516,
+      "speedup": 1.9362867690841967
+    },
+    {
+      "baselineMedianSeconds": 0.002009625,
+      "baselineRangeSeconds": [
+        0.001992625,
+        0.002040084
+      ],
+      "candidateMedianSeconds": 0.001045167,
+      "candidateRangeSeconds": [
+        0.001021458,
+        0.001066458
+      ],
+      "check": "bytes=1048576; sha256:aab84e946fcc8447394011ade53d5e165ac6daf962023bc8df00cff89af7715a; sourceID=source:00000000-0000-0000-0000-000000000001; root=sha256:a032d5fa092a6362d1c83a210fc75ad83829a50ca939a1afced7c43681c4214e; exact equality 8/8 reads",
+      "identifier": "validated-recovery-source-read-1mib",
+      "reductionPercent": 47.991938794551224,
+      "speedup": 1.9227788477822205
+    },
+    {
+      "baselineMedianSeconds": 0.002033333,
+      "baselineRangeSeconds": [
+        0.00202375,
+        0.002057541
+      ],
+      "candidateMedianSeconds": 0.00105875,
+      "candidateRangeSeconds": [
+        0.001037667,
+        0.001098042
+      ],
+      "check": "bytes=1048588; sha256:847dc284bf6e62998befb579544b39cd4027482a9228c5ebbf03605b2b3a0541; artifactID=artifact:sha256:847dc284bf6e62998befb579544b39cd4027482a9228c5ebbf03605b2b3a0541; descriptor=sha256:79db61d2cd894d26f76ef7843e25217e045064498c58edf2797346b93704f0b9; nodeID=analysis-node:sha256:46286a11a735a225a0e3800f585d492974787a79d22ba0ffb3064220771f8798; exact equality 8/8 reads",
+      "identifier": "validated-artifact-read-1mib",
+      "reductionPercent": 47.93031933283923,
+      "speedup": 1.9205034238488783
+    },
+    {
+      "baselineMedianSeconds": 0.013546916,
+      "baselineRangeSeconds": [
+        0.013113792,
+        0.01412025
+      ],
+      "candidateMedianSeconds": 0.007074333,
+      "candidateRangeSeconds": [
+        0.006994458,
+        0.007128583
+      ],
+      "check": "bytes=8388608; sha256:81b6e7f11aca77e1070604993e306b169031b02dc27775dcc6ec4c2ad48af60b; sourceID=source:00000000-0000-0000-0000-000000000008; root=sha256:eb84460ef9edbcccae807df45c766aa3c9a6a0dd40e58cf54bcc78482a286e8c; exact equality 8/8 reads",
+      "identifier": "validated-source-read-8mib",
+      "reductionPercent": 47.77901479569224,
+      "speedup": 1.9149389772859151
+    },
+    {
+      "baselineMedianSeconds": 0.013284333,
+      "baselineRangeSeconds": [
+        0.013133291,
+        0.013334708
+      ],
+      "candidateMedianSeconds": 0.00699725,
+      "candidateRangeSeconds": [
+        0.006974083,
+        0.007040125
+      ],
+      "check": "bytes=8388608; sha256:81b6e7f11aca77e1070604993e306b169031b02dc27775dcc6ec4c2ad48af60b; sourceID=source:00000000-0000-0000-0000-000000000008; root=sha256:eb84460ef9edbcccae807df45c766aa3c9a6a0dd40e58cf54bcc78482a286e8c; exact equality 8/8 reads",
+      "identifier": "validated-recovery-source-read-8mib",
+      "reductionPercent": 47.32705059410962,
+      "speedup": 1.8985076994533567
+    },
+    {
+      "baselineMedianSeconds": 0.013668333,
+      "baselineRangeSeconds": [
+        0.013625625,
+        0.013821208
+      ],
+      "candidateMedianSeconds": 0.007112625,
+      "candidateRangeSeconds": [
+        0.007030167,
+        0.007270417
+      ],
+      "check": "bytes=8388620; sha256:92309aeede44f267d654ba50617f34b23b53d2018aac7770e4894144d29e5d5b; artifactID=artifact:sha256:92309aeede44f267d654ba50617f34b23b53d2018aac7770e4894144d29e5d5b; descriptor=sha256:99384b48c581c247bb1e6c8e64196abdd42c47bd789174d2c264ca7c42cbcff4; nodeID=analysis-node:sha256:3bd84cadaf536f2b53dc368b9e9c072331618516107b38ce9fffb40a11583181; exact equality 8/8 reads",
+      "identifier": "validated-artifact-read-8mib",
+      "reductionPercent": 47.96274717626502,
+      "speedup": 1.921700216164918
+    },
+    {
+      "baselineMedianSeconds": 0.057140083,
+      "baselineRangeSeconds": [
+        0.057077542,
+        0.05732725
+      ],
+      "candidateMedianSeconds": 0.029192917,
+      "candidateRangeSeconds": [
+        0.029080959,
+        0.029261291
+      ],
+      "check": "bytes=33554432; sha256:19a3662771e931adcb0212dba7956d54375f812f6fa2e923fdbe8597a7f4bda9; sourceID=source:00000000-0000-0000-0000-000000000032; root=sha256:ff52fa8cdafe19b9ea083a16748b9d10d982e605352c883bd28af7a1204af7e5; exact equality 8/8 reads",
+      "identifier": "validated-source-read-32mib",
+      "reductionPercent": 48.90991495409624,
+      "speedup": 1.957326943381506
+    },
+    {
+      "baselineMedianSeconds": 0.057352292,
+      "baselineRangeSeconds": [
+        0.057092,
+        0.060729459
+      ],
+      "candidateMedianSeconds": 0.029250792,
+      "candidateRangeSeconds": [
+        0.029138583,
+        0.029501
+      ],
+      "check": "bytes=33554432; sha256:19a3662771e931adcb0212dba7956d54375f812f6fa2e923fdbe8597a7f4bda9; sourceID=source:00000000-0000-0000-0000-000000000032; root=sha256:ff52fa8cdafe19b9ea083a16748b9d10d982e605352c883bd28af7a1204af7e5; exact equality 8/8 reads",
+      "identifier": "validated-recovery-source-read-32mib",
+      "reductionPercent": 48.9980417870658,
+      "speedup": 1.9607090296905465
+    },
+    {
+      "baselineMedianSeconds": 0.058186042,
+      "baselineRangeSeconds": [
+        0.057571584,
+        0.05904125
+      ],
+      "candidateMedianSeconds": 0.0292705,
+      "candidateRangeSeconds": [
+        0.029127416,
+        0.029677708
+      ],
+      "check": "bytes=33554444; sha256:6abd7815508c62af8995d06d292938e7643396e637d1016dcb8c98f5483eab02; artifactID=artifact:sha256:6abd7815508c62af8995d06d292938e7643396e637d1016dcb8c98f5483eab02; descriptor=sha256:fc27210b7d9af1558fa539058289fddfe6d0c4f460159c622d49162ab8c91164; nodeID=analysis-node:sha256:13e8019f3494a956bb8f3e8c956f6fd31510d9596e18fb537dd83cec85df6e57; exact equality 8/8 reads",
+      "identifier": "validated-artifact-read-32mib",
+      "reductionPercent": 49.694980112240664,
+      "speedup": 1.9878731828974563
+    },
+    {
+      "baselineMedianSeconds": 0.18720275,
+      "baselineRangeSeconds": [
+        0.186084291,
+        0.189836459
+      ],
+      "candidateMedianSeconds": 0.088111667,
+      "candidateRangeSeconds": [
+        0.087498958,
+        0.08884525
+      ],
+      "check": "source=sha256:598ef075f7168bfd6b02e4ab984002a46302f3e009ea06caaf34f2918de0a220; query=sha256:21c7e3373750b108e2c3a3c14f414248be3388c3cb17997aef083aba7a062794; matchedScope=false; matches=0; truncated=false; exact equality 8/8 evaluations",
+      "identifier": "normalized-absent-term-100000-unicode-tokens",
+      "reductionPercent": 52.93249324595926,
+      "speedup": 2.124607970474557
+    }
+  ],
+  "snapshotInventoryStable": true,
+  "sourceChanges": [
+    "GlifiCore/GlifiProjectPackage.swift",
+    "GlifiCore/GlifiQueryEvaluator.swift"
+  ]
+}

@@ -56,12 +56,36 @@ Glifi Studio non è un editor generalista con qualche statistica aggiunta e non 
 > [!IMPORTANT]
 > **Incrementi verticali eseguibili — non ancora un prodotto pronto al rilascio.** Il motore crea e verifica package `.glifi`, incorpora TXT e Markdown UTF-8 bounded con commit generazionale, estrae Markdown tramite `SpanMap`, applica `it-token-v1` e interroga la generazione persistita con `QueryAST`/KWIC. Profilo corpus e keyness G-test/effect/BH producono `AnalysisDescriptor`, DAG e Artifact content-addressed, riaperti fail-closed e riusati senza ricalcolo. `planner-mvp-v1` genera e persiste piani deterministici; l'esecuzione materializza gli step e un Artifact `Evidence → Finding → Caveat` con lineage esatto. Investigation e selezioni editoriali sono eventi content-addressed in una storia append-only ramificabile. Un head può essere proiettato in `ReportRevision` ed esportato in PDF/A-2u, Markdown, CSV e JSON con `ExportManifest`, digest e commit atomico. Core, Kit e CLI condividono admission di sistema, progresso e cancellazione. Le app condividono il percorso Must (progetto, import, indagine, piano/esecuzione, KWIC, findings, export) come client di GlifiKit. G1 leggero e G2 headless sono registrati; G3–G5 richiedono ancora audit dispositivo, validazione UX e App Store. Le [dieci specifiche di design](docs/specifiche-di-design/README.md), il [threat model](docs/sicurezza/README.md), il [contratto API/CLI](docs/api/README.md) e la [baseline 0.1](docs/specifiche-di-design/10-product-baseline-mvp.md) restano l'autorità.
 
+Il [laboratorio testuale macOS](docs/pianificazione/programma-analisi-testuale-macos.md)
+estende il percorso post-0.1 con riassunto estrattivo, ranking BM25, frequenze e
+n-grammi configurabili, diversità MTLD e ponderazione TF/TF-IDF configurabile.
+Quest'ultimo incremento mostra celle sparse, zeri osservati, fonti e vocabolario
+completi; test, gate e preflight automatici macOS sono superati sul nuovo
+snapshot conservato in [GS-VER-197](docs/evidenze/GS-VER-197-ponderazione-termini-macos.md).
+Scope, parametri effettivi e lineage
+restano ispezionabili; il mapping delle frasi distingue testo estratto e fonte
+originale. Le analisi dirette espongono Annulla con task posseduto dal modello.
+Il confronto keyness nell'Indagine espone tutta la famiglia paginata, test
+selezionato e intervalli con livello configurabile; il ponte Kit conserva il
+costruttore precedente. Test, gate e preflight macOS superati sullo snapshot conservato
+([GS-VER-198](docs/evidenze/GS-VER-198-keyness-macos.md),
+[correzione del riuso](docs/evidenze/GS-VER-199-identita-keyness.md)).
+Le estensioni applicative iPadOS sono rimandate. La disponibilità in Core/Kit/CLI,
+nel planner e nelle app è registrata separatamente: queste funzioni non dichiarano
+completate tutte le famiglie analitiche o i gate di rilascio.
+Le verifiche applicative sono riferite agli snapshot conservati dei
+[primi incrementi](docs/evidenze/GS-VER-188-gate-macos.md) e del
+[nuovo lotto documentale/TF-IDF](docs/evidenze/GS-VER-196-collegamento-documenti-macos.md);
+il [completamento keyness](docs/evidenze/GS-VER-198-keyness-macos.md) ha un
+ulteriore snapshot verificato. Le modifiche successive a ciascun freeze
+richiedono attestazioni separate.
+
 La documentazione è una baseline controllata: requisiti, architettura e decisioni aperte sono tracciati, ma non tutte le scelte di prodotto hanno ancora approvazione definitiva. La presenza di una tecnologia o di un documento non equivale alla disponibilità della relativa funzione.
 
 | Superficie | Baseline attuale |
 | --- | --- |
-| App macOS | `DocumentGroup` nativo su package `.glifi` + percorso Must GlifiKit |
-| App iPadOS | Stesso `DocumentGroup` Shared, adattivo per navigazione e importer di sistema |
+| App macOS | `DocumentGroup` nativo, percorso Must e laboratorio testuale post-0.1: riassunto estrattivo, BM25, frequenze/ngrammi e MTLD, con cancellazione delle analisi dirette |
+| App iPadOS | `DocumentGroup` condiviso e percorso Must adattivo; sviluppo dedicato delle estensioni del laboratorio rimandato |
 | `GlifiKit` | `ProjectSession` actor-isolated con progetto/import, query, planner, analisi persistenti, Investigation ed export scientifico; espone interpretazione, progresso e receipt senza tipi interni |
 | `GlifiCore` | Motore actor-based con import strict, `md-extract-v1`/SpanMap, package `.glifi`/SQLite generazionale, tokenizer italiano, `QueryAST`/KWIC, planner/esecutore, AnalysisDescriptor/DAG/Artifact, Evidence/Finding/Caveat, ReportRevision ed ExportManifest content-addressed |
 | `GlifiCLI` | Status, create/info/validate/import, query, piano/esecuzione, Investigation create/select/list, analyze, keyness ed export PDF/Markdown/CSV/JSON testuali/JSON v1 |
@@ -206,6 +230,12 @@ Il quality gate locale e quello CI condividono un unico ingresso:
 make verify
 ```
 
+Per il focus macOS esplicitamente richiesto, `make verify-macos` mantiene tutti i
+controlli condivisi ed esegue test e build macOS; `make verify-app-store-macos`
+aggiunge analisi e archivio macOS senza firma. I comandi globali conservano il
+comportamento multipiattaforma predefinito e la CI: un esito del profilo macOS
+non equivale alla verifica di iPadOS o al superamento di G4.
+
 Il gate controlla igiene e configurazione del repository, assenza di segreti e materiale di firma, toolchain, naming, documentazione, dipendenze architetturali, localizzazione, requisiti Apple, baseline App Store, dialetto Swift, formattazione, test, process-kill recovery, smoke test CLI e build Debug/Release di entrambe le app senza firma.
 
 Il loop rapido senza build Xcode:
@@ -235,7 +265,9 @@ Controlli mirati:
 | `make check-fixtures` | Ricalcola seed numerici e valida offset UTF-8 e descrittori avversari |
 | `make check-recovery` | Esegue 16 terminazioni `SIGKILL` sui commit di import, Artifact ed export |
 | `make check-app-store` | Coerenza della baseline App Store |
-| `make verify-app-store` | Preflight di packaging e distribuzione |
+| `make verify-macos` | Controlli condivisi, test e build macOS; azioni iPadOS omesse esplicitamente |
+| `make verify-app-store` | Preflight di packaging e distribuzione per entrambe le piattaforme |
+| `make verify-app-store-macos` | Verifica e preflight macOS con analisi/archivio senza firma |
 | `make app-store-submission-check` | Gate fail-closed per una submission reale |
 
 Le prove riproducibili vengono registrate nell’[indice delle evidenze](docs/evidenze/README.md); le eccezioni temporanee richiedono una [deroga controllata](docs/deroghe/README.md).

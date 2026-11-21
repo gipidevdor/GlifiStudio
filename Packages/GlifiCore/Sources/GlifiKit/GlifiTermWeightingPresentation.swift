@@ -43,7 +43,7 @@ public struct GlifiStudioTermWeightingScheme: Codable, Equatable, Sendable {
     }
 }
 
-/// One non-zero weighted cell.
+/// One observed cell with a positive count; its weight may be zero.
 public struct GlifiStudioWeightedTermCell: Codable, Equatable, Sendable {
     /// Row index into `sourceRevisionIDs`.
     public let rowIndex: Int
@@ -71,7 +71,7 @@ public struct GlifiStudioTermWeightingResult: Codable, Equatable, Sendable {
     public let terms: [String]
     /// Document frequency per term.
     public let documentFrequencies: [Int]
-    /// Non-zero cells ordered by row, then column.
+    /// Observed cells ordered by row, then column, including zero weights.
     public let cells: [GlifiStudioWeightedTermCell]
 
     init(_ result: GlifiProjectDerivedResult<GlifiCorpusTermWeightingAnalysis>) {

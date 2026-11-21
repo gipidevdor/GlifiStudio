@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DEV-002 |
 | Tipo | Guida controllata del loop di sviluppo |
-| Versione | 1.4.0 |
+| Versione | 1.5.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-01 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -27,11 +27,26 @@ sostituire il gate completo `make verify`.
 | `make lint` / `make format-check` | Dopo `format` o in revisione | Controlla lo stile senza modificare i file |
 | `make test-macos` | Iterazione sul ciclo documentale dell'app macOS | Compila app e modello reale dal workspace ed esegue i test Swift Testing senza app host |
 | `make check-swift-dialect` | Sempre nel loop e nel gate | Verifica language mode, concurrency, regole e CI |
-| `make quality-static` | Iterazione senza toolchain Swift | Docs, compliance, segreti, dialetto e baseline statiche |
+| `make quality-static` | Iterazione senza toolchain Swift | Docs, compliance, segreti, tassonomia e messaggi delle failure, dialetto e baseline statiche |
 | `make quality` | Iterazione locale rapida | `quality-static` + formattazione, senza build Xcode |
 | `make check-recovery` | Modifiche a package, SQLite o commit | `SIGKILL` e riapertura su 12 checkpoint import/Artifact |
-| `make verify` | Prima di integrare | Gate completo locale, identico al job CI `verify` |
-| `make verify-app-store` | Modifiche ad app o distribuzione | Gate packaging senza firma |
+| `make verify` | Prima di integrare | Gate completo locale macOS/iPadOS, identico al job CI `verify` |
+| `make verify-macos` | Focus macOS esplicitamente richiesto | Tutti i controlli condivisi e test/build macOS Debug/Release; omette soltanto build iPadOS |
+| `make verify-app-store` | Modifiche ad app o distribuzione | Verifica e packaging senza firma per entrambe le piattaforme |
+| `make verify-app-store-macos` | Preflight del focus macOS | `verify-macos`, analisi e archivio macOS senza firma; azioni iPadOS omesse |
+
+Il profilo macOS usa il flag esplicito `--macos-only` negli script di verifica
+e packaging. Senza argomenti il gate globale continua a verificare entrambe le
+piattaforme. Argomenti sconosciuti, duplicati o combinazioni non ammesse vengono
+rifiutati prima della creazione di temporanei e della preparazione della cache.
+
+Per richiesta dell'iniziatore, il lavoro corrente completa prima macOS mediante
+soli test automatici; lo sviluppo dedicato iPadOS è rimandato. Il profilo conserva
+statici, confini architetturali, Core/Kit, CLI, oracoli, fixture, PDF/A e recovery.
+Un esito positivo di `verify-macos` **non equivale** a `make verify`, non certifica
+iPadOS e non chiude GUI, VoiceOver, dispositivi o G4. Gli eventuali controlli
+opzionali saltati devono essere dichiarati. La verifica globale resta necessaria
+quando si dichiara verificata la baseline multipiattaforma.
 
 Non introdurre hook git obbligatori: il loop primario è Makefile + CI, come deciso
 in ADR-0020.
@@ -63,6 +78,13 @@ make verify
 Durante lo sviluppo di un package, `make quality` riduce il ciclo di feedback.
 Prima della pull request, `make verify` resta obbligatorio. Per modifiche ad app,
 privacy, packaging o metadati App Store eseguire anche `make verify-app-store`.
+
+Il loop statico include `check-failure-taxonomy.py` e
+`check-failure-messages.py`, già presenti nel gate completo: una combinazione
+non ammessa di categoria, retry e stato conservato oppure un messaggio di
+failure privo di traduzione interrompe subito `quality-static` con la
+diagnostica del controllo. La stessa verifica anticipata si applica a
+`make quality` e al job CI `static-quality`, senza richiedere Swift o Xcode.
 
 ## Cache di build e spazio su disco
 
@@ -98,7 +120,8 @@ cache cresceva di decine di gigabyte per esecuzione (GS-VER-139).
 `.github/workflows/ci.yml` esegue:
 
 1. `static-quality` (Ubuntu) — docs, tracciabilità/compliance, segreti, naming,
-   repository, GitHub config, fixture, architettura, localizzazione, baseline
+   repository, GitHub config, fixture, architettura, localizzazione, tassonomia
+   e messaggi delle failure, baseline
    Apple/App Store e dialetto Swift, senza Xcode;
 2. `format-check` (Xcode 27) — dialetto machine-readable e `swift format` strict;
 3. `verify` (Xcode 27) — `Scripts/verify.sh` con cache SPM, process-kill recovery

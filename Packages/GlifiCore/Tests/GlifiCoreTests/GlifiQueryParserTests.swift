@@ -133,3 +133,74 @@ func queryParserEnforcesBudgets() throws {
         try parser.parse("a b c", limits: tinyLimits)
     }
 }
+
+@Test(
+    "La profondità delle catene NEAR e BEFORE rispetta il limite dell'AST",
+    arguments: ["NEAR", "BEFORE"])
+func queryParserBoundsProximityDepth(_ operation: String) throws {
+    let parser = GlifiQueryParser()
+    let separator = " \(operation)/1 "
+    let atLimit = Array(repeating: "casa", count: 33).joined(separator: separator)
+    let query = try parser.parse(atLimit)
+    #expect(try GlifiQueryAST.decode(query.canonicalData()) == query)
+
+    let overLimit = Array(repeating: "casa", count: 34).joined(separator: separator)
+    try expectParserDepthFailure(overLimit, limits: .standard)
+}
+
+@Test("Ogni arco booleano contribuisce alla profondità e la radice resta a zero")
+func queryParserBoundsBooleanDepth() throws {
+    let parser = GlifiQueryParser()
+    for (text, depth) in [
+        ("casa", 0), ("casa mare", 1), ("casa OR mare", 1),
+        ("casa OR mare AND acqua", 2), ("casa OR mare AND NOT acqua", 3),
+    ] {
+        let limits = queryParserDepthLimits(depth)
+        let query = try parser.parse(text, limits: limits)
+        #expect(try GlifiQueryAST.decode(query.canonicalData(), limits: limits) == query)
+        if depth > 0 {
+            try expectParserDepthFailure(text, limits: queryParserDepthLimits(depth - 1))
+        }
+    }
+}
+
+@Test("Il controllo di profondità preserva le guardie sintattiche e la validazione regex separata")
+func queryParserDepthPreservesExistingContracts() throws {
+    try expectParserDepthFailure("((casa))", limits: queryParserDepthLimits(1))
+    let query = try GlifiQueryParser().parse("form:/(a+)+/")
+    #expect(query.root == .regex(field: .form, pattern: "(a+)+", flags: []))
+    #expect(throws: GlifiFailure.self) {
+        try GlifiQueryEvaluator().validate(query)
+    }
+}
+
+private func queryParserDepthLimits(_ depth: Int) -> GlifiQueryLimits {
+    let standard = GlifiQueryLimits.standard
+    return GlifiQueryLimits(
+        maximumQueryByteCount: standard.maximumQueryByteCount,
+        maximumDepth: depth,
+        maximumNodeCount: standard.maximumNodeCount,
+        maximumPhraseTokenCount: standard.maximumPhraseTokenCount,
+        maximumProximityDistance: standard.maximumProximityDistance,
+        maximumRegexByteCount: standard.maximumRegexByteCount,
+        maximumRegexInputByteCount: standard.maximumRegexInputByteCount,
+        maximumSourceCount: standard.maximumSourceCount,
+        maximumScannedByteCount: standard.maximumScannedByteCount,
+        maximumResultCount: standard.maximumResultCount,
+        contextTokenCount: standard.contextTokenCount
+    )
+}
+
+private func expectParserDepthFailure(_ text: String, limits: GlifiQueryLimits) throws {
+    do {
+        _ = try GlifiQueryParser().parse(text, limits: limits)
+        Issue.record("The parser accepted a query exceeding its depth limit")
+    } catch let failure as GlifiFailure {
+        #expect(failure.code == "query.depth-limit-exceeded")
+        #expect(failure.category == .insufficientResources)
+        #expect(failure.operation == .query)
+        #expect(failure.arguments["start"] != nil)
+        #expect(failure.arguments["end"] != nil)
+        #expect(!String(describing: failure).contains(text))
+    }
+}

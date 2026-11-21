@@ -780,6 +780,30 @@
         }
       }
     },
+    "failure.runtime.admission-denied" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The system cannot start this work right now. Try again when resources are available."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il sistema non può avviare questo lavoro ora. Riprova quando le risorse saranno disponibili."
+          }
+        }
+      }
+    },
+    "failure.runtime.admission-denied" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The current system conditions do not allow a new analysis. Try again when conditions improve." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Le condizioni attuali del sistema non consentono una nuova analisi. Riprova quando migliorano." } }
+      }
+    },
     "failure.runtime.operation-limit-exceeded" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11367,6 +11391,4375 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stato conservato"
+          }
+        }
+      }
+    },
+    "sidebar.text-analysis" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text analysis"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analisi testuale"
+          }
+        }
+      }
+    },
+    "summary.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source summary"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sintesi delle fonti"
+          }
+        }
+      }
+    },
+    "summary.introduction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The summary collects sentences extracted from your sources. Choose the material and budget, then inspect the original context."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il riassunto raccoglie frasi estratte dalle fonti. Scegli il materiale e il budget, poi consulta il contesto originale."
+          }
+        }
+      }
+    },
+    "summary.empty-sources.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add sources to summarize"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi le fonti da riassumere"
+          }
+        }
+      }
+    },
+    "summary.empty-sources.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import text or Markdown files into the project to prepare a summary."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importa file di testo o Markdown nel progetto per preparare una sintesi."
+          }
+        }
+      }
+    },
+    "summary.needs-project" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open or save a project, then import the sources to analyze."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri o salva un progetto, poi importa le fonti da analizzare."
+          }
+        }
+      }
+    },
+    "summary.scope.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sources to analyze"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fonti da analizzare"
+          }
+        }
+      }
+    },
+    "summary.scope.choice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scope"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ambito"
+          }
+        }
+      }
+    },
+    "summary.scope.all" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All sources"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutte le fonti"
+          }
+        }
+      }
+    },
+    "summary.scope.selected" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected sources"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fonti selezionate"
+          }
+        }
+      }
+    },
+    "summary.scope.empty" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select at least one source for this scope."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seleziona almeno una fonte per questo ambito."
+          }
+        }
+      }
+    },
+    "summary.scope.source-count" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sources in the project"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fonti nel progetto"
+          }
+        }
+      }
+    },
+    "summary.parameters" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepare the summary"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepara il riassunto"
+          }
+        }
+      }
+    },
+    "summary.budget.unit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Budget unit"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unità del budget"
+          }
+        }
+      }
+    },
+    "summary.budget.sentences" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sentences"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frasi"
+          }
+        }
+      }
+    },
+    "summary.budget.lexical-tokens" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lexical tokens"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Token lessicali"
+          }
+        }
+      }
+    },
+    "summary.budget.limit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximum budget"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Budget massimo"
+          }
+        }
+      }
+    },
+    "summary.budget.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a value from 1 to 10,000. The budget limits the selected sentences or lexical tokens."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inserisci un valore da 1 a 10.000. Il budget limita le frasi o i token lessicali selezionati."
+          }
+        }
+      }
+    },
+    "summary.parameters.details" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Method and repetition"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metodo e ripetizioni"
+          }
+        }
+      }
+    },
+    "summary.method" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selection method"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metodo di selezione"
+          }
+        }
+      }
+    },
+    "summary.method.tfidf-mean" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sentence TF-IDF mean"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Media TF-IDF delle frasi"
+          }
+        }
+      }
+    },
+    "summary.method.centroid-cosine" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centroid similarity"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Somiglianza al centroide"
+          }
+        }
+      }
+    },
+    "summary.redundancy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repetition"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ripetizioni"
+          }
+        }
+      }
+    },
+    "summary.redundancy.none" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No repetition reduction"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna riduzione delle ripetizioni"
+          }
+        }
+      }
+    },
+    "summary.redundancy.mmr" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduce repetition with MMR"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riduci le ripetizioni con MMR"
+          }
+        }
+      }
+    },
+    "summary.mmr.lambda" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MMR trade-off (λ)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilanciamento MMR (λ)"
+          }
+        }
+      }
+    },
+    "summary.mmr.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "λ must be between 0 and 1. Higher values favor relevance; lower values reduce similarity to sentences already selected."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "λ deve essere fra 0 e 1. Valori maggiori privilegiano la rilevanza; valori minori riducono la similarità con le frasi già scelte."
+          }
+        }
+      }
+    },
+    "summary.action.run" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create summary"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea il riassunto"
+          }
+        }
+      }
+    },
+    "summary.result.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last execution result"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Risultato dell’ultima esecuzione"
+          }
+        }
+      }
+    },
+    "summary.result.context" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This result retains the sources and parameters of its execution. Create the summary again to apply new choices."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo risultato conserva le fonti e i parametri della sua esecuzione. Per applicare nuove scelte, crea di nuovo il riassunto."
+          }
+        }
+      }
+    },
+    "summary.result.sources" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analyzed sources"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fonti analizzate"
+          }
+        }
+      }
+    },
+    "summary.result.sentences" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected sentences"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frasi selezionate"
+          }
+        }
+      }
+    },
+    "summary.result.empty.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No sentences selected"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna frase selezionata"
+          }
+        }
+      }
+    },
+    "summary.result.empty.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This execution’s method and budget selected no sentences. Try a larger budget or another method."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il metodo e il budget di questa esecuzione non hanno selezionato frasi. Prova un budget maggiore o un altro metodo."
+          }
+        }
+      }
+    },
+    "summary.result.order" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sentences follow source order and their position in the text."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le frasi seguono l’ordine delle fonti e la posizione nel testo."
+          }
+        }
+      }
+    },
+    "summary.action.open-source" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open original context"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri il contesto originale"
+          }
+        }
+      }
+    },
+    "summary.sentence.details" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selection details"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dettagli della selezione"
+          }
+        }
+      }
+    },
+    "summary.sentence.rank" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relevance rank"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posizione nel ranking"
+          }
+        }
+      }
+    },
+    "summary.sentence.score" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relevance score"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Punteggio di rilevanza"
+          }
+        }
+      }
+    },
+    "summary.sentence.selection-order" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selection order"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordine di selezione"
+          }
+        }
+      }
+    },
+    "summary.sentence.tokens" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sentence lexical tokens"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Token lessicali della frase"
+          }
+        }
+      }
+    },
+    "summary.sentence.eligible" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eligible sentence"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frase eleggibile"
+          }
+        }
+      }
+    },
+    "summary.sentence.extracted-range" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UTF-8 range in extracted text"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervallo UTF-8 nel testo estratto"
+          }
+        }
+      }
+    },
+    "summary.source.revision" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source revision"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisione della fonte"
+          }
+        }
+      }
+    },
+    "summary.result.method-lineage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Method, parameters and provenance"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metodo, parametri e provenienza"
+          }
+        }
+      }
+    },
+    "summary.result.limits" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The score ranks sentences and is not a probability of correctness. Repetition reduction does not guarantee topic coverage: always inspect the source context."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il punteggio ordina le frasi e non è una probabilità di correttezza. La riduzione delle ripetizioni non garantisce copertura tematica: consulta sempre il contesto delle fonti."
+          }
+        }
+      }
+    },
+    "summary.budget.consumed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consumed budget"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Budget utilizzato"
+          }
+        }
+      }
+    },
+    "summary.method.tf" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TF weighting"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ponderazione TF"
+          }
+        }
+      }
+    },
+    "summary.method.idf" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IDF weighting"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ponderazione IDF"
+          }
+        }
+      }
+    },
+    "summary.method.normalization" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normalization"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normalizzazione"
+          }
+        }
+      }
+    },
+    "summary.method.eligibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eligibility rule"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regola di eleggibilità"
+          }
+        }
+      }
+    },
+    "summary.method.tie-break" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tie-break rule"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regola per i pari merito"
+          }
+        }
+      }
+    },
+    "summary.method.output-order" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Output order"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordine di presentazione"
+          }
+        }
+      }
+    },
+    "summary.lineage.project" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project identity"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Identità del progetto"
+          }
+        }
+      }
+    },
+    "summary.lineage.source-generation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analyzed generation"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generazione analizzata"
+          }
+        }
+      }
+    },
+    "summary.lineage.generation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Result generation"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generazione del risultato"
+          }
+        }
+      }
+    },
+    "summary.lineage.artifact" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artifact identity"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Identità dell’Artifact"
+          }
+        }
+      }
+    },
+    "summary.lineage.node" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analysis node"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nodo di analisi"
+          }
+        }
+      }
+    },
+    "summary.source.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Original source context"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contesto nella fonte originale"
+          }
+        }
+      }
+    },
+    "summary.source.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fonte"
+          }
+        }
+      }
+    },
+    "summary.source.unmapped" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Precise source mapping is unavailable. The full source is shown without highlighting."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La localizzazione puntuale non è disponibile. È mostrata la fonte intera, senza evidenziazione."
+          }
+        }
+      }
+    },
+    "summary.source.mapped" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highlighted passages are the original bytes linked to the extracted sentence."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le parti evidenziate corrispondono ai byte originali collegati alla frase estratta."
+          }
+        }
+      }
+    },
+    "summary.action.close-source" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close context"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiudi il contesto"
+          }
+        }
+      }
+    },
+    "progress.summarizing" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparing summary…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparazione del riassunto…"
+          }
+        }
+      }
+    },
+    "text-analysis.tool" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What would you like to do?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cosa vuoi fare?"
+          }
+        }
+      }
+    },
+    "text-analysis.tool.summary" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summarize sources"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riassumere le fonti"
+          }
+        }
+      }
+    },
+    "text-analysis.tool.documents" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find documents"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trovare documenti"
+          }
+        }
+      }
+    },
+    "text-analysis.tool.lexicon" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explore vocabulary"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esplorare il lessico"
+          }
+        }
+      }
+    },
+    "text-analysis.empty-sources.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add sources to analyze"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi le fonti da analizzare"
+          }
+        }
+      }
+    },
+    "text-analysis.empty-sources.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import text or Markdown files into the project to use the analysis tools."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importa file di testo o Markdown nel progetto per usare gli strumenti di analisi."
+          }
+        }
+      }
+    },
+    "bm25.introduction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find documents relevant to your search words. BM25 ranks sources by lexical relevance and retains the parameters used."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trova documenti pertinenti alle parole della tua ricerca. BM25 ordina le fonti per rilevanza lessicale e conserva i parametri usati."
+          }
+        }
+      }
+    },
+    "bm25.parameters" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find relevant documents"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca documenti pertinenti"
+          }
+        }
+      }
+    },
+    "bm25.query" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search words"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parole da cercare"
+          }
+        }
+      }
+    },
+    "bm25.query.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter words to rank documents. This field uses a lexical query; QueryAST concordance syntax belongs to the Search section."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inserisci parole per ordinare i documenti. Questo campo usa una query lessicale; la sintassi della concordanza QueryAST appartiene alla sezione Ricerca."
+          }
+        }
+      }
+    },
+    "bm25.parameters.details" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BM25 parameters"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parametri BM25"
+          }
+        }
+      }
+    },
+    "bm25.k1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frequency saturation (k1)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saturazione delle frequenze (k1)"
+          }
+        }
+      }
+    },
+    "bm25.b" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Length normalization (b)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normalizzazione della lunghezza (b)"
+          }
+        }
+      }
+    },
+    "bm25.parameters.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Defaults: k1 = 1.2 and b = 0.75. k1 must be finite and positive; b must be between 0 and 1."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default: k1 = 1,2 e b = 0,75. k1 deve essere finito e positivo; b deve essere fra 0 e 1."
+          }
+        }
+      }
+    },
+    "bm25.action.run" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find documents"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trova i documenti"
+          }
+        }
+      }
+    },
+    "bm25.result.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last execution ranking"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ranking dell’ultima esecuzione"
+          }
+        }
+      }
+    },
+    "bm25.result.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The score measures lexical relevance, not a probability. Documents with zero scores are included; out-of-vocabulary terms contribute zero."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il punteggio è una rilevanza lessicale, non una probabilità. Sono presenti anche i documenti con punteggio zero; i termini fuori vocabolario contribuiscono zero."
+          }
+        }
+      }
+    },
+    "bm25.query.effective" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Execution query"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Query dell’esecuzione"
+          }
+        }
+      }
+    },
+    "bm25.score" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BM25 score"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Punteggio BM25"
+          }
+        }
+      }
+    },
+    "bm25.document-length" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Length in lexical tokens"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lunghezza in token lessicali"
+          }
+        }
+      }
+    },
+    "bm25.action.open-source" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open document"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri il documento"
+          }
+        }
+      }
+    },
+    "bm25.document-count" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analyzed documents"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Documenti analizzati"
+          }
+        }
+      }
+    },
+    "bm25.average-length" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Average length in tokens"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lunghezza media in token"
+          }
+        }
+      }
+    },
+    "bm25.term.known" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Term in the vocabulary"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termine presente nel vocabolario"
+          }
+        }
+      }
+    },
+    "bm25.term.outside" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Out-of-vocabulary term: zero contribution"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termine fuori vocabolario: contributo zero"
+          }
+        }
+      }
+    },
+    "bm25.source.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Original document"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Documento originale"
+          }
+        }
+      }
+    },
+    "bm25.source.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The full document is shown. BM25 provides document scores without occurrence ranges to highlight."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "È mostrato il documento intero. Il ranking BM25 fornisce punteggi per documento, senza intervalli di occorrenza da evidenziare."
+          }
+        }
+      }
+    },
+    "frequency.introduction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describe source vocabulary with frequencies, word or character sequences, and MTLD diversity. Every result retains its scope, parameters and limits."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descrivi il lessico delle fonti con frequenze, sequenze di parole o caratteri e diversità MTLD. Ogni risultato conserva ambito, parametri e limiti."
+          }
+        }
+      }
+    },
+    "frequency.parameters" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frequencies and sequences"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frequenze e sequenze"
+          }
+        }
+      }
+    },
+    "frequency.unit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Counting unit"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unità da contare"
+          }
+        }
+      }
+    },
+    "frequency.unit.forms" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lexical forms"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forme lessicali"
+          }
+        }
+      }
+    },
+    "frequency.unit.words" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Word sequences"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sequenze di parole"
+          }
+        }
+      }
+    },
+    "frequency.unit.characters" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Character sequences"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sequenze di caratteri"
+          }
+        }
+      }
+    },
+    "frequency.unit.padded-characters" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Character sequences with word boundaries"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sequenze di caratteri con confini di parola"
+          }
+        }
+      }
+    },
+    "frequency.forms.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forms use n = 1. Minimum length counts perceived Unicode characters (grapheme clusters)."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le forme usano n = 1. La lunghezza minima conta i caratteri Unicode percepiti (grapheme cluster)."
+          }
+        }
+      }
+    },
+    "frequency.n" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sequence size (n)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dimensione della sequenza (n)"
+          }
+        }
+      }
+    },
+    "frequency.n.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Words: n from 1 to 5. Characters: n from 1 to 10."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parole: n da 1 a 5. Caratteri: n da 1 a 10."
+          }
+        }
+      }
+    },
+    "frequency.maximum-rows" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Requested row limit"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Massimo di righe richiesto"
+          }
+        }
+      }
+    },
+    "frequency.maximum-rows.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default 1,000, from 1 to 100,000 rows. Pagination shows 50 result rows at a time."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default 1.000, da 1 a 100.000 righe. La paginazione mostra 50 righe del risultato alla volta."
+          }
+        }
+      }
+    },
+    "frequency.filters" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explicit filters"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filtri espliciti"
+          }
+        }
+      }
+    },
+    "frequency.stopwords" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forms to exclude, one per line"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forme da escludere, una per riga"
+          }
+        }
+      }
+    },
+    "frequency.stopwords.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No predefined list. Enter up to 10,000 forms, one per line; the engine normalizes and deduplicates them."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna lista predefinita. Inserisci al massimo 10.000 forme, una per riga; il motore applica normalizzazione e deduplicazione."
+          }
+        }
+      }
+    },
+    "frequency.minimum-length" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimum form length"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lunghezza minima della forma"
+          }
+        }
+      }
+    },
+    "frequency.minimum-count" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimum count"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conteggio minimo"
+          }
+        }
+      }
+    },
+    "frequency.minimum-document-frequency" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimum document frequency"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Numero minimo di documenti"
+          }
+        }
+      }
+    },
+    "frequency.maximum-document-proportion" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximum document proportion"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proporzione massima di documenti"
+          }
+        }
+      }
+    },
+    "frequency.filters.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimum values must be at least 1. Maximum proportion must be greater than 0 and at most 1; all numeric filters default to 1."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I minimi devono essere almeno 1. La proporzione massima deve essere maggiore di 0 e non superiore a 1; default 1 per tutti i filtri numerici."
+          }
+        }
+      }
+    },
+    "frequency.action.run" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calculate frequencies"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calcola le frequenze"
+          }
+        }
+      }
+    },
+    "frequency.result.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last execution frequencies"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frequenze dell’ultima esecuzione"
+          }
+        }
+      }
+    },
+    "frequency.denominator" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Occurrences before filtering"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Occorrenze prima dei filtri"
+          }
+        }
+      }
+    },
+    "frequency.distinct-units" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distinct units before filtering"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unità distinte prima dei filtri"
+          }
+        }
+      }
+    },
+    "frequency.returned-rows" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rows returned by the calculation"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Righe restituite dal calcolo"
+          }
+        }
+      }
+    },
+    "frequency.truncated" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The calculation reached the requested limit: only the leading rows defined by the method are included."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il calcolo ha raggiunto il limite richiesto: sono presenti solo le prime righe previste dal metodo."
+          }
+        }
+      }
+    },
+    "frequency.not-truncated" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The calculation result is not truncated. Pages let you explore the returned rows."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il risultato del calcolo non è troncato. Le pagine permettono di esplorare le righe restituite."
+          }
+        }
+      }
+    },
+    "frequency.empty" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No units in the result"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna unità nel risultato"
+          }
+        }
+      }
+    },
+    "frequency.unit-value" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unit"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unità"
+          }
+        }
+      }
+    },
+    "frequency.count" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Occurrences"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Occorrenze"
+          }
+        }
+      }
+    },
+    "frequency.document-frequency" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Documents"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Documenti"
+          }
+        }
+      }
+    },
+    "frequency.relative-frequency" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relative frequency"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frequenza relativa"
+          }
+        }
+      }
+    },
+    "frequency.filter.identifier" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter variant"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Variante dei filtri"
+          }
+        }
+      }
+    },
+    "frequency.stopwords.policy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "N-gram exclusion rule"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regola di esclusione degli n-grammi"
+          }
+        }
+      }
+    },
+    "frequency.page" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Result page"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pagina del risultato"
+          }
+        }
+      }
+    },
+    "frequency.visible-rows" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rows on this page"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Righe in questa pagina"
+          }
+        }
+      }
+    },
+    "frequency.page.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pages explore all returned rows in the same order without recalculation. The calculation limit is separate from pagination."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le pagine esplorano tutte le righe restituite, nello stesso ordine, senza ricalcolo. Il limite del calcolo resta distinto dalle pagine."
+          }
+        }
+      }
+    },
+    "frequency.page.previous" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous page"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pagina precedente"
+          }
+        }
+      }
+    },
+    "frequency.page.next" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next page"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pagina successiva"
+          }
+        }
+      }
+    },
+    "frequency.exclusions.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exclusions are attributed to the first filter that removes the unit."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le esclusioni sono attribuite al primo filtro che rimuove l’unità."
+          }
+        }
+      }
+    },
+    "frequency.exclusions.stopwords" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluded by the listed forms"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escluse dalle forme indicate"
+          }
+        }
+      }
+    },
+    "frequency.exclusions.length" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluded by length"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escluse per lunghezza"
+          }
+        }
+      }
+    },
+    "frequency.exclusions.count" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluded by count"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escluse per conteggio"
+          }
+        }
+      }
+    },
+    "frequency.exclusions.document-frequency" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluded by document frequency"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escluse per document frequency"
+          }
+        }
+      }
+    },
+    "frequency.exclusions.document-proportion" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluded by document proportion"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escluse per proporzione di documenti"
+          }
+        }
+      }
+    },
+    "mtld.parameters" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MTLD lexical diversity"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diversità lessicale MTLD"
+          }
+        }
+      }
+    },
+    "mtld.threshold" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MTLD threshold (τ)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soglia MTLD (τ)"
+          }
+        }
+      }
+    },
+    "mtld.threshold.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default 0.72; the threshold must be finite, greater than 0 and less than 1. MTLD uses the selected scope and not the frequency filters."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default 0,72; la soglia deve essere finita, maggiore di 0 e minore di 1. MTLD usa l’ambito scelto e non i filtri delle frequenze."
+          }
+        }
+      }
+    },
+    "mtld.action.run" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calculate MTLD diversity"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calcola la diversità MTLD"
+          }
+        }
+      }
+    },
+    "mtld.result.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last execution MTLD"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MTLD dell’ultima esecuzione"
+          }
+        }
+      }
+    },
+    "mtld.result.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MTLD depends on the threshold and sequence order. It is not a percentage or a universal quality score and remains distinct from TTR, MSTTR and MATTR."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MTLD dipende dalla soglia e dall’ordine della sequenza. Non è una percentuale o un giudizio universale sulla qualità e resta distinto da TTR, MSTTR e MATTR."
+          }
+        }
+      }
+    },
+    "mtld.pooled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concatenated source sequence"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sequenza concatenata delle fonti"
+          }
+        }
+      }
+    },
+    "mtld.tokens" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lexical tokens"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Token lessicali"
+          }
+        }
+      }
+    },
+    "mtld.value" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mean bidirectional MTLD"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MTLD medio bidirezionale"
+          }
+        }
+      }
+    },
+    "mtld.directions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Values in both directions"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valori nelle due direzioni"
+          }
+        }
+      }
+    },
+    "mtld.forward" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Original order"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordine originale"
+          }
+        }
+      }
+    },
+    "mtld.backward" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reversed order"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordine inverso"
+          }
+        }
+      }
+    },
+    "mtld.unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unavailable: no lexical tokens."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non disponibile: nessun token lessicale."
+          }
+        }
+      }
+    },
+    "mtld.positive-infinity" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Positive infinity (+∞)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Infinito positivo (+∞)"
+          }
+        }
+      }
+    },
+    "mtld.type-mapping" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lexical type mapping"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regola delle forme lessicali"
+          }
+        }
+      }
+    },
+    "mtld.sequence-policy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concatenated sequence order"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordine della sequenza concatenata"
+          }
+        }
+      }
+    },
+    "progress.ranking-bm25" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ranking documents…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordinamento dei documenti…"
+          }
+        }
+      }
+    },
+    "progress.analyzing-frequencies" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calculating frequencies…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calcolo delle frequenze…"
+          }
+        }
+      }
+    },
+    "progress.analyzing-mtld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calculating MTLD diversity…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calcolo della diversità MTLD…"
+          }
+        }
+      }
+    },
+    "frequency.words.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Counts sequences of normalized lexical forms within one document. Punctuation is excluded; a sequence may cross sentences, but never different sources."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conta sequenze di forme lessicali normalizzate nello stesso documento. La punteggiatura è esclusa; una sequenza può attraversare frasi, mai fonti diverse."
+          }
+        }
+      }
+    },
+    "frequency.characters.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Counts sequences of perceived Unicode characters (grapheme clusters) within each normalized lexical form. Sequences do not cross words."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conta sequenze di caratteri Unicode percepiti (grapheme cluster) dentro ogni forma lessicale normalizzata. Le sequenze non attraversano parole."
+          }
+        }
+      }
+    },
+    "frequency.padded-characters.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Counts perceived Unicode characters within each normalized lexical form, adding _ at the beginning and end to mark word boundaries. Sequences do not cross words."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conta caratteri Unicode percepiti dentro ogni forma lessicale normalizzata, aggiungendo _ all’inizio e alla fine per indicare i confini della parola. Le sequenze non attraversano parole."
+          }
+        }
+      }
+    },
+    "text-analysis.method" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metodo"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Method"
+          }
+        }
+      }
+    },
+    "text-analysis.tool.term-weights" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pesare i termini"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight terms"
+          }
+        }
+      }
+    },
+    "weighting.introduction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confronta il peso dei termini nei documenti combinando frequenza, diffusione nella raccolta e normalizzazione. I pesi non sono probabilità né significatività statistica."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compare term weights across documents using frequency, prevalence in the collection, and normalization. Weights are neither probabilities nor statistical significance."
+          }
+        }
+      }
+    },
+    "weighting.parameters" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Come pesare i termini"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How to weight terms"
+          }
+        }
+      }
+    },
+    "weighting.parameters.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valori iniziali: conteggio raw, IDF smussata e nessuna normalizzazione della riga. I controlli preparano una nuova richiesta; non cambiano il risultato già calcolato."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Initial settings: raw counts, smooth IDF, and no row normalization. Controls prepare a new request; they do not change the existing result."
+          }
+        }
+      }
+    },
+    "weighting.parameters.details" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Significato delle opzioni e limiti"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options and limits explained"
+          }
+        }
+      }
+    },
+    "weighting.tf.raw" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conteggio (raw)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Count (raw)"
+          }
+        }
+      }
+    },
+    "weighting.tf.binary" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presenza (binary)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presence (binary)"
+          }
+        }
+      }
+    },
+    "weighting.tf.l1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quota sul totale (L1)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share of total (L1)"
+          }
+        }
+      }
+    },
+    "weighting.tf.max" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rapporto con il massimo (max)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ratio to maximum (max)"
+          }
+        }
+      }
+    },
+    "weighting.tf.augmented" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frequenza aumentata (augmented)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Augmented frequency"
+          }
+        }
+      }
+    },
+    "weighting.tf.sublinear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scala logaritmica (sublinear)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logarithmic scale (sublinear)"
+          }
+        }
+      }
+    },
+    "weighting.idf.none" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna (solo TF)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None (TF only)"
+          }
+        }
+      }
+    },
+    "weighting.idf.unsmoothed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non smussata"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unsmoothed"
+          }
+        }
+      }
+    },
+    "weighting.idf.smooth" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Smussata"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Smooth"
+          }
+        }
+      }
+    },
+    "weighting.normalization.none" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        }
+      }
+    },
+    "weighting.normalization.l1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Somma dei pesi (L1)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sum of weights (L1)"
+          }
+        }
+      }
+    },
+    "weighting.normalization.l2" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lunghezza euclidea (L2)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Euclidean length (L2)"
+          }
+        }
+      }
+    },
+    "weighting.tf.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TF trasforma il conteggio nel singolo documento: conteggio, presenza, quota sul totale, rapporto con il massimo, frequenza aumentata o scala logaritmica. Le trasformazioni non aggiungono termini assenti."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TF transforms a count within one document: count, presence, share of total, ratio to maximum, augmented frequency, or logarithmic scale. These transformations do not add absent terms."
+          }
+        }
+      }
+    },
+    "weighting.idf.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IDF usa il numero di documenti che contengono il termine. Senza IDF il metodo è solo TF. Con IDF non smussata, un termine presente in tutti i documenti ha peso zero; la variante smussata mantiene un fattore positivo."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IDF uses the number of documents containing a term. Without IDF the method is TF only. With unsmoothed IDF, a term in every document has zero weight; smooth IDF keeps a positive factor."
+          }
+        }
+      }
+    },
+    "weighting.normalization.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La normalizzazione si applica ai pesi dell’intera riga dopo TF e IDF: nessuna, somma assoluta L1 o lunghezza euclidea L2. Una riga con soli pesi zero rimane a zero."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normalization applies to the whole row after TF and IDF: none, absolute sum L1, or Euclidean length L2. A row with only zero weights stays zero."
+          }
+        }
+      }
+    },
+    "weighting.limits.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limiti standard di calcolo: 1 000 fonti, 256 MiB di fonti, 100 000 termini e 500 000 celle osservate. Il risultato ammesso è completo: le pagine non troncano il calcolo."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard computation limits: 1,000 sources, 256 MiB of source data, 100,000 terms, and 500,000 observed cells. An admitted result is complete: pagination does not truncate computation."
+          }
+        }
+      }
+    },
+    "weighting.action.run" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calcola i pesi"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calculate weights"
+          }
+        }
+      }
+    },
+    "weighting.result.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pesi dei termini"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Term weights"
+          }
+        }
+      }
+    },
+    "weighting.result.context" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Risultato dell’ultima richiesta riuscita. Schema, ambito effettivo e generazione sono disponibili nei dettagli e restano indipendenti dai controlli correnti."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Result of the last successful request. Its scheme, effective scope, and generation are available in the details and remain independent of the current controls."
+          }
+        }
+      }
+    },
+    "weighting.term-count" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termini nel vocabolario"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vocabulary terms"
+          }
+        }
+      }
+    },
+    "weighting.observed-cells" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celle osservate"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Observed cells"
+          }
+        }
+      }
+    },
+    "weighting.zeros.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ogni cella mostrata ha conteggio positivo, anche quando il peso è zero. Una coppia fonte–termine assente dalle celle ha conteggio e peso implicitamente zero. La tabella non elimina i pesi zero."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every displayed cell has a positive count, even when its weight is zero. A source–term pair absent from the cells has an implicit count and weight of zero. The table does not remove zero weights."
+          }
+        }
+      }
+    },
+    "weighting.empty.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessun termine lessicale"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No lexical terms"
+          }
+        }
+      }
+    },
+    "weighting.empty.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il calcolo è riuscito, ma le fonti incluse non contengono termini lessicali. Le righe delle fonti sono conservate con zero celle osservate."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The calculation succeeded, but the included sources contain no lexical terms. Source rows are retained with zero observed cells."
+          }
+        }
+      }
+    },
+    "weighting.sources.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fonti della matrice"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Matrix sources"
+          }
+        }
+      }
+    },
+    "weighting.sources.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutte le fonti incluse, anche quelle senza termini, nell’ordine delle righe del risultato. Il conteggio indica quante celle sono memorizzate per la fonte, compresi i pesi zero."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All included sources, including those without terms, in result row order. The count shows how many cells are stored for each source, including zero weights."
+          }
+        }
+      }
+    },
+    "weighting.vocabulary.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vocabolario e diffusione"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vocabulary and prevalence"
+          }
+        }
+      }
+    },
+    "weighting.vocabulary.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vocabolario completo in ordine lessicografico. La frequenza documentale (DF) è il numero di fonti incluse che contengono il termine; le fonti vuote restano nel totale delle fonti."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete vocabulary in lexicographic order. Document frequency (DF) is the number of included sources containing the term; empty sources remain in the source total."
+          }
+        }
+      }
+    },
+    "weighting.term" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termine"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Term"
+          }
+        }
+      }
+    },
+    "weighting.cells.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celle osservate della matrice"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Observed matrix cells"
+          }
+        }
+      }
+    },
+    "weighting.cells.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutte le celle osservate, ordinate per riga della fonte e poi per colonna del termine. Il conteggio è quello osservato; il peso segue lo schema effettivo. Nessun ordinamento per peso è applicato."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All observed cells, ordered by source row and then term column. Count is the observed count; weight follows the effective scheme. No sorting by weight is applied."
+          }
+        }
+      }
+    },
+    "weighting.weight" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peso"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight"
+          }
+        }
+      }
+    },
+    "weighting.analysis" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Identità dell’analisi"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analysis identity"
+          }
+        }
+      }
+    },
+    "weighting.scope.effective" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ambito usato nel risultato"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scope used in the result"
+          }
+        }
+      }
+    },
+    "weighting.limits.sources" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limite di fonti"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source limit"
+          }
+        }
+      }
+    },
+    "weighting.limits.bytes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limite di byte delle fonti"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source byte limit"
+          }
+        }
+      }
+    },
+    "weighting.limits.terms" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limite di termini"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Term limit"
+          }
+        }
+      }
+    },
+    "weighting.limits.cells" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limite di celle osservate"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Observed cell limit"
+          }
+        }
+      }
+    },
+    "weighting.page.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pagine da 50 righe, senza modificare ordine o calcolo. Puoi inserire un numero di pagina da 1 al totale indicato; un numero non valido non cambia la pagina."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pages of 50 rows, without changing ordering or computation. Enter a page number from 1 to the displayed total; an invalid number does not change the page."
+          }
+        }
+      }
+    },
+    "weighting.page.direct" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vai alla pagina"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to page"
+          }
+        }
+      }
+    },
+    "weighting.page.go" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vai"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go"
+          }
+        }
+      }
+    },
+    "weighting.page.last" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultima pagina"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last page"
+          }
+        }
+      }
+    },
+    "progress.analyzing-term-weighting" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calcolo dei pesi dei termini…"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calculating term weights…"
+          }
+        }
+      }
+    },
+    "failure.weighting.invalid-result" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il risultato di ponderazione contiene dati incoerenti e non può essere mostrato. I risultati precedenti restano disponibili."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The term-weighting result contains inconsistent data and cannot be displayed. Previous results remain available."
+          }
+        }
+      }
+    },
+    "keyness.mac.introduction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confronta due gruppi di documenti per descrivere quali termini hanno tassi diversi. Il confronto conta token lessicali normalizzati, non la presenza del termine nei documenti."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compare two document groups to describe terms with different rates. The comparison counts normalized lexical tokens, not term presence across documents."
+          }
+        }
+      }
+    },
+    "keyness.mac.groups.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assegna ogni fonte all’obiettivo o al riferimento. Assegnarla a un gruppo la rimuove dall’altro; premi di nuovo per escluderla. Servono due gruppi non vuoti e senza fonti condivise."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assign each source to the target or reference. Assigning it to one group removes it from the other; press again to exclude it. Both groups must be nonempty and share no sources."
+          }
+        }
+      }
+    },
+    "keyness.mac.groups.target-count" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fonti selezionate per l’obiettivo"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sources selected for the target"
+          }
+        }
+      }
+    },
+    "keyness.mac.groups.reference-count" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fonti selezionate per il riferimento"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sources selected for the reference"
+          }
+        }
+      }
+    },
+    "keyness.mac.groups.empty" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importa le fonti prima di assegnarle ai due gruppi."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import sources before assigning them to the two groups."
+          }
+        }
+      }
+    },
+    "keyness.mac.parameters" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Come confrontare i gruppi"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How to compare groups"
+          }
+        }
+      }
+    },
+    "keyness.mac.confidence" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Livello di confidenza (fra 0 e 1)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confidence level (between 0 and 1)"
+          }
+        }
+      }
+    },
+    "keyness.mac.parameters.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valori iniziali: 100 000 ipotesi, soglia diagnostica 5, livello di confidenza 0,95. I controlli preparano una nuova richiesta e non cambiano il risultato precedente."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Initial settings: 100,000 hypotheses, diagnostic threshold 5, confidence level 0.95. Controls prepare a new request and do not change the previous result."
+          }
+        }
+      }
+    },
+    "keyness.mac.parameters.details" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Famiglia, test e intervalli"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Family, tests, and intervals"
+          }
+        }
+      }
+    },
+    "keyness.mac.family.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il limite di ipotesi è un intero non negativo: se l’intera famiglia supera il limite, il calcolo fallisce. Non seleziona i primi termini e non tronca la famiglia usata dalla correzione Benjamini–Hochberg."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The hypothesis limit is a nonnegative integer: if the full family exceeds the limit, computation fails. It does not select top terms or truncate the family used by the Benjamini–Hochberg correction."
+          }
+        }
+      }
+    },
+    "keyness.mac.selection.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fisher a due code è scelto quando il minimo atteso della tabella è minore di 5; altrimenti si usa il G-test. Questa regola fissa dipende dai margini e resta distinta dalla soglia diagnostica configurabile, finita e non negativa."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two-sided Fisher is selected when the minimum expected table count is below 5; otherwise the G-test is used. This fixed rule depends on the margins and remains separate from the configurable, finite, nonnegative diagnostic threshold."
+          }
+        }
+      }
+    },
+    "keyness.mac.confidence.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il livello deve essere finito e strettamente fra 0 e 1. Gli intervalli Katz e Woolf usano la correzione Haldane–Anscombe (+0,5 alle quattro celle). Con dati rari possono essere ampi. Livelli estremamente vicini a 1 possono fallire per limiti numerici: correggi la richiesta senza attendere un adattamento automatico."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The level must be finite and strictly between 0 and 1. Katz and Woolf intervals use the Haldane–Anscombe correction (+0.5 in all four cells). With rare data, intervals may be wide. Levels extremely close to 1 can fail due to numerical limits: correct the request; no automatic adjustment is applied."
+          }
+        }
+      }
+    },
+    "keyness.mac.action.run" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confronta i termini dei gruppi"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compare terms across groups"
+          }
+        }
+      }
+    },
+    "keyness.mac.result.context" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultimo confronto riuscito. Le popolazioni e i parametri effettivi riportati qui restano separati dalle selezioni e dai controlli correnti."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last successful comparison. The effective populations and parameters shown here remain separate from current selections and controls."
+          }
+        }
+      }
+    },
+    "keyness.mac.confidence.effective" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Livello degli intervalli mostrati"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confidence level of displayed intervals"
+          }
+        }
+      }
+    },
+    "keyness.mac.groups.effective" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fonti usate nel confronto"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sources used in the comparison"
+          }
+        }
+      }
+    },
+    "keyness.mac.groups.effective-help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Queste revisioni appartengono al risultato, anche se nel frattempo hai cambiato i gruppi da confrontare."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "These revisions belong to the result, even if you have since changed the comparison groups."
+          }
+        }
+      }
+    },
+    "keyness.mac.interpretation.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La direzione segue il log ratio dei tassi corretti: positivo verso l’obiettivo, negativo verso il riferimento, zero per tassi corretti uguali. Effetto, intervallo e p/q-value descrivono aspetti distinti; nessun termine viene dichiarato automaticamente significativo."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Direction follows the log ratio of corrected rates: positive toward the target, negative toward the reference, zero for equal corrected rates. Effect, interval, and p/q-values describe distinct aspects; no term is automatically declared significant."
+          }
+        }
+      }
+    },
+    "keyness.mac.terms.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutti i termini del confronto"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All comparison terms"
+          }
+        }
+      }
+    },
+    "keyness.mac.terms.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Famiglia completa, ordinata da Kit per valore assoluto del log ratio decrescente e termine crescente a parità. Nessun filtro di p-value o riordino viene applicato dalla vista."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete family, ordered by Kit by decreasing absolute log ratio, then increasing term for ties. The view applies no p-value filter or reordering."
+          }
+        }
+      }
+    },
+    "keyness.mac.term.details" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conteggi, test e odds ratio"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Counts, tests, and odds ratio"
+          }
+        }
+      }
+    },
+    "keyness.mac.log-ratio.interval" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervallo del log ratio (Katz, HA)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log-ratio interval (Katz, HA)"
+          }
+        }
+      }
+    },
+    "keyness.mac.odds-ratio.interval" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intervallo dell’odds ratio (Woolf, HA)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odds-ratio interval (Woolf, HA)"
+          }
+        }
+      }
+    },
+    "keyness.mac.test.selected" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test selezionato per il termine"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test selected for the term"
+          }
+        }
+      }
+    },
+    "keyness.mac.p-value.selected" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "p-value del test selezionato"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected-test p-value"
+          }
+        }
+      }
+    },
+    "keyness.mac.p-value.g-test" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "p-value del G-test, conservato separatamente"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "G-test p-value, retained separately"
+          }
+        }
+      }
+    },
+    "keyness.mac.diagnostic.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il minimo atteso è sotto la soglia diagnostica di questa richiesta. Il segnale riguarda l’approssimazione asintotica e non è un giudizio sulla grandezza o sulla certezza dell’effetto."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The minimum expected count is below this request’s diagnostic threshold. This signal concerns the asymptotic approximation, not effect magnitude or certainty."
+          }
+        }
+      }
+    },
+    "keyness.mac.page.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cinquanta termini per pagina. Precedente, successiva, ultima e pagina diretta non ricalcolano né riducono la famiglia. Inserisci un numero fra 1 e il totale indicato; un numero non valido non cambia pagina."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fifty terms per page. Previous, next, last, and direct page access neither recompute nor reduce the family. Enter a number from 1 to the displayed total; an invalid number does not change the page."
+          }
+        }
+      }
+    },
+    "keyness.mac.method.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il confronto usa conteggi token-based e correzione BH sull’intera famiglia. p e q non sono probabilità che un’ipotesi sia vera. L’assenza di fonti condivise fra i gruppi non dimostra indipendenza statistica delle osservazioni; gli esiti non stabiliscono cause."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The comparison uses token-based counts and BH correction across the full family. p and q are not probabilities that a hypothesis is true. Disjoint source groups do not establish statistical independence of observations; results do not establish causes."
+          }
+        }
+      }
+    },
+    "keyness.mac.test.selection" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regola preregistrata di scelta del test"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preregistered test-selection rule"
+          }
+        }
+      }
+    },
+    "keyness.mac.test.exact" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metodo esatto disponibile"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Available exact method"
+          }
+        }
+      }
+    },
+    "keyness.mac.log-ratio.interval-method" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metodo dell’intervallo del log ratio"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log-ratio interval method"
+          }
+        }
+      }
+    },
+    "keyness.mac.odds-ratio.interval-method" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metodo dell’intervallo dell’odds ratio"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odds-ratio interval method"
+          }
+        }
+      }
+    },
+    "keyness.mac.limits.sources" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limite di fonti per gruppo"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source limit per group"
+          }
+        }
+      }
+    },
+    "keyness.mac.limits.bytes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limite di byte delle fonti per gruppo"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source byte limit per group"
+          }
+        }
+      }
+    },
+    "keyness.mac.direction.target" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasso corretto maggiore nell’obiettivo"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Higher corrected rate in the target"
+          }
+        }
+      }
+    },
+    "keyness.mac.direction.reference" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasso corretto maggiore nel riferimento"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Higher corrected rate in the reference"
+          }
+        }
+      }
+    },
+    "keyness.mac.direction.equal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tassi corretti uguali"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Equal corrected rates"
+          }
+        }
+      }
+    },
+    "keyness.mac.direction.unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Direzione non disponibile"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Direction unavailable"
+          }
+        }
+      }
+    },
+    "keyness.mac.interval.to" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "a"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "to"
+          }
+        }
+      }
+    },
+    "failure.keyness.invalid-result" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il risultato del confronto contiene dati incoerenti e non può essere mostrato. I risultati precedenti restano disponibili."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The comparison result contains inconsistent data and cannot be displayed. Previous results remain available."
+          }
+        }
+      }
+    },
+    "failure.keyness.invalid-options" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controlla i parametri: limite di ipotesi intero non negativo, soglia diagnostica finita non negativa e livello di confidenza finito strettamente fra 0 e 1."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check the parameters: a nonnegative integer hypothesis limit, a finite nonnegative diagnostic threshold, and a finite confidence level strictly between 0 and 1."
+          }
+        }
+      }
+    },
+    "failure.keyness.hypothesis-limit-exceeded" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’intera famiglia di termini supera il limite di ipotesi richiesto. Aumenta il limite o modifica i gruppi; nessun risultato è stato troncato."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The full term family exceeds the requested hypothesis limit. Increase the limit or change the groups; no result has been truncated."
+          }
+        }
+      }
+    },
+    "failure.keyness.empty-token-population" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Almeno un gruppo non contiene token lessicali. Modifica le fonti assegnate ai gruppi prima di riprovare."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At least one group contains no lexical tokens. Change the sources assigned to the groups before retrying."
+          }
+        }
+      }
+    },
+    "failure.keyness.degenerate-margin" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il confronto produce una tabella con margini degeneri e non può essere calcolato. Modifica le popolazioni da confrontare."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The comparison produces a table with degenerate margins and cannot be computed. Change the populations being compared."
+          }
+        }
+      }
+    },
+    "failure.keyness.empty-family" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I gruppi non producono termini da confrontare. Modifica le fonti assegnate prima di riprovare."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The groups produce no terms to compare. Change the assigned sources before retrying."
+          }
+        }
+      }
+    },
+    "failure.statistics.invalid-probability" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il livello richiesto non consente questo calcolo numerico. Correggi il livello di confidenza e riprova; i risultati precedenti restano disponibili."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The requested level does not permit this numerical calculation. Correct the confidence level and retry; previous results remain available."
+          }
+        }
+      }
+    },
+    "keyness.mac.group-action.target" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obiettivo, Fonte {source}"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Target, Source {source}"
+          }
+        }
+      }
+    },
+    "keyness.mac.group-action.reference" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riferimento, Fonte {source}"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reference, Source {source}"
           }
         }
       }

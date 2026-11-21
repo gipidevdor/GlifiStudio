@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
-.PHONY: bootstrap check-app-store app-store-submission-check check-apple check-architecture check-compliance check-docs cache-size check-failure-messages check-failure-taxonomy check-fixtures check-github check-localization check-naming check-oracles check-pdfa check-recovery check-repository check-secrets check-swift-dialect check-toolchain format format-check github-plan github-apply github-audit github-codeowners lint quality quality-static clean-cache test build-macos build-ipados verify verify-app-store
+.PHONY: bootstrap check-app-store app-store-submission-check check-apple check-architecture check-compliance check-docs cache-size check-failure-messages check-failure-taxonomy check-fixtures check-github check-localization check-naming check-oracles check-pdfa check-recovery check-repository check-secrets check-swift-dialect check-toolchain format format-check github-plan github-apply github-audit github-codeowners lint quality quality-static clean-cache test build-macos build-ipados verify verify-macos verify-app-store verify-app-store-macos
 
 check-app-store:
 	./Scripts/check-app-store-baseline.py
@@ -109,5 +109,11 @@ cache-size:
 verify:
 	./Scripts/verify.sh
 
+verify-macos:
+	./Scripts/verify.sh --macos-only
+
 verify-app-store:
 	./Scripts/verify-app-store.sh
+
+verify-app-store-macos:
+	./Scripts/verify-app-store.sh --macos-only

@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-API-001 |
 | Tipo | Specifica normativa delle interfacce applicative e headless |
-| Versione | 1.29.1 |
+| Versione | 1.30.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-21 |
@@ -210,13 +210,21 @@ chiave (GS-VER-135).
 | esegui piano | stessa request pianificabile e condizioni runtime osservate | Artifact ordinati, interpretazione Evidence/Finding/Caveat, stato terminale, profilo operativo e progresso | Profilo corpus, keyness e capability estese con findings secondo le policy ADR-0026 (GS-VER-111); progresso intra-nodo, checkpoint ed ExecutionRecord aperti |
 | crea/revisiona indagine | domanda, lingua, Interpretation Artifact; poi head e FindingID ordinati | Investigation, nuovo evento content-addressed e generazione | `created`/`editorialSelectionChanged`, diramazione e riapertura implementati; altri eventi cognitivi aperti |
 | elenca indagini | generazione verificata | tutti gli head di ramo in ordine stabile | Implementata in Core, GlifiKit e CLI |
-| analizza | generazione corrente e budget bounded nella slice | profilo corpus, AnalysisNodeID e ArtifactID persistiti | Slice descrittiva implementata con riuso dopo riapertura; l'interpretazione è prodotta dall'esecutore del piano, analisi temporale aperta |
+| analizza | generazione corrente e budget bounded nella slice | profilo corpus, AnalysisNodeID e ArtifactID persistiti | Slice descrittiva implementata con riuso dopo riapertura; l'interpretazione è prodotta dall'esecutore del piano. Primitive temporali headless Core/Kit realizzate in GS-VER-168; persistenza temporale aperta |
 | confronta keyness | due insiemi espliciti e disgiunti di SourceRevisionID | profili dipendenza e famiglia G-test/effect/BH persistiti | `keyness-gtest-fisher-ha-ci-bh-v2` bounded implementata con riuso dopo riapertura, selezione di Fisher e intervalli di confidenza (GS-VER-118) |
 | interroga | testo `glifi-query-v1` oppure QueryAST v1 JSON, generazione di sessione e limiti | digest QueryAST e KWIC con SourceRevision/offset | Slice bounded TXT/Markdown con `sourceRanges`; ingresso AST verificato su Xcode 27 in GS-VER-143/147; indice, metadati, annotazioni, cursor e streaming aperti |
 | carica testo fonte | SourceRevisionID della generazione corrente | testo UTF-8 esatto della revisione incorporata | Implementata in GlifiKit per salto UI KWIC→fonte; non espone path interni |
 | esporta | selezione, formato, destinazione | ExportReceipt + manifest | PDF/A-2u, Markdown, CSV e JSON implementati e verificati |
 
 ### 9.1 Operazioni analitiche derivate (incremento post-0.1)
+
+Il completamento applicativo GS-DOR-198 estende in modo compatibile
+`GlifiStudioKeynessOptions`: la proprietà `confidenceLevel` espone il parametro
+Core esistente e un nuovo costruttore a tre argomenti lo richiede esplicitamente.
+Il costruttore pubblico a due argomenti resta invariato, anche come riferimento
+a funzione, e inoltra il livello 0,95. Il nuovo overload non ha default, evitando
+ambiguità. Dominio finito `(0, 1)`, failure numeriche esistenti e digest/scelta
+Fisher del profilo v2 restano quelli di GS-MET-001-08; nessun nuovo schema.
 
 Ogni operazione è bounded, persiste un Artifact riusabile con dipendenza esplicita dai profili
 corpus o dalla richiesta, espone un risultato GlifiKit indipendente da GlifiCore e ha un comando
@@ -239,7 +247,7 @@ CLI con envelope JSON v1.
 | `analyzeNGramFrequencies` | `ngrams --unit [--n] [filtri]` | `corpus-ngram-frequencies-v1` | GS-VER-117 |
 | `analyzeLexicalDiversity` | `diversity [--threshold]` | `corpus-lexical-diversity-mtld-v1` | GS-VER-116 |
 | `rankDocumentsBM25` | `bm25 --query [--k1 --b]` | `corpus-bm25-ranking-v1` | GS-VER-115 |
-| `analyzeExtractiveSummary` | `summarize [--sentences n / --tokens n / --characters n] [--method m] [--mmr λ] [--tf --idf --norm]` | `corpus-extractive-summary-v1` | GS-VER-146, GS-VER-149, GS-VER-151, GS-VER-164, GS-VER-165, GS-VER-166, GS-VER-167 |
+| `analyzeExtractiveSummary` | `summarize [--sentences n / --tokens n / --characters n] [--method m] [--mmr λ] [--tf --idf --norm] [--graph-damping --graph-tolerance --graph-iterations --graph-threshold]` | `corpus-extractive-summary-v1` | GS-VER-146, GS-VER-149, GS-VER-151, GS-VER-164, GS-VER-165, GS-VER-166, GS-VER-167, GS-VER-168 |
 | `analyzeMultivariate` | `multivariate --method` | `corpus-document-term-multivariate-v2` | GS-VER-102, GS-VER-108 |
 | `assessCodingAgreement` | `agreement` | `coding-agreement-v2` | GS-VER-092, GS-VER-103 |
 
@@ -272,7 +280,29 @@ classificazione, lemmi, confini, entità e morfologia;
 restituiscono failure tipizzate e non promettono Artifact o comandi CLI dedicati
 finché non esiste la relativa integrazione (GS-VER-171).
 
+Il risultato risolto di `analyzeExtractiveSummary` distingue il testo estratto
+(`sentence.startUTF8/endUTF8`, `selected.text`) dai byte originali
+(`selected.sourceRanges`, risolti tramite SpanMap). Il mapping è derivato e non
+cambia l'Artifact. I DTO precedenti senza il campo decodificano un elenco vuoto,
+che significa localizzazione originale non disponibile: il client non deve
+sostituirlo con gli offset estratti (GS-DOR-190, ADR-0033).
+
 ### 9.2 Viste dei risultati estesi
+
+Le primitive concorrenti introdotte in GS-VER-168 sono disponibili anche senza
+progetto persistente; espongono lo stato `candidate` e rispettano i contratti
+scientifici delle rispettive famiglie:
+
+| Superficie GlifiKit | Operazioni | Contratto |
+| --- | --- | --- |
+| `GlifiStudioLexicalStatistics` | `observe`, `fitZipf`, `fitHeaps`, `summarize` | GS-MET-001-04/05: chiavi preprocessate, ordine e checkpoint espliciti, descrittive con unità e mancanti |
+| `GlifiStudioTextAnalytics` | `welchOneWayANOVA` | GS-MET-001-21: gruppi indipendenti, varianze positive e inferenza omnibus |
+| `GlifiStudioTextAnalytics` | `temporalFrequencies` | GS-MET-001-17: conteggi osservati, esposizione, calendario e fuso dichiarati, lineage |
+| `GlifiStudioLinguisticEvaluation` | `classification`, `lemmas`, `boundaries`, `namedEntities`, `morphology` | GS-MET-001-18: annotazioni allineate, matching esatto, policy dei denominatori nulli |
+
+Le facciate convertono errori e cancellazione nella tassonomia pubblica e
+mantengono i calcoli fuori dall'actor chiamante. Non implicano integrazione nel
+planner, un backend linguistico o una nuova request persistente/CLI.
 
 `visualizations(for:)` riceve un `GlifiStudioAnalysisExecutionResult` e restituisce una
 `GlifiStudioVisualization` per ogni output che ha una vista dedicata (GS-MET-001-22, GS-VIZ-001):

@@ -1,0 +1,33 @@
+{
+  "activeProcessorCount": 10,
+  "checksum": 7010000,
+  "configuration": "Release",
+  "fixture": "explicit-nominal-active-no-content-v1",
+  "iterationsPerSample": 1000000,
+  "medianNanosecondsPerSnapshot": 5.747125,
+  "nanosecondsPerSnapshot": [
+    6.040542,
+    5.683334,
+    6.105167,
+    6.022292,
+    5.747125,
+    5.492208,
+    5.646042
+  ],
+  "operatingSystemVersion": "Version 27.2.1 (Build 26B131)",
+  "physicalMemoryBytes": 17179869184,
+  "sampleCount": 7,
+  "systemLowPowerMode": true,
+  "systemThermalState": 0,
+  "warmupIterations": 10000,
+  "workload": "runtime-store-snapshot-v1",
+  "storeSourceSHA256": "7f00221921983e45837b65b0d837aa15d786eb139a26f877e020f9ce043df869",
+  "probeSourceSHA256": "f198ba41470ff5012f118277568dab284cfa3379debbe81546fbbfd531fe54c7",
+  "fixtureDefinition": {
+    "isLowPowerModeEnabled": false,
+    "thermalCondition": "nominal",
+    "memoryPressure": "nominal",
+    "isApplicationActive": true
+  },
+  "fixtureSHA256": "e4a2a097d0565bd1696994ff0f0501b49fade6368fc3efb3373ecd35c60314c4"
+}

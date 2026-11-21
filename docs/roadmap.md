@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-PLAN-001 |
 | Tipo | Piano di validazione e sviluppo |
-| Versione | 1.0.0 |
+| Versione | 1.1.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-17 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Allineata a GS-PROD-001 e allo stato G1/G2 del percorso produttivo 0.1 |
 | Riferimento | ISO/IEC/IEEE 15289:2019, profilo tailored |
 
@@ -20,9 +20,16 @@ Questa roadmap è subordinata alla baseline
 rischi di `.glifi`, SpanMap, QueryAST, Analysis DAG, runtime bounded e navigazione;
 le capacità post-MVP non entrano accidentalmente nelle prime fasi.
 
-Stato osservato al 2026-09-17: **Fase 0/G1 formale leggera chiusa**; **Fase 1/G2
+Stato storico osservato al 2026-09-17: **Fase 0/G1 formale leggera chiusa**; **Fase 1/G2
 headless sostanzialmente realizzata** (evidenze GS-VER-018…033); **Fase 2** è il
 focus produttivo (UI Must sul Kit esistente).
+
+Riconciliazione documentale del 2026-11-21: il percorso Must e gli incrementi
+successivi dispongono delle evidenze locali citate nelle rispettive fasi. La
+candidatura funzionale G3 non chiude G3 formale, G4 o G5
+([GS-VER-057](evidenze/GS-VER-057-checklist-candidatura-g3.md)). Le verifiche
+storiche non attestano il gate completo della copia condivisa corrente;
+implementazioni concomitanti e loro verifiche restano distinte.
 
 ## 1. Fase 0 — Decisioni e prove di fattibilità
 
@@ -45,15 +52,27 @@ TXT/Markdown UTF-8 → `.glifi` → normalizzazione/SpanMap → `it-token-v1`
 keyness, planner, execute, investigation, export via Core/Kit/CLI). Uscita: gate
 **G2** architetturale per il percorso headless.
 
-Limiti residui consapevoli: recovery power-loss completa, gold IT formale,
-indice inverted streaming e UI nativa.
+Restano aperti recovery power-loss completa e indice inverted streaming. Il gold
+italiano su prosa reale è disponibile e verificato per il perimetro di
+[GS-VER-138](evidenze/GS-VER-138-gold-italiano-su-prosa-reale.md): un solo capitolo,
+senza annotazioni lemma/POS/NER né soglie assolute approvate; la copertura
+linguistica rappresentativa resta da ampliare. La UI nativa Must è realizzata
+nella Fase 2 e non è più una capacità interamente assente.
 
 ## 3. Fase 2 — Primo flusso interattivo (focus corrente)
 
 Obiettivo: offrire un percorso utente completo nelle applicazioni native macOS e iPadOS.
 
-Stato 2026-09-17: **candidato funzionale G3** (GS-VER-035…071, GS-VER-074…083). Restano aperti
-audit dispositivo, studi UX e gate G4/G5.
+Stato registrato al 2026-09-17: **candidato funzionale G3** (GS-VER-035…071,
+GS-VER-074…083). GS-VER-057 mantiene aperto G3 formale; audit dispositivo, studi
+UX e gate G4/G5 restano aperti anche dopo gli incrementi successivi.
+
+Il focus corrente è completare prima macOS con soli test automatici; lo sviluppo
+dedicato iPadOS è rimandato secondo ADR-0033. Le evidenze storiche di build
+macOS/iPadOS restano valide per le revisioni dichiarate, senza sostituire audit
+GUI, VoiceOver o prove su dispositivo. L'interfaccia essenziale dispone di
+verifiche automatiche locali in
+[GS-VER-150](evidenze/GS-VER-150-interfaccia-essenziale.md), con audit UI aperti.
 
 - creazione e apertura di un progetto `.glifi`;
 - importazione TXT/Markdown con avanzamento e errori non distruttivi;
@@ -81,11 +100,35 @@ Obiettivo: estendere acquisizione e analisi preservando la stessa pipeline.
 Obiettivo: capacità specialistiche dopo la stabilizzazione dei dati fondamentali.
 **Esplicitamente post-MVP:** CA/PCA/topic, embedding, Foundation Models, sync.
 
-Stato al 2026-09-19: l'incremento analitico post-0.1 (ADR-0025, programma GS-DOR-002) ha già
+Stato storico al 2026-09-19: l'incremento analitico post-0.1 (ADR-0025, programma GS-DOR-002) ha già
 portato in GlifiCore, GlifiKit, CLI e planner-v2 contingenza, dispersione, similarità, statistica
 inferenziale e non parametrica, collocazioni, reti, CA/PCA/LSA/NMF e clustering, verificati contro
-oracoli indipendenti (GS-VER-084…111), con findings secondo ADR-0026. Restano presentazione dedicata
-nelle app, codebook (RF-043), topic model probabilistici, embedding, Foundation Models e sync.
+oracoli indipendenti (GS-VER-084…111), con findings secondo ADR-0026.
+
+Gli incrementi successivi documentano capacità già realizzate che non vengono
+riaperte come nuovi task:
+
+- intenzioni estese e viste dedicate derivate dagli Artifact nelle app
+  ([GS-VER-113](evidenze/GS-VER-113-intenzioni-estese-nelle-app.md),
+  [GS-VER-114](evidenze/GS-VER-114-viste-dei-risultati-estesi.md)); restano aperti
+  copertura di ogni operazione e parametro diretto, audit assistivi e resa su
+  dispositivo;
+- codebook e codifiche persistite, accordo, integrazione nelle app e selezione
+  strutturata per frasi o caratteri (GS-VER-126…129); la selezione diretta con
+  puntatore e gli audit su dispositivo restano distinti;
+- famiglie native di libreria comprendenti MDS, SOM, CLARA, Naive Bayes e LDA,
+  con verifiche numeriche e trasporto Kit/CLI
+  ([GS-VER-160](evidenze/GS-VER-160-operatori-analitici-nativi.md),
+  [GS-VER-161](evidenze/GS-VER-161-revisione-scientifica-operatori.md),
+  [GS-VER-162](evidenze/GS-VER-162-parita-operatori-kit-cli.md)). Le varianti e i
+  rispettivi manifest conservano il proprio stato scientifico; ADR-0032 non
+  estende automaticamente progetto persistente, planner o UI.
+
+Il completamento algoritmico di GS-DOR-168 e il laboratorio macOS di
+[GS-PLAN-002](pianificazione/programma-analisi-testuale-macos.md) dispongono di
+evidenze per incremento: il codice presente nella copia condivisa non
+ne attesta da solo la verifica o la promozione scientifica. Embedding, Foundation
+Models e sincronizzazione restano fuori dal perimetro iniziale.
 
 ## 6. Principio di rilascio
 

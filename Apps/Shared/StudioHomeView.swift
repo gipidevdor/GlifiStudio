@@ -13,6 +13,9 @@ private enum StudioSection: String, CaseIterable, Identifiable {
     case overview
     case project
     case sources
+    #if os(macOS)
+        case textAnalysis
+    #endif
     case investigation
     case query
     case findings
@@ -26,6 +29,9 @@ private enum StudioSection: String, CaseIterable, Identifiable {
         case .overview: "sidebar.overview"
         case .project: "sidebar.project"
         case .sources: "sidebar.sources"
+        #if os(macOS)
+            case .textAnalysis: "sidebar.text-analysis"
+        #endif
         case .investigation: "sidebar.investigation"
         case .query: "sidebar.query"
         case .findings: "sidebar.findings"
@@ -39,6 +45,9 @@ private enum StudioSection: String, CaseIterable, Identifiable {
         case .overview: "square.grid.2x2"
         case .project: "folder"
         case .sources: "doc.text"
+        #if os(macOS)
+            case .textAnalysis: "text.magnifyingglass"
+        #endif
         case .investigation: "lightbulb"
         case .query: "magnifyingglass"
         case .findings: "list.bullet.rectangle"
@@ -59,15 +68,20 @@ struct StudioHomeView: View {
         @Environment(\.openDocument) private var openDocument
     #endif
 
-    @State private var model = StudioHomeModel()
+    @State private var model: StudioHomeModel
     @State private var selection: StudioSection? = .overview
     @State private var isSourceImporterPresented = false
     @State private var isProjectImporterPresented = false
     @State private var isExportFolderPresented = false
 
-    init(documentURL: URL? = nil, needsPackageInitialization: Bool = false) {
+    init(
+        documentURL: URL? = nil,
+        needsPackageInitialization: Bool = false,
+        service: GlifiStudioService = GlifiStudioService()
+    ) {
         self.documentURL = documentURL
         self.needsPackageInitialization = needsPackageInitialization
+        _model = State(initialValue: StudioHomeModel(service: service))
     }
 
     var body: some View {
@@ -80,7 +94,7 @@ struct StudioHomeView: View {
                     }
                 }
                 Section("sidebar.tools") {
-                    ForEach([StudioSection.query, .coding, .export]) { section in
+                    ForEach(toolSections) { section in
                         sidebarRow(section)
                     }
                 }
@@ -96,6 +110,13 @@ struct StudioHomeView: View {
             case .overview: overview
             case .project: project
             case .sources: sources
+            #if os(macOS)
+                case .textAnalysis:
+                    StudioTextAnalysisView(
+                        model: model,
+                        onImportSources: { isSourceImporterPresented = true },
+                        onOpenProject: { isProjectImporterPresented = true })
+            #endif
             case .investigation: investigation
             case .query: query
             case .findings: findings
@@ -123,7 +144,7 @@ struct StudioHomeView: View {
                     }
                     Button("action.reopen-project", systemImage: "arrow.uturn.backward") {
                         selection = .project
-                        Task { await model.reopenLastProject() }
+                        reopenProjectDocument()
                     }
                     .disabled(model.lastProjectBookmark == nil)
                 }
@@ -186,6 +207,14 @@ struct StudioHomeView: View {
             .tag(section)
     }
 
+    private var toolSections: [StudioSection] {
+        #if os(macOS)
+            [.textAnalysis, .query, .coding, .export]
+        #else
+            [.query, .coding, .export]
+        #endif
+    }
+
     private func createProjectDocument() {
         #if os(macOS)
             newDocument(GlifiStudioDocument())
@@ -205,6 +234,18 @@ struct StudioHomeView: View {
             }
         #else
             Task { await model.openProject(at: url) }
+        #endif
+    }
+
+    private func reopenProjectDocument() {
+        #if os(macOS)
+            Task {
+                await model.reopenLastProject(using: { url in
+                    try await openDocument(at: url)
+                })
+            }
+        #else
+            Task { await model.reopenLastProject() }
         #endif
     }
 
@@ -331,7 +372,7 @@ struct StudioHomeView: View {
             if model.lastProjectBookmark != nil {
                 Button("action.reopen-project", systemImage: "arrow.uturn.backward") {
                     selection = .project
-                    Task { await model.reopenLastProject() }
+                    reopenProjectDocument()
                 }
                 .buttonStyle(.bordered)
                 .disabled(model.isBusy)
@@ -409,7 +450,7 @@ struct StudioHomeView: View {
                 }
                 .disabled(model.isBusy)
                 Button("action.reopen-project") {
-                    Task { await model.reopenLastProject() }
+                    reopenProjectDocument()
                 }
                 .disabled(model.isBusy || model.lastProjectBookmark == nil)
             }
@@ -817,252 +858,260 @@ struct StudioHomeView: View {
                 .accessibilityLabel("investigation.intent")
             }
 
-            if let snapshot = model.snapshot, model.selectedIntent.usesComparisonGroups {
-                Section("investigation.compare-groups") {
-                    ForEach(snapshot.sources) { source in
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(shortID(source.sourceRevisionID))
-                                .font(.caption.monospaced())
-                            ViewThatFits(in: .horizontal) {
-                                HStack { comparisonActions(for: source.sourceRevisionID) }
-                                    .fixedSize(horizontal: true, vertical: false)
-                                VStack(alignment: .leading) {
-                                    comparisonActions(for: source.sourceRevisionID)
+            #if os(macOS)
+                StudioKeynessView(model: model)
+            #else
+                if let snapshot = model.snapshot, model.selectedIntent.usesComparisonGroups {
+                    Section("investigation.compare-groups") {
+                        ForEach(snapshot.sources) { source in
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(shortID(source.sourceRevisionID))
+                                    .font(.caption.monospaced())
+                                ViewThatFits(in: .horizontal) {
+                                    HStack { comparisonActions(for: source.sourceRevisionID) }
+                                        .fixedSize(horizontal: true, vertical: false)
+                                    VStack(alignment: .leading) {
+                                        comparisonActions(for: source.sourceRevisionID)
+                                    }
                                 }
                             }
                         }
+                        Button("action.compare-keyness") {
+                            Task { await model.compareKeynessNow() }
+                        }
+                        .disabled(
+                            model.isBusy
+                                || model.selectedTargetRevisionIDs.isEmpty
+                                || model.selectedReferenceRevisionIDs.isEmpty
+                        )
+                        .accessibilityLabel("action.compare-keyness")
                     }
-                    Button("action.compare-keyness") {
-                        Task { await model.compareKeynessNow() }
-                    }
-                    .disabled(
-                        model.isBusy
-                            || model.selectedTargetRevisionIDs.isEmpty
-                            || model.selectedReferenceRevisionIDs.isEmpty
-                    )
-                    .accessibilityLabel("action.compare-keyness")
                 }
-            }
 
-            if let keyness = model.lastKeyness {
-                Section("keyness.title") {
-                    LabeledContent("keyness.target-tokens") {
-                        Text(keyness.targetTokenCount, format: .number)
-                            .monospacedDigit()
-                    }
-                    LabeledContent("keyness.reference-tokens") {
-                        Text(keyness.referenceTokenCount, format: .number)
-                            .monospacedDigit()
-                    }
-                    LabeledContent("keyness.term-count") {
-                        Text(keyness.terms.count, format: .number)
-                            .monospacedDigit()
-                    }
-                    DisclosureGroup("common.provenance") {
-                        LabeledContent("keyness.artifact") {
-                            Text(shortID(keyness.artifactID))
-                                .font(.caption.monospaced())
-                                .textSelection(.enabled)
-                        }
-                        LabeledContent("keyness.analysis-node") {
-                            Text(shortID(keyness.analysisNodeID))
-                                .font(.caption.monospaced())
-                                .textSelection(.enabled)
-                        }
-                        LabeledContent("keyness.generation") {
-                            Text(keyness.generation, format: .number)
+                if let keyness = model.lastKeyness {
+                    Section("keyness.title") {
+                        LabeledContent("keyness.target-tokens") {
+                            Text(keyness.targetTokenCount, format: .number)
                                 .monospacedDigit()
                         }
-                        LabeledContent("keyness.comparison-id") {
-                            Text(keyness.comparisonIdentifier)
-                                .font(.caption2.monospaced())
-                                .textSelection(.enabled)
-                        }
-                        LabeledContent("keyness.comparison-digest") {
-                            Text(shortID(keyness.comparisonDigest))
-                                .font(.caption2.monospaced())
-                                .textSelection(.enabled)
-                        }
-                        LabeledContent("keyness.target-digest") {
-                            Text(shortID(keyness.targetCorpusDigest))
-                                .font(.caption2.monospaced())
-                                .textSelection(.enabled)
-                        }
-                        LabeledContent("keyness.reference-digest") {
-                            Text(shortID(keyness.referenceCorpusDigest))
-                                .font(.caption2.monospaced())
-                                .textSelection(.enabled)
-                        }
-                        revisionIDList(
-                            titleKey: "keyness.target-revisions",
-                            ids: keyness.targetSourceRevisionIDs
-                        )
-                        revisionIDList(
-                            titleKey: "keyness.reference-revisions",
-                            ids: keyness.referenceSourceRevisionIDs
-                        )
-                        LabeledContent("keyness.project-id") {
-                            Text(shortID(keyness.projectID))
-                                .font(.caption2.monospaced())
-                                .textSelection(.enabled)
-                        }
-                        LabeledContent("keyness.source-generation") {
-                            Text(keyness.sourceGeneration, format: .number)
+                        LabeledContent("keyness.reference-tokens") {
+                            Text(keyness.referenceTokenCount, format: .number)
                                 .monospacedDigit()
                         }
-                    }
-                }
-                StudioDetailsSection("keyness.contracts") {
-                    LabeledContent("keyness.test-id") {
-                        Text(keyness.testIdentifier)
-                            .font(.caption2.monospaced())
-                            .textSelection(.enabled)
-                    }
-                    LabeledContent("keyness.pvalue-id") {
-                        Text(keyness.pValueIdentifier)
-                            .font(.caption2.monospaced())
-                            .textSelection(.enabled)
-                    }
-                    LabeledContent("keyness.correction-id") {
-                        Text(keyness.correctionIdentifier)
-                            .font(.caption2.monospaced())
-                            .textSelection(.enabled)
-                    }
-                    LabeledContent("keyness.odds-ratio-id") {
-                        Text(keyness.oddsRatioIdentifier)
-                            .font(.caption2.monospaced())
-                            .textSelection(.enabled)
-                    }
-                    LabeledContent("keyness.log-ratio-id") {
-                        Text(keyness.logRatioIdentifier)
-                            .font(.caption2.monospaced())
-                            .textSelection(.enabled)
-                    }
-                    LabeledContent("keyness.diagnostic-id") {
-                        Text(keyness.diagnosticIdentifier)
-                            .font(.caption2.monospaced())
-                            .textSelection(.enabled)
-                    }
-                    LabeledContent("keyness.ordering-id") {
-                        Text(keyness.orderingIdentifier)
-                            .font(.caption2.monospaced())
-                            .textSelection(.enabled)
-                    }
-                    LabeledContent("keyness.low-expected-threshold") {
-                        Text(
-                            keyness.lowExpectedCountThreshold,
-                            format: .number.precision(.fractionLength(2))
-                        )
-                        .monospacedDigit()
-                    }
-                    LabeledContent("keyness.tolerance") {
-                        Text(
-                            keyness.referenceAbsoluteTolerance,
-                            format: .number.precision(.fractionLength(6))
-                        )
-                        .monospacedDigit()
-                    }
-                    LabeledContent("keyness.fp-determinism") {
-                        Text(keyness.floatingPointDeterminismClass)
-                            .font(.caption2.monospaced())
-                    }
-                    LabeledContent("keyness.numeric-policy") {
-                        Text(keyness.numericPolicyIdentifier)
-                            .font(.caption2.monospaced())
-                            .textSelection(.enabled)
-                    }
-                }
-                Section("keyness.top-terms") {
-                    ForEach(keyness.terms.prefix(20)) { term in
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(term.term)
-                                .font(.body.weight(.medium))
-                            LabeledContent("keyness.direction") {
-                                Text(term.direction)
+                        LabeledContent("keyness.term-count") {
+                            Text(keyness.terms.count, format: .number)
+                                .monospacedDigit()
+                        }
+                        DisclosureGroup("common.provenance") {
+                            LabeledContent("keyness.artifact") {
+                                Text(shortID(keyness.artifactID))
                                     .font(.caption.monospaced())
+                                    .textSelection(.enabled)
                             }
-                            LabeledContent("keyness.target-frequency") {
-                                Text(term.targetFrequency, format: .number)
+                            LabeledContent("keyness.analysis-node") {
+                                Text(shortID(keyness.analysisNodeID))
+                                    .font(.caption.monospaced())
+                                    .textSelection(.enabled)
+                            }
+                            LabeledContent("keyness.generation") {
+                                Text(keyness.generation, format: .number)
                                     .monospacedDigit()
                             }
-                            LabeledContent("keyness.reference-frequency") {
-                                Text(term.referenceFrequency, format: .number)
+                            LabeledContent("keyness.comparison-id") {
+                                Text(keyness.comparisonIdentifier)
+                                    .font(.caption2.monospaced())
+                                    .textSelection(.enabled)
+                            }
+                            LabeledContent("keyness.comparison-digest") {
+                                Text(shortID(keyness.comparisonDigest))
+                                    .font(.caption2.monospaced())
+                                    .textSelection(.enabled)
+                            }
+                            LabeledContent("keyness.target-digest") {
+                                Text(shortID(keyness.targetCorpusDigest))
+                                    .font(.caption2.monospaced())
+                                    .textSelection(.enabled)
+                            }
+                            LabeledContent("keyness.reference-digest") {
+                                Text(shortID(keyness.referenceCorpusDigest))
+                                    .font(.caption2.monospaced())
+                                    .textSelection(.enabled)
+                            }
+                            revisionIDList(
+                                titleKey: "keyness.target-revisions",
+                                ids: keyness.targetSourceRevisionIDs
+                            )
+                            revisionIDList(
+                                titleKey: "keyness.reference-revisions",
+                                ids: keyness.referenceSourceRevisionIDs
+                            )
+                            LabeledContent("keyness.project-id") {
+                                Text(shortID(keyness.projectID))
+                                    .font(.caption2.monospaced())
+                                    .textSelection(.enabled)
+                            }
+                            LabeledContent("keyness.source-generation") {
+                                Text(keyness.sourceGeneration, format: .number)
                                     .monospacedDigit()
-                            }
-                            LabeledContent("keyness.target-relative") {
-                                Text(
-                                    term.targetRelativeFrequency,
-                                    format: .number.precision(.fractionLength(6))
-                                )
-                                .monospacedDigit()
-                            }
-                            LabeledContent("keyness.reference-relative") {
-                                Text(
-                                    term.referenceRelativeFrequency,
-                                    format: .number.precision(.fractionLength(6))
-                                )
-                                .monospacedDigit()
-                            }
-                            LabeledContent("keyness.g-statistic") {
-                                Text(term.gStatistic, format: .number.precision(.fractionLength(2)))
-                                    .monospacedDigit()
-                            }
-                            LabeledContent("keyness.df") {
-                                Text(term.degreesOfFreedom, format: .number)
-                                    .monospacedDigit()
-                            }
-                            LabeledContent("keyness.p-value") {
-                                Text(term.pValue, format: .number.precision(.fractionLength(4)))
-                                    .monospacedDigit()
-                            }
-                            LabeledContent("keyness.q-value") {
-                                Text(term.qValue, format: .number.precision(.fractionLength(4)))
-                                    .monospacedDigit()
-                            }
-                            LabeledContent("keyness.odds-ratio") {
-                                Text(
-                                    term.oddsRatioHaldaneAnscombe,
-                                    format: .number.precision(.fractionLength(3))
-                                )
-                                .monospacedDigit()
-                            }
-                            LabeledContent("keyness.log2-ratio") {
-                                Text(
-                                    term.log2RatioHaldaneAnscombe,
-                                    format: .number.precision(.fractionLength(2))
-                                )
-                                .monospacedDigit()
-                            }
-                            LabeledContent("keyness.min-expected") {
-                                Text(
-                                    term.minimumExpectedCount,
-                                    format: .number.precision(.fractionLength(2))
-                                )
-                                .monospacedDigit()
-                            }
-                            LabeledContent("keyness.low-expected") {
-                                Text(term.hasLowExpectedCount ? "common.yes" : "common.no")
                             }
                         }
-                        .accessibilityElement(children: .combine)
                     }
-                }
-                if let options = model.lastKeynessOptions {
-                    StudioDetailsSection("keyness.options.title") {
-                        LabeledContent("keyness.options.max-hypotheses") {
-                            Text(options.maximumHypothesisCount, format: .number)
-                                .monospacedDigit()
+                    StudioDetailsSection("keyness.contracts") {
+                        LabeledContent("keyness.test-id") {
+                            Text(keyness.testIdentifier)
+                                .font(.caption2.monospaced())
+                                .textSelection(.enabled)
                         }
-                        LabeledContent("keyness.options.low-expected-threshold") {
+                        LabeledContent("keyness.pvalue-id") {
+                            Text(keyness.pValueIdentifier)
+                                .font(.caption2.monospaced())
+                                .textSelection(.enabled)
+                        }
+                        LabeledContent("keyness.correction-id") {
+                            Text(keyness.correctionIdentifier)
+                                .font(.caption2.monospaced())
+                                .textSelection(.enabled)
+                        }
+                        LabeledContent("keyness.odds-ratio-id") {
+                            Text(keyness.oddsRatioIdentifier)
+                                .font(.caption2.monospaced())
+                                .textSelection(.enabled)
+                        }
+                        LabeledContent("keyness.log-ratio-id") {
+                            Text(keyness.logRatioIdentifier)
+                                .font(.caption2.monospaced())
+                                .textSelection(.enabled)
+                        }
+                        LabeledContent("keyness.diagnostic-id") {
+                            Text(keyness.diagnosticIdentifier)
+                                .font(.caption2.monospaced())
+                                .textSelection(.enabled)
+                        }
+                        LabeledContent("keyness.ordering-id") {
+                            Text(keyness.orderingIdentifier)
+                                .font(.caption2.monospaced())
+                                .textSelection(.enabled)
+                        }
+                        LabeledContent("keyness.low-expected-threshold") {
                             Text(
-                                options.lowExpectedCountThreshold,
+                                keyness.lowExpectedCountThreshold,
                                 format: .number.precision(.fractionLength(2))
                             )
                             .monospacedDigit()
                         }
+                        LabeledContent("keyness.tolerance") {
+                            Text(
+                                keyness.referenceAbsoluteTolerance,
+                                format: .number.precision(.fractionLength(6))
+                            )
+                            .monospacedDigit()
+                        }
+                        LabeledContent("keyness.fp-determinism") {
+                            Text(keyness.floatingPointDeterminismClass)
+                                .font(.caption2.monospaced())
+                        }
+                        LabeledContent("keyness.numeric-policy") {
+                            Text(keyness.numericPolicyIdentifier)
+                                .font(.caption2.monospaced())
+                                .textSelection(.enabled)
+                        }
+                    }
+                    Section("keyness.top-terms") {
+                        ForEach(keyness.terms.prefix(20)) { term in
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(term.term)
+                                    .font(.body.weight(.medium))
+                                LabeledContent("keyness.direction") {
+                                    Text(term.direction)
+                                        .font(.caption.monospaced())
+                                }
+                                LabeledContent("keyness.target-frequency") {
+                                    Text(term.targetFrequency, format: .number)
+                                        .monospacedDigit()
+                                }
+                                LabeledContent("keyness.reference-frequency") {
+                                    Text(term.referenceFrequency, format: .number)
+                                        .monospacedDigit()
+                                }
+                                LabeledContent("keyness.target-relative") {
+                                    Text(
+                                        term.targetRelativeFrequency,
+                                        format: .number.precision(.fractionLength(6))
+                                    )
+                                    .monospacedDigit()
+                                }
+                                LabeledContent("keyness.reference-relative") {
+                                    Text(
+                                        term.referenceRelativeFrequency,
+                                        format: .number.precision(.fractionLength(6))
+                                    )
+                                    .monospacedDigit()
+                                }
+                                LabeledContent("keyness.g-statistic") {
+                                    Text(
+                                        term.gStatistic,
+                                        format: .number.precision(.fractionLength(2))
+                                    )
+                                    .monospacedDigit()
+                                }
+                                LabeledContent("keyness.df") {
+                                    Text(term.degreesOfFreedom, format: .number)
+                                        .monospacedDigit()
+                                }
+                                LabeledContent("keyness.p-value") {
+                                    Text(term.pValue, format: .number.precision(.fractionLength(4)))
+                                        .monospacedDigit()
+                                }
+                                LabeledContent("keyness.q-value") {
+                                    Text(term.qValue, format: .number.precision(.fractionLength(4)))
+                                        .monospacedDigit()
+                                }
+                                LabeledContent("keyness.odds-ratio") {
+                                    Text(
+                                        term.oddsRatioHaldaneAnscombe,
+                                        format: .number.precision(.fractionLength(3))
+                                    )
+                                    .monospacedDigit()
+                                }
+                                LabeledContent("keyness.log2-ratio") {
+                                    Text(
+                                        term.log2RatioHaldaneAnscombe,
+                                        format: .number.precision(.fractionLength(2))
+                                    )
+                                    .monospacedDigit()
+                                }
+                                LabeledContent("keyness.min-expected") {
+                                    Text(
+                                        term.minimumExpectedCount,
+                                        format: .number.precision(.fractionLength(2))
+                                    )
+                                    .monospacedDigit()
+                                }
+                                LabeledContent("keyness.low-expected") {
+                                    Text(term.hasLowExpectedCount ? "common.yes" : "common.no")
+                                }
+                            }
+                            .accessibilityElement(children: .combine)
+                        }
+                    }
+                    if let options = model.lastKeynessOptions {
+                        StudioDetailsSection("keyness.options.title") {
+                            LabeledContent("keyness.options.max-hypotheses") {
+                                Text(options.maximumHypothesisCount, format: .number)
+                                    .monospacedDigit()
+                            }
+                            LabeledContent("keyness.options.low-expected-threshold") {
+                                Text(
+                                    options.lowExpectedCountThreshold,
+                                    format: .number.precision(.fractionLength(2))
+                                )
+                                .monospacedDigit()
+                            }
+                        }
                     }
                 }
-            }
+
+            #endif
 
             Section {
                 Button("action.plan") {
@@ -1956,7 +2005,9 @@ struct StudioHomeView: View {
                     highlightedSource(sourceText.text, ranges: match.sourceRanges)
                         .font(.body.monospaced())
                         .textSelection(.enabled)
-                        .accessibilityLabel("query.source")
+                        #if !os(macOS)
+                            .accessibilityLabel("query.source")
+                        #endif
                     ForEach(Array(match.sourceRanges.enumerated()), id: \.offset) { _, range in
                         LabeledContent("source.bytes") {
                             Text("\(range.start)–\(range.end)")
@@ -2400,7 +2451,9 @@ struct StudioHomeView: View {
                     highlightedSource(sourceText.text, ranges: model.evidenceSourceRanges)
                         .font(.body.monospaced())
                         .textSelection(.enabled)
-                        .accessibilityLabel("finding.evidence.source")
+                        #if !os(macOS)
+                            .accessibilityLabel("finding.evidence.source")
+                        #endif
                     ForEach(
                         Array(model.evidenceSourceRanges.prefix(6).enumerated()),
                         id: \.offset
@@ -2557,7 +2610,9 @@ struct StudioHomeView: View {
                         .font(.body.monospaced())
                         .textSelection(.enabled)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .accessibilityLabel("export.preview")
+                        #if !os(macOS)
+                            .accessibilityLabel("export.preview")
+                        #endif
                 }
             }
         }
@@ -2575,11 +2630,21 @@ struct StudioHomeView: View {
                     Text(LocalizedStringKey(messageKey))
                         .fixedSize(horizontal: false, vertical: true)
                     Spacer(minLength: 0)
-                    if model.canCancelExecution {
-                        Button("action.cancel-execution", role: .cancel) {
-                            model.cancelExecution()
+                    #if os(macOS)
+                        if model.canCancelAnalysis {
+                            Button("action.cancel-execution", role: .cancel) {
+                                model.cancelAnalysis()
+                            }
+                            .help("action.cancel-execution")
+                            .keyboardShortcut(.cancelAction)
                         }
-                    }
+                    #else
+                        if model.canCancelExecution {
+                            Button("action.cancel-execution", role: .cancel) {
+                                model.cancelExecution()
+                            }
+                        }
+                    #endif
                 }
                 if model.importProgressTotal > 0 {
                     ProgressView(

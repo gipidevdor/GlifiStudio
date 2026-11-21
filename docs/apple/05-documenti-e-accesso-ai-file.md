@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-APL-005 |
 | Tipo | Standard applicativo Apple |
-| Versione | 0.5.0 |
+| Versione | 0.5.1 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-01 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Ciclo DocumentGroup `.glifi` introdotto; conflict/file provider da validare su dispositivo |
 
 ## Regole
@@ -20,6 +20,10 @@
   Un flag iniziale obsoleto non autorizza a ricreare un progetto già valido.
 - Un'apertura fallita **DEVE** conservare utilizzabile la sessione precedente; l'accesso
   security-scoped acquisito **DEVE** durare quanto la sessione ed essere poi rilasciato.
+- Su macOS un collegamento documentale richiesto durante un'operazione occupata **DEVE**
+  attendere la disponibilità senza essere scartato. Tra richieste in attesa vale
+  soltanto la più recente; la cancellazione invalida soltanto la richiesta del
+  proprio task e non può cancellare quella successiva (GS-DOR-196).
 - File ricevuti da provider esterni **DEVONO** essere considerati input non affidabili e validati prima dell'uso.
 - Path visualizzato e identità persistente **NON DEVONO** coincidere.
 - Cache ricostruibili **DEVONO** risiedere in collocazioni appropriate e non essere incluse nei backup senza necessità.

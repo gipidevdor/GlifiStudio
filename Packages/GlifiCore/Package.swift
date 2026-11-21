@@ -26,8 +26,14 @@ let package = Package(
         .executableTarget(name: "GlifiCLI", dependencies: ["GlifiKit"]),
         .executableTarget(name: "GlifiRecoveryHarness", dependencies: ["GlifiCore"]),
         .executableTarget(name: "GlifiBenchmark", dependencies: ["GlifiCore"]),
-        .testTarget(name: "GlifiCoreTests", dependencies: ["GlifiCore"]),
-        .testTarget(name: "GlifiKitTests", dependencies: ["GlifiKit"]),
+        .target(
+            name: "GlifiBenchmarkTestSupport",
+            path: "Tests/GlifiBenchmarkTestSupport"
+        ),
+        .testTarget(
+            name: "GlifiCoreTests", dependencies: ["GlifiCore", "GlifiBenchmarkTestSupport"]),
+        .testTarget(
+            name: "GlifiKitTests", dependencies: ["GlifiKit", "GlifiBenchmarkTestSupport"]),
     ],
     swiftLanguageModes: [.v6]
 )

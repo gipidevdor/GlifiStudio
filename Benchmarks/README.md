@@ -114,3 +114,95 @@ riporta checksum/diagnostica, hardware, sistema, stato termico, warm-up e cinque
 campioni. L'equivalenza della SOM aggregata è verificata contro la formula diretta;
 il campionatore LDA contro l'integrazione esatta su corpus minimo. Nessuna soglia
 è introdotta senza baseline e hardware di riferimento.
+
+## Letture verificate e termine query normalizzato (GS-DOR-200/201)
+
+```sh
+swift run -c release --package-path Packages/GlifiCore \
+  --scratch-path /tmp/GlifiStudioOptimize200-cache/SwiftPM \
+  GlifiBenchmark --validated-reads-query
+```
+
+Il modo dedicato evita SVD, Louvain e gli altri benchmark del comando predefinito.
+Misura soltanto API di GlifiCore, senza dipendenze da GlifiKit o promesse di
+prestazioni dell'interfaccia:
+
+- `sourceData` del progetto e del recovery read-only, su fonti UTF-8 sintetiche
+  di 1, 8 e 32 MiB;
+- `artifactData`, su payload JSON sintetici delle stesse taglie più l'involucro
+  canonico;
+- valutazione di un termine `normalized` assente su 100.000 token Unicode.
+
+Creazione del package, importazione, Artifact, apertura del recovery,
+tokenizzazione e parsing restano fuori dal timer. Ogni misura usa un warm-up e
+sette campioni; i risultati vengono consumati e confrontati esattamente dopo
+aver fermato il timer. Il rapporto JSON riporta checksum, identità dei sorgenti
+produttivi e del benchmark, hardware, sistema, stato termico e Low Power Mode
+iniziali/finali, campioni grezzi, mediana, minimo e massimo.
+
+La cache del sistema operativo è dichiaratamente calda; non si misura I/O fisico
+a freddo. Eseguire baseline e candidato senza altre build o benchmark concorrenti
+e conservare soltanto miglioramenti osservati con risultati identici. Nessuna
+soglia diventa vincolante. Le fixture vengono rimosse all'uscita; lo scratch può
+essere riusato serialmente per misure, test e gate dello stesso incremento.
+
+## Coordinate, token speciali ed export CSV (GS-DOR-202/203/204)
+
+Le prove di equivalenza in `GlifiCoreTests` comprendono un modo di misura
+esplicito, senza esporre API di benchmark nel prodotto. Compilare in Release con
+testability abilitata per il renderer interno e invocare **separatamente** i tre
+filtri, mantenendo la stessa copia dei sorgenti e lo stesso scratch:
+
+```sh
+GLIFI_PIPELINE_BENCHMARK_DIRECTORY=/tmp/GlifiPipelineReports \
+swift test -c release -Xswiftc -enable-testing \
+  --package-path Packages/GlifiCore \
+  --scratch-path /tmp/GlifiPipelineBuild \
+  --filter pipelineOptimizationSpanMap
+```
+
+Ripetere con `--skip-build` e i filtri `pipelineOptimizationTokenizer` e
+`pipelineOptimizationCSV`; non eseguire il filtro comune in parallelo. La
+variabile di ambiente attiva i workload grandi e i JSON per scenario; senza
+di essa gli stessi test eseguono regressioni piccole contro il riferimento.
+La configurazione Debug rifiuta la misura esplicita.
+
+Gli scenari includono ricerca e composizione SpanMap, costo di costruzione
+della mappa, punteggiatura senza spazi a taglia crescente, controlli Unicode e
+email/URL, e report CSV con riferimenti Evidence condivisi. Un warmup e sette
+campioni grezzi; preparazione delle fixture, riferimenti, confronto completo e
+checksum restano fuori timer. Il tokenizer include la propria preparazione;
+la costruzione della mappa è misurata separatamente dal lookup.
+
+Registrare inventari dei sorgenti, hardware, memoria fisica, sistema, toolchain,
+stato termico e Low Power Mode. Confrontare gli output completi e gli hash,
+senza altre compilazioni o misure concorrenti. L'eventuale `time -l` riguarda
+l'intera invocazione di test, inclusi i riferimenti: non misura la memoria del
+singolo kernel. Le prove non misurano energia, UI o I/O fisico a freddo e non
+introducono soglie di rilascio.
+
+## DAG, proiezione CA e digest (GS-DOR-205/206/207/208)
+
+Il target interno `GlifiBenchmarkTestSupport` mantiene un unico protocollo per
+CoreTests e KitTests. Non è un prodotto SwiftPM e non compare nelle dipendenze
+dei prodotti dell'app. Il corpo del helper preesistente resta invariato.
+
+Usare Release con `-Xswiftc -enable-testing`, una directory esplicita tramite
+`GLIFI_PIPELINE_BENCHMARK_DIRECTORY` e tre invocazioni seriali dei filtri
+`domainOptimizationGraph`, `domainOptimizationProjection` e
+`domainOptimizationDigest`. Fixture, riferimenti, uguaglianza completa e hash
+sono fuori timer; il costruttore del grafo restituisce il valore ancora vivo
+prima dello stop. Il timer della proiezione include l'intero init del DTO, con
+risultato Core già materializzato.
+
+Il confronto ha tre fasi con Package/Fixtures e harness congelati: baseline,
+strutture DAG/CA e candidato completo con digest. La fase intermedia esegue
+Graph e Projection, mantenendo validazione e formatter digest precedenti;
+permette di distinguere i contributi sovrapposti nel costruttore del grafo.
+Non mescolare i tempi delle fasi o attribuire l'intero guadagno a una sola patch.
+
+Conservare tutti i sette campioni, checksum, inventari, configurazione e stato
+termico/energetico. Eventuali RSS di `time -l` riguardano l'intera invocazione,
+compresi preparazione e riferimento. La guard della misura esplicita in Debug
+viene verificata separatamente come controllo negativo; non diventa un nuovo
+gate prestazionale del prodotto.

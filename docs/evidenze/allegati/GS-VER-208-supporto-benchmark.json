@@ -1,0 +1,17 @@
+{
+  "helperProtocolBodyUnchanged": true,
+  "baselineHelperSHA256": "9b4b65677c7d34ef2778798bdb83f70efc0772094f36c41e3c39ee4fc278b5bd",
+  "sharedHelperSHA256": "3721ce3314445571bbc5f03163f55a030a3f03c2d09a623f2e976dc98e22dae0",
+  "onlyConsumers": [
+    "GlifiCoreTests",
+    "GlifiKitTests"
+  ],
+  "supportProductMemberships": [],
+  "products": [
+    "GlifiCore",
+    "GlifiKit",
+    "GlifiCLI",
+    "GlifiRecoveryHarness",
+    "GlifiBenchmark"
+  ]
+}

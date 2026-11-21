@@ -13,6 +13,17 @@
 # Chi itera molte volte di seguito può conservarla con GLIFI_VERIFY_KEEP_CACHE=1, assumendosi il
 # costo in spazio.
 #
+glifi_verification_scope() {
+    if (( $# == 0 )); then
+        print -r -- "all"
+    elif (( $# == 1 )) && [[ "$1" == "--macos-only" ]]; then
+        print -r -- "macos"
+    else
+        print -u2 "Usage: ${ZSH_ARGZERO:t} [--macos-only]"
+        return 2
+    fi
+}
+
 glifi_build_cache_directory() {
     print -r -- "${GLIFI_VERIFY_CACHE:-$HOME/Library/Caches/GlifiStudio/verify}"
 }

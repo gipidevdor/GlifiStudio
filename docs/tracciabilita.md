@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.90.2 |
+| Versione | 0.90.3 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-21 |
@@ -91,6 +91,20 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 | [GS-VER-169](evidenze/GS-VER-169-ottimizzazione-algoritmi.md) | TV-008, TV-009, TV-029, TV-032, TV-033, TV-036; RQ-008, RQ-009, RQ-063 | Superato nello snapshot storico sorgente: 13 confronti Release prima/dopo, controlli input/output invariati, 447 test e gate completo; cache HAC, K-means incrementale, CSR PageRank e visite ridotte | Misure locali informative; compromessi dichiarati, formule/tolleranze e stati scientifici invariati |
 | [GS-VER-168](evidenze/GS-VER-168-completamento-algoritmi.md) | TV-008, TV-029, TV-032, TV-033, TV-036; RF-026, RF-028, RF-037, RF-038, RF-040, RF-041, RF-042, RF-045 | Superato nello snapshot storico sorgente: distribuzioni/OLS, descrittive, Welch ANOVA, HAC/NMF, tempo, metriche linguistiche e riassunti a grafo; 431 test, 152 righe di oracoli, CLI/recovery e build macOS/iPadOS | Primitive nuove candidate; planner/UI e validazione empirica restano separati |
 | [GS-VER-163](evidenze/GS-VER-163-integrita-documenti-macos.md) | TV-001, TV-058, TV-071 | Superato: otto test del modello macOS in locale e gate CI `xcode-27` (`verify`, `app-store-baseline`) su `main` `a86a53b`; inizializzazione non distruttiva, attacco idempotente e sessione conservata dopo apertura fallita | Conteggio dei test macOS non visibile nel log remoto (`-quiet`); GUI, sandbox reale, autosave e file provider aperti; CMP-107 verified |
+| [GS-VER-198](evidenze/GS-VER-198-keyness-macos.md) | TV-031, TV-058, TV-071; RF-031, RF-045, RQ-026 | 67 nuove esecuzioni client e sette di facciata superate; target macOS 55 definizioni/195 esecuzioni e gate/preflight superati sullo snapshot 0ed9b459 | CMP-198 verified per automatici; 48 DTO del helper distinti dal package end-to-end, GUI e G4 aperti |
+| [GS-VER-199](evidenze/GS-VER-199-identita-keyness.md) | TV-004, TV-005, TV-027, TV-031, TV-071; RF-011, RF-031, RQ-003, RQ-024, RQ-058 | Due RED, quattro test Core e gate macOS superati: livello/budget della cache, guard su payload difforme e riapertura del legacy v2 senza riscrittura | CMP-199 verified per automatici sullo snapshot 0ed9b459; nessuna prova del payload v1 pre-Fisher/CI, nuova formula o migrazione |
+| [GS-VER-197](evidenze/GS-VER-197-ponderazione-termini-macos.md) | TV-029, TV-030, TV-058, TV-071; RF-029, RF-030 | 78 esecuzioni dedicate superate: 54 varianti, 20 DTO incoerenti e quattro ulteriori test; gate/preflight macOS superati sullo snapshot 58d18024 | CMP-197 verified per automatici; contenimento helper distinto dal package end-to-end, GUI e G4 aperti |
+| [GS-VER-196](evidenze/GS-VER-196-collegamento-documenti-macos.md) | TV-001, TV-012, TV-071; RF-001, RQ-011, RQ-032, RQ-058 | RED riprodotto, cinque regressioni e gate/preflight macOS superati sullo snapshot 58d18024 | CMP-196 verified per automatici; cancellazione durante letture candidate revisionata, non forzata dal test; iPadOS e G4 aperti |
+| [GS-VER-195](evidenze/GS-VER-195-cancellazione-analisi-dirette-macos.md) | TV-012, TV-071; RQ-011, RQ-058 | Otto nuove esecuzioni superate: sei analisi cancellabili, propagazione al figlio, commit tardivo valido e retry; gate e preflight macOS superati | Solo flussi dichiarati; GUI manuale, altre operazioni, iPadOS e G4 aperti |
+| [GS-VER-194](evidenze/GS-VER-194-anteprima-export-macos.md) | TV-018, TV-060; RQ-013, RQ-044 | Quattro nuovi test superati, con export reale: anteprima UTF-8 bounded fuori dal Main Actor e receipt indipendente; gate e preflight macOS superati | Nessuna prova Instruments/provider, iPadOS e G4 aperti |
+| [GS-VER-193](evidenze/GS-VER-193-contenuto-accessibile-macos.md) | TV-017, TV-058; RQ-012 | Superato nel profilo macOS: tre override accessibili rimossi soltanto su macOS | Correzione statica, nessun audit VoiceOver o G4 attestato |
+| [GS-VER-192](evidenze/GS-VER-192-frequenze-mtld-macos.md) | TV-007, TV-029, TV-058, TV-071; RF-019, RF-020, RF-027 | Otto nuove esecuzioni lessicali superate nel modello: denominatori/pagine e MTLD finito/infinito/nullo; gate e preflight macOS superati | Solo API esistenti; GUI manuale, iPadOS e G4 aperti |
+| [GS-VER-191](evidenze/GS-VER-191-bm25-macos.md) | TV-029, TV-058, TV-071; RF-030, RQ-003, RQ-058 | Due nuovi test BM25 superati nel modello: scope/query lessicale, score zero/OOV, riuso e stato conservati; gate e preflight macOS superati | Nessun match KWIC inventato; GUI manuale, iPadOS e G4 aperti |
+| [GS-VER-190](evidenze/GS-VER-190-riassunto-macos.md) | TV-036, TV-058, TV-071; RF-042, RF-077, RF-078 | Superato nel profilo macOS: riassunto contestuale macOS con scope e parametri espliciti, coordinate estratte distinte dai sourceRanges originali | Solo due metodi dichiarati; GUI, iPadOS e famiglie restanti aperti |
+| [GS-VER-188](evidenze/GS-VER-188-gate-macos.md) | TV-013, TV-049, TV-076; RQ-005, RQ-063 | Superato nel profilo macOS: profilo macOS esplicito con controlli condivisi invariati | Non equivale al gate globale; iPadOS e G4 non certificati |
+| [GS-VER-187](evidenze/GS-VER-187-riapertura-nativa-macos.md) | TV-001, TV-058, TV-071; RF-001, RQ-004 | Superato nel profilo macOS: routing Riapri macOS verso azione documentale nativa con dipendenza iniettabile | Confine hostless; finestre SwiftUI, autosave e G4 aperti |
+| [GS-VER-186](evidenze/GS-VER-186-cancellazione-modello-macos.md) | TV-012, TV-071; RQ-011, RQ-058 | Superato nel profilo macOS: annullamento e cleanup terminale mantengono ownership e stato occupato coerenti | Solo automatici per scelta esplicita; Mac bloccato, GUI/VoiceOver e G4 aperti |
+| [GS-VER-185](evidenze/GS-VER-185-importazione-parziale.md) | TV-002, TV-071; RF-002, RF-003, RQ-058 | Gate locale, packaging e undici test macOS superati: stato coerente dopo import parziale, progresso azzerato e query/riapertura utilizzabili; CMP-108 verified | GUI, sandbox reale e file provider aperti |
 | [GS-VER-150](evidenze/GS-VER-150-interfaccia-essenziale.md) | TV-015, TV-017–TV-018, TV-039, TV-044, TV-048, TV-058 | Branch UI: make verify, 246 test e oracoli superati | Audit assistivi, contrasto, pseudo-lingua e dispositivi fisici aperti |
 | [GS-VER-001](evidenze/GS-VER-001-bootstrap-ambiente.md) | TV-011 preliminare; TV-013 build baseline | Superato | Non copre flussi funzionali, firma o dispositivi fisici |
 | [GS-VER-002](evidenze/GS-VER-002-baseline-linguistica-italiana.md) | TV-014 configurazione iniziale | Superato | Non copre ancora la qualità delle analisi linguistiche italiane |
@@ -390,3 +404,62 @@ nessuna promozione a requisito verificato.
 | [GS-VER-161](evidenze/GS-VER-161-revisione-scientifica-operatori.md) | RF-087; TV-087; ADR-0031 | Correzioni Stress-1/LDA/codifica, oracoli R/Python e sette ValidationManifest per nove varianti; review tecnica automatica, V6 esterno aperto |
 
 | TV-088 | RF-087; RQ-058; RQ-060; RQ-063 | Request analitica tipizzata e dispatcher GlifiKit, CLI text-analysis, fixture condivise e test di input ostili | [GS-VER-162](evidenze/GS-VER-162-parita-operatori-kit-cli.md), GS-API-002, GS-DOR-162; parità e gate completo verificati localmente |
+
+## Lotto complementare macOS GS-PLAN-180
+
+| Evidenza | Requisiti e verifiche | Esito e limite |
+| --- | --- | --- |
+| [GS-VER-180](evidenze/GS-VER-180-feedback-statico-failure.md) | RQ-058, RQ-063, RF-073; TV-071; CMP-180 | Loop statico con tassonomia e messaggi; due regressioni sintetiche intercettate rispetto al loop precedente. Verifica UI e G4 separate |
+| [GS-VER-181](evidenze/GS-VER-181-profondita-query-testuale.md) | RQ-042, RQ-063; TV-053, TV-060; CMP-181 | Profondità AST verificata anche per AND/OR e catene NEAR/BEFORE: 20 test Core, parità Kit e fuzz query; nessuna estensione a indice o streaming |
+
+## Riconciliazione degli stati documentali
+
+[GS-VER-184](evidenze/GS-VER-184-riconciliazione-documentale.md) collega la roadmap
+alle evidenze storiche e chiarisce il contratto di prosecuzione GS-DOR-168. Gli
+stati di RQ-012/RQ-020/RQ-038, RF-022/RF-043 e la tabella di adozione distinguono
+capacità implementate, verifiche riferite a revisioni precise e audit ancora
+aperti. Nessun gate o capacità candidata viene promosso da questa revisione.
+
+## Runtime e integrità del manifest candidato
+
+| Evidenza | Requisiti e verifiche | Esito e limite |
+| --- | --- | --- |
+| [GS-VER-182](evidenze/GS-VER-182-runtime-eventi-macos.md) | RQ-052–RQ-054, RQ-063; TV-065–TV-067; CMP-182 | Snapshot atomici, admission e callback owned; dieci test Core/Kit e tre test monitor nel workspace. Energia, Instruments e G4 restano aperti |
+| [GS-VER-183](evidenze/GS-VER-183-manifest-candidato.md) | RQ-043, RQ-044, RQ-063; TV-051, TV-060, TV-072; CMP-183 | Quattro commit condividono verifica bounded descriptor-relative del candidato atteso; 32 casi e mutante diagnostico. Replacement, cleanup, SQLite e CMP-095 restano distinti |
+
+## Ottimizzazione misurata delle letture e della query
+
+| Evidenza | Requisiti e verifiche | Perimetro |
+| --- | --- | --- |
+| [GS-VER-200](evidenze/GS-VER-200-letture-verificate-passata-unica.md) | RQ-009, RQ-043, RQ-044, RQ-063; TV-009, TV-051, TV-060; CMP-200 | Payload restituiti verificati nella stessa passata, guardie preservate; nove scenari Release da 1/8/32 MiB, 36 casi funzionali e cancellazione |
+| [GS-VER-201](evidenze/GS-VER-201-normalizzazione-query.md) | RF-080, RQ-009, RQ-042, RQ-063; TV-009, TV-053, TV-060; CMP-201 | Termine confrontabile immutabile fuori dalla scansione; risultati completi Unicode/KWIC/digest, troncatura, cancellazione e fuzz invariati |
+
+Il confronto usa copia immutabile con soli due file produttivi differenti,
+fixture e harness identici, warm-up e sette campioni. Le latenze misurano le
+API dichiarate con cache OS calda; non sono prestazioni complessive UI, energia
+o soglie G4 approvate.
+
+## Costi di scala della pipeline: coordinate, token speciali e CSV
+
+| Evidenza | Requisiti e verifiche | Perimetro |
+| --- | --- | --- |
+| [GS-VER-202](evidenze/GS-VER-202-spanmap-indicizzata.md) | RF-009, RF-017, RQ-009, RQ-063; TV-003, TV-009, TV-051; CMP-202 | Ricerca e composizione dei segmenti sovrapposti, fallback legacy e sette campi Codable invariati; riferimento completo e costo di costruzione misurato |
+| [GS-VER-203](evidenze/GS-VER-203-token-speciali.md) | RF-079, RF-009, RQ-009, RQ-011, RQ-063; TV-003, TV-009, TV-052; CMP-203 | Confini dei suffissi riusati nel run, limiti email/URL esistenti, output e frasi identici al riferimento precedente; punteggiatura scalabile e controlli Unicode |
+| [GS-VER-204](evidenze/GS-VER-204-indice-export-csv.md) | RQ-009, RQ-040, RQ-044, RQ-063; TV-009, TV-047, TV-060; CMP-204 | Indice locale EvidenceID verso FindingID; byte CSV, metadati, ordine, quoting e protezione formule invariati |
+
+Il confronto Release isola tre file produttivi su 271 file congelati. Dieci
+scenari, un warmup e sette campioni grezzi, confronto integrale fuori timer;
+nessuna promozione di soglie, famiglia linguistica o prestazioni dell'app.
+
+## Pianificazione, proiezioni e identità di dominio
+
+| Evidenza | Requisiti e verifiche | Perimetro |
+| --- | --- | --- |
+| [GS-VER-205](evidenze/GS-VER-205-coda-dag.md) | RQ-009, RQ-023, RQ-024, RQ-063; TV-009, TV-027, TV-054; CMP-205 | Kahn con heap minimo, identico spareggio e ordine; richieste, invalidazione, riuso e failure invariati; fase strutture distinta da digest |
+| [GS-VER-206](evidenze/GS-VER-206-proiezione-ca.md) | RF-033, RQ-009, RQ-028, RQ-063; TV-009, TV-032; CMP-206 | Proiezione CA con appartenenza Set locale; DTO intero e JSON identici, costi di memoria e caso piccolo espliciti |
+| [GS-VER-207](evidenze/GS-VER-207-codifica-digest.md) | RQ-009, RQ-010, RQ-023, RQ-063; TV-009, TV-027, TV-054; CMP-207 | Validazione ASCII e codifica SHA-256 senza formatter; byte, errori, namespace Unicode e descrittori v1/v2 invariati |
+| [GS-VER-208](evidenze/GS-VER-208-supporto-benchmark-test.md) | RQ-009, RQ-063; TV-009; CMP-208 | Protocollo di misura condiviso dai soli test Core/Kit, senza product membership; corpo preesistente invariato |
+
+Sedici workload Release e undici riscontri intermedi isolano gli effetti delle
+strutture dal digest usato anche dal DAG. Campioni, inventari e risultati
+completi sono conservati; nessuna nuova soglia o promessa di prestazione UI.

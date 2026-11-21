@@ -35,10 +35,19 @@ enum GlifiScientificExportRenderer {
             "ordinal", "evidence_id", "kind", "finding_ids", "artifact_ids", "caveat_ids",
             "payload_json",
         ]
+        var findingIDsByEvidence: [EvidenceID: [String]] = [:]
+        findingIDsByEvidence.reserveCapacity(report.evidence.count)
+        for finding in report.findings {
+            guard !finding.evidenceReferences.isEmpty else { continue }
+            let findingID = finding.id.canonicalValue
+            var referencedEvidence: Set<EvidenceID> = []
+            for reference in finding.evidenceReferences
+            where referencedEvidence.insert(reference.evidenceID).inserted {
+                findingIDsByEvidence[reference.evidenceID, default: []].append(findingID)
+            }
+        }
         let evidenceRows = try report.evidence.enumerated().map { index, evidence in
-            let findingIDs = report.findings.filter { finding in
-                finding.evidenceReferences.contains { $0.evidenceID == evidence.id }
-            }.map(\.id.canonicalValue)
+            let findingIDs = findingIDsByEvidence[evidence.id] ?? []
             return [
                 String(index + 1),
                 evidence.id.canonicalValue,

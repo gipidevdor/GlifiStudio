@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-21",
+  "baseRevision": "a86a53b512bd777f191c89692e0c573a3d37a3ff",
+  "productAndBuildFileCount": 245,
+  "additionalBuildFileCount": 36,
+  "mismatches": [],
+  "inventorySHA256": "a7ccdac18bd97c5440803ae609b7ff520c2b418fd18e382e2b98d4744cee90d3",
+  "packagingMacOSObservedExitCode": 0,
+  "packagingProfile": "macos-only",
+  "fullVerifyObservedExitCode": 0,
+  "criticalSources": {
+    "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift": {
+      "sha256": "7bc9c333dbb45d1724306e733f5f7dc97ab9201700e1de6e5b6ee174c0964551",
+      "size": 54828,
+      "mode": 420,
+      "symlink": false
+    },
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiProjectPackage.swift": {
+      "sha256": "5f5c41369b04aa5c900d628c99c3dd1daf6d115d6385afd705b1465c62bd142a",
+      "size": 123117,
+      "mode": 420,
+      "symlink": false
+    },
+    "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioRuntimeEnvironment.swift": {
+      "sha256": "7f00221921983e45837b65b0d837aa15d786eb139a26f877e020f9ce043df869",
+      "size": 8284,
+      "mode": 420,
+      "symlink": false
+    },
+    "Apps/macOS/StudioMacRuntimeMonitor.swift": {
+      "sha256": "11229f4f02eabbf8742b4af1b070f3097f52cdfa17ea71a334851e7795662339",
+      "size": 5602,
+      "mode": 420,
+      "symlink": false
+    }
+  }
+}

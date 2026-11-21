@@ -1,0 +1,265 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Log osservato; percorsi personali sostituiti con $WORKSPACE e $HOME.
+Building for debugging...
+[Computing dependencies]
+[Pre-planning 1 / 269]
+[Planning deferred tasks]
+[51 / 121] GlifiCore
+[52 / 121] GlifiCore
+[61 / 183]
+[62 / 183]
+[65 / 183]
+[73 / 183]
+[76 / 183]
+[77 / 183]
+[80 / 183]
+[81 / 183]
+[83 / 183]
+[84 / 183]
+[86 / 183]
+[90 / 183]
+[92 / 183]
+[94 / 183]
+[95 / 183]
+[101 / 183]
+[102 / 183]
+[103 / 183]
+[113 / 183] GlifiCore
+[114 / 183] GlifiCore
+[128 / 185]
+[129 / 186]
+[129 / 186] GlifiRecoveryHarness-product
+[133 / 249] GlifiKit
+[138 / 258]
+[139 / 258]
+[142 / 258]
+[152 / 258] GlifiCore
+[158 / 259]
+[160 / 259]
+[164 / 259]
+[165 / 259] GlifiCoreTests-product
+[170 / 289]
+[173 / 289]
+[174 / 289]
+[178 / 289]
+[180 / 289]
+[183 / 289]
+[184 / 289]
+[195 / 289]
+[197 / 289]
+[198 / 289]
+[201 / 289]
+[203 / 289]
+[213 / 289] GlifiRecoveryHarness-product
+[216 / 289] GlifiRecoveryHarness-product
+[218 / 289]
+[220 / 289] GlifiKit
+[223 / 289] GlifiKit
+[227 / 289] GlifiKit
+[233 / 289] GlifiKit
+[235 / 289] GlifiRecoveryHarness-product
+[236 / 289] GlifiKitTests-product
+[239 / 289] GlifiCoreTests-product
+[240 / 289] GlifiKit
+[243 / 289] GlifiCoreTests-product
+[247 / 289] GlifiCoreTests-product
+[249 / 289] GlifiBenchmark-product
+[251 / 289] GlifiBenchmark-product
+[253 / 289] GlifiBenchmark-product
+[253 / 289]
+[258 / 289]
+[265 / 291]
+[268 / 294] GlifiKit-product
+[270 / 305] GlifiKitTests-product
+[273 / 305] GlifiKitTests-product
+[275 / 305] GlifiKitTests-product
+[278 / 305] GlifiKitTests-product
+[282 / 305] GlifiKitTests-product
+[284 / 305] GlifiKitTests-product
+[285 / 305] GlifiKitTests-product
+[286 / 305] GlifiKitTests-product
+[288 / 305]
+[289 / 305] GlifiKitTests-product
+[289 / 305] GlifiCoreTests-product
+[289 / 305] GlifiKitTests-product
+[289 / 305] GlifiCoreTests-product
+[291 / 305] GlifiCoreTests-product
+[295 / 305] GlifiKitTests-product
+[297 / 305] GlifiKitTests-product
+[301 / 305] GlifiCLI-product
+[303 / 305] GlifiCLI-product
+Build complete! (38,09 s)
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test "Core e Kit producono lo stesso digest, gli stessi intervalli e lo stesso ordine" started.
+◇ Test "La cancellazione dopo l'admission della fonte mantiene la failure tipizzata e la generazione" started.
+✔ Test "La cancellazione dopo l'admission della fonte mantiene la failure tipizzata e la generazione" passed after 0.033 seconds.
+✔ Test "Core e Kit producono lo stesso digest, gli stessi intervalli e lo stesso ordine" passed after 0.041 seconds.
+✔ Test run with 2 tests in 0 suites passed after 0.041 seconds.
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test "I limiti di byte, profondità e nodi sono applicati prima del lavoro non bounded" started.
+◇ Test "Una directory già aperta non viene reindirizzata dal nuovo link" started.
+◇ Test "Il limite risultati marca esplicitamente la troncatura" started.
+◇ Test "Ogni arco booleano contribuisce alla profondità e la radice resta a zero" started.
+◇ Test "Phrase, prossimità, range e regex conservano parametri espliciti" started.
+◇ Test "Il motore interroga la generazione persistita senza accesso laterale allo store" started.
+◇ Test "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test "QueryAST JSON conserva la cancellazione senza convertirla in input non valido" started.
+◇ Test "QueryAST JSON applica i limiti esatti di byte, nodi e profondità" started.
+◇ Test "La profondità delle catene NEAR e BEFORE rispetta il limite dell'AST" started.
+◇ Test "Lo staging nuovo è privato e conserva tutti i byte" started.
+◇ Test "QueryAST JSON rifiuta schema, grammatica e input malformato senza contenuto diagnostico" started.
+◇ Test "Campi privi di capability falliscono senza simulare zero risultati" started.
+◇ Test "Una valutazione di termine già cancellata non avvia la scansione" started.
+◇ Test "I componenti intermedi devono essere directory reali" started.
+◇ Test "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test "La cancellazione delle letture verificate non muta il package e permette una nuova lettura" started.
+◇ Test "QueryAST JSON non aggira gli invarianti semantici e i flag regex ammessi" started.
+◇ Test "Booleani e prossimità usano lo scope e l'ordine canonici" started.
+◇ Test "Il parser rifiuta campi, sintassi e regex non conformi con span UTF-8" started.
+◇ Test "Il recovery read-only riapre l'ultima generazione precedente interamente verificabile" started.
+◇ Test "La normalizzazione del termine conserva troncatura zero, parziale e completa" started.
+◇ Test "Il budget di decodifica copre figli, array, prossimità e scope prima di costruire alberi profondi" started.
+◇ Test "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" started.
+◇ Test "La rinomina e la creazione restano ancorate ai descriptor" started.
+◇ Test "Fuzz query: 3.000 query valide e malformate hanno esito tipizzato e tempo limitato" started.
+◇ Test "Le scritture staged restano sui descriptor dopo sostituzioni" started.
+◇ Test "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test "Il sottoinsieme regex bounded evita costrutti di backtracking" started.
+◇ Test "QueryAST JSON conserva algebra, digest e serializzazione canonica" started.
+◇ Test "Il controllo di profondità preserva le guardie sintattiche e la validazione regex separata" started.
+◇ Test "La precedenza NOT, prossimità, AND e OR produce un AST stabile" started.
+◇ Test "I termini Unicode conservano campi, forma esatta, digest e coordinate KWIC" started.
+◇ Test "Il recovery read-only fallisce quando il manifest è illeggibile" started.
+◇ Test "Termini, phrase e KWIC mantengono offset e normalizzazione" started.
+◇ Test "Le nuove directory sono private e il riuso non cambia i permessi esistenti" started.
+◇ Test "La query Markdown conserva coordinate estratte e intervalli della fonte" started.
+◇ Test "Gli errori operativi di creazione mantengono backoff e ultima generazione" started.
+◇ Test "Escape, AND implicito e canonicalizzazione restano deterministici" started.
+◇ Test case passing 1 argument replaceRoot → false to "Una directory già aperta non viene reindirizzata dal nuovo link" started.
+◇ Test case passing 1 argument replaceRoot → true to "Una directory già aperta non viene reindirizzata dal nuovo link" started.
+◇ Test case passing 2 arguments target → .source, mutation → .valid to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .source, mutation → .sameLengthCorruption to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .source, mutation → .truncated to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .source, mutation → .grown to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 1 argument byteCount → 0 to "Lo staging nuovo è privato e conserva tutti i byte" started.
+◇ Test case passing 1 argument operation → "NEAR" to "La profondità delle catene NEAR e BEFORE rispetta il limite dell'AST" started.
+◇ Test case passing 2 arguments target → .source, mutation → .symbolicLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 1 argument operation → "BEFORE" to "La profondità delle catene NEAR e BEFORE rispetta il limite dell'AST" started.
+◇ Test case passing 1 argument byteCount → 1 to "Lo staging nuovo è privato e conserva tutti i byte" started.
+◇ Test case passing 1 argument useFIFO → false to "I componenti intermedi devono essere directory reali" started.
+◇ Test case passing 2 arguments target → .source, mutation → .hardLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 1 argument byteCount → 1048577 to "Lo staging nuovo è privato e conserva tutti i byte" started.
+◇ Test case passing 1 argument useFIFO → true to "I componenti intermedi devono essere directory reali" started.
+◇ Test case passing 2 arguments target → .source, mutation → .fifo to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 1 argument target → .source to "La cancellazione delle letture verificate non muta il package e permette una nuova lettura" started.
+◇ Test case passing 2 arguments target → .source, mutation → .directory to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 1 argument target → .recoverySource to "La cancellazione delle letture verificate non muta il package e permette una nuova lettura" started.
+◇ Test case passing 2 arguments kind → "source", depth → 0 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 1 argument target → .artifact to "La cancellazione delle letture verificate non muta il package e permette una nuova lettura" started.
+◇ Test case passing 1 argument target → .recoveryArtifact to "La cancellazione delle letture verificate non muta il package e permette una nuova lettura" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .valid to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments kind → "source", depth → 1 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .sameLengthCorruption to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 1 argument kind → "regular" to "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" started.
+◇ Test case passing 2 arguments kind → "source", depth → 2 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .truncated to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 1 argument replaced → "root" to "La rinomina e la creazione restano ancorate ai descriptor" started.
+◇ Test case passing 1 argument kind → "symbolicLink" to "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" started.
+◇ Test case passing 1 argument replaced → "root" to "Le scritture staged restano sui descriptor dopo sostituzioni" started.
+◇ Test case passing 1 argument kind → "danglingLink" to "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" started.
+◇ Test case passing 1 argument replaced → "source" to "La rinomina e la creazione restano ancorate ai descriptor" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .grown to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 1 argument path → "" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 1 argument replaced → "transactions" to "Le scritture staged restano sui descriptor dopo sostituzioni" started.
+◇ Test case passing 1 argument replaced → "destination" to "La rinomina e la creazione restano ancorate ai descriptor" started.
+◇ Test case passing 1 argument kind → "hardLink" to "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .symbolicLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 1 argument path → "/" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 2 arguments kind → "source", depth → 3 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 1 argument kind → "fifo" to "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" started.
+◇ Test case passing 1 argument replaced → "staging" to "Le scritture staged restano sui descriptor dopo sostituzioni" started.
+◇ Test case passing 1 argument path → "." to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .hardLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 1 argument kind → "directory" to "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" started.
+◇ Test case passing 1 argument path → ".." to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .fifo to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments kind → "artifact", depth → 0 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 1 argument path → "./payload" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .directory to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments kind → "artifact", depth → 1 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments target → .artifact, mutation → .valid to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 1 argument path → "nested/../payload" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 2 arguments target → .artifact, mutation → .sameLengthCorruption to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments kind → "artifact", depth → 2 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 1 argument path → "nested//payload" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 2 arguments target → .artifact, mutation → .truncated to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 1 argument path → "nested/./payload" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 2 arguments kind → "artifact", depth → 3 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 1 argument path → "nested/payload/" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 2 arguments target → .artifact, mutation → .grown to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 1 argument path → "nested\payload" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 2 arguments target → .artifact, mutation → .symbolicLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 1 argument path → "payload◇ Test case passing 2 arguments target → .artifact, mutation → .hardLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments kind → "descriptor", depth → 0 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 1 argument path → "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 2 arguments target → .artifact, mutation → .fifo to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .artifact, mutation → .directory to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments kind → "descriptor", depth → 1 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .valid to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments kind → "descriptor", depth → 2 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .sameLengthCorruption to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .truncated to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .grown to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .symbolicLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments kind → "descriptor", depth → 3 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .hardLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments kind → "investigation", depth → 0 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .fifo to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments kind → "investigation", depth → 1 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .directory to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments kind → "investigation", depth → 2 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "investigation", depth → 3 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+✔ Test "Il limite risultati marca esplicitamente la troncatura" passed after 0.440 seconds.
+✔ Test "Phrase, prossimità, range e regex conservano parametri espliciti" passed after 0.440 seconds.
+✔ Test "QueryAST JSON applica i limiti esatti di byte, nodi e profondità" passed after 0.440 seconds.
+✔ Test "Ogni arco booleano contribuisce alla profondità e la radice resta a zero" passed after 0.440 seconds.
+✔ Test "I limiti di byte, profondità e nodi sono applicati prima del lavoro non bounded" passed after 0.440 seconds.
+✔ Test "Campi privi di capability falliscono senza simulare zero risultati" passed after 0.440 seconds.
+✔ Test "QueryAST JSON rifiuta schema, grammatica e input malformato senza contenuto diagnostico" passed after 0.440 seconds.
+✔ Test "Una directory già aperta non viene reindirizzata dal nuovo link" with 2 test cases passed after 0.440 seconds.
+✔ Test "Lo staging nuovo è privato e conserva tutti i byte" with 3 test cases passed after 0.440 seconds.
+✔ Test "I componenti intermedi devono essere directory reali" with 2 test cases passed after 0.440 seconds.
+✔ Test "La profondità delle catene NEAR e BEFORE rispetta il limite dell'AST" with 2 test cases passed after 0.440 seconds.
+✔ Test "QueryAST JSON non aggira gli invarianti semantici e i flag regex ammessi" passed after 0.440 seconds.
+✔ Test "Booleani e prossimità usano lo scope e l'ordine canonici" passed after 0.440 seconds.
+✔ Test "Il motore interroga la generazione persistita senza accesso laterale allo store" passed after 0.441 seconds.
+✔ Test "Il parser rifiuta campi, sintassi e regex non conformi con span UTF-8" passed after 0.441 seconds.
+✔ Test "La normalizzazione del termine conserva troncatura zero, parziale e completa" passed after 0.441 seconds.
+✔ Test "Il budget di decodifica copre figli, array, prossimità e scope prima di costruire alberi profondi" passed after 0.441 seconds.
+✔ Test "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" with 6 test cases passed after 0.441 seconds.
+✔ Test "Il recovery read-only riapre l'ultima generazione precedente interamente verificabile" passed after 0.443 seconds.
+✔ Test "La rinomina e la creazione restano ancorate ai descriptor" with 3 test cases passed after 0.443 seconds.
+✔ Test "Le scritture staged restano sui descriptor dopo sostituzioni" with 3 test cases passed after 0.443 seconds.
+✔ Test "Il sottoinsieme regex bounded evita costrutti di backtracking" passed after 0.444 seconds.
+✔ Test "I percorsi relativi anomali sono rifiutati prima della risoluzione" with 12 test cases passed after 0.445 seconds.
+✔ Test "Il controllo di profondità preserva le guardie sintattiche e la validazione regex separata" passed after 0.445 seconds.
+✔ Test "QueryAST JSON conserva algebra, digest e serializzazione canonica" passed after 0.445 seconds.
+✔ Test "La precedenza NOT, prossimità, AND e OR produce un AST stabile" passed after 0.445 seconds.
+✔ Test "I termini Unicode conservano campi, forma esatta, digest e coordinate KWIC" passed after 0.445 seconds.
+✔ Test "Il recovery read-only fallisce quando il manifest è illeggibile" passed after 0.445 seconds.
+✔ Test "Le nuove directory sono private e il riuso non cambia i permessi esistenti" passed after 0.445 seconds.
+✔ Test "Termini, phrase e KWIC mantengono offset e normalizzazione" passed after 0.445 seconds.
+✔ Test "Gli errori operativi di creazione mantengono backoff e ultima generazione" passed after 0.445 seconds.
+✔ Test "La query Markdown conserva coordinate estratte e intervalli della fonte" passed after 0.445 seconds.
+✔ Test "Escape, AND implicito e canonicalizzazione restano deterministici" passed after 0.445 seconds.
+✔ Test "QueryAST JSON conserva la cancellazione senza convertirla in input non valido" passed after 0.466 seconds.
+✔ Test "Una valutazione di termine già cancellata non avvia la scansione" passed after 0.466 seconds.
+✔ Test "La cancellazione delle letture verificate non muta il package e permette una nuova lettura" with 4 test cases passed after 0.468 seconds.
+✔ Test "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" with 32 test cases passed after 0.490 seconds.
+✔ Test "Le letture del package rifiutano directory simboliche a ogni livello" with 16 test cases passed after 0.502 seconds.
+✔ Test "Fuzz query: 3.000 query valide e malformate hanno esito tipizzato e tempo limitato" passed after 0.733 seconds.
+✔ Test run with 39 tests in 0 suites passed after 0.733 seconds.

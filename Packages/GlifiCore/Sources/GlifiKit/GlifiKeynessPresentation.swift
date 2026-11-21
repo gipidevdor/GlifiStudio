@@ -13,17 +13,32 @@ public struct GlifiStudioKeynessOptions: Equatable, Sendable {
     public let maximumHypothesisCount: Int
     /// Expected-count threshold for the asymptotic diagnostic.
     public let lowExpectedCountThreshold: Double
+    /// Level of the Katz and Woolf confidence intervals, in `(0, 1)`.
+    public let confidenceLevel: Double
 
-    /// Creates valid comparison bounds without silently correcting parameters.
+    /// Creates comparison bounds with the established 95% confidence level.
     public init(
         maximumHypothesisCount: Int,
         lowExpectedCountThreshold: Double
+    ) throws {
+        try self.init(
+            maximumHypothesisCount: maximumHypothesisCount,
+            lowExpectedCountThreshold: lowExpectedCountThreshold,
+            confidenceLevel: 0.95)
+    }
+
+    /// Creates comparison bounds and a confidence level without silently correcting parameters.
+    public init(
+        maximumHypothesisCount: Int,
+        lowExpectedCountThreshold: Double,
+        confidenceLevel: Double
     ) throws {
         do {
             self.init(
                 try GlifiKeynessOptions(
                     maximumHypothesisCount: maximumHypothesisCount,
-                    lowExpectedCountThreshold: lowExpectedCountThreshold
+                    lowExpectedCountThreshold: lowExpectedCountThreshold,
+                    confidenceLevel: confidenceLevel
                 )
             )
         } catch let failure as GlifiFailure {
@@ -35,6 +50,7 @@ public struct GlifiStudioKeynessOptions: Equatable, Sendable {
         coreValue = value
         maximumHypothesisCount = value.maximumHypothesisCount
         lowExpectedCountThreshold = value.lowExpectedCountThreshold
+        confidenceLevel = value.confidenceLevel
     }
 }
 

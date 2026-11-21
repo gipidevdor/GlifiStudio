@@ -39,11 +39,12 @@
         "docs/evidenze/GS-VER-142-letture-directory-package.md",
         "docs/evidenze/GS-VER-144-pubblicazione-oggetti-package.md",
         "docs/evidenze/GS-VER-145-staging-transazioni-package.md",
-        "docs/evidenze/GS-VER-148-letture-export.md"
+        "docs/evidenze/GS-VER-148-letture-export.md",
+        "docs/evidenze/GS-VER-183-manifest-candidato.md"
       ],
       "gate": "G2",
       "status": "blocked",
-      "blockingReason": "Letture, pubblicazione e staging degli oggetti descriptor-relative; CI macOS 27 superata su 4bd5dde. Restano lettura e replacement del manifest candidato, cleanup e SQLite sotto sostituzioni concorrenti, identità della radice fra accessi, ACL e file provider; nessuna promozione del requisito."
+      "blockingReason": "Letture, pubblicazione e staging degli oggetti descriptor-relative; manifest candidato letto bounded dal descriptor e confrontato con byte attesi (GS-VER-183). Restano replacement del manifest, cleanup e SQLite sotto sostituzioni concorrenti, identità della radice fra accessi, ACL e file provider; nessuna promozione dell’intera transazione o durabilità power-loss."
     },
     {
       "id": "CMP-001",
@@ -2720,6 +2721,722 @@
       ],
       "gate": "G3",
       "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-108",
+      "clause": "GS-UX-001-03 § Preparazione progressiva e importazioni parziali",
+      "specification": "docs/esperienza-utente/03-profilo-della-raccolta-e-preparazione.md",
+      "requirements": [
+        "RF-002",
+        "RF-003",
+        "RQ-058"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeModel.swift"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+        "Scripts/test.sh",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-185-importazione-parziale.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-109",
+      "clause": "GS-API-001 § Cancellazione e ownership nel modello macOS",
+      "specification": "docs/api/README.md",
+      "requirements": [
+        "RQ-011",
+        "RQ-058"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeModel.swift"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+        "Scripts/test.sh",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-186-cancellazione-modello-macos.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-110",
+      "clause": "GS-APL-005 § Riapertura tramite ciclo documentale macOS",
+      "specification": "docs/apple/05-documenti-e-accesso-ai-file.md",
+      "requirements": [
+        "RF-001",
+        "RQ-004"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/StudioHomeView.swift"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-187-riapertura-nativa-macos.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-111",
+      "clause": "GS-DEV-002 § Profilo esplicito di verifica macOS",
+      "specification": "docs/loop-di-sviluppo-e-qualita.md",
+      "requirements": [
+        "RQ-005",
+        "RQ-063"
+      ],
+      "code": [
+        "Makefile",
+        "Scripts/verify.sh",
+        "Scripts/check-app-store-packaging.sh",
+        "Scripts/build-cache.sh",
+        "Scripts/verify-app-store.sh"
+      ],
+      "tests": [
+        "Scripts/verify.sh",
+        "Scripts/check-app-store-packaging.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-188-gate-macos.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-180",
+      "clause": "GS-DEV-002 § Feedback statico delle failure",
+      "specification": "docs/loop-di-sviluppo-e-qualita.md",
+      "requirements": [
+        "RQ-058",
+        "RF-073",
+        "RQ-063"
+      ],
+      "code": [
+        "Scripts/quality-static.sh"
+      ],
+      "tests": [
+        "Scripts/check-failure-taxonomy.py",
+        "Scripts/check-failure-messages.py"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-180-feedback-statico-failure.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-181",
+      "clause": "GS-QRY-001 § Profondità dell’AST delle query testuali",
+      "specification": "docs/specifiche-di-design/04-ricerca-e-linguaggio-di-query.md",
+      "requirements": [
+        "RQ-042",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryParser.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiQueryParserTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-181-profondita-query-testuale.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-190",
+      "clause": "GS-UX-001-17 § Riassunto estrattivo macOS e provenienza",
+      "specification": "docs/esperienza-utente/17-laboratorio-analisi-testuale.md",
+      "requirements": [
+        "RF-042",
+        "RF-077",
+        "RF-078",
+        "RQ-058"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiExtractiveSummaryAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiExtractiveSummaryPresentation.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/StudioHomeView.swift",
+        "Apps/macOS/StudioTextAnalysisView.swift",
+        "Apps/Shared/Resources/Localizable.xcstrings"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExtractiveSummaryTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSummarySourceMappingTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiSummarySourceMappingTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiExtractiveSummaryCompatibilityTests.swift",
+        "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-190-riassunto-macos.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-191",
+      "clause": "GS-UX-001-17 § Ranking lessicale BM25 nel laboratorio macOS",
+      "specification": "docs/esperienza-utente/17-laboratorio-analisi-testuale.md",
+      "requirements": [
+        "RF-030",
+        "RQ-003",
+        "RQ-058"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/StudioHomeView.swift",
+        "Apps/macOS/StudioTextAnalysisView.swift",
+        "Apps/Shared/Resources/Localizable.xcstrings"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-191-bm25-macos.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-192",
+      "clause": "GS-UX-001-17 § Frequenze n-grammi e MTLD nel laboratorio macOS",
+      "specification": "docs/esperienza-utente/17-laboratorio-analisi-testuale.md",
+      "requirements": [
+        "RF-019",
+        "RF-020",
+        "RF-027",
+        "RQ-003",
+        "RQ-058"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/StudioHomeView.swift",
+        "Apps/macOS/StudioTextAnalysisView.swift",
+        "Apps/Shared/Resources/Localizable.xcstrings"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-192-frequenze-mtld-macos.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-182",
+      "clause": "GS-APL-015 § Adattatore runtime event-driven e admission",
+      "specification": "docs/apple/15-sostenibilita-di-sistema-macos.md",
+      "requirements": [
+        "RQ-052",
+        "RQ-053",
+        "RQ-054",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioRuntimeEnvironment.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Apps/macOS/StudioMacRuntimeMonitor.swift",
+        "Apps/macOS/GlifiStudioMacApp.swift",
+        "Apps/Shared/StudioHomeView.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiOperationalPolicyTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiRuntimeExecutionTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioRuntimeEnvironmentTests.swift",
+        "Apps/macOS/Tests/StudioMacRuntimeMonitorTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-182-runtime-eventi-macos.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-183",
+      "clause": "GS-DAT-001 § Verifica bounded del manifest candidato",
+      "specification": "docs/specifiche-di-design/02-dati-lineage-e-persistenza.md",
+      "requirements": [
+        "RQ-043",
+        "RQ-044",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiProjectPackage.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiProjectCandidateManifestTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-183-manifest-candidato.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-193",
+      "clause": "GS-APL-003 § Contenuto delle fonti accessibile su macOS",
+      "specification": "docs/apple/03-accessibilita.md",
+      "requirements": [
+        "RQ-012"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeView.swift"
+      ],
+      "tests": [
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-193-contenuto-accessibile-macos.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-194",
+      "clause": "GS-APL-006 § Anteprima export fuori dal Main Actor",
+      "specification": "docs/apple/06-prestazioni-ed-energia.md",
+      "requirements": [
+        "RQ-013",
+        "RQ-044"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeModel.swift"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-194-anteprima-export-macos.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-195",
+      "clause": "GS-API-001 § Cancellazione posseduta delle analisi dirette macOS",
+      "specification": "docs/api/README.md",
+      "requirements": [
+        "RQ-011",
+        "RQ-058"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/StudioHomeView.swift",
+        "Apps/Shared/Resources/Localizable.xcstrings"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-195-cancellazione-analisi-dirette-macos.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-200",
+      "clause": "GS-DAT-001 § Letture verificate a passata unica",
+      "specification": "docs/specifiche-di-design/02-dati-lineage-e-persistenza.md",
+      "requirements": [
+        "RQ-009",
+        "RQ-043",
+        "RQ-044",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiProjectPackage.swift",
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiValidatedReadBenchmarks.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiVerifiedPayloadReadTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiProjectPackageTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-200-letture-verificate-passata-unica.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-201",
+      "clause": "GS-QRY-001 § Normalizzazione costante del termine",
+      "specification": "docs/specifiche-di-design/04-ricerca-e-linguaggio-di-query.md",
+      "requirements": [
+        "RF-080",
+        "RQ-009",
+        "RQ-042",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryEvaluator.swift",
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiValidatedReadBenchmarks.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiQueryEvaluatorTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-201-normalizzazione-query.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-202",
+      "clause": "GS-DAT-001 § Ricerca indicizzata dei segmenti SpanMap",
+      "specification": "docs/specifiche-di-design/02-dati-lineage-e-persistenza.md",
+      "requirements": [
+        "RF-009",
+        "RF-017",
+        "RQ-009",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiSpanMap.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSpanMapCompositionTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSpanMapOptimizationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiBenchmarkTestSupport/GlifiPipelineBenchmarkSupport.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-202-spanmap-indicizzata.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-203",
+      "clause": "GS-LNG-001 § Riuso dei confini dei token speciali",
+      "specification": "docs/specifiche-di-design/03-contratto-linguistico-italiano.md",
+      "requirements": [
+        "RF-079",
+        "RF-009",
+        "RQ-009",
+        "RQ-011",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiItalianTokenizer.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiItalianTokenizerTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTokenizerOptimizationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiBenchmarkTestSupport/GlifiPipelineBenchmarkSupport.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-203-token-speciali.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-204",
+      "clause": "ADR-0023 § Indice locale dei riferimenti Evidence nel CSV",
+      "specification": "docs/adr/0023-export-pdf-a2u-csv.md",
+      "requirements": [
+        "RQ-009",
+        "RQ-040",
+        "RQ-044",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiScientificExportRenderer.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiScientificExportTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCSVExportOptimizationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiBenchmarkTestSupport/GlifiPipelineBenchmarkSupport.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-204-indice-export-csv.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-197",
+      "clause": "GS-UX-001-17 § Ponderazione TF TF-IDF nel laboratorio macOS",
+      "specification": "docs/esperienza-utente/17-laboratorio-analisi-testuale.md",
+      "requirements": [
+        "RF-029",
+        "RF-030",
+        "RQ-003",
+        "RQ-011",
+        "RQ-013",
+        "RQ-058"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/macOS/StudioTextAnalysisView.swift",
+        "Apps/Shared/Resources/Localizable.xcstrings",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiTermWeighting.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiTermWeightingPresentation.swift"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioTermWeightingTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTermWeightingTests.swift",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-197-ponderazione-termini-macos.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-196",
+      "clause": "GS-APL-005 § Collegamento documentale macOS e richiesta più recente",
+      "specification": "docs/apple/05-documenti-e-accesso-ai-file.md",
+      "requirements": [
+        "RF-001",
+        "RQ-011",
+        "RQ-032",
+        "RQ-058"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeModel.swift"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-196-collegamento-documenti-macos.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-198",
+      "clause": "GS-UX-001-17 § Confronto keyness completo macOS e livello di confidenza Kit",
+      "specification": "docs/esperienza-utente/17-laboratorio-analisi-testuale.md",
+      "requirements": [
+        "RF-031",
+        "RF-045",
+        "RQ-003",
+        "RQ-011",
+        "RQ-013",
+        "RQ-026",
+        "RQ-028",
+        "RQ-058"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/StudioHomeView.swift",
+        "Apps/macOS/StudioKeynessView.swift",
+        "Apps/Shared/Resources/Localizable.xcstrings",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiKeynessPresentation.swift"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioKeynessTests.swift",
+        "Apps/macOS/Tests/StudioKeynessValidationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiKeynessOptionsTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioServiceTests.swift",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [
+        "Fixtures/Validation/v1/keyness-gtest-fisher-ha-ci-bh-v2.json"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-198-keyness-macos.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-199",
+      "clause": "GS-ANA-001 § Identità del descrittore e admission del riuso keyness",
+      "specification": "docs/specifiche-di-design/05-sistema-analitico.md",
+      "requirements": [
+        "RF-011",
+        "RF-031",
+        "RQ-003",
+        "RQ-024",
+        "RQ-058"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiAnalysisArtifacts.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKeynessCacheContractTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiProjectPackageTests.swift",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-199-identita-keyness.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-205",
+      "clause": "GS-ANA-001 § Coda ordinata del DAG analitico",
+      "specification": "docs/specifiche-di-design/05-sistema-analitico.md",
+      "requirements": [
+        "RQ-009",
+        "RQ-023",
+        "RQ-024",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiAnalysisGraph.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisGraphTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisGraphOptimizationTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-205-coda-dag.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-206",
+      "clause": "GS-API-001 § Appartenenza indicizzata nella proiezione CA",
+      "specification": "docs/api/README.md",
+      "requirements": [
+        "RF-033",
+        "RQ-009",
+        "RQ-028",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiVisualizationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiMultivariateProjectionOptimizationTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-206-proiezione-ca.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-207",
+      "clause": "GS-DAT-001 § Validazione e codifica esadecimale dei digest",
+      "specification": "docs/specifiche-di-design/02-dati-lineage-e-persistenza.md",
+      "requirements": [
+        "RQ-009",
+        "RQ-010",
+        "RQ-023",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiIdentifiers.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiDigestEncoding.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiAnalysisGraph.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisGraphTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDigestOptimizationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDigestEncodingTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-207-codifica-digest.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-208",
+      "clause": "GS-STD-001-17 § Supporto condiviso dei benchmark dei test",
+      "specification": "docs/standard/17-benchmark-e-regressioni-prestazionali.md",
+      "requirements": [
+        "RQ-009",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Package.swift",
+        "Packages/GlifiCore/Tests/GlifiBenchmarkTestSupport/GlifiPipelineBenchmarkSupport.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSpanMapOptimizationTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-208-supporto-benchmark-test.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
       "blockingReason": null
     }
   ]

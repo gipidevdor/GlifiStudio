@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-MET-001-19 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.7.0 |
+| Versione | 1.7.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-21 |
@@ -50,7 +50,7 @@ così:
 
 - **unità**: le frasi del tokenizzatore italiano (GS-LNG-001) di ogni revisione del gruppo;
   `SentenceID` è la posizione zero-based della frase nel documento; la posizione sorgente è
-  l'intervallo UTF-8 esatto, mai il testo copiato nell'Artifact;
+  l'intervallo UTF-8 esatto nel testo estratto, mai il testo copiato nell'Artifact;
 - **token inclusi**: i token lessicali della frase, normalizzati come il profilo corpus
   (`it-token-v1-nfc-lowercase-v1`), ripetizioni comprese; i token fuori da ogni frase sono ignorati;
 - **pesi**: matrice documento-termine del gruppo con uno schema GS-MET-001-07 dichiarato nel
@@ -293,6 +293,20 @@ bitwise con overlap diretto, fixture upstream, compatibilità dei payload,
 budget scalari, limiti e parità di trasporto. Le evidenze GS-VER-168/169/170
 restano registrazioni storiche della linea di lavoro, non sostituiscono le
 verifiche d'integrazione o la promozione scientifica per variante.
+
+## Coordinate estratte e fonte originale
+
+Gli intervalli delle frasi persistite sono nel testo estratto tokenizzato. Alla
+risoluzione, `sourceRanges` deriva da SpanMap e identifica gli intervalli nei
+byte originali; può contenere più origini contributive. Il testo della frase
+restituita resta quello estratto, mentre la vista della fonte usa i byte originali.
+Markdown e BOM impediscono di trattare i due spazi come identici.
+
+Il mapping aggiunto al risultato risolto non cambia Artifact, descriptor o score.
+Un DTO precedente senza `sourceRanges` decodifica un elenco vuoto, che significa
+mapping non disponibile: nessun offset originale viene dedotto dal solo intervallo
+estratto. La UI apre la fonte intera senza highlight e dichiara il limite
+(GS-DOR-190, ADR-0033).
 
 ## Separazione dalla generazione
 

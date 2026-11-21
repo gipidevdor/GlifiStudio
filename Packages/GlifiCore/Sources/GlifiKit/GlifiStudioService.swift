@@ -266,12 +266,17 @@ public actor GlifiStudioProjectSession {
 
     private let engine: GlifiEngine
     private let project: GlifiProjectPackage
+    private let runtimeEnvironment: GlifiStudioRuntimeEnvironment
     private var isClosed = false
     private var activeAnalysisExecutions: [OperationID: Task<Void, Never>] = [:]
 
-    init(engine: GlifiEngine, project: GlifiProjectPackage) {
+    init(
+        engine: GlifiEngine, project: GlifiProjectPackage,
+        runtimeEnvironment: GlifiStudioRuntimeEnvironment = .headless
+    ) {
         self.engine = engine
         self.project = project
+        self.runtimeEnvironment = runtimeEnvironment
     }
 
     /// Returns the current verified generation while the session is open.
@@ -285,7 +290,7 @@ public actor GlifiStudioProjectSession {
         at url: URL,
         format: GlifiStudioTextFormat
     ) async throws -> GlifiStudioProjectImportResult {
-        try ensureOpen()
+        try ensureOpen(operation: .importText)
         do {
             return try await GlifiStudioProjectImportResult(
                 engine.importText(at: url, format: format.coreValue, into: project)
@@ -297,7 +302,7 @@ public actor GlifiStudioProjectSession {
 
     /// Parses and executes one bounded textual query against the current generation.
     public func query(_ text: String) async throws -> GlifiStudioProjectQueryResult {
-        try ensureOpen()
+        try ensureOpen(operation: .query)
         do {
             return try await GlifiStudioProjectQueryResult(engine.query(text, in: project))
         } catch {
@@ -309,7 +314,7 @@ public actor GlifiStudioProjectSession {
     ///
     /// Rejects incompatible schemas and malformed input without exposing decoder details.
     public func query(canonicalAST data: Data) async throws -> GlifiStudioProjectQueryResult {
-        try ensureOpen()
+        try ensureOpen(operation: .query)
         do {
             return try await GlifiStudioProjectQueryResult(
                 engine.query(canonicalAST: data, in: project))
@@ -320,7 +325,7 @@ public actor GlifiStudioProjectSession {
 
     /// Loads the exact UTF-8 text of one immutable source revision for source jump.
     public func sourceText(sourceRevisionID: String) async throws -> GlifiStudioSourceText {
-        try ensureOpen()
+        try ensureOpen(operation: .query)
         do {
             let revision = try SourceRevisionID(canonicalValue: sourceRevisionID)
             let data = try await project.sourceData(for: revision)
@@ -349,7 +354,7 @@ public actor GlifiStudioProjectSession {
     public func planAnalysis(
         _ request: GlifiStudioAnalysisPlanRequest
     ) async throws -> GlifiStudioAnalysisPlanResult {
-        try ensureOpen()
+        try ensureOpen(operation: .plan)
         do {
             return try await GlifiStudioAnalysisPlanResult(
                 engine.planAnalysis(in: project, request: request.coreValue())
@@ -363,7 +368,7 @@ public actor GlifiStudioProjectSession {
     public func createInvestigation(
         _ request: GlifiStudioInvestigationCreationRequest
     ) async throws -> GlifiStudioInvestigationResult {
-        try ensureOpen()
+        try ensureOpen(operation: .investigate)
         do {
             return try await GlifiStudioInvestigationResult(
                 engine.createInvestigation(in: project, request: request.coreValue())
@@ -377,7 +382,7 @@ public actor GlifiStudioProjectSession {
     public func reviseInvestigationSelection(
         _ request: GlifiStudioInvestigationSelectionRequest
     ) async throws -> GlifiStudioInvestigationResult {
-        try ensureOpen()
+        try ensureOpen(operation: .investigate)
         do {
             return try await GlifiStudioInvestigationResult(
                 engine.reviseInvestigationSelection(in: project, request: request.coreValue())
@@ -404,7 +409,7 @@ public actor GlifiStudioProjectSession {
         _ request: GlifiStudioScientificExportRequest,
         to destinationURL: URL
     ) async throws -> GlifiStudioExportReceipt {
-        try ensureOpen()
+        try ensureOpen(operation: .export)
         do {
             return try await GlifiStudioExportReceipt(
                 engine.exportInvestigation(
@@ -422,7 +427,7 @@ public actor GlifiStudioProjectSession {
     public func executeAnalysisPlan(
         _ request: GlifiStudioAnalysisPlanRequest
     ) throws -> GlifiStudioAnalysisExecution {
-        try ensureOpen()
+        try ensureOpen(operation: .executePlan)
         guard
             activeAnalysisExecutions.count < Self.maximumActiveAnalysisExecutionCount
         else {
@@ -454,12 +459,15 @@ public actor GlifiStudioProjectSession {
             throwing: (any Error).self,
             bufferingPolicy: .bufferingNewest(32)
         )
-        let task = Task { [engine, project] in
+        let task = Task(priority: .userInitiated) { [engine, project, runtimeEnvironment] in
             do {
                 let result = try await engine.executeAnalysisPlan(
                     in: project,
                     request: coreRequest,
-                    operationID: operationID
+                    operationID: operationID,
+                    systemConditionsProvider: GlifiSystemConditionsProvider {
+                        runtimeEnvironment.snapshot().coreValue
+                    }
                 ) { progress in
                     _ = continuation.yield(
                         .progress(GlifiStudioOperationProgress(progress))
@@ -491,7 +499,7 @@ public actor GlifiStudioProjectSession {
     public func analyzeCorpus(
         options: GlifiStudioCorpusAnalysisOptions = .standard
     ) async throws -> GlifiStudioCorpusAnalysisResult {
-        try ensureOpen()
+        try ensureOpen(operation: .analyze)
         do {
             return try await GlifiStudioCorpusAnalysisResult(
                 engine.analyzeCorpus(in: project, options: options.coreValue)
@@ -508,7 +516,7 @@ public actor GlifiStudioProjectSession {
         corpusOptions: GlifiStudioCorpusAnalysisOptions = .standard,
         keynessOptions: GlifiStudioKeynessOptions = .standard
     ) async throws -> GlifiStudioKeynessResult {
-        try ensureOpen()
+        try ensureOpen(operation: .analyze)
         do {
             let target = try targetSourceRevisionIDs.map(SourceRevisionID.init(canonicalValue:))
             let reference = try referenceSourceRevisionIDs.map(
@@ -545,7 +553,7 @@ public actor GlifiStudioProjectSession {
         referenceSourceRevisionIDs: [String],
         corpusOptions: GlifiStudioCorpusAnalysisOptions = .standard
     ) async throws -> GlifiStudioCorpusSimilarityResult {
-        try ensureOpen()
+        try ensureOpen(operation: .analyze)
         do {
             let target = try targetSourceRevisionIDs.map(SourceRevisionID.init(canonicalValue:))
             let reference = try referenceSourceRevisionIDs.map(
@@ -774,8 +782,7 @@ public actor GlifiStudioProjectSession {
         }
     }
 
-    /// Selects sentences with `SentenceTFIDFMean-v1` within a declared budget and resolves
-    /// their source text.
+    /// Selects sentences within a declared budget and resolves extracted text and original spans.
     public func analyzeExtractiveSummary(
         sourceRevisionIDs: [String],
         budget: GlifiStudioSummaryBudget = .standard,
@@ -972,7 +979,7 @@ public actor GlifiStudioProjectSession {
         _ visualization: GlifiStudioVisualization,
         to destinationURL: URL
     ) async throws -> GlifiStudioVisualExportReceipt {
-        try ensureOpen()
+        try ensureOpen(operation: .export)
         let current = await project.snapshot()
         guard
             current.artifacts.contains(where: {
@@ -1120,7 +1127,7 @@ public actor GlifiStudioProjectSession {
 
     /// Projection of the persisted qualitative history.
     public func qualitativeState() async throws -> GlifiStudioQualitativeState {
-        try await derivedOperation {
+        try await derivedOperation(admissionOperation: nil) {
             GlifiStudioQualitativeState(try await engine.qualitativeState(in: project))
         }
     }
@@ -1153,9 +1160,10 @@ public actor GlifiStudioProjectSession {
     }
 
     private func derivedOperation<Result>(
+        admissionOperation: GlifiOperationKind? = .analyze,
         _ body: () async throws -> Result
     ) async throws -> Result {
-        try ensureOpen()
+        try ensureOpen(operation: admissionOperation)
         do {
             return try await body()
         } catch let failure as GlifiFailure where failure.code == "identifier.invalid" {
@@ -1191,7 +1199,7 @@ public actor GlifiStudioProjectSession {
         activeAnalysisExecutions[operationID] = nil
     }
 
-    private func ensureOpen() throws {
+    private func ensureOpen(operation: GlifiOperationKind? = nil) throws {
         guard !isClosed else {
             throw GlifiStudioFailure(
                 GlifiFailure(
@@ -1204,11 +1212,28 @@ public actor GlifiStudioProjectSession {
                 )
             )
         }
+        if let operation {
+            try runtimeEnvironment.admit(operation: operation)
+        }
     }
 
     private static func map(_ error: Error, operation: GlifiOperationKind) -> GlifiStudioFailure {
+        if let failure = error as? GlifiStudioFailure {
+            return failure
+        }
         if let failure = error as? GlifiFailure {
             return GlifiStudioFailure(failure)
+        }
+        if error is CancellationError {
+            return GlifiStudioFailure(
+                GlifiFailure(
+                    code: "operation.cancelled",
+                    category: .cancelled,
+                    operation: operation,
+                    retryDisposition: .newRequest,
+                    retainedState: .lastCommittedGeneration,
+                    messageKey: "failure.operation.cancelled"
+                ))
         }
         return GlifiStudioFailure(
             GlifiFailure(
@@ -1226,10 +1251,12 @@ public actor GlifiStudioProjectSession {
 /// Exposes the public application-facing contract for GlifiCore.
 public struct GlifiStudioService: Sendable {
     private let engine: GlifiEngine
+    private let runtimeEnvironment: GlifiStudioRuntimeEnvironment
 
-    /// Creates a service backed by a new GlifiCore engine.
-    public init() {
+    /// Creates a service with explicit platform signals or the headless bootstrap policy.
+    public init(runtimeEnvironment: GlifiStudioRuntimeEnvironment = .headless) {
         engine = GlifiEngine()
+        self.runtimeEnvironment = runtimeEnvironment
     }
 
     /// Returns a presentation-independent description of the engine state.
@@ -1247,6 +1274,7 @@ public struct GlifiStudioService: Sendable {
         at url: URL,
         format: GlifiStudioTextFormat
     ) async throws -> GlifiStudioTextProfile {
+        try runtimeEnvironment.admit(operation: .profileCollection)
         do {
             let profile = try await engine.profileText(
                 at: url,
@@ -1273,7 +1301,8 @@ public struct GlifiStudioService: Sendable {
     public func createProject(at url: URL) async throws -> GlifiStudioProjectSession {
         do {
             let project = try await engine.createProject(at: url)
-            return GlifiStudioProjectSession(engine: engine, project: project)
+            return GlifiStudioProjectSession(
+                engine: engine, project: project, runtimeEnvironment: runtimeEnvironment)
         } catch {
             throw map(error, operation: .persistProject)
         }
@@ -1283,7 +1312,8 @@ public struct GlifiStudioService: Sendable {
     public func openProject(at url: URL) async throws -> GlifiStudioProjectSession {
         do {
             let project = try await engine.openProject(at: url)
-            return GlifiStudioProjectSession(engine: engine, project: project)
+            return GlifiStudioProjectSession(
+                engine: engine, project: project, runtimeEnvironment: runtimeEnvironment)
         } catch {
             throw map(error, operation: .persistProject)
         }

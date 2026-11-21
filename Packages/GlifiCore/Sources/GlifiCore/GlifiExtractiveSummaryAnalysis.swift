@@ -160,7 +160,7 @@ public struct GlifiSummarySentence: Codable, Equatable, Sendable {
     public let sourceRevisionID: String
     /// Zero-based position among the sentences of the document (`SentenceID`).
     public let sentenceIndex: Int
-    /// Exact source interval.
+    /// Interval in the extracted UTF-8 text, before mapping to the original source.
     public let range: GlifiUTF8Range
     /// Lexical tokens included in the score.
     public let tokenCount: Int
@@ -727,10 +727,30 @@ public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
     }
 }
 
-/// One selected sentence resolved against its source text.
+/// One selected sentence resolved against its extracted text and original-source intervals.
 public struct GlifiResolvedSummarySentence: Codable, Equatable, Sendable {
     /// Scored sentence.
     public let sentence: GlifiSummarySentence
-    /// Exact source text of the interval, unchanged.
+    /// Exact extracted text of the interval, unchanged.
     public let text: String
+    /// Original-source UTF-8 intervals contributing to the extracted sentence.
+    ///
+    ///
+    /// Empty when decoding an earlier message without mapping information.
+    public let sourceRanges: [GlifiUTF8Range]
+
+    init(sentence: GlifiSummarySentence, text: String, sourceRanges: [GlifiUTF8Range]) {
+        self.sentence = sentence
+        self.text = text
+        self.sourceRanges = sourceRanges
+    }
+
+    /// Decodes earlier messages without inventing original-source coordinates.
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        sentence = try container.decode(GlifiSummarySentence.self, forKey: .sentence)
+        text = try container.decode(String.self, forKey: .text)
+        sourceRanges =
+            try container.decodeIfPresent([GlifiUTF8Range].self, forKey: .sourceRanges) ?? []
+    }
 }

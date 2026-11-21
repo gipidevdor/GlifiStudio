@@ -51,6 +51,193 @@ enum StudioIntentOption: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
+#if os(macOS)
+    private struct StudioDocumentAttachmentWaiter {
+        let requestID: UUID
+        let continuation: CheckedContinuation<Void, Never>
+    }
+
+    enum StudioTextAnalysisScope: CaseIterable, Identifiable, Sendable {
+        case allSources
+        case selectedSources
+
+        var id: Self { self }
+
+        var titleKey: String {
+            switch self {
+            case .allSources: "summary.scope.all"
+            case .selectedSources: "summary.scope.selected"
+            }
+        }
+    }
+
+    enum StudioSummaryMethod: String, CaseIterable, Identifiable, Sendable {
+        case sentenceTFIDFMean = "SentenceTFIDFMean-v1"
+        case centroidCosine = "CentroidCosine-v1"
+
+        var id: Self { self }
+
+        var titleKey: String {
+            switch self {
+            case .sentenceTFIDFMean: "summary.method.tfidf-mean"
+            case .centroidCosine: "summary.method.centroid-cosine"
+            }
+        }
+    }
+
+    enum StudioSummaryBudgetUnit: String, CaseIterable, Identifiable, Sendable {
+        case sentences = "Budget-sentences-v1"
+        case lexicalTokens = "Budget-lexical-tokens-v1"
+
+        var id: Self { self }
+
+        var titleKey: String {
+            switch self {
+            case .sentences: "summary.budget.sentences"
+            case .lexicalTokens: "summary.budget.lexical-tokens"
+            }
+        }
+    }
+
+    enum StudioSummaryRedundancy: String, CaseIterable, Identifiable, Sendable {
+        case none = "redundancy.none-v1"
+        case maximalMarginalRelevance = "MMR-v1"
+
+        var id: Self { self }
+
+        var titleKey: String {
+            switch self {
+            case .none: "summary.redundancy.none"
+            case .maximalMarginalRelevance: "summary.redundancy.mmr"
+            }
+        }
+    }
+
+    /// Effective parameters captured independently of later edits to the controls.
+    struct StudioSummaryOptions: Equatable, Sendable {
+        let scope: StudioTextAnalysisScope
+        let sourceRevisionIDs: [String]
+        let method: StudioSummaryMethod
+        let budgetUnit: StudioSummaryBudgetUnit
+        let budgetLimit: Int
+        let redundancy: StudioSummaryRedundancy
+        let mmrLambda: Double?
+        let scheme: GlifiStudioTermWeightingScheme
+        let corpusOptions: GlifiStudioCorpusAnalysisOptions
+    }
+
+    struct StudioBM25Options: Equatable, Sendable {
+        let scope: StudioTextAnalysisScope
+        let sourceRevisionIDs: [String]
+        let query: String
+        let k1: Double
+        let b: Double
+        let corpusOptions: GlifiStudioCorpusAnalysisOptions
+    }
+
+    enum StudioFrequencyUnit: String, CaseIterable, Identifiable, Sendable {
+        case forms = "form"
+        case words = "word"
+        case characters = "character"
+        case paddedCharacters = "character-padded"
+
+        var id: Self { self }
+
+        var titleKey: String {
+            switch self {
+            case .forms: "frequency.unit.forms"
+            case .words: "frequency.unit.words"
+            case .characters: "frequency.unit.characters"
+            case .paddedCharacters: "frequency.unit.padded-characters"
+            }
+        }
+    }
+
+    struct StudioFrequencyOptions: Equatable, Sendable {
+        let scope: StudioTextAnalysisScope
+        let sourceRevisionIDs: [String]
+        let unit: GlifiStudioNGramUnit
+        let filter: GlifiStudioTermFilter
+        let maximumRowCount: Int
+        let corpusOptions: GlifiStudioCorpusAnalysisOptions
+    }
+
+    struct StudioMTLDOptions: Equatable, Sendable {
+        let scope: StudioTextAnalysisScope
+        let sourceRevisionIDs: [String]
+        let threshold: Double
+        let corpusOptions: GlifiStudioCorpusAnalysisOptions
+    }
+
+    enum StudioTermFrequencyVariant: String, CaseIterable, Identifiable, Sendable {
+        case raw = "TF-raw-v1"
+        case binary = "TF-binary-v1"
+        case l1 = "TF-L1-v1"
+        case max = "TF-max-v1"
+        case augmented = "TF-augmented-v1"
+        case sublinear = "TF-sublinear-v1"
+
+        var id: Self { self }
+
+        var titleKey: String {
+            switch self {
+            case .raw: "weighting.tf.raw"
+            case .binary: "weighting.tf.binary"
+            case .l1: "weighting.tf.l1"
+            case .max: "weighting.tf.max"
+            case .augmented: "weighting.tf.augmented"
+            case .sublinear: "weighting.tf.sublinear"
+            }
+        }
+    }
+
+    enum StudioInverseDocumentFrequencyVariant: String, CaseIterable, Identifiable, Sendable {
+        case none = "IDF-none-v1"
+        case unsmoothed = "IDF-unsmoothed-v1"
+        case smooth = "IDF-smooth-v1"
+
+        var id: Self { self }
+
+        var titleKey: String {
+            switch self {
+            case .none: "weighting.idf.none"
+            case .unsmoothed: "weighting.idf.unsmoothed"
+            case .smooth: "weighting.idf.smooth"
+            }
+        }
+    }
+
+    enum StudioTermWeightingNormalization: String, CaseIterable, Identifiable, Sendable {
+        case none = "RowNorm-none-v1"
+        case l1 = "RowNorm-L1-v1"
+        case l2 = "RowNorm-L2-v1"
+
+        var id: Self { self }
+
+        var titleKey: String {
+            switch self {
+            case .none: "weighting.normalization.none"
+            case .l1: "weighting.normalization.l1"
+            case .l2: "weighting.normalization.l2"
+            }
+        }
+    }
+
+    struct StudioTermWeightingOptions: Equatable, Sendable {
+        let scope: StudioTextAnalysisScope
+        let sourceRevisionIDs: [String]
+        let scheme: GlifiStudioTermWeightingScheme
+        let corpusOptions: GlifiStudioCorpusAnalysisOptions
+    }
+
+    struct StudioKeynessRequestOptions: Equatable, Sendable {
+        let targetSourceRevisionIDs: [String]
+        let referenceSourceRevisionIDs: [String]
+        let corpusOptions: GlifiStudioCorpusAnalysisOptions
+        let keynessOptions: GlifiStudioKeynessOptions
+    }
+#endif
+
 @MainActor
 @Observable
 final class StudioHomeModel {
@@ -108,9 +295,66 @@ final class StudioHomeModel {
     var selectedTargetRevisionIDs: Set<String> = []
     var selectedReferenceRevisionIDs: Set<String> = []
 
+    #if os(macOS)
+        var textAnalysisScope: StudioTextAnalysisScope = .allSources
+        var selectedTextAnalysisSourceRevisionIDs: Set<String> = []
+        var summaryMethod: StudioSummaryMethod = .sentenceTFIDFMean
+        var summaryBudgetUnit: StudioSummaryBudgetUnit = .sentences
+        var summaryBudgetLimit = 3
+        var summaryRedundancy: StudioSummaryRedundancy = .none
+        var summaryMMRLambda = 0.5
+        private(set) var lastExtractiveSummary: GlifiStudioExtractiveSummaryResult?
+        private(set) var lastSummaryOptions: StudioSummaryOptions?
+        private(set) var summarySourceText: GlifiStudioSourceText?
+        private(set) var summarySourceRanges: [GlifiStudioUTF8Range] = []
+        private(set) var focusedSummarySentenceID: String?
+        var bm25QueryDraft = ""
+        var bm25K1 = 1.2
+        var bm25B = 0.75
+        private(set) var lastBM25Ranking: GlifiStudioBM25Result?
+        private(set) var lastBM25Options: StudioBM25Options?
+        private(set) var bm25SourceText: GlifiStudioSourceText?
+        var frequencyUnit: StudioFrequencyUnit = .forms
+        var frequencyN = 2
+        var frequencyStopwordsDraft = ""
+        var frequencyMinimumLength = 1
+        var frequencyMinimumCount = 1
+        var frequencyMinimumDocumentFrequency = 1
+        var frequencyMaximumDocumentProportion = 1.0
+        var frequencyMaximumRowCount = 1_000
+        private(set) var lastNGramFrequencies: GlifiStudioNGramFrequencyResult?
+        private(set) var lastFrequencyOptions: StudioFrequencyOptions?
+        private(set) var frequencyPage = 0
+        let frequencyPageSize = 50
+        var mtldThreshold = 0.72
+        private(set) var lastLexicalDiversity: GlifiStudioLexicalDiversityResult?
+        private(set) var lastMTLDOptions: StudioMTLDOptions?
+        var termFrequencyVariant: StudioTermFrequencyVariant = .raw
+        var inverseDocumentFrequencyVariant: StudioInverseDocumentFrequencyVariant = .smooth
+        var termWeightingNormalization: StudioTermWeightingNormalization = .none
+        private(set) var lastTermWeighting: GlifiStudioTermWeightingResult?
+        private(set) var lastTermWeightingOptions: StudioTermWeightingOptions?
+        private(set) var termWeightingObservedCellCounts: [Int] = []
+        private(set) var termWeightingCellPage = 0
+        private(set) var termWeightingTermPage = 0
+        let termWeightingCellPageSize = 50
+        let termWeightingTermPageSize = 50
+        var keynessMaximumHypothesisCount = 100_000
+        var keynessLowExpectedCountThreshold = 5.0
+        var keynessConfidenceLevel = 0.95
+        private(set) var lastKeynessRequestOptions: StudioKeynessRequestOptions?
+        private(set) var keynessPage = 0
+        let keynessPageSize = 50
+    #endif
+
     private let service: GlifiStudioService
     private var session: GlifiStudioProjectSession?
     private var activeExecution: GlifiStudioAnalysisExecution?
+    #if os(macOS)
+        private var activeAnalysisTask: Task<Void, any Error>?
+        private var latestDocumentAttachmentID: UUID?
+        private var documentAttachmentWaiter: StudioDocumentAttachmentWaiter?
+    #endif
     private var securityScopedProjectURL: URL?
 
     init(service: GlifiStudioService = GlifiStudioService()) {
@@ -191,6 +435,18 @@ final class StudioHomeModel {
         activeExecution != nil
     }
 
+    #if os(macOS)
+        var canCancelAnalysis: Bool {
+            activeAnalysisTask != nil || activeExecution != nil
+        }
+
+        /// Requests cancellation while leaving cleanup to the task that owns the operation.
+        func cancelAnalysis() {
+            activeAnalysisTask?.cancel()
+            activeExecution?.cancel()
+        }
+    #endif
+
     var activeExecutionOperationID: String? {
         activeExecution?.operationID
     }
@@ -228,39 +484,153 @@ final class StudioHomeModel {
         guard let url else {
             return
         }
-        guard projectURL?.standardizedFileURL != url.standardizedFileURL || session == nil else {
-            return
-        }
-        if needsPackageInitialization,
-            !FileManager.default.fileExists(atPath: url.appending(path: "manifest.json").path)
-        {
-            await run(messageKey: "progress.creating-project") {
-                try await initializePackage(at: url, allowsEmptyPlaceholder: true)
+        #if os(macOS)
+            guard !Task.isCancelled else { return }
+            let requestID = UUID()
+            latestDocumentAttachmentID = requestID
+            let superseded = documentAttachmentWaiter
+            documentAttachmentWaiter = nil
+            superseded?.continuation.resume()
+            defer { finishDocumentAttachment(requestID) }
+            while documentAttachmentIsCurrent(requestID) {
+                guard projectURL?.standardizedFileURL != url.standardizedFileURL || session == nil
+                else { return }
+                await waitForDocumentAttachmentIdle(requestID)
+                guard documentAttachmentIsCurrent(requestID) else { return }
+                guard projectURL?.standardizedFileURL != url.standardizedFileURL || session == nil
+                else { return }
+                let admitted: Bool
+                if needsPackageInitialization,
+                    !FileManager.default.fileExists(
+                        atPath: url.appending(path: "manifest.json").path)
+                {
+                    admitted = await run(
+                        messageKey: "progress.creating-project", documentAttachmentID: requestID
+                    ) {
+                        try await initializePackage(
+                            at: url, allowsEmptyPlaceholder: true,
+                            documentAttachmentID: requestID)
+                    }
+                } else {
+                    admitted = await openProject(at: url, documentAttachmentID: requestID)
+                }
+                if admitted { return }
             }
-        } else {
-            await openProject(at: url)
-        }
+        #else
+            guard projectURL?.standardizedFileURL != url.standardizedFileURL || session == nil
+            else {
+                return
+            }
+            if needsPackageInitialization,
+                !FileManager.default.fileExists(atPath: url.appending(path: "manifest.json").path)
+            {
+                await run(messageKey: "progress.creating-project") {
+                    try await initializePackage(at: url, allowsEmptyPlaceholder: true)
+                }
+            } else {
+                await openProject(at: url)
+            }
+        #endif
     }
 
     func openProject(at url: URL) async {
-        await run(messageKey: "progress.opening-project") {
+        _ = await openProject(at: url, documentAttachmentID: nil)
+    }
+
+    private func openProject(at url: URL, documentAttachmentID: UUID?) async -> Bool {
+        await run(
+            messageKey: "progress.opening-project", documentAttachmentID: documentAttachmentID
+        ) {
+            guard documentAttachmentIsCurrent(documentAttachmentID) else { return }
             let accessGranted = url.startAccessingSecurityScopedResource()
             do {
                 let opened = try await service.openProject(at: url)
-                try await activateSession(opened, at: url, accessGranted: accessGranted)
+                try await activateSession(
+                    opened, at: url, accessGranted: accessGranted,
+                    documentAttachmentID: documentAttachmentID)
             } catch {
                 if accessGranted {
                     url.stopAccessingSecurityScopedResource()
                 }
+                guard documentAttachmentIsCurrent(documentAttachmentID) else { return }
                 throw error
             }
         }
     }
 
-    func reopenLastProject() async {
+    #if os(macOS)
+        private func waitForDocumentAttachmentIdle(_ requestID: UUID) async {
+            while isBusy, documentAttachmentIsCurrent(requestID) {
+                await withTaskCancellationHandler {
+                    await withCheckedContinuation { continuation in
+                        guard isBusy, documentAttachmentIsCurrent(requestID) else {
+                            continuation.resume()
+                            return
+                        }
+                        let superseded = documentAttachmentWaiter
+                        documentAttachmentWaiter = StudioDocumentAttachmentWaiter(
+                            requestID: requestID, continuation: continuation)
+                        superseded?.continuation.resume()
+                    }
+                } onCancel: {
+                    // Cancellation can arrive off actor; this bounded hop only releases its own wait.
+                    Task { @MainActor in finishDocumentAttachment(requestID) }
+                }
+            }
+        }
+
+        private func finishDocumentAttachment(_ requestID: UUID) {
+            if latestDocumentAttachmentID == requestID {
+                latestDocumentAttachmentID = nil
+            }
+            if documentAttachmentWaiter?.requestID == requestID {
+                let waiting = documentAttachmentWaiter
+                documentAttachmentWaiter = nil
+                waiting?.continuation.resume()
+            }
+        }
+    #endif
+
+    private func documentAttachmentIsCurrent(_ requestID: UUID?) -> Bool {
+        #if os(macOS)
+            guard let requestID else { return true }
+            return !Task.isCancelled && latestDocumentAttachmentID == requestID
+        #else
+            return true
+        #endif
+    }
+
+    #if os(macOS)
+        /// Dispatches reopening through the native document action without replacing this session.
+        func reopenLastProject(using opener: @MainActor (URL) async throws -> Void) async {
+            await run(messageKey: "progress.opening-project") {
+                let url = try resolvedLastProjectURL()
+                let accessGranted = url.startAccessingSecurityScopedResource()
+                defer {
+                    if accessGranted {
+                        url.stopAccessingSecurityScopedResource()
+                    }
+                }
+                do {
+                    try await opener(url)
+                } catch {
+                    throw presentationFailure(messageKey: "failure.project.invalid-package")
+                }
+            }
+        }
+    #else
+        func reopenLastProject() async {
+            do {
+                await openProject(at: try resolvedLastProjectURL())
+            } catch {
+                lastFailure = error
+            }
+        }
+    #endif
+
+    private func resolvedLastProjectURL() throws(GlifiStudioFailure) -> URL {
         guard let lastProjectBookmark else {
-            lastFailure = presentationFailure(messageKey: "failure.project.none-open")
-            return
+            throw presentationFailure(messageKey: "failure.project.none-open")
         }
         var isStale = false
         do {
@@ -271,15 +641,14 @@ final class StudioHomeModel {
             #else
                 let resolutionOptions: URL.BookmarkResolutionOptions = [.withoutUI]
             #endif
-            let url = try URL(
+            return try URL(
                 resolvingBookmarkData: lastProjectBookmark,
                 options: resolutionOptions,
                 relativeTo: nil,
                 bookmarkDataIsStale: &isStale
             )
-            await openProject(at: url)
         } catch {
-            lastFailure = presentationFailure(messageKey: "failure.project.invalid-package")
+            throw presentationFailure(messageKey: "failure.project.invalid-package")
         }
     }
 
@@ -292,7 +661,10 @@ final class StudioHomeModel {
             let active = try requireSession()
             importProgressTotal = urls.count
             importProgressCompleted = 0
-            var lastResult: GlifiStudioProjectImportResult?
+            defer {
+                importProgressTotal = 0
+                importProgressCompleted = 0
+            }
             for url in urls {
                 let accessGranted = url.startAccessingSecurityScopedResource()
                 defer {
@@ -303,16 +675,12 @@ final class StudioHomeModel {
                 let format: GlifiStudioTextFormat =
                     ["md", "markdown"].contains(url.pathExtension.lowercased())
                     ? .markdown : .plainText
-                lastResult = try await active.importText(at: url, format: format)
+                let result = try await active.importText(at: url, format: format)
+                snapshot = result.project
+                lastProfile = result.profile
                 lastImportedFileName = url.lastPathComponent
                 importProgressCompleted += 1
             }
-            if let lastResult {
-                snapshot = lastResult.project
-                lastProfile = lastResult.profile
-            }
-            importProgressTotal = 0
-            importProgressCompleted = 0
         }
     }
 
@@ -345,7 +713,10 @@ final class StudioHomeModel {
             lastPlanRequest = request
             let execution = try await active.executeAnalysisPlan(request)
             activeExecution = execution
-            defer { activeExecution = nil }
+            defer {
+                activeExecution = nil
+                executionProgress = nil
+            }
             for try await event in execution.events {
                 switch event {
                 case let .progress(progress):
@@ -365,9 +736,6 @@ final class StudioHomeModel {
 
     func cancelExecution() {
         activeExecution?.cancel()
-        activeExecution = nil
-        executionProgress = nil
-        busyState = .idle
     }
 
     func createInvestigationFromExecution() async {
@@ -648,8 +1016,282 @@ final class StudioHomeModel {
         focusedEvidenceID = nil
     }
 
+    #if os(macOS)
+        func toggleTextAnalysisSource(_ sourceRevisionID: String) {
+            if selectedTextAnalysisSourceRevisionIDs.contains(sourceRevisionID) {
+                selectedTextAnalysisSourceRevisionIDs.remove(sourceRevisionID)
+            } else {
+                selectedTextAnalysisSourceRevisionIDs.insert(sourceRevisionID)
+            }
+        }
+
+        func summarizeSources() async {
+            await runAnalysis(messageKey: "progress.summarizing") { [self] in
+                let active = try requireSession()
+                let sourceRevisionIDs = scopedTextAnalysisSourceRevisionIDs()
+                let lambda: Double?
+                switch summaryRedundancy {
+                case .none: lambda = nil
+                case .maximalMarginalRelevance: lambda = summaryMMRLambda
+                }
+                let options = StudioSummaryOptions(
+                    scope: textAnalysisScope, sourceRevisionIDs: sourceRevisionIDs,
+                    method: summaryMethod, budgetUnit: summaryBudgetUnit,
+                    budgetLimit: summaryBudgetLimit, redundancy: summaryRedundancy,
+                    mmrLambda: lambda, scheme: .summaryStandard, corpusOptions: .standard)
+                let result = try await active.analyzeExtractiveSummary(
+                    sourceRevisionIDs: options.sourceRevisionIDs,
+                    budget: GlifiStudioSummaryBudget(
+                        unit: options.budgetUnit.rawValue, limit: options.budgetLimit),
+                    scheme: options.scheme,
+                    method: GlifiStudioSummaryScoringMethod(identifier: options.method.rawValue),
+                    redundancy: GlifiStudioSummaryRedundancy(
+                        identifier: options.redundancy.rawValue, lambda: options.mmrLambda),
+                    corpusOptions: options.corpusOptions)
+                let updatedSnapshot = try await active.snapshot()
+                lastExtractiveSummary = result
+                lastSummaryOptions = options
+                snapshot = updatedSnapshot
+                clearSummarySource()
+            }
+        }
+
+        func openSummarySource(_ selected: GlifiStudioSelectedSentence) async {
+            await run(messageKey: "progress.loading-source") {
+                let active = try requireSession()
+                let source = try await active.sourceText(
+                    sourceRevisionID: selected.sentence.sourceRevisionID)
+                summarySourceText = source
+                summarySourceRanges = selected.sourceRanges
+                focusedSummarySentenceID =
+                    "\(selected.sentence.sourceRevisionID):\(selected.sentence.sentenceIndex)"
+            }
+        }
+
+        func clearSummarySource() {
+            summarySourceText = nil
+            summarySourceRanges = []
+            focusedSummarySentenceID = nil
+        }
+
+        func rankSourcesBM25() async {
+            await runAnalysis(messageKey: "progress.ranking-bm25") { [self] in
+                let active = try requireSession()
+                let options = StudioBM25Options(
+                    scope: textAnalysisScope,
+                    sourceRevisionIDs: scopedTextAnalysisSourceRevisionIDs(),
+                    query: bm25QueryDraft, k1: bm25K1, b: bm25B, corpusOptions: .standard)
+                let result = try await active.rankDocumentsBM25(
+                    sourceRevisionIDs: options.sourceRevisionIDs,
+                    query: options.query, k1: options.k1, b: options.b,
+                    corpusOptions: options.corpusOptions)
+                let updatedSnapshot = try await active.snapshot()
+                lastBM25Ranking = result
+                lastBM25Options = options
+                snapshot = updatedSnapshot
+                clearBM25Source()
+            }
+        }
+
+        func openBM25Source(_ document: GlifiStudioBM25RankedDocument) async {
+            await run(messageKey: "progress.loading-source") {
+                bm25SourceText = try await requireSession().sourceText(
+                    sourceRevisionID: document.sourceRevisionID)
+            }
+        }
+
+        func clearBM25Source() {
+            bm25SourceText = nil
+        }
+
+        func analyzeFrequencies() async {
+            await runAnalysis(messageKey: "progress.analyzing-frequencies") { [self] in
+                let active = try requireSession()
+                let size: Int
+                let minimumLength: Int
+                switch frequencyUnit {
+                case .forms:
+                    size = 1
+                    minimumLength = frequencyMinimumLength
+                case .words, .characters, .paddedCharacters:
+                    size = frequencyN
+                    minimumLength = 1
+                }
+                let stopwords = frequencyStopwordsDraft.components(separatedBy: .newlines)
+                    .map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+                let options = StudioFrequencyOptions(
+                    scope: textAnalysisScope,
+                    sourceRevisionIDs: scopedTextAnalysisSourceRevisionIDs(),
+                    unit: GlifiStudioNGramUnit(kind: frequencyUnit.rawValue, n: size),
+                    filter: GlifiStudioTermFilter(
+                        stopwords: stopwords, minimumLength: minimumLength,
+                        minimumCount: frequencyMinimumCount,
+                        minimumDocumentFrequency: frequencyMinimumDocumentFrequency,
+                        maximumDocumentProportion: frequencyMaximumDocumentProportion),
+                    maximumRowCount: frequencyMaximumRowCount, corpusOptions: .standard)
+                let result = try await active.analyzeNGramFrequencies(
+                    sourceRevisionIDs: options.sourceRevisionIDs,
+                    unit: options.unit, filter: options.filter,
+                    maximumRowCount: options.maximumRowCount, corpusOptions: options.corpusOptions)
+                let updatedSnapshot = try await active.snapshot()
+                lastNGramFrequencies = result
+                lastFrequencyOptions = options
+                snapshot = updatedSnapshot
+                frequencyPage = 0
+            }
+        }
+
+        var frequencyPageCount: Int {
+            let count = lastNGramFrequencies?.rows.count ?? 0
+            return (count + frequencyPageSize - 1) / frequencyPageSize
+        }
+
+        var frequencyRowsOnPage: [GlifiStudioNGramFrequencyRow] {
+            guard let result = lastNGramFrequencies else { return [] }
+            return Array(
+                result.rows.dropFirst(frequencyPage * frequencyPageSize).prefix(frequencyPageSize))
+        }
+
+        func showFrequencyPage(_ page: Int) {
+            guard page >= 0, page < frequencyPageCount else { return }
+            frequencyPage = page
+        }
+
+        func analyzeMTLD() async {
+            await runAnalysis(messageKey: "progress.analyzing-mtld") { [self] in
+                let active = try requireSession()
+                let options = StudioMTLDOptions(
+                    scope: textAnalysisScope,
+                    sourceRevisionIDs: scopedTextAnalysisSourceRevisionIDs(),
+                    threshold: mtldThreshold, corpusOptions: .standard)
+                let result = try await active.analyzeLexicalDiversity(
+                    sourceRevisionIDs: options.sourceRevisionIDs,
+                    threshold: options.threshold, corpusOptions: options.corpusOptions)
+                let updatedSnapshot = try await active.snapshot()
+                lastLexicalDiversity = result
+                lastMTLDOptions = options
+                snapshot = updatedSnapshot
+            }
+        }
+
+        func analyzeTermWeights() async {
+            await runAnalysis(messageKey: "progress.analyzing-term-weighting") { [self] in
+                let active = try requireSession()
+                let options = StudioTermWeightingOptions(
+                    scope: textAnalysisScope,
+                    sourceRevisionIDs: scopedTextAnalysisSourceRevisionIDs(),
+                    scheme: GlifiStudioTermWeightingScheme(
+                        termFrequency: termFrequencyVariant.rawValue,
+                        inverseDocumentFrequency: inverseDocumentFrequencyVariant.rawValue,
+                        normalization: termWeightingNormalization.rawValue),
+                    corpusOptions: .standard)
+                let result = try await active.analyzeTermWeighting(
+                    sourceRevisionIDs: options.sourceRevisionIDs, scheme: options.scheme,
+                    corpusOptions: options.corpusOptions)
+                let updatedSnapshot = try await active.snapshot()
+                let observedCounts = try await Self.observedTermWeightingCellCounts(
+                    for: result, options: options)
+                lastTermWeighting = result
+                lastTermWeightingOptions = options
+                termWeightingObservedCellCounts = observedCounts
+                snapshot = updatedSnapshot
+                termWeightingCellPage = 0
+                termWeightingTermPage = 0
+            }
+        }
+
+        @concurrent
+        nonisolated static func observedTermWeightingCellCounts(
+            for result: GlifiStudioTermWeightingResult, options: StudioTermWeightingOptions
+        ) async throws(GlifiStudioFailure) -> [Int] {
+            let invalidResult = GlifiStudioFailure(
+                code: "ui.weighting.invalid-result", category: "corruption", operation: "analyze",
+                retryDisposition: "never", retainedState: "lastCommittedGeneration",
+                messageKey: "failure.weighting.invalid-result")
+            let ids = result.sourceRevisionIDs
+            let limits = options.corpusOptions
+            guard !ids.isEmpty, ids.count <= limits.maximumDocumentCount,
+                ids == options.sourceRevisionIDs, ids == ids.sorted(),
+                ids.allSatisfy({ !$0.isEmpty }), Set(ids).count == ids.count,
+                result.scheme == options.scheme,
+                result.terms.count <= limits.maximumVocabularySize,
+                result.documentFrequencies.count == result.terms.count,
+                result.cells.count <= limits.maximumNonZeroCellCount
+            else { throw invalidResult }
+            for index in result.terms.indices {
+                guard !result.terms[index].isEmpty,
+                    index == 0 || result.terms[index - 1] < result.terms[index],
+                    result.documentFrequencies[index] >= 1,
+                    result.documentFrequencies[index] <= ids.count
+                else { throw invalidResult }
+            }
+            var counts = [Int](repeating: 0, count: ids.count)
+            var observedDocumentFrequencies = [Int](repeating: 0, count: result.terms.count)
+            var previousRow = -1
+            var previousColumn = -1
+            for cell in result.cells {
+                guard cell.rowIndex >= 0, cell.rowIndex < ids.count,
+                    cell.columnIndex >= 0, cell.columnIndex < result.terms.count,
+                    cell.count > 0, cell.weight.isFinite, cell.weight >= 0,
+                    cell.rowIndex > previousRow
+                        || (cell.rowIndex == previousRow && cell.columnIndex > previousColumn)
+                else { throw invalidResult }
+                counts[cell.rowIndex] += 1
+                observedDocumentFrequencies[cell.columnIndex] += 1
+                previousRow = cell.rowIndex
+                previousColumn = cell.columnIndex
+            }
+            guard observedDocumentFrequencies == result.documentFrequencies else {
+                throw invalidResult
+            }
+            return counts
+        }
+
+        var termWeightingCellPageCount: Int {
+            let count = lastTermWeighting?.cells.count ?? 0
+            return (count + termWeightingCellPageSize - 1) / termWeightingCellPageSize
+        }
+
+        var termWeightingTermPageCount: Int {
+            let count = lastTermWeighting?.terms.count ?? 0
+            return (count + termWeightingTermPageSize - 1) / termWeightingTermPageSize
+        }
+
+        var cellsOnTermWeightingPage: [GlifiStudioWeightedTermCell] {
+            guard let result = lastTermWeighting else { return [] }
+            return Array(
+                result.cells.dropFirst(termWeightingCellPage * termWeightingCellPageSize)
+                    .prefix(termWeightingCellPageSize))
+        }
+
+        var termIndicesOnWeightingPage: [Int] {
+            guard let result = lastTermWeighting else { return [] }
+            let start = termWeightingTermPage * termWeightingTermPageSize
+            let end = min(result.terms.count, start + termWeightingTermPageSize)
+            guard start < end else { return [] }
+            return Array(start..<end)
+        }
+
+        func showTermWeightingCellPage(_ page: Int) {
+            guard page >= 0, page < termWeightingCellPageCount else { return }
+            termWeightingCellPage = page
+        }
+
+        func showTermWeightingTermPage(_ page: Int) {
+            guard page >= 0, page < termWeightingTermPageCount else { return }
+            termWeightingTermPage = page
+        }
+
+        private func scopedTextAnalysisSourceRevisionIDs() -> [String] {
+            switch textAnalysisScope {
+            case .allSources: (snapshot?.sources.map(\.sourceRevisionID) ?? []).sorted()
+            case .selectedSources: selectedTextAnalysisSourceRevisionIDs.sorted()
+            }
+        }
+    #endif
+
     func analyzeCorpusNow() async {
-        await run(messageKey: "progress.analyzing-corpus") {
+        await runAnalysis(messageKey: "progress.analyzing-corpus") { [self] in
             let active = try requireSession()
             let options = GlifiStudioCorpusAnalysisOptions.standard
             let result = try await active.analyzeCorpus(options: options)
@@ -661,7 +1303,7 @@ final class StudioHomeModel {
     }
 
     func compareKeynessNow() async {
-        await run(messageKey: "progress.comparing-keyness") {
+        await runAnalysis(messageKey: "progress.comparing-keyness") { [self] in
             let active = try requireSession()
             let target = Array(selectedTargetRevisionIDs).sorted()
             let reference = Array(selectedReferenceRevisionIDs).sorted()
@@ -673,19 +1315,181 @@ final class StudioHomeModel {
                 throw presentationFailure(messageKey: "failure.keyness.overlapping-groups")
             }
             let corpusOptions = GlifiStudioCorpusAnalysisOptions.standard
-            let keynessOptions = GlifiStudioKeynessOptions.standard
+            #if os(macOS)
+                let keynessOptions = try GlifiStudioKeynessOptions(
+                    maximumHypothesisCount: keynessMaximumHypothesisCount,
+                    lowExpectedCountThreshold: keynessLowExpectedCountThreshold,
+                    confidenceLevel: keynessConfidenceLevel)
+                let request = StudioKeynessRequestOptions(
+                    targetSourceRevisionIDs: target, referenceSourceRevisionIDs: reference,
+                    corpusOptions: corpusOptions, keynessOptions: keynessOptions)
+            #else
+                let keynessOptions = GlifiStudioKeynessOptions.standard
+            #endif
             let result = try await active.compareKeyness(
                 targetSourceRevisionIDs: target,
                 referenceSourceRevisionIDs: reference,
                 corpusOptions: corpusOptions,
                 keynessOptions: keynessOptions
             )
-            snapshot = try await active.snapshot()
+            let updatedSnapshot = try await active.snapshot()
+            #if os(macOS)
+                try await Self.validateKeynessPresentation(result, options: request)
+            #endif
+            snapshot = updatedSnapshot
             lastKeyness = result
             lastKeynessOptions = keynessOptions
             lastCorpusOptions = corpusOptions
+            #if os(macOS)
+                lastKeynessRequestOptions = request
+                keynessPage = 0
+            #endif
         }
     }
+
+    #if os(macOS)
+        var keynessPageCount: Int {
+            let count = lastKeyness?.terms.count ?? 0
+            return (count + keynessPageSize - 1) / keynessPageSize
+        }
+
+        var keynessTermsOnPage: [GlifiStudioKeynessTerm] {
+            guard let result = lastKeyness else { return [] }
+            return Array(
+                result.terms.dropFirst(keynessPage * keynessPageSize).prefix(keynessPageSize))
+        }
+
+        func showKeynessPage(_ page: Int) {
+            guard page >= 0, page < keynessPageCount else { return }
+            keynessPage = page
+        }
+
+        @concurrent
+        nonisolated static func validateKeynessPresentation(
+            _ result: GlifiStudioKeynessResult, options: StudioKeynessRequestOptions
+        ) async throws(GlifiStudioFailure) {
+            let invalidResult = GlifiStudioFailure(
+                code: "ui.keyness.invalid-result", category: "corruption", operation: "analyze",
+                retryDisposition: "never", retainedState: "lastCommittedGeneration",
+                messageKey: "failure.keyness.invalid-result")
+            let target = result.targetSourceRevisionIDs
+            let reference = result.referenceSourceRevisionIDs
+            let targetSet = Set(target)
+            let referenceSet = Set(reference)
+            let limits = options.corpusOptions
+            guard !target.isEmpty, !reference.isEmpty,
+                target == options.targetSourceRevisionIDs,
+                reference == options.referenceSourceRevisionIDs,
+                target == target.sorted(), reference == reference.sorted(),
+                target.allSatisfy({ !$0.isEmpty }), reference.allSatisfy({ !$0.isEmpty }),
+                targetSet.count == target.count, referenceSet.count == reference.count,
+                targetSet.isDisjoint(with: referenceSet),
+                target.count <= limits.maximumDocumentCount,
+                reference.count <= limits.maximumDocumentCount,
+                result.confidenceLevel == options.keynessOptions.confidenceLevel,
+                result.confidenceLevel.isFinite,
+                result.confidenceLevel > 0, result.confidenceLevel < 1,
+                result.lowExpectedCountThreshold
+                    == options.keynessOptions.lowExpectedCountThreshold,
+                result.lowExpectedCountThreshold.isFinite, result.lowExpectedCountThreshold >= 0,
+                result.targetTokenCount > 0, result.referenceTokenCount > 0,
+                !result.terms.isEmpty,
+                result.terms.count <= options.keynessOptions.maximumHypothesisCount,
+                result.comparisonIdentifier == "keyness-gtest-fisher-ha-ci-bh-v2",
+                result.testIdentifier == "GTest-v1",
+                result.testSelectionIdentifier == "FisherSelection-min-expected-5-v1",
+                result.exactTestIdentifier == "FisherExactTwoSided-v1",
+                result.correctionIdentifier == "BenjaminiHochberg-v1",
+                result.logRatioIntervalIdentifier == "LogRatioCI-Katz-HA-v1",
+                result.oddsRatioIntervalIdentifier == "OddsRatioCI-Woolf-HA-v1",
+                result.pValueIdentifier == "ChiSquareSurvival-df1-erfc-v1",
+                result.oddsRatioIdentifier == "OddsRatio-HA-v1",
+                result.logRatioIdentifier == "LogRatio-HA-v1-base2",
+                result.diagnosticIdentifier == "asymptotic-minimum-expected-count-v1",
+                result.floatingPointDeterminismClass == "D1",
+                result.numericPolicyIdentifier == "IEEE-754-binary64-ordered-reduction-v1",
+                result.referenceAbsoluteTolerance == 1e-12,
+                result.orderingIdentifier == "absolute-log-ratio-descending-term-ascending-v1"
+            else { throw invalidResult }
+            var terms = Set<String>()
+            terms.reserveCapacity(result.terms.count)
+            var targetTotal = 0
+            var referenceTotal = 0
+            var targetTypeCount = 0
+            var referenceTypeCount = 0
+            var previousMagnitude: Double?
+            var previousTerm = ""
+            for row in result.terms {
+                guard !row.term.isEmpty, terms.insert(row.term).inserted,
+                    row.targetFrequency >= 0, row.targetFrequency <= result.targetTokenCount,
+                    row.referenceFrequency >= 0,
+                    row.referenceFrequency <= result.referenceTokenCount,
+                    row.targetFrequency > 0 || row.referenceFrequency > 0,
+                    row.targetRelativeFrequency.isFinite,
+                    row.targetRelativeFrequency >= 0, row.targetRelativeFrequency <= 1,
+                    row.referenceRelativeFrequency.isFinite,
+                    row.referenceRelativeFrequency >= 0, row.referenceRelativeFrequency <= 1,
+                    row.pValue.isFinite, row.pValue >= 0, row.pValue <= 1,
+                    row.gTestPValue.isFinite, row.gTestPValue >= 0, row.gTestPValue <= 1,
+                    row.qValue.isFinite, row.qValue >= 0, row.qValue <= 1,
+                    row.gStatistic.isFinite, row.gStatistic >= 0, row.degreesOfFreedom == 1,
+                    row.minimumExpectedCount.isFinite, row.minimumExpectedCount > 0,
+                    row.log2RatioHaldaneAnscombe.isFinite,
+                    row.log2RatioLower.isFinite, row.log2RatioUpper.isFinite,
+                    row.log2RatioLower <= row.log2RatioUpper,
+                    row.oddsRatioHaldaneAnscombe.isFinite, row.oddsRatioHaldaneAnscombe > 0,
+                    row.oddsRatioLower.isFinite, row.oddsRatioLower > 0,
+                    row.oddsRatioUpper.isFinite, row.oddsRatioUpper > 0,
+                    row.oddsRatioLower <= row.oddsRatioUpper,
+                    row.direction == "target" || row.direction == "reference"
+                        || row.direction == "equal",
+                    row.selectedTestIdentifier == "GTest-v1"
+                        || row.selectedTestIdentifier == "FisherExactTwoSided-v1",
+                    keynessIntervalContains(
+                        row.log2RatioHaldaneAnscombe,
+                        lower: row.log2RatioLower, upper: row.log2RatioUpper),
+                    keynessIntervalContains(
+                        row.oddsRatioHaldaneAnscombe,
+                        lower: row.oddsRatioLower, upper: row.oddsRatioUpper)
+                else { throw invalidResult }
+                let magnitude = abs(row.log2RatioHaldaneAnscombe)
+                if let previousMagnitude {
+                    guard
+                        magnitude < previousMagnitude
+                            || (magnitude == previousMagnitude && previousTerm < row.term)
+                    else { throw invalidResult }
+                }
+                previousMagnitude = magnitude
+                previousTerm = row.term
+                let nextTarget = targetTotal.addingReportingOverflow(row.targetFrequency)
+                let nextReference = referenceTotal.addingReportingOverflow(row.referenceFrequency)
+                guard !nextTarget.overflow, !nextReference.overflow,
+                    nextTarget.partialValue <= result.targetTokenCount,
+                    nextReference.partialValue <= result.referenceTokenCount
+                else { throw invalidResult }
+                targetTotal = nextTarget.partialValue
+                referenceTotal = nextReference.partialValue
+                if row.targetFrequency > 0 { targetTypeCount += 1 }
+                if row.referenceFrequency > 0 { referenceTypeCount += 1 }
+                guard targetTypeCount <= limits.maximumVocabularySize,
+                    referenceTypeCount <= limits.maximumVocabularySize
+                else { throw invalidResult }
+            }
+            guard targetTotal == result.targetTokenCount,
+                referenceTotal == result.referenceTokenCount
+            else { throw invalidResult }
+        }
+
+        nonisolated private static func keynessIntervalContains(
+            _ point: Double, lower: Double, upper: Double
+        ) -> Bool {
+            // A distant opposite endpoint must not enlarge the rounding allowance of this side.
+            let lowerTolerance = max(1e-12, 8 * max(point.ulp, lower.ulp))
+            let upperTolerance = max(1e-12, 8 * max(point.ulp, upper.ulp))
+            return (point >= lower || lower - point <= lowerTolerance)
+                && (point <= upper || point - upper <= upperTolerance)
+        }
+    #endif
 
     func exportInvestigation(to destinationDirectory: URL) async {
         await run(messageKey: "progress.exporting") {
@@ -710,15 +1514,65 @@ final class StudioHomeModel {
             )
             snapshot = try await active.snapshot()
             let markdownURL = destinationDirectory.appending(path: "report.md")
-            if let data = try? Data(contentsOf: markdownURL),
-                let text = String(data: data, encoding: .utf8)
-            {
-                exportPreviewMarkdown = text
-            } else {
-                exportPreviewMarkdown = nil
-            }
+            #if os(macOS)
+                exportPreviewMarkdown = await Self.loadExportPreview(at: markdownURL)
+            #else
+                if let data = try? Data(contentsOf: markdownURL),
+                    let text = String(data: data, encoding: .utf8)
+                {
+                    exportPreviewMarkdown = text
+                } else {
+                    exportPreviewMarkdown = nil
+                }
+            #endif
         }
     }
+
+    #if os(macOS)
+        /// Loads an optional, complete UTF-8 preview with a one-MiB input budget.
+        @concurrent
+        nonisolated static func loadExportPreview(at url: URL) async -> String? {
+            guard url.isFileURL, !Task.isCancelled else { return nil }
+            // Foundation keeps the NUL-terminated path alive until the synchronous open returns.
+            let descriptor = url.withUnsafeFileSystemRepresentation { fileSystemPath in
+                guard let fileSystemPath else { return Int32(-1) }
+                return Darwin.open(fileSystemPath, O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_CLOEXEC)
+            }
+            guard descriptor >= 0 else { return nil }
+            defer { _ = Darwin.close(descriptor) }
+            let maximumByteCount = 1_048_576
+            var initial = stat()
+            guard fstat(descriptor, &initial) == 0,
+                initial.st_mode & S_IFMT == S_IFREG,
+                initial.st_size >= 0, initial.st_size <= off_t(maximumByteCount)
+            else { return nil }
+            var data = Data()
+            data.reserveCapacity(Int(initial.st_size))
+            var buffer = [UInt8](repeating: 0, count: 65_536)
+            while true {
+                guard !Task.isCancelled else { return nil }
+                let capacity = min(buffer.count, maximumByteCount + 1 - data.count)
+                // The bounded buffer remains alive and writable for this synchronous POSIX read.
+                let count = buffer.withUnsafeMutableBytes { bytes in
+                    Darwin.read(descriptor, bytes.baseAddress, capacity)
+                }
+                if count < 0 {
+                    if errno == EINTR { continue }
+                    return nil
+                }
+                if count == 0 { break }
+                data.append(contentsOf: buffer.prefix(count))
+                guard data.count <= maximumByteCount else { return nil }
+            }
+            var final = stat()
+            guard !Task.isCancelled, fstat(descriptor, &final) == 0,
+                final.st_mode & S_IFMT == S_IFREG,
+                final.st_size == initial.st_size, data.count == Int(initial.st_size)
+            else { return nil }
+            let text = String(validating: data, as: UTF8.self)
+            return Task.isCancelled ? nil : text
+        }
+    #endif
 
     func reportOpenFailure() {
         lastFailure = presentationFailure(messageKey: "failure.project.invalid-package")
@@ -764,7 +1618,10 @@ final class StudioHomeModel {
         )
     }
 
-    private func initializePackage(at url: URL, allowsEmptyPlaceholder: Bool) async throws {
+    private func initializePackage(
+        at url: URL, allowsEmptyPlaceholder: Bool, documentAttachmentID: UUID? = nil
+    ) async throws {
+        guard documentAttachmentIsCurrent(documentAttachmentID) else { return }
         let accessGranted = url.startAccessingSecurityScopedResource()
         do {
             if allowsEmptyPlaceholder {
@@ -772,12 +1629,18 @@ final class StudioHomeModel {
                     Self.removeEmptyDocumentPlaceholder(at: url)
                 }.value
             }
+            guard documentAttachmentIsCurrent(documentAttachmentID) else {
+                throw CancellationError()
+            }
             let created = try await service.createProject(at: url)
-            try await activateSession(created, at: url, accessGranted: accessGranted)
+            try await activateSession(
+                created, at: url, accessGranted: accessGranted,
+                documentAttachmentID: documentAttachmentID)
         } catch {
             if accessGranted {
                 url.stopAccessingSecurityScopedResource()
             }
+            guard documentAttachmentIsCurrent(documentAttachmentID) else { return }
             throw error
         }
     }
@@ -797,18 +1660,32 @@ final class StudioHomeModel {
     private func activateSession(
         _ candidate: GlifiStudioProjectSession,
         at url: URL,
-        accessGranted: Bool
+        accessGranted: Bool,
+        documentAttachmentID: UUID? = nil
     ) async throws {
         let candidateSnapshot: GlifiStudioProjectSnapshot
         let heads: [GlifiStudioInvestigation]
         do {
+            guard documentAttachmentIsCurrent(documentAttachmentID) else {
+                throw CancellationError()
+            }
             candidateSnapshot = try await candidate.snapshot()
             heads = try await candidate.investigationHeads()
+            guard documentAttachmentIsCurrent(documentAttachmentID) else {
+                throw CancellationError()
+            }
         } catch {
             await candidate.close()
             throw error
         }
-        await closeSession()
+        #if os(macOS)
+            let previousSession = session
+            let previousSecurityScope = securityScopedProjectURL
+            activeExecution?.cancel()
+            activeExecution = nil
+        #else
+            await closeSession()
+        #endif
         session = candidate
         securityScopedProjectURL = accessGranted ? url : nil
         projectURL = url
@@ -820,6 +1697,10 @@ final class StudioHomeModel {
         if let investigation {
             editorialSelectedFindingIDs = Set(investigation.selectedFindingIDs)
         }
+        #if os(macOS)
+            await previousSession?.close()
+            previousSecurityScope?.stopAccessingSecurityScopedResource()
+        #endif
     }
 
     private func requireSession() throws -> GlifiStudioProjectSession {
@@ -830,6 +1711,51 @@ final class StudioHomeModel {
     }
 
     private func clearAnalysisState() {
+        #if os(macOS)
+            textAnalysisScope = .allSources
+            selectedTextAnalysisSourceRevisionIDs = []
+            summaryMethod = .sentenceTFIDFMean
+            summaryBudgetUnit = .sentences
+            summaryBudgetLimit = 3
+            summaryRedundancy = .none
+            summaryMMRLambda = 0.5
+            lastExtractiveSummary = nil
+            lastSummaryOptions = nil
+            clearSummarySource()
+            bm25QueryDraft = ""
+            bm25K1 = 1.2
+            bm25B = 0.75
+            lastBM25Ranking = nil
+            lastBM25Options = nil
+            clearBM25Source()
+            frequencyUnit = .forms
+            frequencyN = 2
+            frequencyStopwordsDraft = ""
+            frequencyMinimumLength = 1
+            frequencyMinimumCount = 1
+            frequencyMinimumDocumentFrequency = 1
+            frequencyMaximumDocumentProportion = 1
+            frequencyMaximumRowCount = 1_000
+            lastNGramFrequencies = nil
+            lastFrequencyOptions = nil
+            frequencyPage = 0
+            mtldThreshold = 0.72
+            lastLexicalDiversity = nil
+            lastMTLDOptions = nil
+            termFrequencyVariant = .raw
+            inverseDocumentFrequencyVariant = .smooth
+            termWeightingNormalization = .none
+            lastTermWeighting = nil
+            lastTermWeightingOptions = nil
+            termWeightingObservedCellCounts = []
+            termWeightingCellPage = 0
+            termWeightingTermPage = 0
+            keynessMaximumHypothesisCount = 100_000
+            keynessLowExpectedCountThreshold = 5
+            keynessConfidenceLevel = 0.95
+            lastKeynessRequestOptions = nil
+            keynessPage = 0
+        #endif
         lastProfile = nil
         qualitativeState = nil
         codingSegments = []
@@ -876,9 +1802,7 @@ final class StudioHomeModel {
 
     private func rememberProject(_ url: URL) {
         #if os(macOS)
-            let creationOptions: URL.BookmarkCreationOptions = [
-                .withSecurityScope, .minimalBookmark,
-            ]
+            let creationOptions: URL.BookmarkCreationOptions = [.withSecurityScope]
         #else
             let creationOptions: URL.BookmarkCreationOptions = [.minimalBookmark]
         #endif
@@ -889,20 +1813,54 @@ final class StudioHomeModel {
         )
     }
 
-    private func closeSession() async {
-        activeExecution?.cancel()
-        activeExecution = nil
-        await session?.close()
-        session = nil
-        securityScopedProjectURL?.stopAccessingSecurityScopedResource()
-        securityScopedProjectURL = nil
+    #if !os(macOS)
+        private func closeSession() async {
+            activeExecution?.cancel()
+            activeExecution = nil
+            await session?.close()
+            session = nil
+            securityScopedProjectURL?.stopAccessingSecurityScopedResource()
+            securityScopedProjectURL = nil
+        }
+    #endif
+
+    /// Owns the direct-analysis task and forwards caller cancellation until its terminal outcome.
+    private func runAnalysis(
+        messageKey: String,
+        operation: @escaping @MainActor () async throws -> Void
+    ) async {
+        #if os(macOS)
+            await run(messageKey: messageKey) {
+                let task = Task { @MainActor in try await operation() }
+                activeAnalysisTask = task
+                defer { activeAnalysisTask = nil }
+                try await withTaskCancellationHandler {
+                    try await task.value
+                } onCancel: {
+                    task.cancel()
+                }
+            }
+        #else
+            await run(messageKey: messageKey, operation: operation)
+        #endif
     }
 
-    private func run(messageKey: String, operation: () async throws -> Void) async {
-        guard !isBusy else { return }
+    @discardableResult
+    private func run(
+        messageKey: String, documentAttachmentID: UUID? = nil,
+        operation: () async throws -> Void
+    ) async -> Bool {
+        guard !isBusy, documentAttachmentIsCurrent(documentAttachmentID) else { return false }
         busyState = .working(messageKey: messageKey)
         lastFailure = nil
-        defer { busyState = .idle }
+        defer {
+            busyState = .idle
+            #if os(macOS)
+                let waiting = documentAttachmentWaiter
+                documentAttachmentWaiter = nil
+                waiting?.continuation.resume()
+            #endif
+        }
         do {
             try await operation()
         } catch let failure as GlifiStudioFailure {
@@ -910,6 +1868,7 @@ final class StudioHomeModel {
         } catch {
             lastFailure = presentationFailure(messageKey: "failure.internal.unexpected")
         }
+        return true
     }
 
     private func presentationFailure(messageKey: String) -> GlifiStudioFailure {

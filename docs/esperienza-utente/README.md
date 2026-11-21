@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-UX-001 |
 | Tipo | Specifica normativa dell'esperienza utente |
-| Versione | 1.0.0 |
+| Versione | 1.1.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-16 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Paradigma richiesto dall'iniziatore; baseline da validare con utenti |
 | Riferimenti | ISO 9241-210:2019; ISO 9241-11:2018; ISO/IEC 25010:2023; Apple Human Interface Guidelines; GS-MET-001 |
 
@@ -72,6 +72,7 @@ concettuali della specifica non costituiscono automaticamente API pubbliche.
 | GS-UX-001-14 | Linguaggio dell'interfaccia | [Vocabolario e localizzazione semantica](14-vocabolario-e-localizzazione-semantica.md) |
 | GS-UX-001-15 | Checklist G4 accessibilità | [Checklist G4 accessibilità e dispositivi](15-checklist-g4-accessibilita.md) |
 | GS-UX-001-16 | Codifica qualitativa | [Codifica qualitativa](16-codifica-qualitativa.md) |
+| GS-UX-001-17 | Completamento analitico macOS | [Laboratorio di analisi testuale](17-laboratorio-analisi-testuale.md) |
 
 ## Evoluzione
 

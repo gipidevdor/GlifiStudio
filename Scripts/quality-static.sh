@@ -19,8 +19,10 @@ Scripts/check-compliance.py
 Scripts/check-fixtures.py
 Scripts/check-architecture.sh
 Scripts/check-localization.py
+Scripts/check-failure-taxonomy.py
+Scripts/check-failure-messages.py
 Scripts/check-apple-baseline.py
 Scripts/check-app-store-baseline.py
 Scripts/check-swift-dialect.py
 
-print "quality-static: repository, docs, compliance, dialetto e baseline statiche superati"
+print "quality-static: repository, docs, compliance, failure, dialetto e baseline statiche superati"

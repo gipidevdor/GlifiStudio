@@ -46,6 +46,25 @@ preservando i metodi upstream già pubblicati.
 - Creazione e apertura documentale non distruttiva su macOS: gate CI `xcode-27` (`verify`,
   `app-store-baseline`) su `main` `a86a53b`, compreso `xcodebuild test` di `GlifiStudio-macOS`;
   GS-VER-163 superata, CMP-107 `verified`.
+
+- Keyness macOS e riuso corretto verificati sullo snapshot di 854 file:
+  448 test Core/Kit, 195 esecuzioni native, 153 righe di oracoli, due PDF/A-2u,
+  CLI/recovery e build/analisi/archivio macOS senza firma superati. CMP-198/199
+  `verified` nel solo perimetro automatico, con archivio riproducibile; GUI,
+  iPadOS e G4 restano distinti (GS-VER-198/199).
+
+- Collegamento documentale e ponderazione diretta macOS verificati sul nuovo
+  snapshot di 830 file: 433 test Core/Kit, 128 esecuzioni native, 153 righe di
+  oracoli e due PDF/A-2u; CLI/recovery e build/analisi/archivio macOS senza firma
+  superati. CMP-196/197 `verified` nel solo perimetro automatico; sorgenti e
+  risultati conservati, nessuna attestazione G4 o iPadOS (GS-VER-196/197).
+
+- Lotto applicativo macOS verificato su snapshot di 768 file con manifest SHA-256:
+  399 test Core/Kit, 45 esecuzioni native, 152 righe di oracoli, due PDF/A-2u,
+  CLI e recovery superati; build Debug/Release e analisi/archivio macOS senza firma
+  validi. Archiviati sorgenti e risultati riproducibili (GS-VER-188). Nessuna
+  attribuzione al gate iPadOS, CI remota, audit VoiceOver o G4.
+
 - Variante `CentroidCosine-v1` del riassunto estrattivo: gate nativo locale e quattro controlli
   CI `xcode-27` sulla head definitiva di #22 e su `main` `3fa454f`; GS-VER-149 superata,
   CMP-097 `verified`.
@@ -65,16 +84,63 @@ preservando i metodi upstream già pubblicati.
   differenti tramite traslazione locale e scale comuni; regressione Decimal,
   trasformazioni estreme e compatibilità upstream verificate in GS-VER-171.
 
+- Pianificazione DAG: heap minimo e confronto dei digest già memorizzati,
+  stesso ordine Kahn e riuso; stella da 5.000 nodi 7,66× più rapida nella fase
+  isolata e 19,88× con le ottimizzazioni digest (GS-VER-205).
+- Proiezione CA: due Set locali eliminano scansioni ripetute degli inclusi;
+  DTO e JSON invariati, caso grande 84,38× nella fase isolata. Il piccolo caso
+  misurato aggiunge meno di un microsecondo; memoria locale esplicita (GS-VER-206).
+- Identità content-addressed: validazione UTF-8 del solo linguaggio SHA-256
+  precedente e codifica esadecimale con buffer sicuro; 50.000 ID da 388,873 a
+  10,805 ms, senza modificare namespace, encoder JSON o hash (GS-VER-207).
+- Supporto dei benchmark condiviso esclusivamente dai test Core e Kit, senza
+  nuovi prodotti o dipendenze runtime; protocollo di misura invariato (GS-VER-208).
+
 - Raffinamento analitico: NMF con prodotti contigui e obiettivo senza matrice
   temporanea, partizioni temporali indicizzate e ordinamento bounded per
   descrittive a bassa cardinalità. TF-IDF/BM25 con meno allocazioni e failure
   tipizzate per overflow; BM25 conserva risultati finiti con `k1` estremo.
   Confronti completi e compromessi misurati in GS-VER-170.
 
+- Coordinate sorgente: lookup e composizione SpanMap con bounds binari e fallback
+  per rappresentazioni legacy non ordinate, conservando serializzazione e origini;
+  scenari Release 47,31× e 19,29× più rapidi (GS-VER-202).
+- Token speciali: riuso dei confini del run e limite esistente applicato prima
+  della copia del suffisso; 8.000 segni senza spazi da 764,499 a 5,236 ms,
+  token/frasi identici e cancellazione durante la preparazione (GS-VER-203).
+- CSV scientifico: indice locale dei riferimenti Evidence, ordine e byte invariati;
+  report sintetico con 2.048 Finding/Evidence da 385,538 a 234,297 ms (GS-VER-204).
+
+- Fonti e Artifact restituiscono byte verificati con una sola lettura/hash, anche
+  in recovery, preservando controlli di percorso, tipo, link, dimensione, digest
+  e cancellazione; benchmark Release delle API 1,90–1,99 volte più rapido
+  (GS-VER-200).
+- Il termine query viene normalizzato una volta per valutazione anziché a ogni
+  token. Sul workload Unicode preparato da 100.000 token, mediana Release da
+  187,203 a 88,112 ms con risultato completo invariato (GS-VER-201).
+
 - Ottimizzazione misurata dei kernel analitici: cache condensata HAC, distanze
   incrementali K-means++, buffer contigui PageRank e riduzione di visite e
   allocazioni per lessico, tempo, linguistica e riassunti. Formule, seed,
   ordinamenti e tolleranze invariati; benchmark Release riproducibili (GS-VER-169).
+
+- Il runtime macOS riceve energia, termica, pressione memoria e attività tramite
+  eventi owned, senza polling. Le sessioni verificano l'admission prima del
+  lavoro lungo e il piano rivaluta le condizioni fra nodi, preservando i
+  risultati e le generazioni già committate (GS-VER-182).
+- I quattro commit del package verificano il manifest candidato con lettura
+  bounded dal descriptor della transazione e confronto esatto dei byte attesi
+  prima della pubblicazione (GS-VER-183).
+- Roadmap, stati dei requisiti e adozione distinguono capacità già implementate,
+  verifiche storiche e audit ancora aperti (GS-VER-184).
+
+- Il parser testuale rifiuta gli AST oltre il limite di profondità anche quando
+  derivano da AND/OR o catene NEAR/BEFORE, mantenendo la radice a zero e le
+  failure tipizzate già previste (GS-VER-181).
+
+- Il loop `quality-static` esegue anche i controlli esistenti di tassonomia e
+  messaggi delle failure, anticipando il feedback senza richiedere Swift/Xcode
+  (GS-VER-180).
 
 - Revisione degli operatori nativi: Stress-1 con secondary ties, probabilità LDA
   come media dei prodotti, log-probabilità Naive Bayes robuste ai subnormali e
@@ -93,6 +159,38 @@ preservando i metodi upstream già pubblicati.
   progetto e valori iniziali localizzati in italiano e inglese (GS-VER-150).
 
 ### Aggiunto
+
+- Confronto keyness macOS con tutta la famiglia in pagine da 50, richiesta e
+  popolazioni effettive, test selezionato, p del G-test, q BH e intervalli.
+  Livello di confidenza configurabile tramite addizione Kit compatibile con il
+  costruttore a due argomenti; test e gate/preflight macOS superati sullo
+  snapshot conservato (GS-VER-198).
+
+- Ponderazione TF/TF-IDF diretta nel laboratorio macOS: 54 combinazioni esistenti,
+  matrice sparsa con celle osservate anche a peso zero, righe/fonti e vocabolario
+  completi, pagine da 50 con accesso diretto e ultima pagina. Risultati incoerenti
+  contenuti prima della presentazione con failure tipizzata; test dedicati e
+  gate/preflight macOS superati sullo snapshot conservato (GS-VER-197).
+
+- Laboratorio testuale post-0.1 macOS: riassunto estrattivo con due metodi e MMR,
+  ambito e budget dichiarati, fonte originale mappata tramite SpanMap e fallback
+  esplicito dei messaggi precedenti (ADR-0033, GS-VER-190).
+- Ranking BM25 contestuale, con query lessicale distinta da KWIC, punteggi zero
+  e termini fuori vocabolario conservati; frequenze/ngrammi configurabili con
+  pagine da 50 righe, denominatori e troncamento espliciti; MTLD con valori
+  finiti, infiniti o non disponibili distinti (GS-VER-191/192).
+
+- Completamento delle primitive analitiche specificate: distribuzioni lessicali,
+  fitting diagnostico Zipf/Heaps, statistiche descrittive Q7, Welch ANOVA,
+  aggregazioni temporali con esposizione e metriche di valutazione linguistica.
+  Nuove facciate GlifiKit concorrenti; contratti headless candidati (GS-VER-168).
+- Riassunti TextRank e LexRank continuo/a soglia nel percorso Core/Kit/CLI,
+  con parametri persistiti e diagnostica di convergenza; taglio HAC a soglia
+  e contratti numerici più robusti per K-means, NMF, Pearson e PageRank (GS-VER-168).
+
+- Profilo esplicito di verifica macOS: `make verify-macos` e
+  `make verify-app-store-macos` mantengono i controlli condivisi e omettono soltanto
+  le azioni iPadOS; i gate globali conservano il comportamento predefinito (GS-VER-188).
 
 - Request analitica Swift/JSON versionata e CLI `text-analysis --request` condivisa
   con GlifiKit: digest canonico, default espliciti, limiti, failure private e
@@ -535,6 +633,39 @@ preservando i metodi upstream già pubblicati.
   `summary.invalid-character-count`; selezione per rank e MMR confrontano il costo con il
   budget residuo, evitando overflow per costi estremi. Formula e payload invariati;
   regressioni ed evidenza GS-VER-167, CMP-164 torna `implemented` fino alla CI su `main`.
+
+- La keyness distingue nel descrittore i livelli di confidenza richiesti e
+  applica il limite della famiglia anche agli Artifact riusati; un budget diverso
+  ma sufficiente conserva il riuso. Due RED e quattro test Core superati,
+  inclusi guard su payload difforme e riapertura del legacy senza riscrittura;
+  nessuna formula o migrazione nuova, gate macOS superato sullo snapshot
+  conservato (GS-VER-199).
+
+- Il collegamento dei documenti macOS richiesto durante un'operazione occupata
+  attende il termine e conserva soltanto la richiesta più recente; cancellare
+  una richiesta non invalida quella successiva. Cinque regressioni automatiche e
+  gate/preflight macOS superati sullo snapshot conservato (GS-VER-196).
+
+- Le sei analisi dirette macOS possiedono il task e consentono Annulla senza
+  liberare busy prima del terminale; cancellazione del chiamante propagata,
+  risultati già committati preservati (GS-VER-195).
+- Anteprima Markdown macOS letta e decodificata fuori dal Main Actor, integrale
+  entro 1 MiB e facoltativa, senza invalidare l'export autorevole (GS-VER-194).
+- Tre etichette accessibili sostitutive rimosse dai testi di fonte e preview
+  soltanto su macOS; nessuna attestazione VoiceOver o G4 (GS-VER-193).
+
+- Riapri su macOS usa l’azione documentale nativa e conserva lo stato della finestra
+  chiamante; corretta la creazione dei bookmark security-scoped, con prove separate
+  del bookmark e del routing (GS-VER-187).
+
+- Annullamento dell’esecuzione nel modello macOS: handle e stato occupato restano
+  posseduti dal task fino all’esito terminale; il progresso viene ripulito anche
+  su cancellazione (GS-VER-186).
+
+- Dopo un errore durante l'importazione di più file, fonti e profilo mostrano
+  ogni commit già riuscito e i contatori di progresso vengono azzerati; la
+  sessione resta interrogabile senza ripetere gli import confermati (GS-VER-185).
+
 - L'app macOS usa il ciclo documentale nativo per Nuovo/Apri e propone il salvataggio del nuovo
   progetto prima dell'importazione. L'inizializzazione non cancella package esistenti e un'apertura
   fallita conserva la sessione precedente; test di regressione in `make test-macos` (GS-VER-163).

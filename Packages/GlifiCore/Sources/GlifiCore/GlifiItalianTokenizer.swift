@@ -14,16 +14,20 @@ public struct GlifiItalianTokenizer: GlifiTokenizing {
         "dott", "dr", "ecc", "ing", "prof", "sig", "sigg", "sigra",
     ]
     private static let trailingApostropheWords: Set<String> = ["be", "fa", "mo", "po", "sta", "va"]
+    private static let maximumEmailCharacterCount = 320
+    private static let maximumURLCharacterCount = 2_048
 
     /// Creates a stateless Italian tokenizer.
     public init() {}
 
     /// Produces deterministic surface tokens and sentence intervals.
     public func tokenize(_ text: String) throws -> GlifiTokenization {
-        let clusters = clusters(in: text)
+        let clusters = try clusters(in: text)
         var tokens: [GlifiSurfaceToken] = []
         tokens.reserveCapacity(min(clusters.count, 4_096))
         var index = 0
+        var specialRunEnd = -1
+        var specialTrimmedEnd = -1
 
         while index < clusters.count {
             if index.isMultiple(of: 4_096) {
@@ -36,7 +40,15 @@ public struct GlifiItalianTokenizer: GlifiTokenizing {
                 continue
             }
 
-            if let special = specialToken(startingAt: index, clusters: clusters, text: text) {
+            if index > specialRunEnd {
+                let bounds = try specialTokenBounds(startingAt: index, clusters: clusters)
+                specialRunEnd = bounds.end
+                specialTrimmedEnd = bounds.trimmedEnd
+            }
+            if let special = specialToken(
+                startingAt: index, candidateEnd: max(index, specialTrimmedEnd),
+                clusters: clusters, text: text)
+            {
                 tokens.append(
                     try token(
                         from: special.start,
@@ -108,11 +120,13 @@ public struct GlifiItalianTokenizer: GlifiTokenizing {
         )
     }
 
-    private func clusters(in text: String) -> [Cluster] {
+    private func clusters(in text: String) throws -> [Cluster] {
+        if !text.isEmpty { try Task.checkCancellation() }
         var result: [Cluster] = []
         result.reserveCapacity(min(text.count, 4_096))
         var offset = 0
         for character in text {
+            if result.count.isMultiple(of: 4_096) { try Task.checkCancellation() }
             let byteCount = String(character).utf8.count
             result.append(Cluster(character: character, start: offset, end: offset + byteCount))
             offset += byteCount
@@ -120,20 +134,36 @@ public struct GlifiItalianTokenizer: GlifiTokenizing {
         return result
     }
 
-    private func specialToken(
+    /// Resolves the shared suffix bounds once for each run without whitespace.
+    private func specialTokenBounds(
         startingAt start: Int,
-        clusters: [Cluster],
-        text: String
-    ) -> (start: Cluster, end: Int, kind: GlifiTokenKind)? {
+        clusters: [Cluster]
+    ) throws -> (end: Int, trimmedEnd: Int) {
         var end = start
         while end + 1 < clusters.count, !clusters[end + 1].isWhitespace {
+            if end.isMultiple(of: 4_096) { try Task.checkCancellation() }
             end += 1
         }
 
-        var candidateEnd = end
-        while candidateEnd > start, clusters[candidateEnd].isTerminalDelimiter {
-            candidateEnd -= 1
+        var trimmedEnd = end
+        while trimmedEnd > start, clusters[trimmedEnd].isTerminalDelimiter {
+            if trimmedEnd.isMultiple(of: 4_096) { try Task.checkCancellation() }
+            trimmedEnd -= 1
         }
+        return (end, trimmedEnd)
+    }
+
+    private func specialToken(
+        startingAt start: Int,
+        candidateEnd: Int,
+        clusters: [Cluster],
+        text: String
+    ) -> (start: Cluster, end: Int, kind: GlifiTokenKind)? {
+        // Cluster distance counts Characters after trimming, matching both existing limits.
+        guard
+            candidateEnd - start + 1
+                <= max(Self.maximumEmailCharacterCount, Self.maximumURLCharacterCount)
+        else { return nil }
         guard
             let candidate = try? GlifiUTF8Range(
                 start: clusters[start].start,
@@ -356,7 +386,7 @@ public struct GlifiItalianTokenizer: GlifiTokenizing {
     }
 
     private func isEmail(_ candidate: String) -> Bool {
-        guard candidate.count <= 320,
+        guard candidate.count <= Self.maximumEmailCharacterCount,
             candidate.filter({ $0 == "@" }).count == 1,
             let separator = candidate.firstIndex(of: "@")
         else {
@@ -369,7 +399,7 @@ public struct GlifiItalianTokenizer: GlifiTokenizing {
     }
 
     private func isURL(_ candidate: String) -> Bool {
-        guard candidate.count <= 2_048,
+        guard candidate.count <= Self.maximumURLCharacterCount,
             let components = URLComponents(string: candidate),
             let scheme = components.scheme?.lowercased(),
             scheme == "http" || scheme == "https"

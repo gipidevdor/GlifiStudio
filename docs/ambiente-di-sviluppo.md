@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-DEV-001 |
 | Tipo | Guida controllata dell'ambiente di sviluppo |
-| Versione | 1.1.0 |
+| Versione | 1.1.1 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-10-03 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | Non ancora approvato |
 
 ## Prerequisiti
@@ -15,7 +15,30 @@
 - Xcode 27.0 o versione compatibile successiva;
 - Apple Swift 6.4 o successiva compatibile della serie 6, fornita da Xcode 27;
 - SDK macOS e iOS/iPadOS 27;
-- runtime simulatore iPadOS supportato da Xcode.
+- runtime simulatore iPadOS supportato da Xcode;
+- Python 3.10 o successivo, disponibile come `python3` nel `PATH` dei controlli.
+
+Gli script di verifica usano API Python introdotte nella 3.10, fra cui
+`zip(strict=True)`: il Python 3.9 fornito da alcune installazioni macOS non è
+sufficiente. La verifica del 2026-11-21 usa Python 3.12.14 già installato tramite
+mise, selezionato nel `PATH` senza cambiare il Python di sistema.
+
+Gli oracoli numerici richiedono inoltre `Rscript` e i pacchetti R dichiarati nei
+sorgenti in `Packages/GlifiCore/Tests/Oracles/R`; la verifica PDF/A richiede
+veraPDF. Questi strumenti servono allo sviluppo, non sono dipendenze runtime
+delle app. `make check-oracles` e `make check-pdfa` li richiedono esplicitamente;
+nel gate generale un controllo opzionale saltato deve essere riportato come tale.
+
+Il validatore verificato durante GS-VER-185 è conservato come strumento attivo
+nella cache dedicata di Glifi Studio, senza installazione di sistema o modifiche
+al `PATH` globale. Per selezionarlo esplicitamente:
+
+```sh
+VERAPDF="$HOME/Library/Caches/GlifiStudio/tools/veraPDF/1.30.4/verapdf" make verify
+```
+
+La provenienza e il digest del JAR sono registrati in
+[GS-VER-185](evidenze/GS-VER-185-importazione-parziale.md).
 
 La baseline di sviluppo rilevata il 2026-09-15 è Xcode 27.0 (`27A266a`) con
 Apple Swift 6.4 (`swiftlang-6.4.0.34.1`). Le versioni minime di deployment sono
@@ -106,7 +129,10 @@ Linux. `make verify` resta il gate completo da eseguire prima di integrare una
 modifica. Il contratto operativo è in [GS-DEV-002](loop-di-sviluppo-e-qualita.md).
 
 Per modifiche all'app o alla distribuzione, `make verify-app-store` aggiunge analisi
-statica e archivi senza firma. `make app-store-submission-check` verifica invece i
+statica e archivi senza firma. Il focus macOS esplicito usa invece
+`make verify-macos` e `make verify-app-store-macos`, con tutti i controlli
+condivisi e soltanto le azioni applicative macOS. Questo profilo non attesta il
+gate globale macOS/iPadOS; il comportamento predefinito resta invariato. `make app-store-submission-check` verifica invece i
 prerequisiti umani ed esterni e deve restare bloccante finché non sono documentati.
 
 ## Baseline Apple

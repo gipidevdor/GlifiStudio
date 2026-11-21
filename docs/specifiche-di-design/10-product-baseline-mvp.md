@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-PROD-001 |
 | Tipo | Product baseline e criterio di completezza |
-| Versione | 1.1.0 |
+| Versione | 1.1.1 |
 | Stato | Baseline controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-16 |
+| Ultima modifica | 2026-11-21 |
 | Approvazione | G1 leggero approvato: Must 0.1 congelati; G2 headless evidenziato; G3 dipende dalla UI Must |
 | Riferimenti | GS-VIS-001; GS-SRS-001; GS-UX-001; GS-MET-001; ADR-0011; ADR-0016 |
 
@@ -105,6 +105,16 @@ nei flussi Must.
 
 “Fuori” significa nessuna promessa UI, API stabile o formato persistente anticipato.
 Le specifiche scientifiche restano catalogo di evoluzione, non scope implicito.
+
+## Estensioni applicative successive
+
+La baseline 0.1 sopra resta storica e invariata. La richiesta del 2026-11-21 e
+[ADR-0033](../adr/0033-laboratorio-analisi-testuale-macos.md) autorizzano il programma
+post-0.1 di riassunto estrattivo, ranking BM25 e frequenze/MTLD nel laboratorio
+macOS, con DoR e prove separate. L'esclusione del riassunto dalla release 0.1 non
+impedisce questo incremento successivo; nessun nuovo Must viene aggiunto alla 0.1.
+La presenza di una API o del programma non dichiara completate tutte le famiglie,
+la UI, iPadOS o G4.
 
 ## Completezza qualitativa
 

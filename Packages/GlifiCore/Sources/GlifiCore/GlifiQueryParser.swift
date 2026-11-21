@@ -46,7 +46,32 @@ private struct QuerySyntaxParser {
         guard index == tokens.count else {
             throw failure("query.unexpected-token", at: current)
         }
+        try validateTreeDepth(root)
         return root
+    }
+
+    private func validateTreeDepth(_ root: GlifiQueryNode) throws {
+        var pending: [(node: GlifiQueryNode, depth: Int)] = [(root, 0)]
+        while let (node, depth) = pending.popLast() {
+            try Task.checkCancellation()
+            guard depth <= limits.maximumDepth else {
+                throw failure(
+                    "query.depth-limit-exceeded", category: .insufficientResources, at: nil)
+            }
+            switch node {
+            case .matchAll, .term, .phrase, .regex, .range, .exists:
+                break
+            case let .proximity(left, right, _, _, _):
+                pending.append((left, depth + 1))
+                pending.append((right, depth + 1))
+            case let .not(child), let .within(child, _):
+                pending.append((child, depth + 1))
+            case let .and(children), let .or(children):
+                for child in children {
+                    pending.append((child, depth + 1))
+                }
+            }
+        }
     }
 
     private mutating func parseOr(depth: Int) throws -> GlifiQueryNode {

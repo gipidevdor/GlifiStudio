@@ -216,8 +216,9 @@ private struct QueryEvaluationContext {
                 anchors: [QueryTokenInterval(start: 0, end: tokens.count)]
             )
         case let .term(field, value, _):
+            let expected = comparable(value, field: field)
             return try tokenMatches(field: field) { candidate in
-                comparable(candidate, field: field) == comparable(value, field: field)
+                comparable(candidate, field: field) == expected
             }
         case let .regex(field, pattern, flags):
             let matcher = try SafeTokenPattern(

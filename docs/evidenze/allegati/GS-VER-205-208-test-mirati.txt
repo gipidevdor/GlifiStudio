@@ -1,0 +1,34 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Log osservato con percorsi personali sanificati.
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test "La proiezione non CA conserva tutti i campi e la serializzazione del riferimento" started.
+◇ Test "La proiezione CA conserva appartenenza, ordine e DTO completo del riferimento" started.
+◇ Test "La proiezione Kit coincide con il riferimento e misura soltanto workload espliciti" started.
+✔ Test "La proiezione non CA conserva tutti i campi e la serializzazione del riferimento" passed after 0.002 seconds.
+✔ Test "La proiezione Kit coincide con il riferimento e misura soltanto workload espliciti" passed after 0.002 seconds.
+✔ Test "La proiezione CA conserva appartenenza, ordine e DTO completo del riferimento" passed after 0.005 seconds.
+✔ Test run with 3 tests in 0 suites passed after 0.005 seconds.
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test "La coda DAG mantiene limiti, collisioni, errori di dipendenza e priorità della failure ciclica" started.
+◇ Test "Analysis DAG deduplica, ordina, invalida e riusa soltanto rami validi" started.
+◇ Test "Digest, identificatori e descrittori conservano il contratto e misurano workload espliciti" started.
+◇ Test "La ricerca e la composizione di SpanMap coincidono con il riferimento lineare completo" started.
+◇ Test "Analysis DAG rifiuta dipendenze mancanti, cicli e budget superati" started.
+◇ Test "Il tokenizer conserva l'output legacy e misura soltanto workload espliciti" started.
+◇ Test "Il renderer CSV coincide con il riferimento e misura soltanto workload espliciti" started.
+◇ Test "Permutazioni e round-trip del DAG preservano nodi, spareggi, antenati, invalidazione e riuso" started.
+◇ Test "La costruzione del DAG coincide con Kahn scalare e misura soltanto workload espliciti" started.
+✔ Test "La ricerca e la composizione di SpanMap coincidono con il riferimento lineare completo" passed after 0.001 seconds.
+✔ Test "Il tokenizer conserva l'output legacy e misura soltanto workload espliciti" passed after 0.001 seconds.
+✔ Test "Analysis DAG rifiuta dipendenze mancanti, cicli e budget superati" passed after 0.001 seconds.
+✔ Test "La coda DAG mantiene limiti, collisioni, errori di dipendenza e priorità della failure ciclica" passed after 0.002 seconds.
+✔ Test "Analysis DAG deduplica, ordina, invalida e riusa soltanto rami validi" passed after 0.003 seconds.
+✔ Test "Il renderer CSV coincide con il riferimento e misura soltanto workload espliciti" passed after 0.006 seconds.
+✔ Test "Digest, identificatori e descrittori conservano il contratto e misurano workload espliciti" passed after 0.028 seconds.
+✔ Test "La costruzione del DAG coincide con Kahn scalare e misura soltanto workload espliciti" passed after 0.028 seconds.
+✔ Test "Permutazioni e round-trip del DAG preservano nodi, spareggi, antenati, invalidazione e riuso" passed after 0.084 seconds.
+✔ Test run with 9 tests in 0 suites passed after 0.084 seconds.

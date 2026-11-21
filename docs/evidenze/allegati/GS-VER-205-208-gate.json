@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-21",
+  "command": "make verify",
+  "profile": "macOS and iPadOS",
+  "exitCode": 0,
+  "coreTests": 391,
+  "kitTests": 59,
+  "macOSDistinctTests": 55,
+  "macOSDeviceExecutions": 195,
+  "oracleRowsReproduced": 153,
+  "textAnalysisCLIChecks": 51,
+  "textAnalysisFixtures": 15,
+  "recoveryCheckpoints": 22,
+  "validPDFA2uFiles": 2,
+  "builds": [
+    "macOS Debug (test build)",
+    "macOS Release",
+    "iPadOS Debug",
+    "iPadOS Release"
+  ],
+  "simulatorRuntimeTestsExecuted": false,
+  "runtimeAndVerificationInputFiles": 376,
+  "inputsUnchangedDuringGate": true,
+  "productSourceSHA256": {
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiAnalysisGraph.swift": "7fde3f0ebf3da8e0fce5a832f3f9a1b75622c71ae1428d42605c831c9086c0d9",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiIdentifiers.swift": "7e518c114fe27a66456a1ad30c0bde383631ce179266b58e7fa0468e1bb935e6",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiDigestEncoding.swift": "ec5593b55a10bebe4e2a796f881b2d296b697dce9a0571a1bd5897bb66114c1c",
+    "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift": "188dc384753de9803ce44927b2facc83efd4205fc7b8e11ff8251ea4e159d60e"
+  },
+  "logs": {
+    "GS-VER-205-208-gate.txt": {
+      "rawSHA256": "9c74c2150bfd4d273d08dfb025fbb605738af878ddad80a330f17ba67f3b289f",
+      "retainedSHA256": "e23def92bfab1f55db4b926a0b78e49998b68a131e31765d9e6915fc3e996d3d"
+    },
+    "GS-VER-205-208-test-mirati.txt": {
+      "rawSHA256": "6129be6f3a3bbf57dcb557316fa57d6ef14ae065cfd5d4d2f8d1796fa6ce3e11",
+      "retainedSHA256": "eb210ff317061d20c2d5888a8971df7f72b0ab181b00792163b3685346e7b2a3"
+    },
+    "GS-VER-208-guard-debug.txt": {
+      "rawSHA256": "dc2437b5c42254564706ea95bf7a196510b6df9c4cc83fbc304c450f3ddb96f8",
+      "retainedSHA256": "8b9bf9b7e4bb7e3d7dde78072e8e6e98d75235f14222557f72869181ba780e70"
+    }
+  },
+  "debugMeasurementGuard": {
+    "passed": true,
+    "evidence": "GS-VER-208-guard-debug.json",
+    "negativeControlExpectedExitCode": 1
+  }
+}

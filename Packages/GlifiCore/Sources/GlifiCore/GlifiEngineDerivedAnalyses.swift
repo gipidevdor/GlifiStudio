@@ -586,10 +586,10 @@ extension GlifiEngine {
         }
     }
 
-    /// Resolves the selected sentences of a summary against the stored source texts.
+    /// Resolves selected sentences against extracted text and maps their original-source spans.
     ///
-    /// The payload keeps only intervals: the text is read from the sources of the
-    /// current generation and returned unchanged, in source order.
+    /// The payload keeps extracted intervals: text and SpanMap are reconstructed from the
+    /// incorporated revisions. Original-source coordinates never reuse extracted offsets.
     public func resolveSummarySentences(
         _ summary: GlifiCorpusExtractiveSummaryAnalysis,
         in project: GlifiProjectPackage,
@@ -609,17 +609,19 @@ extension GlifiEngine {
                 from: project,
                 maximumSourceByteCount: corpusOptions.maximumSourceByteCount
             )
-            let textByID = Dictionary(
-                uniqueKeysWithValues: sources.map { ($0.sourceRevisionID.canonicalValue, $0.text) }
+            let sourceByID = Dictionary(
+                uniqueKeysWithValues: sources.map { ($0.sourceRevisionID.canonicalValue, $0) }
             )
             return try selected.map { sentence in
-                guard let text = textByID[sentence.sourceRevisionID],
-                    let resolved = sentence.range.text(in: text)
+                guard let source = sourceByID[sentence.sourceRevisionID],
+                    let resolved = sentence.range.text(in: source.text)
                 else {
                     throw derivedAnalysisFailure(
                         "summary.sentence-range-invalid", category: .invariantViolation)
                 }
-                return GlifiResolvedSummarySentence(sentence: sentence, text: resolved)
+                return try GlifiResolvedSummarySentence(
+                    sentence: sentence, text: resolved,
+                    sourceRanges: source.spanMap.sourceRanges(for: sentence.range))
             }
         }
     }

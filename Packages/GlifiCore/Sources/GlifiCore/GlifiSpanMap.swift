@@ -61,6 +61,18 @@ public struct GlifiSpanMap: Codable, Equatable, Sendable {
     /// Ordered segments covering every output byte exactly once.
     public let segments: [GlifiSpanMapSegment]
 
+    private let supportsIndexedLookup: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case contractIdentifier
+        case sourceRevisionID
+        case inputSpace
+        case outputSpace
+        case inputByteCount
+        case outputByteCount
+        case segments
+    }
+
     /// Creates and validates a total, bounded span map.
     public init(
         contractIdentifier: String,
@@ -80,6 +92,7 @@ public struct GlifiSpanMap: Codable, Equatable, Sendable {
         }
 
         var nextOutputOffset = 0
+        var supportsIndexedLookup = true
         for segment in segments {
             guard segment.outputRange.start == nextOutputOffset,
                 segment.outputRange.end <= outputByteCount,
@@ -109,6 +122,9 @@ public struct GlifiSpanMap: Codable, Equatable, Sendable {
                     throw spanMapFailure("text.invalid-span-map")
                 }
             }
+            // Contiguous coverage implies ordering only when every nested range is nonempty.
+            supportsIndexedLookup =
+                supportsIndexedLookup && segment.outputRange.end > segment.outputRange.start
             nextOutputOffset = segment.outputRange.end
         }
         guard nextOutputOffset == outputByteCount else {
@@ -122,15 +138,31 @@ public struct GlifiSpanMap: Codable, Equatable, Sendable {
         self.inputByteCount = inputByteCount
         self.outputByteCount = outputByteCount
         self.segments = segments
+        self.supportsIndexedLookup = supportsIndexedLookup
+    }
+
+    /// Decodes the existing fields and derives a local index invariant without changing legacy validation.
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        contractIdentifier = try container.decode(String.self, forKey: .contractIdentifier)
+        sourceRevisionID = try container.decode(SourceRevisionID.self, forKey: .sourceRevisionID)
+        inputSpace = try container.decode(GlifiTextCoordinateSpace.self, forKey: .inputSpace)
+        outputSpace = try container.decode(GlifiTextCoordinateSpace.self, forKey: .outputSpace)
+        inputByteCount = try container.decode(Int.self, forKey: .inputByteCount)
+        outputByteCount = try container.decode(Int.self, forKey: .outputByteCount)
+        segments = try container.decode([GlifiSpanMapSegment].self, forKey: .segments)
+        supportsIndexedLookup = Self.segmentsSupportIndexedLookup(segments)
     }
 
     /// Resolves every source interval contributing to one extracted interval.
+    ///
+    /// Ordered segments use binary bounds; nonconforming legacy decoding retains linear traversal.
     public func sourceRanges(for outputRange: GlifiUTF8Range) throws -> [GlifiUTF8Range] {
         guard outputRange.end <= outputByteCount else {
             throw spanMapFailure("text.span-out-of-bounds")
         }
         var result: [GlifiUTF8Range] = []
-        for segment in segments {
+        for segment in overlappingSegments(for: outputRange) {
             let lower = max(outputRange.start, segment.outputRange.start)
             let upper = min(outputRange.end, segment.outputRange.end)
             guard lower < upper else { continue }
@@ -190,7 +222,7 @@ public struct GlifiSpanMap: Codable, Equatable, Sendable {
             var origins: [GlifiUTF8Range] = []
             var weakest = strength(segment.kind)
             for range in segment.inputRanges {
-                for piece in inner.segments {
+                for piece in inner.overlappingSegments(for: range) {
                     let lower = max(range.start, piece.outputRange.start)
                     let upper = min(range.end, piece.outputRange.end)
                     guard lower < upper else { continue }
@@ -234,6 +266,44 @@ public struct GlifiSpanMap: Codable, Equatable, Sendable {
             inputSpace: inner.inputSpace,
             outputSpace: outputSpace
         )
+    }
+
+    private static func segmentsSupportIndexedLookup(_ segments: [GlifiSpanMapSegment]) -> Bool {
+        var previousEnd: Int?
+        for segment in segments {
+            let range = segment.outputRange
+            guard range.start < range.end else { return false }
+            if let previousEnd, range.start < previousEnd { return false }
+            previousEnd = range.end
+        }
+        return true
+    }
+
+    private func overlappingSegments(for range: GlifiUTF8Range) -> ArraySlice<GlifiSpanMapSegment> {
+        guard supportsIndexedLookup else { return segments[...] }
+        guard range.start < range.end else { return segments[0..<0] }
+
+        var lower = 0
+        var upper = segments.count
+        while lower < upper {
+            let middle = lower + (upper - lower) / 2
+            if segments[middle].outputRange.end <= range.start {
+                lower = middle + 1
+            } else {
+                upper = middle
+            }
+        }
+        let first = lower
+        upper = segments.count
+        while lower < upper {
+            let middle = lower + (upper - lower) / 2
+            if segments[middle].outputRange.start < range.end {
+                lower = middle + 1
+            } else {
+                upper = middle
+            }
+        }
+        return segments[first..<lower]
     }
 
     private func append(_ range: GlifiUTF8Range, to result: inout [GlifiUTF8Range]) throws {

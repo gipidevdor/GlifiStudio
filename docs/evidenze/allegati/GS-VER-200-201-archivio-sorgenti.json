@@ -1,0 +1,7 @@
+{
+  "archiveSHA256": "0df3e8f7374e1e2409b2795208a935c8503f8a3d480395dc0c72d000d3519fad",
+  "archiveByteCount": 648556,
+  "location": "~/Library/Caches/GlifiStudio/evidence/optimization-200-201-2026-11-21/verified-benchmark-source.tar.gz",
+  "contents": "Frozen benchmark Package/Fixtures and two baseline product source files; no build cache",
+  "baseRevision": "a86a53b512bd777f191c89692e0c573a3d37a3ff"
+}

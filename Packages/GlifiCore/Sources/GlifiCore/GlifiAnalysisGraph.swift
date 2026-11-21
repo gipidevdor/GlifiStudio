@@ -619,16 +619,14 @@ public struct GlifiAnalysisGraph: Codable, Equatable, Sendable {
                 indegree[node.id, default: 0] += 1
             }
         }
-        var ready = indegree.filter { $0.value == 0 }.map(\.key).sorted(by: idOrder)
+        var ready = AnalysisNodeIDMinHeap(indegree.filter { $0.value == 0 }.map(\.key))
         var order: [AnalysisNodeID] = []
-        while let next = ready.first {
-            ready.removeFirst()
+        while let next = ready.removeMinimum() {
             order.append(next)
-            for child in children[next, default: []].sorted(by: idOrder) {
+            for child in children[next, default: []] {
                 indegree[child, default: 0] -= 1
                 if indegree[child] == 0 {
-                    ready.append(child)
-                    ready.sort(by: idOrder)
+                    ready.insert(child)
                 }
             }
         }
@@ -719,19 +717,66 @@ public struct GlifiAnalysisGraph: Codable, Equatable, Sendable {
     }
 }
 
+private struct AnalysisNodeIDMinHeap {
+    private var elements: [AnalysisNodeID]
+
+    init(_ values: [AnalysisNodeID]) {
+        elements = values
+        for index in (0..<(elements.count / 2)).reversed() {
+            siftDown(from: index)
+        }
+    }
+
+    mutating func insert(_ value: AnalysisNodeID) {
+        elements.append(value)
+        var index = elements.count - 1
+        while index > 0 {
+            let parent = (index - 1) / 2
+            guard idOrder(value, elements[parent]) else { break }
+            elements[index] = elements[parent]
+            index = parent
+        }
+        elements[index] = value
+    }
+
+    mutating func removeMinimum() -> AnalysisNodeID? {
+        guard let minimum = elements.first, let last = elements.popLast() else { return nil }
+        if !elements.isEmpty {
+            elements[0] = last
+            siftDown(from: 0)
+        }
+        return minimum
+    }
+
+    private mutating func siftDown(from start: Int) {
+        let value = elements[start]
+        var index = start
+        while index < elements.count / 2 {
+            var child = index * 2 + 1
+            let right = child + 1
+            if right < elements.count, idOrder(elements[right], elements[child]) {
+                child = right
+            }
+            guard idOrder(elements[child], value) else { break }
+            elements[index] = elements[child]
+            index = child
+        }
+        elements[index] = value
+    }
+}
+
 private func canonical(_ value: String) -> String { value.precomposedStringWithCanonicalMapping }
 private func idOrder(_ lhs: AnalysisNodeID, _ rhs: AnalysisNodeID) -> Bool {
-    lhs.canonicalValue < rhs.canonicalValue
+    lhs.digest < rhs.digest
 }
 func isSHA256Digest(_ value: String) -> Bool {
-    value.hasPrefix("sha256:") && value.count == 71
-        && value.dropFirst(7).allSatisfy { "0123456789abcdef".contains($0) }
+    isCanonicalSHA256Digest(value)
 }
 private func digest(of value: some Encodable) throws -> String {
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
     let hash = SHA256.hash(data: try encoder.encode(value))
-    return "sha256:" + hash.map { String(format: "%02x", $0) }.joined()
+    return canonicalSHA256Digest(hash)
 }
 private func analysisGraphFailure(_ code: String, category: GlifiFailureCategory = .invalidInput)
     -> GlifiFailure

@@ -221,6 +221,21 @@ public struct GlifiProjectSimilarityResult: Equatable, Sendable {
     }
 }
 
+/// Bounded synchronous runtime signals, separate from asynchronous progress callbacks.
+public struct GlifiSystemConditionsProvider: Sendable {
+    private let readSnapshot: @Sendable () -> GlifiSystemConditions
+
+    /// Creates a provider whose reads must be O(1), without polling or blocking I/O.
+    public init(_ snapshot: @escaping @Sendable () -> GlifiSystemConditions) {
+        readSnapshot = snapshot
+    }
+
+    /// Returns the latest immutable snapshot at one safe execution boundary.
+    public func snapshot() -> GlifiSystemConditions {
+        readSnapshot()
+    }
+}
+
 /// Provides the headless entry point to GlifiCore capabilities.
 public actor GlifiEngine {
     private let defaultLanguageConfiguration: GlifiLanguageConfiguration
@@ -679,6 +694,9 @@ public actor GlifiEngine {
     }
 
     /// Executes every admitted step of one deterministic plan and reports bounded progress.
+    ///
+    /// An optional bounded provider refreshes admission before planning, each node and
+    /// finalization. Without one, the explicit immutable system snapshot remains authoritative.
     public func executeAnalysisPlan(
         in project: GlifiProjectPackage,
         request: GlifiAnalysisPlanRequest,
@@ -686,26 +704,32 @@ public actor GlifiEngine {
         workIntent: GlifiWorkIntent = .userInitiated,
         systemConditions: GlifiSystemConditions = .current(),
         availableProcessorCount: Int = ProcessInfo.processInfo.activeProcessorCount,
+        systemConditionsProvider: GlifiSystemConditionsProvider? = nil,
         progress: @escaping @Sendable (GlifiOperationProgress) async -> Void = { _ in }
     ) async throws -> GlifiProjectAnalysisExecutionResult {
         do {
             try Task.checkCancellation()
-            let recommendation = GlifiRuntimePolicy.recommendation(
-                for: workIntent,
-                conditions: systemConditions,
-                availableProcessorCount: availableProcessorCount
-            )
-            guard recommendation.allowsNewWork else {
-                throw GlifiFailure(
-                    code: "runtime.admission-denied",
-                    category: .insufficientResources,
-                    operation: .executePlan,
-                    retryDisposition: .afterConditionsChange,
-                    retainedState: .lastCommittedGeneration,
-                    messageKey: "failure.runtime.admission-denied",
-                    arguments: ["operatingProfile": recommendation.profile.rawValue]
+            func admitWork() throws -> GlifiExecutionRecommendation {
+                try Task.checkCancellation()
+                let recommendation = GlifiRuntimePolicy.recommendation(
+                    for: workIntent,
+                    conditions: systemConditionsProvider?.snapshot() ?? systemConditions,
+                    availableProcessorCount: availableProcessorCount
                 )
+                guard recommendation.allowsNewWork else {
+                    throw GlifiFailure(
+                        code: "runtime.admission-denied",
+                        category: .insufficientResources,
+                        operation: .executePlan,
+                        retryDisposition: .afterConditionsChange,
+                        retainedState: .lastCommittedGeneration,
+                        messageKey: "failure.runtime.admission-denied",
+                        arguments: ["operatingProfile": recommendation.profile.rawValue]
+                    )
+                }
+                return recommendation
             }
+            let recommendation = try admitWork()
 
             var progressRevision = 0
             await progress(
@@ -720,6 +744,7 @@ public actor GlifiEngine {
                 )
             )
             progressRevision += 1
+            _ = try admitWork()
             let planned = try await planAnalysis(in: project, request: request)
             await progress(
                 try GlifiOperationProgress(
@@ -790,7 +815,7 @@ public actor GlifiEngine {
             progressRevision += 1
 
             for step in planned.plan.steps {
-                try Task.checkCancellation()
+                _ = try admitWork()
                 guard
                     Set(step.dependencyStepIdentifiers).isSubset(
                         of: completedStepIdentifiers
@@ -851,7 +876,9 @@ public actor GlifiEngine {
                         analysisNodeID: output.analysisNodeID,
                         outputSchemaIdentifier: record.node.descriptor.outputSchemaIdentifier
                     )
-                default:
+                case .analyzeAssociation, .analyzeWindowCollocations, .analyzeWindowNetwork,
+                    .analyzeCorrespondence, .clusterDocuments, .compareSimilarity,
+                    .compareGroupMetric:
                     let output = try await executeExtendedStep(
                         step,
                         plan: planned.plan,
@@ -925,6 +952,7 @@ public actor GlifiEngine {
                 )
             )
             progressRevision += 1
+            _ = try admitWork()
             let interpretationOutput = try await interpretationArtifact(
                 planned: planned,
                 executionArtifacts: artifacts,
@@ -1846,9 +1874,14 @@ public actor GlifiEngine {
             comparison.targetCorpusDigest == target.corpusDigest,
             comparison.referenceCorpusDigest == reference.corpusDigest,
             comparison.lowExpectedCountThreshold == options.lowExpectedCountThreshold,
+            comparison.confidenceLevel == options.confidenceLevel,
             comparison.numericPolicyIdentifier == "IEEE-754-binary64-ordered-reduction-v1"
         else {
             throw analysisArtifactFailure("keyness.descriptor-result-mismatch")
+        }
+        guard comparison.terms.count <= options.maximumHypothesisCount else {
+            throw keynessFailure(
+                "keyness.hypothesis-limit-exceeded", category: .insufficientResources)
         }
     }
 

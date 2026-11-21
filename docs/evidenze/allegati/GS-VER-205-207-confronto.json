@@ -1,0 +1,521 @@
+{
+  "frozenBaselineFiles": 279,
+  "structuresChanges": [
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiAnalysisGraph.swift",
+    "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift"
+  ],
+  "candidateChanges": [
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiAnalysisGraph.swift",
+    "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiIdentifiers.swift",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiDigestEncoding.swift"
+  ],
+  "unchangedFrozenFiles": 276,
+  "measurements": [
+    {
+      "identifier": "dag-construction-chain-1000",
+      "fixtureDigest": "sha256:419c42a43284409f40b7d5246e8ca489231d06a571964fd560e8a7b39cc73f33",
+      "resultDigest": "sha256:1a9c0391a7188248dfb6a867d61ebe2e1f123f92e20349dcbf8dd7ba5825dd09",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 78.30358299999999,
+          "rangeMilliseconds": [
+            77.52187500000001,
+            80.579875
+          ]
+        },
+        "structures": {
+          "medianMilliseconds": 67.340125,
+          "rangeMilliseconds": [
+            67.293375,
+            67.591083
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 25.895875,
+          "rangeMilliseconds": [
+            25.859292,
+            26.186791
+          ]
+        }
+      },
+      "combinedSpeedup": 3.0237859504650832,
+      "combinedReductionPercent": 66.92887603878866,
+      "structuresSpeedup": 1.1628072118963246,
+      "structuresReductionPercent": 14.00122137450593,
+      "additionalDigestSpeedup": 2.600418985649259
+    },
+    {
+      "identifier": "dag-construction-independent-1000",
+      "fixtureDigest": "sha256:862eb9a56365cd0c94cca44af65c0098554a8048b4edecadef1ed417516f5cd4",
+      "resultDigest": "sha256:0298e1bcb1c4288cabb7ed6c8bb49406c01dfa433242581ea6066dd10ed9795a",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 79.03720899999999,
+          "rangeMilliseconds": [
+            78.853875,
+            79.354167
+          ]
+        },
+        "structures": {
+          "medianMilliseconds": 66.018208,
+          "rangeMilliseconds": [
+            65.82075,
+            66.269958
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 22.933958,
+          "rangeMilliseconds": [
+            22.912084,
+            22.977500000000003
+          ]
+        }
+      },
+      "combinedSpeedup": 3.4462960558312696,
+      "combinedReductionPercent": 70.98334026445694,
+      "structuresSpeedup": 1.197203186732969,
+      "structuresReductionPercent": 16.471989794072805,
+      "additionalDigestSpeedup": 2.8786225212412093
+    },
+    {
+      "identifier": "dag-construction-independent-5000",
+      "fixtureDigest": "sha256:53ea32ff645fc6addc338a9b784843fa5acc3e080cd33b9f5ca3d5b206ce2082",
+      "resultDigest": "sha256:048586588949d9c4338cb3b2cf3384b2911560cdec87e6236a5eeceeddf37b1f",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 385.623958,
+          "rangeMilliseconds": [
+            382.136125,
+            392.400917
+          ]
+        },
+        "structures": {
+          "medianMilliseconds": 327.783958,
+          "rangeMilliseconds": [
+            324.007875,
+            332.146375
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 115.347458,
+          "rangeMilliseconds": [
+            113.883583,
+            117.257
+          ]
+        }
+      },
+      "combinedSpeedup": 3.34315089977969,
+      "combinedReductionPercent": 70.08809862378935,
+      "structuresSpeedup": 1.1764576898543644,
+      "structuresReductionPercent": 14.999068081760635,
+      "additionalDigestSpeedup": 2.841709420245741
+    },
+    {
+      "identifier": "dag-construction-layered-3000",
+      "fixtureDigest": "sha256:1349d78e95bf706d82d1d21353347f15a4e4ccd9787965da854e14dcd3d1dd3b",
+      "resultDigest": "sha256:027137f1901daa8c5592f52c8516b977a70ccff5e107a9d62cba47cce1f2a08a",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 257.021167,
+          "rangeMilliseconds": [
+            255.674917,
+            257.303375
+          ]
+        },
+        "structures": {
+          "medianMilliseconds": 223.28645799999998,
+          "rangeMilliseconds": [
+            221.819916,
+            225.931917
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 96.11233299999999,
+          "rangeMilliseconds": [
+            95.468375,
+            96.449333
+          ]
+        }
+      },
+      "combinedSpeedup": 2.6741746764174374,
+      "combinedReductionPercent": 62.60528495693898,
+      "structuresSpeedup": 1.1510826464899184,
+      "structuresReductionPercent": 13.125264893066186,
+      "additionalDigestSpeedup": 2.3231821664343535
+    },
+    {
+      "identifier": "dag-construction-star-5000",
+      "fixtureDigest": "sha256:97c52f168f54b98f1eaa38be8d3deb437c9b830e001f267be1a0e69fcf1b96ee",
+      "resultDigest": "sha256:72535697c1a5150179267ce2fa42baf2dab035f34cdb5e60880037f7c002c8d3",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 2673.178208,
+          "rangeMilliseconds": [
+            2634.062458,
+            2737.4925000000003
+          ]
+        },
+        "structures": {
+          "medianMilliseconds": 349.011208,
+          "rangeMilliseconds": [
+            346.940708,
+            354.84266599999995
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 134.487834,
+          "rangeMilliseconds": [
+            132.476584,
+            136.28420799999998
+          ]
+        }
+      },
+      "combinedSpeedup": 19.876728834817875,
+      "combinedReductionPercent": 94.9689910834407,
+      "structuresSpeedup": 7.659290437457813,
+      "structuresReductionPercent": 86.94396030330051,
+      "additionalDigestSpeedup": 2.595113607079136
+    },
+    {
+      "identifier": "digest-canonical-identifiers-50000",
+      "fixtureDigest": "sha256:3c795fc273c6f8f056cedb9b653465dcf05c9833c59c0fce84d67c15419c3426",
+      "resultDigest": "sha256:3c795fc273c6f8f056cedb9b653465dcf05c9833c59c0fce84d67c15419c3426",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 449.999416,
+          "rangeMilliseconds": [
+            396.65099999999995,
+            450.83095899999995
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 17.687209,
+          "rangeMilliseconds": [
+            17.566625,
+            18.708583
+          ]
+        }
+      },
+      "combinedSpeedup": 25.44208167608581,
+      "combinedReductionPercent": 96.06950401020076
+    },
+    {
+      "identifier": "digest-descriptors-large-1000",
+      "fixtureDigest": "sha256:a4326092a999a4827de40ef1abf29d8081843d3c8508231394307f93fa4d120b",
+      "resultDigest": "sha256:12734ffb497ee00b9425207d4c3555ded1cb94f011b5334f1f7559db06777e19",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 1459.321375,
+          "rangeMilliseconds": [
+            1446.421791,
+            1508.418625
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 1370.346583,
+          "rangeMilliseconds": [
+            1347.463916,
+            1398.6666249999998
+          ]
+        }
+      },
+      "combinedSpeedup": 1.064928677973724,
+      "combinedReductionPercent": 6.096997791182218
+    },
+    {
+      "identifier": "digest-descriptors-small-1000",
+      "fixtureDigest": "sha256:4b09bd465f9376d42eb25583cecefb2f9a278942904045c62837d39f7d12e798",
+      "resultDigest": "sha256:403c3b3f1d97a00f6a54df6ee70369dd8a325f1b072491dd7b66c854c6c3bd49",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 117.039375,
+          "rangeMilliseconds": [
+            115.564458,
+            117.913875
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 40.46575,
+          "rangeMilliseconds": [
+            40.435333,
+            40.683834000000004
+          ]
+        }
+      },
+      "combinedSpeedup": 2.892307074501276,
+      "combinedReductionPercent": 65.42552452967217
+    },
+    {
+      "identifier": "digest-identifiers-50000",
+      "fixtureDigest": "sha256:1f06fd384d6b3f6d3330df9ac4f1cbc1608d17662a10443cc21cb8af37f88c49",
+      "resultDigest": "sha256:3c795fc273c6f8f056cedb9b653465dcf05c9833c59c0fce84d67c15419c3426",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 388.873083,
+          "rangeMilliseconds": [
+            388.30025,
+            390.429708
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 10.805,
+          "rangeMilliseconds": [
+            10.764625,
+            10.835584
+          ]
+        }
+      },
+      "combinedSpeedup": 35.99010485886164,
+      "combinedReductionPercent": 97.2214584983245
+    },
+    {
+      "identifier": "digest-malformed-identifiers-50000",
+      "fixtureDigest": "sha256:21cb0c66999ab0ac8a32b89aa3d492e92a10ba8ef70b46474be70d2aa1493372",
+      "resultDigest": "sha256:34f082834146277d02a44b41bd00b90f30443a934efcd1cdd64d116f06ca7b06",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 289.153167,
+          "rangeMilliseconds": [
+            288.672333,
+            312.278166
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 43.599375,
+          "rangeMilliseconds": [
+            43.388166999999996,
+            44.366083
+          ]
+        }
+      },
+      "combinedSpeedup": 6.632048441061368,
+      "combinedReductionPercent": 84.92170241386289
+    },
+    {
+      "identifier": "projection-ca-1024",
+      "fixtureDigest": "sha256:2cc277cb9a9000c718c7cb0338319c4c92df22c1010fc136c1843d4308efeeb4",
+      "resultDigest": "sha256:8944895c9fbdb8ddf329a337348317ee03ba4181e07918385510fc4fb2c7e679",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 1.836917,
+          "rangeMilliseconds": [
+            1.8285829999999998,
+            1.838583
+          ]
+        },
+        "structures": {
+          "medianMilliseconds": 0.076958,
+          "rangeMilliseconds": [
+            0.0745,
+            0.095541
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 0.075875,
+          "rangeMilliseconds": [
+            0.075125,
+            0.097333
+          ]
+        }
+      },
+      "combinedSpeedup": 24.20977924217463,
+      "combinedReductionPercent": 95.86943775902776,
+      "structuresSpeedup": 23.869084435666206,
+      "structuresReductionPercent": 95.810480277552,
+      "additionalDigestSpeedup": 1.0142734761120265
+    },
+    {
+      "identifier": "projection-ca-4096",
+      "fixtureDigest": "sha256:31f6b9aeb8b7d5e043554d496f0bddaf36356991b1fbadbc6da4fd73e886adc9",
+      "resultDigest": "sha256:ed9389a99c78440574ecbb07c07e775e72d494568ffd61bd57d1ce3119f8d6cf",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 7.474417,
+          "rangeMilliseconds": [
+            7.468,
+            7.495375
+          ]
+        },
+        "structures": {
+          "medianMilliseconds": 0.157417,
+          "rangeMilliseconds": [
+            0.152083,
+            0.20125
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 0.1565,
+          "rangeMilliseconds": [
+            0.153625,
+            0.191708
+          ]
+        }
+      },
+      "combinedSpeedup": 47.75985303514377,
+      "combinedReductionPercent": 97.90619121197011,
+      "structuresSpeedup": 47.481637942534796,
+      "structuresReductionPercent": 97.89392269657955,
+      "additionalDigestSpeedup": 1.0058594249201278
+    },
+    {
+      "identifier": "projection-ca-8192",
+      "fixtureDigest": "sha256:940480a9849a9377723179249960cf2ecbd60665f6312df16cefe3f7890731fc",
+      "resultDigest": "sha256:ae40efa52aa25084bc84350c8dbb5971c97ae1dc83b1ae0c5aab792fae25f3d3",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 25.473540999999997,
+          "rangeMilliseconds": [
+            25.423958,
+            25.513333
+          ]
+        },
+        "structures": {
+          "medianMilliseconds": 0.301875,
+          "rangeMilliseconds": [
+            0.268417,
+            0.38699999999999996
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 0.272667,
+          "rangeMilliseconds": [
+            0.265208,
+            0.345833
+          ]
+        }
+      },
+      "combinedSpeedup": 93.42363028896052,
+      "combinedReductionPercent": 98.92960699888563,
+      "structuresSpeedup": 84.38440082815734,
+      "structuresReductionPercent": 98.81494685014542,
+      "additionalDigestSpeedup": 1.107119673447832
+    },
+    {
+      "identifier": "projection-ca-8192-sparse",
+      "fixtureDigest": "sha256:46818c2180fc8667fda492682a4e0529730e5fc2692a4df36876d3d86bd9518f",
+      "resultDigest": "sha256:7b2e3735f781ce075e8d850b539461f6f519b9eb53510cfa8a9c2bfca3db352e",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 5.0534170000000005,
+          "rangeMilliseconds": [
+            5.036792,
+            5.084709
+          ]
+        },
+        "structures": {
+          "medianMilliseconds": 0.196917,
+          "rangeMilliseconds": [
+            0.186459,
+            0.29645900000000003
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 0.20249999999999999,
+          "rangeMilliseconds": [
+            0.19245800000000002,
+            0.305125
+          ]
+        }
+      },
+      "combinedSpeedup": 24.95514567901235,
+      "combinedReductionPercent": 95.99281040927357,
+      "structuresSpeedup": 25.662675137240566,
+      "structuresReductionPercent": 96.10329011043419,
+      "additionalDigestSpeedup": 0.9724296296296298
+    },
+    {
+      "identifier": "projection-ca-small",
+      "fixtureDigest": "sha256:3e241dc9a38465ee2ac45c9504a5125e0adee84365237306fa209a09852fe5b3",
+      "resultDigest": "sha256:36bbd084d306243d2f49ad6adc65fde7adf1c1e67d18dc7cd904742692922d73",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 0.001458,
+          "rangeMilliseconds": [
+            0.0013340000000000001,
+            0.005084
+          ]
+        },
+        "structures": {
+          "medianMilliseconds": 0.002125,
+          "rangeMilliseconds": [
+            0.0020829999999999998,
+            0.004834
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 0.0022500000000000003,
+          "rangeMilliseconds": [
+            0.002041,
+            0.007041
+          ]
+        }
+      },
+      "combinedSpeedup": 0.648,
+      "combinedReductionPercent": -54.320987654321,
+      "structuresSpeedup": 0.6861176470588235,
+      "structuresReductionPercent": -45.74759945130316,
+      "additionalDigestSpeedup": 0.9444444444444444
+    },
+    {
+      "identifier": "projection-pca-control",
+      "fixtureDigest": "sha256:25856f12273a49c4b7bff95c208902f26cd68d991412f9d3dc584e9c4ca7ca05",
+      "resultDigest": "sha256:58b5fc15fe8f8973f922e662402d306ed93c2fecf4b14187672e761b8116c55c",
+      "stages": {
+        "baseline": {
+          "medianMilliseconds": 0.000959,
+          "rangeMilliseconds": [
+            0.000875,
+            0.0013340000000000001
+          ]
+        },
+        "structures": {
+          "medianMilliseconds": 0.000917,
+          "rangeMilliseconds": [
+            0.000834,
+            0.0011250000000000001
+          ]
+        },
+        "candidate": {
+          "medianMilliseconds": 0.000875,
+          "rangeMilliseconds": [
+            0.000833,
+            0.001
+          ]
+        }
+      },
+      "combinedSpeedup": 1.096,
+      "combinedReductionPercent": 8.759124087591239,
+      "structuresSpeedup": 1.0458015267175573,
+      "structuresReductionPercent": 4.379562043795625,
+      "additionalDigestSpeedup": 1.0479999999999998
+    }
+  ],
+  "inventorySHA256": {
+    "baseline": "5a1a6ad7c86c88749ef1931228fcf2b79a95ae701798c7104c742974f5d3b341",
+    "structures": "abe6b69816b461731bd6c87f978e0c964e3b9cb1546c3e235c2d9d6101b0d6ca",
+    "candidate": "c2b9721df031184aeda16b4791b2403da653008ddfaaa216d2dbc0807b8bedaa"
+  },
+  "sourceSHA256": {
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiAnalysisGraph.swift": {
+      "baseline": "06e1ebb213c428a2d2ea5f6f5e154d18be4aabcf373a80a448faf8e3693f6c47",
+      "structures": "4abe87e72d77fda8b1b07e2597483fddf7b75c606e0dc87e7426600bb2c23595",
+      "candidate": "7fde3f0ebf3da8e0fce5a832f3f9a1b75622c71ae1428d42605c831c9086c0d9"
+    },
+    "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift": {
+      "baseline": "a3c9bc8387b5f2edb24cc9d96aabdaf373b028ce7bf73b68e30f700e33992682",
+      "structures": "188dc384753de9803ce44927b2facc83efd4205fc7b8e11ff8251ea4e159d60e",
+      "candidate": "188dc384753de9803ce44927b2facc83efd4205fc7b8e11ff8251ea4e159d60e"
+    },
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiIdentifiers.swift": {
+      "baseline": "b85db1d06d29aa4c9f18e125f5b07d78f5814305bb1032211448bc082811940f",
+      "structures": "b85db1d06d29aa4c9f18e125f5b07d78f5814305bb1032211448bc082811940f",
+      "candidate": "7e518c114fe27a66456a1ad30c0bde383631ce179266b58e7fa0468e1bb935e6"
+    },
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiDigestEncoding.swift": {
+      "baseline": null,
+      "structures": null,
+      "candidate": "ec5593b55a10bebe4e2a796f881b2d296b697dce9a0571a1bd5897bb66114c1c"
+    }
+  }
+}

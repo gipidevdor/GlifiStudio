@@ -7,5 +7,5 @@ script_directory="${0:A:h}"
 project_directory="${script_directory:h}"
 
 cd "$project_directory"
-Scripts/verify.sh
-Scripts/check-app-store-packaging.sh
+Scripts/verify.sh "$@"
+Scripts/check-app-store-packaging.sh "$@"
