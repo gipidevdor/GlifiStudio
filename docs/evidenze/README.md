@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.16.2 |
+| Versione | 1.17.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-14 |
@@ -15,6 +15,7 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 ## Indice
 
 - [GS-VER-167 — Validazione dei costi del riassunto](GS-VER-167-costi-riassunto.md) — Difetti riprodotti in isolamento; regressioni native e preflight da eseguire; CMP-164 torna implemented
+- [GS-VER-166 — Riassunto estrattivo `TextRankSentence-v1`](GS-VER-166-riassunto-textrank.md) — In verifica sul runner remoto; controlli statici superati localmente; CMP-165 implemented
 - [GS-VER-165 — Budget del riassunto estrattivo in caratteri](GS-VER-165-riassunto-budget-caratteri.md) — Superato: CI `xcode-27` sulla head `3c3cfef` di #31 e su `main` `4c59a50`; CMP-164 verified
 - [GS-VER-164 — Riassunto estrattivo `LexRankSentence-v1`](GS-VER-164-riassunto-lexrank.md) — Superato: CI `xcode-27` sulla head `c3f7bab` di #29 e su `main` `aaf8ff3`; CMP-163 verified
 - [GS-VER-151 — Riassunto estrattivo con ridondanza `MMR-v1`](GS-VER-151-riassunto-mmr.md) — Superato: CI `xcode-27` sulla head definitiva di #24 e su `main` `dfdcdbe`/`a86a53b`; CMP-106 verified

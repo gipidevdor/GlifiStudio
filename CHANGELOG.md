@@ -8,6 +8,11 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Aggiunto
 
+- Metodo `TextRankSentence-v1` del riassunto estrattivo: centralità stazionaria del grafo di
+  sovrapposizione lessicale (`|T(s) ∩ T(u)| / (ln|s| + ln|u|)`, soglia zero, nodi pendenti
+  uniformi, damping 0,85) con limiti condivisi con LexRank e `--method TextRankSentence-v1` in
+  `glifi summarize`; messaggi delle failure a grafo estesi a entrambi i metodi; GS-VER-166,
+  CMP-165 `implemented`.
 - Unità di budget `Budget-characters-v1` del riassunto estrattivo: costo in scalari Unicode del
   testo sorgente esatto di ogni frase, stessa selezione delle altre unità e `--characters <n>`
   in `glifi summarize`; nessun nuovo campo nel payload; GS-VER-165, CMP-164 `implemented`.
