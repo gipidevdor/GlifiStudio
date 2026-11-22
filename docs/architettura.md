@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-AD-001 |
 | Tipo | Architecture description |
-| Versione | 0.15.1 |
+| Versione | 0.15.2 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -168,6 +168,8 @@ livello le responsabilità hanno un proprietario esplicito:
 | `GlifiStudioProjectSession.swift` | Actor, stato, admission, task posseduti e chiusura; i relativi helper rimangono privati nello stesso file |
 | Helper privati del package | Preparazione della transazione e costruzione coerente di digest/manifest; validazioni e checkpoint restano nei commit specifici delle quattro famiglie |
 | Owner privato della CLI | Apertura, esecuzione e chiusura asincrona su risultato/failure/cancellazione, prima della presentazione; raccolta dello stream condivisa da execute e visualize |
+| Helper privato `executePlannedStep` del motore | Esecuzione del singolo passo e risoluzione del record persistito; la regia conserva admission, dipendenze, schema, progressi e finalizzazione |
+| `GlifiStudioEditorDecimal` interno a Kit | Grammatica decimale comune agli editor statistico e degli operatori; validazione delle righe ed errori pubblici rimangono nei chiamanti |
 
 Wrapper con la medesima policy condividono il confine di admission e traduzione
 errori. Le policy diverse di bootstrap, letture, identificatori e analisi derivate
@@ -175,6 +177,9 @@ restano esplicite. I cataloghi di DTO non richiedono protocolli o moduli aggiunt
 per il solo numero di dichiarazioni. Nessuna soglia di righe costituisce un gate.
 La compatibilità e le verifiche sono registrate in
 [GS-VER-280](evidenze/GS-VER-280-struttura-e-coesione-del-codice.md).
+La prosecuzione delimitata è descritta in
+[GS-DOR-284](pianificazione/dor-regia-del-piano-e-input-numerico.md): nessun
+nuovo confine di modulo, contratto pubblico o formato persistente.
 
 ## 6. VA-03 — View dei dati e del lineage
 
