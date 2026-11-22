@@ -30,7 +30,7 @@ alterare precisione, transazioni o ownership.
    letture incrementali bounded e verifica del descriptor aperto; non cambiare il
    writer autorevole del package né i formati.
 4. Gestire un’attività macOS finita soltanto nel piano richiesto dall’utente,
-   consentendo idle sleep e rilasciandola su ogni uscita; niente opt-out App Nap.
+   consentendo idle sleep e rilasciandola su ogni uscita; niente opt-out globale App Nap.
 5. Aggiungere i comandi standard applicabili alla scena macOS, senza intervenire
    sulla riprogettazione GUI in corso.
 

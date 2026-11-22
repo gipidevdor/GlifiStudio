@@ -110,7 +110,7 @@ chat GUI; non viene attestata una sua correzione da questo lotto.
 | ProcessInfo.beginActivity/endActivity | Integrazione limitata al piano esplicitamente richiesto: userInitiatedAllowingIdleSystemSleep, reason statica, owner, fine su risultato/failure/cancellazione |
 | AsyncSequence / Foundation Progress | Il piano pubblica già progressi bounded via stream e cancellazione esplicita; un ponte NSProgress serve solo a un consumatore di sistema concreto, senza un secondo stato autorevole |
 | Combine / Observation | Observation e concorrenza strutturata coprono lo stato corrente; evitare una seconda pipeline reattiva senza requisito |
-| QoS e Swift Concurrency | Intento userInitiated già esplicito; nessuna elevazione globale, occupazione di tutti i core o soppressione di App Nap |
+| QoS e Swift Concurrency | Intento userInitiated già esplicito; nessuna elevazione globale, occupazione di tutti i core o soppressione globale di App Nap |
 | BackgroundTasks / BGContinuedProcessingTask | Condizionali a lavoro iPadOS con progressi localizzati, checkpoint, expiration e cancellazione. Un task async non concede tempo illimitato in background |
 | OSLog / OSSignposter | Facciata GlifiDiagnostics già presente; non aggiungere logger diretti o metadati di corpus, path o query |
 | Instruments, XCTest/Swift Testing, Xcode Organizer | Canali di verifica già previsti; energia, UI e dispositivi richiedono prove proprie, distinte dai test di dominio |

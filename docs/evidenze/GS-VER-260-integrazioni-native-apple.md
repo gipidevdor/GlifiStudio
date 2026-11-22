@@ -11,7 +11,7 @@
 | Responsabile | Iniziatore del progetto, con supporto Codex |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Richiesta esplicita di valutare e integrare le tecnologie Apple appropriate rispettando le altre chat |
-| Riferimenti | GS-DOR-260; GS-APL-016; ADR-0040; CMP-261/262/264 |
+| Riferimenti | [Issue #39](https://github.com/gipidevdor/GlifiStudio/issues/39); GS-DOR-260; GS-APL-016; ADR-0040; CMP-261/262/264 |
 
 ## Perimetro
 
