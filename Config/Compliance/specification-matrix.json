@@ -4665,6 +4665,34 @@
       "gate": "G3",
       "status": "implemented",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-283",
+      "clause": "GS-DEV-002 Ingressi canonici; GS-STD-001-20 § 20.1/20.2; priorità macOS esplicita",
+      "specification": "docs/loop-di-sviluppo-e-qualita.md",
+      "requirements": [
+        "RQ-005",
+        "RQ-063"
+      ],
+      "code": [
+        "Makefile",
+        ".github/workflows/ci.yml",
+        ".github/workflows/app-store.yml",
+        "AGENTS.md"
+      ],
+      "tests": [
+        "Scripts/check-swift-dialect.py",
+        "Scripts/check-github-config.py",
+        "Scripts/verify.sh",
+        "Scripts/check-app-store-packaging.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-280-struttura-e-coesione-del-codice.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }

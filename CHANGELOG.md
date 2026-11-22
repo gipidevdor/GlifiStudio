@@ -22,6 +22,10 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ### Struttura interna e ownership
 
+- Priorità operativa macOS persistita in Make, CI e istruzioni: ingressi predefiniti
+  sul profilo macOS con tutti i controlli condivisi; iPadOS rinviato ai target
+  espliciti `*-all`. Comandi e policy verificati dal checker del loop.
+
 - Contratti valore, bootstrap e sessione Kit separati per responsabilità; policy
   ordinarie condivise senza cambiare API o mapping specializzati.
 - Staging e costruzione digest/manifest del package centralizzati in helper

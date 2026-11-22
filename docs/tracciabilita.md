@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.8 |
+| Versione | 0.92.9 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -573,3 +573,11 @@ rimane in GS-VER-260 senza modificare il backend numerico di produzione.
 
 Nessun modulo, backend, formato o stato scientifico cambia. Gli indicatori di
 coesione e duplicazione non costituiscono una promessa di prestazioni.
+
+### Priorità operativa macOS
+
+CMP-283, RQ-005/RQ-063: richiesta esplicita ribadita dall’iniziatore; Make e CI
+predefiniti sul profilo macOS, ingressi `*-all` per entrambe le piattaforme solo
+su richiesta. AGENTS e GS-DEV-002 conservano la priorità; il checker del loop
+verifica i comandi canonici con prove negative. Nessun controllo condiviso o
+macOS viene rimosso, né è attestata verifica iPadOS dal profilo predefinito.

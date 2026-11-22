@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-STD-001-20 |
 | Tipo | Capitolo normativo |
-| Versione | 1.4.0 |
+| Versione | 1.4.1 |
 | Stato | Proposto |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Non ancora approvato |
 | Documento padre | [GS-STD-001](../standard-di-progetto.md) |
 
@@ -33,7 +33,14 @@ Ogni pull request e ogni revisione di `main` **DEVONO** verificare almeno:
 6. dialetto Swift e formattazione Swift;
 7. unit e integration test disponibili;
 8. smoke test headless;
-9. build pulita Debug e Release di macOS e iPadOS senza firma.
+9. build pulita Debug e Release di macOS senza firma nel profilo corrente.
+
+La priorità macOS è ribadita dall’iniziatore il 2026-11-22. `make verify` e la CI
+usano `--macos-only`, conservando integralmente i controlli condivisi e macOS.
+Le build, analisi e archiviazioni iPadOS sono rinviate al profilo esplicito
+`make verify-all` / `make verify-app-store-all`, quando richiesto. Il rinvio non
+può essere registrato come verifica iPadOS superata. Piattaforme, deployment target
+e contratti del prodotto restano invariati; GS-DOR-280 registra la decisione.
 
 Un controllo fallito **DEVE** bloccare l'integrazione salvo deroga valida. Disabilitare o indebolire il controllo per ottenere esito verde equivale a non conformità.
 

@@ -41,3 +41,12 @@ revisione, contiene la risoluzione completa con ADR-0042, validazione SpanMap e
 test aggiornati: il lotto incorpora tale commit preservandone i contratti.
 La prova di baseline resta distinta dal gate finale combinato; nessun controllo
 è soppresso o indebolito per far passare il refactoring.
+
+## Priorità macOS ribadita dall’iniziatore
+
+Per richiesta esplicita del 2026-11-22 il lotto si conclude su macOS: iPadOS non
+è un gate di consegna corrente. Il Makefile e la CI selezionano macOS per
+default; il profilo multipiattaforma resta nei target espliciti `*-all` e negli
+script senza argomenti. AGENTS, guida del loop e standard CI mantengono questa
+priorità per le sessioni successive. Nessun controllo condiviso o macOS è rimosso;
+le azioni iPadOS rinviate non sono dichiarate superate. CMP-283 traccia la scelta.

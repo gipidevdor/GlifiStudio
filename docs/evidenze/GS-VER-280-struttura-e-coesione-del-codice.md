@@ -11,7 +11,7 @@
 | Responsabile | Iniziatore del progetto, con supporto Codex |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Richiesta esplicita di migliorare struttura e ingegneria del software |
-| Riferimenti | [Issue #41](https://github.com/gipidevdor/GlifiStudio/issues/41); GS-DOR-280; CMP-280/281/282; GS-AD-001; GS-STD-001-10/12/29 |
+| Riferimenti | [Issue #41](https://github.com/gipidevdor/GlifiStudio/issues/41); GS-DOR-280; CMP-280/281/282/283; GS-AD-001; GS-STD-001-10/12/29 |
 
 ## Baseline e perimetro
 
@@ -86,7 +86,22 @@ Il gate finale nel registro PR riguarda l’unione completa.
 ## Gate finale e riproduzione
 
 
-Il gate completo `make verify-app-store` comprende `verify.sh` e il packaging.
+Su richiesta ribadita dall’iniziatore, il gate finale è macOS. Gli ingressi
+predefiniti Make e CI selezionano `--macos-only`; il profilo `*-all` è esplicito.
+La pipeline multipiattaforma è stata fermata e non è usata come prova di un
+preflight globale completato. La fase condivisa/macOS sul codice congelato aveva
+già superato 553 test Core, 112 Kit, 99 test nativi/319 esecuzioni, 95 controlli
+CLI, 22 checkpoint e i due PDF/A, con build macOS Debug/Release. Il packaging
+macOS è superato con `check-app-store-packaging.sh --macos-only` (exit 0):
+analisi statica e archivio unsigned validi. Il controllo statico è ripetuto
+dopo l’aggiornamento di Make/CI e della documentazione, con exit 0.
+
+La verifica dei profili copre sei piani Make e cinque casi positivi/negativi:
+[priorità macOS verificata](allegati/GS-VER-280/macos-default-profile.json).
+I controlli condivisi e macOS restano attivi; il checker rifiuta il ritorno
+implicito al profilo globale nei due ingressi predefiniti e nella CI.
+
+Il gate macOS `make verify-app-store` comprende `verify.sh --macos-only` e il packaging macOS.
 Il suo esito non è dedotto dalle prove mirate. I risultati tardivi del gate
 locale e della CI sono registrati nella [PR #42](https://github.com/gipidevdor/GlifiStudio/pull/42),
 sulla revisione finale, senza anticiparli in questo snapshot.

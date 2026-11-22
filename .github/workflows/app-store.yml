@@ -36,5 +36,5 @@ jobs:
             spm-appstore-${{ runner.os }}-${{ runner.arch }}-
             spm-${{ runner.os }}-${{ runner.arch }}-
 
-      - name: Preflight App Store
-        run: ./Scripts/verify-app-store.sh
+      - name: Preflight App Store macOS
+        run: ./Scripts/verify-app-store.sh --macos-only
