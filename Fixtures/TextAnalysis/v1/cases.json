@@ -1516,10 +1516,14 @@
           "windowSpan": 10
         }
       },
-      "methodIdentifier": "KH-collocation-MI3-Z-global-token-window-v1",
+      "methodIdentifier": "KH-collocation-global-token-window-v1",
       "validationStatus": "candidate",
       "expected": {
-        "mi3": 8.321928094887362
+        "mi3": 8.321928094887362,
+        "mutualInformation": 4.321928094887363,
+        "tScore": 1.9,
+        "jaccard": 0.15384615384615385,
+        "dice": 0.26666666666666666
       }
     },
     {
@@ -1536,7 +1540,7 @@
           "windowSpan": 10
         }
       },
-      "methodIdentifier": "KH-collocation-MI3-Z-global-token-window-v1",
+      "methodIdentifier": "KH-collocation-global-token-window-v1",
       "validationStatus": "candidate"
     },
     {
@@ -1878,6 +1882,55 @@
         "kappa": 1,
         "observedAgreement": 1,
         "expectedAgreement": 0.5
+      }
+    },
+    {
+      "id": "kh-word-association",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "word-association",
+        "counts": {
+          "jointCount": 20,
+          "conditionDocumentCount": 40,
+          "termDocumentCount": 30,
+          "totalDocumentCount": 100
+        }
+      },
+      "methodIdentifier": "KH-word-association-document-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "conditionalProbability": 0.5,
+        "unconditionalProbability": 0.3,
+        "differential": 0.2,
+        "lift": 1.6666666666666667,
+        "jaccard": 0.4,
+        "ochiai": 0.5773502691896258,
+        "isPositiveAssociation": true
+      }
+    },
+    {
+      "id": "kh-word-association-overlap",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "word-association",
+        "counts": {
+          "jointCount": 70,
+          "conditionDocumentCount": 80,
+          "termDocumentCount": 90,
+          "totalDocumentCount": 100
+        }
+      },
+      "methodIdentifier": "KH-word-association-document-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "conditionalProbability": 0.875,
+        "unconditionalProbability": 0.9,
+        "differential": -0.025,
+        "lift": 0.9722222222222222,
+        "jaccard": 0.7,
+        "isPositiveAssociation": false
       }
     }
   ]

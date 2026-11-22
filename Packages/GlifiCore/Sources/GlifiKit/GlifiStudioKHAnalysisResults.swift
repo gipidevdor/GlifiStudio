@@ -116,7 +116,7 @@ public struct GlifiStudioKHSOMResult: Encodable, Sendable {
     }
 }
 
-/// The two independent KH score definitions; undefined values are omitted rather than fabricated.
+/// All seven global-frequency KH scores; undefined values are omitted rather than fabricated.
 public struct GlifiStudioKHCollocationScores: Encodable, Sendable {
     /// Versioned base-two MI3 definition using complete corpus token exposure.
     public let mi3MethodIdentifier = GlifiKHCollocationScores.mi3Identifier
@@ -128,10 +128,52 @@ public struct GlifiStudioKHCollocationScores: Encodable, Sendable {
     public let zScore: Double?
     /// Window expectation E used by Z, omitted when background exposure is zero.
     public let expectedWindowCount: Double?
+    /// Base-two MI over global token frequencies, omitted when no pair is observed.
+    public let mutualInformation: Double?
+    /// Global-token residual divided by sqrt(a), without substituting window opportunity marginals.
+    public let tScore: Double?
+    /// a/(F1+F2−a), omitted for a nonpositive union; overlapping windows need not yield a set metric.
+    public let jaccard: Double?
+    /// 2a/(F1+F2), omitted for zero marginals and never silently clamped to one.
+    public let dice: Double?
+    /// KH manual log likelihood, equal to G²/2; omitted when window counts do not define a valid 2×2 table.
+    public let logLikelihood: Double?
     init(_ value: GlifiKHCollocationScores) {
         mi3 = value.mi3
         zScore = value.zScore
         expectedWindowCount = value.expectedWindowCount
+        mutualInformation = value.mutualInformation
+        tScore = value.tScore
+        jaccard = value.jaccard
+        dice = value.dice
+        logLikelihood = value.logLikelihood
+    }
+}
+
+/// Document-condition association scores, distinct from token-window statistics.
+public struct GlifiStudioKHWordAssociationScores: Encodable, Sendable {
+    /// Global term DF divided by the complete document universe.
+    public let unconditionalProbability: Double?
+    /// Joint DF divided by condition DF; also the KH frequency ordering score.
+    public let conditionalProbability: Double?
+    /// Conditional minus unconditional probability, with exact integer cancellation before conversion.
+    public let differential: Double?
+    /// Conditional probability divided by its nonzero unconditional baseline.
+    public let lift: Double?
+    /// Intersection DF divided by union DF, omitted for an empty union.
+    public let jaccard: Double?
+    /// Intersection DF divided by the geometric mean of both marginals.
+    public let ochiai: Double?
+    /// Exact comparison of conditional and unconditional frequency; no implicit row filtering occurs.
+    public let isPositiveAssociation: Bool
+    init(_ value: GlifiKHWordAssociationScores) {
+        unconditionalProbability = value.unconditionalProbability
+        conditionalProbability = value.conditionalProbability
+        differential = value.differential
+        lift = value.lift
+        jaccard = value.jaccard
+        ochiai = value.ochiai
+        isPositiveAssociation = value.isPositiveAssociation
     }
 }
 
@@ -309,6 +351,7 @@ public enum GlifiStudioKHAnalysisPayload: Encodable, Sendable {
     case mdsSearch(GlifiStudioMDSSearchResult)
     case som(GlifiStudioKHSOMResult)
     case collocation(GlifiStudioKHCollocationScores)
+    case wordAssociation(GlifiStudioKHWordAssociationScores)
     case termScores(GlifiStudioTermExtractionScores)
     case termExtraction(GlifiStudioTermExtractionResult)
     case incrementalClassifier(GlifiStudioIncrementalClassifierResult)
@@ -323,6 +366,7 @@ public enum GlifiStudioKHAnalysisPayload: Encodable, Sendable {
         case let .mdsSearch(value): try value.encode(to: encoder)
         case let .som(value): try value.encode(to: encoder)
         case let .collocation(value): try value.encode(to: encoder)
+        case let .wordAssociation(value): try value.encode(to: encoder)
         case let .termScores(value): try value.encode(to: encoder)
         case let .termExtraction(value): try value.encode(to: encoder)
         case let .incrementalClassifier(value): try value.encode(to: encoder)

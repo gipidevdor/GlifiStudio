@@ -29,6 +29,8 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
         topology: GlifiStudioSOMTopology = .hexagonal, initialCodebooks: [[Double]]? = nil,
         codebookClusterCount: Int? = nil)
     case collocationScores(GlifiStudioKHCollocationInput)
+    /// Computes document-condition association, including differential, lift and Ochiai scores.
+    case wordAssociation(GlifiStudioKHWordAssociationInput)
     case termScores(
         candidates: [GlifiStudioTermCandidate], preprocessingIdentifier: String,
         adjacencyMode: GlifiStudioTermAdjacencyMode = .token, maximumWork: Int = 100_000_000)
@@ -56,6 +58,7 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
         case .somPCAInitialization: "som-pca-initialization"
         case .somKH: "som-kh"
         case .collocationScores: "kh-collocation"
+        case .wordAssociation: "word-association"
         case .termScores: "term-scores"
         case .termExtraction: "term-extraction"
         case .incrementalClassifier: "incremental-classifier"
@@ -139,6 +142,9 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
         case "kh-collocation":
             allowed = ["counts"]
             self = .collocationScores(try f.khRequired("counts"))
+        case "word-association":
+            allowed = ["counts"]
+            self = .wordAssociation(try f.khRequired("counts"))
         case "term-scores":
             allowed = ["candidates", "preprocessingIdentifier", "adjacencyMode", "maximumWork"]
             self = .termScores(
@@ -208,7 +214,7 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
             for phase in [first, second].compactMap({ $0 }) {
                 try khFinite([phase.initialLearningRate, phase.initialRadius])
             }
-        case .collocationScores: break
+        case .collocationScores, .wordAssociation: break
         case let .termScores(candidates, preprocessing, _, _):
             try budget.string(preprocessing)
             try budget.collectionCount(candidates.count)
@@ -259,7 +265,7 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
             try khFinite([tolerance])
         case .sampleZScores, .perThousand, .wordContext, .correspondenceScaled,
             .somPCAInitialization,
-            .somKH, .collocationScores, .termScores, .termExtraction, .incrementalClassifier,
+            .somKH, .collocationScores, .wordAssociation, .termScores, .termExtraction, .incrementalClassifier,
             .continueClassifier,
             .validateClassifierWithAgreement:
             break
@@ -321,6 +327,7 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
             if let initial { try f.khEncode("initialCodebooks", initial) }
             if let clusters { try f.khEncode("codebookClusterCount", clusters) }
         case let .collocationScores(counts): try f.khEncode("counts", counts)
+        case let .wordAssociation(counts): try f.khEncode("counts", counts)
         case let .termScores(candidates, preprocessing, adjacency, work):
             try f.khEncode("candidates", candidates)
             try f.khEncode("preprocessingIdentifier", preprocessing)

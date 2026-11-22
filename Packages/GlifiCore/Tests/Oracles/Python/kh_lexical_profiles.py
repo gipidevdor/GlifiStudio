@@ -34,6 +34,35 @@ def collocation(a, first, second, total, span):
         }
 
 
+def global_scales(a, first, second, total):
+    with localcontext() as context:
+        context.prec = 80
+        da, df, ds, dn = map(Decimal, (a, first, second, total))
+        def entropy(count):
+            value = Decimal(count)
+            return value * value.ln() if count else Decimal(0)
+        # Evaluate the manual's entropy expression directly, independently of deviance kernels.
+        cells = (a, first - a, second - a, total - first - second + a)
+        likelihood = (sum(map(entropy, cells)) - entropy(first) - entropy(second)
+                      - entropy(total - first) - entropy(total - second) + entropy(total))
+        return ((da * dn / (df * ds)).ln() / Decimal(2).ln(),
+                (da - df * ds / dn) / da.sqrt(), da / (df + ds - da),
+                2 * da / (df + ds), likelihood)
+
+
+def word_association(a, b, c, d):
+    with localcontext() as context:
+        context.prec = 80
+        total, first, second = a + b + c + d, a + b, a + c
+        def decimal(value):
+            return Decimal(value.numerator) / Decimal(value.denominator)
+        unconditional = Fraction(second, total)
+        conditional = Fraction(a, first)
+        return (decimal(unconditional), decimal(conditional), decimal(conditional - unconditional),
+                decimal(conditional / unconditional), decimal(Fraction(a, a + b + c)),
+                Decimal(a) / Decimal(first * second).sqrt())
+
+
 def term_scores(mode):
     candidates = {
         ('trigram', 'statistics'): 1,
@@ -74,6 +103,10 @@ for name, arguments in [
 ]:
     values = collocation(*arguments)
     print(name, numbers(values[key] for key in ('mi3', 'expectedWindowCount', 'zScore')))
+print('KH_GLOBAL_SEVEN_SCALES', numbers(global_scales(28, 184, 685, 1108539)))
+print('KH_GLOBAL_SEVEN_HAND', numbers(global_scales(5, 10, 20, 100)))
+print('KH_WORD_ASSOCIATION', numbers(word_association(12, 18, 8, 62)))
+print('KH_WORD_ASSOCIATION_OVERLAP', numbers(word_association(60, 20, 15, 5)))
 for mode in ('token', 'type'):
     print('TERM_LR_' + mode.upper(), numbers(value['lr'] for value in term_scores(mode)))
 print('TERM_FLR_TRIGRAM', numbers(term_scores(mode)[-1]['flr'] for mode in ('token', 'type')))

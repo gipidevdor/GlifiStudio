@@ -15,7 +15,8 @@
 
 ## Baseline e ambito
 
-Base iniziale db2bac1; integrazione pubblicata 1728fc1 incorporata prima del gate.
+Base iniziale db2bac1; integrazioni pubblicate 1728fc1 e b5b0097 incorporate
+prima del gate.
 Il confronto chiude le lacune analitiche elencate nella fotografia GS-VER-234,
 rispetto al manuale KH pubblico del 2016 e ai sorgenti pubblici citati in
 GS-MET-001-23. Non attesta un’edizione chiusa/futura, identità RNG o tokenizer
