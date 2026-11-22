@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-VER-286 |
 | Tipo | Evidenza di refactoring interno |
-| Versione | 1.0.0 |
+| Versione | 1.1.0 |
 | Stato | Superato nel perimetro macOS dichiarato |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -15,7 +15,9 @@
 
 ## Confini e invarianti
 
-Baseline `76e5871`, compilata prima delle patch. L’AST privato delle regole usa
+Baseline `76e5871`, compilata prima delle patch; dopo la pubblicazione
+concorrente di GS-303/306 i confronti sono ripetuti contro `d6b4828`.
+L’AST privato delle regole usa
 un enum per i 12 operatori binari: l’inizializzatore raw-value riconosce i token,
 mentre precedenza e applicazione hanno switch esaustivi. Il parser è l’unico
 costruttore dell’espressione binaria. Il vecchio errore invalid-operator non era
@@ -57,7 +59,7 @@ digest delle sei sorgenti interessate, confronti e limiti.
 - Mirati superati: 23 definizioni Core e 13 Kit. Nuovi contratti: sette test
   Core con 69 righe parametrizzate e confini lessicali; sei test Kit su identità,
   invocazione singola, cancellazione, failure complete e privacy.
-- `make verify` macOS superato: 671 test Core e 151 Kit; 117 test nativi,
+- Gate originario su `a7f1ccc`, `make verify` macOS superato: 671 test Core e 151 Kit; 117 test nativi,
   349 esecuzioni, zero failure o skip; build Debug/Release. Superati 189 controlli
   su 63 fixture testuali, 260 confronti completi sulle 130 operazioni Kit/CLI,
   51 rifiuti di trasporto, 64 rifiuti bounded della CLI di progetto, 22 checkpoint
@@ -79,7 +81,7 @@ Xcode, e il Root, restano preservati.
 
 ## Riproduzione e conservazione
 
-Compilare `76e5871` in una cache isolata, conservando eseguibile CLI e dump
+Compilare la baseline finale `d6b4828` in una cache isolata, conservando eseguibile CLI e dump
 `swift-api-digester` prima delle patch. Estrarre Core/Kit con target
 `arm64-apple-macosx27.0`, SDK macOS, Swift 6, `-avoid-location` e
 `-avoid-tool-args`; ordinare soltanto le dichiarazioni di primo livello per il
@@ -99,3 +101,18 @@ repository. Acquisire il lock degli script se si riusa una cache di build.
 Log, dump API compressi, confronti CLI completi e programma del confronto
 specifico restano nelle prove locali del lotto; le build rigenerabili si
 rimuovono alla chiusura tramite il gestore della cache.
+
+## Integrazione finale
+
+I sei sorgenti del refactoring restano identici al checkpoint `a7f1ccc`,
+che ha superato gate locale e due flussi remoti macOS. I conflitti nei cinque
+registri condivisi sono risolti conservando entrambi i contributi: codice,
+progetto, configurazioni e test di `d6b4828` restano quelli pubblicati dagli
+altri lotti, con le sole aggiunte CMP-286/287 alla matrice. API e 164 + 69
+risposte CLI sono nuovamente identiche alla base aggiornata.
+
+I conteggi del gate originario nell’allegato sono associati esplicitamente
+a `a7f1ccc`: non descrivono i nuovi scenari GS-303 o i controlli GS-306.
+Il gate sul codice unito, i relativi conteggi finali e il preflight macOS sono
+registrati nella [PR #46](https://github.com/gipidevdor/GlifiStudio/pull/46)
+sul suo head finale, mantenendo distinta la provenienza delle evidenze.

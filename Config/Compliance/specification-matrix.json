@@ -1180,16 +1180,14 @@
       "tests": [
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisPlannerTests.swift",
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioServiceTests.swift",
-        "Scripts/verify.sh",
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPlannerProducerRefinementTests.swift"
+        "Scripts/verify.sh"
       ],
       "fixtures": [
         "Fixtures/Persistence/v1/basic/source.txt",
         "Fixtures/Markdown/v1/source.md"
       ],
       "evidence": [
-        "docs/evidenze/GS-VER-027-planner-mvp-deterministico.md",
-        "docs/evidenze/GS-VER-305-rifinitura-kh.md"
+        "docs/evidenze/GS-VER-027-planner-mvp-deterministico.md"
       ],
       "gate": "G2",
       "status": "verified",
@@ -2078,13 +2076,11 @@
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisPlannerTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisExecutionTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiInterpretationTests.swift",
-        "Scripts/verify.sh",
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPlannerProducerRefinementTests.swift"
+        "Scripts/verify.sh"
       ],
       "fixtures": [],
       "evidence": [
-        "docs/evidenze/GS-VER-106-planner-v2-capability-estese.md",
-        "docs/evidenze/GS-VER-305-rifinitura-kh.md"
+        "docs/evidenze/GS-VER-106-planner-v2-capability-estese.md"
       ],
       "gate": "G3",
       "status": "verified",
@@ -2873,18 +2869,11 @@
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTermExtractionTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHDocumentScoresTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHLegacyClusteringTests.swift",
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHChiSquareTests.swift",
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExploratoryBudgetRefinementTests.swift",
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHNumericRefinementTests.swift",
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiNaiveBayesNumericalRefinementTests.swift",
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSOMGaussianRefinementTests.swift",
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTermUnicodeRefinementTests.swift",
-        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiSOMWorkflowRefinementTests.swift"
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHChiSquareTests.swift"
       ],
       "fixtures": [
         "Packages/GlifiCore/Tests/Oracles/R/kh_operators.R",
-        "Fixtures/TextAnalysis/v1/cases.json",
-        "Packages/GlifiCore/Tests/Oracles/Python/kh_refinement.py"
+        "Fixtures/TextAnalysis/v1/cases.json"
       ],
       "evidence": [
         "docs/evidenze/GS-VER-160-operatori-analitici-nativi.md",
@@ -2894,8 +2883,7 @@
         "docs/pianificazione/dor-completamento-kh-coder.md",
         "docs/evidenze/GS-VER-233-completamento-kh-coder.md",
         "docs/evidenze/GS-VER-234-riverifica-correttezza-completezza.md",
-        "docs/evidenze/GS-VER-300-completezza-funzionale-kh.md",
-        "docs/evidenze/GS-VER-305-rifinitura-kh.md"
+        "docs/evidenze/GS-VER-300-completezza-funzionale-kh.md"
       ],
       "gate": "G3",
       "status": "implemented",
@@ -2934,8 +2922,7 @@
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioLinguisticPipelineTests.swift",
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiAdvancedTextAnalysisTransportTests.swift",
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiTextAnalysisReauditTests.swift",
-        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiKHAnalysisTransportTests.swift",
-        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiSOMWorkflowRefinementTests.swift"
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiKHAnalysisTransportTests.swift"
       ],
       "fixtures": [
         "Fixtures/TextAnalysis/v1/cases.json"
@@ -2944,8 +2931,7 @@
         "docs/evidenze/GS-VER-162-parita-operatori-kit-cli.md",
         "docs/evidenze/GS-VER-233-completamento-kh-coder.md",
         "docs/evidenze/GS-VER-234-riverifica-correttezza-completezza.md",
-        "docs/evidenze/GS-VER-300-completezza-funzionale-kh.md",
-        "docs/evidenze/GS-VER-305-rifinitura-kh.md"
+        "docs/evidenze/GS-VER-300-completezza-funzionale-kh.md"
       ],
       "gate": "G3",
       "status": "verified",
@@ -4805,56 +4791,6 @@
       "blockingReason": null
     },
     {
-      "id": "CMP-284",
-      "clause": "GS-STD-001-10 § 10.4; GS-DOR-284 regia e risultato del passo",
-      "specification": "docs/pianificazione/dor-regia-del-piano-e-input-numerico.md",
-      "requirements": [
-        "RQ-005",
-        "RQ-011",
-        "RQ-023",
-        "RQ-063"
-      ],
-      "code": [
-        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift"
-      ],
-      "tests": [
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisExecutionTests.swift",
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiRuntimeExecutionTests.swift"
-      ],
-      "fixtures": [],
-      "evidence": [
-        "docs/evidenze/GS-VER-284-regia-del-piano-e-input-numerico.md"
-      ],
-      "gate": "G2",
-      "status": "implemented",
-      "blockingReason": null
-    },
-    {
-      "id": "CMP-285",
-      "clause": "GS-STD-001-12 § 12.4/12.5; grammatica numerica degli editor GS-DOR-284",
-      "specification": "docs/pianificazione/dor-regia-del-piano-e-input-numerico.md",
-      "requirements": [
-        "RQ-007",
-        "RQ-060",
-        "RQ-063"
-      ],
-      "code": [
-        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioEditorDecimal.swift",
-        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioStatisticsWorkbench.swift",
-        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioCoreOperators.swift"
-      ],
-      "tests": [
-        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiEditorDecimalContractTests.swift"
-      ],
-      "fixtures": [],
-      "evidence": [
-        "docs/evidenze/GS-VER-284-regia-del-piano-e-input-numerico.md"
-      ],
-      "gate": "G2",
-      "status": "implemented",
-      "blockingReason": null
-    },
-    {
       "id": "CMP-302",
       "clause": "GS-STD-001-29 § 29.6; Regressioni di overflow, completezza, teardown e proprietà delle risorse",
       "specification": "docs/standard/29-eccellenza-ingegneristica-apple.md",
@@ -4887,7 +4823,7 @@
         "docs/evidenze/GS-VER-302-robustezza-trasversale.md"
       ],
       "gate": "G3",
-      "status": "verified",
+      "status": "implemented",
       "blockingReason": null
     },
     {
@@ -4916,6 +4852,85 @@
       "fixtures": [],
       "evidence": [
         "docs/evidenze/GS-VER-304-hig-laboratori-macos.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-303",
+      "clause": "GS-STD-001-16 § 16.4 Scenari di analisi e inventario operativo",
+      "specification": "docs/standard/16-strategia-di-verifica-e-test.md",
+      "requirements": [
+        "RQ-058",
+        "RQ-063"
+      ],
+      "code": [
+        "Scripts/check-analysis-scenarios.py",
+        "Scripts/check-kit-cli-parity.py",
+        "Scripts/verify.sh",
+        "Scripts/quality-static.sh",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiAnalysisPlanner.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiAnalysisArtifacts.swift",
+        "Scripts/build-cache.sh"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiAnalysisScenarioTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiPlannerScenarioTests.swift",
+        "Apps/macOS/Tests/StudioCorpusMethodsTests.swift",
+        "Apps/macOS/Tests/StudioOperatorsTests.swift",
+        "Apps/macOS/Tests/StudioStatisticsTests.swift",
+        "Apps/macOS/Tests/StudioEvaluationTests.swift",
+        "Apps/macOS/Tests/StudioAdvancedAnalysisTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPlannerBudgetScenarioTests.swift",
+        "Scripts/check-build-cache.py"
+      ],
+      "fixtures": [
+        "Config/Testing/analysis-scenarios.json",
+        "Fixtures/TextAnalysis/v1/cases.json"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-303-scenari-di-analisi.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-306",
+      "clause": "GS-STD-001-08 § 8.4 Progetto Xcode, inventario e configurazioni (GS-DOR-306)",
+      "specification": "docs/standard/08-gestione-della-configurazione.md",
+      "requirements": [
+        "RQ-005",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "GlifiStudio.xcodeproj/project.pbxproj",
+        "GlifiStudio.xcworkspace/contents.xcworkspacedata",
+        "GlifiStudio.xcodeproj/xcshareddata/xcschemes/GlifiStudio-macOS.xcscheme",
+        "Config/macOS-Tests.xcconfig",
+        "Config/macOS-Tests-Common.xcconfig",
+        "Config/macOS-Tests-Release.xcconfig",
+        "Apps/Shared/Resources/InfoPlist.xcstrings",
+        "Scripts/check-xcode-project.py",
+        "Scripts/check-macos-bundle.swift",
+        "Config/macOS-Debug.xcconfig",
+        "Config/macOS-Release.xcconfig",
+        "Makefile",
+        "Scripts/check-apple-baseline.py",
+        "Scripts/check-app-store-packaging.sh",
+        "Scripts/quality-static.sh",
+        "Scripts/verify.sh"
+      ],
+      "tests": [
+        "Scripts/check-xcode-project.py",
+        "Scripts/check-macos-bundle.swift",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-306-progetto-xcode-completo.md"
       ],
       "gate": "G3",
       "status": "implemented",

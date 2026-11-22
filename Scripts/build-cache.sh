@@ -121,12 +121,10 @@ glifi_prepare_build_cache() {
     glifi_cache_owned_directory="$cache"
     if [[ -d "$cache" ]]; then
         local kilobytes
-        kilobytes="$(du -sk "$cache" | awk '{ print $1 }')" || {
+        if ! kilobytes="$(du -sk "$cache" | awk '{ print $1 }')" || [[ "$kilobytes" != <-> ]]; then
             print -u2 "Impossibile misurare la cache di build."
-            return 1
-        }
-        if [[ "$kilobytes" != <-> ]]; then
-            print -u2 "Impossibile misurare la cache di build."
+            # Roll back partial ownership before returning a preparation failure.
+            glifi_release_build_cache "$cache"
             return 1
         fi
         if (( kilobytes > 10#$maximum * 1048576 )); then

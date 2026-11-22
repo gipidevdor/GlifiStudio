@@ -1,0 +1,24 @@
+{
+  "sourceLanguage" : "it",
+  "strings" : {
+    "Progetto Glifi Studio" : {
+      "comment" : "Localized document type name and exported UTI description. Both nested Info.plist values use this existing source string as their lookup key.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glifi Studio Project"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progetto Glifi Studio"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

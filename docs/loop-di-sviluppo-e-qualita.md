@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DEV-002 |
 | Tipo | Guida controllata del loop di sviluppo |
-| Versione | 1.6.0 |
+| Versione | 1.8.1 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -26,6 +26,7 @@ sostituire il gate completo `make verify`.
 | `make format` | Prima di commitare sorgenti Swift | Riscrive `Apps` e `Packages` secondo `.swift-format` |
 | `make lint` / `make format-check` | Dopo `format` o in revisione | Controlla lo stile senza modificare i file |
 | `make test-macos` | Iterazione sul ciclo documentale dell'app macOS | Compila app e modello reale dal workspace ed esegue i test Swift Testing senza app host |
+| `make check-analysis-scenarios` | Modifiche a scenari, test o operazioni pubbliche | Controlla matrice, riferimenti e omissioni; quattordici controlli negativi |
 | `make check-swift-dialect` | Sempre nel loop e nel gate | Verifica language mode, concurrency, regole e CI |
 | `make quality-static` | Iterazione senza toolchain Swift | Docs, compliance, segreti, tassonomia e messaggi delle failure, dialetto e baseline statiche |
 | `make quality` | Iterazione locale rapida | `quality-static` + formattazione, senza build Xcode |
@@ -51,6 +52,54 @@ la baseline multipiattaforma occorre il profilo `*-all` su richiesta esplicita.
 
 Non introdurre hook git obbligatori: il loop primario è Makefile + CI, come deciso
 in ADR-0020.
+
+## Progetto Xcode, configurazioni e inventario
+
+`GlifiStudio.xcworkspace` resta l'ingresso canonico. Il progetto mostra il
+repository tramite riferimenti espliciti, cartelle native soltanto di
+navigazione e package SwiftPM locale; i file di documentazione e verifica non
+entrano per questo nei Sources o nelle risorse delle app. Config/Testing e la
+matrice degli scenari rimangono elementi di sviluppo.
+
+| Comando e profilo | Ambito verificato |
+| --- | --- |
+| `make check-xcode-project` su macOS | Equivale a `python3 Scripts/check-xcode-project.py --self-test`: grafo PBX, inventario, XML, xcconfig e fixture negative |
+| `python3 Scripts/check-xcode-project.py` su macOS | Validazione completa con parser OpenStep nativo `plutil`, senza build né risoluzione dei package |
+| `python3 Scripts/check-xcode-project.py --portable` | XML del workspace/schemi e catene xcconfig; non dichiara verificati grafo PBX, target ID o inventario |
+
+`quality-static` usa il profilo completo con self-test su macOS e il profilo
+portabile sul job Ubuntu. Il gate `make verify` richiede la validazione completa
+macOS con self-test. Il checker non riscrive il progetto. Un controllo lessicale
+supplementare rifiuta definizioni duplicate nella mappa objects, anche quotate o
+commentate; `plutil` rimane l'unico parser del grafo e riceve il testo già
+controllato. Il self-test copre 23 fixture negative e cinque positive lessicali;
+verifica anche l’unicità di ID/nomi target e le configurazioni del PBXProject.
+ID, percorsi, membership, package, schemi e configurazioni hanno
+controlli distinti; commenti, stringhe e TargetAttributes annidati non sono
+interpretati come nuove definizioni di oggetti.
+
+I test hostless hanno ingressi distinti: macOS-Tests.xcconfig eredita Debug;
+macOS-Tests-Release.xcconfig eredita Release; Common contiene le impostazioni
+neutre condivise. La verifica delle sei configurazioni risolte distingue
+-Onone/DEBUG da -O/wholemodule senza DEBUG. La chiusura del lotto richiede
+esecuzioni native reali in entrambe le configurazioni, non la sola compilazione
+del target test. Lo schema macOS analizza in Release e include il target test
+soltanto per la BuildAction di testing.
+
+Queste configurazioni non sono test plan: EA-T-01, sanitizer pianificati,
+localizzazione UI, prestazioni e audit assistivi conservano i rispettivi stati.
+Il catalogo InfoPlist it/en localizza la chiave descrittiva già presente; il
+lookup nel bundle compilato non dimostra la presentazione di Finder o
+LaunchServices. La verifica iPadOS del lotto è soltanto strutturale, senza build.
+
+[GS-DOR-306](pianificazione/dor-progetto-xcode-completo.md) delimita il contratto;
+[GS-VER-306](evidenze/GS-VER-306-progetto-xcode-completo.md) distingue le prove
+mirate e la chiusura automatica del checkpoint 328169f7: gate, nativi Debug e
+Release indipendenti e preflight macOS superati, con 125 definizioni e 409
+esecuzioni in ciascuna configurazione. La prova resta legata a base d368285 con
+overlay 302/303/304; non certifica il nuovo Core 305 integrato successivamente
+nel checkout principale. Un nuovo controllo dell'inventario dopo l'integrazione
+non estende questi esiti a sorgenti differenti.
 
 ## Dialetto Swift
 
@@ -155,3 +204,5 @@ controllo per ottenere verde è non conformità.
 - [Integrazione continua e quality gate](standard/20-integrazione-continua-e-quality-gate.md)
 - [CI e runner Xcode 27](repository/05-ci-e-runner-xcode.md)
 - [ADR-0020](adr/0020-loop-di-qualita-e-dialetto-swift.md)
+
+La copertura degli scenari analitici è definita in [GS-TST-001](pianificazione/scenari-di-analisi.md). `make verify` ne confronta l’inventario anche con il compilatore; esiti e limiti sono in [GS-VER-303](evidenze/GS-VER-303-scenari-di-analisi.md).

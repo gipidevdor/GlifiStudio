@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.20.8 |
+| Versione | 1.20.10 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -288,10 +288,10 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 
 - [GS-VER-300 — Completezza dei profili analitici KH pubblici](GS-VER-300-completezza-funzionale-kh.md) — Superato localmente nella versione unita; 19 tag KH, 771 test Core/Kit e 63 fixture
 
-- [GS-VER-305 — Riverifica e rifinitura dei profili KH](GS-VER-305-rifinitura-kh.md) — Superato localmente
-
-- [GS-VER-284 — Regia del piano e input numerico](GS-VER-284-regia-del-piano-e-input-numerico.md) — Compatibilità e verifiche macOS del refactoring interno
-
 - [GS-VER-304 — Componenti e campi nativi nei laboratori macOS](GS-VER-304-hig-laboratori-macos.md) — Gate e preflight macOS superati sul checkpoint 9c9e0098: 771 test Core/Kit e 113 definizioni/345 esecuzioni native; audit GUI e assistivi aperti
+
+- [GS-VER-303 — Scenari di analisi](GS-VER-303-scenari-di-analisi.md) — Superato nel profilo macOS; inventario, integrazione e modelli, audit manuali separati
+
+- [GS-VER-306 — Progetto Xcode completo e verificabile](GS-VER-306-progetto-xcode-completo.md) — Superato per automatici sul checkpoint 328169f7: gate, 125 definizioni/409 esecuzioni native in ciascuna configurazione Debug/Release e preflight macOS; nuovo Core 305 escluso
 
 - [GS-VER-286 — Operatori tipizzati e failure coese](GS-VER-286-operatori-tipizzati-e-failure-coese.md) — Compatibilità e gate macOS superati; operatori privati e policy di famiglia

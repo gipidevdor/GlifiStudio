@@ -96,6 +96,41 @@ struct StudioStatisticsTests {
         #expect(model.visibleRows.map(\.id) == Array(0..<50))
     }
 
+    @Test func immediateResetRejectsPublicationAndRetryCapturesOnlyTheNewInput() async throws {
+        let model = StudioStatisticsModel()
+        model.loadSyntheticExample()
+        try await model.execute()
+        _ = try #require(model.result)
+        var entered = false
+        let execution = Task.immediate { @MainActor in
+            entered = true
+            try await model.execute()
+        }
+        #expect(entered && !execution.isCancelled)
+        model.reset()
+        do {
+            try await execution.value
+            Issue.record("A statistical result published after reset")
+        } catch let failure as GlifiStudioFailure {
+            #expect(failure.category == "cancelled")
+            #expect(failure.operation == "analyze")
+            #expect(failure.retryDisposition == "newRequest")
+            #expect(failure.retainedState == "unchanged")
+        }
+        #expect(!execution.isCancelled)
+        #expect(model.result == nil && model.visibleRows.isEmpty)
+        #expect(model.capturedInputRows.isEmpty && model.visibleInputRows.isEmpty)
+        #expect(model.matchingRowCount == 0 && model.page == 0 && model.inputPage == 0)
+        #expect(model.pane == .configuration && !model.isDraftChanged)
+        model.input = "1 2 3"
+        try await model.execute()
+        let result = try #require(model.result)
+        #expect(result.request.values == [[1, 2, 3]])
+        #expect(model.capturedInputRows.count == 3)
+        #expect(model.pane == .results && !model.isDraftChanged)
+        #expect(result == (try await GlifiStudioStatisticsWorkbench.evaluate(result.request)))
+    }
+
     @Test func identifiesEveryDraftChangeWhileKeepingTheCapturedResult() async throws {
         let model = StudioStatisticsModel()
         model.loadSyntheticExample()

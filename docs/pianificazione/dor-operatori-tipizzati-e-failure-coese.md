@@ -32,3 +32,13 @@
 **Ready** prima del primo cambiamento implementativo. macOS è il gate corrente;
 iPadOS è rinviato su richiesta dell’iniziatore. Gli altri mapper Kit conservano
 le rispettive policy: la condivisione riguarda soltanto le due tabelle identiche.
+
+## Integrazione dei nuovi scenari e del progetto Xcode
+
+Dopo i gate locali e remoti superati su `a7f1ccc`, main ha pubblicato GS-303 e
+GS-306 in `d6b4828`. Il lotto integra esattamente questa base, preservando
+codice, configurazioni, test e stati della matrice. I sei sorgenti del lotto
+restano identici al primo checkpoint; confronto API/CLI ripetuto contro la
+nuova base. Gli esiti del gate macOS sul codice unito sono registrati nella
+[PR #46](https://github.com/gipidevdor/GlifiStudio/pull/46), separatamente dalle
+prove originarie. Nessuna configurazione o correzione del planner è riscritta.

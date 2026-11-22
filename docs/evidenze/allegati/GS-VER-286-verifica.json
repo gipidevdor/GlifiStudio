@@ -1,10 +1,10 @@
 {
   "schemaIdentifier": "studio.glifi.verification.typed-coding-and-analysis-failures.v1",
-  "baselineCommit": "76e5871e002eb4274aef16eec4d5982cd32a3b59",
+  "baselineCommit": "d6b482894e163b89205ff11245b938080ea39953",
   "affectedSourcesSHA256": "e2c8a2e815f0430f5a95c532f841d2ce00503dd7eeee219c92832e0b64949307",
   "affectedSourcesDigestMethod": "Sorted relative path, NUL, complete bytes, NUL; four production files and two new contract tests",
   "structure": {
-    "baseline": "76e5871e002eb4274aef16eec4d5982cd32a3b59",
+    "baseline": "d6b482894e163b89205ff11245b938080ea39953",
     "binaryOperators": 12,
     "rawStringASTPayloadsBefore": 1,
     "rawStringASTPayloadsAfter": 0,
@@ -38,7 +38,7 @@
     "performanceClaim": false
   },
   "publicAPI": {
-    "baseline": "76e5871e002eb4274aef16eec4d5982cd32a3b59",
+    "baseline": "d6b482894e163b89205ff11245b938080ea39953",
     "method": "swift-api-digester; only top-level declaration order canonicalized",
     "modules": {
       "GlifiCore": {
@@ -53,8 +53,8 @@
   },
   "cliCompatibility": {
     "schemaIdentifier": "studio.glifi.verification.cli-compatibility.v1",
-    "referenceBinarySHA256": "189955c701b30ce2c232dfb1eaf72a5de1cfd2ef51f654c5982658728480c207",
-    "candidateBinarySHA256": "5567ce9ec6c33cd8f2c3c067d9ae86755aa350ccdc1ce7023cae7b35a181ae13",
+    "referenceBinarySHA256": "ce613c545670a963df303019c527f3109a2fd219826046c720e8e5e92a8fa616",
+    "candidateBinarySHA256": "6379016e3af7ffb2dc8eba7cd6df64a5fb420b02fe6aaaad0e3cbfc19a08332a",
     "caseCount": 164,
     "allBytesEqual": true,
     "comparison": "Complete stdout, stderr and exit code; no fields removed or normalized",
@@ -67,7 +67,7 @@
     "allBytesEqual": true,
     "scope": "Native-token CLI requests; external-token quote/evidence contracts remain covered by public Core tests"
   },
-  "completeCLIReportSHA256": "32c672befb82bde61a088dd15bd3fce15f1cdf6e34a0d9d0f6cdbf734c88b0cd",
+  "completeCLIReportSHA256": "1c9f96c05fc8dddb3442cb1f8cc1e459c53297acea02295fbed47f651d731ca3",
   "completeCodingCLIReportSHA256": "c14ba0299a91c14c2d5f04d417d86c3dd855629b12e3d96b3f9acc0ead92b1ed",
   "referenceGlifiModulesEmbeddedInExecutable": true,
   "targetedTests": {
@@ -77,7 +77,8 @@
     "newCoreTestDefinitions": 7,
     "newCoreParameterRows": 69,
     "newCoreBoundaryTest": 1,
-    "newKitTestDefinitions": 6
+    "newKitTestDefinitions": 6,
+    "verifiedCommit": "a7f1ccc665e71c23d5578802d7fc6d0e73626582"
   },
   "fixtureCorrection": {
     "originalExpression": "!1 + 1 == 1",
@@ -127,7 +128,9 @@
     "kitCLIRejectionChecks": 51,
     "boundedProjectCLIRejectionChecks": 64,
     "processKillCheckpoints": 22,
-    "pdfa2uFiles": 2
+    "pdfa2uFiles": 2,
+    "verifiedCommit": "a7f1ccc665e71c23d5578802d7fc6d0e73626582",
+    "scope": "Original standalone refactor; final combined gate outcomes recorded separately in PR46"
   },
   "limits": {
     "iPadOSDeferred": true,
@@ -136,5 +139,18 @@
     "scientificMaturityPromotion": false,
     "rootCheckoutWrites": false,
     "knownToolchainWarnings": "Existing CoreSimulator/device diagnostics during macOS destinations; native tests and both macOS builds passed"
+  },
+  "initialBaselineCommit": "76e5871e002eb4274aef16eec4d5982cd32a3b59",
+  "finalIntegration": {
+    "upstreamCommit": "d6b482894e163b89205ff11245b938080ea39953",
+    "ownSourceFilesUnchanged": 6,
+    "otherUpstreamFilesAndModesUnchanged": 1229,
+    "codeConfigTestProjectMakefileFilesUnchanged": 474,
+    "upstreamMatrixRecordsPreserved": 169,
+    "addedMatrixRecords": [
+      "CMP-286",
+      "CMP-287"
+    ],
+    "verificationRecord": "https://github.com/gipidevdor/GlifiStudio/pull/46"
   }
 }

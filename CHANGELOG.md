@@ -20,13 +20,28 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 - Condivisa la tabella di traduzione failure già identica fra TextAnalytics ed
   ExploratoryCompletion; le policy delle altre famiglie restano esplicite.
 
-### Regia del piano e grammatica numerica
+### Progetto Xcode completo — GS-DOR-306
 
-- Separata l’esecuzione del singolo passo dalla regia del piano: costruzione del
-  risultato e risoluzione del record persistito condivise, con controlli,
-  progressi e finalizzazione espliciti (GS-DOR-284).
-- Unificata la grammatica decimale degli editor statistico e degli operatori;
-  ciascuna famiglia conserva errori, limiti e semantica delle righe propri.
+- Navigator esteso ai file del repository con cartelle native senza membership
+  di build, gruppo Tests e package GlifiCore visibile; Sources delle app e dei
+  test preservati.
+- Configurazioni hostless Debug/Release distinte, dipendenza GlifiKit esplicita
+  nei test e schema macOS con analisi Release e build dei test solo per testing.
+- Descrizione del documento localizzata it/en tramite InfoPlist.xcstrings;
+  rimossa la chiave secure-restoration non documentata, conservando la policy
+  AppKit degli SDK supportati senza nuovo delegate o entitlement.
+- Controllo di grafo/inventario con parser nativo e profilo portabile distinto,
+  fixture negative e guard lessicale sulle definizioni duplicate. Gate, nativi
+  Debug/Release e archivio macOS senza firma superati sul checkpoint 328169f7
+  (GS-VER-306); il nuovo Core 305 e le prove interattive restano separati.
+
+### Test degli scenari di analisi
+
+- Producer del piano versione2 per separare la cache della policy corretta dai piani storici, che restano leggibili e immutati; nessuna migrazione del package o cambio di schema.
+
+- Il planner addebita il bundle keyness al budget aggregato prima delle analisi successive, impedendo piani che superano il limite richiesto. Nove casi di confine riproducono e verificano la correzione.
+
+- Test degli scenari di analisi: inventario controllato delle operazioni, integrazione di progetto e revisioni, planner completo e casi limite dei modelli macOS (GS-VER-303).
 
 ### Componenti e campi nativi macOS — GS-DOR-304
 
@@ -100,13 +115,6 @@ conserva l’identità candidata distinta `TextRankSentence-configurable-v1`,
 preservando i metodi upstream già pubblicati.
 
 ### Corretto
-
-- Rifinitura KH: arrotondamento subnormale dei punteggi documentali, likelihood
-  e prior NB quasi unitari, rappresentanti Unicode deterministici e pesi gaussiani
-  SOM senza cutoff assoluto. Budget NB/MDS/SOM cumulativi e failure Ward coerenti;
-  alcuni input prima ammessi sono ora rifiutati per risorse o range numerico.
-  Planner: costo keyness detratto e produttore 2 per separare le cache storiche,
-  mantenendo lo schema del progetto. Prove e limiti in GS-VER-305.
 
 - Il decoder UTF-8 rifiuta ora range negativi, vuoti o invertiti che il decoder
   precedente lasciava passare; le span map verificano inoltre i vincoli locali
