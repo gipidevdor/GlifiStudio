@@ -35,3 +35,13 @@ e non chiudono approvazioni scientifiche, audit dell'interfaccia o G4.
 Il supporto precisa che soltanto lo SHA di verifica è escluso dal timer:
 encoder e SHA del produttore pubblico sono inclusi nelle operazioni misurate.
 La precisazione è congelata prima della baseline e non modifica il timer.
+
+## Esito del lotto
+
+Tre produttori ottimizzati con preimmagini, byte, schemi e rifiuti invariati.
+[GS-VER-179](../evidenze/GS-VER-179-identita-canoniche.md) registra sette test
+mirati, otto scenari misurati e il gate integrato con 771 test. La revisione
+1728fc1 stabilisce la priorità macOS: make verify usa tale profilo, iPadOS è
+rinviato. Misure e integrazione hanno inventari distinti; i casi grandi non
+sono presentati come accelerazioni robuste. Nessuna nuova API o promozione
+scientifica.

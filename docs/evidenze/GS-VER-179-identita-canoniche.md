@@ -7,7 +7,7 @@
 | Identificatore | GS-VER-179 |
 | Tipo | Evidenza di correttezza e prestazioni |
 | Versione | 1.0.0 |
-| Stato | Verifica in corso |
+| Stato | Superato localmente con limiti dichiarati |
 | Responsabile | Codex, con quattro agenti concorrenti |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Ottimizzazione complementare richiesta dall'iniziatore |
@@ -93,6 +93,40 @@ I log grezzi e il protocollo restano in /tmp/GlifiCanonical179Reports.
 
 ## Gate congiunto
 
-make verify completo avviato sulla base db2bac1 con i tre produttori ottimizzati.
-Il suo esito è ancora in corso; CMP-187 resta implemented e nessuna
-promozione scientifica o chiusura G4 viene dichiarata.
+La prima esecuzione su db2bac1 supera 560 test Core, 112 Kit, 95 controlli
+CLI, due PDF/A-2u e 22 checkpoint recovery. Viene interrotta dal coordinatore
+prima della chiusura per integrare la revisione pubblicata 1728fc1: non è
+presentata come gate completo superato.
+
+Il merge 013dea0 preserva le tre espressioni ottimizzate e i banchi di prova.
+Le misure restano riferite alla patch sulla base db2bac1; la composizione con
+il refactoring privato è verificata separatamente. Il nuovo inventario contiene
+275 file Swift. AGENTS e Make pubblicati danno priorità a macOS: make verify
+usa quel profilo; iPadOS richiede una richiesta esplicita e non viene avviato.
+
+La nuova esecuzione termina con exit 0: **560 test Core + 112 Kit + 99 nativi
+macOS = 771 test**, 95 controlli CLI su trenta fixture, due PDF/A-2u e 22
+checkpoint recovery. Passano anche 194 righe di oracoli numerici e 64 casi
+Fraction indipendenti. Debug/test e Release macOS completati. Tutti i 275 file
+Swift dell'inventario integrato restano invariati fino alla fine del gate.
+CMP-187 resta implemented: nessuna promozione scientifica, attestazione App
+Store o chiusura G4 viene dichiarata.
+
+Il simulatore dell'host segnala la versione 1171.7.0 contro 1174.21.0 richiesta
+da Xcode; il gate macOS termina comunque. iPadOS non viene verificato in questo
+lotto, in conformità alla nuova priorità pubblicata. Le ultime modifiche dopo
+il gate riguardano soltanto registri ed evidenze e ricevono controlli statici
+finali.
+
+## Chiusura e pulizia
+
+Le due raccolte di risultati nativi sono archiviate e verificate file per file:
+666 file ciascuna. I log grezzi, campioni, fonti, inventari e protocollo sono
+conservati anche in `~/Library/Caches/GlifiStudio/evidence/GS-VER-179`.
+Rimossi soltanto cache e binari rigenerabili di questa sessione:
+**2,181,716 KiB, circa 2.08 GiB**, misurati con du prima
+della rimozione. Non è una differenza df isolata su APFS. Toolchain,
+dipendenze, prove utili e file delle altre chat sono conservati.
+
+make quality finale termina con exit 0 dopo la chiusura dei registri:
+controlli statici, dialetto Swift e formattazione superati.

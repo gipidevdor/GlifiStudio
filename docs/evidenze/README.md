@@ -14,7 +14,7 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
-- [GS-VER-179 — Codifica delle identità canoniche](GS-VER-179-identita-canoniche.md) — Verifica in corso
+- [GS-VER-179 — Codifica delle identità canoniche](GS-VER-179-identita-canoniche.md) — Tre produttori, riferimenti completi, misure e gate macOS integrato superati
 
 - [GS-VER-177 — Buffer indicizzati della betweenness](GS-VER-177-betweenness-indicizzata.md) — Riferimenti bitwise, misure sotto contesa e gate integrato superati
 - [GS-VER-178 — Codifica dei digest degli export visuali](GS-VER-178-digest-export-viste.md) — Byte invariati, misure distinte per fase e gate integrato superati
