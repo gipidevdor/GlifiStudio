@@ -647,11 +647,12 @@
   },
   "ongoingUnpublishedKHWorkIncluded": false,
   "cleanup": {
-    "status": "pending cleanup after main synchronization",
-    "ownedScratchAllocatedKiBBeforeRemoval": 10891992,
+    "status": "removed",
+    "ownedScratchAllocatedKiBBeforeRemoval": 10866608,
     "knownInterruptedTemporaryAllocatedKiB": 11684,
     "priorCoreRemovalKiB": 490308,
-    "measurement": "du -sk; only exact task-owned paths; useful evidence and active tools preserved"
+    "totalMeasuredRemovedKiB": 11368600,
+    "measurement": "du -sk before removal; only exact task-owned paths; useful verification evidence and active tools preserved"
   },
   "intermediateFullSuiteFailure": {
     "passedDefinitions": 116,
@@ -732,5 +733,12 @@
     "latestBranchTip": "d4d9d972a6df943828baa64e1c236155744b2f70",
     "alreadyIncludedBeforeVerification": true,
     "mergeCommit": "eadcc0f431e017174a537f756828d71462cff6c4"
+  },
+  "publication": {
+    "verifiedMainCommit": "db6a43246432cc59db3bcb52c6019f5070520f95",
+    "onlyMainBranch": true,
+    "originalCheckoutSynchronizedWithoutDiscardingLaterWork": true,
+    "laterUnpublishedWork": "GS-VER-303; ongoing paths retained in original checkout and backed up locally",
+    "preservedOngoingPathCount": 21
   }
 }

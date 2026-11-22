@@ -187,3 +187,18 @@ toolchain già installata e valida effettivamente i due PDF/A-2u. Le build macOS
 segnalano il CoreSimulator precedente alla versione
 richiesta da Xcode, senza dedurne prove su simulatore iPadOS. Nessun voto assoluto
 di qualità è ricavato dal solo superamento dei controlli.
+
+## Pubblicazione e pulizia
+
+La baseline verificata è pubblicata su `main`, con storia dei checkpoint
+preservata e nessun force push. Rimane soltanto il branch `main`. Il checkout
+principale è riallineato senza sovrascrivere le 21 voci di lavoro successive
+del lotto 303: sono conservate nel checkout e in una copia locale di recupero,
+fuori dal perimetro pubblicato. La staging area precedente è salvata prima
+del riallineamento.
+
+Le cache e i temporanei posseduti dalla revisione sono rimossi dopo la chiusura
+di tutti i processi. La misura complessiva è **11.368.600 KiB
+(circa 10,84 GiB)**, inclusi i 490.308 KiB già rimossi dal
+benchmark e il singolo temporaneo interrotto identificato. Restano evidenze
+utili, toolchain, dipendenze e file delle altre sessioni.
