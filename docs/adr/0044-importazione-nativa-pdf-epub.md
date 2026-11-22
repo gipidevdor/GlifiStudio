@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-ADR-0044 |
 | Tipo | Decisione di acquisizione e provenienza |
-| Versione | 1.0.1 |
+| Versione | 1.0.2 |
 | Stato | Accettato |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -34,9 +34,10 @@ atomicamente con la fonte usando le generazioni esistenti. La riapertura legge
 lo snapshot verificato e non invoca nuovamente i framework. Non occorre una
 riestrazione delle fonti storiche. Le prove hanno rilevato il vincolo SQL4 sui
 soli formati testuali: al primo import PDF/EPUB una migrazione transazionale
-SQL5 ricostruisce la sola tabella delle fonti con i quattro formati, preservando
-tutte le righe, generazioni, identità e digest. Apertura e import TXT/Markdown
-mantengono SQL4. Il formato del package e gli schemi manifest 3/4 restano invariati;
+SQL5 ricostruisce source_entries con i quattro formati e project_metadata con
+la nuova versione, preservando tutte le righe, generazioni, identità e digest.
+Apertura e import TXT/Markdown mantengono SQL4 nei progetti mai sottoposti a
+importazione ricca. Il formato del package e gli schemi manifest 3/4 restano invariati;
 minimumReaderVersion diventa 2 soltanto con fonti ricche, mentre il nuovo reader
 accetta anche i progetti precedenti. Interruzioni prima del commit possono
 lasciare lo store già aggiornato, come una generazione preparata: il nuovo reader

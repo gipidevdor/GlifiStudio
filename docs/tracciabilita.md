@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.16 |
+| Versione | 0.92.17 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -677,5 +677,6 @@ assistivi, scientifici, energetici o di rilascio ancora aperti.
 
 RF-004/005/006 e RF-088 collegano originale, testo acquisito e locatori nei
 percorsi Core/Kit/CLI e nel selettore nativo. ADR-0044 governa snapshot atomico
-e riapertura senza riestrazione; CMP-310 resta implemented durante la verifica.
-GS-VER-310 registra fixture sintetiche, prove ostili, limiti e gate del lotto.
+e riapertura senza riestrazione. GS-VER-310 registra fixture sintetiche, prove
+ostili, limiti e gate locali superati. CMP-310 resta implemented: la verifica
+funzionale sintetica non chiude corpus reali, qualifica G4/G5 o prove UX manuali.

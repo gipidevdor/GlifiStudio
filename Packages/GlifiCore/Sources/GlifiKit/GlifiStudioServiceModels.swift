@@ -9,7 +9,7 @@ public enum GlifiStudioStatus: String, Sendable, Equatable {
     case ready
 }
 
-/// Text formats supported by the first product ingestion slice.
+/// Source formats supported by the bounded product ingestion boundary.
 public enum GlifiStudioTextFormat: String, Codable, Equatable, Sendable {
     case plainText
     case markdown

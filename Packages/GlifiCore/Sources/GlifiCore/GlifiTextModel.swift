@@ -116,12 +116,12 @@ public struct GlifiImportedText: Equatable, Sendable {
     }
 }
 
-/// Validates bounded UTF-8 input without guessing or lossy replacement.
+/// Imports bounded UTF-8 sources and captures binary document text without lossy decoding.
 public struct GlifiTextImporter: Sendable {
     /// Creates a stateless strict text importer.
     public init() {}
 
-    /// Validates, identifies, and decodes one bounded immutable text snapshot.
+    /// Validates and captures one bounded immutable source snapshot.
     public func importText(
         from data: Data,
         format: GlifiTextFormat,

@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-310 |
 | Tipo | Incremento di acquisizione documentale |
-| Versione | 1.0.1 |
+| Versione | 1.0.2 |
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -38,7 +38,7 @@ binario o nel contenitore compresso. TXT/Markdown conservano il contratto attual
 | failure semantics | Password/DRM o contenuti non supportati, XML/ZIP/PDF invalidi, limiti e cancellazione generano failure tipizzate senza testo/path; nessun commit parziale della fonte |
 | esperienza prevista | Stesso comando importa; TXT/Markdown/PDF/EPUB ammessi dal selettore di sistema; provenienza distinta da coordinate binarie; etichette localizzabili |
 | verifica | Fixture sintetiche, ZIP ostili e CRC, PDF multipagina/OCR, reopen senza riestrazione, query/salto alla fonte e parità CLI; gate make verify macOS prima della consegna |
-| dati e migrazione | Originale e snapshot atomici negli oggetti e Artifact già previsti; SQL5 lazy e transazionale al primo import ricco conserva tutte le righe; payload storici invariati, minimumReaderVersion 2 per nuove fonti, rollback e reader precedenti verificati |
+| dati e migrazione | Originale e snapshot atomici negli oggetti e Artifact già previsti; SQL5 lazy e transazionale al primo import ricco conserva tutte le righe; payload storici invariati, minimumReaderVersion 2 per nuove fonti; rollback e fence del reader corrente verificati, rifiuto dei reader precedenti previsto dal contratto senza esecuzione di un binario storico |
 | sicurezza/privacy | Nessuna esecuzione di script né accesso a risorse esterne; entità XML e path fuori contenitore rifiutati; limiti prima di decompressione e rasterizzazione |
 | prestazioni/sistema | Estrazione fuori Main Actor; pagine/risorse elaborate progressivamente, un buffer OCR per volta, controlli di cancellazione e budget cumulativi |
 | tracciabilità | GS-VER-310, ADR-0044, contratti di dati/importazione/API e matrice aggiornati nello stesso lotto; nessuna promozione G4/G5 |

@@ -1328,7 +1328,8 @@ private struct CLIRequest {
             guard
                 inputFormat != nil
                     || sourceURLs.allSatisfy({
-                        ["txt", "md", "markdown"].contains($0.pathExtension.lowercased())
+                        ["txt", "md", "markdown", "pdf", "epub"].contains(
+                            $0.pathExtension.lowercased())
                     })
             else {
                 throw CLIUsageError.invalidArguments

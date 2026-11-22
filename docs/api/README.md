@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-API-001 |
 | Tipo | Specifica normativa delle interfacce applicative e headless |
-| Versione | 1.32.2 |
+| Versione | 1.32.3 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -208,7 +208,7 @@ chiave (GS-VER-135).
 | --- | --- | --- | --- |
 | stato motore | nessuna | stato capability-neutral | Implementata |
 | crea/apri/chiudi progetto | URL autorizzato, modalità | sessione o failure | Implementata e verificata per package locale `.glifi` v1 |
-| importa | sessione, sorgenti, policy | SourceRevision e rapporto | TXT/Markdown bounded verificati; PDF/EPUB e snapshot di estrazione nel lotto GS-VER-310; streaming generale distinto |
+| importa | sessione, sorgenti, policy | SourceRevision e rapporto | TXT/Markdown/PDF/EPUB bounded e snapshot di estrazione verificati nel perimetro sintetico GS-VER-310; streaming generale distinto |
 | profila raccolta | revisioni TXT/Markdown della generazione e limiti | conteggi, distribuzioni e matrice sparsa con digest | Slice `corpus-profile-it-v1` implementata e verificata; metadati, duplicazioni e problemi di qualità del CollectionProfile completo restano aperti |
 | pianifica | intent, scope/gruppi espliciti e budget bounded | AnalysisPlan, rationale e Artifact persistito | `planner-v2` (ADR-0025): profilo corpus e keyness più sette capability estese con decisioni e costi dichiarati (GS-VER-106) |
 | esegui piano | stessa request pianificabile e condizioni runtime osservate | Artifact ordinati, interpretazione Evidence/Finding/Caveat, stato terminale, profilo operativo e progresso | Profilo corpus, keyness e capability estese con findings secondo le policy ADR-0026 (GS-VER-111); progresso intra-nodo, checkpoint ed ExecutionRecord aperti |

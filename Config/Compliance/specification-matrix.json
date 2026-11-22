@@ -581,7 +581,7 @@
       "evidence": [],
       "gate": "G2",
       "status": "blocked",
-      "blockingReason": "PDF/OCR sono post-MVP; corpus cattivo, metriche e limiti non sono acquisiti."
+      "blockingReason": "L'importazione PDF/OCR e i limiti bounded sintetici sono implementati in GS-VER-310; corpus avversario reale, metriche di qualità e qualifica restano aperti."
     },
     {
       "id": "CMP-021",

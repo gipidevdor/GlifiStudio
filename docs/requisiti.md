@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-SRS-001 |
 | Tipo | Software requirements specification |
-| Versione | 0.51.4 |
+| Versione | 0.51.5 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -138,7 +138,7 @@ restano requisiti di evoluzione finché una successiva baseline non le classific
 | RF-085 | Il sistema **DEVE** produrre report PDF/Markdown ed export CSV/JSON con ExportManifest senza includere fonti complete per default. | NS-016, NS-018; GS-DAT-001, GS-PROD-001 | Must 0.1 | TV-059 | PDF/A-2u, Markdown, CSV e JSON verificati con manifest; preview UI aperta |
 | RF-086 | Il prodotto 0.1 **DEVE** completare il percorso Must e **NON DEVE** esporre come stabili le capacità classificate post-MVP da GS-PROD-001. | NS-008, NS-015; GS-PROD-001 | Must 0.1 | TV-061 | Baseline definita |
 | RF-087 | La libreria GlifiCore, attraverso GlifiKit, **DEVE** offrire le famiglie analitiche KH Coder dichiarate in GS-MET-001-23 con varianti native versionate, errori tipizzati, limiti espliciti e verifica numerica indipendente; le ottimizzazioni **NON DEVONO** alterarne la semantica. | Richieste esplicite 2026-11-01 e 2026-11-22; ADR-0032; ADR-0035 | Libreria candidata | TV-087 | Primitive e facciata implementate; request Swift/CLI riproducibile in GS-API-002 (TV-088); oracoli e benchmark in GS-VER-160; varianti aggiuntive e nove operazioni avanzate implementate, con mirati acquisiti e nuovo gate in verifica in GS-VER-233; promozione scientifica separata secondo ADR-0031 |
-| RF-088 | Il sistema **DEVE** importare EPUB testuali non cifrati preservando originale, metadati, ordine di lettura e locatori delle risorse, senza eseguire script o accedere a rete. | Richiesta esplicita del 2026-11-22; ADR-0044 | Incremento post-0.1 | Fixture sintetiche, ZIP/XML ostili, persistenza atomica e parità dei client | In verifica GS-VER-310 |
+| RF-088 | Il sistema **DEVE** importare EPUB testuali non cifrati preservando originale, metadati, ordine di lettura e locatori delle risorse, senza eseguire script o accedere a rete. | Richiesta esplicita del 2026-11-22; ADR-0044 | Incremento post-0.1 | Fixture sintetiche, ZIP/XML ostili, persistenza atomica e parità dei client | Verifiche sintetiche locali GS-VER-310; qualifica reale aperta |
 
 ## 6. Requisiti di qualità
 

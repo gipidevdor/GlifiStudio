@@ -462,7 +462,19 @@ def check_explicit_imports(binary: Path, directory: Path) -> None:
                 if not provenance["locations"]:
                     raise ValueError("Imported document lost its page/chapter locations")
 
-    print(f"Import: {len(profiles)} explicit formats on .data sources preserve the complete native profile")
+            extension = {"plainText": "txt", "markdown": "md", "pdf": "pdf", "epub": "epub"}[request["format"]]
+            automatic_source = Path(temporary) / (fixture["operation"] + "." + extension)
+            shutil.copyfile(source, automatic_source)
+            automatic_project = Path(temporary) / (fixture["operation"] + "-automatic.glifi")
+            invoke(["project", "create", str(automatic_project)], "project.create")
+            automatic = invoke(["import", str(automatic_project), str(automatic_source)], "import")
+            compare(automatic["lastProfile"], fixture["result"], "import.automatic.lastProfile")
+            auto_snapshot = automatic["project"]
+            if (auto_snapshot["generation"], auto_snapshot["sourceCount"], auto_snapshot["artifactCount"]) != (1, 1, expected_artifacts):
+                raise ValueError("Automatic import committed an unexpected generation or count")
+            if auto_snapshot["sources"][0]["format"] != request["format"]:
+                raise ValueError("Automatic import selected a different source format")
+    print(f"Import: {len(profiles)} explicit and automatic formats preserve the complete native profile and source provenance")
 
 
 def check_legacy_request_file_admission(binary: Path) -> None:

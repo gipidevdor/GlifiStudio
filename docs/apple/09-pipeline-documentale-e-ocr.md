@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-APL-009 |
 | Tipo | Standard applicativo Apple |
-| Versione | 1.1.1 |
+| Versione | 1.1.2 |
 | Stato | Approvato |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -22,10 +22,10 @@ PDF/OCR restano post-MVP; ADR-0044 ne autorizza il nuovo incremento con EPUB, se
 | --- | --- | --- | --- |
 | Uniform Type Identifiers | Dichiarazione e validazione dei tipi importati, esportati e trasferiti | Da adottare nella prima importazione | Elenco formati approvato |
 | Foundation, `FileHandle`, coordinamento file | I/O incrementale, accesso coordinato e scritture recuperabili | Da adottare nella vertical slice | Contratto documentale e test di errore |
-| PDFKit | Estrazione del livello testuale e pagine | Implementato, in verifica GS-VER-310; selezione e navigazione PDF distinte | Fixture digitali e locatori pagina; corpus reali aperti |
-| Vision | OCR locale con osservazioni, coordinate e confidenza | Implementato, in verifica GS-VER-310 | Fixture sintetiche e provenienza; metriche reali ed energia aperte |
+| PDFKit | Estrazione del livello testuale e pagine | Implementato e verificato su fixture sintetiche GS-VER-310; selezione e navigazione PDF distinte | Fixture digitali e locatori pagina; corpus reali aperti |
+| Vision | OCR locale con osservazioni, coordinate e confidenza | Implementato e verificato su fixture sintetiche GS-VER-310 | Fixture sintetiche e provenienza; metriche reali ed energia aperte |
 | VisionKit | Acquisizione guidata da fotocamera e interazioni documentali di sistema su iPad | Condizionale | Requisito esplicito di scansione e permesso fotocamera |
-| Image I/O e Core Graphics | Orientamento e rasterizzazione controllata delle immagini | Core Graphics implementato, in verifica GS-VER-310 | Rotazioni e budget pixel; profili reali distinti |
+| Image I/O e Core Graphics | Orientamento e rasterizzazione controllata delle immagini | Core Graphics implementato e verificato su fixture sintetiche GS-VER-310 | Rotazioni e budget pixel; profili reali distinti |
 | Core Image | Pre-elaborazione immagini accelerata prima dell'OCR quando migliora la qualità | Da valutare | Confronto accuratezza, GPU, energia e memoria |
 | Quick Look Thumbnailing | Anteprime efficienti senza renderer proprietario | Condizionale | Flusso di esplorazione documenti |
 | Core Transferable | Contratto di importazione, esportazione, drag and drop e condivisione | Da adottare quando i tipi sono stabili | Tipi e policy di copia/riferimento approvati |
