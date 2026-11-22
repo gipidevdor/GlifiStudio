@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.0 |
+| Versione | 0.92.5 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -13,6 +13,23 @@
 ## Scopo
 
 La matrice collega le fonti iniziali alle necessità degli stakeholder, ai requisiti software, alle parti dell'architettura e alle evidenze di verifica pianificate. Gli identificatori fanno riferimento a [Requisiti](requisiti.md) e [Architettura](architettura.md).
+
+## Riprogettazione ergonomica della GUI
+
+| Unità | Requisiti e verifiche | Contratto e stato |
+| --- | --- | --- |
+| [GS-DOR-222](pianificazione/dor-riprogettazione-gui.md), ADR-0034, CMP-222 | RF-046, RF-087, RQ-012, RQ-030, RQ-058, RQ-063; TV-017, TV-035, TV-058, TV-071, TV-076, TV-087 | GS-UI-001 e GS-UX-001-17: navigazione per compiti, strumenti raggiungibili, scope e risultati espliciti; client macOS delle famiglie in memoria, senza nuovi Artifact o planner. Implementazione e verifiche autonome in [GS-VER-222](evidenze/GS-VER-222-riprogettazione-gui.md); nessuna promozione scientifica o chiusura G4/G5 |
+
+L'autorizzazione applicativa del 2026-11-22 supera la sola esclusione UI dello
+storico lotto ADR-0032. La disponibilità del motore non è usata come prova della
+nuova presentazione; efficacia, accessibilità e prestazioni complessive restano
+valutazioni distinte.
+
+GS-VER-222 registra `make verify` completo superato sullo snapshot isolato
+`c77d0e37…0129f`: 423 test package, 224 esecuzioni native macOS, 194 righe di
+oracoli, due PDF/A-2u e build Debug/Release macOS/iPadOS. La GUI è osservata
+parzialmente; CMP-222 resta `implemented` per gli audit ancora aperti, senza
+promozioni scientifiche o chiusura G4/G5.
 
 ## Tracciabilità end-to-end
 
@@ -85,6 +102,9 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 
 | Evidenza | Verifiche coperte | Esito | Limite |
 | --- | --- | --- | --- |
+| [GS-VER-176](evidenze/GS-VER-176-cancellazione-resampling.md) | TV-012, TV-056, TV-057; RQ-011, RQ-041, RQ-063 | Superato: checkpoint intra-replica, parità e gate congiunto | Limite in osservazioni ricampionate, non deadline; sort non preemptive |
+| [GS-VER-175](evidenze/GS-VER-175-integrita-export-viste.md) | TV-058; RF-084, RQ-028, RQ-044 | Superato: RED/verde, quattro famiglie e gate congiunto | Integrità interna del bundle; autenticazione e progetto esterno fuori contratto |
+| [GS-VER-174](evidenze/GS-VER-174-betweenness-cammini-estremi.md) | TV-008, TV-009, TV-033; RF-039, RQ-008, RQ-009, RQ-063 | Superato: estremi, riferimenti indipendenti e gate congiunto | Nessuna nuova API, variante, dipendenza o promozione scientifica |
 | [GS-VER-173](evidenze/GS-VER-173-layout-e-visite-analitiche.md) | TV-008, TV-009, TV-032, TV-033, TV-036; RQ-008, RQ-009, RQ-063 | Superato: 18 confronti identici, 544 test e gate completo | CMP-177 `implemented`; NMF alto +0,7% tempo, bootstrap +96 KiB RSS; nessuna promozione scientifica |
 | [GS-VER-172](evidenze/GS-VER-172-query-sparse-e-silhouette.md) | TV-008, TV-009, TV-029, TV-032; RF-030, RF-037; RQ-008, RQ-009, RQ-063 | Superato: venti confronti finali, 440 test e 185 righe di oracoli; gate completo | CMP-176 `implemented`; nessuna promozione dei metodi o soglia prestazionale |
 | [GS-VER-171](evidenze/GS-VER-171-integrazione-algoritmi.md) | TV-008, TV-009, TV-029, TV-032, TV-033, TV-036; RQ-008, RQ-063 | Superato: integrazione isolata, correzione Welch, 425 test e 177 righe di oracoli sulla base upstream `fe6f654` | Evidenze storiche GS-VER-168/169/170 conservate; nuovo gate completo eseguito sulla proiezione integrata |
@@ -92,6 +112,9 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 | [GS-VER-169](evidenze/GS-VER-169-ottimizzazione-algoritmi.md) | TV-008, TV-009, TV-029, TV-032, TV-033, TV-036; RQ-008, RQ-009, RQ-063 | Superato nello snapshot storico sorgente: 13 confronti Release prima/dopo, controlli input/output invariati, 447 test e gate completo; cache HAC, K-means incrementale, CSR PageRank e visite ridotte | Misure locali informative; compromessi dichiarati, formule/tolleranze e stati scientifici invariati |
 | [GS-VER-168](evidenze/GS-VER-168-completamento-algoritmi.md) | TV-008, TV-029, TV-032, TV-033, TV-036; RF-026, RF-028, RF-037, RF-038, RF-040, RF-041, RF-042, RF-045 | Superato nello snapshot storico sorgente: distribuzioni/OLS, descrittive, Welch ANOVA, HAC/NMF, tempo, metriche linguistiche e riassunti a grafo; 431 test, 152 righe di oracoli, CLI/recovery e build macOS/iPadOS | Primitive nuove candidate; planner/UI e validazione empirica restano separati |
 | [GS-VER-163](evidenze/GS-VER-163-integrita-documenti-macos.md) | TV-001, TV-058, TV-071 | Superato: otto test del modello macOS in locale e gate CI `xcode-27` (`verify`, `app-store-baseline`) su `main` `a86a53b`; inizializzazione non distruttiva, attacco idempotente e sessione conservata dopo apertura fallita | Conteggio dei test macOS non visibile nel log remoto (`-quiet`); GUI, sandbox reale, autosave e file provider aperti; CMP-107 verified |
+| [GS-VER-230](evidenze/GS-VER-230-selezione-kwic-coerente-macos.md) | TV-003, TV-058, TV-071; RF-009, RF-017, RQ-047 | RED/GREEN, gate e preflight macOS superati prima su 4d6969dd e poi sul checkpoint ffbfb431; selezione e fonte coerenti | CMP-230 verified per automatici; layout HomeView successivo escluso, nessun audit GUI o iPadOS |
+| [GS-VER-231](evidenze/GS-VER-231-indice-fonti-ui-macos.md) | TV-009, TV-018, TV-058; RQ-009, RQ-013, RQ-047, RQ-063 | Cinque stadi Release con output identici; tre candidati respinti e predicato Sendable misurato con compromessi espliciti | CMP-231 verified per automatici sul checkpoint ffbfb431; nessun beneficio universale o prova GUI/energia/G4; WIP 223 escluso |
+| [GS-VER-232](evidenze/GS-VER-232-selezione-visuale-coerente-macos.md) | TV-058, TV-071; RF-084, RQ-028, RQ-047 | RED/GREEN, gate e preflight macOS superati prima su 4d6969dd e poi sul checkpoint ffbfb431; mark e contesto coerenti | CMP-232 verified per automatici; layout HomeView successivo escluso, nessun audit GUI o iPadOS |
 | [GS-VER-198](evidenze/GS-VER-198-keyness-macos.md) | TV-031, TV-058, TV-071; RF-031, RF-045, RQ-026 | 67 nuove esecuzioni client e sette di facciata superate; target macOS 55 definizioni/195 esecuzioni e gate/preflight superati sullo snapshot 0ed9b459 | CMP-198 verified per automatici; 48 DTO del helper distinti dal package end-to-end, GUI e G4 aperti |
 | [GS-VER-199](evidenze/GS-VER-199-identita-keyness.md) | TV-004, TV-005, TV-027, TV-031, TV-071; RF-011, RF-031, RQ-003, RQ-024, RQ-058 | Due RED, quattro test Core e gate macOS superati: livello/budget della cache, guard su payload difforme e riapertura del legacy v2 senza riscrittura | CMP-199 verified per automatici sullo snapshot 0ed9b459; nessuna prova del payload v1 pre-Fisher/CI, nuova formula o migrazione |
 | [GS-VER-197](evidenze/GS-VER-197-ponderazione-termini-macos.md) | TV-029, TV-030, TV-058, TV-071; RF-029, RF-030 | 78 esecuzioni dedicate superate: 54 varianti, 20 DTO incoerenti e quattro ulteriori test; gate/preflight macOS superati sullo snapshot 58d18024 | CMP-197 verified per automatici; contenimento helper distinto dal package end-to-end, GUI e G4 aperti |
@@ -471,6 +494,45 @@ nessuna promozione di soglie, famiglia linguistica o prestazioni dell'app.
 Sedici workload Release e undici riscontri intermedi isolano gli effetti delle
 strutture dal digest usato anche dal DAG. Campioni, inventari e risultati
 completi sono conservati; nessuna nuova soglia o promessa di prestazione UI.
+
+## Copertura delle capacità analitiche nell'app macOS
+
+[ADR-0041](adr/0041-copertura-funzionale-core-nelle-app.md),
+[GS-DOR-223](pianificazione/dor-copertura-core-app.md) e
+[GS-VER-223](evidenze/GS-VER-223-copertura-core-app.md) collegano le famiglie
+RF-026/028/033/037/040/041/044/045/046/087 ai laboratori corpus, statistico,
+temporale/linguistico e matrici/grafi. CMP-223 rimane implemented: il catalogo
+è un accesso alle capacità del core, non una promozione dei manifest scientifici
+o una chiusura degli audit assistivi. Le revisioni complete e i mapping qualitativi
+riusano RF-043 e la storia append-only già definita.
+
+
+## Accessibilità dei grafici e comandi nativi
+
+| Requisito | Implementazione | Verifica |
+| --- | --- | --- |
+| RF-084, RQ-037, RQ-038 | Grafico audio fattoriale, quantità specifica per metodo e selezione delle fusioni dalla tabella | [GS-VER-270](evidenze/GS-VER-270-grafici-comandi-neural-engine.md), CMP-270 |
+| GS-APL-002, GS-STD-001-29 EA-U-02 | Menu della scena attiva su macOS e iPadOS | GS-VER-270, audit di tastiera su dispositivo aperto |
+| ADR-0008, GS-APL-009/011 | Indicazioni per carico e prova Vision delle capacità OCR | GS-VER-270, misure di inferenza su dispositivi fisici aperte |
+
+## Barriera di reset dei laboratori macOS
+
+[GS-DOR-273](pianificazione/dor-barriera-reset-laboratori-macos.md) è Ready per
+RQ-011/013/047/058/060/063, in attuazione del contratto di GS-DOR-223 e ADR-0041.
+[GS-VER-273](evidenze/GS-VER-273-barriera-reset-laboratori-macos.md) acquisirà
+RED/GREEN deterministici su AdvancedAnalysis, Corpus e valutazione linguistica/
+temporale. CMP-233 è specified: nessun esito o audit GUI è inferito dalla
+revisione del codice. La barriera riguarda la pubblicazione applicativa e non
+annulla Artifact Core già committati; G4/G5 e iPadOS restano separati.
+
+## Presentazione corpus coerente su macOS
+
+[GS-DOR-274](pianificazione/dor-presentazione-corpus-coerente-macos.md) è Ready
+per RF-046 e RQ-013/047/058/060/063. Righe, indici, conteggio, pagina e asse
+appartengono alla presentazione corrente; filtro e proiezione separati
+conservano l'ultimo intento. [GS-VER-274](evidenze/GS-VER-274-presentazione-corpus-coerente-macos.md)
+acquisirà RED/GREEN e controlli automatici macOS; CMP-234 parte specified.
+Nessun risultato numerico Core/Kit, payload o stato scientifico cambia.
 
 ## Integrazioni native Apple coordinate
 

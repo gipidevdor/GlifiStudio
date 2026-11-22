@@ -1,0 +1,14 @@
+{
+  "$comment": "SPDX-License-Identifier: BSD-3-Clause",
+  "date": "2026-11-22",
+  "baseCommit": "c6fd88e9bb712b9f2df7c2c0587e63716613b3a1",
+  "status": "In verifica",
+  "observedRed": {
+    "testFunctions": 4,
+    "issues": 10,
+    "exitCode": 1,
+    "log": "red.log"
+  },
+  "finalVerification": null,
+  "scope": "Core/Kit/CLI correctness and explicit KH coverage; concurrent GUI excluded"
+}

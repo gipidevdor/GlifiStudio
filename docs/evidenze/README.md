@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.19.1 |
+| Versione | 1.19.5 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -13,6 +13,20 @@
 Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un esito positivo prova soltanto l'ambito dichiarato e non sostituisce l'approvazione dei requisiti o della baseline.
 
 ## Indice
+
+- [GS-VER-270 — Grafici audio, comandi di documento e prova del Neural Engine](GS-VER-270-grafici-comandi-neural-engine.md)
+
+- [GS-VER-222 — Riprogettazione ergonomica della GUI](GS-VER-222-riprogettazione-gui.md) — Gate completo isolato superato: 423 test package e 224 esecuzioni native; GUI osservata parzialmente, audit aperti
+
+- [GS-VER-230 — Selezione KWIC e fonte coerenti su macOS](GS-VER-230-selezione-kwic-coerente-macos.md) — RED/GREEN, gate e preflight macOS superati sul checkpoint ffbfb431
+- [GS-VER-231 — Lookup delle etichette fonte nelle viste macOS](GS-VER-231-indice-fonti-ui-macos.md) — Candidato Sendable misurato, tre varianti respinte, gate e preflight macOS superati sul checkpoint ffbfb431
+- [GS-VER-232 — Selezione visuale e contesto fonte coerenti su macOS](GS-VER-232-selezione-visuale-coerente-macos.md) — RED/GREEN, gate e preflight macOS superati sul checkpoint ffbfb431; mark senza fonte incluso
+
+- [GS-VER-176 — Cancellazione nelle repliche bootstrap](GS-VER-176-cancellazione-resampling.md) — Superato: checkpoint, parità numerica e gate congiunto; prestazioni isolate aperte
+
+- [GS-VER-175 — Integrità degli export scientifici](GS-VER-175-integrita-export-viste.md) — Superato: inventario, provenance e CSV; compatibilità delle quattro famiglie e gate congiunto
+
+- [GS-VER-174 — Betweenness con molti cammini minimi](GS-VER-174-betweenness-cammini-estremi.md) — Superato: RED/verde e gate congiunto; misure sotto contesa senza conclusioni prestazionali
 
 - [GS-VER-173 — Layout e visite dei kernel analitici](GS-VER-173-layout-e-visite-analitiche.md) — Superato: 18 confronti identici, 544 test e gate completo; costi residui dichiarati
 
@@ -246,6 +260,14 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 
 - [GS-VER-163 — Integrità dei documenti macOS](GS-VER-163-integrita-documenti-macos.md) — Superato: suite del modello macOS in locale e gate CI `xcode-27` su `main` `a86a53b`; CMP-107 verified
 
+- [GS-VER-223 — Copertura funzionale del core nell’app](GS-VER-223-copertura-core-app.md) — In verifica; audit applicativi aperti
+
+- [GS-VER-273 — Barriera di reset dei laboratori macOS](GS-VER-273-barriera-reset-laboratori-macos.md) — Preparata; RED/GREEN e gate macOS da acquisire
+
+- [GS-VER-274 — Presentazione corpus coerente su macOS](GS-VER-274-presentazione-corpus-coerente-macos.md) — Preparata; RED/GREEN di tabella, asse, filtro e paginazione da acquisire
+
 - [GS-VER-233 — Completamento nativo delle varianti KH Coder](GS-VER-233-completamento-kh-coder.md) — Superato: 561 test Core/Kit, 90 controlli CLI e gate macOS/iPadOS completo; varianti scientifiche candidate
 
 - [GS-VER-260 — Integrazioni native Apple](GS-VER-260-integrazioni-native-apple.md) — Verifica automatica del codice superata; packaging e CI nel registro PR; prove manuali e adozioni condizionali distinte
+
+- [GS-VER-234 — Riverifica di correttezza e completezza](GS-VER-234-riverifica-correttezza-completezza.md) — In verifica; controesempi e limiti di copertura espliciti

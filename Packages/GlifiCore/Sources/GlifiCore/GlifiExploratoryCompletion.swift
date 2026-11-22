@@ -232,9 +232,14 @@ extension GlifiExploratoryAnalysis {
             }.sorted()
             if !distances.isEmpty {
                 let middle = distances.count / 2
-                result[unit] =
-                    distances.count.isMultiple(of: 2)
-                    ? distances[middle - 1] / 2 + distances[middle] / 2 : distances[middle]
+                if distances.count.isMultiple(of: 2) {
+                    let first = distances[middle - 1]
+                    let second = distances[middle]
+                    let sum = first + second
+                    result[unit] = sum.isFinite ? sum / 2 : first / 2 + second / 2
+                } else {
+                    result[unit] = distances[middle]
+                }
             }
         }
         return result
@@ -254,6 +259,9 @@ extension GlifiExploratoryAnalysis {
         if count == 1 {
             return GlifiSOMCodebookClustering(
                 tree: GlifiHierarchicalClustering(linkage: .ward, merges: []), assignments: [0])
+        }
+        guard count <= limits.maximumPairwiseObjects, count <= limits.maximumCells / count else {
+            throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
         }
         let tree = try GlifiMultivariateMethods.hierarchicalClustering(
             map.prototypes, linkage: .ward)

@@ -14,7 +14,7 @@ public struct GlifiCooccurrenceCounts: Equatable, Sendable {
     /// `d`: observations of neither.
     public let neitherCount: Int
 
-    /// Creates a table only after checking non-negative counts.
+    /// Creates a table only after checking nonnegative counts and a representable universe.
     public init(
         jointCount: Int,
         firstOnlyCount: Int,
@@ -23,6 +23,16 @@ public struct GlifiCooccurrenceCounts: Equatable, Sendable {
     ) throws {
         guard jointCount >= 0, firstOnlyCount >= 0, secondOnlyCount >= 0, neitherCount >= 0 else {
             throw collocationFailure("collocation.negative-count", category: .invalidInput)
+        }
+        // Nonnegative subsets cannot exceed this checked total, so every public
+        // marginal and universe sum is representable before the value can escape.
+        var total = 0
+        for count in [jointCount, firstOnlyCount, secondOnlyCount, neitherCount] {
+            let addition = total.addingReportingOverflow(count)
+            guard !addition.overflow else {
+                throw collocationFailure("collocation.count-overflow", category: .invalidInput)
+            }
+            total = addition.partialValue
         }
         self.jointCount = jointCount
         self.firstOnlyCount = firstOnlyCount

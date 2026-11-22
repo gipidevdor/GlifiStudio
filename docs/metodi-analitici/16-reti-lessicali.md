@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-MET-001-16 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.1.0 |
+| Versione | 1.1.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -90,6 +90,24 @@ self-loop, sink e componenti separate. Le misure dei tre generatori sintetici
 sono registrate nell'evidenza, senza cambiare lo stato scientifico del metodo.
 
 ## Verifica
+
+### Precisione di Betweenness-v1
+
+Il forward di Brandes conserva le addizioni binary64 e l'ordine precedente.
+Se una BFS produce un contatore di cammini non finito, soltanto quella BFS
+ricostruisce i conteggi dall'ordine di visita e dai predecessori già raccolti.
+Il fallback conserva una mantissa binary64 di 53 bit con esponente intero
+esteso: non è un contatore BigInt e non promette arrotondamento esatto per
+ogni grafo. Il DAG dei cammini minimi limita l'esponente al numero di nodi.
+
+Nel fallback il rapporto delle mantisse viene moltiplicato per `1+δ` prima di
+materializzare l'esponente; il prodotto è normalizzato prima della conversione
+finale a Double. Una quota non rappresentabile separatamente può così produrre
+un contributo subnormale rappresentabile. Sorgenti, predecessori, dipendenze e
+punteggi conservano l'ordine; il percorso senza overflow resta invariato.
+API, identità del metodo, archi paralleli deduplicati, self-loop esclusi e
+connessioni di peso zero non cambiano. GS-VER-174 registra regressioni, oracoli
+indipendenti e costi del fallback, senza promozione scientifica.
 
 Fixture canoniche comprendono grafo vuoto, singleton, percorso, ciclo, stella,
 componenti disconnesse e grafo diretto con dangling node. Si verificano invariance

@@ -213,14 +213,7 @@ func khCodingRulesProximityAndBoundaries() throws {
 @Test("Regole rifiutano cicli, variabili o annotazioni mancanti e divisione per zero")
 func khCodingRulesFailClosed() throws {
     for source in ["*A\n<*A>", "*A\n<*B>", "*A\n( casa", "*A\n'casa", "*A\nnear(casa-casa)"] {
-        if source.contains("near") {
-            let rules = try GlifiCodingRuleSet(source)
-            #expect(throws: GlifiFailure.self) {
-                try rules.evaluate([GlifiCodingDocument(id: "1", text: "casa")])
-            }
-        } else {
-            #expect(throws: GlifiFailure.self) { try GlifiCodingRuleSet(source) }
-        }
+        #expect(throws: GlifiFailure.self) { try GlifiCodingRuleSet(source) }
     }
     for source in ["*A\ncasa / 0 > 1", "*A\n<>missing-->x", "*A\ncasa-->Noun"] {
         let rules = try GlifiCodingRuleSet(source)

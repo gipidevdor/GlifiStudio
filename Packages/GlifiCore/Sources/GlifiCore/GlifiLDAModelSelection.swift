@@ -100,7 +100,9 @@ public enum GlifiLDAModelSelection {
             logWordLikelihoods.count <= 10_000,
             logWordLikelihoods.allSatisfy(\.isFinite)
         else { throw exploratoryFailure("lda-selection.invalid-metrics") }
-        try requireWork([topics, topics, vocabulary], limits)
+        var remainingWork = limits.maximumWork
+        try ldaAdmitWork([topics, topics, vocabulary, 3], remaining: &remainingWork)
+        try ldaAdmitWork([documentTopics.count, topics], remaining: &remainingWork)
         var unavailable: [String: String] = [:]
         var cao: Double?
         var deveaud: Double?

@@ -550,12 +550,30 @@ public enum GlifiMultivariateMethods {
         func squared(_ left: [Double], _ right: [Double]) -> Double {
             zip(left, right).reduce(0.0) { $0 + ($1.0 - $1.1) * ($1.0 - $1.1) }
         }
+        func distanceValue(_ left: [Double], _ right: [Double], wardFactor: Double?) throws
+            -> Double
+        {
+            let square = squared(left, right)
+            let ordinary = wardFactor.map { $0 * square } ?? square.squareRoot()
+            if ordinary.isFinite, ordinary > 0 { return ordinary }
+            if left == right { return 0 }
+            var norm = 0.0
+            for column in left.indices {
+                if column.isMultiple(of: 4_096) { try Task.checkCancellation() }
+                norm = hypot(norm, left[column] - right[column])
+            }
+            let value = wardFactor.map { ($0 * norm) * norm } ?? norm
+            guard value.isFinite, value > 0 else {
+                throw multivariateFailure("hac.numeric-range", category: .invalidInput)
+            }
+            return value
+        }
         var distances = [Double](repeating: 0, count: count * (count - 1) / 2)
         for right in 1..<count {
             try Task.checkCancellation()
             for left in 0..<right {
-                let square = squared(points[left], points[right])
-                let value = linkage == .ward ? 0.5 * square : square.squareRoot()
+                let value = try distanceValue(
+                    points[left], points[right], wardFactor: linkage == .ward ? 0.5 : nil)
                 guard value.isFinite else {
                     throw multivariateFailure("hac.numeric-overflow", category: .invalidInput)
                 }
@@ -599,13 +617,25 @@ public enum GlifiMultivariateMethods {
             let removed = active[bestPositions.1]
             members[kept] += members[removed]
             if linkage == .ward {
+                guard let first = members[kept].first else {
+                    throw multivariateFailure("hac.invalid-points", category: .invalidInput)
+                }
                 centroids[kept] = (0..<width).map { column in
-                    members[kept].reduce(0.0) {
+                    let constant = points[first][column]
+                    if members[kept].allSatisfy({ points[$0][column] == constant }) {
+                        return constant
+                    }
+                    return members[kept].reduce(0.0) {
                         $0 + points[$1][column] / Double(members[kept].count)
                     }
                 }
             }
-            let height = linkage == .ward ? (2 * bestValue).squareRoot() : bestValue
+            let doubled = 2 * bestValue
+            let height =
+                linkage == .ward
+                ? (doubled.isFinite
+                    ? doubled.squareRoot() : bestValue.squareRoot() * 2.0.squareRoot())
+                : bestValue
             guard height.isFinite, centroids[kept].allSatisfy(\.isFinite) else {
                 throw multivariateFailure("hac.numeric-overflow", category: .invalidInput)
             }
@@ -635,9 +665,9 @@ public enum GlifiMultivariateMethods {
                 case .ward:
                     let a = Double(members[min(kept, other)].count)
                     let b = Double(members[max(kept, other)].count)
-                    value =
-                        a * b / (a + b)
-                        * squared(centroids[min(kept, other)], centroids[max(kept, other)])
+                    value = try distanceValue(
+                        centroids[min(kept, other)], centroids[max(kept, other)],
+                        wardFactor: a * b / (a + b))
                 }
                 guard value.isFinite else {
                     throw multivariateFailure("hac.numeric-overflow", category: .invalidInput)

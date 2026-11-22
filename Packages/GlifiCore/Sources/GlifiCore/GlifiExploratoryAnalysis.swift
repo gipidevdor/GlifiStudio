@@ -147,7 +147,7 @@ public enum GlifiExploratoryAnalysis {
             )
         if method == .classical {
             let coordinates = initial.coordinates.map { $0.map { $0 * scale } }
-            let stress = rawStress(distances, coordinates: initial.coordinates) * scale * scale
+            let stress = try rawStress(distances, coordinates: initial.coordinates) * scale * scale
             guard stress.isFinite, coordinates.allSatisfy({ $0.allSatisfy(\.isFinite) }) else {
                 throw exploratoryFailure("exploratory.numeric-overflow")
             }
@@ -182,7 +182,7 @@ public enum GlifiExploratoryAnalysis {
         var converged = false
         for _ in 0..<maximumIterations {
             try Task.checkCancellation()
-            let fitted = pairwiseEuclidean(coordinates)
+            let fitted = try pairwiseEuclidean(coordinates)
             let targets = method == .kruskal ? disparities(distances, fitted) : distances
             var proposed = Array(repeating: Array(repeating: 0.0, count: dimensions), count: count)
             if method == .sammon {
@@ -288,29 +288,39 @@ public enum GlifiExploratoryAnalysis {
             2 * initialRadius * initialRadius > 0, 2 * finalRadius * finalRadius > 0
         else { throw exploratoryFailure("exploratory.invalid-parameters") }
         let units = width * height
-        try requireWork([matrix.count, units, columns, epochs], limits)
-        try requireWork([units, units, columns, epochs], limits)
+        var remainingWork = limits.maximumWork
+        try admitExploratoryWork([matrix.count, columns], remaining: &remainingWork)
+        try admitExploratoryWork([matrix.count, units, columns, epochs], remaining: &remainingWork)
+        try admitExploratoryWork([matrix.count, columns, epochs], remaining: &remainingWork)
+        try admitExploratoryWork(
+            [units, min(units, matrix.count), columns, epochs], remaining: &remainingWork)
+        try admitExploratoryWork([units, columns, epochs], remaining: &remainingWork)
+        try admitExploratoryWork([matrix.count, units, columns], remaining: &remainingWork)
         guard units <= limits.maximumCells / columns else {
             throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
         }
+        let normalizedInput = try normalizedSOMInput(matrix, columns: columns)
+        let data = normalizedInput.values
+        let coordinateScale = normalizedInput.scale
         var generator = GlifiSplitMix64(seed: seed)
-        var prototypes = (0..<units).map { _ in matrix[generator.index(below: matrix.count)] }
+        var prototypes = (0..<units).map { _ in data[generator.index(below: data.count)] }
         var completed = 0
         var converged = false
         for epoch in 0..<epochs {
             try Task.checkCancellation()
             let fraction = epochs == 1 ? 1 : Double(epoch) / Double(epochs - 1)
-            let radius = initialRadius * pow(finalRadius / initialRadius, fraction)
-            let winners = matrix.map { nearest($0, prototypes) }
+            let radius = geometricSOMRadius(
+                initial: initialRadius, final: finalRadius, fraction: fraction)
+            let winners = try data.map { try nearest($0, prototypes) }
             // Batch sufficient statistics: sum and population per winning unit.
             // This is algebraically identical to weighting every input row independently.
             var groupSums = Array(repeating: Array(repeating: 0.0, count: columns), count: units)
             var populations = [Int](repeating: 0, count: units)
-            for row in matrix.indices {
+            for row in data.indices {
                 if row.isMultiple(of: 256) { try Task.checkCancellation() }
                 let winner = winners[row]
                 populations[winner] += 1
-                nativeAccumulate(matrix[row], scale: 1, into: &groupSums[winner])
+                nativeAccumulate(data[row], scale: 1, into: &groupSums[winner])
             }
             let occupied = populations.indices.filter { populations[$0] > 0 }
             var sums = Array(repeating: Array(repeating: 0.0, count: columns), count: units)
@@ -326,10 +336,11 @@ public enum GlifiExploratoryAnalysis {
                     nativeAccumulate(groupSums[winner], scale: weight, into: &sums[unit])
                 }
             }
-            var change = 0.0
+            var change = ExploratoryDistance.zero
             for unit in 0..<units where weights[unit] > 0 {
                 let next = sums[unit].map { $0 / weights[unit] }
-                change = max(change, vDSP.distanceSquared(next, prototypes[unit]))
+                let displacement = try ExploratoryDistance(next, prototypes[unit])
+                if change.isLess(than: displacement) { change = displacement }
                 prototypes[unit] = next
             }
             guard prototypes.allSatisfy({ $0.allSatisfy(\.isFinite) }) else {
@@ -337,42 +348,63 @@ public enum GlifiExploratoryAnalysis {
             }
             completed += 1
             // Compare stabilization only after the neighborhood has reached its final radius.
-            if epoch == epochs - 1, change <= tolerance * tolerance { converged = true }
+            if epoch == epochs - 1, change.isWithin(tolerance / coordinateScale) {
+                converged = true
+            }
         }
         var error = 0.0
         var topographic = 0
         var assignments: [Int] = []
-        for (rowIndex, row) in matrix.enumerated() {
+        for (rowIndex, row) in data.enumerated() {
             if rowIndex.isMultiple(of: 256) { try Task.checkCancellation() }
             var winner = 0
             var second = 0
-            var firstDistance = Double.infinity
-            var secondDistance = Double.infinity
+            var firstDistance: ExploratoryDistance?
+            var secondDistance: ExploratoryDistance?
             for unit in prototypes.indices {
-                let distance = vDSP.distanceSquared(row, prototypes[unit])
-                if distance < firstDistance {
+                let distance = try ExploratoryDistance(row, prototypes[unit])
+                if firstDistance == nil || distance.isLess(than: firstDistance ?? .zero) {
                     second = winner
                     secondDistance = firstDistance
                     winner = unit
                     firstDistance = distance
-                } else if distance < secondDistance {
+                } else if secondDistance == nil || distance.isLess(than: secondDistance ?? .zero) {
                     second = unit
                     secondDistance = distance
                 }
             }
             assignments.append(winner)
-            error += vDSP.distanceSquared(row, prototypes[winner]).squareRoot()
+            error += firstDistance?.magnitude ?? 0
             if prototypes.count > 1 {
                 if !topology.areNeighbors(winner, second, width: width) {
                     topographic += 1
                 }
             }
         }
-        guard error.isFinite else { throw exploratoryFailure("exploratory.numeric-overflow") }
+        let quantizationError = error / Double(data.count) * coordinateScale
+        guard quantizationError.isFinite else {
+            throw exploratoryFailure("exploratory.numeric-overflow")
+        }
+        guard error == 0 || quantizationError > 0 else {
+            throw exploratoryFailure("exploratory.numeric-range")
+        }
+        var output = prototypes
+        if coordinateScale != 1 {
+            output = try prototypes.map { row in
+                try row.map { value in
+                    let restored = value * coordinateScale
+                    guard restored.isFinite, value == 0 || restored != 0 else {
+                        throw exploratoryFailure("exploratory.numeric-range")
+                    }
+                    return restored
+                }
+            }
+        }
+        try Task.checkCancellation()
         return GlifiSOMResult(
-            topology: topology, width: width, height: height, prototypes: prototypes,
+            topology: topology, width: width, height: height, prototypes: output,
             assignments: assignments,
-            quantizationError: error / Double(matrix.count),
+            quantizationError: quantizationError,
             topographicError: Double(topographic) / Double(matrix.count), epochs: completed,
             converged: converged, seed: seed
         )
@@ -389,8 +421,16 @@ public enum GlifiExploratoryAnalysis {
             sampleSize <= 1_000, (1...100).contains(samples), (1...1_000).contains(maximumSwaps)
         else { throw exploratoryFailure("exploratory.invalid-parameters") }
         let size = min(sampleSize, matrix.count)
-        try requireWork([size, size, clusterCount, clusterCount, samples, maximumSwaps], limits)
-        try requireWork([matrix.count, columns, clusterCount, samples], limits)
+        guard size <= limits.maximumPairwiseObjects,
+            size <= limits.maximumCells / size
+        else { throw exploratoryFailure("exploratory.resource-limit", .insufficientResources) }
+        var remainingWork = limits.maximumWork
+        try admitExploratoryWork([size, size, columns, samples], remaining: &remainingWork)
+        try admitExploratoryWork(
+            [size, size, clusterCount, clusterCount, samples, maximumSwaps],
+            remaining: &remainingWork)
+        try admitExploratoryWork(
+            [matrix.count, columns, clusterCount, samples], remaining: &remainingWork)
         var generator = GlifiSplitMix64(seed: seed)
         var best: (medoids: [Int], assignments: [Int], objective: Double)?
         for _ in 0..<samples {
@@ -404,7 +444,7 @@ public enum GlifiExploratoryAnalysis {
                 sample = Array(sample.prefix(size))
             }
             sample.sort()
-            let distances = pairwiseEuclidean(sample.map { matrix[$0] })
+            let distances = try pairwiseEuclidean(sample.map { matrix[$0] })
             var medoids = Array(0..<clusterCount)
             func cost(_ selected: [Int]) -> Double {
                 distances.reduce(0) { sum, row in sum + (selected.map { row[$0] }.min() ?? 0) }
@@ -420,7 +460,9 @@ public enum GlifiExploratoryAnalysis {
                         swapped[position] = candidate
                         swapped.sort()
                         let value = cost(swapped)
-                        if value < lowest - 1e-12 * max(1, lowest) {
+                        if value.isFinite, value < lowest,
+                            lowest == .infinity || lowest - value > 1e-12 * lowest
+                        {
                             lowest = value
                             improvement = swapped
                         }
@@ -432,9 +474,9 @@ public enum GlifiExploratoryAnalysis {
             }
             let original = medoids.map { sample[$0] }.sorted()
             let centers = original.map { matrix[$0] }
-            let assignments = matrix.map { nearest($0, centers) }
-            let fullCost = matrix.indices.reduce(0.0) {
-                $0 + vDSP.distanceSquared(matrix[$1], centers[assignments[$1]]).squareRoot()
+            let assignments = try matrix.map { try nearest($0, centers) }
+            let fullCost = try matrix.indices.reduce(0.0) {
+                try $0 + ExploratoryDistance(matrix[$1], centers[assignments[$1]]).magnitude
             }
             guard fullCost.isFinite else {
                 throw exploratoryFailure("exploratory.numeric-overflow")
@@ -472,6 +514,17 @@ package func requireWork(_ factors: [Int], _ limits: GlifiExploratoryLimits) thr
     }
 }
 
+private func admitExploratoryWork(_ factors: [Int], remaining: inout Int) throws {
+    var work = 1
+    for factor in factors {
+        guard factor >= 0, work == 0 || factor <= remaining / work else {
+            throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
+        }
+        work *= factor
+    }
+    remaining -= work
+}
+
 package func validateExploratoryMatrix(
     _ matrix: [[Double]], limits: GlifiExploratoryLimits
 ) throws -> Int {
@@ -506,12 +559,101 @@ private func validateDissimilarities(
     }
 }
 
-private func nearest(_ row: [Double], _ centers: [[Double]]) -> Int {
+/// Keeps ordinary squared-distance ordering; only extreme norms use scaled hypot.
+private struct ExploratoryDistance: Sendable {
+    let squared: Double
+    let stableMagnitude: Double?
+
+    static let zero = ExploratoryDistance(squared: 0, stableMagnitude: 0)
+
+    private init(squared: Double, stableMagnitude: Double?) {
+        self.squared = squared
+        self.stableMagnitude = stableMagnitude
+    }
+
+    init(_ first: [Double], _ second: [Double]) throws {
+        let value = vDSP.distanceSquared(first, second)
+        if value.isFinite, value >= Double.leastNormalMagnitude {
+            squared = value
+            stableMagnitude = nil
+        } else if value == 0, first == second {
+            squared = 0
+            stableMagnitude = 0
+        } else {
+            var norm = 0.0
+            for column in first.indices {
+                if column.isMultiple(of: 4_096) { try Task.checkCancellation() }
+                norm = hypot(norm, first[column] - second[column])
+            }
+            guard norm.isFinite else { throw exploratoryFailure("exploratory.numeric-overflow") }
+            squared = value
+            stableMagnitude = norm
+        }
+    }
+
+    var magnitude: Double { stableMagnitude ?? squared.squareRoot() }
+
+    func isLess(than other: Self) -> Bool {
+        if stableMagnitude == nil, other.stableMagnitude == nil { return squared < other.squared }
+        return magnitude < other.magnitude
+    }
+
+    func isWithin(_ tolerance: Double) -> Bool {
+        let threshold = tolerance * tolerance
+        if stableMagnitude == nil, threshold.isFinite, threshold >= Double.leastNormalMagnitude {
+            return squared <= threshold
+        }
+        return magnitude <= tolerance
+    }
+}
+
+private func geometricSOMRadius(initial: Double, final: Double, fraction: Double) -> Double {
+    if fraction <= 0 { return initial }
+    if fraction >= 1 { return final }
+    let ratio = final / initial
+    if ratio.isFinite, ratio >= Double.leastNormalMagnitude {
+        return initial * pow(ratio, fraction)
+    }
+    return exp((1 - fraction) * log(initial) + fraction * log(final))
+}
+
+/// Ordinary inputs share storage and the existing vDSP path.
+///
+/// Extreme inputs are
+/// uniformly rescaled only when the transformation retains every original scalar.
+private func normalizedSOMInput(
+    _ matrix: [[Double]], columns: Int
+) throws -> (values: [[Double]], scale: Double) {
+    var maximum = 0.0
+    var minimum = Double.infinity
+    for (index, row) in matrix.enumerated() {
+        if index.isMultiple(of: 256) { try Task.checkCancellation() }
+        for value in row where value != 0 {
+            maximum = max(maximum, abs(value))
+            minimum = min(minimum, abs(value))
+        }
+    }
+    let lower = Double.leastNormalMagnitude.squareRoot()
+    let upper = (Double.greatestFiniteMagnitude / Double(columns)).squareRoot() / 2
+    if minimum >= lower, maximum <= upper { return (matrix, 1) }
+    let values = try matrix.map { row in
+        try row.map { value in
+            let normalized = value / maximum
+            guard normalized.isFinite, value == 0 || normalized.isNormal,
+                normalized * maximum == value
+            else { throw exploratoryFailure("exploratory.numeric-range") }
+            return normalized
+        }
+    }
+    return (values, maximum)
+}
+
+private func nearest(_ row: [Double], _ centers: [[Double]]) throws -> Int {
     var best = 0
-    var distance = Double.infinity
+    var distance: ExploratoryDistance?
     for i in centers.indices {
-        let value = vDSP.distanceSquared(row, centers[i])
-        if value < distance {
+        let value = try ExploratoryDistance(row, centers[i])
+        if distance == nil || value.isLess(than: distance ?? .zero) {
             best = i
             distance = value
         }
@@ -519,12 +661,13 @@ private func nearest(_ row: [Double], _ centers: [[Double]]) -> Int {
     return best
 }
 
-private func pairwiseEuclidean(_ coordinates: [[Double]]) -> [[Double]] {
+private func pairwiseEuclidean(_ coordinates: [[Double]]) throws -> [[Double]] {
     var distances = Array(
         repeating: Array(repeating: 0.0, count: coordinates.count), count: coordinates.count)
     for i in coordinates.indices {
+        if i.isMultiple(of: 32) { try Task.checkCancellation() }
         for j in 0..<i {
-            let d = vDSP.distanceSquared(coordinates[i], coordinates[j]).squareRoot()
+            let d = try ExploratoryDistance(coordinates[i], coordinates[j]).magnitude
             distances[i][j] = d
             distances[j][i] = d
         }
@@ -544,8 +687,8 @@ private func upperSum(_ matrix: [[Double]]) -> Double {
     matrix.indices.reduce(0) { sum, i in sum + matrix[i].prefix(i).reduce(0, +) }
 }
 
-private func rawStress(_ targets: [[Double]], coordinates: [[Double]]) -> Double {
-    let fitted = pairwiseEuclidean(coordinates)
+private func rawStress(_ targets: [[Double]], coordinates: [[Double]]) throws -> Double {
+    let fitted = try pairwiseEuclidean(coordinates)
     return targets.indices.reduce(0) { sum, i in
         sum + (0..<i).reduce(0) { $0 + pow(fitted[i][$1] - targets[i][$1], 2) }
     }
@@ -554,7 +697,7 @@ private func rawStress(_ targets: [[Double]], coordinates: [[Double]]) -> Double
 package func mdsObjective(
     _ distances: [[Double]], _ coordinates: [[Double]], _ method: GlifiMDSMethod
 ) throws -> Double {
-    let fitted = pairwiseEuclidean(coordinates)
+    let fitted = try pairwiseEuclidean(coordinates)
     let targets = method == .kruskal ? disparities(distances, fitted) : distances
     var numerator = 0.0
     var denominator = 0.0

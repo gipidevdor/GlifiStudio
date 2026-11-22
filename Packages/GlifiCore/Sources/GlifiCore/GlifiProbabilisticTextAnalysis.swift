@@ -115,6 +115,13 @@ public enum GlifiNaiveBayes {
         guard documents.count == labels.count, !labels.isEmpty, !labels.contains(where: \.isEmpty),
             smoothing.isFinite, smoothing > 0
         else { throw exploratoryFailure("naive-bayes.invalid-training") }
+        try Task.checkCancellation()
+        guard documents.count <= limits.maximumCells else {
+            throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
+        }
+        let tokenCount = try classifierTokenCount(documents)
+        try requireWork([documents.count], limits)
+        try requireWork([tokenCount], limits)
         let table = try GlifiDocumentTermTable(documents: documents)
         let classes = Array(Set(labels)).sorted()
         guard classes.count >= 2 else {
@@ -123,6 +130,10 @@ public enum GlifiNaiveBayes {
         guard classes.count <= limits.maximumCells / table.terms.count else {
             throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
         }
+        var remainingWork = limits.maximumWork
+        try admitClassifierWork([documents.count], remaining: &remainingWork)
+        try admitClassifierWork([tokenCount], remaining: &remainingWork)
+        try admitClassifierWork([classes.count, table.terms.count], remaining: &remainingWork)
         let positions = Dictionary(
             uniqueKeysWithValues: classes.enumerated().map { ($0.element, $0.offset) })
         var counts = Array(
@@ -153,9 +164,19 @@ public enum GlifiNaiveBayes {
 
     /// Scores a batch using one vocabulary lookup, sparse counts and log-sum-exp normalization.
     public static func predict(
-        _ documents: [[String]], using model: GlifiNaiveBayesModel
+        _ documents: [[String]], using model: GlifiNaiveBayesModel,
+        limits: GlifiExploratoryLimits = .standard
     ) throws -> [GlifiNaiveBayesPrediction] {
         guard !documents.isEmpty else { return [] }
+        try Task.checkCancellation()
+        guard !model.classes.isEmpty,
+            documents.count <= limits.maximumCells / model.classes.count
+        else { throw exploratoryFailure("exploratory.resource-limit", .insufficientResources) }
+        let tokenCount = try classifierTokenCount(documents)
+        var remainingWork = limits.maximumWork
+        try admitClassifierWork([documents.count], remaining: &remainingWork)
+        try admitClassifierWork([tokenCount, model.classes.count], remaining: &remainingWork)
+        try admitClassifierWork([documents.count, model.classes.count], remaining: &remainingWork)
         let table = try GlifiDocumentTermTable(documents: documents, vocabulary: model.vocabulary)
         return try documents.indices.map { index in
             if index.isMultiple(of: 256) { try Task.checkCancellation() }
@@ -187,14 +208,38 @@ public enum GlifiNaiveBayes {
         guard labels.count == documents.count, folds >= 2, folds <= documents.count else {
             throw exploratoryFailure("naive-bayes.invalid-folds")
         }
+        try Task.checkCancellation()
         let classes = Array(Set(labels)).sorted()
         guard classes.count >= 2 else {
             throw exploratoryFailure("naive-bayes.insufficient-classes", .insufficientData)
         }
-        try requireWork([documents.reduce(0) { $0 + $1.count }, folds], limits)
+        guard !labels.contains(where: \.isEmpty), smoothing.isFinite, smoothing > 0 else {
+            throw exploratoryFailure("naive-bayes.invalid-training")
+        }
+        guard classes.count <= limits.maximumCells / classes.count,
+            documents.count <= limits.maximumCells
+        else { throw exploratoryFailure("exploratory.resource-limit", .insufficientResources) }
+        let tokenCount = try classifierTokenCount(documents)
+        try requireWork([tokenCount], limits)
+        try requireWork([documents.count, classes.count], limits)
+        // This vocabulary is used only for conservative resource admission. Every fold
+        // still learns its own vocabulary exclusively from its training documents.
+        let vocabularyCount = Set(documents.joined()).count
+        guard vocabularyCount <= 100_000 else {
+            throw exploratoryFailure("text-table.invalid-vocabulary")
+        }
+        var remainingWork = limits.maximumWork
+        try admitClassifierWork([documents.count, classes.count], remaining: &remainingWork)
+        try admitClassifierWork([documents.count, folds, 2], remaining: &remainingWork)
+        try admitClassifierWork([tokenCount, folds], remaining: &remainingWork)
+        try admitClassifierWork([classes.count, vocabularyCount, folds], remaining: &remainingWork)
+        try admitClassifierWork([tokenCount, classes.count], remaining: &remainingWork)
+        try admitClassifierWork([documents.count, classes.count], remaining: &remainingWork)
+        try admitClassifierWork([classes.count, classes.count], remaining: &remainingWork)
         var generator = GlifiSplitMix64(seed: seed)
         var assignments = [Int](repeating: 0, count: documents.count)
         for label in classes {
+            try Task.checkCancellation()
             var indices = labels.indices.filter { labels[$0] == label }
             guard indices.count >= folds else {
                 throw exploratoryFailure("naive-bayes.insufficient-fold-support", .insufficientData)
@@ -213,7 +258,7 @@ public enum GlifiNaiveBayes {
                 documents: training.map { documents[$0] }, labels: training.map { labels[$0] },
                 smoothing: smoothing, limits: limits
             )
-            let scored = try predict(heldOut.map { documents[$0] }, using: model)
+            let scored = try predict(heldOut.map { documents[$0] }, using: model, limits: limits)
             for (index, prediction) in zip(heldOut, scored) {
                 predictions[index] = prediction.label
             }
@@ -236,6 +281,29 @@ public enum GlifiNaiveBayes {
             seed: seed
         )
     }
+}
+
+private func classifierTokenCount(_ documents: [[String]]) throws -> Int {
+    var count = 0
+    for (index, document) in documents.enumerated() {
+        if index.isMultiple(of: 256) { try Task.checkCancellation() }
+        guard document.count <= 2_000_000 - count else {
+            throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
+        }
+        count += document.count
+    }
+    return count
+}
+
+private func admitClassifierWork(_ factors: [Int], remaining: inout Int) throws {
+    var estimate = 1
+    for factor in factors {
+        guard factor >= 0, factor == 0 || estimate <= remaining / factor else {
+            throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
+        }
+        estimate *= factor
+    }
+    remaining -= estimate
 }
 
 /// Collapsed-Gibbs topic model with an explicit, immutable vocabulary.
@@ -312,6 +380,9 @@ public enum GlifiLatentDirichletAllocation {
         let positions = Dictionary(
             uniqueKeysWithValues: table.terms.enumerated().map { ($0.element, $0.offset) })
         let words = documents.map { $0.compactMap { positions[$0] } }
+        // Empty documents contribute a posterior theta, but no Gibbs token updates.
+        // Retain their output rows while keeping sweep work bounded by tokenCount.
+        let activeDocuments = words.indices.filter { !words[$0].isEmpty }
         var generator = GlifiSplitMix64(seed: seed)
         var assignments = words.map { $0.map { _ in generator.index(below: topicCount) } }
         var documentCounts = [Int](repeating: 0, count: documents.count * topicCount)
@@ -339,7 +410,7 @@ public enum GlifiLatentDirichletAllocation {
         if retainLogLikelihoods { logWordLikelihoods.reserveCapacity(sampleCount) }
         for sweep in 0..<sweeps {
             try Task.checkCancellation()
-            for document in words.indices {
+            for document in activeDocuments {
                 for token in words[document].indices {
                     if token.isMultiple(of: 1_024) { try Task.checkCancellation() }
                     let word = words[document][token]
@@ -396,7 +467,7 @@ public enum GlifiLatentDirichletAllocation {
                             / denominator / Double(sampleCount)
                     }
                 }
-                for document in words.indices {
+                for document in activeDocuments {
                     let documentDenominator =
                         Double(words[document].count) + Double(topicCount) * alpha
                     for (position, cell) in observed[document].enumerated() {

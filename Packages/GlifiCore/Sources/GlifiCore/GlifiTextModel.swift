@@ -179,6 +179,14 @@ public struct GlifiUTF8Range: Codable, Hashable, Sendable {
         self.end = end
     }
 
+    /// Applies the same invariants to serialized ranges as to native construction.
+    public init(from decoder: any Decoder) throws {
+        let fields = try decoder.container(keyedBy: CodingKeys.self)
+        try self.init(
+            start: fields.decode(Int.self, forKey: .start),
+            end: fields.decode(Int.self, forKey: .end))
+    }
+
     /// Number of bytes covered by the range.
     public var count: Int {
         end - start

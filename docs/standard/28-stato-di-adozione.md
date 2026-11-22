@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-STD-001-28 |
 | Tipo | Capitolo normativo |
-| Versione | 1.13.10 |
+| Versione | 1.13.11 |
 | Stato | Attivo |
 | Responsabile | Amministratore del repository, provvisorio |
 | Ultima modifica | 2026-11-22 |
@@ -23,7 +23,7 @@
 | Tracciabilità | Matrice machine-readable; DoR operativa (GS-DOR-001, CMP-014) | Aggiungere scheda DoR a ogni nuova vertical slice |
 | Controllo versione | Primo commit pubblicato su `main` nel remote privato canonico | Applicare protezioni server-side quando disponibili |
 | Codice e test | Baseline eseguibile macOS/iPadOS, package condiviso, facciata diagnostica e policy runtime coperte da test | Evolvere per vertical slice guidate dai requisiti |
-| Ciclo documentale macOS | Gate storici riferiti agli snapshot GS-VER-188 e GS-VER-196/197; completamento keyness diretto e livello configurabile verificati sullo snapshot 0ed9b459: target con 55 definizioni/195 esecuzioni, zero fallite/saltate, gate e preflight macOS superati (GS-VER-198/199) | Mantenere identità e limiti dello snapshot provato; GUI, file coordination e autorizzazioni sandbox reali restano da validare, G4 aperto |
+| Ciclo documentale macOS | GS-VER-230/231/232 superate per automatici sul checkpoint ffbfb431: 486 test Core/Kit, 67 definizioni/224 esecuzioni native, gate e preflight macOS; lookup misurato con compromessi espliciti. Generazione 4d6969dd conservata separatamente | Verificare separatamente WIP 223 e layout successivi; GUI, file coordination e autorizzazioni sandbox reali restano da validare, G4 aperto |
 | Toolchain Swift | Apple Swift 6.4, Swift 6 language mode, SwiftPM tools 6.4 e strict concurrency verificati | Rivalutare solo con una toolchain Xcode 27 compatibile o nuova ADR |
 | Sicurezza e privacy | GS-SEC-001 completo per asset, trust boundary e THR-001–THR-020; zero telemetria e logging tipizzato | Assegnare responsabile ed eseguire corpus avversario, fuzz, kill test e audit build |
 | API e CLI | Lifecycle, failure, progressi, cancellazione e operazioni di progetto/analisi/indagine/export implementati; contratti Core/Kit/CLI verificati nelle rispettive evidenze, inclusa GS-VER-162 | Mantenere i contract test; completare copertura delle altre operazioni lunghe, diff API e verifica GUI senza promettere ABI prematura |
@@ -75,6 +75,11 @@ Un elemento `Configurato` non è `Verificato` finché non esiste un'esecuzione o
   su tre fasi Release con output completi identici; costi piccoli e RSS espliciti.
   Supporto dei benchmark condiviso dai soli test, senza prodotto runtime;
   guard Debug e gate integrato superati, nessuna soglia G4 nuova.
+
+L'incremento ADR-0041 espone le capacità analitiche utente del core nei laboratori
+macOS e completa l'editor qualitativo condiviso. La verifica è registrata in
+[GS-VER-223](../evidenze/GS-VER-223-copertura-core-app.md); CMP-223 resta implemented.
+Questo stato non promuove i criteri assistivi o prestazionali di GS-STD-001-29.
 
 ## Lotto nativo Apple GS-DOR-260
 

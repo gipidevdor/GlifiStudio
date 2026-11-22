@@ -547,7 +547,7 @@
         },
         "method": "edgeBetweenness"
       },
-      "methodIdentifier": "GirvanNewman-inverse-strength-v1",
+      "methodIdentifier": "GirvanNewman-inverse-strength-exact-binary64-v2",
       "validationStatus": "candidate"
     },
     {

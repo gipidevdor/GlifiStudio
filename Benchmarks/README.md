@@ -2,6 +2,19 @@
 
 # Benchmark
 
+## Betweenness e cammini estremi (GS-VER-174)
+
+```sh
+swift run -c release --package-path Packages/GlifiCore GlifiBenchmark --betweenness-numerics
+```
+
+Tre grafi ordinari: sparso e catena da 600 nodi, 160 diamanti concatenati
+(481 nodi). Un warm-up e cinque campioni; SHA-256 di tutti gli input e
+punteggi fuori timer. La modalità rifiuta Debug. Archiviare la baseline
+prima della patch, confrontare senza compilazioni concorrenti e dichiarare
+RSS, ambiente e termica. Gli estremi sono verificati separatamente con
+formule indipendenti; nessuna soglia o promozione scientifica.
+
 ## Layout e visite analitiche (GS-VER-173)
 
 ```sh
@@ -223,3 +236,25 @@ termico/energetico. Eventuali RSS di `time -l` riguardano l'intera invocazione,
 compresi preparazione e riferimento. La guard della misura esplicita in Debug
 viene verificata separatamente come controllo negativo; non diventa un nuovo
 gate prestazionale del prodotto.
+
+## Stili dei grafici e OCR di sistema
+
+Il benchmark degli stili usa il modello di produzione `StudioPlotSeries` e un
+riferimento che replica il calcolo precedente. Controlla l'intero vettore degli
+indici e alterna l'ordine di misura su sette passaggi. Si compila dalla radice
+con i moduli e gli oggetti prodotti da SwiftPM, in Release.
+
+```sh
+swift build -c release --package-path Packages/GlifiCore --target GlifiKit
+bin=$(swift build -c release --package-path Packages/GlifiCore --show-bin-path)
+out=$(mktemp -d)
+swiftc -swift-version 6 -O -parse-as-library -Xcc -DACCELERATE_NEW_LAPACK \
+  -I "$bin/Modules" Apps/Shared/StudioPlotSeries.swift Benchmarks/macOS/StudioPlotSeriesBenchmark.swift \
+  "$bin"/GlifiKit.build/*.o "$bin"/GlifiCore.build/*.o -lsqlite3 -o "$out/plot-series"
+"$out/plot-series"
+```
+
+La prova Vision genera due righe sintetiche e produce JSON su stdout. Ogni
+configurazione riporta le letture completate e l'eventuale errore. Per
+riprodurla e interpretare le misure consultare
+[GS-VER-270](../docs/evidenze/GS-VER-270-grafici-comandi-neural-engine.md).

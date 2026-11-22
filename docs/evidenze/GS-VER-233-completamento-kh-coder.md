@@ -124,3 +124,10 @@ soltanto scratch rigenerabili e temporanei di questo lotto. Il worktree sorgente
 resta utile per l’integrazione GUI; toolchain, dipendenze e lavoro concorrente
 sono preservati. Lo spazio riportato è allocazione misurata prima della rimozione,
 non una differenza dello spazio libero APFS.
+
+## Riesame successivo
+
+[GS-VER-234](GS-VER-234-riverifica-correttezza-completezza.md) registra difetti
+successivamente individuati su input estremi e risorse, e corregge l’attribuzione
+della matrice parola-contesto. I risultati di questa evidenza restano storici
+per `c6fd88e`: non attestano assenza di difetti né completa parità con KH.

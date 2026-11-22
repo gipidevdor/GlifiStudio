@@ -216,6 +216,9 @@ private struct ProjectionOptimizationReference: Encodable {
     let analysisIdentifier: String
     let methodIdentifier: String
     let representationIdentifier: String
+    let corpusDigest: String?
+    let termSelectionIdentifier: String?
+    let averageSilhouette: Double?
     let sourceRevisionIDs: [String]
     let terms: [String]
     let axisValues: [Double]
@@ -277,6 +280,9 @@ private func projectionOptimizationReference(
         lineage: GlifiStudioDerivedLineage(result), analysisIdentifier: value.analysisIdentifier,
         methodIdentifier: value.method.identifier,
         representationIdentifier: value.representationIdentifier,
+        corpusDigest: value.corpusDigest,
+        termSelectionIdentifier: value.termSelectionIdentifier,
+        averageSilhouette: value.averageSilhouette,
         sourceRevisionIDs: value.sourceRevisionIDs, terms: value.terms,
         axisValues: axisValues, axisShares: axisShares, rowCoordinates: rows,
         columnCoordinates: columns, rowContributions: value.correspondence?.rowContributions,

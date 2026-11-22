@@ -15,8 +15,14 @@ fonti, metodi e passaggi di analisi, per risalire dal risultato al testo origina
 - **Esplora i testi.** Cerca parole e passaggi nel loro contesto, analizza le raccolte e confrontale.
 - **Condividi il lavoro.** Esporta risultati e riferimenti in PDF/A-2u, Markdown, CSV e JSON.
 
-Il laboratorio macOS aggiunge riassunto estrattivo, ricerca BM25, frequenze,
-diversità lessicale e ponderazione dei termini. La disponibilità dei metodi nel
+Il laboratorio macOS aggiunge riassunti estrattivi, ricerca BM25, frequenze,
+diversità lessicale, ponderazione dei termini e distribuzioni di Zipf e Heaps.
+Il laboratorio avanzato offre dodici operazioni sui documenti del progetto,
+con risultati di sessione ed esportazione delle richieste e degli esiti.
+I laboratori dedicati aggiungono analisi dirette del corpus, statistica su dati
+espliciti, valutazione temporale e linguistica, matrici e grafi. Il catalogo
+ricerca i singoli metodi e conserva l’identità dei risultati di sessione.
+La disponibilità dei metodi nel
 motore, nella riga di comando e nelle app è distinta nella
 [matrice di tracciabilità](docs/tracciabilita.md).
 
@@ -45,6 +51,11 @@ open GlifiStudio.xcworkspace
 ```
 
 Nel workspace scegli `GlifiStudio-macOS` o `GlifiStudio-iPadOS`.
+
+Su macOS usa **Area di lavoro → Trova uno strumento…** (`⌘K`) per cercare
+un'attività o un metodo. `⌘F` apre la ricerca nei testi; `⌘1`–`⌘7` raggiungono
+le principali sezioni del progetto. Il laboratorio conserva impostazioni e
+risultati durante la navigazione e separa i due pannelli nelle finestre ampie.
 
 Per usare la riga di comando:
 

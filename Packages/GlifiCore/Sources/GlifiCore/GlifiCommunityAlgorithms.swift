@@ -4,8 +4,8 @@ import Foundation
 
 /// Native deterministic community variants; identifiers describe their weighted contracts.
 public enum GlifiCommunityMethod: String, Codable, CaseIterable, Sendable {
-    /// Recomputed inverse-strength shortest-path betweenness after every removal.
-    case edgeBetweenness = "GirvanNewman-inverse-strength-v1"
+    /// Exact sums of represented reciprocal costs; binary64 probability ratios and output scores.
+    case edgeBetweenness = "GirvanNewman-inverse-strength-exact-binary64-v2"
     /// Sparse weighted Clauset-Newman-Moore modularity agglomeration.
     case fastGreedy = "ClausetNewmanMoore-weighted-v1"
     /// Weighted t-step walks with mean-strength loops and adjacent Ward merges.
@@ -49,6 +49,8 @@ extension GlifiNetworkAnalysis {
     ///
     /// Isolates stay singleton. Ties preserve the earliest partition and declared-node order.
     /// Girvan–Newman recomputes weighted shortest-path edge betweenness after every removal.
+    /// It compares exact sums of finite binary64 reciprocal costs, without epsilon ties;
+    /// probability ratios remain binary64 and their contributions are summed exactly.
     /// CNM uses a sparse lazy heap of exact modularity gains. Walktrap uses t-step weighted
     /// walks, a self-loop of mean incident strength, and adjacent Ward agglomeration.
     /// References: Newman/Girvan (2004), Clauset/Newman/Moore (2004), Pons/Latapy (2005).
@@ -65,12 +67,26 @@ extension GlifiNetworkAnalysis {
         let output: CommunityOutput
         switch method {
         case .edgeBetweenness:
-            let logarithm = max(1, Int(log2(Double(max(2, prepared.count)))) + 1)
-            try admitGraphWork(
-                [
-                    prepared.count, max(1, prepared.edges.count),
-                    max(1, prepared.edges.count + prepared.count), logarithm,
-                ], limits: limits)
+            if prepared.edges.isEmpty {
+                try admitGraphWork([prepared.count], limits: limits)
+            } else {
+                let logarithm = max(1, Int(log2(Double(max(2, prepared.count)))) + 1)
+                try admitGraphWork(
+                    [
+                        prepared.count, prepared.edges.count,
+                        prepared.edges.count + prepared.count, logarithm,
+                        GlifiGraphBinary64Sum.wordCount,
+                    ], limits: limits)
+                // Distances, counts, dependencies, scores and E+1 heap snapshots. The
+                // bound includes fixed-size COW arrays retained by pending heap records.
+                try admitGraphWork(
+                    phases: [
+                        [GlifiGraphBinary64Sum.wordCount, 3, prepared.count],
+                        [GlifiGraphBinary64Sum.wordCount, 2, prepared.edges.count],
+                        [GlifiGraphBinary64Sum.wordCount],
+                    ],
+                    limits: .init(maximumWork: limits.maximumPairwiseCells))
+            }
             output = try girvanNewman(prepared, resolution: resolution)
         case .fastGreedy:
             try admitGraphWork(
@@ -334,51 +350,59 @@ private func girvanNewman(_ graph: GlifiPreparedCommunityGraph, resolution: Doub
 func communityEdgeBetweenness(_ graph: GlifiPreparedCommunityGraph, active: [Bool]) throws
     -> [Double]
 {
-    var scores = [Double](repeating: 0, count: graph.edges.count)
+    let costs = try graph.edges.map { edge in
+        let cost = 1 / edge.weight
+        guard cost.isFinite, cost > 0 else {
+            throw graphAlgorithmFailure("network.numeric-range")
+        }
+        return cost
+    }
+    var scores = [GlifiGraphBinary64Sum](repeating: .init(), count: graph.edges.count)
     for source in 0..<graph.count {
         try Task.checkCancellation()
-        var distances = [Double](repeating: .infinity, count: graph.count)
-        var paths = [Double](repeating: 0, count: graph.count)
+        var distances = [GlifiGraphBinary64Sum?](repeating: nil, count: graph.count)
+        var paths = [GlifiGraphBinary64Sum](repeating: .init(), count: graph.count)
         var predecessors = [[(node: Int, edge: Int)]](repeating: [], count: graph.count)
         var settled = [Bool](repeating: false, count: graph.count)
         var order: [Int] = []
-        var heap = GlifiGraphPriorityQueue<(distance: Double, node: Int)> {
+        var heap = GlifiGraphPriorityQueue<(distance: GlifiGraphBinary64Sum, node: Int)> {
             $0.distance == $1.distance ? $0.node < $1.node : $0.distance < $1.distance
         }
-        distances[source] = 0
-        paths[source] = 1
-        heap.insert((0, source))
+        distances[source] = GlifiGraphBinary64Sum()
+        paths[source] = try .init(1)
+        heap.insert((.init(), source))
         while let next = heap.removeFirst() {
+            try Task.checkCancellation()
             guard !settled[next.node], next.distance == distances[next.node] else { continue }
             settled[next.node] = true
             order.append(next.node)
             for neighbor in graph.adjacency[next.node] where active[neighbor.edge] {
-                let distance = next.distance + 1 / graph.edges[neighbor.edge].weight
-                guard distance.isFinite, distance > next.distance else {
-                    throw graphAlgorithmFailure("network.numeric-range")
-                }
-                if distance < distances[neighbor.node] {
+                let distance = try next.distance.adding(costs[neighbor.edge])
+                if distances[neighbor.node].map({ distance < $0 }) ?? true {
                     distances[neighbor.node] = distance
                     paths[neighbor.node] = paths[next.node]
                     predecessors[neighbor.node] = [(next.node, neighbor.edge)]
                     heap.insert((distance, neighbor.node))
                 } else if distance == distances[neighbor.node] {
-                    paths[neighbor.node] += paths[next.node]
-                    guard paths[neighbor.node].isFinite else {
-                        throw graphAlgorithmFailure("network.path-count-overflow")
-                    }
+                    paths[neighbor.node] = try paths[neighbor.node].adding(paths[next.node])
                     predecessors[neighbor.node].append((next.node, neighbor.edge))
                 }
             }
         }
-        var dependency = [Double](repeating: 0, count: graph.count)
+        let pathCounts = paths.map(\.rounded)
+        guard pathCounts.allSatisfy(\.isFinite) else {
+            throw graphAlgorithmFailure("network.path-count-overflow")
+        }
+        var dependency = [GlifiGraphBinary64Sum](repeating: .init(), count: graph.count)
         for node in order.reversed() {
+            try Task.checkCancellation()
+            let dependent = dependency[node].rounded
             for predecessor in predecessors[node] {
-                let contribution = paths[predecessor.node] / paths[node] * (1 + dependency[node])
-                scores[predecessor.edge] += contribution / 2
-                dependency[predecessor.node] += contribution
+                let contribution = pathCounts[predecessor.node] / pathCounts[node] * (1 + dependent)
+                scores[predecessor.edge] = try scores[predecessor.edge].adding(contribution / 2)
+                dependency[predecessor.node] = try dependency[predecessor.node].adding(contribution)
             }
         }
     }
-    return scores
+    return scores.map(\.rounded)
 }

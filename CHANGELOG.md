@@ -4,6 +4,12 @@
 
 Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazioni vengono raccolte qui. Il progetto segue il versionamento semantico quando esisterà un contratto pubblico stabile; prima di `1.0.0`, ogni incompatibilità deve essere esplicita.
 
+- Copertura applicativa delle famiglie analitiche del core: laboratori corpus,
+  statistica, valutazione e operatori, ricerca per metodo, risultati con input
+  effettivi e stato di convergenza; revisioni qualitative complete e mapping.
+  Export delle viste con preparazione asincrona ed errori espliciti (ADR-0041,
+  GS-VER-223; audit applicativi distinti).
+
 ## Non rilasciato
 
 ### Integrazioni native Apple coordinate
@@ -24,6 +30,18 @@ conserva l’identità candidata distinta `TextRankSentence-configurable-v1`,
 preservando i metodi upstream già pubblicati.
 
 ### Aggiunto
+
+- Grafici audio di VoiceOver per le mappe fattoriali, con sintesi specifica per
+  CA, PCA e LSA. Le righe delle fusioni del dendrogramma aprono le fonti anche
+  da tastiera. Su iPad con tastiera hardware, la navigazione, la ricerca e
+  l'importazione operano sulla finestra del progetto attivo (GS-VER-270).
+
+- Riprogettazione applicativa per compiti e accesso diretto agli strumenti già
+  realizzati, con ricerca delle destinazioni, contesto del progetto e parametri
+  progressivi. Il laboratorio avanzato macOS usa GlifiKit con risultati di
+  sessione distinti dagli Artifact persistiti; ADR-0034 e GS-DOR-222 governano
+  l'integrazione, con verifiche autonome in GS-VER-222.
+
 
 - Varianti native del laboratorio analitico: comunità Girvan–Newman/CNM/Walktrap,
   layout FR/KK, foresta Prim, Simpson, MDS ordinale e multi-start, SOM esagonale
@@ -58,6 +76,18 @@ preservando i metodi upstream già pubblicati.
   CMP-163 `implemented`.
 
 ### Verificato
+
+- Lotto macOS KWIC, contesto visuale e lookup fonti verificato sul checkpoint
+  ffbfb431 di 924 file: 486 test Core/Kit, 224 esecuzioni native, gate e
+  preflight senza firma superati (GS-VER-230/231/232). WIP 223 e layout GUI
+  successivi esclusi; generazione 4d6969dd conservata separatamente.
+
+- Riprogettazione della GUI: `make verify` completo macOS/iPadOS superato sullo
+  snapshot isolato `c77d0e37…0129f`, con 423 test package, 224 esecuzioni native,
+  194 righe di oracoli, due PDF/A-2u e build Debug/Release di entrambe le app.
+  Osservazione GUI parziale; verifica visiva dell'ultima correzione header,
+  audit assistivi e valutazione ergonomica ancora aperti (GS-VER-222).
+
 
 - Completamento headless KH: 561 test Core/Kit in Debug e Release, 90 controlli
   CLI, 194 righe di oracoli, 195 esecuzioni macOS, recovery/PDF e build
@@ -104,6 +134,12 @@ preservando i metodi upstream già pubblicati.
   CMP-095. Conservate le verifiche G3 di QueryAST e riassunto estrattivo.
 
 ### Modificato
+
+- Lookup delle etichette fonte macOS con indice effimero first-wins,
+  ammortamento conservativo e predicato Sendable. Batch sintetico lungo da
+  49,061791 a 2,069916 ms; regressioni piccole/first-only e dispersione dichiarate,
+  nessun claim di rendering o energia. Tre candidati respinti, output completi
+  identici e nuovo gate del sorgente finale superato (GS-VER-231).
 
 - Kernel analitici: trasposte X/H flat per NMF, BFS indicizzate e buffer riusati
   nella centralità armonica, ultimo blocco bootstrap limitato agli elementi
@@ -664,6 +700,23 @@ preservando i metodi upstream già pubblicati.
   che rimane valido.
 
 ### Corretto
+
+- La selezione KWIC macOS e i mark visuali pubblicano il nuovo contesto fonte
+  soltanto dopo il caricamento riuscito; busy/failure conservano lo stato
+  precedente. Un mark senza fonti ammesso azzera il contesto Evidence estraneo.
+  Cinque regressioni riprodotte e superate, gate/preflight macOS superati sullo
+  checkpoint 4d6969dd e rivalidati su ffbfb431; layout GUI e WIP successivi
+  hanno evidenze separate (GS-VER-230/232).
+
+- Betweenness non pesata conserva punteggi finiti quando i contatori dei cammini
+  superano Double.max, con recupero scalato e percorso ordinario invariato
+  (GS-VER-174).
+- Verifica degli export scientifici: inventario rigoroso, congruenza fra
+  manifest e specifica, tabella rettangolare e CSV equivalente al profilo v1;
+  quattro famiglie compatibili e failure di integrità esistente (GS-VER-175).
+- Bootstrap indipendente e moving-block osservano la cancellazione entro
+  4096 osservazioni ricampionate, anche durante una replica; il kernel condiviso
+  estende la granularità a BCa, preservando risultati e validazioni (GS-VER-176).
 
 - Costi del riassunto estrattivo: l'API Core rifiuta conteggi di caratteri non positivi con
   `summary.invalid-character-count`; selezione per rank e MMR confrontano il costo con il

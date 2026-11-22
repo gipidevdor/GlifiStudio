@@ -262,3 +262,36 @@ func ldaPreparationCancellation() async throws {
         } catch is CancellationError {}
     }
 }
+
+@Test("Empty LDA documents do not alter the Gibbs sequence or token-work admission")
+func ldaReauditActiveDocumentSweepParity() throws {
+    let documents = [["a", "a", "b"], ["b", "b"]]
+    let plain = try GlifiLatentDirichletAllocation.fit(
+        documents: documents, topicCount: 2, seed: 17,
+        burnIn: 2, sampleCount: 3, thinning: 4, retainLogLikelihoods: true)
+    let padded = try GlifiLatentDirichletAllocation.fit(
+        documents: [[], documents[0], [], documents[1], []], topicCount: 2, seed: 17,
+        burnIn: 2, sampleCount: 3, thinning: 4, retainLogLikelihoods: true)
+    #expect(padded.topicTerms == plain.topicTerms)
+    #expect(padded.documentTopics[1] == plain.documentTopics[0])
+    #expect(padded.documentTopics[3] == plain.documentTopics[1])
+    #expect(padded.assignments[1] == plain.assignments[0])
+    #expect(padded.assignments[3] == plain.assignments[1])
+    #expect(padded.trainingPerplexity == plain.trainingPerplexity)
+    #expect(padded.sampleLogWordLikelihoods == plain.sampleLogWordLikelihoods)
+    let sparse = try GlifiLatentDirichletAllocation.fit(
+        documents: [[String]](repeating: [], count: 1_000) + [["a"]], topicCount: 1, seed: 0,
+        burnIn: 0, sampleCount: 1, thinning: 1_000,
+        limits: GlifiExploratoryLimits(maximumWork: 5_000))
+    #expect(sparse.trainingPerplexity == 1)
+    #expect(sparse.documentTopics.count == 1_001)
+}
+
+@Test("Direct LDA diagnostics admit document-topic reduction work")
+func ldaReauditMetricsDocumentAdmission() throws {
+    #expect(throws: GlifiFailure.self) {
+        try GlifiLDAModelSelection.metrics(
+            topicTerms: [[1]], documentTopics: [[1], [1]], documentLengths: [1, 1],
+            limits: GlifiExploratoryLimits(maximumWork: 1))
+    }
+}

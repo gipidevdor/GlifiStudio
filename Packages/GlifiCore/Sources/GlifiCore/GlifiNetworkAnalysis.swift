@@ -254,15 +254,92 @@ public enum GlifiNetworkAnalysis {
                 }
             }
             var dependency = Dictionary(uniqueKeysWithValues: graph.nodes.map { ($0, 0.0) })
-            for node in order.reversed() where node != source {
-                for predecessor in predecessors[node] ?? [] {
-                    let ratio = (sigma[predecessor] ?? 0) / (sigma[node] ?? 1)
-                    dependency[predecessor, default: 0] += ratio * (1 + (dependency[node] ?? 0))
+            if sigma.values.contains(where: { !$0.isFinite }) {
+                let counts = extendedBrandesPathCounts(
+                    source: source, order: order, predecessors: predecessors)
+                for node in order.reversed() where node != source {
+                    guard let denominator = counts[node] else {
+                        preconditionFailure("Missing reachable Brandes path count")
+                    }
+                    for predecessor in predecessors[node] ?? [] {
+                        guard let numerator = counts[predecessor] else {
+                            preconditionFailure("Missing Brandes predecessor path count")
+                        }
+                        dependency[predecessor, default: 0] += numerator.dependencyContribution(
+                            dividingBy: denominator, dependency: dependency[node] ?? 0)
+                    }
+                    betweenness[node, default: 0] += dependency[node] ?? 0
                 }
-                betweenness[node, default: 0] += dependency[node] ?? 0
+            } else {
+                for node in order.reversed() where node != source {
+                    for predecessor in predecessors[node] ?? [] {
+                        let ratio = (sigma[predecessor] ?? 0) / (sigma[node] ?? 1)
+                        dependency[predecessor, default: 0] += ratio * (1 + (dependency[node] ?? 0))
+                    }
+                    betweenness[node, default: 0] += dependency[node] ?? 0
+                }
             }
         }
         return GlifiBetweennessResult(scores: betweenness)
+    }
+
+    /// Binary64 precision with an extended exponent; not an arbitrary-precision integer.
+    ///
+    /// Shortest-path DAG counts have exponent at most the number of graph nodes.
+    struct BrandesPathCount: Sendable {
+        private let significand: Double
+        private let exponent: Int
+
+        static let zero = Self(significand: 0, exponent: 0)
+        static let one = Self(significand: 1, exponent: 0)
+
+        private init(significand: Double, exponent: Int) {
+            self.significand = significand
+            self.exponent = exponent
+        }
+
+        func adding(_ other: Self) -> Self {
+            guard significand != 0 else { return other }
+            guard other.significand != 0 else { return self }
+            let commonExponent = max(exponent, other.exponent)
+            let left = Double(
+                sign: .plus, exponent: exponent - commonExponent, significand: significand)
+            let right = Double(
+                sign: .plus, exponent: other.exponent - commonExponent,
+                significand: other.significand)
+            let sum = left + right
+            return Self(
+                significand: sum.significand, exponent: commonExponent + sum.exponent)
+        }
+
+        func dependencyContribution(dividingBy denominator: Self, dependency: Double) -> Double {
+            guard significand != 0 else { return 0 }
+            precondition(denominator.significand > 0)
+            // Multiply before applying the exponent, preserving recoverable subnormals.
+            let product = (significand / denominator.significand) * (1 + dependency)
+            // A normalized significand prevents double rounding in Double's subnormal initializer.
+            return Double(
+                sign: .plus, exponent: exponent - denominator.exponent + product.exponent,
+                significand: product.significand)
+        }
+    }
+
+    private static func extendedBrandesPathCounts<Node>(
+        source: Node, order: [Node], predecessors: [Node: [Node]]
+    ) -> [Node: BrandesPathCount] {
+        var counts: [Node: BrandesPathCount] = [source: .one]
+        for node in order where node != source {
+            var count = BrandesPathCount.zero
+            for predecessor in predecessors[node] ?? [] {
+                // BFS order places every shortest-path predecessor before its child.
+                guard let previous = counts[predecessor] else {
+                    preconditionFailure("Invalid Brandes predecessor order")
+                }
+                count = count.adding(previous)
+            }
+            counts[node] = count
+        }
+        return counts
     }
 
     /// Computes `HarmonicCloseness-v1` over unweighted, directed hop-distance
