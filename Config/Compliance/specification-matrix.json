@@ -863,7 +863,9 @@
       "tests": [
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiMarkdownExtractorTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiItalianTokenizerTests.swift",
-        "Scripts/check-fixtures.py"
+        "Scripts/check-fixtures.py",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHReauditContractTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSpanMapReauditTests.swift"
       ],
       "fixtures": [
         "Fixtures/Markdown/v1/manifest.json",
@@ -871,7 +873,8 @@
         "Fixtures/Markdown/v1/expected.json"
       ],
       "evidence": [
-        "docs/evidenze/GS-VER-021-markdown-spanmap.md"
+        "docs/evidenze/GS-VER-021-markdown-spanmap.md",
+        "docs/evidenze/GS-VER-234-riverifica-correttezza-completezza.md"
       ],
       "gate": "G2",
       "status": "verified",
@@ -1462,7 +1465,8 @@
       ],
       "fixtures": [],
       "evidence": [
-        "docs/evidenze/GS-VER-089-collocazione-pmi-npmi-dice-logdice.md"
+        "docs/evidenze/GS-VER-089-collocazione-pmi-npmi-dice-logdice.md",
+        "docs/evidenze/GS-VER-234-riverifica-correttezza-completezza.md"
       ],
       "gate": "G2",
       "status": "verified",
@@ -1946,14 +1950,16 @@
       "tests": [
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiMultivariateMethodsTests.swift",
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioServiceTests.swift",
-        "Scripts/verify.sh"
+        "Scripts/verify.sh",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExploratoryReauditTests.swift"
       ],
       "fixtures": [
         "Fixtures/Persistence/v1/basic/source.txt",
         "Fixtures/Markdown/v1/source.md"
       ],
       "evidence": [
-        "docs/evidenze/GS-VER-102-svd-ca-pca-lsa-nmf-clustering.md"
+        "docs/evidenze/GS-VER-102-svd-ca-pca-lsa-nmf-clustering.md",
+        "docs/evidenze/GS-VER-234-riverifica-correttezza-completezza.md"
       ],
       "gate": "G3",
       "status": "verified",
@@ -2318,14 +2324,18 @@
         "RF-078"
       ],
       "code": [
-        "Packages/GlifiCore/Sources/GlifiCore/GlifiSpanMap.swift"
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiSpanMap.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiTextModel.swift"
       ],
       "tests": [
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSpanMapCompositionTests.swift"
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSpanMapCompositionTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHReauditContractTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSpanMapReauditTests.swift"
       ],
       "fixtures": [],
       "evidence": [
-        "docs/evidenze/GS-VER-122-spanmap-componibili.md"
+        "docs/evidenze/GS-VER-122-spanmap-componibili.md",
+        "docs/evidenze/GS-VER-234-riverifica-correttezza-completezza.md"
       ],
       "gate": "G3",
       "status": "verified",
@@ -2817,7 +2827,9 @@
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioExploratoryCompletion.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioGraphAlgorithms.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioLDAModelSelection.swift",
-        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioLinguisticPipeline.swift"
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioLinguisticPipeline.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiGraphBinary64Sum.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiMultivariateMethods.swift"
       ],
       "tests": [
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHOperatorTests.swift",
@@ -2834,7 +2846,12 @@
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioGraphAlgorithmsTests.swift",
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioLinguisticPipelineTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLDAModelSelectionBenchmarkTests.swift",
-        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiAdvancedTextAnalysisTransportTests.swift"
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiAdvancedTextAnalysisTransportTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHReauditContractTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExploratoryReauditTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiNaiveBayesReauditTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCodingRuleReauditTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiGraphBinary64SumTests.swift"
       ],
       "fixtures": [
         "Packages/GlifiCore/Tests/Oracles/R/kh_operators.R",
@@ -2846,7 +2863,8 @@
         "docs/pianificazione/dor-operatori-analitici.md",
         "docs/adr/0035-completamento-nativo-kh-coder.md",
         "docs/pianificazione/dor-completamento-kh-coder.md",
-        "docs/evidenze/GS-VER-233-completamento-kh-coder.md"
+        "docs/evidenze/GS-VER-233-completamento-kh-coder.md",
+        "docs/evidenze/GS-VER-234-riverifica-correttezza-completezza.md"
       ],
       "gate": "G3",
       "status": "implemented",
@@ -2879,14 +2897,16 @@
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioExploratoryCompletionTests.swift",
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioGraphAlgorithmsTests.swift",
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioLinguisticPipelineTests.swift",
-        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiAdvancedTextAnalysisTransportTests.swift"
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiAdvancedTextAnalysisTransportTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiTextAnalysisReauditTests.swift"
       ],
       "fixtures": [
         "Fixtures/TextAnalysis/v1/cases.json"
       ],
       "evidence": [
         "docs/evidenze/GS-VER-162-parita-operatori-kit-cli.md",
-        "docs/evidenze/GS-VER-233-completamento-kh-coder.md"
+        "docs/evidenze/GS-VER-233-completamento-kh-coder.md",
+        "docs/evidenze/GS-VER-234-riverifica-correttezza-completezza.md"
       ],
       "gate": "G3",
       "status": "verified",
@@ -3787,11 +3807,13 @@
       "tests": [
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSpanMapCompositionTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSpanMapOptimizationTests.swift",
-        "Packages/GlifiCore/Tests/GlifiBenchmarkTestSupport/GlifiPipelineBenchmarkSupport.swift"
+        "Packages/GlifiCore/Tests/GlifiBenchmarkTestSupport/GlifiPipelineBenchmarkSupport.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSpanMapReauditTests.swift"
       ],
       "fixtures": [],
       "evidence": [
-        "docs/evidenze/GS-VER-202-spanmap-indicizzata.md"
+        "docs/evidenze/GS-VER-202-spanmap-indicizzata.md",
+        "docs/evidenze/GS-VER-234-riverifica-correttezza-completezza.md"
       ],
       "gate": "G3",
       "status": "verified",

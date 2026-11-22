@@ -114,6 +114,12 @@ def check_links(lines: list[str]) -> list[str]:
 
 
 def main() -> int:
+    binary64 = subprocess.run(
+        [sys.executable, str(PROJECT / "Scripts/check-binary64-sum-oracle.py")],
+        check=False,
+    )
+    if binary64.returncode:
+        return binary64.returncode
     require = "--require" in sys.argv
     if shutil.which("Rscript") is None:
         print("Oracoli numerici: Rscript assente, controllo saltato")

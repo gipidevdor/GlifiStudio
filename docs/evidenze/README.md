@@ -4,6 +4,8 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
+| Versione | 1.20.1 |
+
 | Versione | 1.19.6 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
@@ -269,6 +271,8 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 - [GS-VER-233 — Completamento nativo delle varianti KH Coder](GS-VER-233-completamento-kh-coder.md) — Superato: 561 test Core/Kit, 90 controlli CLI e gate macOS/iPadOS completo; varianti scientifiche candidate
 
 - [GS-VER-260 — Integrazioni native Apple](GS-VER-260-integrazioni-native-apple.md) — Verifica automatica del codice superata; packaging e CI nel registro PR; prove manuali e adozioni condizionali distinte
+
+- [GS-VER-234 — Riverifica di correttezza e completezza](GS-VER-234-riverifica-correttezza-completezza.md) — Superato nel perimetro locale: 660 test Core/Kit, 99 macOS, ASan/TSan e gate completo; limiti KH aperti
 
 - [GS-VER-234 — Riverifica di correttezza e completezza](GS-VER-234-riverifica-correttezza-completezza.md) — In verifica; controesempi e limiti di copertura espliciti
 

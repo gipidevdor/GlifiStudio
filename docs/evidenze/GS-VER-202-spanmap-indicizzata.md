@@ -213,3 +213,12 @@ Rimossa la sola cache di lavoro del coordinatore dopo la chiusura delle prove:
 percorso e distingue la dimensione allocata dal delta di spazio libero APFS.
 Allegati, log sanificati, inventari e archivio sorgenti verificato restano
 conservati; toolchain, dipendenze e cache delle altre sessioni sono preservate.
+
+## Riesame successivo degli intervalli
+
+[ADR-0042](../adr/0042-invarianti-intervalli-utf8-decodificati.md) e
+[GS-VER-234](GS-VER-234-riverifica-correttezza-completezza.md) superano la scelta
+storica di accettare intervalli vuoti/invertiti: tali input ora falliscono prima
+del consumo. Il fallback delle geometrie legacy con intervalli validi resta
+confrontato con il percorso lineare. Gli esiti sopra sono storici, non una
+richiesta di mantenere decoder che aggirano l’invariante del tipo.

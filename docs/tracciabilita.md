@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.6 |
+| Versione | 0.92.7 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -430,11 +430,27 @@ nessuna promozione a requisito verificato.
 
 | Verifica | Requisiti | Codice e prova | Evidenza |
 | --- | --- | --- | --- |
-| TV-087 | RF-087; RF-033; RF-037; RF-038; RF-043; RQ-025; RQ-048; RQ-058; RQ-063 | GlifiExploratoryAnalysis, GlifiProbabilisticTextAnalysis, GlifiCodingRules, GlifiTextMatrixOperators, GlifiStudioTextAnalytics; completamento comunità/layout/Prim/Simpson, MDS/SOM, selezione K e pipeline italiana; facciate dedicate e test mirati; test KHOperator e oracolo R; benchmark Release | [GS-VER-160](evidenze/GS-VER-160-operatori-analitici-nativi.md), GS-MET-001-23, ADR-0032, GS-DOR-160; baseline storica conservata; ampliamento ADR-0035 e [GS-VER-233](evidenze/GS-VER-233-completamento-kh-coder.md), nuovi identificatori candidate e gate in verifica |
+| TV-087 | RF-087; RF-033; RF-037; RF-038; RF-043; RQ-025; RQ-048; RQ-058; RQ-063 | GlifiExploratoryAnalysis, GlifiProbabilisticTextAnalysis, GlifiCodingRules, GlifiTextMatrixOperators, GlifiStudioTextAnalytics; completamento comunità/layout/Prim/Simpson, MDS/SOM, selezione K e pipeline italiana; facciate dedicate e test mirati; test KHOperator e oracolo R; benchmark Release | [GS-VER-160](evidenze/GS-VER-160-operatori-analitici-nativi.md), GS-MET-001-23, ADR-0032, GS-DOR-160; baseline storica conservata; ampliamento ADR-0035 e [GS-VER-233](evidenze/GS-VER-233-completamento-kh-coder.md), nuovi identificatori candidate e gate locale del completamento superato; riverifica delle degenerazioni, dei budget e dei tie in [GS-VER-234](evidenze/GS-VER-234-riverifica-correttezza-completezza.md), con gate locale superato nel perimetro dichiarato |
 
 | [GS-VER-161](evidenze/GS-VER-161-revisione-scientifica-operatori.md) | RF-087; TV-087; ADR-0031 | Correzioni Stress-1/LDA/codifica, oracoli R/Python e sette ValidationManifest per nove varianti; review tecnica automatica, V6 esterno aperto |
 
-| TV-088 | RF-087; RQ-058; RQ-060; RQ-063 | Request analitica tipizzata e dispatcher GlifiKit, CLI text-analysis, fixture condivise e test di input ostili; nove operazioni avanzate piatte più ordinal/simpson, 30 fixture presenti nello schema/versione 1 | [GS-VER-162](evidenze/GS-VER-162-parita-operatori-kit-cli.md), GS-API-002, GS-DOR-162; parità e gate storico a 15 fixture verificati localmente; nuovo ambito GS-DOR-233 e [GS-VER-233](evidenze/GS-VER-233-completamento-kh-coder.md) in verifica |
+| TV-088 | RF-087; RQ-058; RQ-060; RQ-063 | Request analitica tipizzata e dispatcher GlifiKit, CLI text-analysis, fixture condivise e test di input ostili; nove operazioni avanzate piatte più ordinal/simpson, 30 fixture presenti nello schema/versione 1 | [GS-VER-162](evidenze/GS-VER-162-parita-operatori-kit-cli.md), GS-API-002, GS-DOR-162; parità e gate storico a 15 fixture verificati localmente; nuovo ambito GS-DOR-233 e [GS-VER-233](evidenze/GS-VER-233-completamento-kh-coder.md) verificati nel perimetro dichiarato; 30 fixture/95 controlli CLI della riverifica e gate locale superato in [GS-VER-234](evidenze/GS-VER-234-riverifica-correttezza-completezza.md) |
+
+La riverifica GS-VER-234 collega anche RF-009/RF-078 (intervalli e composizione),
+RF-034 (overflow delle collocazioni), RF-037 (HAC) e RF-087 con RQ-025/RQ-048/
+RQ-058/RQ-060/RQ-063 (contratti numerici, risorse e trasporto). Le regressioni
+`GlifiKHReauditContractTests`, `GlifiSpanMapReauditTests` e
+`GlifiCollocationAnalysisTests` coprono intervalli, byte sorgenti e overflow;
+`GlifiExploratoryReauditTests`, `GlifiLDAModelSelectionTests`,
+`GlifiNaiveBayesReauditTests`, `GlifiCodingRuleReauditTests`,
+`GlifiGraphCompletionTests` e `GlifiGraphBinary64SumTests` coprono degenerazioni,
+lavoro cumulativo, grammatica e tie; `GlifiTextAnalysisReauditTests` copre il
+trasporto Unicode. I collegamenti riguardano TV-003/TV-008/TV-009/TV-032/TV-051/
+TV-060/TV-087/TV-088 e le clausole CMP-031/051/066/080/160/162/202 esistenti,
+senza promuoverne gli stati. Il gate locale della riverifica è superato:
+660 test Core/Kit, 99 test app macOS e 95 controlli CLI su 30 fixture.
+I limiti di completezza KH restano aperti; non si attestano promozione scientifica,
+audit GUI, V6 esterno, qualità NLP rappresentativa o prove su dispositivo.
 
 ## Lotto complementare macOS GS-PLAN-180
 
