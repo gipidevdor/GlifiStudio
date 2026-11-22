@@ -85,9 +85,15 @@ preservando i metodi upstream già pubblicati.
 
 ### Modificato
 
+- Kernel analitici: trasposte X/H flat per NMF, BFS indicizzate e buffer riusati
+  nella centralità armonica, ultimo blocco bootstrap limitato agli elementi
+  necessari e delega equivalente per blocchi unitari. Formule, PRNG e riduzioni
+  conservati; 18 confronti identici e gate completo con 544 test in GS-VER-173.
+  Benefici e piccoli costi residui misurati senza promozione scientifica.
+
 - Posting BM25 adattivi bounded e membri silhouette preindicizzati, con
   conservazione delle somme ordinarie e recupero numerico
-  degli estremi. Confronto Release e gate da acquisire in GS-VER-172;
+  degli estremi. Confronto Release e gate completo superati in GS-VER-172;
   nessuna promozione o soglia prestazionale introdotta.
 
 - Welch ANOVA conserva la varianza interna anche per gruppi con offset molto

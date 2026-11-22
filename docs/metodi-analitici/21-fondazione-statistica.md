@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-21 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.1.1 |
+| Versione | 1.1.2 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -121,6 +121,21 @@ Ogni intervallo di confidenza dichiara parametro, livello, metodo e assunzioni.
 `BootstrapPercentile-v1` ricampiona con sostituzione l'unità indipendente `B` volte,
 registra PRNG/seed e usa i quantili dichiarati della distribuzione bootstrap. Non è
 valido se il resampling rompe dipendenze del disegno.
+
+`MovingBlockBootstrap-v1` concatena blocchi contigui di lunghezza `L`, con
+`1≤L≤n`, inizi estratti uniformemente in `0...n-L` e troncamento a `n` osservazioni.
+Per ogni blocco il ciclo visita soltanto `min(L,n-drawn)` offset, evitando le visite
+inutili della coda finale. Restano invariati numero e ordine delle estrazioni
+`SplitMix64-v1`, somme scalari nell'ordine delle osservazioni estratte, ordinamento
+delle repliche e quantili di tipo 7; con `L=1` il risultato coincide bit per bit
+con il bootstrap indipendente a parità di input, livello, repliche e seed.
+Per `L=1`, dopo tutte le validazioni MBB, il calcolo delega al bootstrap indipendente
+per evitare il costo del ciclo a blocchi per ogni osservazione. Restano identici
+stream casuale, metadati del risultato e checkpoint ogni 1024 repliche, inclusa la
+prima; gli errori di validazione MBB precedono la cancellazione come in precedenza.
+Validazioni e checkpoint di cancellazione restano quelli esistenti. La verifica
+GS-VER-173 confronta tutti i campi del risultato con il precedente ciclo completo
+e un generatore di riferimento indipendente; le misure usano GS-DOR-173.
 
 Un permutation test dichiara statistica, gruppo di permutazioni compatibile con
 l'ipotesi nulla, alternativa, enumerazione esatta o Monte Carlo, numero di campioni,

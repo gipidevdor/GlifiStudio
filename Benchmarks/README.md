@@ -2,6 +2,23 @@
 
 # Benchmark
 
+## Layout e visite analitiche (GS-VER-173)
+
+```sh
+swift run -c release --package-path Packages/GlifiCore GlifiBenchmark --analysis-storage-optimization
+```
+
+Le sezioni opzionali sono
+`factorization`, `graph` e `resampling`; la modalità rifiuta Debug.
+I nove casi coprono NMF ordinaria/wide/tall, centralità armonica su tre topologie
+con nodi in ordine non banale, bootstrap con tre lunghezze di blocco.
+Un warm-up e cinque campioni; input/configurazione e ultimo output sono
+controllati integralmente fuori timer. Le chiamate precedenti non sono
+confrontate singolarmente. Archiviare il binario e i sorgenti di baseline prima
+dei kernel; confrontare in processi separati senza build concorrenti.
+Registrare tempi, RSS dell'intera sezione, ambiente, termica e alimentazione.
+Nessuna soglia locale diventa gate né sostituisce la validazione scientifica.
+
 ## Query sparse e silhouette (GS-VER-172)
 
 ```sh

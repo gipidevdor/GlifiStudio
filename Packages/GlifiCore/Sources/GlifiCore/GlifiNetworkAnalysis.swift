@@ -270,27 +270,72 @@ public enum GlifiNetworkAnalysis {
     public static func harmonicCloseness<Node>(
         _ graph: GlifiDirectedGraph<Node>
     ) -> GlifiHarmonicClosenessResult<Node> {
-        let outNeighbors = simpleOutNeighbors(graph)
-        var scores: [Node: Double] = [:]
-        for source in graph.nodes {
-            var distance: [Node: Int] = [source: 0]
-            var queue = [source]
+        let count = graph.nodes.count
+        guard count > 0 else { return GlifiHarmonicClosenessResult(scores: [:]) }
+        let adjacency = indexedSimpleOutNeighbors(graph)
+        var distance = [Int](repeating: -1, count: count)
+        var queue: [Int] = []
+        queue.reserveCapacity(count)
+        var values = [Double](repeating: 0, count: count)
+        for source in 0..<count {
+            // A source with no non-self neighbors cannot reach another node.
+            guard adjacency.offsets[source] != adjacency.offsets[source + 1] else { continue }
+            distance[source] = 0
+            queue.append(source)
             var queueIndex = 0
             while queueIndex < queue.count {
                 let current = queue[queueIndex]
                 queueIndex += 1
-                guard let currentDistance = distance[current] else { continue }
-                for neighbor in outNeighbors[current] ?? [] where distance[neighbor] == nil {
-                    distance[neighbor] = currentDistance + 1
+                let nextDistance = distance[current] + 1
+                for edge in adjacency.offsets[current]..<adjacency.offsets[current + 1] {
+                    let neighbor = adjacency.targets[edge]
+                    guard distance[neighbor] == -1 else { continue }
+                    distance[neighbor] = nextDistance
                     queue.append(neighbor)
                 }
             }
-            scores[source] = graph.nodes.reduce(0.0) { result, node in
-                guard node != source, let hops = distance[node], hops > 0 else { return result }
-                return result + 1 / Double(hops)
+            // The floating reduction follows declared node order, never BFS order.
+            var score = 0.0
+            for node in 0..<count {
+                let hops = distance[node]
+                guard node != source, hops > 0 else { continue }
+                score += 1 / Double(hops)
+            }
+            values[source] = score
+            // Only reachable nodes were written; reuse both buffers for the next source.
+            for node in queue { distance[node] = -1 }
+            queue.removeAll(keepingCapacity: true)
+        }
+        return GlifiHarmonicClosenessResult(
+            scores: Dictionary(
+                uniqueKeysWithValues: graph.nodes.enumerated().map {
+                    ($0.element, values[$0.offset])
+                }))
+    }
+
+    /// Resolves identities once while retaining the legacy first-occurrence neighbor order.
+    private static func indexedSimpleOutNeighbors<Node>(
+        _ graph: GlifiDirectedGraph<Node>
+    ) -> (offsets: [Int], targets: [Int]) {
+        let outNeighbors = simpleOutNeighbors(graph)
+        let nodeIndex = Dictionary(
+            uniqueKeysWithValues: graph.nodes.enumerated().map { ($0.element, $0.offset) })
+        var offsets = [Int](repeating: 0, count: graph.nodes.count + 1)
+        for (index, node) in graph.nodes.enumerated() {
+            offsets[index + 1] = offsets[index] + (outNeighbors[node]?.count ?? 0)
+        }
+        var targets: [Int] = []
+        targets.reserveCapacity(offsets[graph.nodes.count])
+        for node in graph.nodes {
+            for neighbor in outNeighbors[node] ?? [] {
+                // GlifiDirectedGraph validates every endpoint before becoming immutable.
+                guard let index = nodeIndex[neighbor] else {
+                    preconditionFailure("Validated graph contains an unknown endpoint")
+                }
+                targets.append(index)
             }
         }
-        return GlifiHarmonicClosenessResult(scores: scores)
+        return (offsets, targets)
     }
 
     /// Deduplicated out-neighbors per node, excluding self-loops: shortest

@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-16 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.0.1 |
+| Versione | 1.0.2 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -68,6 +68,26 @@ di GS-VER-169 confrontano input e output tramite checksum canonici, oltre a
 grafi con identità in collisione hash, archi ripetuti, self-loop, pesi estremi,
 dangling node e cancellazione. Le misure di prestazione sono evidenze del
 backend e non una nuova variante scientifica.
+
+Il backend CPU di `HarmonicCloseness-v1` risolve le identità una sola volta e
+conserva i vicini deduplicati in righe CSR. I self-loop sono esclusi, gli
+archi paralleli contano una sola connessione e l'ordine dei vicini resta
+quello della prima apparizione negli archi. I valori dei pesi non intervengono
+nella distanza hop: anche un arco di peso zero resta una connessione.
+
+Ogni BFS riusa coda e distanze intere, ripristinando soltanto le celle visitate;
+una sorgente priva di vicini diversi da sé ha punteggio zero. La riduzione
+`Σ 1/d` **DEVE** seguire l'ordine dichiarato dei nodi, non l'ordine di visita
+BFS, per preservare la sequenza aritmetica. Non viene conservata una matrice
+quadratica delle distanze. La complessità peggiore resta `O(V(V+E))` e la
+memoria di lavoro `O(V+E)`; non sono introdotte approssimazioni o nuove API.
+
+Le prove di GS-VER-173 confrontano tutti i bit dei punteggi con la precedente
+visita generica e le distanze con Floyd–Warshall indipendente su tutti i 4096
+digrafi semplici di quattro nodi. Fixture aggiuntive coprono ordine dei nodi
+diverso dalla BFS, identità in collisione hash, zeri, archi paralleli,
+self-loop, sink e componenti separate. Le misure dei tre generatori sintetici
+sono registrate nell'evidenza, senza cambiare lo stato scientifico del metodo.
 
 ## Verifica
 
