@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.13 |
+| Versione | 0.92.14 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -641,3 +641,11 @@ residuo globale e l'identità distinta dai vecchi piani. Le prove CLI aggiungono
 confronti esatti per subnormali, byte Unicode e classificazione.
 [GS-VER-305](evidenze/GS-VER-305-rifinitura-kh.md) registra l'audit e i gate locali
 superati; GS-VER-300 resta il precedente snapshot. Nessuna promozione scientifica.
+
+## Regia del piano e grammatica numerica (GS-DOR-284)
+
+CMP-284 collega RQ-005/011/023/063 alla separazione privata fra regia ed
+esecuzione del passo. CMP-285 collega RQ-007/060/063 alla grammatica decimale
+comune dei due editor Kit, con errori distinti e contratti di trasporto conservati.
+[GS-VER-284](evidenze/GS-VER-284-regia-del-piano-e-input-numerico.md) registra
+compatibilità, verifiche macOS e limiti, senza promozione della maturità scientifica.

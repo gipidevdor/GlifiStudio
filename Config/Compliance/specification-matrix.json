@@ -4803,6 +4803,56 @@
       "gate": "G3",
       "status": "verified",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-284",
+      "clause": "GS-STD-001-10 § 10.4; GS-DOR-284 regia e risultato del passo",
+      "specification": "docs/pianificazione/dor-regia-del-piano-e-input-numerico.md",
+      "requirements": [
+        "RQ-005",
+        "RQ-011",
+        "RQ-023",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisExecutionTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiRuntimeExecutionTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-284-regia-del-piano-e-input-numerico.md"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-285",
+      "clause": "GS-STD-001-12 § 12.4/12.5; grammatica numerica degli editor GS-DOR-284",
+      "specification": "docs/pianificazione/dor-regia-del-piano-e-input-numerico.md",
+      "requirements": [
+        "RQ-007",
+        "RQ-060",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioEditorDecimal.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioStatisticsWorkbench.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioCoreOperators.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiEditorDecimalContractTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-284-regia-del-piano-e-input-numerico.md"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }
