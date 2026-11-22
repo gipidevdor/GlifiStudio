@@ -272,4 +272,4 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 
 - [GS-VER-234 — Riverifica di correttezza e completezza](GS-VER-234-riverifica-correttezza-completezza.md) — In verifica; controesempi e limiti di copertura espliciti
 
-- [GS-VER-280 — Struttura e coesione del codice](GS-VER-280-struttura-e-coesione-del-codice.md) — In corso; compatibilità e verifiche distinte dai benefici strutturali
+- [GS-VER-280 — Struttura e coesione del codice](GS-VER-280-struttura-e-coesione-del-codice.md) — Confronti API/CLI e prove mirate superati; gate completo nel registro PR #42

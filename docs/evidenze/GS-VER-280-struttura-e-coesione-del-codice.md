@@ -7,7 +7,7 @@
 | Identificatore | GS-VER-280 |
 | Tipo | Evidenza di refactoring e compatibilità |
 | Versione | 1.0.0 |
-| Stato | Confronti API/CLI e prove mirate superati; gate completo in corso |
+| Stato | Confronti API/CLI e prove mirate superati; gate finale nel registro PR |
 | Responsabile | Iniziatore del progetto, con supporto Codex |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Richiesta esplicita di migliorare struttura e ingegneria del software |
@@ -64,9 +64,11 @@ conteggi e hash dei sorgenti prima/dopo.
 
 
 Il gate completo `make verify-app-store` comprende `verify.sh` e il packaging.
-Il suo esito ancora pendente non è dedotto dalle prove mirate. I risultati tardivi
-del gate locale e della CI sono registrati nella pull request collegata all’issue
-#41, sulla revisione finale, senza anticiparli in questo snapshot.
+Il suo esito non è dedotto dalle prove mirate. I risultati tardivi del gate
+locale e della CI sono registrati nella [PR #42](https://github.com/gipidevdor/GlifiStudio/pull/42),
+sulla revisione finale, senza anticiparli in questo snapshot.
+Il codice e gli allegati dei confronti sono congelati in `d5d45e5`; la successiva
+revisione aggiunge soltanto il collegamento al registro del gate.
 
 Per il confronto CLI compilare `GlifiCLI` della baseline e del candidato con la
 stessa toolchain, congelare i due eseguibili e invocare:
