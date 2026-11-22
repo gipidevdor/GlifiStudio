@@ -3539,6 +3539,83 @@
       "gate": "G3",
       "status": "implemented",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-178",
+      "clause": "GS-STD-001-12 § 12.8; GS-MET-001-16 § Precisione di Betweenness-v1",
+      "specification": "docs/standard/12-implementazione-swift.md",
+      "requirements": [
+        "RF-039",
+        "RQ-008",
+        "RQ-009",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiNetworkAnalysis.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiBetweennessNumericsTests.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiBetweennessNumericsBenchmarks.swift"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-174-betweenness-cammini-estremi.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-179",
+      "clause": "GS-VIZ-001 § Export e Conformità; GS-MET-001-22 § Contratto della specifica di vista",
+      "specification": "docs/specifiche-di-design/08-visualizzazione-scientifica.md",
+      "requirements": [
+        "RF-084",
+        "RQ-028",
+        "RQ-044",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiVisualizationExport.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiVisualExportIntegrityTests.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiVisualizationTests.swift"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-175-integrita-export-viste.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-184",
+      "clause": "GS-STD-001-12 § 12.6; GS-RUN-001 § Cancellazione",
+      "specification": "docs/standard/12-implementazione-swift.md",
+      "requirements": [
+        "RQ-011",
+        "RQ-041",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiResamplingStatistics.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiResamplingCancellationTests.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiMovingBlockBootstrapOptimizationTests.swift"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-176-cancellazione-resampling.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }

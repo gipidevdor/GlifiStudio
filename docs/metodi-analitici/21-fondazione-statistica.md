@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-MET-001-21 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.1.2 |
+| Versione | 1.1.3 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -133,9 +133,28 @@ Per `L=1`, dopo tutte le validazioni MBB, il calcolo delega al bootstrap indipen
 per evitare il costo del ciclo a blocchi per ogni osservazione. Restano identici
 stream casuale, metadati del risultato e checkpoint ogni 1024 repliche, inclusa la
 prima; gli errori di validazione MBB precedono la cancellazione come in precedenza.
-Validazioni e checkpoint di cancellazione restano quelli esistenti. La verifica
+Le validazioni restano quelle esistenti. La verifica
 GS-VER-173 confronta tutti i campi del risultato con il precedente ciclo completo
 e un generatore di riferimento indipendente; le misure usano GS-DOR-173.
+
+GS-VER-176 aggiunge checkpoint prima dell'allocazione delle repliche, dopo le
+validazioni, e almeno ogni 4096 osservazioni ricampionate. Il budget è cumulativo
+fra repliche brevi e suddivide anche l'interno dei blocchi lunghi senza estrarre
+nuovi inizi di blocco. Restano anche i checkpoint ogni 1024 repliche. Un hook
+interno espone solo il conteggio diagnostico cumulativo, saturante a `Int.max`, per
+iniettare cancellazione deterministica nei test; non modifica i valori calcolati.
+Un checkpoint precede e uno segue l'ordinamento, conservando gli operatori
+`sorted()` e `sort()` esistenti. L'ordinamento stesso resta non interrompibile e
+non viene introdotto un backend alternativo. Il limite di 4096 riguarda il ciclo
+di ricampionamento, non la validazione iniziale né l'ordinamento; un calcolo
+cancellato non restituisce intervalli parziali. API pubbliche, PRNG, ordine delle
+somme, quantili e tutti i metadati restano invariati, inclusa la delega `L=1`.
+Il kernel delle repliche è riusato anche da `BootstrapBCa-v1`, che riceve gli
+stessi checkpoint durante il ricampionamento. La formula BCa, bias correction,
+accelerazione jackknife e probabilità corrette restano invariate; il limite di
+lavoro tra checkpoint non viene esteso alle fasi specifiche BCa. Questo riuso è
+esplicito nel perimetro di GS-DOR-176 ed è verificato anche contro l'oracolo R
+già esistente.
 
 Un permutation test dichiara statistica, gruppo di permutazioni compatibile con
 l'ipotesi nulla, alternativa, enumerazione esatta o Monte Carlo, numero di campioni,

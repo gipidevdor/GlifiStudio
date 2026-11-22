@@ -118,19 +118,41 @@ public enum GlifiStudioVisualExport {
         return files
     }
 
-    /// Verifies every file of a bundle against its manifest.
+    /// Verifies payload integrity and agreement of the manifest, view and equivalent table.
+    ///
+    /// This checks internal consistency, not the authenticity of the declared source project.
     public static func verify(_ files: [String: Data]) throws -> GlifiStudioVisualExportManifest {
         guard let data = files[manifestFileName],
             let manifest = try? JSONDecoder().decode(
                 GlifiStudioVisualExportManifest.self, from: data),
             manifest.schema == GlifiStudioVisualExportManifest.schema,
             manifest.schemaVersion == GlifiStudioVisualExportManifest.schemaVersion,
-            Set(files.keys) == Set(manifest.files.map(\.path) + [manifestFileName]),
+            Set(files.keys) == Set([manifestFileName, "view-spec.json", "view.csv"]),
+            manifest.files.map(\.path) == ["view-spec.json", "view.csv"],
+            manifest.files[0].mediaType == "application/json",
+            manifest.files[1].mediaType == "text/csv",
+            validMetadata(manifest),
             manifest.files.allSatisfy({ record in
                 files[record.path].map {
-                    $0.count == record.byteCount && digest($0) == record.sha256
+                    record.byteCount >= 0 && $0.count == record.byteCount
+                        && digest($0) == record.sha256
                 } ?? false
-            })
+            }),
+            let specificationData = files["view-spec.json"],
+            let visualization = try? JSONDecoder().decode(
+                GlifiStudioVisualization.self, from: specificationData),
+            validStructure(visualization),
+            manifest.artifactID == visualization.artifactID,
+            manifest.analysisNodeID == visualization.analysisNodeID,
+            manifest.analysisIdentifier == visualization.analysisIdentifier,
+            manifest.methodIdentifier == visualization.methodIdentifier,
+            manifest.specificationIdentifier == visualization.specificationIdentifier,
+            manifest.totalObservationCount == visualization.totalObservationCount,
+            manifest.visibleObservationCount == visualization.visibleObservationCount,
+            manifest.reductionIdentifier == visualization.reductionIdentifier,
+            manifest.layoutIdentifier == visualization.layoutIdentifier,
+            manifest.caveatKeys == visualization.caveatKeys,
+            files["view.csv"] == Data(GlifiStudioVisualizationBuilder.csv(visualization).utf8)
         else {
             throw GlifiStudioFailure(
                 code: "visual-export.integrity-failed",
@@ -142,6 +164,101 @@ public enum GlifiStudioVisualExport {
             )
         }
         return manifest
+    }
+
+    private static func validMetadata(_ manifest: GlifiStudioVisualExportManifest) -> Bool {
+        [
+            manifest.softwareIdentifier, manifest.projectID, manifest.artifactID,
+            manifest.analysisNodeID, manifest.analysisIdentifier, manifest.methodIdentifier,
+            manifest.specificationIdentifier,
+        ].allSatisfy(nonblank)
+            && manifest.generation >= 0
+            && manifest.totalObservationCount >= 0
+            && manifest.visibleObservationCount >= 0
+            && manifest.visibleObservationCount <= manifest.totalObservationCount
+            && (manifest.reductionIdentifier.map(nonblank) ?? true)
+            && (manifest.layoutIdentifier.map(nonblank) ?? true)
+            && manifest.caveatKeys.allSatisfy(nonblank)
+            && validCreationTime(manifest.createdAt)
+    }
+
+    private static func validStructure(_ view: GlifiStudioVisualization) -> Bool {
+        guard nonblank(view.titleKey), nonblank(view.summaryKey),
+            uniqueNonblank(view.table.columns.map(\.identifier)),
+            uniqueNonblank(view.table.rows.map(\.id)),
+            uniqueNonblank(view.marks.map(\.id)),
+            uniqueNonblank(view.axes.map(\.fieldIdentifier)),
+            view.table.rows.allSatisfy({
+                $0.cells.count == view.table.columns.count && $0.cells.allSatisfy(finiteCell)
+            }),
+            view.axes.allSatisfy({
+                $0.lowerBound.isFinite && $0.upperBound.isFinite && $0.lowerBound <= $0.upperBound
+                    && ($0.share.map(\.isFinite) ?? true)
+            }),
+            view.marks.allSatisfy({
+                $0.x.isFinite && $0.y.isFinite && ($0.x2.map(\.isFinite) ?? true)
+                    && ($0.y2.map(\.isFinite) ?? true) && ($0.magnitude.map(\.isFinite) ?? true)
+                    && $0.sourceRevisionIDs.allSatisfy(nonblank)
+            }),
+            view.summaryArguments.allSatisfy({ finiteCell($0.value) })
+        else { return false }
+        // Counts refer to family-specific observations, not necessarily rows or marks.
+        return true
+    }
+
+    private static func finiteCell(_ cell: GlifiStudioVisualCell) -> Bool {
+        switch cell {
+        case let .decimal(value): value.isFinite
+        case .text, .integer, .missing: true
+        }
+    }
+
+    private static func nonblank(_ value: String) -> Bool {
+        value.unicodeScalars.contains { !CharacterSet.whitespacesAndNewlines.contains($0) }
+    }
+
+    private static func uniqueNonblank(_ values: [String]) -> Bool {
+        values.allSatisfy(nonblank) && Set(values).count == values.count
+    }
+
+    /// Accepts the producer's UTC calendar profile, also with fractions or a zero offset.
+    private static func validCreationTime(_ value: String) -> Bool {
+        let utf8 = value.utf8
+        let count = utf8.count
+        let tail = Array(utf8.suffix(6))
+        let end: Int
+        let zoneLength: Int
+        if tail.last == 90 || tail.last == 122 {
+            zoneLength = 1
+        } else if tail.elementsEqual("+00:00".utf8) {
+            zoneLength = 6
+        } else {
+            return false
+        }
+        end = count - zoneLength
+        let head = Array(utf8.prefix(20))
+        guard end >= 19,
+            head[4] == 45, head[7] == 45, head[10] == 84 || head[10] == 116,
+            head[13] == 58, head[16] == 58
+        else { return false }
+        for index in 0..<19 where ![4, 7, 10, 13, 16].contains(index) {
+            guard (48...57).contains(head[index]) else { return false }
+        }
+        if end > 19 {
+            guard end > 20, head[19] == 46,
+                utf8.dropFirst(20).dropLast(zoneLength).allSatisfy({ (48...57).contains($0) })
+            else { return false }
+        }
+        // The calendar parser sees a fixed twenty bytes, independent of fractional precision.
+        var calendarBytes = Array(head.prefix(19))
+        calendarBytes[10] = 84
+        calendarBytes.append(90)
+        let calendarTime = String(decoding: calendarBytes, as: UTF8.self)
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        formatter.timeZone = TimeZone(identifier: "UTC")
+        guard let date = formatter.date(from: calendarTime) else { return false }
+        return formatter.string(from: date) == calendarTime
     }
 
     static func digest(_ data: Data) -> String {

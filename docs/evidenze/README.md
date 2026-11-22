@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.19.0 |
+| Versione | 1.19.1 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -13,6 +13,12 @@
 Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un esito positivo prova soltanto l'ambito dichiarato e non sostituisce l'approvazione dei requisiti o della baseline.
 
 ## Indice
+
+- [GS-VER-176 — Cancellazione nelle repliche bootstrap](GS-VER-176-cancellazione-resampling.md) — Superato: checkpoint, parità numerica e gate congiunto; prestazioni isolate aperte
+
+- [GS-VER-175 — Integrità degli export scientifici](GS-VER-175-integrita-export-viste.md) — Superato: inventario, provenance e CSV; compatibilità delle quattro famiglie e gate congiunto
+
+- [GS-VER-174 — Betweenness con molti cammini minimi](GS-VER-174-betweenness-cammini-estremi.md) — Superato: RED/verde e gate congiunto; misure sotto contesa senza conclusioni prestazionali
 
 - [GS-VER-173 — Layout e visite dei kernel analitici](GS-VER-173-layout-e-visite-analitiche.md) — Superato: 18 confronti identici, 544 test e gate completo; costi residui dichiarati
 

@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.0 |
+| Versione | 0.92.1 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -85,6 +85,9 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 
 | Evidenza | Verifiche coperte | Esito | Limite |
 | --- | --- | --- | --- |
+| [GS-VER-176](evidenze/GS-VER-176-cancellazione-resampling.md) | TV-012, TV-056, TV-057; RQ-011, RQ-041, RQ-063 | Superato: checkpoint intra-replica, parità e gate congiunto | Limite in osservazioni ricampionate, non deadline; sort non preemptive |
+| [GS-VER-175](evidenze/GS-VER-175-integrita-export-viste.md) | TV-058; RF-084, RQ-028, RQ-044 | Superato: RED/verde, quattro famiglie e gate congiunto | Integrità interna del bundle; autenticazione e progetto esterno fuori contratto |
+| [GS-VER-174](evidenze/GS-VER-174-betweenness-cammini-estremi.md) | TV-008, TV-009, TV-033; RF-039, RQ-008, RQ-009, RQ-063 | Superato: estremi, riferimenti indipendenti e gate congiunto | Nessuna nuova API, variante, dipendenza o promozione scientifica |
 | [GS-VER-173](evidenze/GS-VER-173-layout-e-visite-analitiche.md) | TV-008, TV-009, TV-032, TV-033, TV-036; RQ-008, RQ-009, RQ-063 | Superato: 18 confronti identici, 544 test e gate completo | CMP-177 `implemented`; NMF alto +0,7% tempo, bootstrap +96 KiB RSS; nessuna promozione scientifica |
 | [GS-VER-172](evidenze/GS-VER-172-query-sparse-e-silhouette.md) | TV-008, TV-009, TV-029, TV-032; RF-030, RF-037; RQ-008, RQ-009, RQ-063 | Superato: venti confronti finali, 440 test e 185 righe di oracoli; gate completo | CMP-176 `implemented`; nessuna promozione dei metodi o soglia prestazionale |
 | [GS-VER-171](evidenze/GS-VER-171-integrazione-algoritmi.md) | TV-008, TV-009, TV-029, TV-032, TV-033, TV-036; RQ-008, RQ-063 | Superato: integrazione isolata, correzione Welch, 425 test e 177 righe di oracoli sulla base upstream `fe6f654` | Evidenze storiche GS-VER-168/169/170 conservate; nuovo gate completo eseguito sulla proiezione integrata |

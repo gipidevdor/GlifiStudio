@@ -654,6 +654,16 @@ preservando i metodi upstream già pubblicati.
 
 ### Corretto
 
+- Betweenness non pesata conserva punteggi finiti quando i contatori dei cammini
+  superano Double.max, con recupero scalato e percorso ordinario invariato
+  (GS-VER-174).
+- Verifica degli export scientifici: inventario rigoroso, congruenza fra
+  manifest e specifica, tabella rettangolare e CSV equivalente al profilo v1;
+  quattro famiglie compatibili e failure di integrità esistente (GS-VER-175).
+- Bootstrap indipendente e moving-block osservano la cancellazione entro
+  4096 osservazioni ricampionate, anche durante una replica; il kernel condiviso
+  estende la granularità a BCa, preservando risultati e validazioni (GS-VER-176).
+
 - Costi del riassunto estrattivo: l'API Core rifiuta conteggi di caratteri non positivi con
   `summary.invalid-character-count`; selezione per rank e MMR confrontano il costo con il
   budget residuo, evitando overflow per costi estremi. Formula e payload invariati;

@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.15 |
+| Versione | 1.6.18 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -28,6 +28,12 @@ distribuisce quattro agenti su query, feedback statico, revisione e integrazione
 preservando i confini del lavoro già in corso nell'altra chat.
 
 ## Indice
+
+- [GS-DOR-176 — Cancellazione nelle repliche bootstrap](dor-cancellazione-resampling.md) — Ready
+
+- [GS-DOR-175 — Integrità degli export scientifici](dor-integrita-export-viste.md) — Ready
+
+- [GS-DOR-174 — Betweenness con molti cammini minimi](dor-betweenness-cammini-estremi.md) — Ready
 
 - [GS-DOR-173 — Layout e visite dei kernel analitici](dor-layout-e-visite-analitiche.md) — Ready
 

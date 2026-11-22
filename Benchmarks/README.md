@@ -2,6 +2,19 @@
 
 # Benchmark
 
+## Betweenness e cammini estremi (GS-VER-174)
+
+```sh
+swift run -c release --package-path Packages/GlifiCore GlifiBenchmark --betweenness-numerics
+```
+
+Tre grafi ordinari: sparso e catena da 600 nodi, 160 diamanti concatenati
+(481 nodi). Un warm-up e cinque campioni; SHA-256 di tutti gli input e
+punteggi fuori timer. La modalità rifiuta Debug. Archiviare la baseline
+prima della patch, confrontare senza compilazioni concorrenti e dichiarare
+RSS, ambiente e termica. Gli estremi sono verificati separatamente con
+formule indipendenti; nessuna soglia o promozione scientifica.
+
 ## Layout e visite analitiche (GS-VER-173)
 
 ```sh
