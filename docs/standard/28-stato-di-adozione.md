@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-STD-001-28 |
 | Tipo | Capitolo normativo |
-| Versione | 1.13.11 |
+| Versione | 1.13.12 |
 | Stato | Attivo |
 | Responsabile | Amministratore del repository, provvisorio |
 | Ultima modifica | 2026-11-22 |
@@ -91,3 +91,11 @@ standard sono configurati nella scena macOS e compilati; prove manuali di
 VoiceOver, App Nap, energia, provider e dispositivi/G4 restano aperte. Nessun
 criterio Da introdurre viene convertito in un gate soltanto perché la sua API è
 disponibile.
+
+## Coesione e compatibilità nel refactoring GS-DOR-280
+
+GS-VER-280 registra la separazione interna dei ruoli Kit, gli owner privati CLI
+e le factory private del package. Il confronto API Core/Kit e la parità di byte
+CLI sono prove circoscritte al lotto: non attuano un gate globale di rilascio o
+una promessa ABI. Gli stati scientifici e i criteri Da introdurre restano
+invariati. Non sono fissate soglie di righe, velocità o consumo energetico.

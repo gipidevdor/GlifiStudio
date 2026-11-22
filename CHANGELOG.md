@@ -12,6 +12,16 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Struttura interna e ownership
+
+- Contratti valore, bootstrap e sessione Kit separati per responsabilità; policy
+  ordinarie condivise senza cambiare API o mapping specializzati.
+- Staging e costruzione digest/manifest del package centralizzati in helper
+  privati, conservando ordine I/O e checkpoint delle quattro famiglie.
+- Sessioni CLI chiuse anche su failure e cancellazione prima della presentazione;
+  raccolta dei risultati execute/visualize condivisa, protocollo invariato
+  (GS-VER-280).
+
 ### Integrazioni native Apple coordinate
 
 - Letture esterne Foundation coordinate e bounded prima della decodifica, con

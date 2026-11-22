@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.19.5 |
+| Versione | 1.19.6 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -271,3 +271,5 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 - [GS-VER-260 — Integrazioni native Apple](GS-VER-260-integrazioni-native-apple.md) — Verifica automatica del codice superata; packaging e CI nel registro PR; prove manuali e adozioni condizionali distinte
 
 - [GS-VER-234 — Riverifica di correttezza e completezza](GS-VER-234-riverifica-correttezza-completezza.md) — In verifica; controesempi e limiti di copertura espliciti
+
+- [GS-VER-280 — Struttura e coesione del codice](GS-VER-280-struttura-e-coesione-del-codice.md) — In corso; compatibilità e verifiche distinte dai benefici strutturali

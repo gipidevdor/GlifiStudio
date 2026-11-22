@@ -1,0 +1,26 @@
+{
+  "schemaIdentifier": "studio.glifi.verification.public-api-compatibility.v1",
+  "baselineRevision": "38bba2931d9048ce46b0885e4933305b04b3d760",
+  "tool": "Apple Swift6.4.2 swift-api-digester -dump-sdk -avoid-location -avoid-tool-args",
+  "normalization": "Only ABIRoot.children declaration order is sorted; no signatures, attributes, members, parameters or type information removed. All other arrays retain their original order.",
+  "scope": "Scoped public API comparison; no ABI or release-gate certification",
+  "modules": [
+    {
+      "module": "GlifiCore",
+      "equal": true,
+      "baselineNormalizedSHA256": "2378113a858118452a4d320e71e0742d08733a121dfa2d2fe6d40327335b2a22",
+      "candidateNormalizedSHA256": "2378113a858118452a4d320e71e0742d08733a121dfa2d2fe6d40327335b2a22",
+      "baselineTopLevelNodes": 477,
+      "candidateTopLevelNodes": 477
+    },
+    {
+      "module": "GlifiKit",
+      "equal": true,
+      "baselineNormalizedSHA256": "d2f1986fae67352c4d3ed0ca875985e555357a8a02e9255c36e473869d9ce3c4",
+      "candidateNormalizedSHA256": "d2f1986fae67352c4d3ed0ca875985e555357a8a02e9255c36e473869d9ce3c4",
+      "baselineTopLevelNodes": 272,
+      "candidateTopLevelNodes": 272
+    }
+  ],
+  "allEqual": true
+}

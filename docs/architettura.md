@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-AD-001 |
 | Tipo | Architecture description |
-| Versione | 0.15.0 |
+| Versione | 0.15.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Non ancora approvato |
 | Riferimento | ISO/IEC/IEEE 42010:2022, profilo tailored |
 
@@ -154,6 +154,27 @@ I confini candidati della sezione 5.2 non sono ancora target separati: verranno 
 `GlifiInvestigation`, `GlifiPlanning` e `GlifiInterpretation` indicano responsabilità
 concettuali e **NON** impongono nomi di target o API. I modelli di presentazione in
 GlifiKit proiettano questi contratti senza trasferire regole scientifiche nelle view.
+
+
+### 5.4 Coesione interna e ownership (GS-DOR-280)
+
+I livelli e i prodotti SwiftPM restano quelli esistenti. All’interno di ciascun
+livello le responsabilità hanno un proprietario esplicito:
+
+| Componente | Responsabilità e confine |
+| --- | --- |
+| `GlifiStudioService.swift` | Bootstrap stateless del servizio e traduzione degli errori del bootstrap |
+| `GlifiStudioServiceModels.swift` | Contratti valore e conversioni del modello applicativo |
+| `GlifiStudioProjectSession.swift` | Actor, stato, admission, task posseduti e chiusura; i relativi helper rimangono privati nello stesso file |
+| Helper privati del package | Preparazione della transazione e costruzione coerente di digest/manifest; validazioni e checkpoint restano nei commit specifici delle quattro famiglie |
+| Owner privato della CLI | Apertura, esecuzione e chiusura asincrona su risultato/failure/cancellazione, prima della presentazione; raccolta dello stream condivisa da execute e visualize |
+
+Wrapper con la medesima policy condividono il confine di admission e traduzione
+errori. Le policy diverse di bootstrap, letture, identificatori e analisi derivate
+restano esplicite. I cataloghi di DTO non richiedono protocolli o moduli aggiuntivi
+per il solo numero di dichiarazioni. Nessuna soglia di righe costituisce un gate.
+La compatibilità e le verifiche sono registrate in
+[GS-VER-280](evidenze/GS-VER-280-struttura-e-coesione-del-codice.md).
 
 ## 6. VA-03 — View dei dati e del lineage
 
