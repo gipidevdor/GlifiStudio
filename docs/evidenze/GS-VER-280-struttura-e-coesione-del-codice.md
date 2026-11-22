@@ -56,9 +56,24 @@ conteggi e hash dei sorgenti prima/dopo.
   errori, sessione e lease dell’attività.
 - Revisione indipendente: API/accessi invariati; mapping distinti del bootstrap e
   della sessione preservati. I/O e checkpoint dei quattro commit restano nel
-  medesimo ordine, comprese le asimmetrie qualitative e Investigation. Tutte le
-  157 clausole preesistenti conservano stati e metadati; 38 aggiungono soltanto i
-  due nuovi riferimenti Kit.
+  medesimo ordine, comprese le asimmetrie qualitative e Investigation. Il confronto del primo incremento conserva stati e metadati delle 157
+  clausole preesistenti e aggiunge soltanto i riferimenti Kit a 38 righe; le
+  successive correzioni di `aec1a00` mantengono la propria evidenza e il proprio ambito.
+
+## Riscontro e correzione pubblicata della baseline
+
+Il primo gate completo ha superato 110 test Kit e ha segnalato due failure nei
+546 test Core. Lo snapshot immutabile `38bba29`, compilato separatamente senza il
+refactoring, riproduce entrambe (2 test, exit 1): i test costruivano range vuoti o
+invertiti che il decoder già rifiutava. I tre sorgenti coinvolti erano identici
+alla baseline, come registra la [prova separata](allegati/GS-VER-280/baseline-range-failures.json).
+
+La chat di revisione ha poi pubblicato `aec1a00`: risoluzione completa con
+ADR-0042, validazione SpanMap e test aggiornati. Il candidato incorpora tale
+commit, mantenendo la risoluzione del suo proprietario; il tentativo locale di
+solo allineamento dei test è superato e non viene consegnato. Non si rimuove una
+guardia produttiva né si usa il primo gate fallito come evidenza di successo.
+La verifica finale riguarda la composizione aggiornata.
 
 ## Gate finale e riproduzione
 
@@ -67,8 +82,9 @@ Il gate completo `make verify-app-store` comprende `verify.sh` e il packaging.
 Il suo esito non è dedotto dalle prove mirate. I risultati tardivi del gate
 locale e della CI sono registrati nella [PR #42](https://github.com/gipidevdor/GlifiStudio/pull/42),
 sulla revisione finale, senza anticiparli in questo snapshot.
-Il codice e gli allegati dei confronti sono congelati in `d5d45e5`; la successiva
-revisione aggiunge soltanto il collegamento al registro del gate.
+I cinque sorgenti produttivi e gli allegati API/CLI/metriche sono congelati in
+`d5d45e5`; le revisioni successive collegano il registro del gate e allineano i
+riscontri della baseline alla correzione pubblicata `aec1a00`.
 
 Per il confronto CLI compilare `GlifiCLI` della baseline e del candidato con la
 stessa toolchain, congelare i due eseguibili e invocare:

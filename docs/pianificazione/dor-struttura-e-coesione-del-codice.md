@@ -31,3 +31,13 @@
 **Ready** prima del coding. Gli identificatori 280…289 sono riservati a questo
 lotto. Le aree GUI, visualizzazioni/export e kernel numerici in lavorazione nelle
 altre chat non rientrano nel refactoring.
+
+## Riscontro del gate sulla baseline integrata
+
+Il primo gate completo ha trovato due fixture incompatibili con la validazione
+già presente in `GlifiUTF8Range.init(from:)` su `38bba29`. Lo snapshot intatto
+riproduce entrambe le failure. Il successivo `aec1a00`, pubblicato dalla chat di
+revisione, contiene la risoluzione completa con ADR-0042, validazione SpanMap e
+test aggiornati: il lotto incorpora tale commit preservandone i contratti.
+La prova di baseline resta distinta dal gate finale combinato; nessun controllo
+è soppresso o indebolito per far passare il refactoring.
