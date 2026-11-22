@@ -682,7 +682,8 @@ funzionale sintetica non chiude corpus reali, qualifica G4/G5 o prove UX manuali
 [GS-DOR-303](pianificazione/dor-scenari-di-analisi.md),
 [GS-TST-001](pianificazione/scenari-di-analisi.md) e
 [GS-VER-303](evidenze/GS-VER-303-scenari-di-analisi.md) attuano
-GS-STD-001-16 § 16.4: 170 varianti operative inventariate, scenari di progetto,
+GS-STD-001-16 § 16.4: 172 varianti operative inventariate dopo l’estensione
+PDF/EPUB GS-VER-310, scenari di progetto,
 riapertura e revisioni, 11 intenti del planner, barriere dei modelli e casi
 scientifici indipendenti. CMP-303 riguarda questa verifica software, senza
 promozione di manifest scientifici o audit manuali. Le estensioni KH prive di

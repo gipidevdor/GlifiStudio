@@ -303,7 +303,9 @@
       "id": "GS-SCN-005",
       "command": "profile",
       "variants": [
+        "epub",
         "markdown",
+        "pdf",
         "plainText"
       ],
       "contracts": [
@@ -319,14 +321,24 @@
         {
           "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiProfileCommandTests.swift",
           "symbol": "malformedProfileRequestsDoNotAccessAFile"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiDocumentImportWorkflowTests.swift",
+          "symbol": "binaryDocumentsRemainQueryableAfterReopen"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+          "symbol": "richDocumentExtensionsImportAndRestoreCapturedSources"
         }
       ],
       "scientificReferences": [
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTextImporterTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiMarkdownExtractorTests.swift",
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiItalianTokenizerTests.swift"
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiItalianTokenizerTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPDFImporterTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiEPUBImporterTests.swift"
       ],
-      "nativeScope": "Importazione esplicita Plain Text/Markdown, senza dedurre semantica dai nomi.",
+      "nativeScope": "Importazione TXT, Markdown, PDF ed EPUB, con riconoscimento automatico per estensione e selezione esplicita; il contenuto resta validato.",
       "headlessOnly": []
     },
     {

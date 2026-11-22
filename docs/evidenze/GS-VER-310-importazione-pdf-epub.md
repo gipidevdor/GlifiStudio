@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-VER-310 |
 | Tipo | Implementazione e verifica documentale |
-| Versione | 1.0.0 |
+| Versione | 1.1.0 |
 | Stato | Superato localmente nel perimetro dichiarato |
 | Responsabile | Codex e tre agenti |
 | Ultima modifica | 2026-11-22 |
@@ -98,7 +98,7 @@ durante la copia SQL.
 - PDF: digitali, scansionati, misti, ruotati, vuoti, invalidi e protetti;
   budget prima della rasterizzazione, provenienza OCR e prestito del contesto
   di cancellazione sicuro fra code e callback tardive. Nove definizioni mirate.
-- EPUB: stored/DEFLATE, CRC, ordine spine, path/link/encryption e strutture XML
+- EPUB: stored/DEFLATE, CRC delle risorse lette, ordine spine, path/link/encryption e strutture XML
   ostili, 248 entità XHTML confrontate con un oracolo indipendente. Quindici
   definizioni; regressioni Unicode NFD e limite esatto senza LF finale spurio.
 - Persistenza: quattordici definizioni, 28 esecuzioni, comprese due formati per
@@ -145,6 +145,38 @@ Per un PDF troncato dopo una firma valida, Core Graphics può emettere il
 messaggio generico «CoreGraphics PDF has logged an error». È registrato e
 verificato privo di contenuto e path; segue la failure tipizzata. Nessuna
 redirezione globale di stderr o modifica dell'ambiente del processo.
+
+## Integrazione successiva di main
+
+Prima della pubblicazione è incorporato d6b4828, con scenari GS-303 e
+configurazione Xcode GS-306. L'allegato mantiene separati i gate iniziali e la
+fase composedVerification: 557 file, digest
+`sha256:658a5a2841828fa9fc5454ea9d3822dfd60fa4f43a5db6c8d3dce83fe29b6cc1`.
+35 file documentali della feature restano identici al checkpoint 8fa5159;
+519 file eseguibili upstream non condivisi restano identici a d6b4828.
+I tre file condivisi conservano ammissione del testo acquisito, parità e nuova
+matrice di scenario. La sola differenza Swift rispetto ai primi sanitizzatori
+è un commento rimosso e la medesima detrazione locale del budget spostata oltre
+costruttori puri, senza letture intermedie del budget o effetti pubblicati.
+
+Il nuovo controllo degli scenari ha prodotto RED perché profile elencava due
+formati mentre l'enum ne ammette quattro. La matrice ora include PDF/EPUB e
+collega i test già esistenti: 172 varianti e cinque workflow, con 14 self-test
+del checker verdi. Il tentativo Release avviato sul primo congelamento composto
+è stato interrotto prima dei test; log e metadata restano separati e non sono
+attribuiti a un successo del prodotto.
+
+Sul composto, make verify macOS e Release Core/Kit sono ripetuti integralmente:
+706 Core + 155 Kit, 861 test; l'app Debug conta 126 definizioni e 411 esecuzioni.
+La nuova regressione planner supera TSan con due definizioni e 11 casi. La
+review di equivalenza e la conservazione byte-identica degli importatori
+motivano il riuso dei due sanitizzatori completi sul primo congelamento: non
+sono dichiarati full ASan/TSan sul composto di 557 file. La configurazione
+nativa Release supera anch'essa 126 definizioni e 411 esecuzioni, senza failure
+o skip, con una prova distinta nell'allegato.
+make quality finale supera controlli documentali, conformità, progetto Xcode,
+concorrenza e formattazione. Anche il suo primo avvio con Python 3.9 è conservato
+come errore del runner; il controllo valido usa Python 3.12 sullo stesso codice.
 
 ## Misure e limiti della prova
 
