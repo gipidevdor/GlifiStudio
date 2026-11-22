@@ -102,6 +102,64 @@ def main():
         schema = {"schema": "studio.glifi.text-analysis-request", "schemaVersion": 1}
         def encoded(fields):
             return json.dumps({**schema, **fields}).encode()
+
+        def succeeds(fields):
+            nonlocal checks
+            path = directory / "refinement-request.json"
+            path.write_bytes(encoded(fields))
+            completed = invoke(path)
+            assert completed.returncode == 0 and completed.stderr == "", completed
+            checks += 1
+            return json.loads(completed.stdout)["result"]["result"]
+
+        # Exact underflow boundaries must not be hidden by the general 1e-12 tolerance.
+        count = float.fromhex("0x1.8000000000001p-1022")
+        exposure = 4_503_599_627_370_497
+        for mode, value, length, corpus in (
+            ("tf", count, exposure, 1),
+            ("tfIdf", count, 2 * exposure, 100),
+            ("tfDividedByIdf", 2 * count, exposure, 100),
+        ):
+            body = succeeds({"operation": "document-scores", "counts": [[value]],
+                             "exposures": [length], "documentFrequencies": [1],
+                             "corpusDocumentCount": corpus, "mode": mode})
+            assert body["scores"] == [math.ulp(0.0)], mode
+            assert body["termContributions"] == [[math.ulp(0.0)]], mode
+
+        def annotated(identifier, first, last):
+            offset = len(first.encode("utf-8"))
+            return {"id": identifier, "text": first + " " + last,
+                    "linguisticContract": "synthetic-exact-pos-v1", "tokens": [
+                        {"surface": first, "base": first, "partOfSpeech": "N",
+                         "startUTF8": 0, "endUTF8": offset},
+                        {"surface": last, "base": last, "partOfSpeech": "N",
+                         "startUTF8": offset + 1, "endUTF8": offset + 2}]}
+
+        first = annotated("NFC", "é", "a")
+        second = annotated("NFD", "e\u0301", "b")
+        for documents in ([first, second], [second, first]):
+            body = succeeds({"operation": "term-extraction", "documents": documents,
+                             "rule": {"identifier": "synthetic-noun-runs-v1",
+                                      "allowedPartsOfSpeech": ["N"]}})
+            common = next(item["component"] for item in body["scores"]["components"]
+                          if item["component"] in {"é", "e\u0301"})
+            assert common.encode("utf-8") == documents[0]["tokens"][0]["base"].encode("utf-8")
+
+        total = 10**15
+        body = succeeds({"operation": "continue-classifier", "documents": [], "labels": [],
+                         "state": {"classes": ["A", "B"], "vocabulary": ["x", "y"],
+                                   "documentCounts": [1, 1],
+                                   "tokenCounts": [[total - 2, 2], [total - 1, 1]], "smoothing": 1},
+                         "predictionDocuments": [["x"] * 100]})
+        assert body["predictions"]["labels"] == ["B"]
+        assert body["model"]["logLikelihoods"][0][0] < body["model"]["logLikelihoods"][1][0] < 0
+
+        closer = math.ldexp(1.0, -537)
+        farther = math.nextafter(closer, math.inf)
+        rejects(encoded({"operation": "kh-hierarchical-ward-d2", "dissimilarities": [
+            [0, farther, closer, 1], [farther, 0, closer + farther, 1],
+            [closer, closer + farther, 0, 1], [1, 1, 1, 0]]}), 3, "invalidInput")
+
         rejects(b"{", 3, "invalidInput")
         rejects(b"\xff", 3, "invalidInput")
         rejects(encoded({"operation": "missing"}), 3, "invalidInput")

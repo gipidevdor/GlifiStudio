@@ -131,11 +131,11 @@ extension GlifiExploratoryAnalysis {
         let initial = try initialCodebooks ?? khSOMRestore(codebooks, scale: normalized.scale)
         try khSOMTrain(
             normalized.values, codebooks: &codebooks, phase: first,
-            width: width, topology: topology)
+            width: width, topology: topology, scale: normalized.scale)
         let intermediate = try khSOMRestore(codebooks, scale: normalized.scale)
         try khSOMTrain(
             normalized.values, codebooks: &codebooks, phase: second,
-            width: width, topology: topology)
+            width: width, topology: topology, scale: normalized.scale)
         let diagnostics = try khSOMDiagnostics(
             normalized.values, codebooks: codebooks, width: width,
             topology: topology, scale: normalized.scale)
@@ -396,7 +396,7 @@ private func khSOMDistance(_ first: [Double], _ second: [Double]) -> Double {
 
 private func khSOMTrain(
     _ data: [[Double]], codebooks: inout [[Double]], phase: GlifiKHSOMPhase,
-    width: Int, topology: GlifiSOMTopology
+    width: Int, topology: GlifiSOMTopology, scale: Double
 ) throws {
     let c = Double(phase.steps) / 100
     for step in 1...phase.steps {
@@ -418,9 +418,30 @@ private func khSOMTrain(
         for unit in codebooks.indices {
             if unit.isMultiple(of: 32) { try Task.checkCancellation() }
             let grid = sqrt(topology.squaredDistance(unit, winner, width: width)) / radius
-            let weight = alpha * exp(-0.5 * grid * grid)
+            let exponent = -0.5 * grid * grid
+            let weight = alpha * exp(exponent)
             for axis in row.indices {
-                codebooks[unit][axis] += weight * (row[axis] - codebooks[unit][axis])
+                if axis.isMultiple(of: 1_024) { try Task.checkCancellation() }
+                let previous = codebooks[unit][axis]
+                let difference = row[axis] - previous
+                var delta = weight * difference
+                if delta == 0, difference != 0, exponent.isFinite {
+                    // A Gaussian can underflow before its product with a larger
+                    // scalar. Combine the factors only on this exceptional path.
+                    let magnitude = log(alpha) + exponent + log(abs(difference))
+                    delta = exp(magnitude)
+                    if difference < 0 { delta = -delta }
+                    if delta == 0, previous == 0, exp(magnitude + log(scale)) > 0 {
+                        // The original-coordinate update exists, but a zero in
+                        // normalized storage would erase it before restoration.
+                        throw exploratoryFailure("exploratory.numeric-range")
+                    }
+                }
+                let next = previous + delta
+                guard scale == 1 || next == 0 || next.isNormal else {
+                    throw exploratoryFailure("exploratory.numeric-range")
+                }
+                codebooks[unit][axis] = next
             }
         }
     }

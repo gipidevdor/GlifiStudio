@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.20.5 |
+| Versione | 1.20.6 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -286,3 +286,5 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 - [GS-VER-280 — Struttura e coesione del codice](GS-VER-280-struttura-e-coesione-del-codice.md) — Confronti API/CLI e prove mirate superati; gate completo nel registro PR #42
 
 - [GS-VER-300 — Completezza dei profili analitici KH pubblici](GS-VER-300-completezza-funzionale-kh.md) — Superato localmente nella versione unita; 19 tag KH, 771 test Core/Kit e 63 fixture
+
+- [GS-VER-305 — Riverifica e rifinitura dei profili KH](GS-VER-305-rifinitura-kh.md) — Superato localmente

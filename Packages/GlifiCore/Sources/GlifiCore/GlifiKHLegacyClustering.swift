@@ -22,14 +22,17 @@ public enum GlifiKHLegacyClustering {
     /// pair of current cluster identities. Singletons are 0..<n and merge s receives n+s.
     /// This is an algebraic compatibility profile, including for Jaccard/cosine dissimilarities;
     /// it makes no claim to minimize Euclidean within-cluster variance. Distances are scaled
-    /// before squaring. Unrepresentable positive squares or output heights fail closed.
+    /// before squaring. Zero/subnormal positive squares or unrepresentable heights fail closed.
     public static func wardD2(
         dissimilarities: [[Double]], limits: GlifiExploratoryLimits = .standard
     ) throws -> GlifiKHLegacyClusteringResult {
         try Task.checkCancellation()
         let count = dissimilarities.count
-        guard count >= 2, count <= limits.maximumPairwiseObjects else {
+        guard count >= 2 else {
             throw exploratoryFailure("kh-ward.invalid-dissimilarities")
+        }
+        guard count <= limits.maximumPairwiseObjects else {
+            throw exploratoryFailure("kh-ward.resource-limit", .insufficientResources)
         }
         var cells = limits.maximumCells
         try khWardConsume([count, count, 2], remaining: &cells)
@@ -67,7 +70,7 @@ public enum GlifiKHLegacyClustering {
                 if column.isMultiple(of: 1_024) { try Task.checkCancellation() }
                 let ratio = value / scale
                 let square = ratio * ratio
-                guard value == 0 || square > 0 else {
+                guard value == 0 || square.isNormal else {
                     throw exploratoryFailure("kh-ward.numeric-range")
                 }
                 normalized.append(square)
@@ -129,7 +132,7 @@ public enum GlifiKHLegacyClustering {
                     best.distance
                     + (a + c) / total * (squares[left][other] - best.distance)
                     + (b + c) / total * (squares[right][other] - best.distance)
-                guard value.isFinite, value >= 0,
+                guard value >= 0, value == 0 || value.isNormal,
                     value > 0 || (squares[left][other] == 0 && squares[right][other] == 0)
                 else { throw exploratoryFailure("kh-ward.numeric-range") }
                 squares[left][other] = value

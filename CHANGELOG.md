@@ -62,6 +62,13 @@ preservando i metodi upstream già pubblicati.
 
 ### Corretto
 
+- Rifinitura KH: arrotondamento subnormale dei punteggi documentali, likelihood
+  e prior NB quasi unitari, rappresentanti Unicode deterministici e pesi gaussiani
+  SOM senza cutoff assoluto. Budget NB/MDS/SOM cumulativi e failure Ward coerenti;
+  alcuni input prima ammessi sono ora rifiutati per risorse o range numerico.
+  Planner: costo keyness detratto e produttore 2 per separare le cache storiche,
+  mantenendo lo schema del progetto. Prove e limiti in GS-VER-305.
+
 - Il decoder UTF-8 rifiuta ora range negativi, vuoti o invertiti che il decoder
   precedente lasciava passare; le span map verificano inoltre i vincoli locali
   dei segmenti prima di lookup/composizione. JSON valido invariato; i dati

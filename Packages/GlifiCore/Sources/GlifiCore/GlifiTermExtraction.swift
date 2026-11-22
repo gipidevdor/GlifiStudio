@@ -205,6 +205,7 @@ public enum GlifiTermExtraction {
         }
         var occurrences: [GlifiTermOccurrence] = []
         var frequencies: [[String]: Int] = [:]
+        var candidateOrder: [[String]] = []
         for document in documents {
             try Task.checkCancellation()
             let bytes = Array(document.text.utf8)
@@ -217,8 +218,12 @@ public enum GlifiTermExtraction {
                 guard occurrences.count < maximumCandidateCount else { throw termExtractionLimit() }
                 let parts = document.tokens[first..<end].map(\.base)
                 try budget.consume(parts.reduce(0) { $0 + $1.utf8.count })
-                if frequencies[parts] == nil, frequencies.count >= maximumCandidateCount {
-                    throw termExtractionLimit()
+                if frequencies[parts] == nil {
+                    guard frequencies.count < maximumCandidateCount else {
+                        throw termExtractionLimit()
+                    }
+                    try budget.consume(1)
+                    candidateOrder.append(parts)
                 }
                 frequencies[parts, default: 0] += 1
                 occurrences.append(
@@ -256,8 +261,14 @@ public enum GlifiTermExtraction {
             }
             try finishRun()
         }
-        let candidates = try frequencies.map {
-            try GlifiTermCandidate(components: $0.key, frequency: $0.value)
+        // The first source occurrence also chooses the spelling of canonically
+        // equal keys. Dictionary iteration must not choose that representative.
+        let candidates = try candidateOrder.map { parts in
+            try budget.consume(parts.reduce(1) { $0 + $1.utf8.count })
+            guard let frequency = frequencies[parts] else {
+                throw termExtractionFailure("term-extraction.invalid-input")
+            }
+            return try GlifiTermCandidate(components: parts, frequency: frequency)
         }
         let scores = try calculate(
             candidates, adjacencyMode: adjacencyMode,

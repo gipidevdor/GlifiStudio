@@ -125,8 +125,14 @@ public enum GlifiExploratoryAnalysis {
         guard dimensions > 0, dimensions < count, (1...10_000).contains(maximumIterations),
             tolerance.isFinite, tolerance > 0
         else { throw exploratoryFailure("exploratory.invalid-parameters") }
-        try requireWork(
-            [count, count, dimensions, method == .classical ? count : maximumIterations], limits)
+        if method == .classical {
+            try requireWork([count, count, dimensions, count], limits)
+        } else {
+            try admitIterativeMDSResources(
+                count: count, dimensions: dimensions, iterations: maximumIterations,
+                starts: 1, method: method,
+                classicalInitialization: initialization == .classical, limits: limits)
+        }
         let scale = dissimilarities.flatMap { $0 }.max() ?? 0
         guard scale > 0 else { throw exploratoryFailure("mds.zero-distances", .insufficientData) }
         // All output coordinate distances must remain representable by the native
@@ -288,17 +294,8 @@ public enum GlifiExploratoryAnalysis {
             2 * initialRadius * initialRadius > 0, 2 * finalRadius * finalRadius > 0
         else { throw exploratoryFailure("exploratory.invalid-parameters") }
         let units = width * height
-        var remainingWork = limits.maximumWork
-        try admitExploratoryWork([matrix.count, columns], remaining: &remainingWork)
-        try admitExploratoryWork([matrix.count, units, columns, epochs], remaining: &remainingWork)
-        try admitExploratoryWork([matrix.count, columns, epochs], remaining: &remainingWork)
-        try admitExploratoryWork(
-            [units, min(units, matrix.count), columns, epochs], remaining: &remainingWork)
-        try admitExploratoryWork([units, columns, epochs], remaining: &remainingWork)
-        try admitExploratoryWork([matrix.count, units, columns], remaining: &remainingWork)
-        guard units <= limits.maximumCells / columns else {
-            throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
-        }
+        try admitBatchSOMResources(
+            rows: matrix.count, columns: columns, units: units, epochs: epochs, limits: limits)
         let normalizedInput = try normalizedSOMInput(matrix, columns: columns)
         let data = normalizedInput.values
         let coordinateScale = normalizedInput.scale
@@ -323,22 +320,89 @@ public enum GlifiExploratoryAnalysis {
                 nativeAccumulate(data[row], scale: 1, into: &groupSums[winner])
             }
             let occupied = populations.indices.filter { populations[$0] > 0 }
+            var groupMinimums = [Double](repeating: .infinity, count: units)
+            for winner in occupied {
+                for (axis, value) in groupSums[winner].enumerated() where value != 0 {
+                    if axis.isMultiple(of: 1_024) { try Task.checkCancellation() }
+                    groupMinimums[winner] = min(groupMinimums[winner], abs(value))
+                }
+            }
+            let minimumGroupScalar = groupMinimums.min() ?? .infinity
             var sums = Array(repeating: Array(repeating: 0.0, count: columns), count: units)
             var weights = Array(repeating: 0.0, count: units)
             for unit in 0..<units {
                 if unit.isMultiple(of: 32) { try Task.checkCancellation() }
+                let gridBounds = occupied.reduce((minimum: Double.infinity, maximum: 0.0)) {
+                    let distance = topology.squaredDistance(unit, $1, width: width)
+                    return (min($0.minimum, distance), max($0.maximum, distance))
+                }
+                let minimumAbsoluteWeight = exp(-gridBounds.maximum / (2 * radius * radius))
+                // Preserve ordinary absolute-weight arithmetic, including its BMU
+                // tie behavior. A common positive factor is removed only when the
+                // smallest coefficient or weighted scalar enters the subnormal
+                // range; this also keeps the denominator safely representable.
+                let rescale =
+                    !minimumAbsoluteWeight.isNormal
+                    || (minimumGroupScalar.isFinite
+                        && minimumAbsoluteWeight * minimumGroupScalar
+                            < Double.leastNormalMagnitude)
+                let distanceOffset = rescale ? gridBounds.minimum : 0
+                var lostLogMagnitudes: [Double]?
                 for winner in occupied {
                     let squaredGridDistance = topology.squaredDistance(
                         unit, winner, width: width)
-                    let weight = exp(-squaredGridDistance / (2 * radius * radius))
-                    guard weight > 1e-15 else { continue }
+                    let logWeight = -(squaredGridDistance - distanceOffset) / (2 * radius * radius)
+                    let weight = exp(logWeight)
                     weights[unit] += weight * Double(populations[winner])
-                    nativeAccumulate(groupSums[winner], scale: weight, into: &sums[unit])
+                    if groupMinimums[winner].isFinite,
+                        !weight.isNormal
+                            || weight * groupMinimums[winner] < Double.leastNormalMagnitude
+                    {
+                        // Combine exponents only when multiplying a weight first
+                        // could lose a scalar. Ordinary vectors keep the vDSP path.
+                        for axis in 0..<columns {
+                            if axis.isMultiple(of: 1_024) { try Task.checkCancellation() }
+                            let value = groupSums[winner][axis]
+                            var contribution = weight * value
+                            if value != 0, contribution == 0 || !weight.isNormal,
+                                logWeight.isFinite
+                            {
+                                let magnitude = log(abs(value)) + logWeight
+                                contribution = exp(magnitude)
+                                if value < 0 { contribution = -contribution }
+                                if contribution == 0 {
+                                    if lostLogMagnitudes == nil {
+                                        lostLogMagnitudes = [Double](
+                                            repeating: -.infinity, count: columns)
+                                    }
+                                    let previous = lostLogMagnitudes?[axis] ?? -.infinity
+                                    lostLogMagnitudes?[axis] = max(previous, magnitude)
+                                }
+                            }
+                            sums[unit][axis] += contribution
+                        }
+                    } else {
+                        nativeAccumulate(groupSums[winner], scale: weight, into: &sums[unit])
+                    }
+                }
+                if let lostLogMagnitudes {
+                    for axis in 0..<columns where !sums[unit][axis].isNormal {
+                        let restoredLog =
+                            lostLogMagnitudes[axis] + log(coordinateScale) - log(weights[unit])
+                        guard exp(restoredLog) == 0 else {
+                            throw exploratoryFailure("exploratory.numeric-range")
+                        }
+                    }
                 }
             }
             var change = ExploratoryDistance.zero
             for unit in 0..<units where weights[unit] > 0 {
                 let next = sums[unit].map { $0 / weights[unit] }
+                for axis in 0..<columns {
+                    guard sums[unit][axis] == 0 || next[axis] != 0,
+                        coordinateScale == 1 || next[axis] == 0 || next[axis].isNormal
+                    else { throw exploratoryFailure("exploratory.numeric-range") }
+                }
                 let displacement = try ExploratoryDistance(next, prototypes[unit])
                 if change.isLess(than: displacement) { change = displacement }
                 prototypes[unit] = next
@@ -512,6 +576,53 @@ package func requireWork(_ factors: [Int], _ limits: GlifiExploratoryLimits) thr
         }
         work *= factor
     }
+}
+
+package func admitBatchSOMResources(
+    rows: Int, columns: Int, units: Int, epochs: Int,
+    includeCodebookAnalysis: Bool = false, clusterCount: Int? = nil,
+    limits: GlifiExploratoryLimits
+) throws {
+    guard rows > 0, columns > 0, units > 0, (1...10_000).contains(epochs) else {
+        throw exploratoryFailure("exploratory.invalid-parameters")
+    }
+    if let clusterCount {
+        guard clusterCount > 0, clusterCount <= units else {
+            throw exploratoryFailure("exploratory.invalid-parameters")
+        }
+    }
+    var work = limits.maximumWork
+    for factors in [
+        [rows, columns], [rows, units, columns, epochs], [rows, columns, epochs],
+        [3, units, min(units, rows), columns, epochs],
+        [units, columns, epochs], [rows, units, columns],
+    ] {
+        try admitExploratoryWork(factors, remaining: &work)
+    }
+    var cells = limits.maximumCells
+    // Original/normalized data, group sums, output/prototype copies, sparse
+    // population/weight arrays, assignments and the rare scalar-range scratch.
+    for factors in [[2, rows, columns], [5, units, columns], [2, rows], [5, units], [columns]] {
+        try admitExploratoryWork(factors, remaining: &cells)
+    }
+    if includeCodebookAnalysis {
+        try admitExploratoryWork([7, units, columns], remaining: &work)
+        try admitExploratoryWork([units], remaining: &cells)
+        try admitExploratoryWork([32], remaining: &cells)
+        if clusterCount != nil {
+            guard units <= limits.maximumPairwiseObjects else {
+                throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
+            }
+            for factors in [
+                [units, units, units, columns], [units, units, columns], [3, units, columns],
+            ] {
+                try admitExploratoryWork(factors, remaining: &work)
+            }
+            try admitExploratoryWork([4, units, units], remaining: &cells)
+            try admitExploratoryWork([8, units], remaining: &cells)
+        }
+    }
+    try Task.checkCancellation()
 }
 
 private func admitExploratoryWork(_ factors: [Int], remaining: inout Int) throws {

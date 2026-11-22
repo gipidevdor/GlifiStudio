@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-ANA-001 |
 | Tipo | Specifica di design del sistema analitico |
-| Versione | 1.7.1 |
+| Versione | 1.7.2 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Baseline proposta; policy e regole MVP da convalidare |
 | Riferimenti | GS-MET-001; GS-UX-001-03–08; GS-DOM-001; GS-DAT-001; ADR-0013; ADR-0016 |
 
@@ -239,6 +239,14 @@ fallback vuoti espliciti, caveat, inclusioni, esclusioni, rinvii e condizioni
 irrisolte. Il payload `studio.glifi.artifact.analysis-plan.v1` è legato al proprio
 AnalysisNodeID, committato nel package e riusato dopo riapertura. GlifiKit e
 GlifiCLI espongono lo stesso contratto tramite una richiesta JSON bounded.
+
+La revisione GS-VER-305 impone un unico residuo di budget per tutti i bundle:
+il costo dei profili target/riferimento e di keyness è detratto prima delle
+capability successive. La somma dei costi dei passi ammessi non supera il
+massimo richiesto. Il produttore corrente di planner-v2 usa algorithmVersion 2:
+una richiesta ricalcolata non può collidere con un vecchio DAG prodotto dalla
+revisione 1. Planner identifier, catalogo, descriptor schema e payload
+analysis-plan.v1 restano invariati; gli Artifact storici non vengono riscritti.
 
 `executeAnalysisPlan` applica prima l'admission deterministica di GS-RUN, persiste
 o riusa la revisione del piano e verifica nuovamente radice delle fonti, ordine

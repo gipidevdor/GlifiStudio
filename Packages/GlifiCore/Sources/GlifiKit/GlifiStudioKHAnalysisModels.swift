@@ -240,7 +240,7 @@ public struct GlifiStudioTermToken: Codable, Equatable, Sendable {
         self.sentence = sentence
         self.paragraph = paragraph
     }
-    /// Decodes token evidence, preserving an absent or null POS and omitted boundary identities as zero.
+    /// Decodes token evidence, rejecting explicit nulls and defaulting omitted boundary identities to zero.
     public init(from decoder: any Decoder) throws {
         let f = try khFields(
             decoder,

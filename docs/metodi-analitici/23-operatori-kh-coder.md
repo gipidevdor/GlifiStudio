@@ -6,13 +6,13 @@
 | --- | --- |
 | Identificatore | GS-MET-001-23 |
 | Tipo | Specifica dei contratti numerici e della copertura |
-| Versione | 1.5.3 |
-| Stato | Profili pubblici implementati; versione unita verificata localmente in GS-VER-300 |
+| Versione | 1.5.4 |
+| Stato | Profili pubblici implementati; baseline storica GS-VER-300, rifinitura GS-VER-305 verificata localmente |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Ambito richiesto dall'iniziatore; promozione scientifica separata secondo ADR-0031 |
 | Documento padre | [GS-MET-001](README.md) |
-| Riferimenti | RF-087; ADR-0032; ADR-0035; ADR-0043; GS-DOR-300; GS-VER-160; GS-VER-233; GS-VER-234; GS-VER-300; GS-VER-301 |
+| Riferimenti | RF-087; ADR-0032; ADR-0035; ADR-0043; GS-DOR-300; GS-DOR-305; GS-VER-160; GS-VER-233; GS-VER-234; GS-VER-300; GS-VER-301; GS-VER-305 |
 
 ## Scopo e copertura
 
@@ -203,6 +203,15 @@ L’avvio `r` usa `seed &+ UInt64(r)`. Restituisce tutti i risultati, cronologie
 seed e convergenze, più l’indice del minimo; a parità conserva il primo.
 Nessuna selezione fra obiettivi di metodi diversi o promessa di ottimo globale.
 L’ammissione controlla sia lavoro cumulativo sia celle conservate per tutti gli avvii.
+Primary e secondary condividono il controllo prima dei buffer: con n oggetti,
+d dimensioni, S avvii e I passi massimi, la riserva di celle comprende
+`12n² + 3nd + Snd + S(I+1)`. Il lavoro include geometria iniziale, passi,
+ordinamento delle coppie, PAVA e inizializzazione classica quando richiesta;
+primary riserva anche il riordinamento delle coppie a ogni stima delle disparità.
+Per le varianti iterative storiche si ammettono tutti i 32 candidati possibili
+del backtracking, non soltanto i passi accettati. Kruskal riserva inoltre gli
+ordinamenti e i fit PAVA di `1+33I` valutazioni per avvio. Un budget insufficiente
+produce `exploratory.resource-limit` con categoria `insufficientResources`.
 
 ## Reti, comunità e layout
 
@@ -253,6 +262,16 @@ geometria governa il vicinato e l’errore topografico; i vicini immediati sono
 a distanza uno, al massimo quattro nel rettangolo e sei nell’esagono.
 Per ogni epoca:
 `m_u = sum_i h(u,bmu_i) x_i / sum_i h(u,bmu_i)`.
+La gaussiana è completa, senza una soglia assoluta che scarti i pesi piccoli.
+L'aritmetica dei pesi assoluti è conservata quando coefficienti e prodotti
+restano nel range ordinario, preservando anche i tie di quel percorso.
+Se il coefficiente assoluto minimo o il suo prodotto con il minimo scalare
+non nullo dei gruppi entra nel range subnormale, si sottrae dalla distanza
+quadrata quella della più vicina unità occupata prima dell'esponenziale.
+Il fattore comune positivo si elimina dal rapporto e protegge anche il
+denominatore. I prodotti con coefficienti subnormali combinano i fattori in
+dominio logaritmico prima dell'esponenziale quando necessario: un coefficiente
+quantizzato non deve alterare un contributo finale normale.
 Il raggio interpola geometricamente da initialRadius a finalRadius, con endpoint
 esatti e calcolo logaritmico quando il rapporto non è rappresentabile. L'aggregazione di
 somme e popolazioni per unità vincente è algebricamente equivalente alla formula
@@ -263,12 +282,20 @@ una tolleranza positiva mediante un quadrato in underflow. Un riscalamento SOM
 si applica solo agli input estremi e solo quando conserva ogni valore; altrimenti
 il fit fallisce con `exploratory.numeric-range`, senza prototipi o diagnostiche
 zero apparentemente validi. Gli input ordinari mantengono il percorso vDSP.
+Anche dopo gli aggiornamenti, un valore rappresentabile nelle unità originali
+ma non conservabile nello stato normalizzato produce `exploratory.numeric-range`;
+non viene pubblicato uno zero plausibile. I controlli non cambiano gli
+identificatori v1, ma correggono i risultati dei casi prima troncati o fuori range.
 La mappa non è una proiezione che garantisce distanze globali.
 La U-matrix restituisce per ogni unità la mediana delle distanze euclidee dai
 codebook immediatamente vicini; ai bordi usa i soli vicini presenti, per una
 singola unità restituisce zero. `SOM-codebooks-Ward-v1` compone l’HAC Ward
 euclidea già esistente sui prototipi, conservando identità, albero e assegnazioni;
 non implementa un diverso aggiornamento SOM o una nuova formula Ward.
+La facciata SOM avanzata riserva fit, U-matrix e Ward opzionale in un solo
+budget prima del fit: il limite standard di 500.000.000 unità di lavoro non
+riparte fra le fasi. Le celle includono lo stato del fit, i risultati conservati
+e il workspace della composizione.
 
 ### Profilo KH online a due fasi
 
@@ -291,6 +318,10 @@ L'uscita conserva fasi, codebook iniziali/intermedi/finali, assegnazioni,
 diagnostiche e U-matrix con la mediana dei vicini immediati. Il parametro
 opzionale `codebookClusterCount` aggiunge l'HAC Ward dei codebook con ammissione
 cumulativa di lavoro/celle; non cambia l'aggiornamento online o l'identità SOM.
+Nel percorso online il prodotto gaussiano viene ricomposto soltanto nei casi
+di underflow; se il suo valore fisico esiste ma lo stato normalizzato lo
+perderebbe, il fit fallisce con `exploratory.numeric-range`. Non si modifica
+la formula di aggiornamento o l'identificatore del profilo.
 
 `SOM-PCA-linear-unscaled-canonical-v1` costruisce la griglia da media, primi due
 assi PCA e deviazioni standard campionarie, su tick `−2…2`; assegna il primo asse
@@ -317,6 +348,17 @@ Scoring sparso nel dominio logaritmico, normalizzazione log-sum-exp e tie-break
 nell'ordine canonico delle classi. I posteriori del modello non sono confidenze calibrate.
 La validazione k-fold ricostruisce modello e vocabolario su ciascun training fold,
 separa i documenti di test e restituisce matrice di confusione e accuratezza.
+Training batch e derivazione dello stato incrementale condividono il calcolo
+stabile. Per una probabilità dominante, il complemento
+`q=((count(c,*)−count(c,w))+(V−1)alpha)/(count(c,*)+V alpha)` usa la differenza
+dei conteggi interi prima della conversione e `log1p(−q)`; negli altri casi
+resta la differenza dei logaritmi. Anche i prior dominanti usano il complemento
+intero `documentiTotali−documentiClasse`. Questo evita falsi tie dovuti a
+probabilità arrotondate a uno; non cambia smoothing, formula o calibrazione.
+Prima di set, ordinamenti e tabella sparsa, il training ammette anche byte UTF-8
+di token ed etichette, hashing e ordinamento delle identità. La CV riserva
+gli stessi costi per tutti i fold nel proprio budget cumulativo, senza portare
+il vocabolario globale usato per l'ammissione dentro il training di un fold.
 
 `MultinomialNaiveBayes-incremental-counts-v1` conserva in memoria classi,
 vocabolario canonico, conteggi di documenti e token per classe e smoothing.
@@ -445,6 +487,9 @@ con la fonte. Preannotazioni inglesi, giapponesi o italiane rendono eseguibile
 il calcolo: non certificano un tokenizer inglese/giapponese, MeCab o ChaSen.
 Il ranking matematico e la qualità dell'estrazione linguistica restano distinti,
 coerentemente con il ruolo di TermExtract in [KH A.4.4](https://khcoder.net/en/manual_en_v3.pdf).
+Fra chiavi canonicamente equivalenti, la prima occorrenza nell'ordine delle
+fonti sceglie la grafia dei componenti restituiti. L'iterazione di un dizionario
+non decide quel rappresentante; le occorrenze mantengono i propri byte e range.
 
 Il motore ammette 100.000 candidate/occorrenze, 1.000.000 componenti o token,
 64 componenti per candidata e 64 MiB testuali aggregati. Lo stesso budget di
@@ -466,6 +511,12 @@ numerosità del corpus, IDF, contributi per termine e somme; i conteggi restano
 nella richiesta canonica, anche per sottoinsiemi selezionati di righe/colonne. Gli identificatori sono `KH-document-tf-v1`,
 `KH-document-tf-log10-idf-v1` e
 `KH-document-tf-divided-by-log10-idf-zero-one-v1`.
+I contributi subnormali e il loro confine normale usano il rapporto esatto dei
+fattori binary64 già risolti, con prodotti di significandi UInt128 e un solo
+arrotondamento al più vicino, con parità al significando pari. Non si attribuisce
+esattezza al logaritmo IDF reale. Per K contributi candidati a questo percorso,
+il budget riserva altre `54K` unità prima dei buffer di output. Un contributo
+positivo non rappresentabile resta `kh-document-score.numeric-range`.
 
 `KH-hclust-WardD2-dissimilarities-v1` ammette dissimilarità simmetriche finite
 non negative, con diagonale nulla. Opera sui quadrati con la ricorrenza
@@ -476,6 +527,11 @@ Il riferimento è [R hclust Ward.D2](https://stat.ethz.ch/R-manual/R-devel/libra
 Applicare la ricorrenza a Jaccard o coseno è un contratto algebrico; non attesta
 minimizzazione della varianza entro cluster. `wardIncrement` resta assente,
 distinto dal Ward euclideo di GS-MET-001-14 e dal Ward dei codebook SOM.
+Dopo la scalatura, ogni quadrato positivo iniziale e aggiornato deve essere
+normale: un quadrato subnormale potrebbe fondere distanze distinte in un falso
+tie. Il caso produce `kh-ward.numeric-range`, senza pubblicare una fusione
+ambigua. Il superamento del limite di oggetti, celle o lavoro produce invece
+`kh-ward.resource-limit`, categoria `insufficientResources`.
 
 ## Pearson, Yates e significatività dei codici
 
@@ -589,9 +645,14 @@ allora esaminata. GS-VER-300 registra il gate locale pre-merge superato con
 precedente integrazione pubblicata fino a `32b06f7`, con 15 profili KH e 54
 fixture. Le prove restano riferite ai rispettivi checkpoint. I 19 tag KH attuali
 riusano schema 1 e il medesimo comando CLI, secondo GS-API-002: con i 12 iniziali
-e i nove avanzati formano 40 operazioni distinte. La verifica combinata della
-nuova unione è superata in GS-VER-300: 771 test Core/Kit, 113 test nativi,
+e i nove avanzati formano 40 operazioni distinte. La versione integrata
+documentata in GS-VER-300 ha superato 771 test Core/Kit, 113 test nativi,
 63 fixture/189 controlli CLI e 236 righe di oracoli riprodotte.
+Questi esiti restano storici. La rifinitura di GS-DOR-305 è registrata in
+[GS-VER-305](../evidenze/GS-VER-305-rifinitura-kh.md): nuovo gate locale
+superato con 795 test Core/Kit per Debug, Release e ciascun sanitizzatore,
+113 test nativi, 196 controlli CLI e 244 righe di oracolo. Formule e identificatori matematici restano
+invariati; cambiano i risultati numerici corretti e l'ammissione dei casi limite.
 GUI, persistenza, nuove lingue automatiche, V6 esterno e dispositivi non sono
 promossi da questo incremento.
 

@@ -6,12 +6,13 @@
 | --- | --- |
 | Identificatore | GS-MET-001-14 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.3.0 |
+| Versione | 1.3.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
+| Riferimenti | GS-MET-001-23; ADR-0043; GS-DOR-305; GS-VER-305 |
 
 ## Contratto comune
 
@@ -85,13 +86,24 @@ d(A∪B,C)² = [(|A|+|C|)d(A,C)² + (|B|+|C|)d(B,C)² − |C|d(A,B)²]
 
 Le altezze sono radici delle dissimilarità aggiornate. La scelta della coppia
 minima e i tie seguono le identità correnti canoniche. La scalatura per potenze
-di due evita quadrati intermedi fuori intervallo; un risultato positivo non
-rappresentabile produce failure tipizzata. Il profilo ammette le dissimilarità
+di due evita overflow intermedi evitabili. Dopo la scalatura, i quadrati
+positivi iniziali e aggiornati **DEVONO** essere normali: valori subnormali
+possono quantizzare distanze distinte nello stesso quadrato e creare un falso
+tie. Zeri sono ammessi soltanto per distanze realmente nulle. Quadrati positivi
+nulli/subnormali o altezze non rappresentabili producono `kh-ward.numeric-range`.
+Il superamento dei limiti di oggetti, celle o lavoro produce invece
+`kh-ward.resource-limit`, categoria `insufficientResources`.
+Il profilo ammette le dissimilarità
 Jaccard/cosine usate dal flusso KH pubblico come compatibilità algebrica;
 **NON DEVE** chiamare le altezze incrementi della varianza. `wardIncrement` è
 sempre assente. Non garantisce gli stessi tie interni di ogni versione R.
 Il Ward vettoriale sopra specificato resta distinto e conserva i divieti esistenti.
-La verifica R indipendente e i limiti cumulativi sono registrati in GS-VER-300.
+La verifica R indipendente e i limiti cumulativi della baseline sono registrati
+in GS-VER-300. La successiva rifinitura dei controlli di range e categoria delle
+failure segue GS-DOR-305; [GS-VER-305](../evidenze/GS-VER-305-rifinitura-kh.md)
+registra il nuovo gate locale superato. L'identificatore matematico v1 resta invariato; la correzione
+rifiuta casi che prima potevano restituire fusioni numericamente ambigue,
+senza estendere le attestazioni storiche o promuovere la variante.
 
 ## K-means
 

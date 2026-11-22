@@ -6,12 +6,12 @@
 | --- | --- |
 | Identificatore | GS-API-002 |
 | Tipo | Contratto del trasporto analitico transitorio |
-| Versione | 1.3.4 |
-| Stato | Profili pubblici implementati; versione unita verificata localmente in GS-VER-300 |
+| Versione | 1.3.5 |
+| Stato | Profili pubblici implementati; baseline storica GS-VER-300, rifinitura GS-VER-305 verificata localmente |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Prosecuzioni esplicite RF-087 e GUI; ADR-0034 e ADR-0043 |
-| Riferimenti | GS-API-001; GS-MET-001-23; RF-087; RQ-060; ADR-0032; ADR-0034; [ADR-0035 headless](../adr/0035-completamento-nativo-kh-coder.md); [ADR-0041 app](../adr/0041-copertura-funzionale-core-nelle-app.md); GS-DOR-162; GS-DOR-222; ADR-0042; ADR-0043; GS-DOR-300; GS-VER-234; GS-VER-300; GS-VER-301; [GS-DOR-233 headless](../pianificazione/dor-completamento-kh-coder.md) |
+| Riferimenti | GS-API-001; GS-MET-001-23; RF-087; RQ-060; ADR-0032; ADR-0034; [ADR-0035 headless](../adr/0035-completamento-nativo-kh-coder.md); [ADR-0041 app](../adr/0041-copertura-funzionale-core-nelle-app.md); GS-DOR-162; GS-DOR-222; ADR-0042; ADR-0043; GS-DOR-300; GS-DOR-305; GS-VER-234; GS-VER-300; GS-VER-301; GS-VER-305; [GS-DOR-233 headless](../pianificazione/dor-completamento-kh-coder.md) |
 
 ## Contratto
 
@@ -225,12 +225,19 @@ e `tfDividedByIdf`: TF è conteggio/esposizione, IDF è `log10(N/DF)` senza smoo
 Soltanto la divisione sostituisce un divisore IDF nullo con uno. Il risultato
 conserva esposizioni, DF, numerosità del corpus, IDF originali, contributi e
 somme; i conteggi restano nella richiesta canonica.
+I rapporti subnormali sono arrotondati una sola volta al più vicino con parità
+al pari sui fattori binary64 già risolti; si riservano altre 54 unità di lavoro
+per ogni contributo candidato al percorso esatto prima dei buffer di output.
+Un contributo positivo non rappresentabile produce `kh-document-score.numeric-range`.
 
 `kh-hierarchical-ward-d2` riceve dissimilarità simmetriche non negative a diagonale
 nulla. Esegue la ricorrenza algebrica Ward.D2 sulle distanze quadrate; l'uscita
 conserva fusioni e altezze nella scala originale, con `wardIncrement` assente.
 È distinto dal Ward euclideo di varianza: una dissimilarità Jaccard non diventa
 una distanza euclidea per effetto della ricorrenza.
+Quadrati positivi subnormali dopo la scalatura, iniziali o aggiornati, producono
+`kh-ward.numeric-range`; i limiti di oggetti, celle e lavoro producono
+`kh-ward.resource-limit` con categoria `insufficientResources`.
 
 `kh-chi-square` riceve una tabella rettangolare di conteggi interi non negativi.
 `correction` ammette `automatic`, `none`, `yates`: il default applica Yates solo
@@ -261,6 +268,9 @@ POS presenti; superfici e offset devono coincidere con i byte della fonte.
 L'uscita conserva regola risolta, ID/contratti linguistici, run indipendenti,
 indici dei token, intervalli UTF-8 e ranking. Questi ingressi operano su
 preannotazioni esplicite, senza selezionare un tokenizer inglese o giapponese.
+Per componenti canonicamente equivalenti in Unicode, la prima occorrenza di
+fonte sceglie la grafia restituita. Non si normalizzano i byte della request
+o delle occorrenze, né si affida il rappresentante all'ordine di un dizionario.
 
 Lo `state` NB transitorio contiene `classes`, `vocabulary`, `documentCounts`,
 `tokenCounts` e `smoothing=1` se omesso. Continuare il training conserva i
@@ -269,6 +279,11 @@ modello ispezionabile e predizioni quando definite. Uno stato a classe unica
 può essere continuato; la predizione richiede almeno due classi.
 `validate-classifier-kappa` restituisce predizioni fuori fold, matrice di
 confusione, accuratezza, κ e accordo osservato/atteso sulle stesse unità.
+Batch e stato incrementale condividono il calcolo stabile di likelihood e prior:
+i complementi dei conteggi dominanti sono sottratti come interi prima della
+conversione, poi valutati con `log1p` quando applicabile. Non cambiano smoothing
+o calibrazione. Training e CV ammettono anche byte UTF-8, hashing e ordinamento
+di vocabolario/etichette; nella CV questi costi sono riservati per tutti i fold.
 
 ## Identità e risultati
 
@@ -304,8 +319,10 @@ ausiliari senza manifest dedicato (distanze, aggregazione, CV, reti, HAC) manten
 `candidate`. Il trasporto non promuove metodi né completa la revisione esterna V6.
 I nuovi identificatori KH restano `candidate`. GS-VER-300 registra il gate
 locale pre-merge superato; GS-VER-301 conserva la precedente integrazione
-pubblicata. La nuova unione ha superato il gate locale GS-VER-300 e non modifica lo stato
-dei manifest preesistenti.
+pubblicata. La versione attestata da GS-VER-300 resta storica e non modifica lo
+stato dei manifest preesistenti. La successiva rifinitura GS-DOR-305 mantiene
+schema 1 e gli stessi identificatori matematici, con risultati corretti e guard
+di range/risorse più rigorosi; GS-VER-305 attesta il nuovo gate locale superato.
 
 ## Limiti e failure
 
@@ -314,6 +331,20 @@ Profondità JSON: massimo 32 contenitori. Prima della codifica canonica si appli
 250.000 elementi aggregati (righe, celle, token, etichette, gruppi, unità e
 variabili) e 1 MiB di contenuti UTF-8 aggregati; matrici, documenti e unità hanno
 al massimo 20.000 righe. Restano applicabili i limiti di lavoro e output del Core.
+MDS ordinale applica la stessa ammissione di coppie, PAVA, workspace e risultati
+conservati a primary e secondary, anche nella ricerca multipla. Le varianti con
+backtracking riservano tutti i 32 tentativi; Kruskal include i sort ripetuti.
+La facciata SOM avanzata riserva fit, U-matrix e Ward opzionale in un solo budget
+prima del fit, senza ripartire dal limite standard di 500.000.000 a ogni fase.
+
+SOM batch applica la gaussiana completa, senza cutoff assoluto. Mantiene pesi
+assoluti nel range ordinario e li riscala soltanto quando coefficienti o
+prodotti rischiano il range subnormale; il percorso raro combina i fattori prima
+dell'esponenziale. Batch e profilo online rifiutano con
+`exploratory.numeric-range` un valore fisico rappresentabile che andrebbe perso
+nello stato normalizzato, invece di pubblicare zero. Gli identificatori v1
+restano quelli della formula dichiarata; non attestano identità bit per bit
+con i risultati erronei delle revisioni precedenti.
 
 Chiavi sconosciute, duplicate anche con escape Unicode equivalenti, operazioni
 ignote, tipi errati, default esplicitamente `null` e valori non finiti sono
@@ -417,9 +448,13 @@ GS-VER-233/234, ciascuna sulla propria revisione. GS-VER-300 registra il gate
 locale pre-merge superato del lotto a 19 profili KH, 63 fixture e 236 righe di
 oracolo. GS-VER-301 conserva la precedente integrazione pubblicata fino a
 `32b06f7`, con 54 fixture e 36 tag: non attesta le modifiche successive.
-La verifica combinata è superata in GS-VER-300: 771 test Core/Kit, 113 nativi,
+La versione integrata documentata in GS-VER-300 ha superato 771 test Core/Kit, 113 nativi,
 63 fixture/189 controlli CLI e 2.816 dichiarazioni pubbliche controllate.
 I gate precedenti restano circoscritti ai rispettivi checkpoint.
+La successiva rifinitura è verificata localmente in
+[GS-VER-305](../evidenze/GS-VER-305-rifinitura-kh.md): 795 test Core/Kit per
+Debug, Release e ciascun sanitizzatore, 113 test nativi e 196 controlli CLI.
+I conteggi storici restano riferiti ai rispettivi checkpoint. Non cambiano schema 1, i 40 tag o lo stato dei manifest.
 Test Swift per identità canonica/default/UInt64, cancellazione e input ostili;
 confronto integrale CLI/Kit entro 1e-12 assoluto e relativo, con controlli golden
 indipendenti per i casi minimi, exit status, stdout/stderr e file speciali.
@@ -477,4 +512,5 @@ Il gate locale di [GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md)
 resta riferito al suo perimetro storico. Anche GS-VER-234 e GS-VER-300 mantengono
 revisioni, conteggi e limiti dei rispettivi checkpoint. GS-VER-300 attesta il
 lotto pre-merge a 19 profili KH; GS-VER-301 la precedente unione pubblicata fino
-a `32b06f7`. La verifica combinata dopo il nuovo merge è superata nel perimetro GS-VER-300.
+a `32b06f7`. La verifica combinata allora eseguita è superata nel perimetro
+GS-VER-300; la rifinitura successiva è verificata localmente in GS-VER-305.

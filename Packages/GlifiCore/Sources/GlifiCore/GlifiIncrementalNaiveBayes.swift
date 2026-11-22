@@ -72,13 +72,20 @@ public struct GlifiNaiveBayesTrainingState: Equatable, Sendable {
         try incrementalWork([classes.count, vocabulary.count, 2], remaining: &work)
         let mass = Double(vocabulary.count) * smoothing
         guard mass.isFinite else { throw exploratoryFailure("naive-bayes.invalid-smoothing") }
+        let complementaryMass = Double(vocabulary.count - 1) * smoothing
         let totalDocuments = try documentCounts.reduce(0) { try incrementalCount($0, $1) }
         var likelihoods: [[Double]] = []
         for category in classes.indices {
             try Task.checkCancellation()
             let total = try tokenCounts[category].reduce(0) { try incrementalCount($0, $1) }
-            let denominator = log(Double(total) + mass)
-            let values = tokenCounts[category].map { log(Double($0) + smoothing) - denominator }
+            let denominator = Double(total) + mass
+            let logDenominator = log(denominator)
+            let values = tokenCounts[category].map {
+                naiveBayesLogLikelihood(
+                    $0, total: total, smoothing: smoothing,
+                    complementaryMass: complementaryMass,
+                    denominator: denominator, logDenominator: logDenominator)
+            }
             guard values.allSatisfy(\.isFinite) else {
                 throw exploratoryFailure("exploratory.numeric-overflow")
             }
@@ -86,7 +93,7 @@ public struct GlifiNaiveBayesTrainingState: Equatable, Sendable {
         }
         return GlifiNaiveBayesModel(
             classes: classes, vocabulary: vocabulary,
-            logPriors: documentCounts.map { log(Double($0) / Double(totalDocuments)) },
+            logPriors: documentCounts.map { naiveBayesLogPrior($0, total: totalDocuments) },
             logLikelihoods: likelihoods, smoothing: smoothing)
     }
 }
