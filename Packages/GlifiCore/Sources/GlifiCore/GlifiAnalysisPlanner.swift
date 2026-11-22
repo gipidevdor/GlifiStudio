@@ -640,7 +640,6 @@ public struct GlifiAnalysisPlanner: Sendable {
                 estimatedWorkUnits: keynessBundleCost
             )
         } else {
-            remainingBudget -= keynessBundleCost
             let targetStepID = "plan-step.corpus-profile.target.v1"
             let referenceStepID = "plan-step.corpus-profile.reference.v1"
             if !profileRelevant {
@@ -663,6 +662,7 @@ public struct GlifiAnalysisPlanner: Sendable {
                 isIncluded: true,
                 estimatedWorkUnits: keynessBundleCost
             )
+            remainingBudget -= keynessBundleCost
             steps.append(
                 step(
                     identifier: targetStepID,

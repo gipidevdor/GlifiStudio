@@ -248,6 +248,69 @@ struct StudioAdvancedAnalysisTests {
         await fixture.session.close()
     }
 
+    @Test(arguments: [GlifiStudioSOMTopology.rectangular, .hexagonal], [false, true])
+    func advancedSOMRetainsGeometryAndOptionalWardWithoutChangingTheProject(
+        topology: GlifiStudioSOMTopology, usesWard: Bool
+    ) async throws {
+        let fixture = try await makeFixture(sourceCount: 6)
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let before = try await fixture.session.snapshot()
+        let model = configuredModel(tool: .somAdvanced, ids: fixture.ids)
+        model.somTopology = topology
+        model.gridWidth = 2
+        model.gridHeight = 3
+        model.clustersSOMCodebooks = usesWard
+        model.somCodebookClusterCount = 2
+        model.somInitialRadius = 1.5
+        model.somFinalRadius = 0.2
+        model.somTolerance = 1e-7
+        try await model.execute(
+            session: fixture.session, sourceRevisionIDs: fixture.ids,
+            sourceNumbers: fixture.numbers, locale: .init(identifier: "it_IT"))
+        let output = try #require(model.output)
+        guard
+            case let .advanced(
+                .somAdvanced(
+                    _, width, height, seed, epochs, geometry, initial, final, tolerance, clusters)) =
+                output.request
+        else {
+            Issue.record("Expected an advanced SOM request")
+            return
+        }
+        #expect(width == 2 && height == 3 && seed == 17 && epochs == 5)
+        #expect(geometry == topology && initial == 1.5 && final == 0.2 && tolerance == 1e-7)
+        #expect(clusters == (usesWard ? 2 : nil))
+        #expect(
+            try GlifiStudioTextAnalysisRequest.decode(output.canonicalRequest) == output.request)
+        let json = try #require(
+            JSONSerialization.jsonObject(with: output.encodedResult) as? [String: Any])
+        let result = try #require(json["result"] as? [String: Any])
+        let map = try #require(result["map"] as? [String: Any])
+        let prototypes = try #require(map["prototypes"] as? [[Double]])
+        let distances = try #require(result["uMatrix"] as? [Double])
+        #expect(result["topology"] as? String == topology.rawValue)
+        #expect(
+            prototypes.count == 6 && prototypes.allSatisfy { $0.count == output.input.terms.count })
+        #expect(prototypes.flatMap { $0 }.allSatisfy { $0.isFinite })
+        #expect(distances.count == 6 && distances.allSatisfy { $0.isFinite && $0 >= 0 })
+        #expect(output.tables.first { $0.id == "advanced.table.som-u-matrix" }?.rows.count == 6)
+        #expect(output.tables.contains { $0.id == "advanced.table.som-ward" } == usesWard)
+        if usesWard {
+            let clustering = try #require(result["codebookClustering"] as? [String: Any])
+            let assignments = try #require(clustering["assignments"] as? [Int])
+            #expect(assignments.count == 6 && Set(assignments).count == 2)
+            #expect(output.tables.first { $0.id == "advanced.table.som-ward" }?.rows.count == 5)
+        } else {
+            #expect(result["codebookClustering"] == nil)
+        }
+        model.somTopology = topology == .rectangular ? .hexagonal : .rectangular
+        model.clustersSOMCodebooks.toggle()
+        #expect(model.isDraftChanged)
+        #expect(model.output?.canonicalRequest == output.canonicalRequest)
+        #expect(try await fixture.session.snapshot() == before)
+        await fixture.session.close()
+    }
+
     @Test func ordinalCoordinatesAndNewDraftFieldsKeepTheirCapturedIdentity() async throws {
         let fixture = try await makeFixture()
         defer { try? FileManager.default.removeItem(at: fixture.root) }

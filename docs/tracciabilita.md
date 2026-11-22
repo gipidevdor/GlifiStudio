@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.17 |
+| Versione | 0.92.18 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -13,6 +13,24 @@
 ## Scopo
 
 La matrice collega le fonti iniziali alle necessità degli stakeholder, ai requisiti software, alle parti dell'architettura e alle evidenze di verifica pianificate. Gli identificatori fanno riferimento a [Requisiti](requisiti.md) e [Architettura](architettura.md).
+
+## Progetto Xcode completo e verificabile
+
+| Requisiti e clausola | Attuazione circoscritta | Verifica |
+| --- | --- | --- |
+| RQ-005, RQ-062, RQ-063; GS-STD-001-08 § 8.4; CMP-306 | Navigator completo senza nuova membership Sources; configurazioni test distinte, schemi, package locale e descrizione documento it/en | [GS-DOR-306](pianificazione/dor-progetto-xcode-completo.md) Ready; checker completo/portabile e fixture, sei configurazioni risolte; [GS-VER-306](evidenze/GS-VER-306-progetto-xcode-completo.md): gate, nativi Debug/Release e preflight macOS superati sul checkpoint 328169f7 |
+
+CMP-306 è `implemented`: 215 oggetti PBX, 12 cartelle native e 1219 file
+inventariati nel controllo mirato; 23 fixture negative e cinque positive
+lessicali. Il rifiuto dei duplicati raw ha RED/GREEN distinto dalla
+normalizzazione di plutil. Il verificatore bundle compilato ha una fixture
+sintetica positiva e sette negative; il bundle reale ha lookup it/en e 15 voci
+ispezionate, senza corrispondenze nell'ambito vietato dichiarato. Gate e archivio
+sono superati; i nativi Debug e Release hanno ciascuno 125 definizioni e 409
+esecuzioni, zero failure/skip/runtime warning. La composizione è base d368285
+overlay 302/303/304, 1219 file invariati durante le prove: nessun esito è
+attribuito al nuovo Core 305 del checkout principale 76e5871. Nessuna prova Finder,
+restoration interattiva, UI assistiva o test plan è inferita; EA-T-01 resta aperto.
 
 ## Componenti e campi nativi dei laboratori macOS
 
@@ -639,28 +657,6 @@ e il gate macOS della versione unita superato: 771 test Core/Kit in
 Debug/Release e nei sanitizzatori, 113 test nativi e 189 controlli sulle 63 fixture CLI. ADR-0043 governa l’estensione; le clausole
 CMP-160 e CMP-162 conservano i propri stati, senza promozioni V6 o GUI.
 
-
-## Rifinitura analitica e ammissione cumulativa (GS-DOR-305)
-
-RF-087, RQ-025, RQ-058, RQ-060 e RQ-063 collegano le regressioni numeriche,
-Unicode e dei budget ai percorsi Core/Kit/CLI. GlifiKHNumericRefinementTests,
-GlifiNaiveBayesNumericalRefinementTests, GlifiTermUnicodeRefinementTests,
-GlifiExploratoryBudgetRefinementTests, GlifiSOMGaussianRefinementTests e
-GlifiSOMWorkflowRefinementTests distinguono i difetti prima delle correzioni.
-GlifiAnalysisPlannerTests e GlifiPlannerProducerRefinementTests verificano il
-residuo globale e l'identità distinta dai vecchi piani. Le prove CLI aggiungono
-confronti esatti per subnormali, byte Unicode e classificazione.
-[GS-VER-305](evidenze/GS-VER-305-rifinitura-kh.md) registra l'audit e i gate locali
-superati; GS-VER-300 resta il precedente snapshot. Nessuna promozione scientifica.
-
-## Regia del piano e grammatica numerica (GS-DOR-284)
-
-CMP-284 collega RQ-005/011/023/063 alla separazione privata fra regia ed
-esecuzione del passo. CMP-285 collega RQ-007/060/063 alla grammatica decimale
-comune dei due editor Kit, con errori distinti e contratti di trasporto conservati.
-[GS-VER-284](evidenze/GS-VER-284-regia-del-piano-e-input-numerico.md) registra
-compatibilità, verifiche macOS e limiti, senza promozione della maturità scientifica.
-
 ## Robustezza trasversale della baseline (GS-DOR-302)
 
 | Requisiti | Correzione e verifica | Evidenza |
@@ -680,3 +676,14 @@ percorsi Core/Kit/CLI e nel selettore nativo. ADR-0044 governa snapshot atomico
 e riapertura senza riestrazione. GS-VER-310 registra fixture sintetiche, prove
 ostili, limiti e gate locali superati. CMP-310 resta implemented: la verifica
 funzionale sintetica non chiude corpus reali, qualifica G4/G5 o prove UX manuali.
+
+## Scenari di analisi verificabili
+
+[GS-DOR-303](pianificazione/dor-scenari-di-analisi.md),
+[GS-TST-001](pianificazione/scenari-di-analisi.md) e
+[GS-VER-303](evidenze/GS-VER-303-scenari-di-analisi.md) attuano
+GS-STD-001-16 § 16.4: 170 varianti operative inventariate, scenari di progetto,
+riapertura e revisioni, 11 intenti del planner, barriere dei modelli e casi
+scientifici indipendenti. CMP-303 riguarda questa verifica software, senza
+promozione di manifest scientifici o audit manuali. Le estensioni KH prive di
+adattatore GUI restano dichiarate headless.

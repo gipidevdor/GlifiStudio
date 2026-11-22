@@ -56,11 +56,42 @@ struct StudioCorpusMethodsTests {
             #expect(lineage["projectID"] as? String == snapshot.projectID)
             #expect(lineage["generation"] as? Int == snapshot.generation)
         }
+        let reusedSnapshot = try await model.execute(
+            session: fixture.session, sourceRevisionIDs: fixture.ids,
+            sourceNumbers: fixture.numbers, locale: Locale(identifier: "it_IT"))
+        #expect(reusedSnapshot == snapshot)
+        let expectedCacheRead = try cacheReadJSON(
+            output.encodedResult, generation: snapshot.generation)
+        #expect(model.output?.encodedResult == expectedCacheRead)
+        model.draft.diversityWindowSize = 0
+        do {
+            try await model.execute(
+                session: fixture.session, sourceRevisionIDs: fixture.ids,
+                sourceNumbers: fixture.numbers, locale: Locale(identifier: "it_IT"))
+            Issue.record("Invalid corpus options were accepted")
+        } catch let failure as GlifiStudioFailure {
+            let expected = GlifiStudioFailure(
+                code: "analysis.invalid-options", category: "invalidInput", operation: "analyze",
+                retryDisposition: "afterCorrection", retainedState: "lastCommittedGeneration",
+                messageKey: "failure.analysis.invalid-options")
+            #expect(failure == expected)
+        }
+        #expect(model.output?.encodedResult == expectedCacheRead)
+        #expect(try await fixture.session.snapshot() == snapshot)
+        await fixture.session.close()
+        let reopened = try await GlifiStudioService().openProject(
+            at: fixture.root.appending(path: "Methods.glifi"))
+        let reopenedModel = configuredModel(method, ids: fixture.ids)
+        let reopenedSnapshot = try await reopenedModel.execute(
+            session: reopened, sourceRevisionIDs: fixture.ids,
+            sourceNumbers: fixture.numbers, locale: Locale(identifier: "it_IT"))
+        #expect(reopenedSnapshot == snapshot)
+        #expect(reopenedModel.output?.encodedResult == expectedCacheRead)
+        await reopened.close()
         let captured = output.draft
         model.draft.maximumTerms = 2
         model.draft.groupLabels = [:]
         #expect(model.output?.draft == captured)
-        await fixture.session.close()
     }
 
     @Test func reusesTheKitArtifactAndPreservesTheOutputOnInvalidInput() async throws {
@@ -265,6 +296,20 @@ struct StudioCorpusMethodsTests {
         #expect(model.output != nil)
         #expect(!model.tables.isEmpty)
         await fixture.session.close()
+    }
+
+    /// A cache read preserves every scientific byte and refreshes only request-snapshot lineage.
+    private func cacheReadJSON(_ data: Data, generation: Int) throws -> Data {
+        var text = String(decoding: data, as: UTF8.self)
+        let expression = try NSRegularExpression(
+            pattern: #""(sourceGeneration|generation)"\s*:\s*([0-9]+)"#)
+        let matches = expression.matches(in: text, range: NSRange(text.startIndex..., in: text))
+        #expect(matches.count == 2)
+        for match in matches.reversed() {
+            let range = try #require(Range(match.range(at: 2), in: text))
+            text.replaceSubrange(range, with: String(generation))
+        }
+        return Data(text.utf8)
     }
 
     private func configuredModel(_ tool: StudioCorpusMethod, ids: [String])

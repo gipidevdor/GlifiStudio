@@ -160,7 +160,6 @@ def main() -> int:
     required_macos_settings = (
         "CODE_SIGN_ENTITLEMENTS = Config/GlifiStudio-macOS.entitlements",
         "ENABLE_APP_SANDBOX = YES",
-        "INFOPLIST_KEY_LSApplicationSupportsSecureRestorableState = YES",
     )
     for configuration in macos_configurations:
         for setting in required_macos_settings:

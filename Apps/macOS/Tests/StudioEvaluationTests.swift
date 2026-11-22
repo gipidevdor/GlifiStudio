@@ -262,6 +262,197 @@ struct StudioEvaluationTests {
         await session.close()
     }
 
+    @Test(arguments: [GlifiStudioTemporalOutsidePolicy.exclude, .reject])
+    func instantCalendarBucketsRespectDSTAndTheExclusiveUpperBoundary(
+        outsidePolicy: GlifiStudioTemporalOutsidePolicy
+    ) async throws {
+        let fixture = try await makeTemporalFixture(
+            texts: ["casa casa mare", "casa mare", "mare", "casa casa casa", "mare mare"])
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let before = try await fixture.session.snapshot()
+        let model = StudioEvaluationModel()
+        model.instantBasis = true
+        model.timeZoneIdentifier = "Europe/Rome"
+        model.granularity = .day
+        model.originYear = 2024
+        model.originMonth = 3
+        model.originDay = 30
+        model.bucketCount = 3
+        model.selectedTerms = "casa"
+        let instants = [
+            "2024-03-30T22:30:00Z", "2024-03-30T23:00:00Z",
+            "2024-03-31T21:59:59Z", "2024-03-31T22:00:00Z", "2024-04-01T22:00:00Z",
+        ]
+        for (id, instant) in zip(fixture.ids, instants) {
+            model.temporalAnnotations[id] = .init(
+                precision: .instant, instant: instant, provenance: "manual.dst-scenario")
+        }
+        try await model.executeTemporal(
+            session: fixture.session, sourceRevisionIDs: fixture.ids,
+            sourceNumbers: fixture.numbers, locale: .init(identifier: "it_IT"))
+        let output = try #require(model.output)
+        let value = try #require(output.temporal)
+        #expect(value.result.configuration.basis == .instants(timeZoneIdentifier: "Europe/Rome"))
+        #expect(value.result.buckets.map { $0.aggregate.documentCount } == [1, 2, 1])
+        #expect(value.result.buckets.map { $0.aggregate.tokenCount } == [3, 3, 3])
+        #expect(value.result.buckets.map { $0.aggregate.terms.first?.frequency } == [2, 1, 3])
+        #expect(value.result.excluded.map { $0.lineage.sourceRevisionID } == [fixture.ids[4]])
+        #expect(value.result.excluded.first?.reasonIdentifier == "temporal.after-domain")
+        let dst = value.result.buckets[1]
+        guard case let .instant(start) = dst.start, case let .instant(end) = dst.end else {
+            Issue.record("Instant boundaries were converted to civil dates")
+            return
+        }
+        #expect(end.timeIntervalSince(start) == 23 * 60 * 60)
+        #expect(value.documents.allSatisfy { $0.metadataProvenance == "manual.dst-scenario" })
+        model.timeZoneIdentifier = "UTC"
+        model.bucketWidth = 2
+        #expect(model.isDraftChanged)
+        #expect(model.output?.input.timeZoneIdentifier == "Europe/Rome")
+        #expect(model.output?.input.bucketWidth == 1)
+        model.timeZoneIdentifier = "Europe/Rome"
+        model.bucketWidth = 1
+        model.outsidePolicy = outsidePolicy
+        if outsidePolicy == .reject {
+            do {
+                try await model.executeTemporal(
+                    session: fixture.session, sourceRevisionIDs: fixture.ids,
+                    sourceNumbers: fixture.numbers, locale: .init(identifier: "it_IT"))
+                Issue.record("An instant at the exclusive upper boundary was accepted")
+            } catch let failure as GlifiStudioFailure {
+                #expect(failure.code == "temporal.after-domain")
+                #expect(failure.category == "invalidInput")
+                #expect(failure.retainedState == "unchanged")
+            }
+            #expect(model.output?.id == output.id)
+        } else {
+            #expect(!model.isDraftChanged)
+        }
+        #expect(try await fixture.session.snapshot() == before)
+        await fixture.session.close()
+    }
+
+    @Test(arguments: [
+        GlifiStudioTemporalMissingPolicy.exclude, .separate, .reject,
+    ])
+    func missingTemporalMetadataKeepsItsDeclaredPolicyAndExposure(
+        policy: GlifiStudioTemporalMissingPolicy
+    ) async throws {
+        let fixture = try await makeTemporalFixture(texts: ["casa casa mare", "mare"])
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let before = try await fixture.session.snapshot()
+        let model = StudioEvaluationModel()
+        model.bucketCount = 1
+        model.selectedTerms = "casa"
+        model.temporalAnnotations[fixture.ids[0]] = .init(
+            precision: .civilDate, year: 2024, month: 1, day: 1,
+            provenance: "manual.observed")
+        model.temporalAnnotations[fixture.ids[1]] = .init(
+            precision: .missing, provenance: "manual.unavailable")
+        try await model.executeTemporal(
+            session: fixture.session, sourceRevisionIDs: fixture.ids,
+            sourceNumbers: fixture.numbers, locale: .init(identifier: "it_IT"))
+        let previous = try #require(model.output)
+        model.missingPolicy = policy
+        if policy == .reject {
+            do {
+                try await model.executeTemporal(
+                    session: fixture.session, sourceRevisionIDs: fixture.ids,
+                    sourceNumbers: fixture.numbers, locale: .init(identifier: "it_IT"))
+                Issue.record("Missing temporal metadata was accepted by the reject policy")
+            } catch let failure as GlifiStudioFailure {
+                #expect(failure.code == "temporal.missing-date")
+                #expect(failure.category == "insufficientData")
+                #expect(failure.retainedState == "unchanged")
+            }
+            #expect(model.output?.id == previous.id)
+        } else {
+            try await model.executeTemporal(
+                session: fixture.session, sourceRevisionIDs: fixture.ids,
+                sourceNumbers: fixture.numbers, locale: .init(identifier: "it_IT"))
+            let result = try #require(model.output?.temporal?.result)
+            #expect(result.configuration.missingPolicy == policy)
+            #expect(result.buckets.first?.aggregate.documentCount == 1)
+            #expect(result.buckets.first?.aggregate.tokenCount == 3)
+            #expect(result.buckets.first?.aggregate.terms.first?.frequency == 2)
+            if policy == .separate {
+                #expect(result.missing?.documentCount == 1)
+                #expect(result.missing?.tokenCount == 1)
+                #expect(result.missing?.terms.first?.frequency == 0)
+                #expect(result.excluded.isEmpty)
+            } else {
+                #expect(result.missing == nil)
+                #expect(result.excluded.map { $0.reasonIdentifier } == ["temporal.missing-date"])
+                #expect(result.excluded.first?.lineage.sourceRevisionID == fixture.ids[1])
+            }
+        }
+        #expect(try await fixture.session.snapshot() == before)
+        await fixture.session.close()
+    }
+
+    @Test(arguments: [StudioTemporalPrecision.civilDate, .instant])
+    func invalidTemporalDraftPreservesTheResultAndProjectThenAllowsCorrection(
+        precision: StudioTemporalPrecision
+    ) async throws {
+        let fixture = try await makeTemporalFixture(texts: ["casa mare"])
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let before = try await fixture.session.snapshot()
+        let id = try #require(fixture.ids.first)
+        let model = StudioEvaluationModel()
+        model.temporalAnnotations[id] = .init(precision: .civilMonth, year: 2024, month: 1)
+        try await model.executeTemporal(
+            session: fixture.session, sourceRevisionIDs: fixture.ids,
+            sourceNumbers: fixture.numbers, locale: .init(identifier: "it_IT"))
+        let previous = try #require(model.output)
+        model.temporalAnnotations[id] = .init(
+            precision: precision, year: 2024, month: 2, day: 30,
+            instant: "2024-03-31T02:30:00")
+        do {
+            try await model.executeTemporal(
+                session: fixture.session, sourceRevisionIDs: fixture.ids,
+                sourceNumbers: fixture.numbers, locale: .init(identifier: "it_IT"))
+            Issue.record("An invalid or unzoned temporal value was silently corrected")
+        } catch let failure as GlifiStudioFailure {
+            #expect(failure.category == "invalidInput")
+            #expect(failure.retainedState == "unchanged")
+            if precision == .civilDate { #expect(failure.code == "temporal.invalid-civil-date") }
+        }
+        #expect(model.output?.id == previous.id)
+        #expect(model.output?.input == previous.input)
+        #expect(try await fixture.session.snapshot() == before)
+        model.temporalAnnotations[id] = .init(precision: .civilDate, year: 2024, month: 2, day: 29)
+        try await model.executeTemporal(
+            session: fixture.session, sourceRevisionIDs: fixture.ids,
+            sourceNumbers: fixture.numbers, locale: .init(identifier: "it_IT"))
+        #expect(model.output?.id != previous.id)
+        #expect(model.output?.temporal?.result.buckets[1].aggregate.documentCount == 1)
+        #expect(try await fixture.session.snapshot() == before)
+        await fixture.session.close()
+    }
+
+    private func makeTemporalFixture(texts: [String]) async throws -> (
+        root: URL, session: GlifiStudioProjectSession, ids: [String], numbers: [String: Int]
+    ) {
+        let root = FileManager.default.temporaryDirectory.appending(
+            path: "GlifiTemporalScenario-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        let session = try await GlifiStudioService().createProject(
+            at: root.appending(path: "Time.glifi"))
+        var ids: [String] = []
+        for (index, text) in texts.enumerated() {
+            let url = root.appending(path: "source-\(index).txt")
+            try Data(text.utf8).write(to: url)
+            let imported = try await session.importText(at: url, format: .plainText)
+            let added = Set(imported.project.sources.map(\.sourceRevisionID)).subtracting(ids)
+            #expect(added.count == 1)
+            ids.append(try #require(added.first))
+        }
+        return (
+            root, session, ids,
+            Dictionary(uniqueKeysWithValues: ids.enumerated().map { ($0.element, $0.offset + 1) })
+        )
+    }
+
     @Test func temporalMetadataAndCountsAreFrozenWithoutPersistingAssignments() async throws {
         let root = FileManager.default.temporaryDirectory.appending(
             path: "GlifiTemporalClient-\(UUID().uuidString)")

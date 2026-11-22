@@ -18,5 +18,4 @@ ENABLE_APP_SANDBOX = YES
 ENABLE_HARDENED_RUNTIME = NO
 INFOPLIST_KEY_CFBundleDisplayName = Glifi Studio
 INFOPLIST_KEY_LSApplicationCategoryType = public.app-category.productivity
-INFOPLIST_KEY_LSApplicationSupportsSecureRestorableState = YES
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks

@@ -211,6 +211,60 @@ class BuildCacheChecks(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertFalse(self.cache.exists(), "Failed preparation left its partially claimed cache behind")
 
+    def test_failed_measurement_with_numeric_output_is_not_admitted(self) -> None:
+        tools = self.root / "bin"
+        tools.mkdir()
+        du = tools / "du"
+        du.write_text('#!/bin/sh\nprintf "4\\tcache\\n"\nexit 79\n')
+        du.chmod(0o755)
+        result = self.invoke(
+            'trap \'glifi_release_build_cache "$GLIFI_VERIFY_CACHE"\' EXIT; '
+            'glifi_prepare_build_cache "$GLIFI_VERIFY_CACHE"; print ADMITTED',
+            PATH=str(tools) + os.pathsep + os.environ["PATH"],
+        )
+        self.assertNotEqual(result.returncode, 0, "Failed du output was accepted as a valid measurement")
+        self.assertNotIn("ADMITTED", result.stdout)
+        self.assertFalse(self.cache.exists(), "Failed measurement left its partially claimed cache behind")
+        self.assertTrue(Path(str(self.cache) + ".glifi-lock").is_file())
+
+    def test_failed_measurement_preserves_retained_cache_and_releases_lock(self) -> None:
+        prepared = self.invoke(
+            'glifi_prepare_build_cache "$GLIFI_VERIFY_CACHE"; '
+            'glifi_release_build_cache "$GLIFI_VERIFY_CACHE"',
+            GLIFI_VERIFY_KEEP_CACHE="1",
+        )
+        self.assertEqual(prepared.returncode, 0, prepared.stderr)
+        sentinel = self.cache / "retained-build"
+        sentinel.write_text("preserve the retained cache")
+        lock = Path(str(self.cache) + ".glifi-lock")
+        lock_inode = lock.stat().st_ino
+        tools = self.root / "bin"
+        tools.mkdir()
+        du = tools / "du"
+        du.write_text("#!/bin/sh\nexit 79\n")
+        du.chmod(0o755)
+        # ZERR observes rollback before ERR_EXIT terminates this shell; neither option is disabled.
+        result = self.invoke(
+            'trap \'if [[ -z "$glifi_cache_lock_descriptor" && -z "$glifi_cache_owned_directory" ]]; '
+            'then print RELEASED; else print LEAKED; fi\' ZERR; '
+            'glifi_prepare_build_cache "$GLIFI_VERIFY_CACHE"',
+            PATH=str(tools) + os.pathsep + os.environ["PATH"],
+            GLIFI_VERIFY_KEEP_CACHE="1",
+        )
+        self.assertNotEqual(result.returncode, 0, result.stderr)
+        self.assertIn("RELEASED", result.stdout)
+        self.assertNotIn("LEAKED", result.stdout)
+        self.assertEqual(sentinel.read_text(), "preserve the retained cache")
+        self.assertFalse((self.cache / ".glifi-build-cache-active").exists())
+        self.assertEqual(lock.stat().st_ino, lock_inode)
+        retry = self.invoke(
+            'glifi_prepare_build_cache "$GLIFI_VERIFY_CACHE"; '
+            'glifi_release_build_cache "$GLIFI_VERIFY_CACHE"'
+        )
+        self.assertEqual(retry.returncode, 0, retry.stderr)
+        self.assertFalse(self.cache.exists())
+        self.assertEqual(lock.stat().st_ino, lock_inode)
+
     def test_free_space_probe_failure_removes_verification_temporaries(self) -> None:
         tools = self.root / "bin"
         tools.mkdir()
