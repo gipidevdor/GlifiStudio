@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-22 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.1.0 |
+| Versione | 1.1.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Catalogo richiesto; design UI da validare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -67,6 +67,31 @@ visibili. Area, volume e colore **NON DEVONO** rappresentare quantità senza leg
 e mapping coerente. Colore non è l'unico canale. Ogni vista offre descrizione
 accessibile, valori tabellari esportabili, navigazione da tastiera e localizzazione
 di etichette/numeri senza modificare la semantica dei dati.
+
+## Integrità dell'export macchina
+
+Il profilo v1 di [GS-VIZ-001, Export](../specifiche-di-design/08-visualizzazione-scientifica.md#export)
+conserva writer e formati esistenti. Il verificatore **DEVE** controllare
+l'inventario canonico dei due payload, i loro media type, dimensioni e digest,
+la concordanza dei campi condivisi fra manifest e specifica e l'identità dei
+byte CSV rispetto alla rigenerazione della stessa tabella. Un insieme di hash
+autocoerenti non sostituisce la concordanza semantica dei payload.
+
+La tabella è rettangolare; gli identificatori di righe, colonne, segni e assi
+sono unici entro la rispettiva raccolta e i valori numerici rappresentati sono
+finiti. Le osservazioni mantengono la
+cardinalità della famiglia: foglie e fusioni del dendrogramma, nodi e archi
+della rete, esclusioni e riduzione del factor plot non sono intercambiabili.
+Una vista con esclusioni dichiarate può avere meno osservazioni visibili del
+totale anche senza riduzione della vista. La verifica non impone una biezione
+generale fra segni e righe.
+
+Identità opache, generazione zero, software storico non vuoto e JSON
+semanticamente equivalente restano compatibili. La verifica offline attesta
+la coerenza del bundle; autenticità, presenza dell'Artifact nel progetto e
+corrispondenza con una generazione esterna richiedono prove autorevoli
+separate. Le prove di [GS-VER-175](../evidenze/GS-VER-175-integrita-export-viste.md)
+non cambiano lo stato scientifico della capacità né chiudono gli audit GUI.
 
 ## Verifica
 

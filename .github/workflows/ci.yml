@@ -72,5 +72,5 @@ jobs:
           restore-keys: |
             spm-${{ runner.os }}-${{ runner.arch }}-
 
-      - name: Quality gate completo
-        run: ./Scripts/verify.sh
+      - name: Quality gate macOS
+        run: ./Scripts/verify.sh --macos-only

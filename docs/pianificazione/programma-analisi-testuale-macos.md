@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-PLAN-002 |
 | Tipo | Programma operativo con inventario e backlog |
-| Versione | 1.3.8 |
+| Versione | 1.3.9 |
 | Stato | Attivo; completezza per capacità ed evidenza |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -252,23 +252,23 @@ derivato da 4d6969dd più il helper finale e i documenti del lotto. Il WIP 223 e
 il layout HomeView successivo sono esclusi e preservati nella copia condivisa.
 Le evidenze 230–232 mantengono le generazioni distinte; iPadOS e G4 restano aperti.
 
-## Sottoincremento 235 — Barriera di reset dei laboratori macOS
+## Sottoincremento GS-DOR-273 — Barriera di reset dei laboratori macOS
 
-GS-DOR-235 attua il lifecycle richiesto da GS-DOR-223. La Ready precede codice
-e test con l'identificatore iniziale 233, poi rinumerato per la collisione con
-il completamento KH Coder upstream, senza inventare nuove corse. Il fix
+GS-DOR-273 attua il lifecycle richiesto da GS-DOR-223. La Ready precede codice
+e test con l'identificatore locale iniziale 233, poi 235; l'allineamento usa
+GS-DOR-273 e GS-VER-273 del registro remoto, senza inventare nuove corse. Il fix
 Advanced legacy e i guard preesistenti di Evaluation/Corpus mantengono le
 rispettive attribuzioni. Il candidato latest137 preserva executionRevision
 peer, più forte perché protegge anche dalle esecuzioni superate.
-CMP-235 è verified per automatici sul checkpoint ea48ba88: 592 test Core/Kit,
+CMP-233 è verified per automatici sul checkpoint ea48ba88: 592 test Core/Kit,
 104 definizioni/327 esecuzioni native, 90 controlli CLI/30 fixture condivise,
 oracoli, PDF/A, recovery e gate/preflight macOS superati. L'originale legacy02
 conserva la GUI diversa; non viene certificato l'intero checkout corrente.
 Nessuna nuova formula, API pubblica, migrazione o backend appartiene al lotto.
 
-## Sottoincremento 234 — Presentazione corpus coerente su macOS
+## Sottoincremento GS-DOR-274 — Presentazione corpus coerente su macOS
 
-GS-DOR-234 è Ready prima della correzione di invalidazione sincrona e
+GS-DOR-274 è Ready prima della correzione di invalidazione sincrona e
 separazione dei task di filtro/proiezione. L'ultima scelta di asse, tabella e
 ricerca è conservata; pending espone progresso localizzato, nasconde conteggio
 e vuoto transitori e disabilita le pagine senza bloccare le scelte. La suite
@@ -276,6 +276,6 @@ StudioCorpusPresentationTests distingue l'errore iniziale di fixture dal RED
 pertinente, senza trap volontari o hook di produzione. GREEN legacy e allineato
 restano distinti; CMP-234 è verified per automatici sul checkpoint ea48ba88,
 con gate e packaging macOS superati, senza cambiamenti numerici Core/Kit.
-Il lotto resta limitato a 234/235; budget e ulteriori problemi di chiarezza
+Il lotto resta limitato a GS-DOR-273/274; budget e ulteriori problemi di chiarezza
 statistica sono nel backlog. Nessuna nuova feature o promozione scientifica;
 iPadOS, GUI manuale e G4 restano fuori perimetro.

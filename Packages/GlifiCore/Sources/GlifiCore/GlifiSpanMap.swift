@@ -141,7 +141,7 @@ public struct GlifiSpanMap: Codable, Equatable, Sendable {
         self.supportsIndexedLookup = supportsIndexedLookup
     }
 
-    /// Decodes the existing fields and derives a local index invariant without changing legacy validation.
+    /// Validates each decoded segment while retaining locally valid legacy map geometry.
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         contractIdentifier = try container.decode(String.self, forKey: .contractIdentifier)
@@ -151,6 +151,37 @@ public struct GlifiSpanMap: Codable, Equatable, Sendable {
         inputByteCount = try container.decode(Int.self, forKey: .inputByteCount)
         outputByteCount = try container.decode(Int.self, forKey: .outputByteCount)
         segments = try container.decode([GlifiSpanMapSegment].self, forKey: .segments)
+        guard !contractIdentifier.isEmpty, inputByteCount >= 0, outputByteCount >= 0 else {
+            throw spanMapFailure("text.invalid-span-map")
+        }
+        let decodedInputByteCount = inputByteCount
+        for segment in segments {
+            guard segment.outputRange.end <= outputByteCount,
+                segment.inputRanges.allSatisfy({ $0.end <= decodedInputByteCount })
+            else {
+                throw spanMapFailure("text.invalid-span-map")
+            }
+            switch segment.kind {
+            case .exact:
+                guard segment.inputRanges.count == 1,
+                    segment.inputRanges[0].count == segment.outputRange.count
+                else {
+                    throw spanMapFailure("text.invalid-span-map")
+                }
+            case .derivational:
+                guard !segment.inputRanges.isEmpty else {
+                    throw spanMapFailure("text.invalid-span-map")
+                }
+            case .contributive:
+                guard segment.inputRanges.count >= 2 else {
+                    throw spanMapFailure("text.invalid-span-map")
+                }
+            case .synthetic:
+                guard segment.inputRanges.isEmpty else {
+                    throw spanMapFailure("text.invalid-span-map")
+                }
+            }
+        }
         supportsIndexedLookup = Self.segmentsSupportIndexedLookup(segments)
     }
 

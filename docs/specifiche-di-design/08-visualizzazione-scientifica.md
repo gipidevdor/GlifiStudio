@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-VIZ-001 |
 | Tipo | Specifica di design delle visualizzazioni |
-| Versione | 1.1.0 |
+| Versione | 1.1.2 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -126,6 +126,76 @@ dopo audit di compatibilità e sicurezza; non è requisito MVP.
 L'export dichiara filtri, dimensione, versione software, downsampling e data di
 generazione. Un'immagine senza provenance non è considerata export scientifico
 completo.
+
+### Profilo macchina v1 e verifica offline
+
+Il profilo esistente comprende esattamente `view-spec.json`, `view.csv` e
+`visual-export-manifest.json`. Schema, versione, nomi dei file e writer restano
+invariati. L'inventario `files` del manifest **DEVE** contenere esattamente due
+record, nell'ordine `view-spec.json`, `view.csv`, con media type rispettivamente
+`application/json` e `text/csv`. Record duplicati, file aggiuntivi e percorsi
+alternativi **DEVONO** essere rifiutati. Dimensione non negativa e SHA-256 di
+ciascun record **DEVONO** corrispondere ai byte effettivi del relativo payload.
+
+La resa canonica del digest è `sha256:` seguito da 64 cifre ASCII minuscole.
+La codifica diretta dei nibble in UTF-8 è un dettaglio privato: non sostituisce
+CryptoKit, non memorizza hash in cache e **DEVE** conservare tutti i byte,
+i controlli e i fallimenti del profilo. GS-VER-178 confronta i vettori SHA-256,
+il formatter precedente e l'intero bundle v1 prima e dopo l'ottimizzazione.
+
+La `VisualizationSpec` **DEVE** essere decodificabile e concordare con tutti i
+campi condivisi del manifest: Artifact, nodo analitico, analisi, metodo,
+identificatore della specifica, osservazioni totali e visibili, riduzione,
+layout e array dei Caveat nel suo ordine dichiarato. Gli identificatori sono
+opachi e non vuoti: il verificatore non richiede UUID né un metodo appartenente
+a un elenco chiuso. La generazione zero è ammessa. L'identificatore software
+non vuoto può appartenere a una build storica; non è vincolato alla versione
+del lettore corrente. I conteggi rispettano `0≤visibili≤totali`.
+
+Il CSV **DEVE** essere identico byte per byte alla rigenerazione della tabella
+dalla specifica mediante il writer v1 esistente: UTF-8, campi testuali con
+escape RFC 4180, separatore virgola, terminatori CRLF anche sull'ultima riga,
+valori numerici indipendenti dal locale e reali che conservano il round-trip
+binary64; una cella mancante resta un campo vuoto. Aggiornare soltanto digest e
+dimensione di un CSV alterato non ne ripristina la coerenza semantica.
+I payload JSON e il manifest possono usare spaziatura e ordine dei campi
+diversi da quelli prodotti dal writer, purché siano decodificabili, coerenti
+e accompagnati dai digest dei byte effettivamente presenti.
+
+La tabella **DEVE** essere rettangolare. Gli identificatori di colonne, righe,
+segni e assi **DEVONO** essere non vuoti e unici entro la rispettiva raccolta.
+Coordinate, estremi dei domini, quote degli assi, grandezze dei segni, celle
+decimali e argomenti numerici della sintesi **DEVONO** essere finiti; gli estremi
+degli assi sono ordinati, anche quando coincidono. Le identità sorgenti
+presenti nel lineage dei segni sono non vuote.
+
+Le cardinalità mantengono il significato della famiglia:
+
+- nel dendrogramma le osservazioni visibili sono foglie, mentre le righe della
+  tabella descrivono fusioni; più segni possono disegnare una sola fusione;
+- nella rete i segni comprendono nodi e archi, mentre la tabella può descrivere
+  soltanto i nodi;
+- nel factor plot esclusioni dichiarate o valori non finiti esclusi dal builder
+  possono ridurre le osservazioni visibili senza un `reductionIdentifier`.
+
+Non si impone quindi una corrispondenza universale fra conteggi, righe e segni.
+Esclusione del metodo e riduzione della vista restano concetti distinti.
+
+La data usa il profilo calendario UTC del produttore
+`YYYY-MM-DDTHH:MM:SSZ`; sono ammesse frazioni di secondo, l'offset esplicito
+`+00:00` e le lettere `t`/`z` equivalenti. Il calendario deve essere valido.
+Questo profilo non attesta il supporto completo a RFC 3339 o ai secondi
+intercalari.
+
+La verifica offline controlla la consistenza interna, non autentica l'origine.
+Progetto e generazione dichiarati non vengono confrontati con un progetto
+esterno; la loro attestazione richiede quel contesto autorevole. Una riscrittura
+coerente di tutti i payload e del manifest non è distinguibile senza un digest
+atteso fidato. L'incoerenza rilevata produce la failure di integrità esistente
+`visual-export.integrity-failed`, senza risultato parziale.
+[GS-VER-175](../evidenze/GS-VER-175-integrita-export-viste.md) registra le prove
+strutturali, semantiche e di compatibilità del profilo; non attesta audit GUI,
+accessibilità manuale o promozione scientifica.
 
 ## Errori percettivi vietati
 

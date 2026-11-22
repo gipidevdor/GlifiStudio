@@ -60,7 +60,8 @@ public struct GlifiCodingDocument: Equatable, Sendable {
         var previousParagraph = 0
         for token in tokens {
             guard token.range.start >= end, token.range.end <= text.utf8.count,
-                token.range.text(in: text) == token.surface, !token.base.isEmpty,
+                let surface = token.range.text(in: text),
+                surface.utf8.elementsEqual(token.surface.utf8), !token.base.isEmpty,
                 token.sentence >= previousSentence, token.paragraph >= previousParagraph
             else { throw exploratoryFailure("coding.invalid-token") }
             end = token.range.end
@@ -194,6 +195,7 @@ public struct GlifiCodingRuleSet: Sendable {
             var parser = try CodingParser(body)
             let expression = try parser.parse()
             try expression.validateDepth(0)
+            try expression.validateConditions()
             expressions.append(expression)
         }
         let all = Set(names)
@@ -226,22 +228,37 @@ public struct GlifiCodingRuleSet: Sendable {
     }
 
     /// Evaluates every rule without mutating the project's manual codings or creating a new format.
+    ///
+    /// Estimated preparation, literal comparisons and every proximity candidate visit share
+    /// `maximumWork`. Proximity additionally has one aggregate ceiling of 1,000,000 visits.
     public func evaluate(
         _ documents: [GlifiCodingDocument], limits: GlifiExploratoryLimits = .standard
     ) throws -> GlifiCodingMatrix {
         guard !documents.isEmpty, Set(documents.map(\.id)).count == documents.count,
             documents.count <= limits.maximumCells / names.count
         else { throw exploratoryFailure("coding.invalid-documents") }
-        try requireWork([documents.reduce(0) { $0 + $1.tokens.count }, expressions.count], limits)
-        try requireWork(
-            [documents.reduce(0) { $0 + $1.text.utf8.count }, expressions.count], limits)
+        var preparationUnits = 0
+        for document in documents {
+            let textAndTokens = document.text.utf8.count.addingReportingOverflow(
+                document.tokens.count)
+            let sum = preparationUnits.addingReportingOverflow(textAndTokens.partialValue)
+            guard !textAndTokens.overflow, !sum.overflow else {
+                throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
+            }
+            preparationUnits = sum.partialValue
+        }
+        try requireWork([preparationUnits, expressions.count], limits)
+        // requireWork proves this product is representable and at most maximumWork.
+        let preparationWork = preparationUnits * expressions.count
+        let work = CodingWorkBudget(remaining: limits.maximumWork - preparationWork)
         var values: [[Int]] = []
         var evidence: [[[GlifiUTF8Range]]] = []
         var frequencies = [Int](repeating: 0, count: names.count)
         var evidenceCount = 0
         for (index, document) in documents.enumerated() {
             try Task.checkCancellation()
-            let context = CodingContext(document: document, number: index + 1)
+            let context = CodingContext(
+                document: document, number: index + 1, work: work)
             // Every document shares the same precompiled AST; token positions are indexed once.
             var cache: [String: CodingValue] = [:]
             func evaluateCode(_ name: String) throws -> CodingValue {
@@ -307,6 +324,30 @@ private indirect enum CodingExpression: Sendable {
         }
     }
 
+    func validateConditions() throws {
+        switch self {
+        case let .binary(_, left, right):
+            try left.validateConditions()
+            try right.validateConditions()
+        case let .unary(child): try child.validateConditions()
+        case let .word(value): _ = try CodingTokenCondition(value)
+        case let .atom(value, literal):
+            guard !literal else { return }
+            if value.hasPrefix("<>") {
+                _ = try codingVariableCondition(value)
+            } else if value == "lw" || value == "lc" || value == "No." {
+                return
+            } else if value.contains("+") {
+                try validateCodingProximityTerms(value.components(separatedBy: "+"), ordered: true)
+            } else {
+                _ = try CodingTokenCondition(value)
+            }
+        case let .proximity(terms, ordered, _, _):
+            try validateCodingProximityTerms(terms, ordered: ordered)
+        case .number, .reference: break
+        }
+    }
+
     var references: Set<String> {
         switch self {
         case let .reference(name): [name]
@@ -322,14 +363,150 @@ private struct CodingValue {
     let ranges: [GlifiUTF8Range]
 }
 
+/// Parsed qualifiers are checked both when compiling an AST and when resolving token positions.
+private struct CodingTokenCondition {
+    let base: String
+    let partOfSpeech: String?
+    let inflection: String?
+    let surface: String?
+
+    init(_ specification: String) throws {
+        let surfaces = specification.components(separatedBy: "=>")
+        guard (1...2).contains(surfaces.count), surfaces.allSatisfy({ !$0.isEmpty }) else {
+            throw exploratoryFailure("coding.invalid-token-condition")
+        }
+        let partsOfSpeech = surfaces[0].components(separatedBy: "-->")
+        guard (1...2).contains(partsOfSpeech.count),
+            partsOfSpeech.allSatisfy({ !$0.isEmpty })
+        else { throw exploratoryFailure("coding.invalid-token-condition") }
+        let bases = partsOfSpeech[0].components(separatedBy: "->")
+        guard (1...2).contains(bases.count), bases.allSatisfy({ !$0.isEmpty }) else {
+            throw exploratoryFailure("coding.invalid-token-condition")
+        }
+        base = bases[0]
+        surface = surfaces.count == 2 ? surfaces[1] : nil
+        if partsOfSpeech.count == 2 {
+            // Inflection belongs after POS; a second earlier qualifier cannot be ignored.
+            guard bases.count == 1 else {
+                throw exploratoryFailure("coding.invalid-token-condition")
+            }
+            let qualifiers = partsOfSpeech[1].components(separatedBy: "->")
+            guard (1...2).contains(qualifiers.count), qualifiers.allSatisfy({ !$0.isEmpty }) else {
+                throw exploratoryFailure("coding.invalid-token-condition")
+            }
+            partOfSpeech = qualifiers[0]
+            inflection = qualifiers.count == 2 ? qualifiers[1] : nil
+        } else {
+            partOfSpeech = nil
+            inflection = bases.count == 2 ? bases[1] : nil
+        }
+        guard surface == nil || inflection == nil else {
+            throw exploratoryFailure("coding.invalid-token-condition")
+        }
+    }
+}
+
+private func codingVariableCondition(_ specification: String) throws -> (
+    name: String, value: String
+) {
+    let suffix = String(specification.dropFirst(2))
+    let parts = suffix.components(separatedBy: "-->")
+    let resolved = parts.count == 2 ? parts : suffix.components(separatedBy: "->")
+    guard resolved.count == 2, resolved.allSatisfy({ !$0.isEmpty }) else {
+        throw exploratoryFailure("coding.invalid-variable-condition")
+    }
+    return (resolved[0], resolved[1])
+}
+
+/// A dash separates proximity terms, while arrows remain part of a token qualifier.
+private func codingProximityTerms(_ text: String) -> [String] {
+    let characters = Array(text)
+    var terms: [String] = []
+    var current = ""
+    var index = 0
+    while index < characters.count {
+        if characters[index] == "-" {
+            if index + 2 < characters.count, characters[index + 1] == "-",
+                characters[index + 2] == ">"
+            {
+                current += "-->"
+                index += 3
+                continue
+            }
+            if index + 1 < characters.count, characters[index + 1] == ">" {
+                current += "->"
+                index += 2
+                continue
+            }
+            terms.append(current)
+            current = ""
+        } else {
+            current.append(characters[index])
+        }
+        index += 1
+    }
+    terms.append(current)
+    return terms
+}
+
+private func validateCodingProximityTerms(_ terms: [String], ordered: Bool) throws {
+    guard (2...32).contains(terms.count), !terms.contains(where: \.isEmpty),
+        ordered || Set(terms).count == terms.count
+    else { throw exploratoryFailure("coding.invalid-proximity") }
+    for term in terms { _ = try CodingTokenCondition(term) }
+}
+
+/// A synchronous operation owns this budget; it never escapes into another task or actor.
+private final class CodingWorkBudget {
+    private var remaining: Int
+    private var remainingProximity = 1_000_000
+    private var checkpoint = 0
+
+    init(remaining: Int) { self.remaining = remaining }
+
+    func visitProximity() throws {
+        try consume(1, code: "coding.proximity-work-limit")
+        guard remainingProximity > 0 else {
+            throw exploratoryFailure("coding.proximity-work-limit", .insufficientResources)
+        }
+        remainingProximity -= 1
+    }
+
+    func admitLiteral(textBytes: Int, patternBytes: Int) throws {
+        try Task.checkCancellation()
+        // This conservative byte-comparison estimate also bounds a naive literal scan;
+        // it does not assume a particular implementation of Foundation's search routine.
+        let comparisons = textBytes.multipliedReportingOverflow(by: patternBytes)
+        guard !comparisons.overflow else {
+            throw exploratoryFailure("coding.literal-work-limit", .insufficientResources)
+        }
+        try consume(comparisons.partialValue, code: "coding.literal-work-limit")
+    }
+
+    func visitLiteral() throws {
+        try consume(1, code: "coding.literal-work-limit")
+    }
+
+    private func consume(_ count: Int, code: String) throws {
+        if checkpoint == 0 { try Task.checkCancellation() }
+        guard count >= 0, count <= remaining else {
+            throw exploratoryFailure(code, .insufficientResources)
+        }
+        remaining -= count
+        checkpoint = (checkpoint + 1) % 1_024
+    }
+}
+
 private struct CodingContext {
     let document: GlifiCodingDocument
     let number: Int
     var positions: [String: [Int]] = [:]
+    let work: CodingWorkBudget
 
-    init(document: GlifiCodingDocument, number: Int) {
+    init(document: GlifiCodingDocument, number: Int, work: CodingWorkBudget) {
         self.document = document
         self.number = number
+        self.work = work
         for (index, token) in document.tokens.enumerated() {
             positions[codingNormalized(token.base), default: []].append(index)
         }
@@ -394,38 +571,43 @@ private struct CodingContext {
 
     private func atom(_ value: String, literal: Bool) throws -> CodingValue {
         if literal {
+            let bytes = document.text.utf8
+            try work.admitLiteral(textBytes: bytes.count, patternBytes: value.utf8.count)
             var ranges: [GlifiUTF8Range] = []
             var cursor = document.text.startIndex
+            var byteCursor = bytes.startIndex
+            var byteOffset = 0
             while cursor < document.text.endIndex,
                 let range = document.text.range(
                     of: value, options: [.literal], range: cursor..<document.text.endIndex)
             {
-                let start = document.text[..<range.lowerBound].utf8.count
-                let end = start + document.text[range].utf8.count
-                let sentence = document.tokens.first { $0.range.end > start }?.sentence
-                let lastSentence = document.tokens.last { $0.range.start < end }?.sentence
-                if sentence == lastSentence {
+                try work.visitLiteral()
+                guard let startIndex = range.lowerBound.samePosition(in: bytes),
+                    let endIndex = range.upperBound.samePosition(in: bytes),
+                    startIndex >= byteCursor, endIndex > startIndex
+                else { throw exploratoryFailure("coding.invalid-token-range") }
+                // Advance monotonically, so resolving offsets never rescans earlier source bytes.
+                let start = byteOffset + bytes.distance(from: byteCursor, to: startIndex)
+                let end = start + bytes.distance(from: startIndex, to: endIndex)
+                if try literalIsWithinSentence(start: start, end: end) {
                     ranges.append(try GlifiUTF8Range(start: start, end: end))
                 }
                 guard ranges.count <= 10_000 else {
                     throw exploratoryFailure("coding.evidence-limit", .insufficientResources)
                 }
-                try Task.checkCancellation()
                 cursor = range.upperBound
+                byteCursor = endIndex
+                byteOffset = end
             }
-            guard ranges.count <= 10_000 else {
-                throw exploratoryFailure("coding.evidence-limit", .insufficientResources)
-            }
+            try Task.checkCancellation()
             return CodingValue(number: Double(ranges.count), ranges: ranges)
         }
         if value.hasPrefix("<>") {
-            let parts = String(value.dropFirst(2)).components(separatedBy: "-->")
-            let fallback =
-                parts.count == 2 ? parts : String(value.dropFirst(2)).components(separatedBy: "->")
-            guard fallback.count == 2, let variable = document.variables[fallback[0]] else {
+            let condition = try codingVariableCondition(value)
+            guard let variable = document.variables[condition.name] else {
                 throw exploratoryFailure("coding.missing-variable", .insufficientData)
             }
-            return CodingValue(number: variable == fallback[1] ? 1 : 0, ranges: [])
+            return CodingValue(number: variable == condition.value ? 1 : 0, ranges: [])
         }
         switch value {
         case "lw": return CodingValue(number: Double(document.tokens.count), ranges: [])
@@ -445,51 +627,62 @@ private struct CodingContext {
             number: Double(selected.count), ranges: selected.map { document.tokens[$0].range })
     }
 
+    private func literalIsWithinSentence(start: Int, end: Int) throws -> Bool {
+        // Token validation guarantees monotonically increasing starts and ends. These
+        // searches exactly preserve first(end > start) and last(start < end), including nil.
+        var lower = 0
+        var upper = document.tokens.count
+        while lower < upper {
+            try work.visitLiteral()
+            let middle = lower + (upper - lower) / 2
+            if document.tokens[middle].range.end <= start {
+                lower = middle + 1
+            } else {
+                upper = middle
+            }
+        }
+        let firstSentence = lower < document.tokens.count ? document.tokens[lower].sentence : nil
+        lower = 0
+        upper = document.tokens.count
+        while lower < upper {
+            try work.visitLiteral()
+            let middle = lower + (upper - lower) / 2
+            if document.tokens[middle].range.start < end {
+                lower = middle + 1
+            } else {
+                upper = middle
+            }
+        }
+        let lastSentence = lower > 0 ? document.tokens[lower - 1].sentence : nil
+        return firstSentence == lastSentence
+    }
+
     private func tokenPositions(_ specification: String) throws -> [Int] {
-        let surfaceParts = specification.components(separatedBy: "=>")
-        let posParts = surfaceParts[0].components(separatedBy: "-->")
-        let inflectionParts = posParts.last?.components(separatedBy: "->") ?? []
-        let baseParts = posParts[0].components(separatedBy: "->")
-        guard surfaceParts.count <= 2, posParts.count <= 2, !baseParts[0].isEmpty,
-            !(surfaceParts.count == 2 && (inflectionParts.count == 2 || baseParts.count == 2))
-        else { throw exploratoryFailure("coding.invalid-token-condition") }
-        let pos = posParts.count == 2 ? inflectionParts.first : nil
-        let inflection =
-            posParts.count == 2
-            ? (inflectionParts.count == 2 ? inflectionParts[1] : nil)
-            : (baseParts.count == 2 ? baseParts[1] : nil)
-        if pos != nil, !document.tokens.allSatisfy({ $0.partOfSpeech != nil }) {
+        let condition = try CodingTokenCondition(specification)
+        if condition.partOfSpeech != nil, !document.tokens.allSatisfy({ $0.partOfSpeech != nil }) {
             throw exploratoryFailure("coding.missing-pos", .insufficientData)
         }
-        if inflection != nil, !document.tokens.allSatisfy({ $0.inflection != nil }) {
+        if condition.inflection != nil, !document.tokens.allSatisfy({ $0.inflection != nil }) {
             throw exploratoryFailure("coding.missing-inflection", .insufficientData)
         }
-        return (positions[codingNormalized(baseParts[0])] ?? []).filter { index in
+        return (positions[codingNormalized(condition.base)] ?? []).filter { index in
             let token = document.tokens[index]
-            return (pos == nil || token.partOfSpeech == pos)
-                && (inflection == nil || token.inflection == inflection)
-                && (surfaceParts.count == 1 || token.surface == surfaceParts[1])
+            return (condition.partOfSpeech == nil || token.partOfSpeech == condition.partOfSpeech)
+                && (condition.inflection == nil || token.inflection == condition.inflection)
+                && (condition.surface == nil || token.surface == condition.surface)
         }
     }
 
     private func proximity(
         _ terms: [String], ordered: Bool, distance: Int, boundary: String
     ) throws -> CodingValue {
-        guard terms.count >= 2, terms.count <= 32, !terms.contains(where: \.isEmpty),
-            Set(terms).count == terms.count || ordered
-        else { throw exploratoryFailure("coding.invalid-proximity") }
+        try validateCodingProximityTerms(terms, ordered: ordered)
         let candidates = try terms.map { try tokenPositions($0) }
         guard candidates.allSatisfy({ !$0.isEmpty }) else {
             return CodingValue(number: 0, ranges: [])
         }
         var matches: [GlifiUTF8Range] = []
-        var steps = 0
         func extend(_ selected: [Int], _ next: Int) throws {
-            steps += 1
-            guard steps <= 1_000_000 else {
-                throw exploratoryFailure("coding.proximity-work-limit", .insufficientResources)
-            }
-            if steps.isMultiple(of: 1_024) { try Task.checkCancellation() }
             if next == candidates.count {
                 guard let first = selected.min(), let last = selected.max() else { return }
                 guard matches.count < 10_000 else {
@@ -501,8 +694,10 @@ private struct CodingContext {
                         end: document.tokens[last].range.end))
                 return
             }
-            for candidate in candidates[next] where !selected.contains(candidate) {
-                guard let previous = selected.last else { continue }
+            for candidate in candidates[next] {
+                // Meter before every rejection, including duplicate, distance and boundary filters.
+                try work.visitProximity()
+                guard !selected.contains(candidate), let previous = selected.last else { continue }
                 if ordered, candidate <= previous { continue }
                 if distance > 0 {
                     if ordered {
@@ -524,10 +719,8 @@ private struct CodingContext {
                 try extend(selected + [candidate], next + 1)
             }
         }
-        guard candidates[0].count <= 1_000_000 else {
-            throw exploratoryFailure("coding.proximity-work-limit", .insufficientResources)
-        }
         for first in candidates[0] {
+            try work.visitProximity()
             try extend([first], 1)
             guard matches.count <= 10_000 else {
                 throw exploratoryFailure("coding.evidence-limit", .insufficientResources)
@@ -671,8 +864,8 @@ private struct CodingParser {
             else {
                 throw exploratoryFailure("coding.invalid-proximity")
             }
-            let terms = token.value[token.value.index(after: opening)..<closing].components(
-                separatedBy: "-")
+            let terms = codingProximityTerms(
+                String(token.value[token.value.index(after: opening)..<closing]))
             let suffix = String(token.value[token.value.index(after: closing)...])
             var option = suffix.isEmpty ? "" : String(suffix.dropFirst().dropLast())
             guard suffix.isEmpty || (suffix.hasPrefix("[") && suffix.hasSuffix("]")) else {
@@ -687,7 +880,8 @@ private struct CodingParser {
             left = .proximity(
                 terms, ordered: token.value.hasPrefix("seq("), distance: distance,
                 boundary: boundary)
-        } else if let number = Double(token.value), number.isFinite {
+        } else if let number = Double(token.value) {
+            guard number.isFinite else { throw exploratoryFailure("exploratory.numeric-overflow") }
             left = .number(number)
         } else {
             guard token.value != ")", precedence(token.value) == nil else {

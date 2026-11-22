@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.22 |
+| Versione | 1.6.24 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -38,6 +38,16 @@ preservando i confini del lavoro già in corso nell'altra chat.
 - [GS-DOR-230 — Selezione KWIC e fonte coerenti su macOS](dor-selezione-kwic-coerente-macos.md) — Ready; selezione e fonte verificate sul checkpoint macOS ffbfb431
 - [GS-DOR-231 — Lookup delle etichette fonte nelle viste macOS](dor-indice-fonti-ui-macos.md) — Ready; lookup misurato e verificato sul checkpoint macOS ffbfb431
 - [GS-DOR-232 — Selezione visuale e contesto fonte coerenti su macOS](dor-selezione-visuale-coerente-macos.md) — Ready; selezione e policy senza fonte verificate sul checkpoint macOS ffbfb431
+
+- [GS-DOR-176 — Cancellazione nelle repliche bootstrap](dor-cancellazione-resampling.md) — Ready
+
+- [GS-DOR-175 — Integrità degli export scientifici](dor-integrita-export-viste.md) — Ready
+
+- [GS-DOR-174 — Betweenness con molti cammini minimi](dor-betweenness-cammini-estremi.md) — Ready
+- [GS-DOR-177 — Buffer indicizzati della betweenness](dor-betweenness-indicizzata.md) — Ready
+- [GS-DOR-178 — Codifica dei digest degli export visuali](dor-digest-export-viste.md) — Ready
+- [GS-DOR-179 — Codifica delle identità canoniche](dor-identita-canoniche.md) — Ready
+
 
 - [GS-DOR-172 — Query sparse e qualità del clustering](dor-query-sparse-e-silhouette.md) — Ready
 
@@ -119,12 +129,18 @@ preservando i confini del lavoro già in corso nell'altra chat.
 
 - [GS-DOR-208 — Supporto condiviso dei benchmark dei test](dor-ottimizzazione-supporto-benchmark-test.md) — Ready
 
+- [GS-DOR-223 — Copertura funzionale del core nell’app](dor-copertura-core-app.md) — Ready con rischio accettato; ADR-0041
+
+- [GS-DOR-273 — Barriera di reset dei laboratori macOS](dor-barriera-reset-laboratori-macos.md) — Ready; Gate e preflight macOS superati sul checkpoint ea48ba88/base137; iPadOS, GUI manuale e G4 esclusi
+
+- [GS-DOR-274 — Presentazione corpus coerente su macOS](dor-presentazione-corpus-coerente-macos.md) — Ready; Gate e preflight macOS superati sul checkpoint ea48ba88/base137; iPadOS, GUI manuale e G4 esclusi
+
 - [GS-DOR-233 — Completamento delle varianti native KH Coder](dor-completamento-kh-coder.md) — Ready per prosecuzione e verifica; registrazione successiva all’avvio autorizzato
 
 - [GS-DOR-260 — Integrazioni native Apple coordinate](dor-integrazioni-native-apple.md) — Ready; letture bounded, attività macOS, comandi nativi e candidato Accelerate misurato
 
-- [GS-DOR-223 — Copertura funzionale del core nell’app](dor-copertura-core-app.md) — Ready con rischio accettato; ADR-0041
 
-- [GS-DOR-235 — Barriera di reset dei laboratori macOS](dor-barriera-reset-laboratori-macos.md) — Ready; Gate e preflight macOS superati sul checkpoint ea48ba88/base137; iPadOS, GUI manuale e G4 esclusi
 
-- [GS-DOR-234 — Presentazione corpus coerente su macOS](dor-presentazione-corpus-coerente-macos.md) — Ready; Gate e preflight macOS superati sul checkpoint ea48ba88/base137; iPadOS, GUI manuale e G4 esclusi
+- [GS-DOR-234 — Riverifica di correttezza e completezza KH](dor-riverifica-correttezza-kh.md) — Ready per il gate delle correzioni e della mappa di copertura
+
+- [GS-DOR-280 — Struttura e coesione del codice](dor-struttura-e-coesione-del-codice.md) — Ready; responsabilità, lifecycle e commit condivisi

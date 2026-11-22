@@ -10,7 +10,7 @@ public struct GlifiGraphAlgorithmLimits: Equatable, Sendable {
     public let maximumNodeCount: Int
     /// Maximum input arcs, including loops and repeated arcs, before projection.
     public let maximumEdgeCount: Int
-    /// Maximum admitted scalar cells across the inherent quadratic working buffers.
+    /// Maximum scalar cells across pairwise or exact-accumulator working buffers.
     public let maximumPairwiseCells: Int
     /// Maximum conservative operation-count estimate admitted before iterative work.
     public let maximumWork: Int
@@ -48,12 +48,26 @@ func admitGraph<Node>(_ graph: GlifiDirectedGraph<Node>, limits: GlifiGraphAlgor
 }
 
 func admitGraphWork(_ factors: [Int], limits: GlifiGraphAlgorithmLimits) throws {
-    var product = 1
-    for factor in factors {
-        guard factor >= 0, factor == 0 || product <= limits.maximumWork / factor else {
+    try admitGraphWork(phases: [factors], limits: limits)
+}
+
+/// Charges all phases against one budget, without overflowing either products or their sum.
+func admitGraphWork(phases: [[Int]], limits: GlifiGraphAlgorithmLimits) throws {
+    var remaining = limits.maximumWork
+    for factors in phases {
+        guard factors.allSatisfy({ $0 >= 0 }) else {
             throw graphAlgorithmFailure("network.resource-limit", category: .insufficientResources)
         }
-        product *= factor
+        if factors.contains(0) { continue }
+        var product = 1
+        for factor in factors {
+            guard product <= remaining / factor else {
+                throw graphAlgorithmFailure(
+                    "network.resource-limit", category: .insufficientResources)
+            }
+            product *= factor
+        }
+        remaining -= product
     }
 }
 

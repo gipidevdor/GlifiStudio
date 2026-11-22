@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-API-001 |
 | Tipo | Specifica normativa delle interfacce applicative e headless |
-| Versione | 1.32.0 |
+| Versione | 1.32.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -553,8 +553,10 @@ Il risultato è transitorio e non crea Artifact nel package del progetto.
 
 L’ampliamento del 2026-11-22 aggiunge nove operazioni avanzate nel medesimo JSON
 piatto di schema/versione 1, oltre a ordinal MDS e Simpson. Le facciate dedicate
-restano transitorie e non estendono GUI, persistenza o approvazione scientifica;
-il nuovo gate è registrato in [GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md).
+restano transitorie: il lotto headless originario non estende GUI, persistenza o
+approvazione scientifica; il suo gate è registrato in
+[GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md).
+L'accesso applicativo successivo è distinto e segue ADR-0041 e GS-VER-223.
 
 ## 17. Parità continua delle operazioni pubbliche
 

@@ -103,6 +103,15 @@ extension GlifiStatisticalFoundation {
         resampleCount: Int = 2_000,
         seed: UInt64
     ) throws -> GlifiBootstrapInterval {
+        try bootstrapMeanInterval(
+            sample, confidenceLevel: confidenceLevel, resampleCount: resampleCount,
+            seed: seed, checkpoint: { _ in try Task.checkCancellation() })
+    }
+
+    static func bootstrapMeanInterval(
+        _ sample: [Double], confidenceLevel: Double, resampleCount: Int, seed: UInt64,
+        checkpoint: (Int) throws -> Void
+    ) throws -> GlifiBootstrapInterval {
         guard sample.count >= 2 else {
             throw resamplingFailure("statistics.insufficient-sample-size")
         }
@@ -118,7 +127,8 @@ extension GlifiStatisticalFoundation {
         let means = try bootstrapMeanReplicates(
             sample,
             resampleCount: resampleCount,
-            seed: seed
+            seed: seed,
+            checkpoint: checkpoint
         )
         let tail = (1 - confidenceLevel) / 2
         return GlifiBootstrapInterval(
@@ -136,20 +146,35 @@ extension GlifiStatisticalFoundation {
     static func bootstrapMeanReplicates(
         _ sample: [Double],
         resampleCount: Int,
-        seed: UInt64
+        seed: UInt64,
+        checkpoint: (Int) throws -> Void = { _ in try Task.checkCancellation() }
     ) throws -> [Double] {
+        try checkpoint(0)
+        var progress = ResamplingObservationProgress()
         var generator = GlifiSplitMix64(seed: seed)
         var means: [Double] = []
         means.reserveCapacity(resampleCount)
         for iteration in 0..<resampleCount {
-            if iteration.isMultiple(of: 1_024) { try Task.checkCancellation() }
+            if iteration > 0, iteration.isMultiple(of: 1_024) {
+                try checkpoint(progress.completed)
+            }
             var total = 0.0
-            for _ in sample.indices {
-                total += sample[generator.index(below: sample.count)]
+            var drawn = 0
+            while drawn < sample.count {
+                let take = try progress.chunkCount(
+                    upTo: sample.count - drawn, checkpoint: checkpoint)
+                for _ in 0..<take {
+                    total += sample[generator.index(below: sample.count)]
+                }
+                progress.consume(take)
+                drawn += take
             }
             means.append(total / Double(sample.count))
         }
-        return means.sorted()
+        try checkpoint(progress.completed)
+        let sorted = means.sorted()
+        try checkpoint(progress.completed)
+        return sorted
     }
 
     /// `MovingBlockBootstrap-v1` percentile interval of the mean for dependent sequences.
@@ -163,6 +188,16 @@ extension GlifiStatisticalFoundation {
         confidenceLevel: Double = 0.95,
         resampleCount: Int = 2_000,
         seed: UInt64
+    ) throws -> GlifiBootstrapInterval {
+        try movingBlockBootstrapMeanInterval(
+            sequence, blockLength: blockLength, confidenceLevel: confidenceLevel,
+            resampleCount: resampleCount, seed: seed,
+            checkpoint: { _ in try Task.checkCancellation() })
+    }
+
+    static func movingBlockBootstrapMeanInterval(
+        _ sequence: [Double], blockLength: Int, confidenceLevel: Double,
+        resampleCount: Int, seed: UInt64, checkpoint: (Int) throws -> Void
     ) throws -> GlifiBootstrapInterval {
         guard sequence.count >= 2, (1...sequence.count).contains(blockLength) else {
             throw resamplingFailure("statistics.invalid-block-length", category: .invalidInput)
@@ -182,27 +217,38 @@ extension GlifiStatisticalFoundation {
             // Keep MBB validation precedence, then reuse the identical draw stream and checkpoints.
             return try bootstrapMeanInterval(
                 sequence, confidenceLevel: confidenceLevel,
-                resampleCount: resampleCount, seed: seed)
+                resampleCount: resampleCount, seed: seed, checkpoint: checkpoint)
         }
+        try checkpoint(0)
+        var progress = ResamplingObservationProgress()
         var generator = GlifiSplitMix64(seed: seed)
         let count = sequence.count
         var means: [Double] = []
         means.reserveCapacity(resampleCount)
         for iteration in 0..<resampleCount {
-            if iteration.isMultiple(of: 1_024) { try Task.checkCancellation() }
+            if iteration > 0, iteration.isMultiple(of: 1_024) {
+                try checkpoint(progress.completed)
+            }
             var total = 0.0
             var drawn = 0
             while drawn < count {
                 let start = generator.index(below: count - blockLength + 1)
                 let take = min(blockLength, count - drawn)
-                for offset in 0..<take {
-                    total += sequence[start + offset]
+                var offset = 0
+                while offset < take {
+                    let chunk = try progress.chunkCount(upTo: take - offset, checkpoint: checkpoint)
+                    let end = offset + chunk
+                    for position in offset..<end { total += sequence[start + position] }
+                    progress.consume(chunk)
+                    offset = end
                 }
                 drawn += take
             }
             means.append(total / Double(count))
         }
+        try checkpoint(progress.completed)
         means.sort()
+        try checkpoint(progress.completed)
         let tail = (1 - confidenceLevel) / 2
         return GlifiBootstrapInterval(
             estimate: sequence.reduce(0, +) / Double(count),
@@ -350,6 +396,26 @@ extension GlifiStatisticalFoundation {
             indices[next] = indices[next - 1] + 1
         }
         return true
+    }
+}
+
+/// Work-based checkpoints shared across replicas; the diagnostic count saturates at Int.max.
+private struct ResamplingObservationProgress {
+    private var remaining = 4_096
+    private(set) var completed = 0
+
+    mutating func chunkCount(upTo count: Int, checkpoint: (Int) throws -> Void) throws -> Int {
+        if remaining == 0 {
+            try checkpoint(completed)
+            remaining = 4_096
+        }
+        return min(count, remaining)
+    }
+
+    mutating func consume(_ count: Int) {
+        remaining -= count
+        let (next, overflow) = completed.addingReportingOverflow(count)
+        completed = overflow ? Int.max : next
     }
 }
 

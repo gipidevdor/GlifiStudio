@@ -106,3 +106,24 @@ func graphCompletionKitRejectsAmbiguousNestedInputs() throws {
         from: Data(#"{"nodes":["a","b"],"edges":[{"source":"a","target":"b"}]}"#.utf8))
     #expect(omitted.edges.first?.weight == 1)
 }
+
+@Test("Il layout rifiuta cardinalità delle posizioni incoerenti al confine Kit")
+func graphCompletionKitPositionCardinality() async throws {
+    let input = GlifiStudioGraphInput(nodes: ["a", "b"], edges: [])
+    for count in [0, 3] {
+        do {
+            _ = try await GlifiStudioGraphAlgorithms.layout(
+                input, method: .fruchtermanReingold, maximumIterations: 1,
+                initialPositions: Array(repeating: .init(x: 0, y: 0), count: count))
+            Issue.record("Mismatched initial positions were accepted")
+        } catch let failure {
+            #expect(failure.code == "network.invalid-layout-positions")
+            #expect(failure.category == "invalidInput")
+            #expect(failure.retainedState == "unchanged")
+        }
+    }
+    let result = try await GlifiStudioGraphAlgorithms.layout(
+        input, method: .fruchtermanReingold, maximumIterations: 1,
+        initialPositions: [.init(x: -0.5, y: 0), .init(x: 0.5, y: 0)])
+    #expect(result.positions.count == 2)
+}

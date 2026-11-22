@@ -6,13 +6,13 @@
 | --- | --- |
 | Identificatore | GS-MET-001-23 |
 | Tipo | Specifica dei contratti numerici e della copertura |
-| Versione | 1.3.0 |
+| Versione | 1.4.2 |
 | Stato | Contratti revisionati; supporto numerico per variante |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Ambito richiesto dall'iniziatore; promozione scientifica separata secondo ADR-0031 |
 | Documento padre | [GS-MET-001](README.md) |
-| Riferimenti | RF-087; ADR-0032; ADR-0035; GS-VER-160; GS-VER-233 |
+| Riferimenti | RF-087; ADR-0032; ADR-0035; GS-VER-160; GS-VER-233; GS-VER-234 |
 
 ## Scopo e copertura
 
@@ -45,7 +45,31 @@ L’ampliamento è autorizzato in [ADR-0035](../adr/0035-completamento-nativo-kh
 | Regole automatiche e frequenze dei codici | GlifiCodingRuleSet e matrice multi-label con evidenze UTF-8 |
 | Tabelle incrociate e similarità dei codici | crosstab con denominatori/mancanti espliciti; distanze condivise |
 | CA, MDS, clustering, rete e SOM dei codici | Stessi operatori numerici sulla matrice documento-codice |
-| Matrici documento-parola, parola-contesto, documento-codice | Tabella sparsa, trasposizione bounded e matrice binaria dei codici |
+| Matrici documento-parola e documento-codice | Tabella sparsa, trasposizione bounded e matrice binaria dei codici |
+| Matrice parola-contesto KH A.6.8 | Non implementata: la trasposizione documento-parola non calcola medie condizionate sui contesti |
+
+La riverifica di [GS-VER-234](../evidenze/GS-VER-234-riverifica-correttezza-completezza.md)
+corregge la precedente attribuzione della matrice parola-contesto. La copertura
+per famiglie e la possibilità di fornire una matrice già preparata non provano
+la disponibilità di ogni variante o preparazione KH. Restano non implementati
+z-score campionario per righe/colonne, generazione dei vettori parola-contesto
+condizionati e SOM con le due fasi/inizializzazione PCA del profilo KH. Il SOM
+nativo sottostante ha un proprio contratto batch gaussiano a singolo schedule.
+
+| Profilo pubblico KH | Stato reale del profilo nativo |
+| --- | --- |
+| Z-score per parola/documento (A.5.9, A.6.2) | Nessun operatore generale; la standardizzazione interna PCA non restituisce questa matrice |
+| Frequenze con lunghezza completa del documento | `perThousand` usa la somma delle colonne fornite: applicarlo prima di filtrare i termini, altrimenti il denominatore KH non è disponibile |
+| Parola-contesto per livelli e pesi (A.6.8) | Generatore assente; non è una matrice di Jaccard o una trasposizione |
+| MDS ordinale e gestione dei tie | Il profilo nativo impone tie secondary/strong; non implementa la variante primary di smacof |
+| SOM KH a due fasi e inizializzazione PCA | Variante diversa dal batch gaussiano nativo; non si compone con due fit che reinizializzano i prototipi |
+| MI³ e Z con TF globali e span (A.5.6) | Nessun operatore dedicato; PMI naturale e misure su opportunità di coppia hanno universo distinto |
+| Scaling CA e κ del classificatore | Componibili dagli operatori esistenti, senza promettere un workflow Kit/CLI integrato |
+| Addestramento NB incrementale (A.6.3) | Statistiche sufficienti non conservate nel modello pubblico; rifit richiede il training originale |
+| TermExtract (A.4.4) | Non implementato; il riferimento lo limita a lingue fuori dalla baseline italiana |
+
+Queste differenze restano requisiti/varianti aperti: questa specifica non attesta
+parità numerica o completa equivalenza funzionale con KH Coder.
 
 Le nuove primitive sono API di libreria in memoria. Nel lotto originario di
 ADR-0032 il planner persistente e l'interfaccia applicativa conservavano le
@@ -132,8 +156,15 @@ sequenza, la modularità del grafo originale
 `Q=Σ_c[w_in(c)/W − γ(strength(c)/(2W))²]`, con `0<γ≤1000`.
 Tie e comunità conservano l’ordine dichiarato dei nodi e il primo massimo.
 
-- `GirvanNewman-inverse-strength-v1`: ricalcola la edge betweenness dopo
-  ogni rimozione, con costo del cammino uguale all’inverso dell’intensità.
+- `GirvanNewman-inverse-strength-exact-binary64-v2`: ricalcola la edge betweenness
+  dopo ogni rimozione. I reciproci delle intensità proiettate sono binary64;
+  somme dei costi e accumuli non negativi usano 34 limb UInt64, con confronti
+  esatti delle somme rappresentate, senza epsilon che fonda cammini distinti.
+  L’uscita è arrotondata nearest-even una sola volta. Normalizzazione, divisioni
+  e rapporti fra molteplicità restano binary64: non è aritmetica razionale dei
+  pesi originari. Sostituisce v1, che poteva perdere cammini pari per associazione
+  delle somme e rompere i tie canonici. L’ammissione conteggia il fattore 34 di
+  lavoro e `34*(3N+2E+1)` celle aggiuntive prima dei buffer.
 - `ClausetNewmanMoore-weighted-v1`: agglomerazione sparsa con guadagni di
   modularità e heap di candidati; conserva gerarchia e storia dell’obiettivo.
 - `Walktrap-weighted-mean-loops-v1`: cammini pesati di lunghezza 1–64,
@@ -146,6 +177,9 @@ e distanza virtuale `2*max(1,diametro)` fra componenti: questa estensione non
 trasforma distanze irraggiungibili in cammini osservati. I pesi non partecipano ai
 layout; direzioni e multiarchi coalescono, loop e archi nulli sono omessi.
 Coordinate, seed, iterazioni, arresto e storia energetica KK sono espliciti.
+L’ammissione KK somma preparazione all-pairs BFS e iterazioni nello stesso
+budget, prima dei buffer. La facciata controlla la cardinalità delle posizioni
+prima di convertirle in un nuovo array.
 
 `Prim-minimum-spanning-forest-v1` usa invece i pesi come costi non negativi:
 omette loop, prende il minimo costo fra paralleli e conserva costi nulli.
@@ -162,10 +196,16 @@ geometria governa il vicinato e l’errore topografico; i vicini immediati sono
 a distanza uno, al massimo quattro nel rettangolo e sei nell’esagono.
 Per ogni epoca:
 `m_u = sum_i h(u,bmu_i) x_i / sum_i h(u,bmu_i)`.
-Il raggio decade geometricamente da initialRadius a finalRadius. L'aggregazione di
+Il raggio interpola geometricamente da initialRadius a finalRadius, con endpoint
+esatti e calcolo logaritmico quando il rapporto non è rappresentabile. L'aggregazione di
 somme e popolazioni per unità vincente è algebricamente equivalente alla formula
 diretta e viene confrontata con essa entro 1e-12. Si restituiscono prototipi,
 assegnazioni, errore di quantizzazione e topografico, epoche e seed.
+Norme estreme usano un calcolo stabile; il confronto di convergenza non elimina
+una tolleranza positiva mediante un quadrato in underflow. Un riscalamento SOM
+si applica solo agli input estremi e solo quando conserva ogni valore; altrimenti
+il fit fallisce con `exploratory.numeric-range`, senza prototipi o diagnostiche
+zero apparentemente validi. Gli input ordinari mantengono il percorso vDSP.
 La mappa non è una proiezione che garantisce distanze globali.
 La U-matrix restituisce per ogni unità la mediana delle distanze euclidee dai
 codebook immediatamente vicini; ai bordi usa i soli vicini presenti, per una
@@ -228,6 +268,8 @@ L’ammissione è cumulativa prima di tutti i fit: conteggia Gibbs, accumulo the
 anche per documenti vuoti, phi, predizioni, likelihood richieste, diagnostiche e
 fold-in. Celle documento×topic vengono controllate prima della tabella sparsa;
 fit e inferenza restano cancellabili, senza risultati parziali pubblicati.
+I Gibbs sweep e le predizioni saltano gli indici dei documenti vuoti senza
+saltare estrazioni casuali: theta continua a includere tutti i documenti.
 
 ## Regole di codifica
 
@@ -254,6 +296,13 @@ conservati; la versione del modello Apple non esposta resta assente. Disponibili
 non equivale ad accuratezza linguistica; italiano è la sola baseline di questo lotto.
 Variabili mancanti, divisione per zero, riferimenti ignoti/ciclici, overflow,
 profondità e limiti delle evidenze falliscono senza produrre una matrice parziale.
+Gli intervalli UTF-8 decodificati rispettano gli stessi invarianti del costruttore;
+le superfici esterne coincidono con i byte sorgenti, non soltanto per equivalenza
+canonica Unicode. I qualificatori sono validati in tutti i rami prima della
+valutazione; frecce POS/flessione non sono separatori di prossimità. Letterali
+numerici non finiti falliscono; una parola numerica resta possibile tra virgolette.
+Ogni candidato di prossimità consuma il limite condiviso anche quando scartato,
+con cancellazione periodica. Il bound non riparte a ogni codice o documento.
 Anche le evidenze aggregate hanno un budget; i riferimenti non ne provocano
 un'espansione esponenziale. Una negazione può applicare un codice senza un
 intervallo positivo, e questo non viene inventato.
@@ -292,9 +341,12 @@ in output; la codifica aggregata ammette 10.000 unità entro lo stesso MiB.
 
 Gli operatori aggiunti restano `candidate`, anche quando i test locali passano:
 non ereditano i manifest delle nove varianti storiche per somiglianza del nome.
-[GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md) registra i mirati
-osservati e il gate globale ancora in verifica. GUI, persistenza, nuove lingue,
-V6 esterno e dispositivi non sono promossi da questo incremento.
+[GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md) conserva i mirati
+e il gate locale del completamento, superato nel suo perimetro storico.
+[GS-VER-234](../evidenze/GS-VER-234-riverifica-correttezza-completezza.md) registra
+la successiva riverifica, le correzioni e i limiti KH ancora aperti. GUI,
+persistenza, nuove lingue, V6 esterno e dispositivi non sono promossi da questo
+incremento.
 
 ## Riferimenti
 

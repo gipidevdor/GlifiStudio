@@ -4,7 +4,7 @@
 
 | Campo | Valore |
 | --- | --- |
-| Identificatore | GS-DOR-235 |
+| Identificatore | GS-DOR-273 |
 | Tipo | Scheda Definition of Ready |
 | Versione | 1.3.0 |
 | Stato | Ready |
@@ -39,11 +39,11 @@ pubblicazione precedente, senza dipendere da Task.cancel, e il retry è valido.
 | contratto di dominio/API | Identità privata UUID della generazione del modello, rinnovata da reset; cattura prima del primo await e verifica dopo l'ultimo await, immediatamente prima del blocco di pubblicazione MainActor senza ulteriori await. Output e presentazione derivata appartengono alla medesima generazione. Nessuna API pubblica Kit/Core o identità di dominio cambia |
 | failure semantics | Un'operazione superata dal reset termina con GlifiStudioFailure: code operation.cancelled, category cancelled, operation analyze, retryDisposition newRequest, retainedState unchanged. Rimane valido lo stato corrente imposto dal reset o da un retry successivo. Failure e cancellazione ordinarie conservano il comportamento e l'output precedente previsti; ownership, admission e busy del coordinatore non cambiano |
 | esperienza prevista | Nessun nuovo testo o controllo; si riusa la failure cancellata localizzata. Risultati, righe, filtri e pagine resettati non ricompaiono per il completamento precedente. Compilazione e test non sono audit della GUI o dell'accessibilità |
-| verifica | Prova deterministica sui quattro percorsi con fixture numeriche reali: RED atteso soltanto Advanced, tre GREEN attesi per i controlli già presenti di valutazione linguistica/temporale e corpus. Non rimuovere guard preesistenti per costruire un falso RED. Task.immediate sul Main Actor esegue inline fino al primo hop del calcolo concurrent; il chiamante esegue reset nello stesso turno prima che il completamento possa riprendere sul Main Actor. API SDK disponibile da macOS 26, target macOS 27. Nessun hook o iniezione in produzione, sleep, polling o yield arbitrario. Assert di mancata pubblicazione dopo reset senza Task.cancel, metadata della failure, stato derivato, failure ordinaria e retry; i test esistenti restano attivi. GS-VER-235 registra risultati effettivi; gate e preflight macOS sul sorgente finale identificato |
+| verifica | Prova deterministica sui quattro percorsi con fixture numeriche reali: RED atteso soltanto Advanced, tre GREEN attesi per i controlli già presenti di valutazione linguistica/temporale e corpus. Non rimuovere guard preesistenti per costruire un falso RED. Task.immediate sul Main Actor esegue inline fino al primo hop del calcolo concurrent; il chiamante esegue reset nello stesso turno prima che il completamento possa riprendere sul Main Actor. API SDK disponibile da macOS 26, target macOS 27. Nessun hook o iniezione in produzione, sleep, polling o yield arbitrario. Assert di mancata pubblicazione dopo reset senza Task.cancel, metadata della failure, stato derivato, failure ordinaria e retry; i test esistenti restano attivi. GS-VER-273 registra risultati effettivi; gate e preflight macOS sul sorgente finale identificato |
 | dati e migrazione | Il reset invalida soltanto la pubblicazione applicativa. Non annulla un Artifact Core già committato né modifica snapshot persistenti, formati o migrazioni. UUID esclusivamente di sessione, non esportati |
 | sicurezza/privacy | Fixture sintetiche e temporanee; nessun corpus reale, segreto, log di contenuto/path, rete, dipendenza, entitlement o telemetria nuova. Nessun confine di iniezione è aggiunto al prodotto |
 | prestazioni/sistema | Costo O(1) per reset/esecuzione, senza scansioni o lavoro aggiuntivo per elemento. Calcolo e preparazione restano fuori Main Actor; guard e pubblicazione restano sul Main Actor. Nessuna attività di polling o promessa di latenza/energia |
-| tracciabilità | CMP-235 inizialmente specified; GS-VER-235 candidata, test nativi dei tre modelli e verifica macOS. Aggiornare nello stesso incremento codice, prove, registri e stato pertinente; nessuna promozione di CMP-223 o G4/G5 |
+| tracciabilità | CMP-233 inizialmente specified; GS-VER-273 candidata, test nativi dei tre modelli e verifica macOS. Aggiornare nello stesso incremento codice, prove, registri e stato pertinente; nessuna promozione di CMP-223 o G4/G5 |
 | decisioni e recupero | Correzione locale coerente con ADR-0041 e GS-STD-001-07/29; nessuna nuova decisione architetturale. Revert del solo incremento se il guard modifica risultati, ownership o stato valido. Il WIP altrui resta preservato |
 
 ## Casi di accettazione

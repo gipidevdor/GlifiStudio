@@ -246,6 +246,49 @@ func graphCompletionAdmissionAndCancellation() async throws {
     } catch is CancellationError {}
 }
 
+@Test("Kamada–Kawai addebita preparazione e iterazioni allo stesso budget")
+func graphCompletionCumulativeKamadaKawaiWork() throws {
+    let graph = try completionGraph(2, [(0, 1, 1)])
+    // Each phase fits 75 individually; the complete estimate is 68 + 4 + 4 = 76.
+    do {
+        _ = try GlifiNetworkAnalysis.layout(
+            graph, method: .kamadaKawai, maximumIterations: 1,
+            limits: .init(maximumWork: 75))
+        Issue.record("Separate phases bypassed the cumulative work budget")
+    } catch let failure as GlifiFailure {
+        #expect(failure.code == "network.resource-limit")
+        #expect(failure.category == .insufficientResources)
+        #expect(failure.retainedState == .unchanged)
+    }
+    _ = try GlifiNetworkAnalysis.layout(
+        graph, method: .kamadaKawai, maximumIterations: 1,
+        limits: .init(maximumWork: 76))
+    _ = try GlifiNetworkAnalysis.layout(
+        graph, method: .fruchtermanReingold, maximumIterations: 1,
+        limits: .init(maximumWork: 68))
+}
+
+@Test("La betweenness pesata conserva i pareggi dell'oracolo razionale indipendente")
+func graphCompletionWeightedBetweennessRationalOracle() throws {
+    let pairs = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
+    let fixtures: [[Int64]] = [[1, 1, 7, 6, 3, 6], [1, 3, 6, 6, 3, 2]]
+    for weights in fixtures {
+        let graph = try completionGraph(
+            4, zip(pairs, weights).map { ($0.0.0, $0.0.1, Double($0.1)) })
+        let expected = completionRationalBetweenness(pairs, strengths: weights)
+        let prepared = try GlifiPreparedCommunityGraph(graph, limits: .standard)
+        let actual = try communityEdgeBetweenness(
+            prepared, active: Array(repeating: true, count: prepared.edges.count))
+        #expect(zip(actual, expected).allSatisfy { abs($0 - $1.value) < 1e-12 })
+        let maximum = try #require(expected.max())
+        let firstMaximum = try #require(expected.firstIndex(of: maximum))
+        let result = try GlifiNetworkAnalysis.communities(graph, method: .edgeBetweenness)
+        let removed = try #require(result.removedEdges.first)
+        #expect(removed.source == pairs[firstMaximum].0)
+        #expect(removed.target == pairs[firstMaximum].1)
+    }
+}
+
 private func completionGraph(_ count: Int, _ edges: [(Int, Int, Double)]) throws
     -> GlifiDirectedGraph<Int>
 {
@@ -351,4 +394,81 @@ private func completionDenseWalkProfiles(_ graph: GlifiDirectedGraph<Int>, lengt
         power = next
     }
     return power.map { row in row.enumerated().map { $0.element / sqrt(degrees[$0.offset]) } }
+}
+
+/// Exact arithmetic is deliberately limited to these four-node integer-strength fixtures.
+///
+/// All simple paths contain at most three edges; every cross-product fits Int64.
+private struct CompletionRational: Comparable {
+    let numerator: Int64
+    let denominator: Int64
+    var value: Double { Double(numerator) / Double(denominator) }
+
+    init(_ numerator: Int64, _ denominator: Int64 = 1) {
+        var a = numerator
+        var b = denominator
+        while b != 0 { (a, b) = (b, a % b) }
+        self.numerator = numerator / a
+        self.denominator = denominator / a
+    }
+
+    static func + (left: Self, right: Self) -> Self {
+        Self(
+            left.numerator * right.denominator + right.numerator * left.denominator,
+            left.denominator * right.denominator)
+    }
+
+    static func < (left: Self, right: Self) -> Bool {
+        left.numerator * right.denominator < right.numerator * left.denominator
+    }
+}
+
+private func completionRationalBetweenness(_ pairs: [(Int, Int)], strengths: [Int64])
+    -> [CompletionRational]
+{
+    var result = Array(repeating: CompletionRational(0), count: pairs.count)
+    for source in 0..<4 {
+        for target in 0..<source {
+            var best: CompletionRational?
+            var shortest: [[Int]] = []
+            func visit(_ node: Int, cost: CompletionRational, seen: Int, path: [Int]) {
+                if let best, cost > best { return }
+                if node == target {
+                    guard let incumbent = best else {
+                        best = cost
+                        shortest = [path]
+                        return
+                    }
+                    if cost < incumbent {
+                        best = cost
+                        shortest = [path]
+                    } else if cost == incumbent {
+                        shortest.append(path)
+                    }
+                    return
+                }
+                for (edge, pair) in pairs.enumerated() {
+                    let next: Int
+                    if pair.0 == node {
+                        next = pair.1
+                    } else if pair.1 == node {
+                        next = pair.0
+                    } else {
+                        continue
+                    }
+                    guard seen & (1 << next) == 0 else { continue }
+                    visit(
+                        next, cost: cost + CompletionRational(1, strengths[edge]),
+                        seen: seen | (1 << next), path: path + [edge])
+                }
+            }
+            visit(source, cost: CompletionRational(0), seen: 1 << source, path: [])
+            for path in shortest {
+                for edge in path {
+                    result[edge] = result[edge] + CompletionRational(1, Int64(shortest.count))
+                }
+            }
+        }
+    }
+    return result
 }

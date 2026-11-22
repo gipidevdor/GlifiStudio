@@ -1,59 +1,46 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# GS-VER-234 — Presentazione corpus coerente su macOS
+# GS-VER-273 — Barriera di reset dei laboratori macOS
 
 | Campo | Valore |
 | --- | --- |
-| Identificatore | GS-VER-234 |
-| Tipo | Evidenza di verifica della presentazione applicativa macOS |
-| Versione | 1.2.4 |
+| Identificatore | GS-VER-273 |
+| Tipo | Evidenza di verifica del lifecycle applicativo macOS |
+| Versione | 1.3.4 |
 | Stato | Superato nel perimetro automatico macOS sul checkpoint ea48ba88 |
 | Responsabile | Codex, esecuzione automatizzata interna |
 | Ultima modifica | 2026-11-22 |
-| Approvazione | GS-DOR-234; GS-DOR-223; ADR-0041; RF-046; RQ-013/047/058/060/063 |
+| Approvazione | GS-DOR-273; GS-DOR-223; ADR-0041; RQ-011/013/047/058/060/063 |
 
 ## Perimetro
 
-Sono verificate sul checkpoint ea48ba88 l'invalidazione sincrona dei derivati al cambio di tabella
-e l'indipendenza dei task di filtro e proiezione del modello corpus macOS.
-Righe, indici, conteggio, pagina e asse devono riferirsi alla presentazione
-corrente; ricerca e tabella più recenti vanno applicate alla proiezione finale.
-I risultati Core/Kit, i formati e la persistenza non cambiano.
-Durante pending il modello espone isPreparingPresentation e la vista mostra
-ProgressView localizzato cm.presentation.updating; conteggio e nessun risultato
-sono nascosti, le pagine disabilitate, asse/tabella/ricerca ancora modificabili.
+La proprietà verificata sul checkpoint ea48ba88 è il mancato ripopolamento di un modello resettato
+quando una precedente operazione termina. Sono interessati il laboratorio
+avanzato per la nuova correzione; valutazione linguistica/temporale e corpus
+sono regressioni dei guard lifecycleID/lifecycleNonce già arrivati dal lavoro
+223, preservati senza attribuzione a questo lotto. Il controllo è una
+generazione privata del modello, indipendente dalla cancellazione del Task.
 
-La revisione individua un possibile accesso fuori limite con indici della
-tabella precedente e un'incoerenza asse/dati quando la ricerca invalida il
-token della proiezione. Le prove seguenti riproducono l'invalidazione mancante
-senza provocare un trap volontario; non sono osservazioni di una GUI reale.
+La revisione del codice individua il confine async da presidiare; la
+riproduzione RED successiva è registrata separatamente sotto. L'ownership Home attuale attende lo stato occupato
+prima di cambiare documento: non si attribuisce il difetto a un percorso GUI
+osservato. La correzione non annulla Artifact Core già validamente committati.
 
-## RED iniziale e RED corretto
+## Riproduzione RED e attribuzione
 
-La prima corsa termina con una failure di preparazione: la tabella iniziale
-scelta dalla fixture non consente di trovare la tabella più corta richiesta.
-Non raggiunge l'asserzione del difetto e non viene presentata come RED valido.
-Dati in `234-red-results.json` e `234-red.log`.
+La corsa originariamente nominata reset 233 termina con **exit 65**: quattro
+definizioni, tre superate e una fallita, zero saltate e `runtimeWarnings: []`.
+Il solo RED è `StudioAdvancedAnalysisTests.resetDuringImmediateExecutionPreventsPublicationAndAllowsRetry`,
+che raggiunge l'asserzione pertinente sulla pubblicazione invalidata dal reset.
+Valutazione linguistica/temporale e corpus sono tre GREEN dei guard già
+arrivati dal lavoro 223: non sono tre difetti riprodotti o nuove correzioni
+attribuite a questo incremento. Nessun guard è rimosso per costruire RED.
 
-Dopo la sola correzione della scelta della tabella nella fixture, la corsa
-prima della patch produttiva termina con **una definizione fallita**, zero
-superate/saltate e `runtimeWarnings: []`. Il test
-`StudioCorpusPresentationTests.switchingTablesInvalidatesPreviousRowsBeforeFiltering`
-raggiunge `model.visibleRows.isEmpty`, falsa con le righe precedenti ancora
-presenti. Non viene provocato l'accesso fuori limite. Riepilogo, input e log
-sono `234-red-corrected-results.json`, `234-red-corrected-inputs.json` e
-`234-red-corrected.log` nel dossier storico `/tmp/MacStudio233Evidence/`.
-
-## Strategia e modifica del candidato
-
-La suite StudioCorpusPresentationTests è registrata nel target macOS. Usa
-fixture correspondence reale, cambio a tabella più corta nello stesso turno,
-richiesta di pagina durante pending, asse+ricerca+tabella, latest-axis-wins e
-reset. L'attesa della presentazione usa withObservationTracking dello stato
-observable, senza API await aggiunte al prodotto, hook o attese temporali
-arbitrarie. Il candidato invalida sincronicamente i derivati e separa i token
-per applicare l'ultimo intento alla proiezione corrente; il risultato Core/Kit
-non viene ricalcolato per filtrare o cambiare pagina.
+Fixture numeriche reali e Task.immediate sul Main Actor forzano il reset dopo
+l'avvio inline e il primo hop concurrent, prima della pubblicazione, senza
+Task.cancel, hook produttivi, sleep o yield arbitrari. Riepilogo e sorgenti
+sono `233-red-results.json`, `233-red-source-hashes.json` e `233-red.log` nel
+dossier storico. La rinumerazione a 235 non crea un'altra esecuzione.
 
 ## GREEN congiunto del candidato
 
@@ -72,10 +59,10 @@ contributi concomitanti eventualmente già presenti mantengono la loro
 attribuzione. Gli esiti della nuova integrazione identificata non sono
 attribuiti a questa fase legacy e sono registrati separatamente sotto.
 
-Nella fase legacy CMP-234 passa da specified a **implemented nel candidato**. Restano da
-acquisire gate e preflight del contenuto finale; nessun esito precedente è
-trasferito al nuovo codice. lifecycleNonce del lavoro 223 e il lotto di reset
-235 mantengono i propri limiti e la propria attribuzione.
+Nella fase legacy CMP-233 passa da specified a **implemented nel candidato**. La nuova patch
+è limitata ad Advanced; i guard preesistenti di Evaluation e Corpus restano
+preservati. Le evidenze 223, 230–232, 234 e 270 mantengono i propri perimetri;
+nessuna prova storica, promozione scientifica o chiusura G4/G5 è trasferita.
 
 ## Checkpoint allineato verificato (ea48ba88)
 
@@ -139,7 +126,7 @@ metadati Info.plist, privacy manifest e asset sono conformi. Il log
 La corrispondenza di hash e mode dei 1 072 ingressi è verificata prima e dopo
 le corse, senza modificare il checkpoint congelato.
 
-CMP-234 e CMP-235 sono **verified nel solo perimetro automatico del checkpoint
+CMP-234 e CMP-233 sono **verified nel solo perimetro automatico del checkpoint
 ea48ba88 sulla base 1375950**. Nell'originale legacy 02c1c66 i fix sono applicati
 preservando la GUI diversa e gli aggiornamenti concomitanti; il gate appartiene
 al checkpoint allineato, non è una certificazione dell'intero checkout condiviso
@@ -150,6 +137,20 @@ rimane preservato. iPadOS, verifiche manuali e G4 restano esclusi. Dossier final
 
 ## Limiti
 
-Soli test automatici macOS: nessuna attestazione della GUI reale, VoiceOver,
-Voice Control, iPadOS, energia, CI remota o promozione scientifica. I contributi
-concorrenti e i dati preesistenti rimangono preservati.
+Soltanto test automatici macOS. Nessuna attestazione della GUI reale,
+VoiceOver, Voice Control, iPadOS, energia, CI remota o rollback di persistenza.
+Il contenuto preesistente e i contributi concorrenti restano preservati.
+
+## Rinumerazione e provenienza delle esecuzioni
+
+Questa unità di reset era stata registrata localmente come 233. Il controllo
+successivo di origin/main `137595026cf1aa416094fc3bf82aa8b0dfe04027` rileva
+l'identificatore 233 già assegnato al completamento KH Coder; l'identificatore
+235 risulta libero nella revisione verificata e viene adottato per questo
+stesso incremento. Le revisioni Ready 1.0–1.2 precedono codice e test con il
+nome iniziale; la 1.3 cambia l'identità documentale, senza retrodatare readiness
+o creare una nuova esecuzione.
+
+Directory MacStudio233, file e log con prefisso 233 restano nomi storici della
+stessa prova sul modello di reset. Non si rinominano campioni, conteggi o log
+grezzi e non si attribuiscono queste prove al completamento KH Coder upstream.

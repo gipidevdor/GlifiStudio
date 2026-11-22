@@ -376,7 +376,7 @@ extension GlifiStudioTextAnalytics {
 
 /// Grouped code counts retain denominators and the count of missing group values.
 public struct GlifiStudioCodeCrosstab: Encodable, Equatable, Sendable {
-    /// Code order retained for native presentation, without changing JSON v1.
+    /// Code order of the table columns, retained for native presentation.
     public let codes: [String]
     /// Canonical group labels.
     public let groups: [String]

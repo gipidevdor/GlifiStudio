@@ -5,7 +5,7 @@
 | Campo | Valore |
 | --- | --- |
 | Identificatore | GS-ADR-0041 |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | Accettato per ambito e architettura; verifiche separate |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |

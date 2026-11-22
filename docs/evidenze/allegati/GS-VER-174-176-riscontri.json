@@ -1,0 +1,383 @@
+{
+  "schema": "studio.glifi.verification.analytical-milestones.v1",
+  "date": "2026-11-22",
+  "milestones": 5,
+  "sourceBase": "c6fd88e",
+  "codeSHA256": {
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiNetworkAnalysis.swift": "e544e524a7af2da27dd6cdfbba8ef3c2df4009fda917aa403c569a95a2c25ea4",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiResamplingStatistics.swift": "c6f0e13eb7c812ec3587fd0a9303975ab748a76ec31efef5dab88fe75d8d84ce",
+    "Packages/GlifiCore/Sources/GlifiKit/GlifiVisualizationExport.swift": "5234cc788d8a06f53edc8d7273c976d43c0882a8509227a856d215add6fcd899"
+  },
+  "verification": {
+    "makeVerifyExitCode": 0,
+    "completedUTC": "2026-11-22T10:42:35Z",
+    "coreTests": 497,
+    "kitTests": 85,
+    "nativeTests": 55,
+    "nativeFailed": 0,
+    "nativeSkipped": 0,
+    "totalTests": 637,
+    "numericalOracleRows": 194,
+    "pdfaConforming": 2,
+    "cliFixtures": 30,
+    "cliChecks": 90,
+    "recoveryCheckpoints": 22,
+    "nativeBuilds": [
+      "macOS Debug test",
+      "macOS Release",
+      "iPadOS Simulator generic Debug",
+      "iPadOS Simulator generic Release"
+    ]
+  },
+  "negativeControls": {
+    "betweennessOldCode": {
+      "exitCode": 1,
+      "issues": 1,
+      "seconds": 7.675
+    },
+    "visualExportOldCode": {
+      "exitCode": 1,
+      "issues": 14,
+      "seconds": 0.012
+    },
+    "resamplingMutant": {
+      "exitCode": 1,
+      "issues": 8,
+      "seconds": 0.02,
+      "actualTrace": [
+        0,
+        10001,
+        10001
+      ],
+      "requiredTrace": [
+        0,
+        4096,
+        8192
+      ]
+    }
+  },
+  "measurements": {
+    "isolatedPerformanceVerified": false,
+    "reason": "Le compilazioni delle altre attività hanno impedito una finestra libera di quattro secondi. Tutte le quattro coppie osservate presentano contesa; nessuna conclusione prestazionale è attestata.",
+    "measurementSourceBase": "b59292f",
+    "candidateCheckpoint": "7af41b4",
+    "baselineSHA256": "3dbc1c615c55ed283b51b6c1ba4e18b20c30bebea7b09ff0ed8eef9bf778b913",
+    "candidateSHA256": "8248b3f322326bb4478b87641d41bd244efe2e204e36b03c4c6c830dc5e1a531",
+    "inputAndOutputDigestComparisonsEqual": 12,
+    "warmupRuns": 1,
+    "samples": 5,
+    "batch": 1,
+    "data": [
+      {
+        "section": "betweenness",
+        "pair": 1,
+        "order": [
+          "baseline",
+          "candidate"
+        ],
+        "contended": true,
+        "sourceFilesUnchanged": true,
+        "baselineRSSBytes": 10928128,
+        "candidateRSSBytes": 10895360,
+        "baselineThermal": "NSProcessInfoThermalState(rawValue: 0)",
+        "candidateThermal": "NSProcessInfoThermalState(rawValue: 0)",
+        "comparisons": [
+          {
+            "identifier": "betweenness-directed-sparse-600",
+            "inputSHA256": "16dd77876cbfa2f8beaff98e7515df69e3978de808e56f93b55ee25cfbab3b02",
+            "outputSHA256": "ed48f4e376f5ec205c01d452866cb554f9cf26bbb59a9e8d195cc26265198b46",
+            "scoreBitsEqual": true,
+            "before": {
+              "medianSeconds": 1.237515208,
+              "minimumSeconds": 1.236164958,
+              "maximumSeconds": 1.244834917
+            },
+            "after": {
+              "medianSeconds": 1.137538208,
+              "minimumSeconds": 1.134851541,
+              "maximumSeconds": 1.174453459
+            },
+            "speedup": 1.0878889159914706
+          },
+          {
+            "identifier": "betweenness-directed-chain-600",
+            "inputSHA256": "34876b9fb81fc9c40c27a46501c2292b786780a2b85fdb1db43e34d7fca221e0",
+            "outputSHA256": "93af189de36b265a46b50f754fc37fef1dfe606a4f811e08ead218a25b69c405",
+            "scoreBitsEqual": true,
+            "before": {
+              "medianSeconds": 0.487363167,
+              "minimumSeconds": 0.485912375,
+              "maximumSeconds": 0.491023291
+            },
+            "after": {
+              "medianSeconds": 0.476610667,
+              "minimumSeconds": 0.473594791,
+              "maximumSeconds": 0.483276292
+            },
+            "speedup": 1.0225603427377759
+          },
+          {
+            "identifier": "betweenness-diamond-dag-160",
+            "inputSHA256": "f0c3f991d301b28017b6e6160bc578cb321c5ba0d05e5f1dcb4ed830d51723f9",
+            "outputSHA256": "8f3a78701ec9bcf43c66146f2bbf34d7c913b9da5bacda9a2ce857f62943a4ad",
+            "scoreBitsEqual": true,
+            "before": {
+              "medianSeconds": 0.351427667,
+              "minimumSeconds": 0.350571791,
+              "maximumSeconds": 0.351936375
+            },
+            "after": {
+              "medianSeconds": 0.344742375,
+              "minimumSeconds": 0.343665625,
+              "maximumSeconds": 0.350678042
+            },
+            "speedup": 1.0193921388399092
+          }
+        ]
+      },
+      {
+        "section": "betweenness",
+        "pair": 2,
+        "order": [
+          "candidate",
+          "baseline"
+        ],
+        "contended": true,
+        "sourceFilesUnchanged": true,
+        "baselineRSSBytes": 10862592,
+        "candidateRSSBytes": 10829824,
+        "baselineThermal": "NSProcessInfoThermalState(rawValue: 0)",
+        "candidateThermal": "NSProcessInfoThermalState(rawValue: 0)",
+        "comparisons": [
+          {
+            "identifier": "betweenness-directed-sparse-600",
+            "inputSHA256": "16dd77876cbfa2f8beaff98e7515df69e3978de808e56f93b55ee25cfbab3b02",
+            "outputSHA256": "ed48f4e376f5ec205c01d452866cb554f9cf26bbb59a9e8d195cc26265198b46",
+            "scoreBitsEqual": true,
+            "before": {
+              "medianSeconds": 1.22244225,
+              "minimumSeconds": 1.215616542,
+              "maximumSeconds": 1.246682125
+            },
+            "after": {
+              "medianSeconds": 1.144204209,
+              "minimumSeconds": 1.143409042,
+              "maximumSeconds": 1.151236166
+            },
+            "speedup": 1.0683776902624558
+          },
+          {
+            "identifier": "betweenness-directed-chain-600",
+            "inputSHA256": "34876b9fb81fc9c40c27a46501c2292b786780a2b85fdb1db43e34d7fca221e0",
+            "outputSHA256": "93af189de36b265a46b50f754fc37fef1dfe606a4f811e08ead218a25b69c405",
+            "scoreBitsEqual": true,
+            "before": {
+              "medianSeconds": 0.481478167,
+              "minimumSeconds": 0.480495833,
+              "maximumSeconds": 0.48187225
+            },
+            "after": {
+              "medianSeconds": 0.477944875,
+              "minimumSeconds": 0.475831333,
+              "maximumSeconds": 0.48037675
+            },
+            "speedup": 1.007392676822824
+          },
+          {
+            "identifier": "betweenness-diamond-dag-160",
+            "inputSHA256": "f0c3f991d301b28017b6e6160bc578cb321c5ba0d05e5f1dcb4ed830d51723f9",
+            "outputSHA256": "8f3a78701ec9bcf43c66146f2bbf34d7c913b9da5bacda9a2ce857f62943a4ad",
+            "scoreBitsEqual": true,
+            "before": {
+              "medianSeconds": 0.350438625,
+              "minimumSeconds": 0.343588625,
+              "maximumSeconds": 0.35109375
+            },
+            "after": {
+              "medianSeconds": 0.339350458,
+              "minimumSeconds": 0.338948125,
+              "maximumSeconds": 0.340841083
+            },
+            "speedup": 1.0326746781641296
+          }
+        ]
+      },
+      {
+        "section": "resampling",
+        "pair": 1,
+        "order": [
+          "baseline",
+          "candidate"
+        ],
+        "contended": true,
+        "sourceFilesUnchanged": true,
+        "baselineRSSBytes": 9601024,
+        "candidateRSSBytes": 9519104,
+        "baselineThermal": "NSProcessInfoThermalState(rawValue: 0)",
+        "candidateThermal": "NSProcessInfoThermalState(rawValue: 0)",
+        "comparisons": [
+          {
+            "identifier": "moving-block-bootstrap-n4096-b4000-l4095",
+            "inputSHA256": "bec93421df70dfceb8e7afb9e10b7bae022e149ac1d3f447997871b88cbab122",
+            "outputSHA256": "fb5ad69238087ac44ffd8b0710157a7280ef57a786be65316a2fe7f9c2f49aa8",
+            "outputBitsEqual": true,
+            "before": {
+              "medianSeconds": 0.016363458,
+              "minimumSeconds": 0.015074416,
+              "maximumSeconds": 0.016427833
+            },
+            "after": {
+              "medianSeconds": 0.015154291,
+              "minimumSeconds": 0.013435459,
+              "maximumSeconds": 0.01724025
+            },
+            "speedup": 1.0797904039192596
+          },
+          {
+            "identifier": "moving-block-bootstrap-n4096-b4000-l257",
+            "inputSHA256": "1114c6b96a748c91a4142d1f7d1e64c016779fd4a6428553645fb772cbdbece0",
+            "outputSHA256": "f576e23f74fbf754faf5a486a478b4621de07665fe0edf0d138c4d80dc64d883",
+            "outputBitsEqual": true,
+            "before": {
+              "medianSeconds": 0.016526333,
+              "minimumSeconds": 0.016271416,
+              "maximumSeconds": 0.016574042
+            },
+            "after": {
+              "medianSeconds": 0.017564,
+              "minimumSeconds": 0.015418375,
+              "maximumSeconds": 0.018617041
+            },
+            "speedup": 0.9409208039171032
+          },
+          {
+            "identifier": "moving-block-bootstrap-n4096-b4000-l1",
+            "inputSHA256": "7eb70d93449024d4d7dc4cf6371517054546d92b7b0e689b66db65ad4d851b8a",
+            "outputSHA256": "7c5924887153725a0af04884b19f9a2d8d7729e579d13c4359f9ae9793a5d304",
+            "outputBitsEqual": true,
+            "before": {
+              "medianSeconds": 0.028444542,
+              "minimumSeconds": 0.020319833,
+              "maximumSeconds": 0.02850075
+            },
+            "after": {
+              "medianSeconds": 0.028574583,
+              "minimumSeconds": 0.020535,
+              "maximumSeconds": 0.028673
+            },
+            "speedup": 0.9954490674457086
+          }
+        ]
+      },
+      {
+        "section": "resampling",
+        "pair": 2,
+        "order": [
+          "candidate",
+          "baseline"
+        ],
+        "contended": true,
+        "sourceFilesUnchanged": true,
+        "baselineRSSBytes": 9601024,
+        "candidateRSSBytes": 9551872,
+        "baselineThermal": "NSProcessInfoThermalState(rawValue: 0)",
+        "candidateThermal": "NSProcessInfoThermalState(rawValue: 0)",
+        "comparisons": [
+          {
+            "identifier": "moving-block-bootstrap-n4096-b4000-l4095",
+            "inputSHA256": "bec93421df70dfceb8e7afb9e10b7bae022e149ac1d3f447997871b88cbab122",
+            "outputSHA256": "fb5ad69238087ac44ffd8b0710157a7280ef57a786be65316a2fe7f9c2f49aa8",
+            "outputBitsEqual": true,
+            "before": {
+              "medianSeconds": 0.015440083,
+              "minimumSeconds": 0.014956417,
+              "maximumSeconds": 0.015820541
+            },
+            "after": {
+              "medianSeconds": 0.016296875,
+              "minimumSeconds": 0.015227,
+              "maximumSeconds": 0.01721875
+            },
+            "speedup": 0.9474259942473635
+          },
+          {
+            "identifier": "moving-block-bootstrap-n4096-b4000-l257",
+            "inputSHA256": "1114c6b96a748c91a4142d1f7d1e64c016779fd4a6428553645fb772cbdbece0",
+            "outputSHA256": "f576e23f74fbf754faf5a486a478b4621de07665fe0edf0d138c4d80dc64d883",
+            "outputBitsEqual": true,
+            "before": {
+              "medianSeconds": 0.016003084,
+              "minimumSeconds": 0.014597708,
+              "maximumSeconds": 0.016591708
+            },
+            "after": {
+              "medianSeconds": 0.016364,
+              "minimumSeconds": 0.015376083,
+              "maximumSeconds": 0.017193458
+            },
+            "speedup": 0.9779445123441701
+          },
+          {
+            "identifier": "moving-block-bootstrap-n4096-b4000-l1",
+            "inputSHA256": "7eb70d93449024d4d7dc4cf6371517054546d92b7b0e689b66db65ad4d851b8a",
+            "outputSHA256": "7c5924887153725a0af04884b19f9a2d8d7729e579d13c4359f9ae9793a5d304",
+            "outputBitsEqual": true,
+            "before": {
+              "medianSeconds": 0.032818667,
+              "minimumSeconds": 0.020322459,
+              "maximumSeconds": 0.043951
+            },
+            "after": {
+              "medianSeconds": 0.028645666,
+              "minimumSeconds": 0.021841625,
+              "maximumSeconds": 0.039375583
+            },
+            "speedup": 1.1456765222355103
+          }
+        ]
+      }
+    ]
+  },
+  "limits": [
+    "Nessuna promozione scientifica",
+    "Nessuna esecuzione iPad su simulatore o dispositivo",
+    "Nessuna attestazione di UI, accessibilità, energia o hardware di riferimento",
+    "La coerenza del bundle non autentica la sua origine",
+    "Validazione e ordinamento non diventano fasi di cancellazione preemptive"
+  ],
+  "cleanup": {
+    "removed": [
+      {
+        "label": "GlifiBetweenness174Cache",
+        "KiB": 3114100
+      },
+      {
+        "label": "GlifiBetweenness174Transient",
+        "KiB": 2436
+      },
+      {
+        "label": "GlifiResampling176Mutation",
+        "KiB": 3756
+      },
+      {
+        "label": "GlifiResampling176MutationCache",
+        "KiB": 522152
+      },
+      {
+        "label": "GlifiBetweenness174Measurement",
+        "KiB": 16040
+      },
+      {
+        "label": "BaselineBenchmark",
+        "KiB": 10624
+      },
+      {
+        "label": "CandidateBenchmark",
+        "KiB": 10644
+      }
+    ],
+    "totalKiB": 3679752,
+    "measurement": "Blocchi allocati misurati con du prima della rimozione, non delta dello spazio libero APFS",
+    "otherActivitiesTouched": false
+  }
+}

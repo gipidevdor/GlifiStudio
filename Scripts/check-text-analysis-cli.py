@@ -151,6 +151,19 @@ def main():
         rejects(encoded({"operation": "linguistic-coding", "units": [{"id": "1", "text": "secret-canary", "extra": 1}],
                          "rules": "*A\\na"}), 3, "invalidInput")
 
+        rejects(encoded({"operation": "coding", "units": [{"id": "1", "text": "casa"}],
+                         "rules": "*A\ncasa->V->ignored"}), 3, "invalidInput")
+        rejects(encoded({"operation": "coding", "units": [{"id": "1", "text": "casa"}],
+                         "rules": "*A\n1e309 == 0"}), 3, "invalidInput")
+        rejects(encoded({"operation": "coding", "units": [{"id": "1", "text": " ".join(["a"] * 2_000 + ["b"] * 2_000)}],
+                         "rules": "*A\nnear(a-b)[1]"}), 7, "insufficientResources")
+        rejects(encoded({"operation": "classify", "documents": [["x"]] * 3_000,
+                         "labels": [f"c{i}" for i in range(3_000)],
+                         "predictionDocuments": [["x"]] * 2_000}), 7, "insufficientResources")
+        rejects(encoded({"operation": "validate-classifier", "documents": [["x"]] * 4_500,
+                         "labels": [f"c{i}" for i in range(2_250) for _ in range(2)],
+                         "folds": 2, "seed": 0}), 7, "insufficientResources")
+
         if os.geteuid() != 0:
             protected = directory / "secret-canary-protected.json"
             protected.write_text(json.dumps(cases[0]["request"]))

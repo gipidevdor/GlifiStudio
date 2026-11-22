@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.19.8 |
+| Versione | 1.20.4 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -17,6 +17,10 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 ## Indice
 
 - [GS-VER-173 — Layout e visite dei kernel analitici](GS-VER-173-layout-e-visite-analitiche.md) — Superato: 18 confronti identici, 544 test e gate completo; costi residui dichiarati
+- [GS-VER-179 — Codifica delle identità canoniche](GS-VER-179-identita-canoniche.md) — Tre produttori, riferimenti completi, misure e gate macOS integrato superati
+
+- [GS-VER-177 — Buffer indicizzati della betweenness](GS-VER-177-betweenness-indicizzata.md) — Riferimenti bitwise, misure sotto contesa e gate integrato superati
+- [GS-VER-178 — Codifica dei digest degli export visuali](GS-VER-178-digest-export-viste.md) — Byte invariati, misure distinte per fase e gate integrato superati
 
 - [GS-VER-270 — Grafici audio, comandi di documento e prova del Neural Engine](GS-VER-270-grafici-comandi-neural-engine.md)
 
@@ -25,6 +29,13 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 - [GS-VER-230 — Selezione KWIC e fonte coerenti su macOS](GS-VER-230-selezione-kwic-coerente-macos.md) — RED/GREEN, gate e preflight macOS superati sul checkpoint ffbfb431
 - [GS-VER-231 — Lookup delle etichette fonte nelle viste macOS](GS-VER-231-indice-fonti-ui-macos.md) — Candidato Sendable misurato, tre varianti respinte, gate e preflight macOS superati sul checkpoint ffbfb431
 - [GS-VER-232 — Selezione visuale e contesto fonte coerenti su macOS](GS-VER-232-selezione-visuale-coerente-macos.md) — RED/GREEN, gate e preflight macOS superati sul checkpoint ffbfb431; mark senza fonte incluso
+
+- [GS-VER-176 — Cancellazione nelle repliche bootstrap](GS-VER-176-cancellazione-resampling.md) — Superato: checkpoint, parità numerica e gate congiunto; prestazioni isolate aperte
+
+- [GS-VER-175 — Integrità degli export scientifici](GS-VER-175-integrita-export-viste.md) — Superato: inventario, provenance e CSV; compatibilità delle quattro famiglie e gate congiunto
+
+- [GS-VER-174 — Betweenness con molti cammini minimi](GS-VER-174-betweenness-cammini-estremi.md) — Superato: RED/verde e gate congiunto; misure sotto contesa senza conclusioni prestazionali
+
 
 Le evidenze GS-VER-168/169/170 si riferiscono ai rispettivi snapshot storici del
 working tree sorgente. La nuova integrazione sulla base `fe6f654` ha verifica
@@ -256,12 +267,18 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 
 - [GS-VER-163 — Integrità dei documenti macOS](GS-VER-163-integrita-documenti-macos.md) — Superato: suite del modello macOS in locale e gate CI `xcode-27` su `main` `a86a53b`; CMP-107 verified
 
+- [GS-VER-223 — Copertura funzionale del core nell’app](GS-VER-223-copertura-core-app.md) — Verifiche automatiche superate; audit applicativi aperti
+
+- [GS-VER-273 — Barriera di reset dei laboratori macOS](GS-VER-273-barriera-reset-laboratori-macos.md) — Gate e preflight macOS superati sul checkpoint ea48ba88/base137; iPadOS, GUI manuale e G4 esclusi
+
+- [GS-VER-274 — Presentazione corpus coerente su macOS](GS-VER-274-presentazione-corpus-coerente-macos.md) — Gate e preflight macOS superati sul checkpoint ea48ba88/base137; iPadOS, GUI manuale e G4 esclusi
+
 - [GS-VER-233 — Completamento nativo delle varianti KH Coder](GS-VER-233-completamento-kh-coder.md) — Superato: 561 test Core/Kit, 90 controlli CLI e gate macOS/iPadOS completo; varianti scientifiche candidate
 
 - [GS-VER-260 — Integrazioni native Apple](GS-VER-260-integrazioni-native-apple.md) — Verifica automatica del codice superata; packaging e CI nel registro PR; prove manuali e adozioni condizionali distinte
 
-- [GS-VER-223 — Copertura funzionale del core nell’app](GS-VER-223-copertura-core-app.md) — Verifiche automatiche superate; audit applicativi aperti
 
-- [GS-VER-235 — Barriera di reset dei laboratori macOS](GS-VER-235-barriera-reset-laboratori-macos.md) — Gate e preflight macOS superati sul checkpoint ea48ba88/base137; iPadOS, GUI manuale e G4 esclusi
 
-- [GS-VER-234 — Presentazione corpus coerente su macOS](GS-VER-234-presentazione-corpus-coerente-macos.md) — Gate e preflight macOS superati sul checkpoint ea48ba88/base137; iPadOS, GUI manuale e G4 esclusi
+- [GS-VER-234 — Riverifica di correttezza e completezza](GS-VER-234-riverifica-correttezza-completezza.md) — Superato nel perimetro locale: 660 test Core/Kit, 99 macOS, ASan/TSan e gate completo; limiti KH aperti
+
+- [GS-VER-280 — Struttura e coesione del codice](GS-VER-280-struttura-e-coesione-del-codice.md) — Confronti API/CLI e prove mirate superati; gate completo nel registro PR #42

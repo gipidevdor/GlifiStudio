@@ -93,7 +93,7 @@ public struct GlifiCodingAgreementRequest: Codable, Equatable, Sendable {
     /// Digest of the canonical table, used as the semantic input identity.
     public func canonicalDigest() throws -> String {
         let data = try GlifiArtifactCanonicalJSON.encode(self)
-        return "sha256:" + SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+        return canonicalSHA256Digest(SHA256.hash(data: data))
     }
 }
 

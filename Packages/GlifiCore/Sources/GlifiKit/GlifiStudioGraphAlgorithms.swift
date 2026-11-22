@@ -81,7 +81,7 @@ public struct GlifiStudioGraphAlgorithmLimits: Codable, Equatable, Sendable {
     public let maximumNodeCount: Int
     /// Maximum input arcs, including loops and repeated arcs, before projection.
     public let maximumEdgeCount: Int
-    /// Maximum admitted scalar cells across the inherent quadratic working buffers.
+    /// Maximum scalar cells across pairwise or exact-accumulator working buffers.
     public let maximumPairwiseCells: Int
     /// Maximum conservative operation-count estimate admitted before iterative work.
     public let maximumWork: Int
@@ -260,8 +260,13 @@ public enum GlifiStudioGraphAlgorithms {
         limits: GlifiStudioGraphAlgorithmLimits = .standard
     ) async throws(GlifiStudioFailure) -> GlifiStudioGraphLayoutResult {
         try graphPresentationFailure {
+            let graph = try input.core(limits: limits)
+            if let initialPositions, initialPositions.count != input.nodes.count {
+                throw graphPresentationInputFailure(
+                    "network.invalid-layout-positions", .invalidInput)
+            }
             let value = try GlifiNetworkAnalysis.layout(
-                input.core(limits: limits), method: method.core,
+                graph, method: method.core,
                 seed: seed, maximumIterations: maximumIterations, tolerance: tolerance,
                 initialPositions: initialPositions?.map { GlifiGraphPoint(x: $0.x, y: $0.y) },
                 limits: limits.core)

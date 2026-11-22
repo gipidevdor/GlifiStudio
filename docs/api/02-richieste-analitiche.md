@@ -6,12 +6,12 @@
 | --- | --- |
 | Identificatore | GS-API-002 |
 | Tipo | Contratto del trasporto analitico transitorio |
-| Versione | 1.3.0 |
+| Versione | 1.3.1 |
 | Stato | Verificato nei rispettivi snapshot: trasporto ampliato e ponte di progetto; integrazione congiunta in verifica |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Prosecuzioni esplicite RF-087 e GUI; ADR-0034 |
-| Riferimenti | GS-API-001; GS-MET-001-23; RF-087; RQ-060; ADR-0032; ADR-0034; [ADR-0035 headless](../adr/0035-completamento-nativo-kh-coder.md); [ADR-0041 app](../adr/0041-copertura-funzionale-core-nelle-app.md); GS-DOR-162; GS-DOR-222; [GS-DOR-233 headless](../pianificazione/dor-completamento-kh-coder.md) |
+| Riferimenti | GS-API-001; GS-MET-001-23; RF-087; RQ-060; ADR-0032; ADR-0034; [ADR-0035 headless](../adr/0035-completamento-nativo-kh-coder.md); [ADR-0041 app](../adr/0041-copertura-funzionale-core-nelle-app.md); GS-DOR-162; GS-DOR-222; ADR-0042; GS-VER-234; [GS-DOR-233 headless](../pianificazione/dor-completamento-kh-coder.md) |
 
 ## Contratto
 
@@ -139,6 +139,14 @@ Ordini, diagnostiche, seed e coordinate UTF-8 sono quelli della facciata.
 Il digest della request da solo non identifica la revisione dell'algoritmo:
 per confrontare risultati si **DEVONO** conservare anche metodo e versione.
 
+Per `communities` con `method=edgeBetweenness`, l’identificatore restituito è
+`GirvanNewman-inverse-strength-exact-binary64-v2`. Le somme dei costi binary64
+rappresentati e gli accumuli non negativi sono esatti; normalizzazione, reciproci
+e rapporti restano binary64. La variante sostituisce v1 per distinguere cammini
+e spareggi che le somme arrotondate potevano fondere o separare. Non introduce
+una nuova operazione o uno schema diverso: i risultati v1 e v2 restano
+identificati dalla rispettiva versione del metodo.
+
 Il client nativo può ispezionare lo stesso risultato mediante il payload
 tipizzato `GlifiStudioTextAnalysisPayload`, senza decodificare o reinterpretare
 il JSON. `GlifiStudioCodeCrosstab.codes` conserva le identità delle colonne per
@@ -164,6 +172,23 @@ testo, regole e path non attraversano le failure. L'apertura distingue
 `authorizationDenied` per permessi negati, `insufficientResources` per risorse
 esaurite, `invalidInput` per path assente/non regolare o link finale e
 `transientIO` per gli altri errori temporanei del filesystem.
+
+La decodifica dei DTO contenenti intervalli UTF-8 applica gli invarianti del
+costruttore: `0 ≤ start < end` e lunghezza rappresentabile. Range negativi,
+vuoti, invertiti o traboccanti sono rifiutati anticipatamente secondo
+[ADR-0042](../adr/0042-invarianti-intervalli-utf8-decodificati.md), senza cambiare
+il JSON valido. Le span map rifiutano anche segmenti localmente incoerenti;
+geometrie legacy valide con gap o sovrapposizioni conservano il fallback.
+Le superfici annotate esterne devono coincidere con i byte UTF-8 della fonte:
+l’equivalenza canonica fra NFC e NFD non basta a validare un intervallo.
+
+Le regole di `coding` e `linguistic-coding` validano i qualificatori in tutti i
+rami e riferimenti prima della valutazione. Frecce ripetute o prive del vincolo,
+operandi di prossimità incompleti e letterali numerici non finiti sono rifiutati,
+anche se il ramo non sarebbe valutato. Una parola numerica come `1e309` può
+restare un termine se racchiusa tra apici. I candidati di prossimità scartati e
+le evidenze aggregate consumano i rispettivi budget condivisi; non si pubblica
+un risultato parziale al superamento del limite.
 
 L'output scientifico richiesto può contenere vocabolario, nomi dei codici,
 etichette, ID e intervalli di evidenza; non è un canale diagnostico anonimizzato.
@@ -234,10 +259,18 @@ confronto integrale CLI/Kit entro 1e-12 assoluto e relativo, con controlli golde
 indipendenti per i casi minimi, exit status, stdout/stderr e file speciali.
 Evidenza e limiti effettivi in [GS-VER-162](../evidenze/GS-VER-162-parita-operatori-kit-cli.md).
 
-L’ampliamento è headless e transitorio secondo [ADR-0035](../adr/0035-completamento-nativo-kh-coder.md);
+Il lotto originario dell’ampliamento è headless e transitorio secondo
+[ADR-0035](../adr/0035-completamento-nativo-kh-coder.md);
 nessuna promozione V6 esterna, nuova lingua, GUI, persistenza o dipendenza runtime
 segue dall’aggiunta delle operazioni. Il gate completo è superato localmente nel perimetro dichiarato
 in [GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md).
+
+La riverifica ha eseguito le stesse 30 fixture e 95 controlli CLI, inclusi nuovi
+rifiuti di grammatica e risorse, mantenendo lo schema/versione 1 e la parità
+numerica entro 1e-12. I test aggiuntivi verificano anche identità canonica,
+byte sorgenti e offset distinti per NFC/NFD. Esiti, stato del gate e limiti della
+revisione corrente sono in [GS-VER-234](../evidenze/GS-VER-234-riverifica-correttezza-completezza.md):
+la singola prova CLI non chiude il gate complessivo né promuove gli operatori.
 
 ## Facciate dei laboratori espliciti (ADR-0041)
 

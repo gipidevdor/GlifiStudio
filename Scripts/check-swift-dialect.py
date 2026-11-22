@@ -197,6 +197,17 @@ def validate_developer_loop(errors: list[str]) -> None:
     if "quality-static" not in makefile:
         errors.append("Makefile: target quality-static mancante")
 
+    required_profiles = {
+        "verify": "./Scripts/verify.sh --macos-only",
+        "verify-app-store": "./Scripts/verify-app-store.sh --macos-only",
+        "verify-all": "./Scripts/verify.sh",
+        "verify-app-store-all": "./Scripts/verify-app-store.sh",
+    }
+    for target, command in required_profiles.items():
+        pattern = rf"^{re.escape(target)}:\n\t{re.escape(command)}[ \t]*$"
+        if re.search(pattern, makefile, re.MULTILINE) is None:
+            errors.append(f"Makefile: profilo canonico non rispettato per {target}")
+
     if not CI_WORKFLOW.is_file():
         errors.append(".github/workflows/ci.yml mancante")
         return
@@ -206,6 +217,8 @@ def validate_developer_loop(errors: list[str]) -> None:
         errors.append("ci.yml: job obbligatorio verify non dichiarato")
     if "./Scripts/verify.sh" not in workflow and "Scripts/verify.sh" not in workflow:
         errors.append("ci.yml: deve invocare Scripts/verify.sh")
+    if "run: ./Scripts/verify.sh --macos-only" not in workflow:
+        errors.append("ci.yml: il gate corrente deve selezionare macOS esplicitamente")
     if "static-quality" not in workflow:
         errors.append("ci.yml: job early-fail static-quality mancante")
     if "format-check" not in workflow:
@@ -226,6 +239,8 @@ def validate_developer_loop(errors: list[str]) -> None:
             errors.append("app-store.yml: cache SPM deterministica mancante")
         if "verify-app-store.sh" not in app_store_body:
             errors.append("app-store.yml: deve invocare Scripts/verify-app-store.sh")
+        if "run: ./Scripts/verify-app-store.sh --macos-only" not in app_store_body:
+            errors.append("app-store.yml: il preflight corrente deve selezionare macOS esplicitamente")
 
 
 def main() -> int:

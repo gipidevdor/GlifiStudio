@@ -4,7 +4,44 @@
 
 Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazioni vengono raccolte qui. Il progetto segue il versionamento semantico quando esisterà un contratto pubblico stabile; prima di `1.0.0`, ogni incompatibilità deve essere esplicita.
 
+- Copertura applicativa delle famiglie analitiche del core: laboratori corpus,
+  statistica, valutazione e operatori, ricerca per metodo, risultati con input
+  effettivi e stato di convergenza; revisioni qualitative complete e mapping.
+  Export delle viste con preparazione asincrona ed errori espliciti (ADR-0041,
+  GS-VER-223; audit applicativi distinti).
+
 ## Non rilasciato
+
+### Codifica delle identità canoniche
+
+- Query e tabelle di accordo riusano il codificatore SHA-256 interno,
+  conservando i byte canonici e tutti i comportamenti di validazione.
+- Revisioni di report e helper dei manifest scientifici mantengono identità,
+  preimmagini e formato v1 con la stessa codifica bounded (GS-VER-179).
+- Il supporto dei benchmark distingue esplicitamente SHA del produttore,
+  incluso nella misura, e checksum di verifica fuori timer.
+
+### Ottimizzazioni complementari di grafi ed export
+
+- Riutilizzo dei buffer nelle visite di betweenness, con ordine numerico e
+  fallback estremi conservati bit per bit (GS-VER-177).
+- Codifica UTF-8 dei digest degli export visuali, con bundle e controlli di
+  integrità invariati; misure distinte del digest e delle operazioni complete
+  (GS-VER-178). Le misure locali sotto contesa restano informative.
+
+### Struttura interna e ownership
+
+- Priorità operativa macOS persistita in Make, CI e istruzioni: ingressi predefiniti
+  sul profilo macOS con tutti i controlli condivisi; iPadOS rinviato ai target
+  espliciti `*-all`. Comandi e policy verificati dal checker del loop.
+
+- Contratti valore, bootstrap e sessione Kit separati per responsabilità; policy
+  ordinarie condivise senza cambiare API o mapping specializzati.
+- Staging e costruzione digest/manifest del package centralizzati in helper
+  privati, conservando ordine I/O e checkpoint delle quattro famiglie.
+- Sessioni CLI chiuse anche su failure e cancellazione prima della presentazione;
+  raccolta dei risultati execute/visualize condivisa, protocollo invariato
+  (GS-VER-280).
 
 ### Integrazioni native Apple coordinate
 
@@ -23,13 +60,20 @@ working tree sorgente; la verifica della nuova integrazione su `fe6f654`
 conserva l’identità candidata distinta `TextRankSentence-configurable-v1`,
 preservando i metodi upstream già pubblicati.
 
-### Aggiunto
+### Corretto
 
-- Copertura applicativa delle famiglie analitiche del core: laboratori corpus,
-  statistica, valutazione e operatori, ricerca per metodo, risultati con input
-  effettivi e stato di convergenza; revisioni qualitative complete e mapping.
-  Export delle viste con preparazione asincrona ed errori espliciti (ADR-0041,
-  GS-VER-223; audit applicativi distinti).
+- Il decoder UTF-8 rifiuta ora range negativi, vuoti o invertiti che il decoder
+  precedente lasciava passare; le span map verificano inoltre i vincoli locali
+  dei segmenti prima di lookup/composizione. JSON valido invariato; i dati
+  malformati richiedono correzione esplicita, senza riparazione automatica
+  (ADR-0042).
+- Riverifica analitica: intervalli/byte UTF-8, overflow dei conteggi, grammatica e
+  lavoro della codifica, ammissione Naive Bayes/KK/LDA, norme estreme SOM/CLARA/HAC.
+  Nuova `GirvanNewman-inverse-strength-exact-binary64-v2` con somme dei costi
+  rappresentati esatte e budget più restrittivi. Corrette le dichiarazioni di
+  completezza KH: alcune preparazioni e varianti restano assenti (GS-VER-234).
+
+### Aggiunto
 
 - Varianti native del laboratorio analitico: comunità Girvan–Newman/CNM/Walktrap,
   layout FR/KK, foresta Prim, Simpson, MDS ordinale e multi-start, SOM esagonale
@@ -58,6 +102,12 @@ preservando i metodi upstream già pubblicati.
   sessione distinti dagli Artifact persistiti; ADR-0034 e GS-DOR-222 governano
   l'integrazione, con verifiche autonome in GS-VER-222.
 
+
+- Varianti native del laboratorio analitico: comunità Girvan–Newman/CNM/Walktrap,
+  layout FR/KK, foresta Prim, Simpson, MDS ordinale e multi-start, SOM esagonale
+  con diagnostiche, selezione K LDA e pipeline italiana opzionale. Nove operazioni
+  aggiuntive nello stesso contratto GlifiKit/CLI; GUI e approvazione scientifica
+  delle nuove varianti restano separate (ADR-0035, GS-VER-233).
 - Completamento delle primitive analitiche specificate: distribuzioni lessicali,
   fitting diagnostico Zipf/Heaps, statistiche descrittive Q7, Welch ANOVA,
   aggregazioni temporali con esposizione e metriche di valutazione linguistica.
@@ -103,6 +153,11 @@ preservando i metodi upstream già pubblicati.
   Osservazione GUI parziale; verifica visiva dell'ultima correzione header,
   audit assistivi e valutazione ergonomica ancora aperti (GS-VER-222).
 
+
+- Completamento headless KH: 561 test Core/Kit in Debug e Release, 90 controlli
+  CLI, 194 righe di oracoli, 195 esecuzioni macOS, recovery/PDF e build
+  macOS/iPadOS Debug/Release superati localmente. Nuove varianti scientifiche
+  candidate; GUI separata (GS-VER-233).
 - Audit di conservazione dei contenuti prima dell’integrazione: sette branch
   storici hanno alberi identici ai commit squash già in `main`; nuova integrazione
   delle PR #37/#38 e gate locale `make verify` superato (GS-VER-221).
@@ -717,6 +772,16 @@ preservando i metodi upstream già pubblicati.
   Cinque regressioni riprodotte e superate, gate/preflight macOS superati sullo
   checkpoint 4d6969dd e rivalidati su ffbfb431; layout GUI e WIP successivi
   hanno evidenze separate (GS-VER-230/232).
+
+- Betweenness non pesata conserva punteggi finiti quando i contatori dei cammini
+  superano Double.max, con recupero scalato e percorso ordinario invariato
+  (GS-VER-174).
+- Verifica degli export scientifici: inventario rigoroso, congruenza fra
+  manifest e specifica, tabella rettangolare e CSV equivalente al profilo v1;
+  quattro famiglie compatibili e failure di integrità esistente (GS-VER-175).
+- Bootstrap indipendente e moving-block osservano la cancellazione entro
+  4096 osservazioni ricampionate, anche durante una replica; il kernel condiviso
+  estende la granularità a BCa, preservando risultati e validazioni (GS-VER-176).
 
 - Costi del riassunto estrattivo: l'API Core rifiuta conteggi di caratteri non positivi con
   `summary.invalid-character-count`; selezione per rank e MMR confrontano il costo con il

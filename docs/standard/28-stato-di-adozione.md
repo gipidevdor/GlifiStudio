@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-STD-001-28 |
 | Tipo | Capitolo normativo |
-| Versione | 1.13.11 |
+| Versione | 1.13.13 |
 | Stato | Attivo |
 | Responsabile | Amministratore del repository, provvisorio |
 | Ultima modifica | 2026-11-22 |
@@ -76,6 +76,11 @@ Un elemento `Configurato` non è `Verificato` finché non esiste un'esecuzione o
   Supporto dei benchmark condiviso dai soli test, senza prodotto runtime;
   guard Debug e gate integrato superati, nessuna soglia G4 nuova.
 
+L'incremento ADR-0041 espone le capacità analitiche utente del core nei laboratori
+macOS e completa l'editor qualitativo condiviso. La verifica è registrata in
+[GS-VER-223](../evidenze/GS-VER-223-copertura-core-app.md); CMP-223 resta implemented.
+Questo stato non promuove i criteri assistivi o prestazionali di GS-STD-001-29.
+
 ## Lotto nativo Apple GS-DOR-260
 
 L’inventario GS-APL-016 distingue API già adottate, lavori delle altre chat,
@@ -87,7 +92,10 @@ VoiceOver, App Nap, energia, provider e dispositivi/G4 restano aperte. Nessun
 criterio Da introdurre viene convertito in un gate soltanto perché la sua API è
 disponibile.
 
-L'incremento ADR-0041 espone le capacità analitiche utente del core nei laboratori
-macOS e completa l'editor qualitativo condiviso. La verifica è registrata in
-[GS-VER-223](../evidenze/GS-VER-223-copertura-core-app.md); CMP-223 resta implemented.
-Questo stato non promuove i criteri assistivi o prestazionali di GS-STD-001-29.
+## Coesione e compatibilità nel refactoring GS-DOR-280
+
+GS-VER-280 registra la separazione interna dei ruoli Kit, gli owner privati CLI
+e le factory private del package. Il confronto API Core/Kit e la parità di byte
+CLI sono prove circoscritte al lotto: non attuano un gate globale di rilascio o
+una promessa ABI. Gli stati scientifici e i criteri Da introdurre restano
+invariati. Non sono fissate soglie di righe, velocità o consumo energetico.

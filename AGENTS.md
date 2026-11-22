@@ -50,4 +50,9 @@ La barra completa è `docs/standard/29-eccellenza-ingegneristica-apple.md` (GS-S
 
 ## Verifica
 
+Priorità attuale richiesta dall'utente: **macOS**. `make verify` e
+`make verify-app-store` usano il profilo macOS, come la CI; iPadOS è rinviato e
+si verifica soltanto su richiesta esplicita con `make verify-all` o
+`make verify-app-store-all`. Non avviare il profilo globale per abitudine.
+
 Eseguire il controllo più mirato durante il lavoro e `make verify` prima della consegna. Se un controllo non è eseguibile, dichiarare esattamente cosa manca e non presentare come verificato ciò che non lo è.

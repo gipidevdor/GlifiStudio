@@ -72,8 +72,17 @@ extension GlifiNetworkAnalysis {
                 })
             else { throw graphAlgorithmFailure("network.invalid-layout-positions") }
         }
-        try admitGraphWork([maximumIterations, n, n + 32], limits: limits)
-        if method == .kamadaKawai { try admitGraphPairs(n, limits: limits) }
+        switch method {
+        case .fruchtermanReingold:
+            try admitGraphWork([maximumIterations, n, n + 32], limits: limits)
+        case .kamadaKawai:
+            try admitGraphPairs(n, limits: limits)
+            // All-pairs BFS visits nodes and both ends of each projected edge. Input arc
+            // count is a conservative upper bound, available before projection allocation.
+            try admitGraphWork(
+                phases: [[maximumIterations, n, n + 32], [n, n], [2, n, graph.edges.count]],
+                limits: limits)
+        }
         let prepared = try GlifiPreparedCommunityGraph(graph, limits: limits, weighted: false)
         var generator = GlifiSplitMix64(seed: seed)
         let initial =

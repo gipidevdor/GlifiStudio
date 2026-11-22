@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-UX-001-17 |
 | Tipo | Specifica normativa dell'esperienza utente |
-| Versione | 1.3.3 |
+| Versione | 1.3.4 |
 | Stato | Baseline implementativa per incrementi separati |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -351,8 +351,8 @@ coordinatore applicativo.
 
 La barriera protegge output e presentazione di sessione; non annulla Artifact
 Core già committati. La verifica deterministica e i limiti del confine di test
-sono definiti in [GS-DOR-235](../pianificazione/dor-barriera-reset-laboratori-macos.md)
-e registrati in [GS-VER-235](../evidenze/GS-VER-235-barriera-reset-laboratori-macos.md).
+sono definiti in [GS-DOR-273](../pianificazione/dor-barriera-reset-laboratori-macos.md)
+e registrati in [GS-VER-273](../evidenze/GS-VER-273-barriera-reset-laboratori-macos.md).
 
 ## Presentazione corpus coerente durante la preparazione
 
@@ -368,8 +368,8 @@ tabella non annulla la proiezione dell'asse. Quest'ultima applica le scelte più
 recenti ancora valide, e completamenti vecchi non ripristinano stato superato.
 Reset e nuovo output invalidano entrambi i percorsi. Il risultato scientifico
 catturato rimane invariato. Contratto e prove sono in
-[GS-DOR-234](../pianificazione/dor-presentazione-corpus-coerente-macos.md) e
-[GS-VER-234](../evidenze/GS-VER-234-presentazione-corpus-coerente-macos.md).
+[GS-DOR-274](../pianificazione/dor-presentazione-corpus-coerente-macos.md) e
+[GS-VER-274](../evidenze/GS-VER-274-presentazione-corpus-coerente-macos.md).
 
 ## Completamento delle capacità native
 

@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.8 |
+| Versione | 0.92.11 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -115,6 +115,12 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 
 | Evidenza | Verifiche coperte | Esito | Limite |
 | --- | --- | --- | --- |
+| [GS-VER-177](evidenze/GS-VER-177-betweenness-indicizzata.md) | TV-008, TV-009, TV-033; RF-039, RQ-008, RQ-009, RQ-063 | Undici regressioni Release, confronti bitwise e gate completo con 764 test superati | Misure locali con contesa; nessuna soglia o promozione scientifica |
+| [GS-VER-179](evidenze/GS-VER-179-identita-canoniche.md) | RQ-009, RQ-023, RQ-028, RQ-042, RQ-063; CMP-187 | Riferimenti canonici, manomissioni, 48 osservazioni Release e gate macOS con 771 test superati | Encoder/SHA del produttore inclusi; solo SHA di verifica esclusi; tre produttori Core |
+| [GS-VER-178](evidenze/GS-VER-178-digest-export-viste.md) | TV-058; RF-084, RQ-028, RQ-044, RQ-063 | Vettori, bundle completo, nove regressioni Release e gate completo con 764 test superati | Verifica grande invariata; API e profilo v1 invariati |
+| [GS-VER-176](evidenze/GS-VER-176-cancellazione-resampling.md) | TV-012, TV-056, TV-057; RQ-011, RQ-041, RQ-063 | Superato: checkpoint intra-replica, parità e gate congiunto | Limite in osservazioni ricampionate, non deadline; sort non preemptive |
+| [GS-VER-175](evidenze/GS-VER-175-integrita-export-viste.md) | TV-058; RF-084, RQ-028, RQ-044 | Superato: RED/verde, quattro famiglie e gate congiunto | Integrità interna del bundle; autenticazione e progetto esterno fuori contratto |
+| [GS-VER-174](evidenze/GS-VER-174-betweenness-cammini-estremi.md) | TV-008, TV-009, TV-033; RF-039, RQ-008, RQ-009, RQ-063 | Superato: estremi, riferimenti indipendenti e gate congiunto | Nessuna nuova API, variante, dipendenza o promozione scientifica |
 | [GS-VER-173](evidenze/GS-VER-173-layout-e-visite-analitiche.md) | TV-008, TV-009, TV-032, TV-033, TV-036; RQ-008, RQ-009, RQ-063 | Superato: 18 confronti identici, 544 test e gate completo | CMP-177 `implemented`; NMF alto +0,7% tempo, bootstrap +96 KiB RSS; nessuna promozione scientifica |
 | [GS-VER-172](evidenze/GS-VER-172-query-sparse-e-silhouette.md) | TV-008, TV-009, TV-029, TV-032; RF-030, RF-037; RQ-008, RQ-009, RQ-063 | Superato: venti confronti finali, 440 test e 185 righe di oracoli; gate completo | CMP-176 `implemented`; nessuna promozione dei metodi o soglia prestazionale |
 | [GS-VER-171](evidenze/GS-VER-171-integrazione-algoritmi.md) | TV-008, TV-009, TV-029, TV-032, TV-033, TV-036; RQ-008, RQ-063 | Superato: integrazione isolata, correzione Welch, 425 test e 177 righe di oracoli sulla base upstream `fe6f654` | Evidenze storiche GS-VER-168/169/170 conservate; nuovo gate completo eseguito sulla proiezione integrata |
@@ -440,11 +446,27 @@ nessuna promozione a requisito verificato.
 
 | Verifica | Requisiti | Codice e prova | Evidenza |
 | --- | --- | --- | --- |
-| TV-087 | RF-087; RF-033; RF-037; RF-038; RF-043; RQ-025; RQ-048; RQ-058; RQ-063 | GlifiExploratoryAnalysis, GlifiProbabilisticTextAnalysis, GlifiCodingRules, GlifiTextMatrixOperators, GlifiStudioTextAnalytics; completamento comunità/layout/Prim/Simpson, MDS/SOM, selezione K e pipeline italiana; facciate dedicate e test mirati; test KHOperator e oracolo R; benchmark Release | [GS-VER-160](evidenze/GS-VER-160-operatori-analitici-nativi.md), GS-MET-001-23, ADR-0032, GS-DOR-160; baseline storica conservata; ampliamento ADR-0035 e [GS-VER-233](evidenze/GS-VER-233-completamento-kh-coder.md), nuovi identificatori candidate e gate in verifica |
+| TV-087 | RF-087; RF-033; RF-037; RF-038; RF-043; RQ-025; RQ-048; RQ-058; RQ-063 | GlifiExploratoryAnalysis, GlifiProbabilisticTextAnalysis, GlifiCodingRules, GlifiTextMatrixOperators, GlifiStudioTextAnalytics; completamento comunità/layout/Prim/Simpson, MDS/SOM, selezione K e pipeline italiana; facciate dedicate e test mirati; test KHOperator e oracolo R; benchmark Release | [GS-VER-160](evidenze/GS-VER-160-operatori-analitici-nativi.md), GS-MET-001-23, ADR-0032, GS-DOR-160; baseline storica conservata; ampliamento ADR-0035 e [GS-VER-233](evidenze/GS-VER-233-completamento-kh-coder.md), nuovi identificatori candidate e gate locale del completamento superato; riverifica delle degenerazioni, dei budget e dei tie in [GS-VER-234](evidenze/GS-VER-234-riverifica-correttezza-completezza.md), con gate locale superato nel perimetro dichiarato |
 
 | [GS-VER-161](evidenze/GS-VER-161-revisione-scientifica-operatori.md) | RF-087; TV-087; ADR-0031 | Correzioni Stress-1/LDA/codifica, oracoli R/Python e sette ValidationManifest per nove varianti; review tecnica automatica, V6 esterno aperto |
 
-| TV-088 | RF-087; RQ-058; RQ-060; RQ-063 | Request analitica tipizzata e dispatcher GlifiKit, CLI text-analysis, fixture condivise e test di input ostili; nove operazioni avanzate piatte più ordinal/simpson, 30 fixture presenti nello schema/versione 1 | [GS-VER-162](evidenze/GS-VER-162-parita-operatori-kit-cli.md), GS-API-002, GS-DOR-162; parità e gate storico a 15 fixture verificati localmente; nuovo ambito GS-DOR-233 e [GS-VER-233](evidenze/GS-VER-233-completamento-kh-coder.md) in verifica |
+| TV-088 | RF-087; RQ-058; RQ-060; RQ-063 | Request analitica tipizzata e dispatcher GlifiKit, CLI text-analysis, fixture condivise e test di input ostili; nove operazioni avanzate piatte più ordinal/simpson, 30 fixture presenti nello schema/versione 1 | [GS-VER-162](evidenze/GS-VER-162-parita-operatori-kit-cli.md), GS-API-002, GS-DOR-162; parità e gate storico a 15 fixture verificati localmente; nuovo ambito GS-DOR-233 e [GS-VER-233](evidenze/GS-VER-233-completamento-kh-coder.md) verificati nel perimetro dichiarato; 30 fixture/95 controlli CLI della riverifica e gate locale superato in [GS-VER-234](evidenze/GS-VER-234-riverifica-correttezza-completezza.md) |
+
+La riverifica GS-VER-234 collega anche RF-009/RF-078 (intervalli e composizione),
+RF-034 (overflow delle collocazioni), RF-037 (HAC) e RF-087 con RQ-025/RQ-048/
+RQ-058/RQ-060/RQ-063 (contratti numerici, risorse e trasporto). Le regressioni
+`GlifiKHReauditContractTests`, `GlifiSpanMapReauditTests` e
+`GlifiCollocationAnalysisTests` coprono intervalli, byte sorgenti e overflow;
+`GlifiExploratoryReauditTests`, `GlifiLDAModelSelectionTests`,
+`GlifiNaiveBayesReauditTests`, `GlifiCodingRuleReauditTests`,
+`GlifiGraphCompletionTests` e `GlifiGraphBinary64SumTests` coprono degenerazioni,
+lavoro cumulativo, grammatica e tie; `GlifiTextAnalysisReauditTests` copre il
+trasporto Unicode. I collegamenti riguardano TV-003/TV-008/TV-009/TV-032/TV-051/
+TV-060/TV-087/TV-088 e le clausole CMP-031/051/066/080/160/162/202 esistenti,
+senza promuoverne gli stati. Il gate locale della riverifica è superato:
+660 test Core/Kit, 99 test app macOS e 95 controlli CLI su 30 fixture.
+I limiti di completezza KH restano aperti; non si attestano promozione scientifica,
+audit GUI, V6 esterno, qualità NLP rappresentativa o prove su dispositivo.
 
 ## Lotto complementare macOS GS-PLAN-180
 
@@ -541,26 +563,46 @@ snapshot verificato, supplemento di soli metadati e audit manuali aperti.
 
 ## Barriera di reset dei laboratori macOS
 
-[GS-DOR-235](pianificazione/dor-barriera-reset-laboratori-macos.md) è Ready per
+[GS-DOR-273](pianificazione/dor-barriera-reset-laboratori-macos.md) è Ready per
 RQ-011/013/047/058/060/063, in attuazione del contratto di GS-DOR-223 e ADR-0041.
-[GS-VER-235](evidenze/GS-VER-235-barriera-reset-laboratori-macos.md) distingue il
+[GS-VER-273](evidenze/GS-VER-273-barriera-reset-laboratori-macos.md) distingue il
 RED/fix Advanced legacy e le regressioni preesistenti dal checkpoint allineato
 ea48ba88/base137, che preserva il guard peer executionRevision più forte.
-CMP-235 è verified per automatici su tale checkpoint: 592 test Core/Kit,
+CMP-233 è verified per automatici su tale checkpoint: 592 test Core/Kit,
 104 definizioni/327 esecuzioni native, gate e packaging macOS superati.
 L'originale legacy preserva la GUI diversa; non è dichiarata l'equivalenza
 dell'intero checkout corrente. La barriera non annulla Artifact già committati.
-Il reset è rinumerato da 233 a 235 per distinguerlo dal completamento KH Coder
-upstream; directory e log storici non sono rinominati. G4/G5 e iPadOS separati.
+Il reset usa GS-DOR-273 e GS-VER-273, allineati al registro remoto;
+le precedenti denominazioni locali 233 e 235 restano provenienza storica.
+Directory e log storici non sono rinominati. G4/G5 e iPadOS separati.
 
 ## Presentazione corpus coerente su macOS
 
-[GS-DOR-234](pianificazione/dor-presentazione-corpus-coerente-macos.md) è Ready
+[GS-DOR-274](pianificazione/dor-presentazione-corpus-coerente-macos.md) è Ready
 per RF-046 e RQ-013/047/058/060/063. Righe, indici, conteggio, pagina e asse
 appartengono alla presentazione corrente; filtro e proiezione separati
-conservano l'ultimo intento. [GS-VER-234](evidenze/GS-VER-234-presentazione-corpus-coerente-macos.md)
+conservano l'ultimo intento. [GS-VER-274](evidenze/GS-VER-274-presentazione-corpus-coerente-macos.md)
 registra il primo errore di fixture, il RED pertinente corretto e i GREEN
 legacy/allineato distinti. CMP-234 è verified nel solo perimetro automatico del
 checkpoint ea48ba88/base137, con gate e packaging macOS superati. Nessun
 risultato numerico Core/Kit, payload o stato scientifico viene promosso dal
 lotto; il checkout originale con GUI diversa non è certificato nel suo intero.
+
+## Struttura e coesione dei confini applicativi
+
+| Clausola | Attuazione | Verifica |
+| --- | --- | --- |
+| CMP-280; RQ-005/011/063 | Bootstrap, contratti valore e actor Kit separati; policy equivalenti condivise, mapping specializzati e ownership preservati | GS-DOR-280; [GS-VER-280](evidenze/GS-VER-280-struttura-e-coesione-del-codice.md); confronto API e suite di sessione/runtime |
+| CMP-281; RQ-005/010/023/063 | Factory private di staging e digest/manifest; ordine I/O, checkpoint e confini delle quattro famiglie invariati | Suite package/qualitative, fault injection e recovery; gate process-kill |
+| CMP-282; RQ-005/011/063 | Owner privato della sessione CLI su ogni uscita, collector condiviso e presentazione dopo chiusura | Confronto completo di byte/exit in 98 casi, CLI contrattuale e gate completo |
+
+Nessun modulo, backend, formato o stato scientifico cambia. Gli indicatori di
+coesione e duplicazione non costituiscono una promessa di prestazioni.
+
+### Priorità operativa macOS
+
+CMP-283, RQ-005/RQ-063: richiesta esplicita ribadita dall’iniziatore; Make e CI
+predefiniti sul profilo macOS, ingressi `*-all` per entrambe le piattaforme solo
+su richiesta. AGENTS e GS-DEV-002 conservano la priorità; il checker del loop
+verifica i comandi canonici con prove negative. Nessun controllo condiviso o
+macOS viene rimosso, né è attestata verifica iPadOS dal profilo predefinito.

@@ -84,6 +84,28 @@ if CommandLine.arguments.contains("--text-operators") {
     exit(0)
 }
 
+if CommandLine.arguments.contains("--betweenness-numerics") {
+    #if DEBUG
+        FileHandle.standardError.write(Data("This benchmark requires a Release build.\n".utf8))
+        exit(64)
+    #else
+        let thermal = String(describing: ProcessInfo.processInfo.thermalState)
+        let measurements = try betweennessNumericsMeasurements()
+        let report = Report(
+            device: hardwareModel(),
+            operatingSystem: ProcessInfo.processInfo.operatingSystemVersionString,
+            thermalStateAtStart: thermal,
+            configuration: "Release, GlifiBenchmark --betweenness-numerics",
+            warmUpRuns: 1, samples: 5, statistic: "median, min, max wall-clock seconds per call",
+            threshold: "observational before/after comparison; no release gate",
+            measurements: measurements)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        FileHandle.standardOutput.write(try encoder.encode(report) + Data("\n".utf8))
+        exit(0)
+    #endif
+}
+
 if CommandLine.arguments.contains("--analysis-storage-optimization") {
     #if DEBUG
         FileHandle.standardError.write(Data("This benchmark requires a Release build.\n".utf8))
