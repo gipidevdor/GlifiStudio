@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-STD-001-18 |
 | Tipo | Capitolo normativo |
-| Versione | 0.5.0 |
+| Versione | 0.5.1 |
 | Stato | Proposto |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Non ancora approvato |
 | Documento padre | [GS-STD-001](../standard-di-progetto.md) |
 
@@ -29,6 +29,16 @@ framework sottostanti:
 | `incompatibleVersion` | formato, schema o protocollo non leggibile | update/export | originale intatto; read-only se sicuro |
 | `corruption` | digest, schema o integrità non verificabile | recovery esplicito | solo generazione verificata precedente, se esiste |
 | `invariantViolation` | difetto interno o stato impossibile | mai automatico | validità non presunta; componente fail-closed |
+
+Il confine di decodifica **DEVE** preservare gli invarianti dei tipi di dominio,
+anche quando un decoder precedente accettava dati malformati. Per gli intervalli
+UTF-8 non vuoti, start **DEVE** essere non negativo ed end strettamente maggiore
+di start: decodifica e costruzione applicano la stessa validazione. La decisione
+[ADR-0042](../adr/0042-invarianti-intervalli-utf8-decodificati.md) restringe soltanto
+gli intervalli invalidi e i segmenti di span map localmente incoerenti; non
+autorizza correzioni automatiche o migrazioni dei dati. Ordinamento globale e
+copertura legacy restano distinti dagli invarianti locali necessari per un
+consumo sicuro delle coordinate.
 
 Ogni failure dichiara codice stabile namespaced, categoria, operazione,
 `retryDisposition`, `retainedState`, azione possibile, `messageKey` e argomenti

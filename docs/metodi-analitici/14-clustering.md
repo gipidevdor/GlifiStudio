@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-14 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.1.2 |
+| Versione | 1.2.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -54,6 +54,17 @@ Ward:     incremento della somma dei quadrati intra-cluster dopo la fusione
 spazio euclideo con distanza euclidea quadratica e centroidi definiti. Non può
 essere combinato con Jaccard, Manhattan o divergenze. L'output conserva l'intero albero di fusioni, altezze e appartenenze;
 un taglio a `k` o a soglia è un'operazione separata.
+
+La riverifica [GS-VER-234](../evidenze/GS-VER-234-riverifica-correttezza-completezza.md)
+corregge i casi estremi: distanze single/complete/average recuperano norme
+rappresentabili con un calcolo stabile quando il quadrato va in under/overflow.
+Ward non pubblica incremento zero per centroidi distinti quando il valore positivo
+non è rappresentabile; produce `hac.numeric-range`. Quando solo il quadrato
+intermedio trabocca ma Δ è rappresentabile, l’ordine scalato dei prodotti e una
+radice stabile recuperano Δ e altezza. Le colonne costanti dei centroidi conservano
+il valore originario invece di azzerarlo o introdurre una variazione da divisioni
+ripetute. Questa correzione può modificare bit e tie rispetto alla revisione
+precedente; non estende retroattivamente le attestazioni di identità storiche.
 
 Il taglio a soglia include tutte le fusioni con altezza minore o uguale alla
 soglia, comprese le parità; la soglia è finita e non negativa. Entrambi i tagli

@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-ADR-IDX-001 |
 | Tipo | Registro delle decisioni architetturali |
-| Versione | 0.31.0 |
+| Versione | 0.32.0 |
 | Stato | Attivo |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -68,3 +68,5 @@ Ogni ADR deve contenere titolo, stato, contesto, decisione, conseguenze e, quand
 - [ADR-0035 — Completamento nativo delle varianti KH Coder](0035-completamento-nativo-kh-coder.md) — Ambito e architettura accettati; gate in verifica e varianti nuove candidate
 
 - [ADR-0040 — Integrazioni native Apple coordinate e misurate](0040-integrazioni-native-misurate.md) — Attuazione dei contratti esistenti; prove separate
+
+- [ADR-0042 — Invarianti degli intervalli UTF-8 decodificati](0042-invarianti-intervalli-utf8-decodificati.md) — Accettato; rifiuto anticipato dei range malformati, geometria legacy valida preservata
