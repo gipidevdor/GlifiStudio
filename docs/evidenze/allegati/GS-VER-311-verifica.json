@@ -1,0 +1,5554 @@
+{
+  "$comment": "SPDX-License-Identifier: BSD-3-Clause",
+  "evidenceIdentifier": "GS-VER-311",
+  "date": "2026-11-22",
+  "status": "Mirati superati; verifica completa in corso",
+  "baseline": "b401c084aae5a9f02e73a3af1598c1498d9a0edc",
+  "diagnosticRuns": [
+    {
+      "runID": 45054499095,
+      "commit": "0d170a9",
+      "scope": "26nativeperforminoneprocess; coldquerytiminglimitationrecorded"
+    },
+    {
+      "runID": 45055797007,
+      "commit": "02020be",
+      "scope": "22freshprocesses;18accuratefailed4fastsucceeded"
+    },
+    {
+      "runID": 45056456760,
+      "commit": "42f7c9f",
+      "scope": "2controlsfailed;2sameprocessaccurate-to-fastrecoveriespassed"
+    }
+  ],
+  "components": {
+    "native-ocr-probe-remote.json": {
+      "accessibleMLDeviceTypes": [
+        "cpu",
+        "gpu"
+      ],
+      "activeProcessorCount": 3,
+      "architecture": "arm64",
+      "automaticallyDetectsLanguage": true,
+      "capabilityInventoryTiming": "Global device inventory and cold-request stage inventory are collected after the two first concurrent perform attempts.",
+      "claim": "Independent diagnostic experiments; no fallback, product skip, energy or throughput claim.",
+      "coldConcurrentExperiments": [
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "automatic",
+          "elapsedSeconds": 0.560040417,
+          "fixture": "cold-concurrent-pdf-text",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "0598451cc1f5e7c64d2fd20b7c90c081abd39e595271faace80b713864f6b702",
+          "imageBytesPerRow": 5120,
+          "imageHeight": 600,
+          "imageWidth": 1280,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "production-task-bridge",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "automatic",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "automatic",
+          "elapsedSeconds": 0.563185042,
+          "fixture": "cold-concurrent-pdf-blank",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "762a94cad90d5883c94cec2c438a7e9e369f00d141c85b5ccab05f270d8ae40a",
+          "imageBytesPerRow": 5120,
+          "imageHeight": 600,
+          "imageWidth": 1280,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "production-task-bridge",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "automatic",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        }
+      ],
+      "coldConcurrentSetupErrors": [
+        [],
+        []
+      ],
+      "currentRevision": 3,
+      "experiments": [
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "automatic",
+          "elapsedSeconds": 0.00479,
+          "fixture": "direct-text",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+          "imageBytesPerRow": 2560,
+          "imageHeight": 300,
+          "imageWidth": 640,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 0,
+          "progressErrors": [],
+          "progressMode": "none",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "automatic",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "automatic",
+          "elapsedSeconds": 0.003845,
+          "fixture": "direct-text",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+          "imageBytesPerRow": 2560,
+          "imageHeight": 300,
+          "imageWidth": 640,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "counting-callback",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "automatic",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "automatic",
+          "elapsedSeconds": 0.004560375,
+          "fixture": "direct-text",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+          "imageBytesPerRow": 2560,
+          "imageHeight": 300,
+          "imageWidth": 640,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "production-task-bridge",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "automatic",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "cpu-all-advertised-stages",
+          "elapsedSeconds": 0.054452958,
+          "fixture": "direct-text",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+          "imageBytesPerRow": 2560,
+          "imageHeight": 300,
+          "imageWidth": 640,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 0,
+          "progressErrors": [],
+          "progressMode": "none",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "cpu",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "cpu-all-advertised-stages",
+          "elapsedSeconds": 0.00541325,
+          "fixture": "direct-text",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+          "imageBytesPerRow": 2560,
+          "imageHeight": 300,
+          "imageWidth": 640,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "counting-callback",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "cpu",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "cpu-all-advertised-stages",
+          "elapsedSeconds": 0.004222375,
+          "fixture": "direct-text",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+          "imageBytesPerRow": 2560,
+          "imageHeight": 300,
+          "imageWidth": 640,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "production-task-bridge",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "cpu",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "automatic",
+          "elapsedSeconds": 0.004685625,
+          "fixture": "direct-blank",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+          "imageBytesPerRow": 2560,
+          "imageHeight": 300,
+          "imageWidth": 640,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 0,
+          "progressErrors": [],
+          "progressMode": "none",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "automatic",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "automatic",
+          "elapsedSeconds": 0.004507375,
+          "fixture": "direct-blank",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+          "imageBytesPerRow": 2560,
+          "imageHeight": 300,
+          "imageWidth": 640,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "counting-callback",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "automatic",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "automatic",
+          "elapsedSeconds": 0.005342084,
+          "fixture": "direct-blank",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+          "imageBytesPerRow": 2560,
+          "imageHeight": 300,
+          "imageWidth": 640,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "production-task-bridge",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "automatic",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "cpu-all-advertised-stages",
+          "elapsedSeconds": 0.003655417,
+          "fixture": "direct-blank",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+          "imageBytesPerRow": 2560,
+          "imageHeight": 300,
+          "imageWidth": 640,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 0,
+          "progressErrors": [],
+          "progressMode": "none",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "cpu",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "cpu-all-advertised-stages",
+          "elapsedSeconds": 0.004490625,
+          "fixture": "direct-blank",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+          "imageBytesPerRow": 2560,
+          "imageHeight": 300,
+          "imageWidth": 640,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "counting-callback",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "cpu",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "cpu-all-advertised-stages",
+          "elapsedSeconds": 0.004648792,
+          "fixture": "direct-blank",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+          "imageBytesPerRow": 2560,
+          "imageHeight": 300,
+          "imageWidth": 640,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "production-task-bridge",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "cpu",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "automatic",
+          "elapsedSeconds": 0.007419208,
+          "fixture": "pdf-raster-text",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "0598451cc1f5e7c64d2fd20b7c90c081abd39e595271faace80b713864f6b702",
+          "imageBytesPerRow": 5120,
+          "imageHeight": 600,
+          "imageWidth": 1280,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 0,
+          "progressErrors": [],
+          "progressMode": "none",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "automatic",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "automatic",
+          "elapsedSeconds": 0.005517542,
+          "fixture": "pdf-raster-text",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "0598451cc1f5e7c64d2fd20b7c90c081abd39e595271faace80b713864f6b702",
+          "imageBytesPerRow": 5120,
+          "imageHeight": 600,
+          "imageWidth": 1280,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "counting-callback",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "automatic",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "automatic",
+          "elapsedSeconds": 0.008751542,
+          "fixture": "pdf-raster-text",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "0598451cc1f5e7c64d2fd20b7c90c081abd39e595271faace80b713864f6b702",
+          "imageBytesPerRow": 5120,
+          "imageHeight": 600,
+          "imageWidth": 1280,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "production-task-bridge",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "automatic",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "cpu-all-advertised-stages",
+          "elapsedSeconds": 0.007176041,
+          "fixture": "pdf-raster-text",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "0598451cc1f5e7c64d2fd20b7c90c081abd39e595271faace80b713864f6b702",
+          "imageBytesPerRow": 5120,
+          "imageHeight": 600,
+          "imageWidth": 1280,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 0,
+          "progressErrors": [],
+          "progressMode": "none",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "cpu",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "cpu-all-advertised-stages",
+          "elapsedSeconds": 0.007484583,
+          "fixture": "pdf-raster-text",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "0598451cc1f5e7c64d2fd20b7c90c081abd39e595271faace80b713864f6b702",
+          "imageBytesPerRow": 5120,
+          "imageHeight": 600,
+          "imageWidth": 1280,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "counting-callback",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "cpu",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "cpu-all-advertised-stages",
+          "elapsedSeconds": 0.007153083,
+          "fixture": "pdf-raster-text",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "0598451cc1f5e7c64d2fd20b7c90c081abd39e595271faace80b713864f6b702",
+          "imageBytesPerRow": 5120,
+          "imageHeight": 600,
+          "imageWidth": 1280,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "production-task-bridge",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "cpu",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "automatic",
+          "elapsedSeconds": 0.007527042,
+          "fixture": "pdf-raster-blank",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "762a94cad90d5883c94cec2c438a7e9e369f00d141c85b5ccab05f270d8ae40a",
+          "imageBytesPerRow": 5120,
+          "imageHeight": 600,
+          "imageWidth": 1280,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 0,
+          "progressErrors": [],
+          "progressMode": "none",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "automatic",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "automatic",
+          "elapsedSeconds": 0.007924833,
+          "fixture": "pdf-raster-blank",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "762a94cad90d5883c94cec2c438a7e9e369f00d141c85b5ccab05f270d8ae40a",
+          "imageBytesPerRow": 5120,
+          "imageHeight": 600,
+          "imageWidth": 1280,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "counting-callback",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "automatic",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "automatic",
+          "elapsedSeconds": 0.007992458,
+          "fixture": "pdf-raster-blank",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "762a94cad90d5883c94cec2c438a7e9e369f00d141c85b5ccab05f270d8ae40a",
+          "imageBytesPerRow": 5120,
+          "imageHeight": 600,
+          "imageWidth": 1280,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "production-task-bridge",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "automatic",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "cpu-all-advertised-stages",
+          "elapsedSeconds": 0.008984333,
+          "fixture": "pdf-raster-blank",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "762a94cad90d5883c94cec2c438a7e9e369f00d141c85b5ccab05f270d8ae40a",
+          "imageBytesPerRow": 5120,
+          "imageHeight": 600,
+          "imageWidth": 1280,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 0,
+          "progressErrors": [],
+          "progressMode": "none",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "cpu",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "cpu-all-advertised-stages",
+          "elapsedSeconds": 0.011828542,
+          "fixture": "pdf-raster-blank",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "762a94cad90d5883c94cec2c438a7e9e369f00d141c85b5ccab05f270d8ae40a",
+          "imageBytesPerRow": 5120,
+          "imageHeight": 600,
+          "imageWidth": 1280,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "counting-callback",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "cpu",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        },
+        {
+          "callerTaskCancelledAfter": false,
+          "callerTaskCancelledBefore": false,
+          "callerTaskPresent": true,
+          "capabilityErrors": [],
+          "deviceMode": "cpu-all-advertised-stages",
+          "elapsedSeconds": 0.011255667,
+          "fixture": "pdf-raster-blank",
+          "imageBitmapInfo": 1,
+          "imageBitsPerComponent": 8,
+          "imageByteDigest": "762a94cad90d5883c94cec2c438a7e9e369f00d141c85b5ccab05f270d8ae40a",
+          "imageBytesPerRow": 5120,
+          "imageHeight": 600,
+          "imageWidth": 1280,
+          "languageErrors": [],
+          "observations": [],
+          "performErrors": [
+            {
+              "code": 9,
+              "domain": "TextRecognition.CRImageReaderError"
+            }
+          ],
+          "performed": true,
+          "progressCallbacks": 1,
+          "progressErrors": [],
+          "progressMode": "production-task-bridge",
+          "revision": 3,
+          "stageCapabilities": [
+            {
+              "assignedDeviceType": "cpu",
+              "stage": "VNComputeStageMain",
+              "supportedDeviceTypes": [
+                "cpu",
+                "gpu"
+              ]
+            }
+          ],
+          "status": "performFailed",
+          "supportedLanguages": [
+            "en-US",
+            "fr-FR",
+            "it-IT",
+            "de-DE",
+            "es-ES",
+            "pt-BR",
+            "zh-Hans",
+            "zh-Hant",
+            "yue-Hans",
+            "yue-Hant",
+            "ko-KR",
+            "ja-JP",
+            "ru-RU",
+            "uk-UA",
+            "th-TH",
+            "vi-VT",
+            "ar-SA",
+            "ars-SA",
+            "tr-TR",
+            "id-ID",
+            "cs-CZ",
+            "da-DK",
+            "nl-NL",
+            "no-NO",
+            "nn-NO",
+            "nb-NO",
+            "ms-MY",
+            "pl-PL",
+            "ro-RO",
+            "sv-SE",
+            "fi-FI",
+            "hi-IN",
+            "mr-IN"
+          ]
+        }
+      ],
+      "finishedUTC": "2026-11-22T18:21:34Z",
+      "metalDeviceTypes": [
+        "gpu"
+      ],
+      "operatingSystem": "Version 27.0.1 (Build 26A434)",
+      "physicalMemoryBytes": 7516192768,
+      "probe": "native-vision-ocr-capabilities-v1",
+      "recognitionLevel": "accurate",
+      "requestedLanguages": [
+        "it-IT",
+        "en-US"
+      ],
+      "schemaVersion": 1,
+      "setupErrors": [],
+      "startedUTC": "2026-11-22T18:21:33Z",
+      "supportedRevisions": [
+        1,
+        2,
+        3
+      ],
+      "syntheticText": "NATIVE OCR 314159",
+      "usesLanguageCorrection": true
+    },
+    "native-ocr-probe-v3-remote.json": [
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.456963,
+            "fixture": "direct-text",
+            "height": 300,
+            "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:33.798Z",
+            "performStartedUTC": "2026-11-22T18:34:33.340Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "stock-auto",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:33.813Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "text",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "stock-auto",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:33.291Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.107586417,
+            "fixture": "direct-blank",
+            "height": 300,
+            "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:33.963Z",
+            "performStartedUTC": "2026-11-22T18:34:33.855Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "stock-auto",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:33.965Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "blank",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "stock-auto",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:33.850Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.095572917,
+            "fixture": "direct-text",
+            "height": 300,
+            "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:34.093Z",
+            "performStartedUTC": "2026-11-22T18:34:33.997Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "cpu-all-advertised-stages",
+              "identifier": "stock-cpu",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "cpu",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "before-perform-required-for-cpu-selection-and-after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:34.095Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "text",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "cpu-all-advertised-stages",
+          "identifier": "stock-cpu",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:33.990Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.112313458,
+            "fixture": "direct-blank",
+            "height": 300,
+            "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:34.234Z",
+            "performStartedUTC": "2026-11-22T18:34:34.121Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "cpu-all-advertised-stages",
+              "identifier": "stock-cpu",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "cpu",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "before-perform-required-for-cpu-selection-and-after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:34.238Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "blank",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "cpu-all-advertised-stages",
+          "identifier": "stock-cpu",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:34.116Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.062939583,
+            "fixture": "direct-text",
+            "height": 300,
+            "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 0,
+                "domain": "Foundation._GenericObjCError",
+                "localizedDescription": "The operation couldn’t be completed. (Foundation._GenericObjCError error 0.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:34.335Z",
+            "performStartedUTC": "2026-11-22T18:34:34.272Z",
+            "profile": {
+              "automaticallyDetectsLanguage": false,
+              "deviceMode": "automatic",
+              "identifier": "r3-no-autodetect",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 0,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:34.338Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "text",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": false,
+          "deviceMode": "automatic",
+          "identifier": "r3-no-autodetect",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:34.264Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.043282167,
+            "fixture": "direct-blank",
+            "height": 300,
+            "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 0,
+                "domain": "Foundation._GenericObjCError",
+                "localizedDescription": "The operation couldn’t be completed. (Foundation._GenericObjCError error 0.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:34.410Z",
+            "performStartedUTC": "2026-11-22T18:34:34.366Z",
+            "profile": {
+              "automaticallyDetectsLanguage": false,
+              "deviceMode": "automatic",
+              "identifier": "r3-no-autodetect",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 0,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:34.412Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "blank",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": false,
+          "deviceMode": "automatic",
+          "identifier": "r3-no-autodetect",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:34.361Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.103247041,
+            "fixture": "direct-text",
+            "height": 300,
+            "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:34.547Z",
+            "performStartedUTC": "2026-11-22T18:34:34.443Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "r3-no-correction",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": false
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:34.550Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "text",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "r3-no-correction",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": false
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:34.434Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.109414875,
+            "fixture": "direct-blank",
+            "height": 300,
+            "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:34.702Z",
+            "performStartedUTC": "2026-11-22T18:34:34.591Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "r3-no-correction",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": false
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:34.705Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "blank",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "r3-no-correction",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": false
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:34.583Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.044813125,
+            "fixture": "direct-text",
+            "height": 300,
+            "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 0,
+                "domain": "Foundation._GenericObjCError",
+                "localizedDescription": "The operation couldn’t be completed. (Foundation._GenericObjCError error 0.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:34.789Z",
+            "performStartedUTC": "2026-11-22T18:34:34.744Z",
+            "profile": {
+              "automaticallyDetectsLanguage": false,
+              "deviceMode": "automatic",
+              "identifier": "r3-both-off",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": false
+            },
+            "progressCallbacks": 0,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:34.792Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "text",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": false,
+          "deviceMode": "automatic",
+          "identifier": "r3-both-off",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": false
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:34.735Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.089321125,
+            "fixture": "direct-blank",
+            "height": 300,
+            "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 0,
+                "domain": "Foundation._GenericObjCError",
+                "localizedDescription": "The operation couldn’t be completed. (Foundation._GenericObjCError error 0.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:34.909Z",
+            "performStartedUTC": "2026-11-22T18:34:34.819Z",
+            "profile": {
+              "automaticallyDetectsLanguage": false,
+              "deviceMode": "automatic",
+              "identifier": "r3-both-off",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": false
+            },
+            "progressCallbacks": 0,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:34.911Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "blank",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": false,
+          "deviceMode": "automatic",
+          "identifier": "r3-both-off",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": false
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:34.813Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.105195875,
+            "fixture": "direct-text",
+            "height": 300,
+            "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:35.048Z",
+            "performStartedUTC": "2026-11-22T18:34:34.942Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "r3-en-only",
+              "recognitionLanguages": [
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:35.051Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "text",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "r3-en-only",
+          "recognitionLanguages": [
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:34.933Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.11498275,
+            "fixture": "direct-blank",
+            "height": 300,
+            "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:35.194Z",
+            "performStartedUTC": "2026-11-22T18:34:35.079Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "r3-en-only",
+              "recognitionLanguages": [
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:35.196Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "blank",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "r3-en-only",
+          "recognitionLanguages": [
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:35.074Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.103169458,
+            "fixture": "direct-text",
+            "height": 300,
+            "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:35.332Z",
+            "performStartedUTC": "2026-11-22T18:34:35.228Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "r3-it-only",
+              "recognitionLanguages": [
+                "it-IT"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:35.334Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "text",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "r3-it-only",
+          "recognitionLanguages": [
+            "it-IT"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:35.221Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.105307042,
+            "fixture": "direct-blank",
+            "height": 300,
+            "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:35.467Z",
+            "performStartedUTC": "2026-11-22T18:34:35.361Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "r3-it-only",
+              "recognitionLanguages": [
+                "it-IT"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:35.469Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "blank",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "r3-it-only",
+          "recognitionLanguages": [
+            "it-IT"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:35.356Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.289612541,
+            "fixture": "direct-text",
+            "height": 300,
+            "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+            "languageErrors": [],
+            "observations": [
+              {
+                "confidence": 0.5,
+                "height": 0.10666666666666669,
+                "text": "NATIVE OCR 314159",
+                "width": 0.6265625,
+                "x": 0.0515625,
+                "y": 0.4633333333333334
+              }
+            ],
+            "performErrors": [],
+            "performFinishedUTC": "2026-11-22T18:34:35.789Z",
+            "performStartedUTC": "2026-11-22T18:34:35.499Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "r3-fast",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "fast",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 4,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performedSuccessfully",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:35.791Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "text",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "r3-fast",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "fast",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:35.491Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.115997666,
+            "fixture": "direct-blank",
+            "height": 300,
+            "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [],
+            "performFinishedUTC": "2026-11-22T18:34:35.933Z",
+            "performStartedUTC": "2026-11-22T18:34:35.817Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "r3-fast",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "fast",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 3,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performedSuccessfully",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:35.935Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "blank",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "r3-fast",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "fast",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:35.813Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.532351666,
+            "fixture": "direct-text",
+            "height": 300,
+            "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+            "languageErrors": [],
+            "observations": [
+              {
+                "confidence": 0.5,
+                "height": 0.10666666666666669,
+                "text": "NATIVE OCR 314159",
+                "width": 0.6265625,
+                "x": 0.0515625,
+                "y": 0.4633333333333334
+              }
+            ],
+            "performErrors": [],
+            "performFinishedUTC": "2026-11-22T18:34:36.493Z",
+            "performStartedUTC": "2026-11-22T18:34:35.960Z",
+            "profile": {
+              "automaticallyDetectsLanguage": false,
+              "deviceMode": "automatic",
+              "identifier": "r3-fast-both-off",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "fast",
+              "revision": 3,
+              "usesLanguageCorrection": false
+            },
+            "progressCallbacks": 3,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performedSuccessfully",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:36.496Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "text",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": false,
+          "deviceMode": "automatic",
+          "identifier": "r3-fast-both-off",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "fast",
+          "revision": 3,
+          "usesLanguageCorrection": false
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:35.955Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.123125042,
+            "fixture": "direct-blank",
+            "height": 300,
+            "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [],
+            "performFinishedUTC": "2026-11-22T18:34:36.656Z",
+            "performStartedUTC": "2026-11-22T18:34:36.532Z",
+            "profile": {
+              "automaticallyDetectsLanguage": false,
+              "deviceMode": "automatic",
+              "identifier": "r3-fast-both-off",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "fast",
+              "revision": 3,
+              "usesLanguageCorrection": false
+            },
+            "progressCallbacks": 3,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performedSuccessfully",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:36.659Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "blank",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": false,
+          "deviceMode": "automatic",
+          "identifier": "r3-fast-both-off",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "fast",
+          "revision": 3,
+          "usesLanguageCorrection": false
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:36.525Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.042646459,
+            "fixture": "direct-text",
+            "height": 300,
+            "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 0,
+                "domain": "Foundation._GenericObjCError",
+                "localizedDescription": "The operation couldn’t be completed. (Foundation._GenericObjCError error 0.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:36.735Z",
+            "performStartedUTC": "2026-11-22T18:34:36.692Z",
+            "profile": {
+              "automaticallyDetectsLanguage": false,
+              "deviceMode": "automatic",
+              "identifier": "r2-accurate",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 2,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 0,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:36.737Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "text",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": false,
+          "deviceMode": "automatic",
+          "identifier": "r2-accurate",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 2,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:36.682Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.041152959,
+            "fixture": "direct-blank",
+            "height": 300,
+            "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 0,
+                "domain": "Foundation._GenericObjCError",
+                "localizedDescription": "The operation couldn’t be completed. (Foundation._GenericObjCError error 0.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:36.804Z",
+            "performStartedUTC": "2026-11-22T18:34:36.763Z",
+            "profile": {
+              "automaticallyDetectsLanguage": false,
+              "deviceMode": "automatic",
+              "identifier": "r2-accurate",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 2,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 0,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:36.807Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "blank",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": false,
+          "deviceMode": "automatic",
+          "identifier": "r2-accurate",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 2,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:36.758Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.125443333,
+            "fixture": "direct-text",
+            "height": 300,
+            "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:36.962Z",
+            "performStartedUTC": "2026-11-22T18:34:36.836Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "stock-auto",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:36.964Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "text",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "stock-auto",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:36.829Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "claim": "One independent experiment per process, not a product fallback or performance comparison. Fresh process is not a reset of system model caches.",
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.126974916,
+            "fixture": "direct-blank",
+            "height": 300,
+            "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:34:37.130Z",
+            "performStartedUTC": "2026-11-22T18:34:37.003Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "stock-auto",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:34:37.134Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-request-factors-v3",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "blank",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "stock-auto",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:34:36.998Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      }
+    ],
+    "native-ocr-probe-v4-remote.json": [
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "actualProfile": "none",
+        "claim": "Declared diagnostic sequence only: at most two requests on one unchanged image; preserve every attempt. No product fallback or performance claim. Fresh process is not a reset of system model caches.",
+        "consumedRequests": 1,
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.266007542,
+            "fixture": "direct-text",
+            "height": 300,
+            "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:41:27.049Z",
+            "performStartedUTC": "2026-11-22T18:41:26.782Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "stock-auto",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:41:27.062Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-accurate-then-fast-v4",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "text",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "stock-auto",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:41:26.757Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "actualProfile": "none",
+        "claim": "Declared diagnostic sequence only: at most two requests on one unchanged image; preserve every attempt. No product fallback or performance claim. Fresh process is not a reset of system model caches.",
+        "consumedRequests": 1,
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.088586041,
+            "fixture": "direct-blank",
+            "height": 300,
+            "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:41:27.183Z",
+            "performStartedUTC": "2026-11-22T18:41:27.094Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "stock-auto",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:41:27.185Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-accurate-then-fast-v4",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "blank",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "stock-auto",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:41:27.090Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "actualProfile": "stock-fast",
+        "claim": "Declared diagnostic sequence only: at most two requests on one unchanged image; preserve every attempt. No product fallback or performance claim. Fresh process is not a reset of system model caches.",
+        "consumedRequests": 2,
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.084320167,
+            "fixture": "direct-text",
+            "height": 300,
+            "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:41:27.296Z",
+            "performStartedUTC": "2026-11-22T18:41:27.212Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "stock-auto",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          },
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.168181834,
+            "fixture": "direct-text",
+            "height": 300,
+            "imageByteDigest": "06507c12a4027a00acd434cc2fbd7a027a00b4517e4c684d1cfeffe58c185e52",
+            "languageErrors": [],
+            "observations": [
+              {
+                "confidence": 0.5,
+                "height": 0.10666666666666669,
+                "text": "NATIVE OCR 314159",
+                "width": 0.6265625,
+                "x": 0.0515625,
+                "y": 0.4633333333333334
+              }
+            ],
+            "performErrors": [],
+            "performFinishedUTC": "2026-11-22T18:41:27.467Z",
+            "performStartedUTC": "2026-11-22T18:41:27.298Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "stock-fast",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "fast",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 4,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performedSuccessfully",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:41:27.468Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-accurate-then-fast-v4",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "text",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "accurate-then-fast",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:41:27.206Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "accessibleMLDeviceTypes": [
+          "cpu",
+          "gpu"
+        ],
+        "activeProcessorCount": 3,
+        "actualProfile": "stock-fast",
+        "claim": "Declared diagnostic sequence only: at most two requests on one unchanged image; preserve every attempt. No product fallback or performance claim. Fresh process is not a reset of system model caches.",
+        "consumedRequests": 2,
+        "currentRevision": 3,
+        "descriptionPolicy": "Only three public NSError string keys and localizedDescription fallback; omit entire value containing path separators, URL/address markers, controls, canonical UUID, 0x-hex or explicit deviceID; output at most512UTF8. No NSError.description or arbitrary userInfo.",
+        "descriptionRedactionSelfCheckPassed": true,
+        "experiments": [
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.084035541,
+            "fixture": "direct-blank",
+            "height": 300,
+            "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [
+              {
+                "code": 9,
+                "domain": "TextRecognition.CRImageReaderError",
+                "localizedDescription": "The operation couldn’t be completed. (TextRecognition.CRImageReaderError error 9.)",
+                "publicDiagnosticValues": {}
+              }
+            ],
+            "performFinishedUTC": "2026-11-22T18:41:27.575Z",
+            "performStartedUTC": "2026-11-22T18:41:27.490Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "stock-auto",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "accurate",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 1,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu",
+                  "gpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performFailed",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR",
+              "zh-Hans",
+              "zh-Hant",
+              "yue-Hans",
+              "yue-Hant",
+              "ko-KR",
+              "ja-JP",
+              "ru-RU",
+              "uk-UA",
+              "th-TH",
+              "vi-VT",
+              "ar-SA",
+              "ars-SA",
+              "tr-TR",
+              "id-ID",
+              "cs-CZ",
+              "da-DK",
+              "nl-NL",
+              "no-NO",
+              "nn-NO",
+              "nb-NO",
+              "ms-MY",
+              "pl-PL",
+              "ro-RO",
+              "sv-SE",
+              "fi-FI",
+              "hi-IN",
+              "mr-IN"
+            ],
+            "width": 640
+          },
+          {
+            "allRequestedLanguagesAdvertised": true,
+            "bitmapInfo": 1,
+            "bitsPerComponent": 8,
+            "bytesPerRow": 2560,
+            "callerTaskPresent": true,
+            "capabilityErrors": [],
+            "elapsedSeconds": 0.030989,
+            "fixture": "direct-blank",
+            "height": 300,
+            "imageByteDigest": "d734cba5a1c20b1822d70d4e2d2bc45e59c2f65917c099bff722b987d087e24f",
+            "languageErrors": [],
+            "observations": [],
+            "performErrors": [],
+            "performFinishedUTC": "2026-11-22T18:41:27.606Z",
+            "performStartedUTC": "2026-11-22T18:41:27.575Z",
+            "profile": {
+              "automaticallyDetectsLanguage": true,
+              "deviceMode": "automatic",
+              "identifier": "stock-fast",
+              "recognitionLanguages": [
+                "it-IT",
+                "en-US"
+              ],
+              "recognitionLevel": "fast",
+              "revision": 3,
+              "usesLanguageCorrection": true
+            },
+            "progressCallbacks": 3,
+            "progressErrors": [],
+            "stageCapabilities": [
+              {
+                "assignedDeviceType": "automatic",
+                "identifier": "VNComputeStageMain",
+                "supportedDeviceTypes": [
+                  "cpu"
+                ]
+              }
+            ],
+            "stageInventoryTiming": "after-perform",
+            "status": "performedSuccessfully",
+            "supportedLanguages": [
+              "en-US",
+              "fr-FR",
+              "it-IT",
+              "de-DE",
+              "es-ES",
+              "pt-BR"
+            ],
+            "width": 640
+          }
+        ],
+        "finishedUTC": "2026-11-22T18:41:27.608Z",
+        "metalDeviceTypes": [
+          "gpu"
+        ],
+        "operatingSystem": "Version 27.0.1 (Build 26A434)",
+        "physicalMemoryBytes": 7516192768,
+        "probe": "native-vision-ocr-accurate-then-fast-v4",
+        "progressMode": "production-task-bridge",
+        "schemaVersion": 1,
+        "selectedFixture": "blank",
+        "selectedProfile": {
+          "automaticallyDetectsLanguage": true,
+          "deviceMode": "automatic",
+          "identifier": "accurate-then-fast",
+          "recognitionLanguages": [
+            "it-IT",
+            "en-US"
+          ],
+          "recognitionLevel": "accurate",
+          "revision": 3,
+          "usesLanguageCorrection": true
+        },
+        "setupErrors": [],
+        "sourceFixture": "synthetic-640x300-Helvetica42-native-ocr-digits-v1",
+        "startedUTC": "2026-11-22T18:41:27.487Z",
+        "supportedRevisions": [
+          1,
+          2,
+          3
+        ]
+      }
+    ],
+    "taxonomy-pdf-targeted.json": {
+      "$comment": "SPDX-License-Identifier: BSD-3-Clause",
+      "command": [
+        "zsh",
+        "/tmp/GlifiPDFOCRFix-20261122/taxonomy_pdf_targeted.zsh"
+      ],
+      "swiftTestCommand": [
+        "swift",
+        "test",
+        "--package-path",
+        "Packages/GlifiCore",
+        "--scratch-path",
+        "/tmp/GlifiPDFOCRFix-20261122/VerifyCache/SwiftPM",
+        "--jobs",
+        "2",
+        "--no-parallel",
+        "--filter",
+        "pdfVision|pdfImporter"
+      ],
+      "startedUTC": "2026-11-22T18:30:52.442432+00:00",
+      "finishedUTC": "2026-11-22T18:33:12.339590+00:00",
+      "wallSeconds": 139.896703542,
+      "exitCode": 0,
+      "testSummaries": [
+        {
+          "tests": 17,
+          "suites": 0,
+          "seconds": 0.286
+        }
+      ],
+      "testDefinitionsPassed": 17,
+      "parameterizedCaseStarts": 27,
+      "sourceBefore": {
+        "fileCount": 559,
+        "digest": "sha256:edd7cf0153f2010751fb59882d3f342a3c68781b1b244d0b9c9f9101ed29c207",
+        "inventoryFile": "taxonomy-pdf-targeted-source-before.json",
+        "inventorySHA256": "9916469e8734548ad6ec4f69fa185a9578ae3296e69f27c4f1ead6c9aafbec29"
+      },
+      "sourceAfter": {
+        "fileCount": 559,
+        "digest": "sha256:edd7cf0153f2010751fb59882d3f342a3c68781b1b244d0b9c9f9101ed29c207",
+        "inventoryFile": "taxonomy-pdf-targeted-source-after.json",
+        "inventorySHA256": "99d0dabd172cf5c448e99ccbb2d8033bc984de32ab59164241ef0f1919025774"
+      },
+      "sourceUnchanged": true,
+      "changedSourceFiles": [],
+      "logSHA256": "3250bd7457854ffd7fb812a9913aac880119b3a483fafbb1fd651d9b6e8e3f53",
+      "cacheProtocol": "Scripts/build-cache.sh exclusive lease and EXIT trap; GLIFI_VERIFY_KEEP_CACHE=1",
+      "cacheOwnerMarker": "studio.glifi.build-cache.v1",
+      "cacheActiveMarkerRemoved": true,
+      "compilerWarnings": [],
+      "nativePDFDiagnostics": [
+        "CoreGraphics PDF has logged an error. Set environment variable \"CG_PDF_VERBOSE\" to learn more."
+      ],
+      "informativeOCRBenchmarkEnabled": false,
+      "parameterizedDefinitionsPassed": 4,
+      "parameterizedCasesPassed": 27,
+      "totalTestExecutions": 40,
+      "status": "Passed"
+    },
+    "pdf-v2-targeted-green.json": {
+      "startedUTC": "2026-11-22T18:57:32.731314+00:00",
+      "finishedUTC": "2026-11-22T18:57:44.770879+00:00",
+      "wallSeconds": 12.039320416981354,
+      "exitCode": 0,
+      "shellScript": "set -euo pipefail\nsource Scripts/build-cache.sh\ntask_cache_directory=\"$(glifi_build_cache_directory)\"\ntrap 'glifi_release_build_cache \"$task_cache_directory\"' EXIT\nglifi_prepare_build_cache \"$task_cache_directory\" || exit 1\nswift test --package-path Packages/GlifiCore --scratch-path \"$task_cache_directory/SwiftPM\" --jobs 2 --no-parallel --filter 'pdfVision|pdfImporter|pdfOCRExecution|pdfProfileProvenance'\n",
+      "cacheEnvironment": {
+        "GLIFI_VERIFY_CACHE": "/tmp/GlifiPDFOCRFix-20261122/VerifyCache",
+        "GLIFI_VERIFY_KEEP_CACHE": "1"
+      },
+      "testSummaries": [
+        {
+          "tests": 27,
+          "suites": 0,
+          "seconds": 0.441
+        }
+      ],
+      "testTotal": 27,
+      "inputHashesBefore": {
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiPDFExtractor.swift": "311ff1e6a96242957f915ede159282eb6c1eb44543991141facc691944e08ac0",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiPDFOCRExecution.swift": "e399f6455bb4b6947fee20e9f6026cb6a00607c135d85d59196e346822606c18",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiPDFVisionFailure.swift": "972e672e19f4d0e31f31b44facec3974f21079b4159d9a9da019e9883aea1c85",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPDFImporterTests.swift": "7172a1216d10b108c3f5573de1209b304988baae5320fd032d3c560b2ab658d8",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPDFOCRExecutionTests.swift": "eedb6777302edbc127712d883c72c69dcaffec0dc5ebe60f0dae65df7c66eb58",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPDFVisionFailureTests.swift": "5775030d88ac628717516fa818915d7e004860855b5cdc34a7a9c37e477533fb",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPDFProfileProvenanceTests.swift": "76426168b23422a9d6d1732aebdc6b6fcbb4593684a7d433cca612f6ad19ef0e"
+      },
+      "inputHashesAfter": {
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiPDFExtractor.swift": "311ff1e6a96242957f915ede159282eb6c1eb44543991141facc691944e08ac0",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiPDFOCRExecution.swift": "e399f6455bb4b6947fee20e9f6026cb6a00607c135d85d59196e346822606c18",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiPDFVisionFailure.swift": "972e672e19f4d0e31f31b44facec3974f21079b4159d9a9da019e9883aea1c85",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPDFImporterTests.swift": "7172a1216d10b108c3f5573de1209b304988baae5320fd032d3c560b2ab658d8",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPDFOCRExecutionTests.swift": "eedb6777302edbc127712d883c72c69dcaffec0dc5ebe60f0dae65df7c66eb58",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPDFVisionFailureTests.swift": "5775030d88ac628717516fa818915d7e004860855b5cdc34a7a9c37e477533fb",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPDFProfileProvenanceTests.swift": "76426168b23422a9d6d1732aebdc6b6fcbb4593684a7d433cca612f6ad19ef0e"
+      },
+      "ownedInputsUnchanged": true,
+      "logPath": "/tmp/GlifiPDFOCRFix-20261122/pdf-v2-targeted-green.log",
+      "logSHA256": "0c512806461cdda6c2417a353220043086752673f7fe04c9d21eb1952a749210",
+      "compilerWarnings": [],
+      "failureLines": []
+    },
+    "ocr-reimport-persistence-audit.json": {
+      "$comment": "SPDX-License-Identifier: BSD-3-Clause",
+      "recordedUTC": "2026-11-22T18:40:29.966222+00:00",
+      "scope": "Read-only reimport, snapshot identity and persistence review; no storage/source patch or runtime execution",
+      "sources": [
+        {
+          "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiIdentifiers.swift",
+          "sha256": "7e518c114fe27a66456a1ad30c0bde383631ce179266b58e7fa0468e1bb935e6"
+        },
+        {
+          "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiTextModel.swift",
+          "sha256": "19ae009f76f17a70ae0fcb2b85fea4362dcad9a5d2d382b2c4dd16628b133539"
+        },
+        {
+          "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiProjectPackage.swift",
+          "sha256": "65fac0463750c20d6e5d311ef2a2ae234ac8348139bfc2430fa999f60ebce29e"
+        },
+        {
+          "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiDocumentExtractionPersistence.swift",
+          "sha256": "c16b56df6224b2eb06ac42224b2465fb811aef0472ddbf410b0c5618bbf00fd3"
+        },
+        {
+          "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiSQLiteProjectStore.swift",
+          "sha256": "f34e63a460d63365abaf45c3c38aa5e53fa029b8dd029c106f9e077d4f0b408d"
+        }
+      ],
+      "conclusion": {
+        "identitySchemeChangeRequired": false,
+        "storageFormatOrMigrationChangeRequired": false,
+        "newAcquisitionWithChangedProfileRequiresFreshSourceRevisionID": true,
+        "oldSnapshotMayBeReplacedUnderSameRevision": false,
+        "existingFactoryCreatesFreshRevisionByDefault": true,
+        "currentReimportSemantics": "Append-only. A shared SourceID does not replace or hide an earlier revision; both remain active in the project corpus. Binary bytes are content-addressed/deduplicated, not the logical acquisitions.",
+        "oneExtractionPerRevision": "Enforced by bindings; a new profile may create a new acquisition/revision, not a second artifact for an existing revision.",
+        "noAutomaticIdenticalReimportDeduplicationClaim": true
+      },
+      "codeEvidence": [
+        {
+          "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiIdentifiers.swift",
+          "lines": [
+            84,
+            93
+          ],
+          "observation": "SourceRevisionID is a UUID-backed opaque identifier, not a hash of the original bytes or OCR profile."
+        },
+        {
+          "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiTextModel.swift",
+          "lines": [
+            125,
+            153
+          ],
+          "observation": "The import factory defaults sourceRevisionID to a new SourceRevisionID; the extraction returns one DTO that restoreDocument binds to that revision."
+        },
+        {
+          "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiProjectPackage.swift",
+          "lines": [
+            1495,
+            1517
+          ],
+          "observation": "Source record uses the supplied SourceID and imported revision, points original object to raw SHA path and appends to all current sources."
+        },
+        {
+          "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiDocumentExtractionPersistence.swift",
+          "lines": [
+            98,
+            120
+          ],
+          "observation": "Descriptor identity includes sourceRevisionIDs, original source record, extractionDigest, complete backendMetadata and backendIdentifier. Different policy/backend remains distinct even if captured text is identical."
+        },
+        {
+          "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiProjectPackage.swift",
+          "lines": [
+            2265,
+            2324
+          ],
+          "observation": "Existing extraction declares exactly its own revision; adding another revision preserves this corpus subset and therefore retains the old extraction artifact."
+        },
+        {
+          "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiDocumentExtractionPersistence.swift",
+          "lines": [
+            127,
+            150
+          ],
+          "observation": "Duplicate source revisions, more than one reserved extraction for one revision, and missing rich extractions fail closed."
+        },
+        {
+          "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiProjectPackage.swift",
+          "lines": [
+            1518,
+            1564
+          ],
+          "observation": "The new source adds exactly one prepared extraction, validates the graph/bindings and only then prepares the database generation."
+        },
+        {
+          "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiSQLiteProjectStore.swift",
+          "lines": [
+            486,
+            508
+          ],
+          "observation": "SQLite copies historical source rows and inserts the new revision; primary key is generation/source_revision_id, not SourceID."
+        },
+        {
+          "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiDocumentExtractionPersistence.swift",
+          "lines": [
+            221,
+            233
+          ],
+          "observation": "Reopen validates/rebuilds the descriptor from persisted payload.extraction, not the current recognizer policy. Canonical bytes and stored metadata are preserved."
+        }
+      ],
+      "regressionsProposed": [
+        {
+          "id": "old-v1-new-v2-same-source-and-bytes",
+          "setup": "Use fixed SourceID, two distinct fixed SourceRevisionID values, identical opaque non-PDF raw bytes, identical captured UTF8 text/locations. V1 has legacy backend and no new policy metadata. V2 has explicit new policy/backend metadata. Construct both via restoreDocument so any accidental parser call would fail.",
+          "steps": [
+            "Import V1 under shared SourceID. Save original source record, extraction artifact, descriptor bytes, payload bytes, nodeID and ArtifactID.",
+            "Import V2 under the SAME SourceID with the FRESH revision.",
+            "Reopen and load importedText for each revision independently."
+          ],
+          "assertions": [
+            "Generation advances exactly once for V2; two source records and exactly two reserved artifacts, one per revision.",
+            "SourceID equal and contentDigest/objectPath/raw bytes equal; SourceRevisionIDs differ.",
+            "V1 source record, artifact, descriptor and payload bytes/IDs remain exactly unchanged.",
+            "V2 nodeID, ArtifactID, extractionDigest and backend identity differ, even with identical captured text.",
+            "Both captured texts/ranges and source raw digests match expected values after reopen.",
+            "V1 metadata remains policy-less and byte-identical; V2 preserves the selected new profile/backend.",
+            "No Vision/PDFKit invocation; opaque original cannot be parsed."
+          ]
+        },
+        {
+          "id": "old-revision-cannot-be-rebound-to-v2",
+          "setup": "Reuse V1 SourceRevisionID intentionally for V2 metadata/backend, keeping SourceID and raw bytes equal.",
+          "assertions": [
+            "Import throws a typed GlifiFailure before manifest replacement; no second committed artifact binds that revision.",
+            "Current snapshot generation and source/artifact roots unchanged; reopen still yields exact V1 metadata/text/IDs.",
+            "Do not require temporary unreferenced staged objects to be absent: they are not authoritative project state."
+          ]
+        },
+        {
+          "id": "profile-change-identity-independent-of-text",
+          "setup": "Build descriptors for equal original bytes and captured text with V1 versus V2 policy/backend. Compare canonical descriptor identities and extraction digests.",
+          "assertions": [
+            "Backend/policy differences participate in content identity; no reuse keyed solely by original contentDigest or captured text.",
+            "This identity test does not authorize a second extraction on the same already-committed SourceRevisionID."
+          ]
+        }
+      ],
+      "fallbackBoundary": {
+        "rule": "Accurate failure then fast retry occurs before the single successful extraction DTO and source commit. Persist only the successful selected result once for each page and one document snapshot once.",
+        "limitation": "Persistence enforces one artifact per revision, but cannot detect duplicated text already combined inside one faulty extraction DTO. The OCR integration test must cover that boundary separately."
+      },
+      "outOfScope": [
+        "No automatic latest-revision replacement/selection design",
+        "No changes to storage/identity factories",
+        "No runtime OCR cause or performance claim",
+        "No tests/build executed during this audit"
+      ]
+    }
+  },
+  "manualAccessibilityVerified": false,
+  "iPadOSVerified": false,
+  "realOCRQualityQualified": false,
+  "energyClaim": false,
+  "unexplainedNativeError": "Opaque CRImageReaderError9; no public mapping or specific hardware/root-cause claim"
+}

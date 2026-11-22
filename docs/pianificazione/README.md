@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.29 |
+| Versione | 1.6.30 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -156,3 +156,5 @@ preservando i confini del lavoro già in corso nell'altra chat.
 - [GS-DOR-310 — Importazione PDF ed EPUB](dor-importazione-pdf-epub.md) — Ready; PDFKit, Vision e parser EPUB bounded
 
 - [GS-DOR-306 — Progetto Xcode completo e verificabile](dor-progetto-xcode-completo.md) — Ready; gate, nativi Debug/Release e preflight macOS superati sul checkpoint 328169f7; limiti interattivi e nuovo Core 305 separati
+
+- [GS-DOR-311 — Disponibilità e failure OCR native](dor-disponibilita-e-failure-ocr.md) — Ready; diagnosi remota e tassonomia

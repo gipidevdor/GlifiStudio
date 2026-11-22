@@ -3374,7 +3374,13 @@ private struct StudioDocumentSourceProvenance: View {
                 }
             }
             if (document.metadata["ocrPageCount"].flatMap(Int.init) ?? 0) > 0 {
-                Label("source.document.ocr", systemImage: "text.viewfinder")
+                if (document.metadata["ocrFallbackPageCount"].flatMap(Int.init) ?? 0) > 0 {
+                    Label("source.document.ocr.fast", systemImage: "text.viewfinder")
+                        .help("source.document.ocr.fast.hint")
+                        .accessibilityHint(Text("source.document.ocr.fast.hint"))
+                } else {
+                    Label("source.document.ocr", systemImage: "text.viewfinder")
+                }
             }
             Text("source.document.captured").foregroundStyle(.secondary)
         }

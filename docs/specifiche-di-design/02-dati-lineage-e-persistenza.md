@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DAT-001 |
 | Tipo | Specifica di design di dati e persistenza |
-| Versione | 1.12.1 |
+| Versione | 1.12.2 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -477,3 +477,15 @@ Per questi formati lo spazio source UTF-8 usato da query, evidenze e selezioni
 binario originale. Non è una falsa mappa UTF-8 sui byte PDF o ZIP. Regioni OCR
 normalizzate e confidenza restano distinte dal testo incorporato. I budget
 conteggiano almeno il massimo fra dimensione originale e rappresentazione.
+
+ADR-0045 aggiunge il contratto PDF V2 e un profilo accurate preferito con
+recupero fast limitato ai problemi di risorse del perform. Il payload conserva
+il livello effettivo e le pagine fast; non si concatena un risultato parziale
+del primo tentativo. La selezione termina prima di validare e aggiungere il
+testo al documento. Un solo DTO riuscito entra nel commit della fonte.
+
+Il nuovo backend non autorizza a riscrivere una SourceRevision V1. Una nuova
+acquisizione usa una nuova SourceRevisionID, anche con SourceID e originale
+identici; il raw object viene deduplicato per digest e le due revisioni restano
+attive secondo il contratto esistente. I vecchi payload, descriptor e nodeID
+restano invariati; il decoder non aggiunge impostazioni V2 agli snapshot V1.

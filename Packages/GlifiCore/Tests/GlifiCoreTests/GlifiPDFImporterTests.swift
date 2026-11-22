@@ -25,6 +25,13 @@ func pdfImporterDigitalPagesAndUnicodeLocations() throws {
     #expect(result.metadata["documentUnitCount"] == "2")
     #expect(result.metadata["digitalTextPageCount"] == "2")
     #expect(result.metadata["ocrPageCount"] == "0")
+    #expect(result.contractIdentifier == "pdfkit-pages-vision-ocr-v2")
+    #expect(result.metadata["ocrRequestedRecognitionLevel"] == "accurate")
+    #expect(result.metadata["ocrRecognitionLevel"] == "none")
+    #expect(result.metadata["ocrRequestCount"] == "0")
+    #expect(result.metadata["ocrFallbackPageCount"] == "0")
+    #expect(result.metadata["ocrFastPageNumbers"] == "")
+    #expect(result.backendIdentifier.hasSuffix(";OCR-policy-v2;OCR-level-none"))
     #expect(result.backendIdentifier.contains("PDFKit-"))
     #expect(result.metadata["operatingSystemVersion"]?.isEmpty == false)
     #expect(
@@ -58,10 +65,28 @@ func pdfImporterMixedDigitalAndOCR() throws {
     #expect(ocr.allSatisfy { (0...1).contains($0.confidence ?? -1) })
     #expect(result.metadata["ocrPageCount"] == "1")
     #expect(result.metadata["ocrRequestedLanguages"] == "it-IT,en-US")
-    #expect(result.metadata["ocrProfileIdentifier"] == "pdf-import-readable-text-accurate-v1")
+    #expect(
+        result.metadata["ocrProfileIdentifier"]
+            == "pdf-import-readable-text-accurate-preferred-fast-resource-v2")
     #expect(result.metadata["ocrRevision"] == String(VNRecognizeTextRequest.currentRevision))
     #expect(result.metadata["documentUnitCount"] == "2")
     #expect(result.backendIdentifier.contains("Vision-text-r"))
+    #expect(result.contractIdentifier == "pdfkit-pages-vision-ocr-v2")
+    #expect(result.metadata["ocrRequestedRecognitionLevel"] == "accurate")
+    switch result.metadata["ocrRequestCount"] {
+    case "1":
+        #expect(result.metadata["ocrRecognitionLevel"] == "accurate")
+        #expect(result.metadata["ocrFallbackPageCount"] == "0")
+        #expect(result.metadata["ocrFastPageNumbers"] == "")
+        #expect(result.backendIdentifier.hasSuffix(";OCR-policy-v2;OCR-level-accurate"))
+    case "2":
+        #expect(result.metadata["ocrRecognitionLevel"] == "fast")
+        #expect(result.metadata["ocrFallbackPageCount"] == "1")
+        #expect(result.metadata["ocrFastPageNumbers"] == "2")
+        #expect(result.backendIdentifier.hasSuffix(";OCR-policy-v2;OCR-level-fast"))
+    default:
+        Issue.record("One OCR page must consume exactly one or two native requests")
+    }
 }
 
 @Test("A rotated digital page preserves text and the original page number")

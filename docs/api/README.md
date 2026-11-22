@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-API-001 |
 | Tipo | Specifica normativa delle interfacce applicative e headless |
-| Versione | 1.32.3 |
+| Versione | 1.32.4 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -601,3 +601,16 @@ di testo incorporato, non fonde automaticamente immagini e testo della stessa
 pagina. Layout complessi e qualità OCR richiedono confronto con l'originale.
 PDFKit può emettere una diagnostica generica su PDF firmati ma corrotti; il
 trasporto mantiene la failure di dominio e non intercetta globalmente stderr.
+
+ADR-0045 definisce il profilo PDF V2 accurate preferito, con un solo secondo
+tentativo Vision fast se il perform nativo fallisce per risorse del backend.
+Preflight, limiti, input invalido, cancellazione e successo senza osservazioni
+non vengono ritentati. Restano al massimo 128 pagine OCR e due perform per
+pagina, sulla stessa bitmap bounded. Gli errori nativi di risorse non diventano
+invalidInput e non espongono descrizioni o userInfo.
+
+La provenienza registra profilo, livello preferito ed effettivo, conteggio delle
+richieste e pagine fast; la fonte espone una breve etichetta OCR rapido quando
+usato. Il nuovo contratto di estrazione è pdfkit-pages-vision-ocr-v2; gli snapshot
+V1 mantengono metadati, backend e testo originari, senza nuovi default o parser.
+Le API e i parametri pubblici restano invariati. Prove correttive in GS-VER-311.

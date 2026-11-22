@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-APL-009 |
 | Tipo | Standard applicativo Apple |
-| Versione | 1.1.2 |
+| Versione | 1.2.0 |
 | Stato | Approvato |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -23,7 +23,7 @@ PDF/OCR restano post-MVP; ADR-0044 ne autorizza il nuovo incremento con EPUB, se
 | Uniform Type Identifiers | Dichiarazione e validazione dei tipi importati, esportati e trasferiti | Da adottare nella prima importazione | Elenco formati approvato |
 | Foundation, `FileHandle`, coordinamento file | I/O incrementale, accesso coordinato e scritture recuperabili | Da adottare nella vertical slice | Contratto documentale e test di errore |
 | PDFKit | Estrazione del livello testuale e pagine | Implementato e verificato su fixture sintetiche GS-VER-310; selezione e navigazione PDF distinte | Fixture digitali e locatori pagina; corpus reali aperti |
-| Vision | OCR locale con osservazioni, coordinate e confidenza | Implementato e verificato su fixture sintetiche GS-VER-310 | Fixture sintetiche e provenienza; metriche reali ed energia aperte |
+| Vision | OCR locale con osservazioni, coordinate e confidenza | Profilo adattivo ADR-0045 in verifica GS-VER-311; baseline locale GS-VER-310 | Fixture sintetiche e provenienza effettiva; metriche reali ed energia aperte |
 | VisionKit | Acquisizione guidata da fotocamera e interazioni documentali di sistema su iPad | Condizionale | Requisito esplicito di scansione e permesso fotocamera |
 | Image I/O e Core Graphics | Orientamento e rasterizzazione controllata delle immagini | Core Graphics implementato e verificato su fixture sintetiche GS-VER-310 | Rotazioni e budget pixel; profili reali distinti |
 | Core Image | Pre-elaborazione immagini accelerata prima dell'OCR quando migliora la qualità | Da valutare | Confronto accuratezza, GPU, energia e memoria |
@@ -34,7 +34,7 @@ PDF/OCR restano post-MVP; ADR-0044 ne autorizza il nuovo incremento con EPUB, se
 
 - La fonte originale **NON DEVE** essere modificata implicitamente.
 - Il testo digitale e il testo OCR **DEVONO** essere unità di provenienza distinte e ispezionabili nello snapshot di estrazione (ADR-0044), con pagina, regione, revisione dell'algoritmo, lingua richiesta e confidenza applicabile.
-- Vision **DEVE** operare sul dispositivo; la modalità `fast` o `accurate` **DEVE** appartenere a un profilo d'uso esplicito e verificato. GS-DOR-310 usa il profilo di acquisizione testuale accurata, con confronto sintetico informativo separato dalle misure energetiche e dalla validazione su corpus reali.
+- Vision **DEVE** operare sul dispositivo; la modalità `fast` o `accurate` **DEVE** appartenere a un profilo d'uso esplicito e verificato. ADR-0045 estende il profilo storico GS-DOR-310: accurate preferito, un solo fast su errore nativo di risorse del perform, con livello effettivo nello snapshot e nella provenienza. Cancellazione, limiti, preflight, input invalido e successo vuoto non attivano il secondo tentativo. Non si dichiara equivalenza qualitativa fra i percorsi; confronti sintetici, energia e validazione su corpus reali restano distinti.
 - La disponibilità della lingua OCR **DEVE** essere verificata a runtime; una lingua non supportata deve produrre un errore comprensibile o selezionare un backend approvato.
 - PDFKit **NON DEVE** essere trattato come fonte infallibile: ordine di lettura, ligature, font incorporati e PDF corrotti richiedono fixture negative.
 - Immagini e pagine **DEVONO** essere elaborate a finestre o tile quando la dimensione rende rischiosa una rasterizzazione completa.

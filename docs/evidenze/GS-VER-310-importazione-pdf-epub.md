@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-VER-310 |
 | Tipo | Implementazione e verifica documentale |
-| Versione | 1.1.0 |
+| Versione | 1.1.1 |
 | Stato | Superato localmente nel perimetro dichiarato |
 | Responsabile | Codex e tre agenti |
 | Ultima modifica | 2026-11-22 |
@@ -199,3 +199,10 @@ manuale o distribuzione firmata. G4/G5 e CMP-020 restano aperti; CMP-310 resta
 implemented per evitare di confondere verifica funzionale sintetica e qualifica
 completa. Log, fixture e risultati utili sono conservati localmente; le sole
 cache rigenerabili del lotto sono rimosse a verifiche concluse.
+
+## Riverifica remota
+
+Il successivo controllo remoto ha rilevato indisponibilità del percorso OCR
+accurate sull’immagine assegnata. GS-VER-311 registra diagnosi e correzione
+ADR-0045; i conteggi e gli esiti locali precedenti restano riferiti ai propri
+congelamenti e non vengono presentati come successi remoti.

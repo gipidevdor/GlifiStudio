@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.20.11 |
+| Versione | 1.20.12 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -295,3 +295,5 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 - [GS-VER-303 — Scenari di analisi](GS-VER-303-scenari-di-analisi.md) — Superato nel profilo macOS; inventario, integrazione e modelli, audit manuali separati
 
 - [GS-VER-306 — Progetto Xcode completo e verificabile](GS-VER-306-progetto-xcode-completo.md) — Superato per automatici sul checkpoint 328169f7: gate, 125 definizioni/409 esecuzioni native in ciascuna configurazione Debug/Release e preflight macOS; nuovo Core 305 escluso
+
+- [GS-VER-311 — Disponibilità e failure OCR native](GS-VER-311-disponibilita-ocr.md) — In verifica; log e probe sintetici remoti

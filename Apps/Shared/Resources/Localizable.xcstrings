@@ -12404,6 +12404,40 @@
       }
     }
   },
+  "source.document.ocr.fast": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Fast OCR"
+        }
+      },
+      "it": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "OCR rapido"
+        }
+      }
+    }
+  },
+  "source.document.ocr.fast.hint": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Accurate recognition was unavailable. Review the captured text."
+        }
+      },
+      "it": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Il riconoscitore accurato non era disponibile. Verifica il testo acquisito."
+        }
+      }
+    }
+  },
   "source.document.pages": {
     "extractionState": "manual",
     "localizations": {

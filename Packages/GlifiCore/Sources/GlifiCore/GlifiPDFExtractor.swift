@@ -33,6 +33,9 @@ enum GlifiPDFExtractor {
         var output = PDFExtractedTextBuilder(limits: limits)
         var digitalPages = 0
         var ocrPages = 0
+        var ocrRequests = GlifiPDFOCRExecution.RequestBudget(limits: limits)
+        var usedAccurate = false
+        var fastPageNumbers: [Int] = []
         let revision = VNRecognizeTextRequest.currentRevision
         for index in 0..<document.pageCount {
             try pdfCheckCancellation()
@@ -53,8 +56,13 @@ enum GlifiPDFExtractor {
                 ocrPages += 1
                 let image = try rasterizePDFPage(page, limits: limits)
                 try pdfCheckCancellation()
-                try recognizePDFPage(
-                    image, pageNumber: index + 1, revision: revision, output: &output)
+                let level = try recognizePDFPage(
+                    image, pageNumber: index + 1, revision: revision,
+                    requestBudget: &ocrRequests, output: &output)
+                switch level {
+                case .accurate: usedAccurate = true
+                case .fast: fastPageNumbers.append(index + 1)
+                }
             }
         }
         try pdfCheckCancellation()
@@ -66,10 +74,18 @@ enum GlifiPDFExtractor {
         let pdfVersion =
             Bundle(for: PDFDocument.self).object(forInfoDictionaryKey: "CFBundleVersion") as? String
             ?? "system"
+        let effectiveLevel: String
+        switch (usedAccurate, !fastPageNumbers.isEmpty) {
+        case (false, false): effectiveLevel = "none"
+        case (true, false): effectiveLevel = "accurate"
+        case (false, true): effectiveLevel = "fast"
+        case (true, true): effectiveLevel = "mixed"
+        }
         return try GlifiDocumentExtraction(
             text: output.text, locations: output.locations,
-            contractIdentifier: "pdfkit-pages-vision-ocr-v1",
-            backendIdentifier: "PDFKit-\(pdfVersion);Vision-text-r\(revision);OS-\(osIdentifier)",
+            contractIdentifier: "pdfkit-pages-vision-ocr-v2",
+            backendIdentifier:
+                "PDFKit-\(pdfVersion);Vision-text-r\(revision);OS-\(osIdentifier);OCR-policy-v2;OCR-level-\(effectiveLevel)",
             metadata: [
                 "pageCount": String(document.pageCount),
                 "documentUnitCount": String(document.pageCount),
@@ -79,8 +95,13 @@ enum GlifiPDFExtractor {
                 "operatingSystemVersion": osIdentifier,
                 "operatingSystemBuild": ProcessInfo.processInfo.operatingSystemVersionString,
                 "ocrRevision": String(revision),
-                "ocrRecognitionLevel": "accurate",
-                "ocrProfileIdentifier": "pdf-import-readable-text-accurate-v1",
+                "ocrRequestedRecognitionLevel": "accurate",
+                "ocrRecognitionLevel": effectiveLevel,
+                "ocrRequestCount": String(ocrRequests.requestCount),
+                "ocrFallbackPageCount": String(fastPageNumbers.count),
+                "ocrFastPageNumbers": fastPageNumbers.map(String.init).joined(separator: ","),
+                "ocrProfileIdentifier":
+                    "pdf-import-readable-text-accurate-preferred-fast-resource-v2",
                 "ocrRequestedLanguages": "it-IT,en-US",
                 "ocrAutomaticallyDetectsLanguage": "true",
                 "ocrUsesLanguageCorrection": "true",
@@ -179,44 +200,17 @@ private func rasterizePDFPage(_ page: PDFPage, limits: GlifiTextImportLimits) th
 }
 
 private func recognizePDFPage(
-    _ image: CGImage, pageNumber: Int, revision: Int, output: inout PDFExtractedTextBuilder
-) throws {
-    let request = VNRecognizeTextRequest()
-    request.revision = revision
-    request.recognitionLevel = .accurate
-    request.recognitionLanguages = ["it-IT", "en-US"]
-    request.usesLanguageCorrection = true
-    request.automaticallyDetectsLanguage = true
-    do {
-        let supported = try request.supportedRecognitionLanguages()
-        guard request.recognitionLanguages.allSatisfy({ supported.contains($0) }) else {
-            throw pdfFailure("pdf.ocr-language-unavailable", .unsupportedFormat)
+    _ image: CGImage, pageNumber: Int, revision: Int,
+    requestBudget: inout GlifiPDFOCRExecution.RequestBudget,
+    output: inout PDFExtractedTextBuilder
+) throws -> GlifiPDFOCRExecution.Level {
+    let selected = try GlifiPDFOCRExecution.run(checkCancellation: pdfCheckCancellation) { level in
+        try autoreleasepool {
+            try performPDFOCRAttempt(
+                image, level: level, revision: revision, requestBudget: &requestBudget)
         }
-    } catch let failure as GlifiFailure {
-        throw failure
-    } catch {
-        throw pdfFailure("pdf.ocr-unavailable", .insufficientResources)
     }
-    let handler = VNImageRequestHandler(cgImage: image, options: [:])
-    try GlifiPDFCancellationProbe.withCurrentTask { probe in
-        request.progressHandler = { request, _, _ in
-            if probe.isCancelled { request.cancel() }
-        }
-        defer { request.progressHandler = { _, _, _ in } }
-        do {
-            try handler.perform([request])
-        } catch {
-            if probe.isCancelled
-                || ((error as NSError).domain == VNErrorDomain
-                    && (error as NSError).code == VNErrorCode.requestCancelled.rawValue)
-            {
-                throw pdfFailure("pdf.cancelled", .cancelled)
-            }
-            throw pdfFailure("pdf.ocr-failed", .invalidInput)
-        }
-        try pdfCheckCancellation()
-    }
-    let observations = request.results ?? []
+    let observations = selected.value
     guard observations.count <= output.limits.maximumDocumentLocationCount - output.locations.count
     else {
         throw pdfFailure("pdf.location-limit", .insufficientResources)
@@ -260,6 +254,51 @@ private func recognizePDFPage(
         }
         try output.append(
             text, page: pageNumber, method: "pdf-ocr", region: region, confidence: confidence)
+    }
+    return selected.level
+}
+
+private func performPDFOCRAttempt(
+    _ image: CGImage, level: GlifiPDFOCRExecution.Level, revision: Int,
+    requestBudget: inout GlifiPDFOCRExecution.RequestBudget
+) throws -> Result<[VNRecognizedTextObservation], GlifiFailure> {
+    try pdfCheckCancellation()
+    let request = VNRecognizeTextRequest()
+    request.revision = revision
+    switch level {
+    case .accurate: request.recognitionLevel = .accurate
+    case .fast: request.recognitionLevel = .fast
+    }
+    request.recognitionLanguages = ["it-IT", "en-US"]
+    request.usesLanguageCorrection = true
+    request.automaticallyDetectsLanguage = true
+    do {
+        let supported = try request.supportedRecognitionLanguages()
+        guard request.recognitionLanguages.allSatisfy({ supported.contains($0) }) else {
+            throw pdfFailure("pdf.ocr-language-unavailable", .unsupportedFormat)
+        }
+    } catch let failure as GlifiFailure {
+        throw failure
+    } catch {
+        throw GlifiPDFVisionFailure.classify(error, code: "pdf.ocr-unavailable")
+    }
+    let handler = VNImageRequestHandler(cgImage: image, options: [:])
+    return try GlifiPDFCancellationProbe.withCurrentTask { probe in
+        request.progressHandler = { request, _, _ in
+            if probe.isCancelled { request.cancel() }
+        }
+        defer { request.progressHandler = { _, _, _ in } }
+        try pdfCheckCancellation()
+        try requestBudget.consume()
+        do {
+            try handler.perform([request])
+        } catch {
+            return .failure(
+                GlifiPDFVisionFailure.classify(
+                    error, code: "pdf.ocr-failed", isCancelled: probe.isCancelled))
+        }
+        try pdfCheckCancellation()
+        return .success(request.results ?? [])
     }
 }
 

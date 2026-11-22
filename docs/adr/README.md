@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-ADR-IDX-001 |
 | Tipo | Registro delle decisioni architetturali |
-| Versione | 0.32.2 |
+| Versione | 0.32.3 |
 | Stato | Attivo |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -76,3 +76,5 @@ Ogni ADR deve contenere titolo, stato, contesto, decisione, conseguenze e, quand
 - [ADR-0043 — Chiusura funzionale dei profili KH pubblici](0043-completezza-funzionale-kh-pubblico.md) — Accettato; varianti candidate e verifica separata
 
 - [ADR-0044 — Importazione nativa PDF ed EPUB](0044-importazione-nativa-pdf-epub.md) — Accettato; originale e snapshot atomici, backend Apple, verifica GS-VER-310
+
+- [ADR-0045 — Profilo OCR nativo adattivo e tracciato](0045-profilo-ocr-nativo-adattivo.md) — Accettato; accurate preferito, recupero fast bounded e provenienza esplicita

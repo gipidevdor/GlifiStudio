@@ -4989,6 +4989,41 @@
       "gate": "G3",
       "status": "implemented",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-311",
+      "clause": "GS-DOR-311 § Disponibilità e failure OCR native",
+      "specification": "docs/pianificazione/dor-disponibilita-e-failure-ocr.md",
+      "requirements": [
+        "RF-004",
+        "RF-005",
+        "RF-006",
+        "RQ-044",
+        "RQ-058",
+        "RQ-060"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiPDFExtractor.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiPDFVisionFailure.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiPDFOCRExecution.swift",
+        "Apps/Shared/StudioHomeView.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPDFVisionFailureTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPDFImporterTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPDFOCRExecutionTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPDFProfileProvenanceTests.swift"
+      ],
+      "fixtures": [
+        "Fixtures/DocumentImport/v1/digital.pdf"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-311-disponibilita-ocr.md",
+        "docs/evidenze/allegati/GS-VER-311-verifica.json"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }

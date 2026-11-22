@@ -688,3 +688,10 @@ riapertura e revisioni, 11 intenti del planner, barriere dei modelli e casi
 scientifici indipendenti. CMP-303 riguarda questa verifica software, senza
 promozione di manifest scientifici o audit manuali. Le estensioni KH prive di
 adattatore GUI restano dichiarate headless.
+
+## Disponibilità OCR e profilo effettivo
+
+GS-DOR-311, ADR-0045 e GS-VER-311 collegano RF-004/005/006 alla tassonomia
+corretta degli errori Vision, alla selezione bounded del profilo e alla
+conservazione degli snapshot V1/V2. I test OCR restano rigorosi; CMP-311 non
+qualifica accuratezza reale, energia o G4/G5.
