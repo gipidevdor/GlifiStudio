@@ -32,10 +32,12 @@ struct StudioCodingView: View {
     @State private var noteDraft = ""
     @State private var noteTargetID: String?
     @State private var agreementCoders: Set<String> = []
+    @State private var agreementRevision: Int?
 
     var body: some View {
         Form {
             codebookSection
+            StudioCodebookManagementView(model: model)
             if model.activeCodebook != nil {
                 codingSection
                 codingsSection
@@ -46,12 +48,34 @@ struct StudioCodingView: View {
         .disabled(model.isBusy || model.snapshot == nil)
         .navigationTitle("sidebar.coding")
         .task { await model.loadQualitativeState() }
+        .onChange(of: model.selectedCodebookID) { _, _ in
+            selectedCategoryID = nil
+            agreementCoders = []
+            agreementRevision = nil
+        }
+        .onChange(of: model.activeCodebook?.revision) { _, _ in
+            selectedCategoryID = nil
+            agreementCoders = []
+            agreementRevision = nil
+        }
     }
 
     // MARK: - Codebook
 
     private var codebookSection: some View {
         Section("coding.codebook") {
+            if let books = model.qualitativeState?.codebooks, books.count > 1 {
+                Picker(
+                    "coding.management.book",
+                    selection: Binding(
+                        get: { model.activeCodebook?.codebookID },
+                        set: { model.selectedCodebookID = $0 })
+                ) {
+                    ForEach(books, id: \.codebookID) { book in
+                        Text(book.codebookID).tag(Optional(book.codebookID))
+                    }
+                }
+            }
             if let codebook = model.activeCodebook {
                 LabeledContent("coding.codebook.revision") {
                     Text(codebook.revision, format: .number).monospacedDigit()
@@ -295,6 +319,14 @@ struct StudioCodingView: View {
 
     private var agreementSection: some View {
         Section("coding.agreement") {
+            if let codebook = model.activeCodebook {
+                Picker("coding.agreement.revision", selection: $agreementRevision) {
+                    Text("coding.agreement.latest-revision").tag(Int?.none)
+                    ForEach(1...codebook.revision, id: \.self) { revision in
+                        Text(revision, format: .number).tag(Optional(revision))
+                    }
+                }
+            }
             ForEach(model.knownCoders, id: \.self) { coder in
                 Toggle(
                     coder,
@@ -311,10 +343,25 @@ struct StudioCodingView: View {
             }
             Button("action.assess-agreement", systemImage: "person.2") {
                 let coders = agreementCoders.sorted()
-                Task { await model.assessAgreement(coders: coders) }
+                let revision = agreementRevision
+                Task { await model.assessAgreement(coders: coders, revision: revision) }
             }
             .disabled(model.isBusy || agreementCoders.count < 2)
             if let result = model.storedAgreement {
+                LabeledContent(
+                    "coding.management.book", value: model.storedAgreementCodebookID ?? "")
+                if let revision = model.storedAgreementRevision {
+                    LabeledContent("coding.agreement.revision") { Text(revision, format: .number) }
+                }
+                LabeledContent(
+                    "coding.agreement.captured-coders",
+                    value: result.agreement.coderIdentifiers.joined(separator: ", "))
+                if Set(result.agreement.coderIdentifiers) != agreementCoders
+                    || model.storedAgreementRevision
+                        != (agreementRevision ?? model.activeCodebook?.revision)
+                {
+                    Label("coding.agreement.draft-changed", systemImage: "info.circle")
+                }
                 LabeledContent("coding.agreement.units") {
                     Text(result.agreement.unitCount, format: .number).monospacedDigit()
                 }
@@ -342,11 +389,220 @@ struct StudioCodingView: View {
     // MARK: - Helpers
 
     private func label(for categoryID: String) -> String {
-        model.qualitativeState?.codebooks.first?.revisions
+        model.qualitativeState?.codebooks.first(where: {
+            $0.codebookID == model.activeCodebook?.codebookID
+        })?.revisions
             .flatMap { $0 }.first { $0.categoryID == categoryID }?.label ?? categoryID
     }
 
     private func segmentText(for coding: GlifiStudioCoding) -> String {
         model.codingTexts[coding.eventID] ?? "\(coding.startUTF8)–\(coding.endUTF8)"
+    }
+}
+
+private struct StudioCodebookCategoryDraft: Identifiable {
+    let id = UUID()
+    var categoryID = ""
+    var parentID: String?
+    var label = ""
+    var definition = ""
+    var instructions = ""
+
+    var value: GlifiStudioCodebookCategory {
+        GlifiStudioCodebookCategory(
+            categoryID: categoryID, parentCategoryID: parentID, label: label,
+            definition: definition, instructions: instructions.isEmpty ? nil : instructions)
+    }
+}
+
+/// Complete, explicit editing of the existing append-only qualitative contracts.
+private struct StudioCodebookManagementView: View {
+    @Bindable var model: StudioHomeModel
+    @State private var bookID = "temi"
+    @State private var categories: [StudioCodebookCategoryDraft] = []
+    @State private var expandedCategories: Set<UUID> = []
+    @FocusState private var focusedCategory: UUID?
+    @State private var mappingKind = "rename"
+    @State private var fromRevision = 1
+    @State private var toRevision = 2
+    @State private var fromIDs = ""
+    @State private var toIDs = ""
+    @State private var memoKind = "source"
+    @State private var memoCategory = ""
+    @State private var memo = ""
+
+    var body: some View {
+        Section {
+            DisclosureGroup("coding.management.title") {
+                Text("coding.management.explanation").foregroundStyle(.secondary)
+                TextField("coding.management.book-id", text: $bookID)
+                    .autocorrectionDisabled()
+                Button("coding.management.load-current") {
+                    guard let book = model.activeCodebook else { return }
+                    expandedCategories = []
+                    focusedCategory = nil
+                    bookID = book.codebookID
+                    categories = book.categories.map {
+                        StudioCodebookCategoryDraft(
+                            categoryID: $0.categoryID,
+                            parentID: $0.parentCategoryID, label: $0.label,
+                            definition: $0.definition, instructions: $0.instructions ?? "")
+                    }
+                }
+                ForEach($categories) { $category in
+                    DisclosureGroup(
+                        isExpanded: Binding(
+                            get: { expandedCategories.contains(category.id) },
+                            set: { expanded in
+                                if expanded {
+                                    expandedCategories.insert(category.id)
+                                } else {
+                                    expandedCategories.remove(category.id)
+                                }
+                            })
+                    ) {
+                        TextField("coding.management.category-id", text: $category.categoryID)
+                            .autocorrectionDisabled()
+                            .focused($focusedCategory, equals: category.id)
+                        TextField("coding.category.label", text: $category.label)
+                        TextField(
+                            "coding.category.definition", text: $category.definition,
+                            axis: .vertical)
+                        TextField(
+                            "coding.management.instructions", text: $category.instructions,
+                            axis: .vertical)
+                        Picker("coding.management.parent", selection: $category.parentID) {
+                            Text("coding.management.no-parent").tag(String?.none)
+                            ForEach(
+                                categories.filter { $0.id != category.id && !$0.categoryID.isEmpty }
+                            ) { parent in
+                                Text(parent.label.isEmpty ? parent.categoryID : parent.label).tag(
+                                    Optional(parent.categoryID))
+                            }
+                        }
+                        Button("coding.management.remove-draft", role: .destructive) {
+                            let identity = category.id
+                            categories.removeAll { $0.id == identity }
+                            expandedCategories.remove(identity)
+                            if focusedCategory == identity { focusedCategory = nil }
+                        }
+                    } label: {
+                        if category.label.isEmpty && category.categoryID.isEmpty {
+                            Text("coding.management.new-category")
+                        } else {
+                            Text(category.label.isEmpty ? category.categoryID : category.label)
+                        }
+                    }
+                }
+                Button("coding.management.add-category", systemImage: "plus") {
+                    let category = StudioCodebookCategoryDraft()
+                    categories.append(category)
+                    expandedCategories.insert(category.id)
+                    focusedCategory = category.id
+                }.disabled(categories.count >= 128)
+                Button("coding.management.record-full-revision", systemImage: "checkmark.seal") {
+                    let values = categories.map(\.value)
+                    let identity = bookID
+                    Task { await model.registerCodebookRevision(values, codebookID: identity) }
+                }
+                .disabled(
+                    categories.isEmpty || bookID.isEmpty
+                        || categories.contains {
+                            $0.categoryID.isEmpty || $0.label.isEmpty || $0.definition.isEmpty
+                        })
+                mappingEditor
+                memoEditor
+            }
+        }
+    }
+
+    private var mappingEditor: some View {
+        DisclosureGroup("coding.management.mapping") {
+            Text("coding.management.mapping-help").foregroundStyle(.secondary)
+            Picker("coding.management.mapping-kind", selection: $mappingKind) {
+                Text("coding.management.rename").tag("rename")
+                Text("coding.management.merge").tag("merge")
+                Text("coding.management.split").tag("split")
+            }
+            TextField("coding.management.from-revision", value: $fromRevision, format: .number)
+            TextField("coding.management.to-revision", value: $toRevision, format: .number)
+            TextField("coding.management.from-categories", text: $fromIDs)
+            TextField("coding.management.to-categories", text: $toIDs)
+            Button("coding.management.record-mapping") {
+                let mapping = GlifiStudioCategoryMapping(
+                    kind: mappingKind,
+                    fromCategoryIDs: fromIDs.split(whereSeparator: \.isWhitespace).map(String.init),
+                    toCategoryIDs: toIDs.split(whereSeparator: \.isWhitespace).map(String.init))
+                let identity = bookID
+                let first = fromRevision
+                let last = toRevision
+                Task {
+                    await model.mapCategories(
+                        codebookID: identity, fromRevision: first, toRevision: last,
+                        mapping: mapping)
+                }
+            }.disabled(
+                bookID.isEmpty || fromIDs.isEmpty || toIDs.isEmpty || fromRevision < 1
+                    || toRevision <= fromRevision)
+        }
+    }
+
+    private var memoEditor: some View {
+        DisclosureGroup("coding.management.memo") {
+            TextField("coding.coder", text: $model.coderDraft)
+            Picker("coding.management.memo-target", selection: $memoKind) {
+                Text("coding.source").tag("source")
+                Text("coding.category").tag("category")
+            }
+            if memoKind == "source" {
+                Text("coding.management.memo-source-help").foregroundStyle(.secondary)
+                if let source = model.codingSourceRevisionID {
+                    Text(source).font(.caption.monospaced()).textSelection(.enabled)
+                }
+            } else {
+                TextField("coding.management.category-id", text: $memoCategory)
+            }
+            TextField("coding.note", text: $memo, axis: .vertical)
+            Button("action.save-note") {
+                let target: GlifiStudioMemoTarget
+                if memoKind == "source", let source = model.codingSourceRevisionID {
+                    target = .source(sourceRevisionID: source)
+                } else {
+                    target = .category(codebookID: bookID, categoryID: memoCategory)
+                }
+                let text = memo
+                Task {
+                    await model.attachNote(to: target, text: text)
+                    if model.lastFailure == nil { memo = "" }
+                }
+            }
+            .disabled(
+                memo.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    || model.coderDraft.isEmpty
+                    || (memoKind == "source"
+                        ? model.codingSourceRevisionID == nil
+                        : bookID.isEmpty || memoCategory.isEmpty)
+            )
+            ForEach(
+                (model.qualitativeState?.memos ?? []).filter {
+                    switch $0.target {
+                    case .coding: false
+                    case .source, .category: true
+                    }
+                }, id: \.eventID
+            ) { note in
+                VStack(alignment: .leading) {
+                    switch note.target {
+                    case let .source(sourceRevisionID):
+                        Text(sourceRevisionID).font(.caption.monospaced())
+                    case let .category(codebookID, categoryID):
+                        Text(verbatim: "\(codebookID) / \(categoryID)").font(.caption)
+                    case .coding: EmptyView()
+                    }
+                    Label(note.text, systemImage: "note.text")
+                    Text(note.coderID).font(.caption).foregroundStyle(.secondary)
+                }
+            }
+        }
     }
 }

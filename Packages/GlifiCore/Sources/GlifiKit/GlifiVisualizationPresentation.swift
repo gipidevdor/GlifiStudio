@@ -175,6 +175,23 @@ public struct GlifiStudioVisualization: Codable, Equatable, Identifiable, Sendab
     public let summaryKey: String
     /// Arguments of the accessible summary.
     public let summaryArguments: [GlifiStudioVisualArgument]
+
+    /// Resolves each selectable table row to the mark that carries its source lineage.
+    public var tableSelectionMarks: [String: GlifiStudioVisualMark] {
+        let byID = Dictionary(marks.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        var selections: [String: GlifiStudioVisualMark] = [:]
+        for row in table.rows {
+            if let mark = byID[row.id] {
+                selections[row.id] = mark
+            } else if family == .dendrogram, let bridge = byID[row.id + ":bridge"],
+                bridge.kind == .segment, bridge.series == "merges"
+            {
+                // Each merge row describes three segments sharing the same descendants.
+                selections[row.id] = bridge
+            }
+        }
+        return selections
+    }
 }
 
 /// Deterministic builders of view specifications from Kit results.
@@ -188,8 +205,12 @@ public enum GlifiStudioVisualizationBuilder {
         firstAxis: Int = 0,
         secondAxis: Int = 1
     ) throws -> GlifiStudioVisualization? {
-        let supported = ["CA-SVD-v1", "PCA-SVD-v1", "LSA-SVD-v1"]
-        guard supported.contains(result.methodIdentifier), !result.axisValues.isEmpty else {
+        let summaries = [
+            "CA-SVD-v1": "visual.summary.factor-plot-ca",
+            "PCA-SVD-v1": "visual.summary.factor-plot-pca",
+            "LSA-SVD-v1": "visual.summary.factor-plot-lsa",
+        ]
+        guard let summaryKey = summaries[result.methodIdentifier], !result.axisValues.isEmpty else {
             return nil
         }
         let axisRange = 0..<result.axisValues.count
@@ -357,7 +378,7 @@ public enum GlifiStudioVisualizationBuilder {
                 ? "emphasis.contribution-above-mean.v1" : "emphasis.documents.v1",
             excludedLabels: result.excludedSourceRevisionIDs + result.excludedTerms + nonFinite,
             caveatKeys: caveats,
-            summaryKey: "visual.summary.factor-plot",
+            summaryKey: summaryKey,
             summaryArguments: [
                 GlifiStudioVisualArgument(name: "documents", value: .integer(documents.count)),
                 GlifiStudioVisualArgument(name: "terms", value: .integer(terms.count)),

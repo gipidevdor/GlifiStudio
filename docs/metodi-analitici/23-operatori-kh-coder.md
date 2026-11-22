@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-23 |
 | Tipo | Specifica dei contratti numerici e della copertura |
-| Versione | 1.2.0 |
+| Versione | 1.3.0 |
 | Stato | Contratti revisionati; supporto numerico per variante |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-01 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Ambito richiesto dall'iniziatore; promozione scientifica separata secondo ADR-0031 |
 | Documento padre | [GS-MET-001](README.md) |
 | Riferimenti | RF-087; ADR-0032; GS-VER-160 |
@@ -43,9 +43,12 @@ varianti native sono dichiarate, senza sostituire silenziosamente quelle del pro
 | CA, MDS, clustering, rete e SOM dei codici | Stessi operatori numerici sulla matrice documento-codice |
 | Matrici documento-parola, parola-contesto, documento-codice | Tabella sparsa, trasposizione bounded e matrice binaria dei codici |
 
-Le nuove primitive sono API di libreria in memoria. Il planner persistente e
-l'interfaccia applicativa conservano le capacità già registrate: il nuovo
-catalogo non promuove automaticamente funzionalità post-MVP nel percorso stabile.
+Le nuove primitive sono API di libreria in memoria. Nel lotto originario di
+ADR-0032 il planner persistente e l'interfaccia applicativa conservavano le
+capacità già registrate: il catalogo non promuove automaticamente funzionalità
+post-MVP nel percorso stabile. La successiva [ADR-0034](../adr/0034-riprogettazione-gui-e-laboratorio-avanzato.md)
+autorizza un client GUI macOS delle medesime API, con risultati di sessione e
+verifica applicativa distinta, senza introdurre persistenza o capability planner.
 Non sono introdotti un formato di progetto, un parser CSV, un motore SQL o un
 runtime R/Python di prodotto. R è esclusivamente un oracolo di sviluppo.
 
@@ -178,4 +181,7 @@ La review scientifica esterna V6 e le prove su dispositivo restano aperte.
 [GS-API-002](../api/02-richieste-analitiche.md) espone gli operatori in memoria con
 request tipizzata e digest canonico, anche tramite `text-analysis --request`.
 Non cambia formule o manifest scientifici. La parità di trasporto è verificata
-separatamente in GS-VER-162; planner, UI e persistenza non sono estesi.
+separatamente in GS-VER-162; quel lotto non estende planner, UI e persistenza.
+L'estensione applicativa successiva segue GS-UX-001-17 e ADR-0034; esiti e limiti
+sono registrati in [GS-VER-222](../evidenze/GS-VER-222-riprogettazione-gui.md),
+senza modificare formule, varianti o manifest numerici.

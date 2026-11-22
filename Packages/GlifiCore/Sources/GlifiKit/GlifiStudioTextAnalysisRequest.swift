@@ -379,11 +379,12 @@ public struct GlifiStudioTextAnalysisResult: Encodable, Sendable {
     public let methodIdentifier: String
     /// Conservative, method-scoped validation status.
     public let validationStatus: String
-    private let payload: TextAnalysisPayload
+    /// Typed numerical payload for native presentation, identical to the encoded result.
+    public let payload: GlifiStudioTextAnalysisPayload
 
     fileprivate init(
         request: GlifiStudioTextAnalysisRequest, canonical: Data,
-        methodIdentifier: String, payload: TextAnalysisPayload
+        methodIdentifier: String, payload: GlifiStudioTextAnalysisPayload
     ) {
         operation = request.operation
         requestDigest = SHA256.hash(data: canonical).map { String(format: "%02x", $0) }.joined()
@@ -405,7 +406,8 @@ public struct GlifiStudioTextAnalysisResult: Encodable, Sendable {
     }
 }
 
-private enum TextAnalysisPayload: Encodable, Sendable {
+/// Exhaustive result family shared by native views and the JSON transport.
+public enum GlifiStudioTextAnalysisPayload: Encodable, Sendable {
     case mds(GlifiStudioMDSResult)
     case som(GlifiStudioSOMResult)
     case clara(GlifiStudioCLARAResult)
@@ -419,7 +421,8 @@ private enum TextAnalysisPayload: Encodable, Sendable {
     case hierarchical(GlifiStudioMatrixClustering)
     case network(GlifiStudioMatrixNetwork)
 
-    func encode(to encoder: any Encoder) throws {
+    /// Encodes the numerical result using the existing JSON payload shape.
+    public func encode(to encoder: any Encoder) throws {
         switch self {
         case let .mds(value): try value.encode(to: encoder)
         case let .som(value): try value.encode(to: encoder)

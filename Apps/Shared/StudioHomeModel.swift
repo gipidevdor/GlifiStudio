@@ -71,9 +71,35 @@ enum StudioIntentOption: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
+    /// Editable values stay separate from the parameters captured in a completed result.
+    struct StudioLexicalLawsDraft: Equatable, Sendable {
+        var checkpointCount = GlifiStudioLexicalLawsParameters.standard.checkpointCount
+        var firstRank = GlifiStudioLexicalLawsParameters.standard.zipfFirstRank
+        var usesLastObservedRank = true
+        var lastRank = 100
+        var rankRowLimit = GlifiStudioLexicalLawsParameters.standard.rankRowLimit
+
+        var parameters: GlifiStudioLexicalLawsParameters {
+            GlifiStudioLexicalLawsParameters(
+                checkpointCount: checkpointCount, zipfFirstRank: firstRank,
+                zipfLastRank: usesLastObservedRank ? nil : lastRank, rankRowLimit: rankRowLimit)
+        }
+
+        var isValid: Bool {
+            (2...10_000).contains(checkpointCount) && firstRank >= 1
+                && (usesLastObservedRank || lastRank > firstRank)
+                && (1...100_000).contains(rankRowLimit)
+        }
+    }
+
     enum StudioSummaryMethod: String, CaseIterable, Identifiable, Sendable {
         case sentenceTFIDFMean = "SentenceTFIDFMean-v1"
         case centroidCosine = "CentroidCosine-v1"
+        case lexRank = "LexRankSentence-v1"
+        case textRank = "TextRankSentence-v1"
+        case textRankConfigurable = "TextRankSentence-configurable-v1"
+        case lexRankContinuous = "LexRankSentence-continuous-v1"
+        case lexRankThreshold = "LexRankSentence-threshold-v1"
 
         var id: Self { self }
 
@@ -81,6 +107,18 @@ enum StudioIntentOption: String, CaseIterable, Identifiable, Sendable {
             switch self {
             case .sentenceTFIDFMean: "summary.method.tfidf-mean"
             case .centroidCosine: "summary.method.centroid-cosine"
+            case .lexRank: "summary.method.lexrank"
+            case .textRank: "summary.method.textrank"
+            case .textRankConfigurable: "summary.method.textrank-configurable"
+            case .lexRankContinuous: "summary.method.lexrank-continuous"
+            case .lexRankThreshold: "summary.method.lexrank-threshold"
+            }
+        }
+
+        var supportsGraphConfiguration: Bool {
+            switch self {
+            case .sentenceTFIDFMean, .centroidCosine, .lexRank, .textRank: false
+            case .textRankConfigurable, .lexRankContinuous, .lexRankThreshold: true
             }
         }
     }
@@ -88,6 +126,7 @@ enum StudioIntentOption: String, CaseIterable, Identifiable, Sendable {
     enum StudioSummaryBudgetUnit: String, CaseIterable, Identifiable, Sendable {
         case sentences = "Budget-sentences-v1"
         case lexicalTokens = "Budget-lexical-tokens-v1"
+        case characters = "Budget-characters-v1"
 
         var id: Self { self }
 
@@ -95,6 +134,7 @@ enum StudioIntentOption: String, CaseIterable, Identifiable, Sendable {
             switch self {
             case .sentences: "summary.budget.sentences"
             case .lexicalTokens: "summary.budget.lexical-tokens"
+            case .characters: "summary.budget.characters"
             }
         }
     }
@@ -122,6 +162,7 @@ enum StudioIntentOption: String, CaseIterable, Identifiable, Sendable {
         let budgetLimit: Int
         let redundancy: StudioSummaryRedundancy
         let mmrLambda: Double?
+        let graphConfiguration: GlifiStudioSummaryGraphConfiguration?
         let scheme: GlifiStudioTermWeightingScheme
         let corpusOptions: GlifiStudioCorpusAnalysisOptions
     }
@@ -259,12 +300,21 @@ final class StudioHomeModel {
     private(set) var executionProgress: GlifiStudioOperationProgress?
     private(set) var visualizations: [GlifiStudioVisualization] = []
     private(set) var qualitativeState: GlifiStudioQualitativeState?
+    var selectedCodebookID: String? {
+        didSet {
+            storedAgreement = nil
+            storedAgreementCodebookID = nil
+            storedAgreementRevision = nil
+        }
+    }
     private(set) var codingSegments: [GlifiStudioTextSegment] = []
     private(set) var codingSourceRevisionID: String?
     private(set) var codingSourceCharacterCount = 0
     private(set) var codingPassage: GlifiStudioTextSegment?
     private(set) var codingTexts: [String: String] = [:]
     private(set) var storedAgreement: GlifiStudioStoredCodingAgreement?
+    private(set) var storedAgreementCodebookID: String?
+    private(set) var storedAgreementRevision: Int?
     var coderDraft = "c1"
     private(set) var selectedVisualMarkID: String?
     private(set) var investigation: GlifiStudioInvestigation?
@@ -278,6 +328,7 @@ final class StudioHomeModel {
     private(set) var lastQueryExpression: String?
     private(set) var selectedQueryMatchID: String?
     private(set) var sourceText: GlifiStudioSourceText?
+    private(set) var browsedSourceText: GlifiStudioSourceText?
     private(set) var evidenceSourceText: GlifiStudioSourceText?
     private(set) var evidenceSourceRanges: [GlifiStudioUTF8Range] = []
     private(set) var focusedEvidenceID: String?
@@ -296,6 +347,11 @@ final class StudioHomeModel {
     var selectedReferenceRevisionIDs: Set<String> = []
 
     #if os(macOS)
+        let advancedAnalysis = StudioAdvancedAnalysisModel()
+        let corpusMethods = StudioCorpusMethodsModel()
+        let statistics = StudioStatisticsModel()
+        let evaluation = StudioEvaluationModel()
+        let operators = StudioOperatorsModel()
         var textAnalysisScope: StudioTextAnalysisScope = .allSources
         var selectedTextAnalysisSourceRevisionIDs: Set<String> = []
         var summaryMethod: StudioSummaryMethod = .sentenceTFIDFMean
@@ -303,6 +359,12 @@ final class StudioHomeModel {
         var summaryBudgetLimit = 3
         var summaryRedundancy: StudioSummaryRedundancy = .none
         var summaryMMRLambda = 0.5
+        var summaryGraphDamping = GlifiStudioSummaryGraphConfiguration.standard.damping
+        var summaryGraphTolerance = GlifiStudioSummaryGraphConfiguration.standard.tolerance
+        var summaryGraphMaximumIterations = GlifiStudioSummaryGraphConfiguration.standard
+            .maximumIterations
+        var summaryGraphSimilarityThreshold = GlifiStudioSummaryGraphConfiguration.standard
+            .similarityThreshold
         private(set) var lastExtractiveSummary: GlifiStudioExtractiveSummaryResult?
         private(set) var lastSummaryOptions: StudioSummaryOptions?
         private(set) var summarySourceText: GlifiStudioSourceText?
@@ -329,6 +391,8 @@ final class StudioHomeModel {
         var mtldThreshold = 0.72
         private(set) var lastLexicalDiversity: GlifiStudioLexicalDiversityResult?
         private(set) var lastMTLDOptions: StudioMTLDOptions?
+        var lexicalLawsDraft = StudioLexicalLawsDraft()
+        private(set) var lastLexicalLaws: GlifiStudioLexicalLawsResult?
         var termFrequencyVariant: StudioTermFrequencyVariant = .raw
         var inverseDocumentFrequencyVariant: StudioInverseDocumentFrequencyVariant = .smooth
         var termWeightingNormalization: StudioTermWeightingNormalization = .none
@@ -458,6 +522,17 @@ final class StudioHomeModel {
     var mustPathHasFindings: Bool { !findings.isEmpty || insufficientEvidence != nil }
     var mustPathHasInvestigation: Bool { investigation != nil }
     var mustPathHasExport: Bool { exportReceipt != nil }
+
+    /// A displayed plan keeps its original scope when navigation changes the draft intent.
+    var isPlanDraftChanged: Bool {
+        guard let plan = planResult?.plan else { return false }
+        let request = makePlanRequest()
+        return plan.intent != request.intent
+            || plan.targetSourceRevisionIDs != request.targetSourceRevisionIDs
+            || plan.referenceSourceRevisionIDs != request.referenceSourceRevisionIDs
+            || plan.resolvedScopeSourceRevisionIDs.sorted()
+                != (snapshot?.sources.map(\.sourceRevisionID).sorted() ?? [])
+    }
 
     func prepare() async {
         let status = await service.status()
@@ -688,8 +763,8 @@ final class StudioHomeModel {
         await run(messageKey: "progress.planning") {
             let active = try requireSession()
             let request = makePlanRequest()
-            lastPlanRequest = request
             let planned = try await active.planAnalysis(request)
+            lastPlanRequest = request
             planResult = planned
             executionResult = nil
             executionProgress = nil
@@ -830,10 +905,26 @@ final class StudioHomeModel {
     }
 
     func selectQueryMatch(_ match: GlifiStudioQueryMatch) async {
-        selectedQueryMatchID = match.id
+        #if os(macOS)
+            await run(messageKey: "progress.loading-source") {
+                let active = try requireSession()
+                let source = try await active.sourceText(sourceRevisionID: match.sourceRevisionID)
+                selectedQueryMatchID = match.id
+                sourceText = source
+            }
+        #else
+            selectedQueryMatchID = match.id
+            await run(messageKey: "progress.loading-source") {
+                let active = try requireSession()
+                sourceText = try await active.sourceText(sourceRevisionID: match.sourceRevisionID)
+            }
+        #endif
+    }
+
+    func browseSource(_ sourceRevisionID: String) async {
         await run(messageKey: "progress.loading-source") {
-            let active = try requireSession()
-            sourceText = try await active.sourceText(sourceRevisionID: match.sourceRevisionID)
+            browsedSourceText = try await requireSession().sourceText(
+                sourceRevisionID: sourceRevisionID)
         }
     }
 
@@ -864,17 +955,34 @@ final class StudioHomeModel {
 
     /// Selects one datum of a view and opens its first reachable source.
     func selectVisualMark(_ mark: GlifiStudioVisualMark) async {
-        selectedVisualMarkID = mark.id
-        guard let sourceRevisionID = mark.sourceRevisionIDs.first else {
-            return
-        }
-        await run(messageKey: "progress.loading-source") {
-            let active = try requireSession()
-            evidenceSourceText = try await active.sourceText(sourceRevisionID: sourceRevisionID)
-            // Il lineage contributivo raggiunge il documento, non posizioni esatte.
-            evidenceSourceRanges = []
-            focusedEvidenceID = nil
-        }
+        #if os(macOS)
+            await run(messageKey: "progress.loading-source") {
+                guard let sourceRevisionID = mark.sourceRevisionIDs.first else {
+                    selectedVisualMarkID = mark.id
+                    clearEvidenceSource()
+                    return
+                }
+                let active = try requireSession()
+                let source = try await active.sourceText(sourceRevisionID: sourceRevisionID)
+                selectedVisualMarkID = mark.id
+                evidenceSourceText = source
+                // Contributive lineage reaches the document without claiming exact positions.
+                evidenceSourceRanges = []
+                focusedEvidenceID = nil
+            }
+        #else
+            selectedVisualMarkID = mark.id
+            guard let sourceRevisionID = mark.sourceRevisionIDs.first else {
+                return
+            }
+            await run(messageKey: "progress.loading-source") {
+                let active = try requireSession()
+                evidenceSourceText = try await active.sourceText(sourceRevisionID: sourceRevisionID)
+                // Il lineage contributivo raggiunge il documento, non posizioni esatte.
+                evidenceSourceRanges = []
+                focusedEvidenceID = nil
+            }
+        #endif
     }
 
     // MARK: - Codifica qualitativa (GS-UX-001-16)
@@ -883,7 +991,9 @@ final class StudioHomeModel {
     var activeCodebook:
         (codebookID: String, revision: Int, categories: [GlifiStudioCodebookCategory])?
     {
-        guard let codebook = qualitativeState?.codebooks.first,
+        guard let codebooks = qualitativeState?.codebooks,
+            let codebook = codebooks.first(where: { $0.codebookID == selectedCodebookID })
+                ?? codebooks.first,
             let categories = codebook.revisions.last
         else {
             return nil
@@ -931,9 +1041,37 @@ final class StudioHomeModel {
     /// Registers the next codebook revision with the given categories.
     func registerCodebookRevision(_ categories: [GlifiStudioCodebookCategory]) async {
         let codebookID = activeCodebook?.codebookID ?? "temi"
-        let revision = (activeCodebook?.revision ?? 0) + 1
+        await registerCodebookRevision(categories, codebookID: codebookID)
+    }
+
+    /// Appends a full revision without replacing earlier category definitions.
+    func registerCodebookRevision(_ categories: [GlifiStudioCodebookCategory], codebookID: String)
+        async
+    {
+        let revision =
+            (qualitativeState?.codebooks.first { $0.codebookID == codebookID }?.revisions.count ?? 0)
+            + 1
         await appendQualitative(
             .codebookRevised(codebookID: codebookID, revision: revision, categories: categories))
+        if lastFailure == nil {
+            selectedCodebookID = codebookID
+            storedAgreement = nil
+        }
+    }
+
+    /// Records an explicit category relationship between two retained revisions.
+    func mapCategories(
+        codebookID: String, fromRevision: Int, toRevision: Int, mapping: GlifiStudioCategoryMapping
+    ) async {
+        await appendQualitative(
+            .categoryMapped(
+                codebookID: codebookID, fromRevision: fromRevision, toRevision: toRevision,
+                mappings: [mapping]))
+    }
+
+    /// Attaches a memo to a source, category or coding through the same event history.
+    func attachNote(to target: GlifiStudioMemoTarget, text: String) async {
+        await appendQualitative(.memoAttached(target: target, coderID: coderDraft, text: text))
     }
 
     /// Records the resolved passage under one category.
@@ -963,12 +1101,19 @@ final class StudioHomeModel {
             .memoAttached(target: .coding(eventID: eventID), coderID: coderDraft, text: text))
     }
 
-    func assessAgreement(coders: [String]) async {
+    func assessAgreement(coders: [String], revision: Int? = nil) async {
         guard let codebook = activeCodebook else { return }
+        let requestedRevision = revision ?? codebook.revision
         await run(messageKey: "progress.assessing-agreement") {
-            storedAgreement = try await requireSession().assessStoredCodingAgreement(
-                codebookID: codebook.codebookID, codebookRevision: codebook.revision,
+            let active = try requireSession()
+            let result = try await active.assessStoredCodingAgreement(
+                codebookID: codebook.codebookID, codebookRevision: requestedRevision,
                 coderIDs: coders)
+            let updatedSnapshot = try await active.snapshot()
+            storedAgreement = result
+            storedAgreementCodebookID = codebook.codebookID
+            storedAgreementRevision = requestedRevision
+            snapshot = updatedSnapshot
         }
     }
 
@@ -1034,11 +1179,19 @@ final class StudioHomeModel {
                 case .none: lambda = nil
                 case .maximalMarginalRelevance: lambda = summaryMMRLambda
                 }
+                let graphConfiguration: GlifiStudioSummaryGraphConfiguration? =
+                    summaryMethod.supportsGraphConfiguration
+                    ? GlifiStudioSummaryGraphConfiguration(
+                        damping: summaryGraphDamping, tolerance: summaryGraphTolerance,
+                        maximumIterations: summaryGraphMaximumIterations,
+                        similarityThreshold: summaryGraphSimilarityThreshold)
+                    : nil
                 let options = StudioSummaryOptions(
                     scope: textAnalysisScope, sourceRevisionIDs: sourceRevisionIDs,
                     method: summaryMethod, budgetUnit: summaryBudgetUnit,
                     budgetLimit: summaryBudgetLimit, redundancy: summaryRedundancy,
-                    mmrLambda: lambda, scheme: .summaryStandard, corpusOptions: .standard)
+                    mmrLambda: lambda, graphConfiguration: graphConfiguration,
+                    scheme: .summaryStandard, corpusOptions: .standard)
                 let result = try await active.analyzeExtractiveSummary(
                     sourceRevisionIDs: options.sourceRevisionIDs,
                     budget: GlifiStudioSummaryBudget(
@@ -1047,6 +1200,7 @@ final class StudioHomeModel {
                     method: GlifiStudioSummaryScoringMethod(identifier: options.method.rawValue),
                     redundancy: GlifiStudioSummaryRedundancy(
                         identifier: options.redundancy.rawValue, lambda: options.mmrLambda),
+                    graphConfiguration: options.graphConfiguration,
                     corpusOptions: options.corpusOptions)
                 let updatedSnapshot = try await active.snapshot()
                 lastExtractiveSummary = result
@@ -1171,6 +1325,45 @@ final class StudioHomeModel {
                 lastLexicalDiversity = result
                 lastMTLDOptions = options
                 snapshot = updatedSnapshot
+            }
+        }
+
+        func analyzeLexicalLaws(parameters: GlifiStudioLexicalLawsParameters = .standard) async {
+            await runAnalysis(messageKey: "progress.analyzing-lexical-laws") { [self] in
+                let active = try requireSession()
+                let result = try await active.analyzeLexicalLaws(
+                    sourceRevisionIDs: scopedTextAnalysisSourceRevisionIDs(),
+                    parameters: parameters, corpusOptions: .standard)
+                let updatedSnapshot = try await active.snapshot()
+                lastLexicalLaws = result
+                snapshot = updatedSnapshot
+            }
+        }
+
+        /// Shares operation ownership, cancellation and error presentation with direct analyses.
+        func runAdvancedAnalysis(
+            _ operation: @escaping @MainActor (GlifiStudioProjectSession) async throws -> Void
+        ) async {
+            await runAnalysis(messageKey: "advanced.progress") { [self] in
+                try await operation(requireSession())
+            }
+        }
+
+        /// Owns a session-independent analytical task with the same cancellation contract.
+        func runCoreAnalysis(
+            _ operation: @escaping @MainActor () async throws -> Void
+        ) async {
+            await runAnalysis(messageKey: "core-features.progress", operation: operation)
+        }
+
+        /// Publishes the refreshed project only after the operation has validated its output.
+        func runCorpusAnalysis(
+            _ operation:
+                @escaping @MainActor (GlifiStudioProjectSession) async throws
+                -> GlifiStudioProjectSnapshot
+        ) async {
+            await runAnalysis(messageKey: "core-features.progress") { [self] in
+                snapshot = try await operation(requireSession())
             }
         }
 
@@ -1712,6 +1905,11 @@ final class StudioHomeModel {
 
     private func clearAnalysisState() {
         #if os(macOS)
+            advancedAnalysis.reset()
+            corpusMethods.reset()
+            statistics.reset()
+            evaluation.reset()
+            operators.reset()
             textAnalysisScope = .allSources
             selectedTextAnalysisSourceRevisionIDs = []
             summaryMethod = .sentenceTFIDFMean
@@ -1719,6 +1917,12 @@ final class StudioHomeModel {
             summaryBudgetLimit = 3
             summaryRedundancy = .none
             summaryMMRLambda = 0.5
+            summaryGraphDamping = GlifiStudioSummaryGraphConfiguration.standard.damping
+            summaryGraphTolerance = GlifiStudioSummaryGraphConfiguration.standard.tolerance
+            summaryGraphMaximumIterations =
+                GlifiStudioSummaryGraphConfiguration.standard.maximumIterations
+            summaryGraphSimilarityThreshold =
+                GlifiStudioSummaryGraphConfiguration.standard.similarityThreshold
             lastExtractiveSummary = nil
             lastSummaryOptions = nil
             clearSummarySource()
@@ -1742,6 +1946,8 @@ final class StudioHomeModel {
             mtldThreshold = 0.72
             lastLexicalDiversity = nil
             lastMTLDOptions = nil
+            lastLexicalLaws = nil
+            lexicalLawsDraft = StudioLexicalLawsDraft()
             termFrequencyVariant = .raw
             inverseDocumentFrequencyVariant = .smooth
             termWeightingNormalization = .none
@@ -1758,12 +1964,15 @@ final class StudioHomeModel {
         #endif
         lastProfile = nil
         qualitativeState = nil
+        selectedCodebookID = nil
         codingSegments = []
         codingSourceRevisionID = nil
         codingSourceCharacterCount = 0
         codingPassage = nil
         codingTexts = [:]
         storedAgreement = nil
+        storedAgreementCodebookID = nil
+        storedAgreementRevision = nil
         lastImportedFileName = nil
         planResult = nil
         executionResult = nil
@@ -1781,6 +1990,7 @@ final class StudioHomeModel {
         lastQueryExpression = nil
         selectedQueryMatchID = nil
         sourceText = nil
+        browsedSourceText = nil
         evidenceSourceText = nil
         evidenceSourceRanges = []
         focusedEvidenceID = nil

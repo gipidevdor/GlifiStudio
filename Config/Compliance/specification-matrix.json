@@ -3469,6 +3469,190 @@
       "gate": "G3",
       "status": "verified",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-222",
+      "clause": "GS-UI-001 § Riprogettazione per compiti e laboratorio avanzato",
+      "specification": "docs/specifiche-di-design/07-information-architecture-e-interazione.md",
+      "requirements": [
+        "RF-046",
+        "RF-087",
+        "RQ-012",
+        "RQ-030",
+        "RQ-058",
+        "RQ-063"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeView.swift",
+        "Apps/Shared/StudioWorkspaceNavigation.swift",
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/macOS/StudioTextAnalysisView.swift",
+        "Apps/macOS/StudioLexicalLawsView.swift",
+        "Apps/macOS/StudioAdvancedAnalysisModel.swift",
+        "Apps/macOS/StudioAdvancedAnalysisView.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectTextAnalysis.swift"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+        "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+        "Apps/macOS/Tests/StudioAdvancedAnalysisTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiProjectLaboratoryInputTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-222-riprogettazione-gui.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-230",
+      "clause": "GS-UX-001-09 § Coppia selezione KWIC e fonte coerente macOS",
+      "specification": "docs/esperienza-utente/09-lineage-interattivo-e-numeri.md",
+      "requirements": ["RF-009", "RF-017", "RQ-011", "RQ-047", "RQ-058"],
+      "code": ["Apps/Shared/StudioHomeModel.swift", "Apps/Shared/StudioHomeView.swift"],
+      "tests": ["Apps/macOS/Tests/StudioSelectionConsistencyTests.swift", "Scripts/verify.sh"],
+      "fixtures": [],
+      "evidence": ["docs/evidenze/GS-VER-230-selezione-kwic-coerente-macos.md"],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-231",
+      "clause": "GS-UX-001-17 § Lookup delle etichette fonte macOS",
+      "specification": "docs/esperienza-utente/17-laboratorio-analisi-testuale.md",
+      "requirements": ["RQ-009", "RQ-013", "RQ-047", "RQ-063"],
+      "code": ["Apps/macOS/StudioTextAnalysisView.swift", "Apps/macOS/StudioKeynessView.swift", "Apps/macOS/StudioSourceLookup.swift"],
+      "tests": ["Apps/macOS/Tests/StudioSourceLookupTests.swift", "Scripts/benchmark-macos-source-lookup.py", "Scripts/verify.sh"],
+      "fixtures": ["Benchmarks/macOS/StudioSourceLookupBenchmark.swift"],
+      "evidence": ["docs/evidenze/GS-VER-231-indice-fonti-ui-macos.md"],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-232",
+      "clause": "GS-UX-001-09 § Coppia selezione visuale e contesto fonte coerente macOS",
+      "specification": "docs/esperienza-utente/09-lineage-interattivo-e-numeri.md",
+      "requirements": ["RF-084", "RQ-028", "RQ-047", "RQ-058"],
+      "code": ["Apps/Shared/StudioHomeModel.swift"],
+      "tests": ["Apps/macOS/Tests/StudioSelectionConsistencyTests.swift", "Scripts/verify.sh"],
+      "fixtures": [],
+      "evidence": ["docs/evidenze/GS-VER-232-selezione-visuale-coerente-macos.md"],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-223",
+      "clause": "GS-UX-001-17 § Accesso alle altre capacità del core (ADR-0035)",
+      "specification": "docs/esperienza-utente/17-laboratorio-analisi-testuale.md",
+      "requirements": [
+        "RF-026",
+        "RF-028",
+        "RF-033",
+        "RF-037",
+        "RF-040",
+        "RF-041",
+        "RF-043",
+        "RF-044",
+        "RF-045",
+        "RF-046",
+        "RF-087",
+        "RQ-012",
+        "RQ-030",
+        "RQ-058",
+        "RQ-063"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/StudioWorkspaceNavigation.swift",
+        "Apps/Shared/StudioCodingView.swift",
+        "Apps/Shared/StudioVisualExportPreparation.swift",
+        "Apps/macOS/StudioCoreMethodRoute.swift",
+        "Apps/macOS/StudioCorpusMethodsModel.swift",
+        "Apps/macOS/StudioCorpusMethodsView.swift",
+        "Apps/macOS/StudioStatisticsModel.swift",
+        "Apps/macOS/StudioStatisticsView.swift",
+        "Apps/macOS/StudioEvaluationModel.swift",
+        "Apps/macOS/StudioEvaluationView.swift",
+        "Apps/macOS/StudioOperatorsModel.swift",
+        "Apps/macOS/StudioOperatorsView.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioCoreOperators.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioStatisticsWorkbench.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioEvaluationWorkbench.swift"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioOperatorsTests.swift",
+        "Apps/macOS/Tests/StudioStatisticsTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiCoreOperatorsTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStatisticsWorkbenchTests.swift",
+        "Apps/macOS/Tests/StudioCorpusMethodsTests.swift",
+        "Apps/macOS/Tests/StudioEvaluationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiEvaluationWorkbenchTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-223-copertura-core-app.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-234",
+      "clause": "GS-UX-001-17 § Presentazione corpus coerente durante la preparazione",
+      "specification": "docs/esperienza-utente/17-laboratorio-analisi-testuale.md",
+      "requirements": ["RF-046", "RQ-013", "RQ-047", "RQ-058", "RQ-060", "RQ-063"],
+      "code": ["Apps/macOS/StudioCorpusMethodsModel.swift", "Apps/macOS/StudioCorpusMethodsView.swift", "Apps/Shared/Resources/Localizable.xcstrings"],
+      "tests": ["Apps/macOS/Tests/StudioCorpusMethodsTests.swift", "Scripts/verify.sh"],
+      "fixtures": [],
+      "evidence": ["docs/evidenze/GS-VER-234-presentazione-corpus-coerente-macos.md"],
+      "gate": "G3",
+      "status": "specified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-233",
+      "clause": "GS-UX-001-17 § Barriera di reset dei laboratori macOS",
+      "specification": "docs/esperienza-utente/17-laboratorio-analisi-testuale.md",
+      "requirements": ["RQ-011", "RQ-013", "RQ-047", "RQ-058", "RQ-060", "RQ-063"],
+      "code": ["Apps/macOS/StudioAdvancedAnalysisModel.swift"],
+      "tests": ["Apps/macOS/Tests/StudioAdvancedAnalysisTests.swift", "Apps/macOS/Tests/StudioCorpusMethodsTests.swift", "Apps/macOS/Tests/StudioEvaluationTests.swift", "Scripts/verify.sh"],
+      "fixtures": [],
+      "evidence": ["docs/evidenze/GS-VER-233-barriera-reset-laboratori-macos.md"],
+      "gate": "G3",
+      "status": "specified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-270",
+      "clause": "GS-APL-003 § Grafici, Audio Graphs e accesso tabellare",
+      "specification": "docs/apple/03-accessibilita.md",
+      "requirements": [
+        "RF-084",
+        "RQ-037",
+        "RQ-038"
+      ],
+      "code": [
+        "Apps/Shared/StudioFactorAudioGraph.swift",
+        "Apps/Shared/StudioVisualizationView.swift",
+        "Apps/Shared/StudioPlotSeries.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiVisualizationPresentation.swift"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioFactorAudioGraphTests.swift",
+        "Benchmarks/macOS/StudioPlotSeriesBenchmark.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-270-grafici-comandi-neural-engine.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }

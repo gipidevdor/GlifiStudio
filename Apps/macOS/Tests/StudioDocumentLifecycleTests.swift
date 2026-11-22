@@ -464,6 +464,19 @@ struct StudioDocumentLifecycleTests {
             model.summaryBudgetLimit = 10
             model.summaryRedundancy = .maximalMarginalRelevance
             model.summaryMMRLambda = 0.6
+        case .lexRank, .textRank:
+            model.summaryBudgetUnit = .characters
+            model.summaryBudgetLimit = 70
+            model.summaryRedundancy = .none
+        case .textRankConfigurable, .lexRankContinuous, .lexRankThreshold:
+            model.summaryBudgetUnit = .characters
+            model.summaryBudgetLimit = 70
+            model.summaryRedundancy = .maximalMarginalRelevance
+            model.summaryMMRLambda = 0.7
+            model.summaryGraphDamping = 0.7
+            model.summaryGraphTolerance = 1e-10
+            model.summaryGraphMaximumIterations = 250
+            model.summaryGraphSimilarityThreshold = 0.25
         }
 
         await model.summarizeSources()
@@ -477,6 +490,17 @@ struct StudioDocumentLifecycleTests {
         #expect(options.budgetUnit == model.summaryBudgetUnit)
         #expect(options.budgetLimit == model.summaryBudgetLimit)
         #expect(options.redundancy == model.summaryRedundancy)
+        if method.supportsGraphConfiguration {
+            #expect(
+                options.graphConfiguration
+                    == GlifiStudioSummaryGraphConfiguration(
+                        damping: 0.7, tolerance: 1e-10, maximumIterations: 250,
+                        similarityThreshold: 0.25))
+            #expect(result.graphDiagnostics?.configuration == options.graphConfiguration)
+        } else {
+            #expect(options.graphConfiguration == nil)
+            #expect(result.graphDiagnostics == nil)
+        }
         #expect(options.scheme == .summaryStandard)
         #expect(options.corpusOptions == .standard)
         #expect(result.sourceRevisionIDs == [selectedID])
@@ -498,10 +522,12 @@ struct StudioDocumentLifecycleTests {
                 unit: options.budgetUnit.rawValue, limit: options.budgetLimit),
             method: GlifiStudioSummaryScoringMethod(identifier: method.rawValue),
             redundancy: GlifiStudioSummaryRedundancy(
-                identifier: options.redundancy.rawValue, lambda: options.mmrLambda))
+                identifier: options.redundancy.rawValue, lambda: options.mmrLambda),
+            graphConfiguration: options.graphConfiguration)
         #expect(result.lineage.artifactID == referenceResult.lineage.artifactID)
         #expect(result.sentences == referenceResult.sentences)
         #expect(result.selected == referenceResult.selected)
+        #expect(result.graphDiagnostics == referenceResult.graphDiagnostics)
         await reference.close()
         let committedGeneration = model.snapshot?.generation
 
@@ -659,6 +685,80 @@ struct StudioDocumentLifecycleTests {
         #expect(model.lastSummaryOptions != nil)
         #expect(model.snapshot?.generation == result.lineage.generation)
         #expect(!model.isBusy)
+    }
+
+    @Test func lexicalLawsCaptureTheSelectedScopeAndRetainThePreviousResultOnFailure()
+        async throws
+    {
+        let root = try makeRoot()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let projectURL = root.appending(path: "LexicalLaws.glifi")
+        let model = StudioHomeModel()
+        await model.attachDocument(at: projectURL, needsPackageInitialization: true)
+        let sources = try await importTexts(
+            [
+                "sole sole sole luna luna mare vento casa",
+                "prova prova fonte fonte testo parola libro",
+            ],
+            into: model, in: root)
+        let selectedID = try #require(sources.first?.sourceRevisionID)
+        let otherID = try #require(sources.last?.sourceRevisionID)
+        model.textAnalysisScope = .selectedSources
+        model.selectedTextAnalysisSourceRevisionIDs = [selectedID]
+        model.queryDraft = "normalized:sole"
+        await model.runQuery()
+        let previousQuery = model.queryResult
+        model.lexicalLawsDraft.checkpointCount = 4
+        model.lexicalLawsDraft.usesLastObservedRank = false
+        model.lexicalLawsDraft.lastRank = 3
+        model.lexicalLawsDraft.rankRowLimit = 2
+        let draft = model.lexicalLawsDraft
+        let parameters = draft.parameters
+
+        await model.analyzeLexicalLaws(parameters: parameters)
+
+        #expect(model.lastFailure == nil)
+        let result = try #require(model.lastLexicalLaws)
+        #expect(result.sourceRevisionIDs == [selectedID])
+        #expect(result.parameters == parameters)
+        #expect(result.rankFrequency.count == 2)
+        #expect(result.isRankFrequencyTruncated)
+        #expect(result.zipf.fit?.pointCount == 3)
+        #expect(model.queryResult == previousQuery)
+        let reference = try await GlifiStudioService().openProject(at: projectURL)
+        let referenceResult = try await reference.analyzeLexicalLaws(
+            sourceRevisionIDs: [selectedID], parameters: parameters)
+        #expect(result.lineage.artifactID == referenceResult.lineage.artifactID)
+        #expect(result.sourceRevisionIDs == referenceResult.sourceRevisionIDs)
+        #expect(result.parameters == referenceResult.parameters)
+        #expect(result.tokenCount == referenceResult.tokenCount)
+        #expect(result.typeCount == referenceResult.typeCount)
+        #expect(result.rankFrequency == referenceResult.rankFrequency)
+        #expect(result.spectrum == referenceResult.spectrum)
+        #expect(result.growth == referenceResult.growth)
+        #expect(result.zipf == referenceResult.zipf)
+        #expect(result.heaps == referenceResult.heaps)
+        await reference.close()
+        let previousSnapshot = model.snapshot
+        model.selectedTextAnalysisSourceRevisionIDs = [otherID]
+        #expect(model.lastLexicalLaws == result)
+
+        await model.analyzeLexicalLaws(
+            parameters: GlifiStudioLexicalLawsParameters(
+                checkpointCount: 1, zipfFirstRank: 1, zipfLastRank: nil, rankRowLimit: 2))
+
+        #expect(model.lastFailure?.code == "laws.invalid-checkpoints")
+        #expect(model.lastLexicalLaws == result)
+        #expect(model.snapshot == previousSnapshot)
+        #expect(model.lexicalLawsDraft == draft)
+        #expect(!model.isBusy)
+        await model.attachDocument(
+            at: root.appending(path: "FreshLexicalLaws.glifi"), needsPackageInitialization: true)
+        #expect(model.lastFailure == nil)
+        #expect(model.lastLexicalLaws == nil)
+        #expect(model.lexicalLawsDraft == StudioLexicalLawsDraft())
+        #expect(model.textAnalysisScope == .allSources)
+        #expect(model.selectedTextAnalysisSourceRevisionIDs.isEmpty)
     }
 
     @Test func bm25UsesTheSelectedScopeAndPreservesZeroScoresAndQueryState() async throws {
@@ -1148,6 +1248,7 @@ struct StudioDocumentLifecycleTests {
         let ranking = model.lastBM25Ranking
         let frequencies = model.lastNGramFrequencies
         let diversity = model.lastLexicalDiversity
+        let lexicalLaws = model.lastLexicalLaws
         let corpus = model.lastCorpusAnalysis
         let keyness = model.lastKeyness
         let observation = ExecutionCancellationObservation()
@@ -1181,6 +1282,7 @@ struct StudioDocumentLifecycleTests {
         #expect(model.lastBM25Ranking == ranking)
         #expect(model.lastNGramFrequencies == frequencies)
         #expect(model.lastLexicalDiversity == diversity)
+        #expect(model.lastLexicalLaws == lexicalLaws)
         #expect(model.lastCorpusAnalysis == corpus)
         #expect(model.lastKeyness == keyness)
 
@@ -1518,6 +1620,7 @@ struct StudioDocumentLifecycleTests {
         case .bm25: await model.rankSourcesBM25()
         case .frequencies: await model.analyzeFrequencies()
         case .mtld: await model.analyzeMTLD()
+        case .lexicalLaws: await model.analyzeLexicalLaws()
         case .corpus: await model.analyzeCorpusNow()
         case .keyness: await model.compareKeynessNow()
         }
@@ -1581,6 +1684,7 @@ enum StudioDirectAnalysis: CaseIterable, Sendable {
     case bm25
     case frequencies
     case mtld
+    case lexicalLaws
     case corpus
     case keyness
 }

@@ -3,10 +3,10 @@
 | Campo | Valore |
 | --- | --- |
 | Identificatore | GS-ADR-0008 |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | Accettato |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-22 |
 | Decisore | Iniziatore del progetto |
 | Data proposta | 2026-09-15 |
 | Data decisione | 2026-09-15 |
@@ -53,3 +53,5 @@ Le capacità vengono interrogate a runtime. Ogni percorso accelerato mantiene un
 - [Calcolo accelerato su Apple silicon](../apple/11-calcolo-accelerato-apple-silicon.md)
 - [Persistenza e indicizzazione di sistema](../apple/12-persistenza-e-indicizzazione-di-sistema.md)
 - [Integrazione di sistema e lavoro prolungato](../apple/13-integrazione-di-sistema-e-lavoro-prolungato.md)
+
+La verifica applicativa del 22 novembre 2026 documenta i dispositivi ammessi da Vision per l’OCR italiano e le condizioni per confrontare i backend di un modello locale. [GS-VER-270](../evidenze/GS-VER-270-grafici-comandi-neural-engine.md)

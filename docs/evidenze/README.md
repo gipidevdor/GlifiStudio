@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.18.0 |
+| Versione | 1.19.5 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -13,6 +13,14 @@
 Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un esito positivo prova soltanto l'ambito dichiarato e non sostituisce l'approvazione dei requisiti o della baseline.
 
 ## Indice
+
+- [GS-VER-270 — Grafici audio, comandi di documento e prova del Neural Engine](GS-VER-270-grafici-comandi-neural-engine.md)
+
+- [GS-VER-222 — Riprogettazione ergonomica della GUI](GS-VER-222-riprogettazione-gui.md) — Gate completo isolato superato: 423 test package e 224 esecuzioni native; GUI osservata parzialmente, audit aperti
+
+- [GS-VER-230 — Selezione KWIC e fonte coerenti su macOS](GS-VER-230-selezione-kwic-coerente-macos.md) — RED/GREEN, gate e preflight macOS superati sul checkpoint ffbfb431
+- [GS-VER-231 — Lookup delle etichette fonte nelle viste macOS](GS-VER-231-indice-fonti-ui-macos.md) — Candidato Sendable misurato, tre varianti respinte, gate e preflight macOS superati sul checkpoint ffbfb431
+- [GS-VER-232 — Selezione visuale e contesto fonte coerenti su macOS](GS-VER-232-selezione-visuale-coerente-macos.md) — RED/GREEN, gate e preflight macOS superati sul checkpoint ffbfb431; mark senza fonte incluso
 
 Le evidenze GS-VER-168/169/170 si riferiscono ai rispettivi snapshot storici del
 working tree sorgente. La nuova integrazione sulla base `fe6f654` ha verifica
@@ -243,3 +251,9 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 - [GS-VER-162 — Parità degli operatori GlifiKit/CLI](GS-VER-162-parita-operatori-kit-cli.md) — Gate completo superato, 15 fixture e 51 controlli CLI
 
 - [GS-VER-163 — Integrità dei documenti macOS](GS-VER-163-integrita-documenti-macos.md) — Superato: suite del modello macOS in locale e gate CI `xcode-27` su `main` `a86a53b`; CMP-107 verified
+
+- [GS-VER-223 — Copertura funzionale del core nell’app](GS-VER-223-copertura-core-app.md) — In verifica; audit applicativi aperti
+
+- [GS-VER-233 — Barriera di reset dei laboratori macOS](GS-VER-233-barriera-reset-laboratori-macos.md) — Preparata; RED/GREEN e gate macOS da acquisire
+
+- [GS-VER-234 — Presentazione corpus coerente su macOS](GS-VER-234-presentazione-corpus-coerente-macos.md) — Preparata; RED/GREEN di tabella, asse, filtro e paginazione da acquisire

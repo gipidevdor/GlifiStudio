@@ -9,54 +9,6 @@ import UniformTypeIdentifiers
     import AppKit
 #endif
 
-private enum StudioSection: String, CaseIterable, Identifiable {
-    case overview
-    case project
-    case sources
-    #if os(macOS)
-        case textAnalysis
-    #endif
-    case investigation
-    case query
-    case findings
-    case coding
-    case export
-
-    var id: Self { self }
-
-    var titleKey: LocalizedStringKey {
-        switch self {
-        case .overview: "sidebar.overview"
-        case .project: "sidebar.project"
-        case .sources: "sidebar.sources"
-        #if os(macOS)
-            case .textAnalysis: "sidebar.text-analysis"
-        #endif
-        case .investigation: "sidebar.investigation"
-        case .query: "sidebar.query"
-        case .findings: "sidebar.findings"
-        case .coding: "sidebar.coding"
-        case .export: "sidebar.export"
-        }
-    }
-
-    var systemImage: String {
-        switch self {
-        case .overview: "square.grid.2x2"
-        case .project: "folder"
-        case .sources: "doc.text"
-        #if os(macOS)
-            case .textAnalysis: "text.magnifyingglass"
-        #endif
-        case .investigation: "lightbulb"
-        case .query: "magnifyingglass"
-        case .findings: "list.bullet.rectangle"
-        case .coding: "highlighter"
-        case .export: "square.and.arrow.up"
-        }
-    }
-}
-
 struct StudioHomeView: View {
     var documentURL: URL?
     var needsPackageInitialization: Bool
@@ -70,9 +22,20 @@ struct StudioHomeView: View {
 
     @State private var model: StudioHomeModel
     @State private var selection: StudioSection? = .overview
+    @State private var preferredCompactColumn = NavigationSplitViewColumn.sidebar
     @State private var isSourceImporterPresented = false
     @State private var isProjectImporterPresented = false
     @State private var isExportFolderPresented = false
+    @State private var isToolPickerPresented = false
+    @State private var isSourcePreviewPresented = false
+    @State private var previewSourceRevisionID: String?
+    @State private var queryFocusRequested = false
+    @FocusState private var isQueryFocused: Bool
+    #if os(macOS)
+        @State private var selectedTextTool: StudioTextTool = .summary
+        @SceneStorage("workspace.specialized-laboratories") private
+            var showsSpecializedLaboratories = false
+    #endif
 
     init(
         documentURL: URL? = nil,
@@ -85,54 +48,118 @@ struct StudioHomeView: View {
     }
 
     var body: some View {
-        NavigationSplitView {
+        NavigationSplitView(preferredCompactColumn: $preferredCompactColumn) {
             List(selection: $selection) {
-                Section {
-                    ForEach([StudioSection.overview, .sources, .investigation, .findings]) {
+                Section("workspace.sidebar.project") {
+                    ForEach([StudioSection.overview, .sources]) {
                         section in
                         sidebarRow(section)
                     }
                 }
-                Section("sidebar.tools") {
-                    ForEach(toolSections) { section in
+                Section("workspace.sidebar.explore") {
+                    ForEach([StudioSection.investigation, .query, .coding, .tools]) { section in
                         sidebarRow(section)
                     }
+                    #if os(macOS)
+                        sidebarRow(.textAnalysis)
+                        DisclosureGroup(
+                            "core-features.laboratories", isExpanded: $showsSpecializedLaboratories
+                        ) {
+                            sidebarRow(.corpusMethods)
+                            sidebarRow(.advancedAnalysis)
+                            sidebarRow(.statistics)
+                            sidebarRow(.evaluation)
+                            sidebarRow(.operators)
+                        }
+                    #endif
                 }
-                Section {
+                Section("workspace.sidebar.publish") {
+                    sidebarRow(.findings)
+                    sidebarRow(.export)
+                }
+                Section("workspace.sidebar.manage") {
                     sidebarRow(.project)
                 }
             }
             .listStyle(.sidebar)
             .navigationTitle("app.name")
-            .navigationSplitViewColumnWidth(min: 200, ideal: 220, max: 280)
+            .navigationSplitViewColumnWidth(min: 210, ideal: 235, max: 320)
         } detail: {
-            switch selection ?? .overview {
-            case .overview: overview
-            case .project: project
-            case .sources: sources
-            #if os(macOS)
-                case .textAnalysis:
-                    StudioTextAnalysisView(
-                        model: model,
-                        onImportSources: { isSourceImporterPresented = true },
-                        onOpenProject: { isProjectImporterPresented = true })
-            #endif
-            case .investigation: investigation
-            case .query: query
-            case .findings: findings
-            case .coding: StudioCodingView(model: model)
-            case .export: export
+            VStack(spacing: 0) {
+                if let snapshot = model.snapshot {
+                    workspaceContext(snapshot)
+                }
+                switch selection ?? .overview {
+                case .overview: overview
+                case .project: project
+                case .sources: sources
+                case .tools:
+                    #if os(macOS)
+                        StudioToolCatalogView(onSelect: openTool, onSelectCore: openCoreMethod)
+                    #else
+                        StudioToolCatalogView(onSelect: openTool)
+                    #endif
+                #if os(macOS)
+                    case .textAnalysis:
+                        StudioTextAnalysisView(
+                            model: model,
+                            onImportSources: { isSourceImporterPresented = true },
+                            onOpenProject: { isProjectImporterPresented = true },
+                            tool: $selectedTextTool)
+                    case .advancedAnalysis:
+                        StudioAdvancedAnalysisView(
+                            model: model,
+                            onImportSources: { isSourceImporterPresented = true },
+                            onOpenProject: { isProjectImporterPresented = true })
+                    case .corpusMethods:
+                        StudioCorpusMethodsView(
+                            model: model,
+                            onImportSources: { isSourceImporterPresented = true },
+                            onOpenProject: { isProjectImporterPresented = true })
+                    case .statistics:
+                        StudioStatisticsView(model: model)
+                    case .evaluation:
+                        StudioEvaluationView(
+                            model: model,
+                            onImportSources: { isSourceImporterPresented = true },
+                            onOpenProject: { isProjectImporterPresented = true })
+                    case .operators:
+                        StudioOperatorsView(model: model)
+                #endif
+                case .investigation: investigation
+                case .query: query
+                case .findings: findings
+                case .coding: StudioCodingView(model: model).id(model.snapshot?.projectID)
+                case .export: export
+                }
             }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if model.isBusy || model.lastFailure != nil {
+                    statusBar
+                }
+            }
+        }
+        .onChange(of: selection) { _, section in
+            #if os(macOS)
+                if section == .corpusMethods || section == .advancedAnalysis
+                    || section == .statistics || section == .evaluation || section == .operators
+                {
+                    showsSpecializedLaboratories = true
+                }
+            #endif
         }
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
+                Button("workspace.tools.find", systemImage: "square.grid.2x2") {
+                    isToolPickerPresented = true
+                }
+                .help("workspace.tools.find")
                 if model.snapshot != nil {
                     Button("action.import", systemImage: "plus") {
                         isSourceImporterPresented = true
                     }
                     .disabled(model.isBusy)
                     .help("action.import")
-                    .keyboardShortcut("i", modifiers: [.command, .shift])
                 }
                 Menu("sidebar.project", systemImage: "folder") {
                     Button("action.new-project", systemImage: "folder.badge.plus") {
@@ -152,6 +179,22 @@ struct StudioHomeView: View {
                 .help("sidebar.project")
             }
         }
+        .sheet(isPresented: $isToolPickerPresented) {
+            NavigationStack {
+                toolPicker
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("workspace.close") { isToolPickerPresented = false }
+                                .keyboardShortcut(.cancelAction)
+                        }
+                    }
+            }
+            .frame(minWidth: 340, idealWidth: 640, minHeight: 420, idealHeight: 620)
+        }
+        .sheet(isPresented: $isSourcePreviewPresented) {
+            sourcePreview
+        }
+        .focusedSceneValue(\.studioWorkspaceActions, sceneActions)
         .fileImporter(
             isPresented: $isSourceImporterPresented,
             allowedContentTypes: [.plainText, .markdown],
@@ -160,7 +203,7 @@ struct StudioHomeView: View {
             guard case let .success(urls) = result, !urls.isEmpty else {
                 return
             }
-            selection = .sources
+            showSection(.sources)
             Task { await model.importSources(at: urls) }
         }
         .fileImporter(
@@ -188,11 +231,6 @@ struct StudioHomeView: View {
             }
             Task { await model.exportInvestigation(to: url) }
         }
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            if model.isBusy || model.lastFailure != nil {
-                statusBar
-            }
-        }
         .task(id: documentURL?.path) {
             await model.prepare()
             await model.attachDocument(
@@ -202,17 +240,218 @@ struct StudioHomeView: View {
         }
     }
 
-    private func sidebarRow(_ section: StudioSection) -> some View {
-        Label(section.titleKey, systemImage: section.systemImage)
-            .tag(section)
+    @ViewBuilder private var toolPicker: some View {
+        #if os(macOS)
+            StudioToolCatalogView(
+                onSelect: { tool in
+                    isToolPickerPresented = false
+                    openTool(tool)
+                },
+                onSelectCore: { route in
+                    isToolPickerPresented = false
+                    openCoreMethod(route)
+                })
+        #else
+            StudioToolCatalogView { tool in
+                isToolPickerPresented = false
+                openTool(tool)
+            }
+        #endif
     }
 
-    private var toolSections: [StudioSection] {
+    #if os(macOS)
+        private func openCoreMethod(_ route: StudioCoreMethodRoute) {
+            showSection(route.activate(on: model))
+        }
+    #endif
+
+    private var sceneActions: StudioWorkspaceActions? {
+        guard !isToolPickerPresented, !isSourcePreviewPresented, !isSourceImporterPresented,
+            !isProjectImporterPresented, !isExportFolderPresented
+        else { return nil }
+        return StudioWorkspaceActions(
+            showOverview: { showSection(.overview) },
+            showSources: { showSection(.sources) },
+            showInvestigation: { showSection(.investigation) },
+            showQuery: openQueryEditor,
+            showFindings: { showSection(.findings) },
+            showCoding: { showSection(.coding) },
+            showExport: { showSection(.export) },
+            findTool: { isToolPickerPresented = true },
+            importSources: { isSourceImporterPresented = true },
+            canImport: model.snapshot != nil && !model.isBusy)
+    }
+
+    private func openQueryEditor() {
+        showSection(.query)
+        queryFocusRequested = model.snapshot != nil && !model.isBusy
+    }
+
+    private func showSection(_ section: StudioSection) {
+        selection = section
+        preferredCompactColumn = .detail
+    }
+
+    private func sidebarRow(_ section: StudioSection) -> some View {
+        NavigationLink(value: section) {
+            Label(section.titleKey, systemImage: section.systemImage)
+        }
+    }
+
+    private func workspaceContext(_ snapshot: GlifiStudioProjectSnapshot) -> some View {
+        ViewThatFits(in: .horizontal) {
+            HStack {
+                Label(projectDisplayName, systemImage: "folder")
+                    .font(.callout.weight(.semibold))
+                Spacer(minLength: 12)
+                Label {
+                    Text("workspace.context.sources \(snapshot.sourceCount)")
+                } icon: {
+                    Image(systemName: "doc.text")
+                }
+                .font(.callout)
+                .foregroundStyle(.secondary)
+            }
+            VStack(alignment: .leading, spacing: 4) {
+                Text(projectDisplayName).font(.callout.weight(.semibold))
+                Text("workspace.context.sources \(snapshot.sourceCount)")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.bar)
+        .accessibilityElement(children: .combine)
+    }
+
+    private var projectDisplayName: String {
+        model.projectURL?.deletingPathExtension().lastPathComponent
+            ?? String(localized: "project.default-name", locale: locale)
+    }
+
+    private func openTool(_ tool: StudioToolDestination) {
+        preferredCompactColumn = .detail
+        switch tool {
+        case .corpus: selection = .sources
+        case .query: openQueryEditor()
+        case .coding: selection = .coding
+        case .export: selection = .export
+        case .keyness:
+            model.selectedIntent = .compareObjects
+            selection = .investigation
+        case .relationships:
+            model.selectedIntent = .exploreRelationships
+            selection = .investigation
+        case .themes:
+            model.selectedIntent = .identifyThemes
+            selection = .investigation
+        case .similarity:
+            model.selectedIntent = .findSimilar
+            selection = .investigation
+        case .review:
+            model.selectedIntent = .reviewCompletely
+            selection = .investigation
         #if os(macOS)
-            [.textAnalysis, .query, .coding, .export]
-        #else
-            [.query, .coding, .export]
+            case .summary:
+                selectedTextTool = .summary
+                selection = .textAnalysis
+            case .documents:
+                selectedTextTool = .documents
+                selection = .textAnalysis
+            case .lexicon:
+                selectedTextTool = .lexicon
+                selection = .textAnalysis
+            case .termWeights:
+                selectedTextTool = .termWeights
+                selection = .textAnalysis
+            case .lexicalLaws:
+                selectedTextTool = .lexicalLaws
+                selection = .textAnalysis
+            case .mds:
+                model.advancedAnalysis.tool = .mds
+                selection = .advancedAnalysis
+            case .som:
+                model.advancedAnalysis.tool = .som
+                selection = .advancedAnalysis
+            case .clara:
+                model.advancedAnalysis.tool = .clara
+                selection = .advancedAnalysis
+            case .topics:
+                model.advancedAnalysis.tool = .topics
+                selection = .advancedAnalysis
+            case .classification:
+                model.advancedAnalysis.tool = .classification
+                selection = .advancedAnalysis
+            case .classifierValidation:
+                model.advancedAnalysis.tool = .classifierValidation
+                selection = .advancedAnalysis
+            case .codingRules:
+                model.advancedAnalysis.tool = .coding
+                selection = .advancedAnalysis
+            case .codeCrosstab:
+                model.advancedAnalysis.tool = .codeCrosstab
+                selection = .advancedAnalysis
+            case .distances:
+                model.advancedAnalysis.tool = .distances
+                selection = .advancedAnalysis
+            case .correspondence:
+                model.advancedAnalysis.tool = .correspondence
+                selection = .advancedAnalysis
+            case .hierarchical:
+                model.advancedAnalysis.tool = .hierarchical
+                selection = .advancedAnalysis
+            case .network:
+                model.advancedAnalysis.tool = .network
+                selection = .advancedAnalysis
+            case .corpusMethods: selection = .corpusMethods
+            case .statistics: selection = .statistics
+            case .evaluation: selection = .evaluation
+            case .operators: selection = .operators
         #endif
+        }
+    }
+
+    private var sourcePreview: some View {
+        NavigationStack {
+            Group {
+                if let source = model.browsedSourceText,
+                    source.sourceRevisionID == previewSourceRevisionID
+                {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text(source.text)
+                                .textSelection(.enabled)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            DisclosureGroup("common.provenance") {
+                                LabeledContent("sources.source-id", value: source.sourceRevisionID)
+                                LabeledContent("sources.bytes") {
+                                    Text(source.byteCount, format: .number)
+                                }
+                            }
+                            .font(.caption)
+                        }
+                        .padding(24)
+                    }
+                } else if model.isBusy {
+                    ProgressView("progress.loading-source")
+                } else {
+                    ContentUnavailableView {
+                        Label("workspace.source.unavailable", systemImage: "doc.text")
+                    } description: {
+                        if let message = model.failureMessage { Text(message) }
+                    }
+                }
+            }
+            .navigationTitle("query.source")
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("workspace.close") { isSourcePreviewPresented = false }
+                        .keyboardShortcut(.cancelAction)
+                }
+            }
+        }
+        .frame(minWidth: 340, idealWidth: 760, minHeight: 400, idealHeight: 640)
     }
 
     private func createProjectDocument() {
@@ -281,6 +520,24 @@ struct StudioHomeView: View {
 
                 Divider()
 
+                if let snapshot = model.snapshot, !snapshot.sources.isEmpty {
+                    LazyVGrid(
+                        columns: [GridItem(.adaptive(minimum: 220), alignment: .leading)],
+                        alignment: .leading, spacing: 16
+                    ) {
+                        overviewShortcut(.query)
+                        #if os(macOS)
+                            overviewShortcut(.summary)
+                            overviewShortcut(.lexicon)
+                        #endif
+                        overviewShortcut(.keyness)
+                    }
+                    Button("workspace.tools.browse", systemImage: "square.grid.2x2") {
+                        selection = .tools
+                    }
+                    .buttonStyle(.bordered)
+                }
+
                 DisclosureGroup("home.must-progress.title") {
                     VStack(alignment: .leading, spacing: 0) {
                         mustProgressRow(
@@ -323,12 +580,31 @@ struct StudioHomeView: View {
                 }
                 .accessibilityElement(children: .contain)
             }
-            .frame(maxWidth: 640, alignment: .leading)
+            .frame(maxWidth: 1000, alignment: .leading)
             .padding(.horizontal, 24)
-            .padding(.vertical, 48)
+            .padding(.vertical, 32)
             .frame(maxWidth: .infinity, alignment: .center)
         }
         .navigationTitle("sidebar.overview")
+    }
+
+    private func overviewShortcut(_ tool: StudioToolDestination) -> some View {
+        Button {
+            openTool(tool)
+        } label: {
+            VStack(alignment: .leading, spacing: 10) {
+                Label(LocalizedStringKey(tool.titleKey), systemImage: tool.systemImage)
+                    .font(.headline)
+                Text(LocalizedStringKey(tool.descriptionKey))
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, minHeight: 96, alignment: .topLeading)
+            .padding(8)
+        }
+        .buttonStyle(.bordered)
+        .accessibilityElement(children: .combine)
     }
 
     private var nextStepDescription: LocalizedStringKey {
@@ -490,6 +766,70 @@ struct StudioHomeView: View {
                     Text("import.allowed-formats")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
+                }
+                if let snapshot = model.snapshot {
+                    Section("workspace.sources.library") {
+                        if snapshot.sources.isEmpty {
+                            ContentUnavailableView {
+                                Label("text-analysis.empty-sources.title", systemImage: "doc.text")
+                            } description: {
+                                Text("text-analysis.empty-sources.description")
+                            }
+                        }
+                        ForEach(
+                            Array(snapshot.sources.enumerated()), id: \.element.sourceRevisionID
+                        ) {
+                            index, source in
+                            Button {
+                                previewSourceRevisionID = source.sourceRevisionID
+                                isSourcePreviewPresented = true
+                                Task { await model.browseSource(source.sourceRevisionID) }
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "doc.text").foregroundStyle(.secondary)
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("workspace.source.ordinal \(index + 1)")
+                                            .font(.headline)
+                                        HStack {
+                                            Text(shortID(source.sourceRevisionID))
+                                                .font(.caption.monospaced())
+                                            Text(
+                                                Int64(source.byteCount),
+                                                format: .byteCount(style: .file)
+                                            )
+                                            .font(.caption)
+                                        }
+                                        .foregroundStyle(.secondary)
+                                    }
+                                    Spacer(minLength: 0)
+                                    Image(systemName: "chevron.forward").foregroundStyle(.secondary)
+                                }
+                                .padding(.vertical, 4)
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(model.isBusy)
+                            .accessibilityElement(children: .combine)
+                            #if os(macOS)
+                                .contextMenu {
+                                    Button("workspace.tool.summary.title") {
+                                        model.textAnalysisScope = .selectedSources
+                                        model.selectedTextAnalysisSourceRevisionIDs = [
+                                            source.sourceRevisionID
+                                        ]
+                                        openTool(.summary)
+                                    }
+                                    Button("workspace.tool.lexicon.title") {
+                                        model.textAnalysisScope = .selectedSources
+                                        model.selectedTextAnalysisSourceRevisionIDs = [
+                                            source.sourceRevisionID
+                                        ]
+                                        openTool(.lexicon)
+                                    }
+                                }
+                            #endif
+                        }
+                    }
                 }
                 if let lastProfile = model.lastProfile {
                     Section("profile.title") {
@@ -858,6 +1198,42 @@ struct StudioHomeView: View {
                 .accessibilityLabel("investigation.intent")
             }
 
+            if model.isPlanDraftChanged {
+                Section {
+                    Label("workspace.plan.changed", systemImage: "exclamationmark.triangle")
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+
+            Section {
+                Button("action.plan") {
+                    Task { await model.planInvestigation() }
+                }
+                .disabled(model.isBusy || model.snapshot == nil)
+                Button("action.execute", systemImage: "play.fill") {
+                    Task { await model.executePlan() }
+                }
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.return, modifiers: .command)
+                .disabled(model.isBusy || model.snapshot == nil)
+                if model.canCancelExecution {
+                    Button("action.cancel-execution", role: .cancel) {
+                        model.cancelExecution()
+                    }
+                    if let operationID = model.activeExecutionOperationID {
+                        LabeledContent("execution.active-operation-id") {
+                            Text(shortID(operationID))
+                                .font(.caption2.monospaced())
+                                .textSelection(.enabled)
+                        }
+                    }
+                }
+                Button("action.save-investigation") {
+                    Task { await model.createInvestigationFromExecution() }
+                }
+                .disabled(model.isBusy || model.executionResult == nil)
+            }
+
             #if os(macOS)
                 StudioKeynessView(model: model)
             #else
@@ -1112,33 +1488,6 @@ struct StudioHomeView: View {
                 }
 
             #endif
-
-            Section {
-                Button("action.plan") {
-                    Task { await model.planInvestigation() }
-                }
-                .disabled(model.isBusy || model.snapshot == nil)
-                Button("action.execute") {
-                    Task { await model.executePlan() }
-                }
-                .disabled(model.isBusy || model.snapshot == nil)
-                if model.canCancelExecution {
-                    Button("action.cancel-execution", role: .cancel) {
-                        model.cancelExecution()
-                    }
-                    if let operationID = model.activeExecutionOperationID {
-                        LabeledContent("execution.active-operation-id") {
-                            Text(shortID(operationID))
-                                .font(.caption2.monospaced())
-                                .textSelection(.enabled)
-                        }
-                    }
-                }
-                Button("action.save-investigation") {
-                    Task { await model.createInvestigationFromExecution() }
-                }
-                .disabled(model.isBusy || model.executionResult == nil)
-            }
 
             if !model.investigationHeads.isEmpty {
                 Section("investigation.heads") {
@@ -1886,139 +2235,217 @@ struct StudioHomeView: View {
     }
 
     private var query: some View {
-        Form {
-            Section("query.editor") {
-                TextField("query.placeholder", text: $model.queryDraft)
-                    .disabled(model.isBusy || model.snapshot == nil)
-                    .accessibilityLabel("query.placeholder")
-                Button("action.search") {
-                    Task { await model.runQuery() }
-                }
-                .disabled(model.isBusy || model.snapshot == nil)
-            }
-            if let queryResult = model.queryResult {
-                Section("query.results") {
-                    if let expression = model.lastQueryExpression {
-                        LabeledContent("query.expression") {
-                            Text(expression)
-                                .font(.caption.monospaced())
-                                .textSelection(.enabled)
-                        }
+        VStack(spacing: 0) {
+            queryEditor
+            Divider()
+            GeometryReader { geometry in
+                if geometry.size.width >= 850 && !dynamicTypeSize.isAccessibilitySize {
+                    HStack(spacing: 0) {
+                        queryResults(compact: false)
+                            .frame(minWidth: 300, idealWidth: 380, maxWidth: 460)
+                        Divider()
+                        querySourceDetail
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
-                    LabeledContent("query.matches") {
-                        Text(queryResult.matches.count, format: .number)
-                            .monospacedDigit()
-                    }
-                    LabeledContent("query.matched-sources") {
-                        Text(queryResult.matchedSourceCount, format: .number)
-                            .monospacedDigit()
-                    }
-                    LabeledContent("query.project-id") {
-                        Text(shortID(queryResult.projectID))
-                            .font(.caption2.monospaced())
-                            .textSelection(.enabled)
-                    }
-                    LabeledContent("query.generation") {
-                        Text(queryResult.generation, format: .number)
-                            .monospacedDigit()
-                    }
-                    LabeledContent("query.digest") {
-                        Text(shortID(queryResult.queryDigest))
-                            .font(.caption2.monospaced())
-                            .textSelection(.enabled)
-                    }
-                    if queryResult.isTruncated {
-                        Text("query.truncated")
-                            .foregroundStyle(.secondary)
-                    }
-                    ForEach(queryResult.matches) { match in
-                        VStack(alignment: .leading, spacing: 8) {
-                            Button {
-                                Task { await model.selectQueryMatch(match) }
-                            } label: {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(
-                                        kwicAttributedString(
-                                            leftContext: match.leftContext,
-                                            match: match.match,
-                                            rightContext: match.rightContext
-                                        )
-                                    )
-                                    .textSelection(.enabled)
-                                }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            .buttonStyle(.plain)
-                            .accessibilityElement(children: .combine)
-                            .accessibilityLabel("query.match.accessibility")
-                            .accessibilityValue(
-                                Text(
-                                    kwicAttributedString(
-                                        leftContext: match.leftContext,
-                                        match: match.match,
-                                        rightContext: match.rightContext
-                                    )
-                                )
-                            )
-                            .accessibilityAddTraits(
-                                model.selectedQueryMatchID == match.id
-                                    ? AccessibilityTraits.isSelected
-                                    : AccessibilityTraits()
-                            )
-                            DisclosureGroup("common.provenance") {
-                                LabeledContent("query.match.id") {
-                                    Text(shortID(match.id))
-                                        .font(.caption2.monospaced())
-                                        .textSelection(.enabled)
-                                }
-                                LabeledContent("query.match.source-revision") {
-                                    Text(shortID(match.sourceRevisionID))
-                                        .font(.caption2.monospaced())
-                                        .textSelection(.enabled)
-                                }
-                                LabeledContent("query.coordinate-space") {
-                                    Text(match.coordinateSpace)
-                                        .font(.caption2.monospaced())
-                                }
-                                LabeledContent("query.match.start-utf8") {
-                                    Text(match.startUTF8, format: .number)
-                                        .monospacedDigit()
-                                }
-                                LabeledContent("query.match.end-utf8") {
-                                    Text(match.endUTF8, format: .number)
-                                        .monospacedDigit()
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if let sourceText = model.sourceText, let match = model.selectedQueryMatch {
-                Section("query.source") {
-                    Text(shortID(sourceText.sourceRevisionID))
-                        .font(.caption.monospaced())
-                        .foregroundStyle(.secondary)
-                    LabeledContent("query.source.bytes") {
-                        Text(sourceText.byteCount, format: .number)
-                            .monospacedDigit()
-                    }
-                    highlightedSource(sourceText.text, ranges: match.sourceRanges)
-                        .font(.body.monospaced())
-                        .textSelection(.enabled)
-                        #if !os(macOS)
-                            .accessibilityLabel("query.source")
-                        #endif
-                    ForEach(Array(match.sourceRanges.enumerated()), id: \.offset) { _, range in
-                        LabeledContent("source.bytes") {
-                            Text("\(range.start)–\(range.end)")
-                                .font(.caption2.monospaced())
-                        }
+                } else {
+                    NavigationStack {
+                        queryResults(compact: true)
                     }
                 }
             }
         }
-        .formStyle(.grouped)
         .navigationTitle("sidebar.query")
+        .onChange(of: queryFocusRequested, initial: true) { _, requested in
+            if requested {
+                isQueryFocused = true
+                queryFocusRequested = false
+            }
+        }
+    }
+
+    private var queryEditor: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 12) { queryControls }
+                VStack(alignment: .leading, spacing: 12) { queryControls }
+            }
+            DisclosureGroup("workspace.query.syntax") {
+                Text("workspace.query.syntax-help")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+        .padding(20)
+    }
+
+    @ViewBuilder
+    private var queryControls: some View {
+        TextField("query.placeholder", text: $model.queryDraft)
+            .textFieldStyle(.roundedBorder)
+            .focused($isQueryFocused)
+            .disabled(model.isBusy || model.snapshot == nil)
+            .accessibilityLabel("query.placeholder")
+            .onSubmit { if canRunQuery { Task { await model.runQuery() } } }
+        Button("action.search", systemImage: "magnifyingglass") {
+            Task { await model.runQuery() }
+        }
+        .buttonStyle(.borderedProminent)
+        .disabled(!canRunQuery)
+    }
+
+    private var canRunQuery: Bool {
+        !model.isBusy && model.snapshot != nil
+            && !model.queryDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    @ViewBuilder
+    private func queryResults(compact: Bool) -> some View {
+        if let result = model.queryResult {
+            if result.matches.isEmpty {
+                ContentUnavailableView.search(text: model.lastQueryExpression ?? "")
+            } else {
+                List {
+                    Section {
+                        LabeledContent("query.matches") {
+                            Text(result.matches.count, format: .number).monospacedDigit()
+                        }
+                        if result.isTruncated {
+                            Label("query.truncated", systemImage: "info.circle")
+                                .foregroundStyle(.secondary)
+                        }
+                        DisclosureGroup("common.provenance") {
+                            LabeledContent(
+                                "query.expression", value: model.lastQueryExpression ?? "")
+                            LabeledContent("query.matched-sources") {
+                                Text(result.matchedSourceCount, format: .number)
+                            }
+                            LabeledContent("query.project-id", value: result.projectID)
+                            LabeledContent("query.generation") {
+                                Text(result.generation, format: .number)
+                            }
+                            LabeledContent("query.digest", value: result.queryDigest)
+                        }
+                        .font(.caption)
+                        .textSelection(.enabled)
+                    }
+                    Section("query.results") {
+                        ForEach(result.matches) { match in
+                            queryMatchRow(match, compact: compact)
+                        }
+                    }
+                }
+            }
+        } else {
+            ContentUnavailableView {
+                Label("workspace.query.empty.title", systemImage: "text.magnifyingglass")
+            } description: {
+                Text("workspace.query.empty.description")
+            }
+        }
+    }
+
+    private func queryMatchRow(_ match: GlifiStudioQueryMatch, compact: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Group {
+                if compact {
+                    NavigationLink {
+                        querySourceDetail
+                            .task { await model.selectQueryMatch(match) }
+                    } label: {
+                        queryMatchLabel(match)
+                    }
+                } else {
+                    Button {
+                        Task { await model.selectQueryMatch(match) }
+                    } label: {
+                        queryMatchLabel(match)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .disabled(model.isBusy)
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(
+                model.selectedQueryMatchID == match.id ? .isSelected : [])
+            DisclosureGroup("common.provenance") {
+                LabeledContent("query.match.id", value: match.id)
+                LabeledContent("query.match.source-revision", value: match.sourceRevisionID)
+                LabeledContent("query.coordinate-space", value: match.coordinateSpace)
+                LabeledContent("query.match.start-utf8") {
+                    Text(match.startUTF8, format: .number)
+                }
+                LabeledContent("query.match.end-utf8") {
+                    Text(match.endUTF8, format: .number)
+                }
+            }
+            .font(.caption)
+            .textSelection(.enabled)
+        }
+        .padding(.vertical, 6)
+    }
+
+    private func queryMatchLabel(_ match: GlifiStudioQueryMatch) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            if model.selectedQueryMatchID == match.id {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(.tint)
+                    .accessibilityHidden(true)
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                Text(
+                    kwicAttributedString(
+                        leftContext: match.leftContext, match: match.match,
+                        rightContext: match.rightContext)
+                )
+                .fixedSize(horizontal: false, vertical: true)
+                Text(shortID(match.sourceRevisionID))
+                    .font(.caption.monospaced())
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .contentShape(Rectangle())
+    }
+
+    @ViewBuilder
+    private var querySourceDetail: some View {
+        if let source = model.sourceText, let match = model.selectedQueryMatch,
+            source.sourceRevisionID == match.sourceRevisionID
+        {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("query.source").font(.headline).accessibilityAddTraits(.isHeader)
+                    highlightedSource(source.text, ranges: match.sourceRanges)
+                        .textSelection(.enabled)
+                    DisclosureGroup("common.provenance") {
+                        LabeledContent(
+                            "query.match.source-revision", value: source.sourceRevisionID)
+                        LabeledContent("query.source.bytes") {
+                            Text(source.byteCount, format: .number)
+                        }
+                        ForEach(Array(match.sourceRanges.enumerated()), id: \.offset) { _, range in
+                            LabeledContent("source.bytes") {
+                                Text("\(range.start)–\(range.end)").font(.caption.monospaced())
+                            }
+                        }
+                    }
+                    .font(.caption)
+                }
+                .padding(24)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .navigationTitle("query.source")
+        } else if model.isBusy {
+            ProgressView("progress.loading-source")
+        } else {
+            ContentUnavailableView {
+                Label("workspace.query.select.title", systemImage: "doc.text.magnifyingglass")
+            } description: {
+                Text("workspace.query.select.description")
+            }
+        }
     }
 
     private var findings: some View {

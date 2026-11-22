@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VIZ-001 |
 | Tipo | Specifica di design delle visualizzazioni |
-| Versione | 1.0.0 |
+| Versione | 1.1.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Baseline proposta; prototipi percettivi e accessibili richiesti |
 | Riferimenti | GS-MET-001-22; GS-UX-001-09; GS-UI-001; GS-DAT-001; ADR-0016 |
 
@@ -81,6 +81,14 @@ e `derivational` determinano la formulazione dell'azione “Mostra nella fonte�
 Tutte le interazioni sono disponibili con tastiera e alternative strutturate.
 Focus non viene perso a ogni rerender. Reduce Motion disabilita transizioni non
 essenziali senza nascondere il cambiamento di stato.
+
+Per il dendrogramma, la riga di fusione si collega al segmento che unisce
+i due rami all'altezza dichiarata. Il segmento conserva il lineage contributivo
+di entrambi i rami. Nelle mappe fattoriali il denominatore della quota degli assi
+è l'inerzia totale per CA, la varianza totale per PCA e la somma dei quadrati
+dei valori singolari per LSA. Per tutti e tre i metodi l'avviso di quota bassa
+si attiva quando gli assi rappresentati spiegano insieme meno del 50%.
+[GS-VER-270](../evidenze/GS-VER-270-grafici-comandi-neural-engine.md)
 
 ## Dataset grandi
 

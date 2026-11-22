@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.14 |
+| Versione | 1.6.19 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Non applicabile; registro operativo |
 
 Le schede DoR sono gate di ingresso al coding (GS-STD-001-07). Ogni unità di
@@ -28,6 +28,12 @@ distribuisce quattro agenti su query, feedback statico, revisione e integrazione
 preservando i confini del lavoro già in corso nell'altra chat.
 
 ## Indice
+
+- [GS-DOR-222 — Riprogettazione ergonomica della GUI](dor-riprogettazione-gui.md) — Ready con rischio accettato; nuova autorizzazione applicativa, verifiche autonome
+
+- [GS-DOR-230 — Selezione KWIC e fonte coerenti su macOS](dor-selezione-kwic-coerente-macos.md) — Ready; selezione e fonte verificate sul checkpoint macOS ffbfb431
+- [GS-DOR-231 — Lookup delle etichette fonte nelle viste macOS](dor-indice-fonti-ui-macos.md) — Ready; lookup misurato e verificato sul checkpoint macOS ffbfb431
+- [GS-DOR-232 — Selezione visuale e contesto fonte coerenti su macOS](dor-selezione-visuale-coerente-macos.md) — Ready; selezione e policy senza fonte verificate sul checkpoint macOS ffbfb431
 
 - [GS-DOR-172 — Query sparse e qualità del clustering](dor-query-sparse-e-silhouette.md) — Ready
 
@@ -108,3 +114,9 @@ preservando i confini del lavoro già in corso nell'altra chat.
 - [GS-DOR-207 — Validazione e codifica esadecimale dei digest](dor-ottimizzazione-codifica-digest.md) — Ready
 
 - [GS-DOR-208 — Supporto condiviso dei benchmark dei test](dor-ottimizzazione-supporto-benchmark-test.md) — Ready
+
+- [GS-DOR-223 — Copertura funzionale del core nell’app](dor-copertura-core-app.md) — Ready con rischio accettato; ADR-0035
+
+- [GS-DOR-233 — Barriera di reset dei laboratori macOS](dor-barriera-reset-laboratori-macos.md) — Ready; reset indipendente dalla cancellazione e pubblicazione appartenente alla generazione corrente
+
+- [GS-DOR-234 — Presentazione corpus coerente su macOS](dor-presentazione-corpus-coerente-macos.md) — Ready; invalidazione sincrona dei derivati e ultimo intento di asse/tabella/ricerca
