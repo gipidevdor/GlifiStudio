@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-286 |
 | Tipo | Scheda Definition of Ready |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -42,3 +42,16 @@ restano identici al primo checkpoint; confronto API/CLI ripetuto contro la
 nuova base. Gli esiti del gate macOS sul codice unito sono registrati nella
 [PR #46](https://github.com/gipidevdor/GlifiStudio/pull/46), separatamente dalle
 prove originarie. Nessuna configurazione o correzione del planner è riscritta.
+
+## Integrazione della pipeline PDF/EPUB
+
+La successiva base pubblicata `b401c08` introduce il lotto documentale
+PDF/EPUB. Il refactoring la integra preservando codice, configurazioni,
+fixture, test e le 170 voci della matrice upstream; restano aggiunte soltanto
+CMP-286/287. I sei sorgenti del lotto sono identici ad `a7f1ccc`. Le migrazioni
+e i nuovi formati provengono dal lotto documentale e non vengono riscritti
+qui. Il confronto contro questa base conferma API e 164 + 69 risposte CLI
+identiche. Il gate macOS corrente è registrato nella PR #46 dopo la sua
+esecuzione, distinto dal gate originario e dal precedente gate locale
+su `c61c80e` (832 test Core/Kit, 125 definizioni
+native e 409 esecuzioni).

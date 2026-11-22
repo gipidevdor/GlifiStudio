@@ -1,10 +1,10 @@
 {
   "schemaIdentifier": "studio.glifi.verification.typed-coding-and-analysis-failures.v1",
-  "baselineCommit": "d6b482894e163b89205ff11245b938080ea39953",
+  "baselineCommit": "b401c084aae5a9f02e73a3af1598c1498d9a0edc",
   "affectedSourcesSHA256": "e2c8a2e815f0430f5a95c532f841d2ce00503dd7eeee219c92832e0b64949307",
   "affectedSourcesDigestMethod": "Sorted relative path, NUL, complete bytes, NUL; four production files and two new contract tests",
   "structure": {
-    "baseline": "d6b482894e163b89205ff11245b938080ea39953",
+    "baseline": "b401c084aae5a9f02e73a3af1598c1498d9a0edc",
     "binaryOperators": 12,
     "rawStringASTPayloadsBefore": 1,
     "rawStringASTPayloadsAfter": 0,
@@ -38,38 +38,37 @@
     "performanceClaim": false
   },
   "publicAPI": {
-    "baseline": "d6b482894e163b89205ff11245b938080ea39953",
+    "baseline": "b401c084aae5a9f02e73a3af1598c1498d9a0edc",
     "method": "swift-api-digester; only top-level declaration order canonicalized",
     "modules": {
       "GlifiCore": {
         "equal": true,
-        "sha256": "2f178cd5f2b97e4ab09789059cc4d57754cf94defdeae9ee3c36821118543dd1"
+        "sha256": "b339a67e6d97c92d9c26352579484cf8c6ee4cb6e8cecbeb7a3c95f8196ab3a6"
       },
       "GlifiKit": {
         "equal": true,
-        "sha256": "dee06b4afad028b36f26892432091b4fd3db7671e46d69dc86c200ab3f66a698"
+        "sha256": "e19b814f51c27e195e231b5cd22684be62b343c026169d55c043d735f8a1590a"
       }
     }
   },
   "cliCompatibility": {
     "schemaIdentifier": "studio.glifi.verification.cli-compatibility.v1",
-    "referenceBinarySHA256": "ce613c545670a963df303019c527f3109a2fd219826046c720e8e5e92a8fa616",
-    "candidateBinarySHA256": "6379016e3af7ffb2dc8eba7cd6df64a5fb420b02fe6aaaad0e3cbfc19a08332a",
+    "referenceBinarySHA256": "17a9fcdbfaa8930d751d70e2ea5dd1ecc9a72fd47ef5f34603320203419f710a",
+    "candidateBinarySHA256": "344b45574ff36a2e2a286c262299b07d2cd95bafc407674ece405250112fa068",
     "caseCount": 164,
     "allBytesEqual": true,
     "comparison": "Complete stdout, stderr and exit code; no fields removed or normalized",
-    "scope": "Synthetic deterministic requests and read-only/failing project operations; owned execution streams and successful writes are covered by the full gate"
+    "scope": "Synthetic deterministic requests and read-only/failing project operations; owned execution streams and successful writes are covered by the full gate",
+    "baselineCommit": "b401c084aae5a9f02e73a3af1598c1498d9a0edc"
   },
   "codingCLICompatibility": {
     "schemaIdentifier": "studio.glifi.verification.coding-cli-compatibility.v1",
     "caseCount": 69,
     "explicitBaselineExpectations": 45,
     "allBytesEqual": true,
-    "scope": "Native-token CLI requests; external-token quote/evidence contracts remain covered by public Core tests"
+    "scope": "Native-token CLI requests; external-token quote/evidence contracts remain covered by public Core tests",
+    "baselineCommit": "b401c084aae5a9f02e73a3af1598c1498d9a0edc"
   },
-  "completeCLIReportSHA256": "1c9f96c05fc8dddb3442cb1f8cc1e459c53297acea02295fbed47f651d731ca3",
-  "completeCodingCLIReportSHA256": "c14ba0299a91c14c2d5f04d417d86c3dd855629b12e3d96b3f9acc0ead92b1ed",
-  "referenceGlifiModulesEmbeddedInExecutable": true,
   "targetedTests": {
     "exitCode": 0,
     "coreTestDefinitions": 23,
@@ -142,15 +141,68 @@
   },
   "initialBaselineCommit": "76e5871e002eb4274aef16eec4d5982cd32a3b59",
   "finalIntegration": {
-    "upstreamCommit": "d6b482894e163b89205ff11245b938080ea39953",
+    "upstreamCommit": "b401c084aae5a9f02e73a3af1598c1498d9a0edc",
     "ownSourceFilesUnchanged": 6,
-    "otherUpstreamFilesAndModesUnchanged": 1229,
-    "codeConfigTestProjectMakefileFilesUnchanged": 474,
-    "upstreamMatrixRecordsPreserved": 169,
+    "otherUpstreamFilesAndModesUnchanged": 1251,
+    "codeConfigTestFilesUnchanged": 484,
+    "upstreamMatrixRecordsPreserved": 170,
     "addedMatrixRecords": [
       "CMP-286",
       "CMP-287"
     ],
+    "currentComparisonStatus": "passed",
+    "currentCombinedGateStatus": "see-linked-pr-for-final-head",
     "verificationRecord": "https://github.com/gipidevdor/GlifiStudio/pull/46"
-  }
+  },
+  "priorIntegratedComparison": {
+    "publicAPI": {
+      "baseline": "d6b482894e163b89205ff11245b938080ea39953",
+      "method": "swift-api-digester; only top-level declaration order canonicalized",
+      "modules": {
+        "GlifiCore": {
+          "equal": true,
+          "sha256": "2f178cd5f2b97e4ab09789059cc4d57754cf94defdeae9ee3c36821118543dd1"
+        },
+        "GlifiKit": {
+          "equal": true,
+          "sha256": "dee06b4afad028b36f26892432091b4fd3db7671e46d69dc86c200ab3f66a698"
+        }
+      }
+    },
+    "cliCompatibility": {
+      "schemaIdentifier": "studio.glifi.verification.cli-compatibility.v1",
+      "referenceBinarySHA256": "ce613c545670a963df303019c527f3109a2fd219826046c720e8e5e92a8fa616",
+      "candidateBinarySHA256": "6379016e3af7ffb2dc8eba7cd6df64a5fb420b02fe6aaaad0e3cbfc19a08332a",
+      "caseCount": 164,
+      "allBytesEqual": true,
+      "comparison": "Complete stdout, stderr and exit code; no fields removed or normalized",
+      "scope": "Synthetic deterministic requests and read-only/failing project operations; owned execution streams and successful writes are covered by the full gate"
+    },
+    "codingCLICompatibility": {
+      "schemaIdentifier": "studio.glifi.verification.coding-cli-compatibility.v1",
+      "caseCount": 69,
+      "explicitBaselineExpectations": 45,
+      "allBytesEqual": true,
+      "scope": "Native-token CLI requests; external-token quote/evidence contracts remain covered by public Core tests"
+    },
+    "completeCLIReportSHA256": "1c9f96c05fc8dddb3442cb1f8cc1e459c53297acea02295fbed47f651d731ca3",
+    "completeCodingCLIReportSHA256": "c14ba0299a91c14c2d5f04d417d86c3dd855629b12e3d96b3f9acc0ead92b1ed",
+    "referenceGlifiModulesEmbeddedInExecutable": true,
+    "baselineCommit": "d6b482894e163b89205ff11245b938080ea39953",
+    "verifiedCommit": "c61c80e526f1f139d26b35af6d0b8a0d627a39d9",
+    "scope": "Completed comparisons before PDF/EPUB integration; not comparisons against the current b401 baseline"
+  },
+  "priorCombinedMakeVerify": {
+    "verifiedCommit": "c61c80e526f1f139d26b35af6d0b8a0d627a39d9",
+    "baselineCommit": "d6b482894e163b89205ff11245b938080ea39953",
+    "command": "make verify",
+    "profile": "macOS",
+    "exitCode": 0,
+    "coreAndKitTestDefinitions": 832,
+    "nativeTestDefinitions": 125,
+    "nativeExecutions": 409,
+    "scope": "Completed local gate before PDF/EPUB integration; not the current b401 composition"
+  },
+  "completeCLIReportSHA256": "cdebf687492381af9a80592098a018caf3b354c5bbb1075de6f0d99eaed45b83",
+  "completeCodingCLIReportSHA256": "c14ba0299a91c14c2d5f04d417d86c3dd855629b12e3d96b3f9acc0ead92b1ed"
 }

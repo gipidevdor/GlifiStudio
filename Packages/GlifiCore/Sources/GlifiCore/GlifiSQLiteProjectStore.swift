@@ -124,10 +124,10 @@ final class GlifiSQLiteProjectStore {
             "SELECT schema_version FROM project_metadata WHERE singleton = 1",
             allowNoRows: false
         )
-        guard version == 2 || version == 3 || version == 4 else {
+        guard version == 2 || version == 3 || version == 4 || version == 5 else {
             throw Self.failure("project.store-schema-unsupported", category: .corruption)
         }
-        guard version != 4 else { return }
+        guard version != 4 && version != 5 else { return }
         if version == 3 {
             try migrateQualitativeHistory()
             return
@@ -258,7 +258,7 @@ final class GlifiSQLiteProjectStore {
             throw Self.failure("project.store-foreign-key-failed", category: .corruption)
         }
         let storedProjectID = try scalarText(
-            "SELECT project_id FROM project_metadata WHERE singleton = 1 AND schema_version = 4"
+            "SELECT project_id FROM project_metadata WHERE singleton = 1 AND schema_version IN (4, 5)"
         )
         guard storedProjectID == projectID.canonicalValue else {
             throw Self.failure("project.store-project-mismatch", category: .corruption)
@@ -451,67 +451,136 @@ final class GlifiSQLiteProjectStore {
         source: GlifiProjectSourceRecord
     ) throws {
         try transaction {
-            try withStatement(
-                """
-                INSERT INTO generations(
-                    generation, base_generation, state, record_digest, source_root_digest, source_count,
-                    artifact_root_digest, artifact_count, investigation_root_digest,
-                    investigation_event_count, qualitative_root_digest, qualitative_event_count
-                )
-                SELECT ?, ?, 'prepared', ?, ?, source_count + 1, ?, ?, ?,
-                       investigation_event_count, qualitative_root_digest, qualitative_event_count
-                FROM generations
-                WHERE generation = ? AND state IN ('prepared', 'committed')
-                """
-            ) { statement in
-                try bind(generation, at: 1, to: statement)
-                try bind(baseGeneration, at: 2, to: statement)
-                try bind(recordDigest, at: 3, to: statement)
-                try bind(sourceRootDigest, at: 4, to: statement)
-                try bind(artifactRootDigest, at: 5, to: statement)
-                try bind(artifacts.count, at: 6, to: statement)
-                try bind(investigationRootDigest, at: 7, to: statement)
-                try bind(baseGeneration, at: 8, to: statement)
-                try expectDone(statement)
-                guard sqlite3_changes(database) == 1 else {
-                    throw Self.failure("project.stale-generation", category: .staleArtifact)
+            try withRichImportCancellation(
+                enabled: GlifiDocumentExtractionPersistence.isRich(source.format)
+            ) {
+                if GlifiDocumentExtractionPersistence.isRich(source.format) {
+                    try enableRichSourceFormats()
+                }
+                try withStatement(
+                    """
+                    INSERT INTO generations(
+                        generation, base_generation, state, record_digest, source_root_digest, source_count,
+                        artifact_root_digest, artifact_count, investigation_root_digest,
+                        investigation_event_count, qualitative_root_digest, qualitative_event_count
+                    )
+                    SELECT ?, ?, 'prepared', ?, ?, source_count + 1, ?, ?, ?,
+                           investigation_event_count, qualitative_root_digest, qualitative_event_count
+                    FROM generations
+                    WHERE generation = ? AND state IN ('prepared', 'committed')
+                    """
+                ) { statement in
+                    try bind(generation, at: 1, to: statement)
+                    try bind(baseGeneration, at: 2, to: statement)
+                    try bind(recordDigest, at: 3, to: statement)
+                    try bind(sourceRootDigest, at: 4, to: statement)
+                    try bind(artifactRootDigest, at: 5, to: statement)
+                    try bind(artifacts.count, at: 6, to: statement)
+                    try bind(investigationRootDigest, at: 7, to: statement)
+                    try bind(baseGeneration, at: 8, to: statement)
+                    try expectDone(statement)
+                    guard sqlite3_changes(database) == 1 else {
+                        throw Self.failure("project.stale-generation", category: .staleArtifact)
+                    }
+                }
+                try withStatement(
+                    """
+                    INSERT INTO source_entries(
+                        generation, source_id, source_revision_id, format,
+                        content_digest, byte_count, object_path
+                    )
+                    SELECT ?, source_id, source_revision_id, format,
+                           content_digest, byte_count, object_path
+                    FROM source_entries WHERE generation = ?
+                    """
+                ) { statement in
+                    try bind(generation, at: 1, to: statement)
+                    try bind(baseGeneration, at: 2, to: statement)
+                    try expectDone(statement)
+                }
+                try copyInvestigationEvents(from: baseGeneration, to: generation)
+                try insertArtifacts(artifacts, into: generation)
+                try withStatement(
+                    """
+                    INSERT INTO source_entries(
+                        generation, source_id, source_revision_id, format,
+                        content_digest, byte_count, object_path
+                    ) VALUES(?, ?, ?, ?, ?, ?, ?)
+                    """
+                ) { statement in
+                    try bind(generation, at: 1, to: statement)
+                    try bind(source.sourceID.canonicalValue, at: 2, to: statement)
+                    try bind(source.sourceRevisionID.canonicalValue, at: 3, to: statement)
+                    try bind(source.format.rawValue, at: 4, to: statement)
+                    try bind(source.contentDigest, at: 5, to: statement)
+                    try bind(source.byteCount, at: 6, to: statement)
+                    try bind(source.objectPath, at: 7, to: statement)
+                    try expectDone(statement)
                 }
             }
-            try withStatement(
-                """
-                INSERT INTO source_entries(
-                    generation, source_id, source_revision_id, format,
-                    content_digest, byte_count, object_path
-                )
-                SELECT ?, source_id, source_revision_id, format,
-                       content_digest, byte_count, object_path
-                FROM source_entries WHERE generation = ?
-                """
-            ) { statement in
-                try bind(generation, at: 1, to: statement)
-                try bind(baseGeneration, at: 2, to: statement)
-                try expectDone(statement)
-            }
-            try copyInvestigationEvents(from: baseGeneration, to: generation)
-            try insertArtifacts(artifacts, into: generation)
-            try withStatement(
-                """
-                INSERT INTO source_entries(
-                    generation, source_id, source_revision_id, format,
-                    content_digest, byte_count, object_path
-                ) VALUES(?, ?, ?, ?, ?, ?, ?)
-                """
-            ) { statement in
-                try bind(generation, at: 1, to: statement)
-                try bind(source.sourceID.canonicalValue, at: 2, to: statement)
-                try bind(source.sourceRevisionID.canonicalValue, at: 3, to: statement)
-                try bind(source.format.rawValue, at: 4, to: statement)
-                try bind(source.contentDigest, at: 5, to: statement)
-                try bind(source.byteCount, at: 6, to: statement)
-                try bind(source.objectPath, at: 7, to: statement)
-                try expectDone(statement)
-            }
         }
+    }
+
+    /// The synchronous SQLite callback stays on this owned connection and borrows no task handle.
+    private func withRichImportCancellation<Result>(
+        enabled: Bool, _ body: () throws -> Result
+    ) throws -> Result {
+        guard enabled else { return try body() }
+        try Task.checkCancellation()
+        sqlite3_progress_handler(
+            database, 4_096, { _ in Task<Never, Never>.isCancelled ? 1 : 0 }, nil)
+        defer { sqlite3_progress_handler(database, 0, nil, nil) }
+        do {
+            let result = try body()
+            try Task.checkCancellation()
+            return result
+        } catch {
+            // SQLITE_INTERRUPT is cancellation only when this task was cancelled.
+            // This defer runs before transaction() rolls back the failed generation.
+            try Task.checkCancellation()
+            throw error
+        }
+    }
+
+    /// Lazy schema 5: retain every historical row and widen only the source-format constraint.
+    ///
+    /// The caller owns the transaction that also prepares the new source generation.
+    private func enableRichSourceFormats() throws {
+        let version = try scalarInt(
+            "SELECT schema_version FROM project_metadata WHERE singleton = 1", allowNoRows: false)
+        if version == 5 { return }
+        guard version == 4 else {
+            throw Self.failure("project.store-schema-unsupported", category: .corruption)
+        }
+        try execute(
+            """
+            CREATE TABLE source_entries_v5 (
+                generation INTEGER NOT NULL,
+                source_id TEXT NOT NULL,
+                source_revision_id TEXT NOT NULL,
+                format TEXT NOT NULL CHECK (format IN ('plainText', 'markdown', 'pdf', 'epub')),
+                content_digest TEXT NOT NULL,
+                byte_count INTEGER NOT NULL CHECK (byte_count >= 0),
+                object_path TEXT NOT NULL,
+                PRIMARY KEY (generation, source_revision_id),
+                FOREIGN KEY (generation) REFERENCES generations(generation) ON DELETE CASCADE
+            ) STRICT;
+            INSERT INTO source_entries_v5(
+                generation, source_id, source_revision_id, format, content_digest, byte_count, object_path
+            ) SELECT generation, source_id, source_revision_id, format, content_digest, byte_count, object_path
+              FROM source_entries;
+            DROP TABLE source_entries;
+            ALTER TABLE source_entries_v5 RENAME TO source_entries;
+            CREATE TABLE project_metadata_v5 (
+                singleton INTEGER PRIMARY KEY CHECK (singleton = 1),
+                project_id TEXT NOT NULL,
+                schema_version INTEGER NOT NULL CHECK (schema_version = 5)
+            ) STRICT;
+            INSERT INTO project_metadata_v5(singleton, project_id, schema_version)
+                SELECT singleton, project_id, 5 FROM project_metadata;
+            DROP TABLE project_metadata;
+            ALTER TABLE project_metadata_v5 RENAME TO project_metadata;
+            """)
     }
 
     func prepareArtifactGeneration(

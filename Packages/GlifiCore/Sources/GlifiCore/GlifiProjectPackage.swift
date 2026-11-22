@@ -204,6 +204,8 @@ public struct GlifiProjectManifest: Codable, Equatable, Sendable {
         "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     /// Current package format major.
     public static let formatVersion = 1
+    /// Current reader capability, including captured rich-document representations.
+    public static let readerVersion = 2
 
     /// Stable schema identifier encoded in the document.
     public let schema: String
@@ -250,7 +252,8 @@ public struct GlifiProjectManifest: Codable, Equatable, Sendable {
         investigationRootDigest: String,
         investigationEventCount: Int,
         qualitativeRootDigest: String = GlifiProjectManifest.emptyQualitativeRootDigest,
-        qualitativeEventCount: Int = 0
+        qualitativeEventCount: Int = 0,
+        containsRichDocuments: Bool = false
     ) {
         schema = Self.schema
         schemaVersion =
@@ -259,7 +262,7 @@ public struct GlifiProjectManifest: Codable, Equatable, Sendable {
         self.qualitativeRootDigest = qualitativeEventCount > 0 ? qualitativeRootDigest : nil
         self.qualitativeEventCount = qualitativeEventCount > 0 ? qualitativeEventCount : nil
         formatVersion = Self.formatVersion
-        minimumReaderVersion = Self.formatVersion
+        minimumReaderVersion = containsRichDocuments ? Self.readerVersion : Self.formatVersion
         self.projectID = projectID
         self.generation = generation
         self.baseGeneration = baseGeneration
@@ -479,6 +482,14 @@ public actor GlifiProjectPackage {
         return try GlifiProjectPackageIO.readValidatedObject(source, in: packageURL)
     }
 
+    /// Restores the captured document representation without running an extraction backend.
+    package func importedText(
+        for sourceRevisionID: SourceRevisionID, limits: GlifiTextImportLimits = .standard
+    ) throws -> GlifiImportedText {
+        try GlifiProjectPackageIO.readImportedText(
+            for: sourceRevisionID, snapshot: currentSnapshot, in: packageURL, limits: limits)
+    }
+
     /// Returns the fully verified analysis DAG selected by the current generation.
     public func analysisGraph() throws -> GlifiAnalysisGraph {
         try GlifiAnalysisGraph(currentSnapshot.artifacts.map(\.node))
@@ -676,6 +687,13 @@ public actor GlifiProjectPackage {
         interruption: GlifiProjectCommitInterruption?,
         interruptionBehavior: GlifiProjectCommitInterruptionBehavior = .throwFailure
     ) throws -> GlifiProjectSnapshot {
+        guard !GlifiDocumentExtractionPersistence.isReserved(descriptor) else {
+            throw GlifiFailure(
+                code: "project.document-extraction-import-only", category: .invalidInput,
+                operation: .persistProject, retryDisposition: .afterCorrection,
+                retainedState: .unchanged,
+                messageKey: "failure.project.document-extraction-import-only")
+        }
         guard descriptor.outputSchemaIdentifier == Payload.outputSchemaIdentifier else {
             throw GlifiFailure(
                 code: "project.artifact-schema-mismatch",
@@ -780,6 +798,14 @@ extension GlifiProjectPackage {
                 )
             }
             return try GlifiProjectPackageIO.readValidatedObject(source, in: packageURL)
+        }
+
+        /// Restores an older verified extraction without requiring the original backend.
+        package func importedText(
+            for sourceRevisionID: SourceRevisionID, limits: GlifiTextImportLimits = .standard
+        ) throws -> GlifiImportedText {
+            try GlifiProjectPackageIO.readImportedText(
+                for: sourceRevisionID, snapshot: snapshot, in: packageURL, limits: limits)
         }
 
         /// Reads immutable artifact bytes after checking path, size, digest, and identity again.
@@ -981,6 +1007,12 @@ private enum GlifiProjectPackageIO {
             }
 
             let sources = try database.sources(generation: manifest.generation)
+            guard
+                manifest.minimumReaderVersion >= 2
+                    || !sources.contains(where: {
+                        GlifiDocumentExtractionPersistence.isRich($0.format)
+                    })
+            else { throw corruption("project.document-reader-version-mismatch") }
             guard sources.count == manifest.sourceCount,
                 try sourceRootDigest(sources) == manifest.sourceRootDigest
             else {
@@ -1016,6 +1048,7 @@ private enum GlifiProjectPackageIO {
             } catch {
                 throw corruption("project.artifact-graph-mismatch")
             }
+            try validateDocumentExtractions(sources: sources, artifacts: artifacts, in: packageURL)
             let investigationEvents = try database.investigationEvents(
                 generation: manifest.generation
             )
@@ -1206,6 +1239,7 @@ private enum GlifiProjectPackageIO {
         } catch {
             throw corruption("project.artifact-graph-mismatch")
         }
+        try validateDocumentExtractions(sources: sources, artifacts: artifacts, in: packageURL)
         let investigationEvents = try database.investigationEvents(
             generation: generationNumber
         )
@@ -1374,7 +1408,8 @@ private enum GlifiProjectPackageIO {
         sourceRoot: GenerationRoot? = nil,
         artifactRoot: GenerationRoot? = nil,
         investigationRoot: GenerationRoot? = nil,
-        qualitativeRoot: GenerationRoot? = nil
+        qualitativeRoot: GenerationRoot? = nil,
+        containsNewRichDocument: Bool = false
     ) throws -> GlifiProjectManifest {
         let sourceRoot =
             sourceRoot
@@ -1417,7 +1452,11 @@ private enum GlifiProjectPackageIO {
             investigationRootDigest: investigationRoot.digest,
             investigationEventCount: investigationRoot.count,
             qualitativeRootDigest: qualitativeRoot.digest,
-            qualitativeEventCount: qualitativeRoot.count
+            qualitativeEventCount: qualitativeRoot.count,
+            containsRichDocuments: containsNewRichDocument
+                || snapshot.sources.contains {
+                    GlifiDocumentExtractionPersistence.isRich($0.format)
+                }
         )
     }
 
@@ -1462,26 +1501,74 @@ private enum GlifiProjectPackageIO {
             byteCount: importedText.bytes.count,
             objectPath: objectPath
         )
+        let extraction = try GlifiDocumentExtractionPersistence.prepare(
+            importedText, source: source)
         try transaction.directory.writeFile(importedText.bytes, named: "source-object")
         try promoteObject(
             "source-object", from: transaction.directory, source: source,
             in: transaction.packageDirectory)
-        try interruptIfRequested(.objectPromoted, interruption, behavior: interruptionBehavior)
-
         var sources = observedSnapshot.sources
         sources.append(source)
         sources.sort { $0.sourceRevisionID.canonicalValue < $1.sourceRevisionID.canonicalValue }
         let sourceRootDigest = try sourceRootDigest(sources)
         // Un'importazione invalida soltanto gli Artifact il cui corpus è cambiato (ADR-0028):
         // quelli legati a revisioni ancora presenti sopravvivono, con la loro catena.
-        let artifacts = try retainedArtifacts(
+        var artifacts = try retainedArtifacts(
             observedSnapshot.artifacts, sources: sources, rootDigest: sourceRootDigest)
+        if let extraction {
+            let descriptor = extraction.descriptor
+            let descriptorDigest = digest(extraction.descriptorData)
+            guard descriptorDigest == (try descriptor.canonicalDigest()) else {
+                throw corruption("project.descriptor-canonicalization-mismatch")
+            }
+            let contentDigest = digest(extraction.data)
+            let artifact = GlifiProjectArtifactRecord(
+                artifactID: try ArtifactID(digest: contentDigest),
+                node: try GlifiAnalysisNode(descriptor: descriptor),
+                descriptorDigest: descriptorDigest,
+                descriptorByteCount: extraction.descriptorData.count,
+                descriptorObjectPath: try descriptorObjectPath(for: descriptorDigest),
+                contentDigest: contentDigest, byteCount: extraction.data.count,
+                objectPath: try artifactObjectPath(for: contentDigest))
+            artifacts.append(artifact)
+            artifacts.sort { $0.node.id.canonicalValue < $1.node.id.canonicalValue }
+            guard artifacts.count <= GlifiAnalysisGraphLimits.standard.maximumNodeCount else {
+                throw GlifiFailure(
+                    code: "project.artifact-limit-exceeded", category: .insufficientResources,
+                    operation: .persistProject, retryDisposition: .afterConditionsChange,
+                    retainedState: .unchanged, messageKey: "failure.project.artifact-limit-exceeded"
+                )
+            }
+            let graph = try GlifiAnalysisGraph(artifacts.map(\.node))
+            let reusable = try graph.reusableNodeIDs(from: artifacts.map { try $0.reference })
+            guard reusable.count == artifacts.count else {
+                throw corruption("project.artifact-graph-mismatch")
+            }
+            try transaction.directory.writeFile(
+                extraction.descriptorData, named: "descriptor-object")
+            try promoteArtifactObject(
+                "descriptor-object", from: transaction.directory,
+                relativePath: artifact.descriptorObjectPath,
+                expectedDigest: artifact.descriptorDigest,
+                expectedByteCount: artifact.descriptorByteCount,
+                maximumByteCount: GlifiProjectPackage.maximumDescriptorByteCount,
+                in: transaction.packageDirectory)
+            try transaction.directory.writeFile(extraction.data, named: "artifact-object")
+            try promoteArtifactObject(
+                "artifact-object", from: transaction.directory, relativePath: artifact.objectPath,
+                expectedDigest: artifact.contentDigest, expectedByteCount: artifact.byteCount,
+                maximumByteCount: GlifiProjectPackage.maximumArtifactByteCount,
+                in: transaction.packageDirectory)
+        }
+        _ = try GlifiDocumentExtractionPersistence.bindings(sources: sources, artifacts: artifacts)
+        try interruptIfRequested(.objectPromoted, interruption, behavior: interruptionBehavior)
         let artifactRootDigest = try artifactRootDigest(artifacts)
         let investigationRootDigest = observedSnapshot.investigationRootDigest
         let manifest = try makeCandidateManifest(
             after: observedSnapshot, generation: transaction.targetGeneration,
             sourceRoot: .init(digest: sourceRootDigest, count: sources.count),
-            artifactRoot: .init(digest: artifactRootDigest, count: artifacts.count)
+            artifactRoot: .init(digest: artifactRootDigest, count: artifacts.count),
+            containsNewRichDocument: GlifiDocumentExtractionPersistence.isRich(source.format)
         )
         let database = try GlifiSQLiteProjectStore.open(at: databaseURL(in: packageURL))
         try database.discardGenerations(after: observedSnapshot.generation)
@@ -2074,6 +2161,54 @@ private enum GlifiProjectPackageIO {
         return data
     }
 
+    static func readImportedText(
+        for revision: SourceRevisionID, snapshot: GlifiProjectSnapshot,
+        in packageURL: URL, limits: GlifiTextImportLimits
+    ) throws -> GlifiImportedText {
+        try Task.checkCancellation()
+        guard let source = snapshot.sources.first(where: { $0.sourceRevisionID == revision }) else {
+            throw GlifiFailure(
+                code: "project.source-not-found", category: .insufficientData,
+                operation: .persistProject, retryDisposition: .afterCorrection,
+                retainedState: .lastCommittedGeneration,
+                messageKey: "failure.project.source-not-found")
+        }
+        guard source.byteCount <= limits.maximumByteCount else {
+            throw documentImportFailure("document.resource-limit", category: .insufficientResources)
+        }
+        switch source.format {
+        case .plainText, .markdown:
+            return try GlifiTextImporter().importText(
+                from: readValidatedObject(source, in: packageURL), format: source.format,
+                limits: limits, sourceRevisionID: revision)
+        case .pdf, .epub:
+            let artifact = try GlifiDocumentExtractionPersistence.artifact(
+                for: source, artifacts: snapshot.artifacts)
+            try GlifiDocumentExtractionPersistence.admit(artifact, limits: limits)
+            let extraction = try GlifiDocumentExtractionPersistence.decode(
+                readValidatedArtifact(artifact, in: packageURL), source: source, artifact: artifact)
+            return try GlifiTextImporter().restoreDocument(
+                from: readValidatedObject(source, in: packageURL), format: source.format,
+                extraction: extraction, limits: limits, sourceRevisionID: revision)
+        }
+    }
+
+    static func validateDocumentExtractions(
+        sources: [GlifiProjectSourceRecord], artifacts: [GlifiProjectArtifactRecord],
+        in packageURL: URL
+    ) throws {
+        let bindings = try GlifiDocumentExtractionPersistence.bindings(
+            sources: sources, artifacts: artifacts)
+        for source in sources where GlifiDocumentExtractionPersistence.isRich(source.format) {
+            try Task.checkCancellation()
+            guard let artifact = bindings[source.sourceRevisionID] else {
+                throw GlifiDocumentExtractionPersistence.invalidSnapshot()
+            }
+            _ = try GlifiDocumentExtractionPersistence.decode(
+                readValidatedArtifact(artifact, in: packageURL), source: source, artifact: artifact)
+        }
+    }
+
     static func readValidatedArtifact(
         _ artifact: GlifiProjectArtifactRecord,
         in packageURL: URL
@@ -2233,6 +2368,12 @@ private enum GlifiProjectPackageIO {
         if let failure = error as? GlifiFailure {
             return failure
         }
+        if error is CancellationError {
+            return GlifiFailure(
+                code: "project.cancelled", category: .cancelled, operation: operation,
+                retryDisposition: .newRequest, retainedState: .lastCommittedGeneration,
+                messageKey: "failure.project.cancelled")
+        }
         let cocoaError = error as NSError
         let authorizationCodes: Set<Int> = [
             CocoaError.fileReadNoPermission.rawValue,
@@ -2267,7 +2408,7 @@ private enum GlifiProjectPackageIO {
             (GlifiProjectManifest.previousSchemaVersion...GlifiProjectManifest.schemaVersion)
                 .contains(manifest.schemaVersion),
             manifest.formatVersion == GlifiProjectManifest.formatVersion,
-            manifest.minimumReaderVersion <= GlifiProjectManifest.formatVersion
+            (1...GlifiProjectManifest.readerVersion).contains(manifest.minimumReaderVersion)
         else {
             throw GlifiFailure(
                 code: "project.incompatible-version",

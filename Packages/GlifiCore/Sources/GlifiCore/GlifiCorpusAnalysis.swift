@@ -234,7 +234,7 @@ public struct GlifiCorpusAnalyzer: Sendable {
             $0.sourceRevisionID.canonicalValue < $1.sourceRevisionID.canonicalValue
         }
         try validateCorpusSelection(
-            documentByteCounts: orderedSources.map(\.bytes.count),
+            documentByteCounts: orderedSources.map(\.analysisByteCount),
             options: options
         )
 

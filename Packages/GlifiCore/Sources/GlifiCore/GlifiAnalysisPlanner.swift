@@ -109,18 +109,49 @@ public struct GlifiPlanningSource: Equatable, Sendable {
     /// Observed exact source byte count.
     public let byteCount: Int
 
+    /// Work-admission size, including a captured representation that may exceed the binary input.
+    package let admittedByteCount: Int
+
     /// Creates one validated planning fact.
     public init(
         sourceRevisionID: SourceRevisionID,
         format: GlifiTextFormat,
         byteCount: Int
     ) throws {
-        guard byteCount >= 0 else {
+        switch format {
+        case .plainText, .markdown:
+            try self.init(
+                sourceRevisionID: sourceRevisionID, format: format, byteCount: byteCount,
+                admittedByteCount: byteCount)
+        case .pdf, .epub:
+            throw plannerFailure("planner.missing-captured-text-size")
+        }
+    }
+
+    /// Creates a binary-document planning fact with an explicit captured UTF-8 size.
+    public init(
+        sourceRevisionID: SourceRevisionID, format: GlifiTextFormat,
+        byteCount: Int, capturedTextByteCount: Int
+    ) throws {
+        guard capturedTextByteCount >= 0 else {
+            throw plannerFailure("planner.invalid-source-size")
+        }
+        try self.init(
+            sourceRevisionID: sourceRevisionID, format: format, byteCount: byteCount,
+            admittedByteCount: max(byteCount, capturedTextByteCount))
+    }
+
+    package init(
+        sourceRevisionID: SourceRevisionID, format: GlifiTextFormat,
+        byteCount: Int, admittedByteCount: Int
+    ) throws {
+        guard byteCount >= 0, admittedByteCount >= byteCount else {
             throw plannerFailure("planner.invalid-source-size")
         }
         self.sourceRevisionID = sourceRevisionID
         self.format = format
         self.byteCount = byteCount
+        self.admittedByteCount = admittedByteCount
     }
 }
 
@@ -841,14 +872,14 @@ public struct GlifiAnalysisPlanner: Sendable {
 
     private func estimatedProfileCost(_ sources: [GlifiPlanningSource]) throws -> Int64 {
         try checkedSum([
-            try checkedSum(sources.map { Int64($0.byteCount) }),
+            try checkedSum(sources.map { Int64($0.admittedByteCount) }),
             try checkedProduct(Int64(sources.count), 64),
         ])
     }
 
     private func estimatedKeynessCost(_ sources: [GlifiPlanningSource]) throws -> Int64 {
         try checkedSum([
-            try checkedSum(sources.map { Int64($0.byteCount) }),
+            try checkedSum(sources.map { Int64($0.admittedByteCount) }),
             try checkedProduct(Int64(sources.count), 128),
         ])
     }
@@ -858,7 +889,7 @@ public struct GlifiAnalysisPlanner: Sendable {
         guard sources.count <= options.maximumDocumentCount else { return false }
         var bytes = 0
         for source in sources {
-            let sum = bytes.addingReportingOverflow(source.byteCount)
+            let sum = bytes.addingReportingOverflow(source.admittedByteCount)
             guard !sum.overflow, sum.partialValue <= options.maximumSourceByteCount else {
                 return false
             }

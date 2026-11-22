@@ -11,7 +11,7 @@ fonti, metodi e passaggi di analisi, per risalire dal risultato al testo origina
 
 ## Dai testi ai risultati
 
-- **Organizza le fonti.** Importa documenti TXT e Markdown UTF-8 in un progetto `.glifi`.
+- **Organizza le fonti.** Importa TXT, Markdown, PDF ed EPUB in un progetto `.glifi`, conservando gli originali.
 - **Esplora i testi.** Cerca parole e passaggi nel loro contesto, analizza le raccolte e confrontale.
 - **Condividi il lavoro.** Esporta risultati e riferimenti in PDF/A-2u, Markdown, CSV e JSON.
 

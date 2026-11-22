@@ -76,18 +76,14 @@ extension GlifiStudioTextAnalytics {
             var tokenCount = 0
             for source in sources {
                 try Task.checkCancellation()
-                let original = try await session.sourceText(
-                    sourceRevisionID: source.sourceRevisionID)
-                let format: GlifiTextFormat
-                switch source.format {
-                case .plainText: format = .plainText
-                case .markdown: format = .markdown
+                let imported = try await session.importedTextForLaboratory(
+                    sourceRevisionID: source.sourceRevisionID,
+                    maximumByteCount: projectLaboratoryMaximumBytes - byteCount + source.byteCount)
+                let extraBytes = imported.analysisByteCount - source.byteCount
+                guard extraBytes <= projectLaboratoryMaximumBytes - byteCount else {
+                    throw projectInputFailure(resource: true)
                 }
-                let imported = try GlifiTextImporter().importText(
-                    from: Data(original.text.utf8), format: format,
-                    limits: GlifiTextImportLimits(maximumByteCount: projectLaboratoryMaximumBytes),
-                    sourceRevisionID: SourceRevisionID(canonicalValue: source.sourceRevisionID)
-                )
+                byteCount += extraBytes
                 guard imported.contentDigest == source.contentDigest else {
                     throw projectInputFailure()
                 }

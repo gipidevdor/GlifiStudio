@@ -153,6 +153,8 @@ preservando i confini del lavoro già in corso nell'altra chat.
 
 - [GS-DOR-304 — Componenti e campi nativi nei laboratori macOS](dor-hig-laboratori-macos.md) — Ready; implementazione, gate e preflight macOS superati sul checkpoint 9c9e0098; audit interattivi aperti
 
+- [GS-DOR-310 — Importazione PDF ed EPUB](dor-importazione-pdf-epub.md) — Ready; PDFKit, Vision e parser EPUB bounded
+
 - [GS-DOR-306 — Progetto Xcode completo e verificabile](dor-progetto-xcode-completo.md) — Ready; gate, nativi Debug/Release e preflight macOS superati sul checkpoint 328169f7; limiti interattivi e nuovo Core 305 separati
 
 - [GS-DOR-286 — Operatori tipizzati e failure coese](dor-operatori-tipizzati-e-failure-coese.md) — Ready; invarianti del parser e policy Kit condivisa

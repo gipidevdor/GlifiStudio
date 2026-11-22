@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-VER-286 |
 | Tipo | Evidenza di refactoring interno |
-| Versione | 1.1.0 |
+| Versione | 1.2.0 |
 | Stato | Superato nel perimetro macOS dichiarato |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -15,8 +15,11 @@
 
 ## Confini e invarianti
 
-Baseline `76e5871`, compilata prima delle patch; dopo la pubblicazione
-concorrente di GS-303/306 i confronti sono ripetuti contro `d6b4828`.
+Baseline originaria `76e5871`, compilata prima delle patch. Dopo GS-303/306
+i confronti sono stati ripetuti contro `d6b4828`; la successiva integrazione
+PDF/EPUB assume come base `b401c08`. I risultati positivi descritti sotto
+restano associati ai rispettivi checkpoint, senza attribuirli alla nuova
+composizione prima della verifica.
 L’AST privato delle regole usa
 un enum per i 12 operatori binari: l’inizializzatore raw-value riconosce i token,
 mentre precedenza e applicazione hanno switch esaustivi. Il parser è l’unico
@@ -48,10 +51,12 @@ digest delle sei sorgenti interessate, confronti e limiti.
 - Due tabelle di failure → una, riusata da 15 ingressi delle due facciate.
   Corpo della funzione condivisa identico all’originale, salvo visibilità da
   privata a interna. Gli altri mapper non cambiano.
-- Superficie pubblica Core/Kit identica con `swift-api-digester`, dopo il solo
+- Sul checkpoint originario, sulla precedente base `d6b4828` e sulla nuova
+  base `b401c08`, superficie pubblica Core/Kit identica con `swift-api-digester`, dopo il solo
   ordinamento delle dichiarazioni di primo livello; nessuna rimozione di membri,
   parametri, attributi o disponibilità. Nessuna certificazione ABI implicita.
-- 164 casi CLI generali e 69 richieste sulle regole: stdout, stderr e codici di
+- Sul checkpoint originario, sulla precedente base `d6b4828` e sulla nuova
+  base `b401c08`, 164 casi CLI generali e 69 richieste sulle regole: stdout, stderr e codici di
   uscita identici alla baseline, senza normalizzazione di campi. Per 45 richieste
   sono confermati anche valori o errori attesi espliciti sulla baseline.
   I casi CLI usano token nativi; i token esterni espliciti sono coperti dalle
@@ -81,7 +86,7 @@ Xcode, e il Root, restano preservati.
 
 ## Riproduzione e conservazione
 
-Compilare la baseline finale `d6b4828` in una cache isolata, conservando eseguibile CLI e dump
+Compilare la baseline corrente `b401c08` in una cache isolata, conservando eseguibile CLI e dump
 `swift-api-digester` prima delle patch. Estrarre Core/Kit con target
 `arm64-apple-macosx27.0`, SDK macOS, Swift 6, `-avoid-location` e
 `-avoid-tool-args`; ordinare soltanto le dichiarazioni di primo livello per il
@@ -102,7 +107,7 @@ Log, dump API compressi, confronti CLI completi e programma del confronto
 specifico restano nelle prove locali del lotto; le build rigenerabili si
 rimuovono alla chiusura tramite il gestore della cache.
 
-## Integrazione finale
+## Integrazione precedente di scenari e progetto Xcode
 
 I sei sorgenti del refactoring restano identici al checkpoint `a7f1ccc`,
 che ha superato gate locale e due flussi remoti macOS. I conflitti nei cinque
@@ -116,3 +121,27 @@ a `a7f1ccc`: non descrivono i nuovi scenari GS-303 o i controlli GS-306.
 Il gate sul codice unito, i relativi conteggi finali e il preflight macOS sono
 registrati nella [PR #46](https://github.com/gipidevdor/GlifiStudio/pull/46)
 sul suo head finale, mantenendo distinta la provenienza delle evidenze.
+
+## Integrazione corrente PDF/EPUB
+
+Main ha poi pubblicato la pipeline documentale in `b401c08`. Il merge
+conserva integralmente i file upstream fuori dal delta del refactoring,
+compresi contenuti e permessi Git; 484 file di codice, configurazioni e test
+sono controllati separatamente. La matrice mantiene esattamente le 170 voci
+e le proprietà di primo livello upstream, con le sole aggiunte CMP-286/287.
+I tre conflitti nei registri sono risolti conservando il corpo upstream,
+la sola aggiunta del lotto e una singola riga Versione. I sei sorgenti del
+refactoring restano identici ad `a7f1ccc`.
+
+Il precedente gate locale sulla composizione `c61c80e` ha superato 832 test
+Core/Kit, 125 definizioni native e 409 esecuzioni. L’allegato lo registra
+come fase distinta dal gate originario `a7f1ccc`, i cui conteggi restano
+invariati. Le precedenti prove API/CLI contro `d6b4828` sono conservate in
+una sezione storica: non attestano i risultati contro `b401c08`.
+
+Il confronto sulla nuova base è ora completato: API Core/Kit e tutte le
+164 + 69 risposte CLI sono identiche a `b401c08`, con 45 aspettative esplicite
+confermate sulla baseline. L’allegato conserva i risultati e i digest dei
+rapporti completi. Il gate corrente sul codice unito e il preflight finale
+macOS restano distinti dalle verifiche precedenti e sono registrati nella
+[PR #46](https://github.com/gipidevdor/GlifiStudio/pull/46) sul relativo head.

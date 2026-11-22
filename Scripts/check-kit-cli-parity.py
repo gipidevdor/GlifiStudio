@@ -444,7 +444,8 @@ def check_explicit_imports(binary: Path, directory: Path) -> None:
             snapshot = imported["project"]
             if imported["importedSourceCount"] != 1 or snapshot["projectID"] != created["projectID"]:
                 raise ValueError("Import changed project identity or reported a wrong source count")
-            if snapshot["generation"] != 1 or snapshot["sourceCount"] != 1 or snapshot["artifactCount"] != 0:
+            expected_artifacts = 1 if request["format"] in {"pdf", "epub"} else 0
+            if snapshot["generation"] != 1 or snapshot["sourceCount"] != 1 or snapshot["artifactCount"] != expected_artifacts:
                 raise ValueError("Import committed an unexpected generation or source/artifact count")
             if len(snapshot["sources"]) != 1:
                 raise ValueError("Import did not preserve the source record")
@@ -455,7 +456,38 @@ def check_explicit_imports(binary: Path, directory: Path) -> None:
                 raise ValueError("Import ignored the explicit input format or byte count")
             if not re.fullmatch(r"sha256:[0-9a-f]{64}", record["contentDigest"]):
                 raise ValueError("Import produced an invalid content digest")
-    print(f"Import: {len(profiles)} explicit formats on .data sources preserve the complete native profile")
+            native_source = read_json(source.parent / (request["format"] + "-source.json"))
+            native_source["sourceRevisionID"] = record["sourceRevisionID"]
+            source_request = Path(temporary) / (fixture["operation"] + "-source.json")
+            source_request.write_text(json.dumps({
+                "schema": "studio.glifi.project-command-request", "schemaVersion": 1,
+                "operation": "source-text",
+                "parameters": {"sourceRevisionID": record["sourceRevisionID"]},
+            }), encoding="utf-8")
+            actual_source = invoke([
+                "project-call", str(project), "--request", str(source_request)
+            ], "project-call")
+            compare(actual_source, native_source, "import.source-text")
+            if expected_artifacts:
+                provenance = actual_source["document"]
+                if provenance["format"] != request["format"] or provenance["originalContentDigest"] != record["contentDigest"]:
+                    raise ValueError("Captured document provenance differs from the original source")
+                if not provenance["locations"]:
+                    raise ValueError("Imported document lost its page/chapter locations")
+
+            extension = {"plainText": "txt", "markdown": "md", "pdf": "pdf", "epub": "epub"}[request["format"]]
+            automatic_source = Path(temporary) / (fixture["operation"] + "." + extension)
+            shutil.copyfile(source, automatic_source)
+            automatic_project = Path(temporary) / (fixture["operation"] + "-automatic.glifi")
+            invoke(["project", "create", str(automatic_project)], "project.create")
+            automatic = invoke(["import", str(automatic_project), str(automatic_source)], "import")
+            compare(automatic["lastProfile"], fixture["result"], "import.automatic.lastProfile")
+            auto_snapshot = automatic["project"]
+            if (auto_snapshot["generation"], auto_snapshot["sourceCount"], auto_snapshot["artifactCount"]) != (1, 1, expected_artifacts):
+                raise ValueError("Automatic import committed an unexpected generation or count")
+            if auto_snapshot["sources"][0]["format"] != request["format"]:
+                raise ValueError("Automatic import selected a different source format")
+    print(f"Import: {len(profiles)} explicit and automatic formats preserve the complete native profile and source provenance")
 
 
 def check_legacy_request_file_admission(binary: Path) -> None:

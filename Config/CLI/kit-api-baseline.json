@@ -8273,6 +8273,213 @@
       "role": "data"
     },
     {
+      "identifier": "s:8GlifiKit0A24StudioDocumentProvenanceV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioDocumentProvenance"
+      ],
+      "declaration": "struct GlifiStudioDocumentProvenance",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioDocumentProvenanceV17backendIdentifierSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentProvenance",
+        "backendIdentifier"
+      ],
+      "declaration": "let backendIdentifier: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioDocumentProvenanceV28extractionContractIdentifierSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentProvenance",
+        "extractionContractIdentifier"
+      ],
+      "declaration": "let extractionContractIdentifier: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioDocumentProvenanceV6formatAA0aC10TextFormatOvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentProvenance",
+        "format"
+      ],
+      "declaration": "let format: GlifiStudioTextFormat",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioDocumentProvenanceV9locationsSayAA0acD12TextLocationVGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentProvenance",
+        "locations"
+      ],
+      "declaration": "let locations: [GlifiStudioDocumentTextLocation]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioDocumentProvenanceV8metadataSDyS2SGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentProvenance",
+        "metadata"
+      ],
+      "declaration": "let metadata: [String : String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioDocumentProvenanceV17originalByteCountSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentProvenance",
+        "originalByteCount"
+      ],
+      "declaration": "let originalByteCount: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioDocumentProvenanceV21originalContentDigestSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentProvenance",
+        "originalContentDigest"
+      ],
+      "declaration": "let originalContentDigest: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioDocumentRegionV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioDocumentRegion"
+      ],
+      "declaration": "struct GlifiStudioDocumentRegion",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioDocumentRegionV6heightSdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentRegion",
+        "height"
+      ],
+      "declaration": "let height: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioDocumentRegionV5widthSdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentRegion",
+        "width"
+      ],
+      "declaration": "let width: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioDocumentRegionV1xSdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentRegion",
+        "x"
+      ],
+      "declaration": "let x: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioDocumentRegionV1ySdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentRegion",
+        "y"
+      ],
+      "declaration": "let y: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioDocumentTextLocationV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioDocumentTextLocation"
+      ],
+      "declaration": "struct GlifiStudioDocumentTextLocation",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioDocumentTextLocationV10confidenceSdSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentTextLocation",
+        "confidence"
+      ],
+      "declaration": "let confidence: Double?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioDocumentTextLocationV3endSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentTextLocation",
+        "end"
+      ],
+      "declaration": "let end: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioDocumentTextLocationV6methodSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentTextLocation",
+        "method"
+      ],
+      "declaration": "let method: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioDocumentTextLocationV10pageNumberSiSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentTextLocation",
+        "pageNumber"
+      ],
+      "declaration": "let pageNumber: Int?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioDocumentTextLocationV6regionAA0acD6RegionVSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentTextLocation",
+        "region"
+      ],
+      "declaration": "let region: GlifiStudioDocumentRegion?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioDocumentTextLocationV12resourcePathSSSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentTextLocation",
+        "resourcePath"
+      ],
+      "declaration": "let resourcePath: String?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioDocumentTextLocationV5startSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioDocumentTextLocation",
+        "start"
+      ],
+      "declaration": "let start: Int",
+      "role": "data"
+    },
+    {
       "identifier": "s:8GlifiKit0A26StudioEditorialRankFactorsV",
       "kind": "swift.struct",
       "path": [
@@ -32446,6 +32653,16 @@
       "role": "data"
     },
     {
+      "identifier": "s:8GlifiKit0A16StudioSourceTextV8documentAA0aC18DocumentProvenanceVSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioSourceText",
+        "document"
+      ],
+      "declaration": "let document: GlifiStudioDocumentProvenance?",
+      "role": "data"
+    },
+    {
       "identifier": "s:8GlifiKit0A16StudioSourceTextV6encode2toys7Encoder_p_tKF",
       "kind": "swift.method",
       "path": [
@@ -41193,6 +41410,16 @@
       "role": "data"
     },
     {
+      "identifier": "s:8GlifiKit0A16StudioTextFormatO4epubyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioTextFormat",
+        "epub"
+      ],
+      "declaration": "case epub",
+      "role": "data"
+    },
+    {
       "identifier": "s:8GlifiKit0A16StudioTextFormatO8rawValueACSgSS_tcfc",
       "kind": "swift.init",
       "path": [
@@ -41233,6 +41460,16 @@
         "markdown"
       ],
       "declaration": "case markdown",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioTextFormatO3pdfyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioTextFormat",
+        "pdf"
+      ],
+      "declaration": "case pdf",
       "role": "data"
     },
     {

@@ -201,7 +201,7 @@ struct StudioHomeView: View {
         .focusedSceneValue(\.studioWorkspaceActions, sceneActions)
         .fileImporter(
             isPresented: $isSourceImporterPresented,
-            allowedContentTypes: [.plainText, .markdown],
+            allowedContentTypes: [.plainText, .markdown, .pdf, .epub],
             allowsMultipleSelection: true
         ) { result in
             guard case let .success(urls) = result, !urls.isEmpty else {
@@ -430,6 +430,9 @@ struct StudioHomeView: View {
                 {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
+                            if let document = source.document {
+                                StudioDocumentSourceProvenance(document: document)
+                            }
                             Text(source.text)
                                 .textSelection(.enabled)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -1166,8 +1169,13 @@ struct StudioHomeView: View {
                                         .textSelection(.enabled)
                                 }
                                 Text(
-                                    source.format == .markdown
-                                        ? "format.markdown" : "format.plain-text"
+                                    LocalizedStringKey(
+                                        source.format == .markdown
+                                            ? "format.markdown"
+                                            : source.format == .pdf
+                                                ? "format.pdf"
+                                                : source.format == .epub
+                                                    ? "format.epub" : "format.plain-text")
                                 )
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
@@ -2427,6 +2435,9 @@ struct StudioHomeView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     Text("query.source").font(.headline).accessibilityAddTraits(.isHeader)
+                    if let document = source.document {
+                        StudioDocumentSourceProvenance(document: document)
+                    }
                     highlightedSource(source.text, ranges: match.sourceRanges)
                         .textSelection(.enabled)
                     DisclosureGroup("common.provenance") {
@@ -2885,6 +2896,9 @@ struct StudioHomeView: View {
                         Text(sourceText.byteCount, format: .number)
                             .monospacedDigit()
                     }
+                    if let document = sourceText.document {
+                        StudioDocumentSourceProvenance(document: document)
+                    }
                     highlightedSource(sourceText.text, ranges: model.evidenceSourceRanges)
                         .font(.body.monospaced())
                         .textSelection(.enabled)
@@ -3330,6 +3344,41 @@ struct StudioHomeView: View {
         default:
             return "—"
         }
+    }
+}
+
+/// Identifies captured document text without exposing internal parser or storage details.
+private struct StudioDocumentSourceProvenance: View {
+    let document: GlifiStudioDocumentProvenance
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if let title = document.metadata["title"], !title.isEmpty {
+                Text(title).font(.headline).fixedSize(horizontal: false, vertical: true)
+            }
+            if let creator = document.metadata["creator"], !creator.isEmpty {
+                Text(creator).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            LabeledContent("source.document.format") {
+                Text(LocalizedStringKey(document.format == .pdf ? "format.pdf" : "format.epub"))
+            }
+            if let count = document.metadata["documentUnitCount"].flatMap(Int.init) {
+                LabeledContent(
+                    LocalizedStringKey(
+                        document.format == .pdf
+                            ? "source.document.pages" : "source.document.sections"
+                    )
+                ) {
+                    Text(count, format: .number)
+                }
+            }
+            if (document.metadata["ocrPageCount"].flatMap(Int.init) ?? 0) > 0 {
+                Label("source.document.ocr", systemImage: "text.viewfinder")
+            }
+            Text("source.document.captured").foregroundStyle(.secondary)
+        }
+        .font(.caption)
     }
 }
 

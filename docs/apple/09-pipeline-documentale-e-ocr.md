@@ -4,17 +4,17 @@
 | --- | --- |
 | Identificatore | GS-APL-009 |
 | Tipo | Standard applicativo Apple |
-| Versione | 1.1.0 |
+| Versione | 1.1.2 |
 | Stato | Approvato |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | ADR-0008 |
 
 ## Scopo
 
 Questo documento assegna le tecnologie Apple alla pipeline di acquisizione,
 interpretazione e presentazione. GS-DAT-001 governa formato, ingestion e offset;
-PDF/OCR restano post-MVP e non modificano il contratto già deciso.
+PDF/OCR restano post-MVP; ADR-0044 ne autorizza il nuovo incremento con EPUB, senza riscrivere la baseline 0.1.
 
 ## Portafoglio tecnologico
 
@@ -22,10 +22,10 @@ PDF/OCR restano post-MVP e non modificano il contratto già deciso.
 | --- | --- | --- | --- |
 | Uniform Type Identifiers | Dichiarazione e validazione dei tipi importati, esportati e trasferiti | Da adottare nella prima importazione | Elenco formati approvato |
 | Foundation, `FileHandle`, coordinamento file | I/O incrementale, accesso coordinato e scritture recuperabili | Da adottare nella vertical slice | Contratto documentale e test di errore |
-| PDFKit | Estrazione del livello testuale, pagine, selezioni e navigazione PDF | Pianificato | Corpus PDF digitale e round-trip delle posizioni |
-| Vision | OCR locale con osservazioni, coordinate e confidenza | Pianificato | Corpus OCR, metriche e provenienza approvati |
+| PDFKit | Estrazione del livello testuale e pagine | Implementato e verificato su fixture sintetiche GS-VER-310; selezione e navigazione PDF distinte | Fixture digitali e locatori pagina; corpus reali aperti |
+| Vision | OCR locale con osservazioni, coordinate e confidenza | Implementato e verificato su fixture sintetiche GS-VER-310 | Fixture sintetiche e provenienza; metriche reali ed energia aperte |
 | VisionKit | Acquisizione guidata da fotocamera e interazioni documentali di sistema su iPad | Condizionale | Requisito esplicito di scansione e permesso fotocamera |
-| Image I/O e Core Graphics | Orientamento, decodifica e normalizzazione controllata delle immagini | Pianificato con OCR | Test colore, orientamento e memoria |
+| Image I/O e Core Graphics | Orientamento e rasterizzazione controllata delle immagini | Core Graphics implementato e verificato su fixture sintetiche GS-VER-310 | Rotazioni e budget pixel; profili reali distinti |
 | Core Image | Pre-elaborazione immagini accelerata prima dell'OCR quando migliora la qualità | Da valutare | Confronto accuratezza, GPU, energia e memoria |
 | Quick Look Thumbnailing | Anteprime efficienti senza renderer proprietario | Condizionale | Flusso di esplorazione documenti |
 | Core Transferable | Contratto di importazione, esportazione, drag and drop e condivisione | Da adottare quando i tipi sono stabili | Tipi e policy di copia/riferimento approvati |
@@ -33,8 +33,8 @@ PDF/OCR restano post-MVP e non modificano il contratto già deciso.
 ## Regole
 
 - La fonte originale **NON DEVE** essere modificata implicitamente.
-- Il testo digitale e il testo OCR **DEVONO** essere artefatti distinti con pagina, regione, revisione dell'algoritmo, lingua richiesta e confidenza applicabile.
-- Vision **DEVE** operare sul dispositivo e la modalità `fast` o `accurate` **DEVE** essere scelta mediante profili d'uso e benchmark, non globalmente.
+- Il testo digitale e il testo OCR **DEVONO** essere unità di provenienza distinte e ispezionabili nello snapshot di estrazione (ADR-0044), con pagina, regione, revisione dell'algoritmo, lingua richiesta e confidenza applicabile.
+- Vision **DEVE** operare sul dispositivo; la modalità `fast` o `accurate` **DEVE** appartenere a un profilo d'uso esplicito e verificato. GS-DOR-310 usa il profilo di acquisizione testuale accurata, con confronto sintetico informativo separato dalle misure energetiche e dalla validazione su corpus reali.
 - La disponibilità della lingua OCR **DEVE** essere verificata a runtime; una lingua non supportata deve produrre un errore comprensibile o selezionare un backend approvato.
 - PDFKit **NON DEVE** essere trattato come fonte infallibile: ordine di lettura, ligature, font incorporati e PDF corrotti richiedono fixture negative.
 - Immagini e pagine **DEVONO** essere elaborate a finestre o tile quando la dimensione rende rischiosa una rasterizzazione completa.

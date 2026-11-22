@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.17 |
+| Versione | 0.92.19 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -669,12 +669,21 @@ CMP-160 e CMP-162 conservano i propri stati, senza promozioni V6 o GUI.
 Questa revisione verifica le correzioni esercitate; non promuove criteri
 assistivi, scientifici, energetici o di rilascio ancora aperti.
 
+## Importazione PDF ed EPUB (GS-DOR-310)
+
+RF-004/005/006 e RF-088 collegano originale, testo acquisito e locatori nei
+percorsi Core/Kit/CLI e nel selettore nativo. ADR-0044 governa snapshot atomico
+e riapertura senza riestrazione. GS-VER-310 registra fixture sintetiche, prove
+ostili, limiti e gate locali superati. CMP-310 resta implemented: la verifica
+funzionale sintetica non chiude corpus reali, qualifica G4/G5 o prove UX manuali.
+
 ## Scenari di analisi verificabili
 
 [GS-DOR-303](pianificazione/dor-scenari-di-analisi.md),
 [GS-TST-001](pianificazione/scenari-di-analisi.md) e
 [GS-VER-303](evidenze/GS-VER-303-scenari-di-analisi.md) attuano
-GS-STD-001-16 § 16.4: 170 varianti operative inventariate, scenari di progetto,
+GS-STD-001-16 § 16.4: 172 varianti operative inventariate dopo l’estensione
+PDF/EPUB GS-VER-310, scenari di progetto,
 riapertura e revisioni, 11 intenti del planner, barriere dei modelli e casi
 scientifici indipendenti. CMP-303 riguarda questa verifica software, senza
 promozione di manifest scientifici o audit manuali. Le estensioni KH prive di

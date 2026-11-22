@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DAT-001 |
 | Tipo | Specifica di design di dati e persistenza |
-| Versione | 1.12.0 |
+| Versione | 1.12.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-19 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Baseline proposta; prototipo e benchmark richiesti al gate G2 |
 | Riferimenti | GS-DOM-001; GS-MET-001-01; GS-MET-001-02; GS-SEC-001; GS-API-001; ADR-0016; ADR-0019 |
 
@@ -447,3 +447,33 @@ GS-VER-030–033.
 - [RFC 8785 — JSON Canonicalization Scheme](https://www.rfc-editor.org/rfc/rfc8785.html)
 - [CryptoKit SHA256](https://developer.apple.com/documentation/cryptokit/sha256)
 - [SwiftUI FileDocument](https://developer.apple.com/documentation/swiftui/filedocument)
+
+
+## Snapshot documentali PDF ed EPUB
+
+ADR-0044 e GS-DOR-310 estendono l'acquisizione post-0.1. La SourceRevision
+conserva formato, digest e byte dell'originale. Un Artifact di estrazione
+riservato all'importazione conserva testo, contratto, backend e locatori; fonte,
+descriptor e payload sono pubblicati nella stessa generazione e nello stesso
+commit del manifest. Il primo import ricco applica la migrazione lazy SQL4→SQL5
+per estendere il vincolo dei formati: tutte le righe e generazioni sono copiate
+nella stessa transazione, senza riscrivere gli oggetti storici o i loro digest.
+I progetti testuali mai sottoposti a un tentativo di import ricco restano SQL4.
+Un tentativo interrotto dopo databasePrepared può lasciare SQL5 e il precedente
+manifest reader1: il nuovo reader verifica la generazione precedente intatta,
+mentre un reader storico rifiuta lo store aggiornato (ADR-0044).
+minimumReaderVersion 2 segnala le nuove fonti ai reader precedenti; gli schemi
+manifest 3/4 e il formato package 1 restano invariati.
+
+Ogni fonte PDF/EPUB richiede esattamente uno snapshot verificato e legato alla
+singola revisione. Lo storage generico degli Artifact non può sostituirlo.
+Assenza, duplicazione, mismatch di digest/descriptor o payload incoerente
+rendono il progetto non valido. La riapertura e il recovery non riestraggono
+il testo. Parametri e identità del produttore derivano dalla provenienza
+persistita, non dalla versione del sistema operativo al momento della lettura.
+
+Per questi formati lo spazio source UTF-8 usato da query, evidenze e selezioni
+è il testo acquisito, immutabile; i locatori lo associano a pagina/risorsa del
+binario originale. Non è una falsa mappa UTF-8 sui byte PDF o ZIP. Regioni OCR
+normalizzate e confidenza restano distinte dal testo incorporato. I budget
+conteggiano almeno il massimo fra dimensione originale e rappresentazione.

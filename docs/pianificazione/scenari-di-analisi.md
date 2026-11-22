@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-TST-001 |
 | Tipo | Piano controllato degli scenari di verifica |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | Implementato; esiti in GS-VER-303 |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -27,11 +27,11 @@ parametri. La sola presenza nella matrice non dimostra il superamento di un test
 | Operatori | 45 | Kit/CLI e tutti gli esempi del modello macOS |
 | Valutazione | 13 | Kit/CLI; cinque evaluator e tempo nel laboratorio macOS |
 | Operazioni di progetto | 26 | Sessione Kit/CLI e percorsi nativi pertinenti, incluse 17 analisi corpus |
-| Profilo di fonte | 2 formati | Plain Text e Markdown espliciti |
+| Profilo di fonte | 4 formati | TXT, Markdown, PDF ed EPUB espliciti e automatici (GS-VER-310) |
 | Analisi testuale | 40 tag, 63 fixture | 12 tag iniziali, 9 avanzati e 19 estensioni KH |
 
-I primi cinque gruppi conservano **130** varianti; con le richieste testuali
-l'inventario ne comprende **170**. Le diciannove estensioni KH successive sono
+I primi cinque gruppi conservano **132** varianti; con le richieste testuali
+l'inventario ne comprende **172**. Le diciannove estensioni KH successive sono
 verificate come Core/Kit/CLI: non hanno un adattatore GUI dedicato. I quattordici
 profili e le cinquantadue fixture di GS-VER-300 restano un checkpoint storico,
 non vengono riscritti con i conteggi di questo piano.
