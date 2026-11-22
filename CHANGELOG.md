@@ -27,6 +27,12 @@ preservando i metodi upstream già pubblicati.
   uniformi, damping 0,85) con limiti condivisi con LexRank e `--method TextRankSentence-v1` in
   `glifi summarize`; messaggi delle failure a grafo estesi a entrambi i metodi; GS-VER-166,
   CMP-165 `implemented`.
+
+- Osservazioni lessicali e leggi empiriche `corpus-lexical-laws-v1`: rank-frequency con
+  troncamento dichiarato, spectrum, vocabulary growth `GrowthCheckpoints-linear-v1` e fit
+  `ZipfLogOLS-v1`/`HeapsLogOLS-v1` separati, con residui, dominio dell'esponente e avviso
+  descrittivo; `analyzeLexicalLaws` in GlifiKit e `glifi laws`; GS-VER-220, CMP-166
+  `implemented`.
 - Unità di budget `Budget-characters-v1` del riassunto estrattivo: costo in scalari Unicode del
   testo sorgente esatto di ogni frase, stessa selezione delle altre unità e `--characters <n>`
   in `glifi summarize`; nessun nuovo campo nel payload; GS-VER-165, CMP-164 `implemented`.
@@ -36,6 +42,10 @@ preservando i metodi upstream già pubblicati.
   CMP-163 `implemented`.
 
 ### Verificato
+
+- Audit di conservazione dei contenuti prima dell’integrazione: sette branch
+  storici hanno alberi identici ai commit squash già in `main`; nuova integrazione
+  delle PR #37/#38 e gate combinato in verifica (GS-VER-221).
 
 - Unità di budget `Budget-characters-v1` del riassunto estrattivo: quattro controlli CI
   `xcode-27` sulla head di #31 e su `main` `4c59a50`; GS-VER-165 superata, CMP-164 `verified`.

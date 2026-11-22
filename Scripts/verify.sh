@@ -472,6 +472,10 @@ cli_bm25_output="$(swift run --package-path Packages/GlifiCore \
 cli_diversity_output="$(swift run --package-path Packages/GlifiCore \
     --scratch-path "$build_cache_directory/SwiftPM" --skip-build \
     GlifiCLI --format json diversity "$cli_visual_project_path" --sources "$cli_visual_sources")"
+cli_laws_output="$(swift run --package-path Packages/GlifiCore \
+    --scratch-path "$build_cache_directory/SwiftPM" --skip-build \
+    GlifiCLI --format json laws "$cli_visual_project_path" --sources "$cli_visual_sources" \
+    --checkpoints 5)"
 cli_summarize_output="$(swift run --package-path Packages/GlifiCore \
     --scratch-path "$build_cache_directory/SwiftPM" --skip-build \
     GlifiCLI --format json summarize "$cli_visual_project_path" --sources "$cli_visual_sources" \
@@ -646,6 +650,39 @@ assert len(result["documents"]) == 2
 for document in result["documents"]:
     value = document["mtld"]["value"]
     assert value == "+Infinity" or value > 0
+PY
+python3 - "$cli_laws_output" <<'PY'
+import json
+import math
+import sys
+
+laws = json.loads(sys.argv[1])
+assert laws["command"] == "laws"
+result = laws["result"]
+assert result["analysisIdentifier"] == "corpus-lexical-laws-v1"
+assert result["checkpointPolicy"] == "GrowthCheckpoints-linear-v1"
+assert result["parameters"]["checkpointCount"] == 5
+assert len(result["sourceRevisionIDs"]) == 2
+rows = result["rankFrequency"]
+assert sum(r["count"] for r in rows) == result["tokenCount"]
+assert len(rows) == result["typeCount"]
+assert [r["rank"] for r in rows] == list(range(1, len(rows) + 1))
+assert all(
+    a["count"] > b["count"] or (a["count"] == b["count"] and a["type"].encode() < b["type"].encode())
+    for a, b in zip(rows, rows[1:])
+)
+assert sum(s["typeCount"] for s in result["spectrum"]) == result["typeCount"]
+assert sum(s["frequency"] * s["typeCount"] for s in result["spectrum"]) == result["tokenCount"]
+growth = result["growth"]
+assert growth[-1] == {"tokenCount": result["tokenCount"], "typeCount": result["typeCount"]}
+assert result["zipf"]["methodIdentifier"] == "ZipfLogOLS-v1"
+assert result["heaps"]["methodIdentifier"] == "HeapsLogOLS-v1"
+for law, points in ((result["zipf"], len(rows)), (result["heaps"], len(growth))):
+    fit = law["fit"]
+    assert fit["pointCount"] == points == len(fit["residuals"])
+    assert math.isclose(fit["coefficient"], math.exp(fit["intercept"]))
+    assert abs(sum(fit["residuals"])) < 1e-9
+assert result["fitCaveat"] == "caveat.lexical-law-fit-is-descriptive-v1"
 PY
 python3 - "$cli_summarize_output" "$cli_centroid_summary_output" "$cli_mmr_summary_output" \
     "$cli_lexrank_summary_output" "$cli_character_summary_output" \

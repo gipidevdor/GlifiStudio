@@ -20,6 +20,11 @@
       "status": "candidate"
     },
     {
+      "id": "validation-lexical-laws-v1",
+      "path": "Fixtures/Validation/v1/lexical-laws-v1.json",
+      "status": "candidate"
+    },
+    {
       "id": "validation-extractive-summary-v1",
       "path": "Fixtures/Validation/v1/extractive-summary-v1.json",
       "status": "candidate"

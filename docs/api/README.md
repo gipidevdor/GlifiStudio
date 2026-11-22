@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-API-001 |
 | Tipo | Specifica normativa delle interfacce applicative e headless |
-| Versione | 1.30.1 |
+| Versione | 1.31.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Baseline pre-1.0 proposta; contract test richiesti prima della stabilizzazione |
 | Riferimenti | GS-DOM-001; GS-DAT-001; GS-QRY-001; GS-ANA-001; GS-RUN-001; GS-SEC-001; ADR-0002; ADR-0019 |
 
@@ -246,6 +246,7 @@ CLI con envelope JSON v1.
 | `analyzeTermWeighting` | `weighting --tf --idf --norm` | `corpus-term-weighting-v1` | GS-VER-115 |
 | `analyzeNGramFrequencies` | `ngrams --unit [--n] [filtri]` | `corpus-ngram-frequencies-v1` | GS-VER-117 |
 | `analyzeLexicalDiversity` | `diversity [--threshold]` | `corpus-lexical-diversity-mtld-v1` | GS-VER-116 |
+| `analyzeLexicalLaws` | `laws [--checkpoints --zipf-min-rank --zipf-max-rank --max-rows]` | `corpus-lexical-laws-v1` | GS-VER-220 |
 | `rankDocumentsBM25` | `bm25 --query [--k1 --b]` | `corpus-bm25-ranking-v1` | GS-VER-115 |
 | `analyzeExtractiveSummary` | `summarize [--sentences n / --tokens n / --characters n] [--method m] [--mmr λ] [--tf --idf --norm] [--graph-damping --graph-tolerance --graph-iterations --graph-threshold]` | `corpus-extractive-summary-v1` | GS-VER-146, GS-VER-149, GS-VER-151, GS-VER-164, GS-VER-165, GS-VER-166, GS-VER-167, GS-VER-168 |
 | `analyzeMultivariate` | `multivariate --method` | `corpus-document-term-multivariate-v2` | GS-VER-102, GS-VER-108 |
@@ -269,6 +270,14 @@ Le varianti configurabili aggiungono `--graph-damping`, `--graph-tolerance`,
 `LexRankSentence-threshold-v1`; gli identificatori legacy conservano i propri
 parametri e le proprie failure. Le varianti configurabili espongono convergenza
 e configurazione risolta nella diagnostica, senza reinterpretare i payload legacy.
+
+L’operazione persistita `analyzeLexicalLaws` aggiunge l’Artifact
+`corpus-lexical-laws-v1`, con ordine canonico delle revisioni, checkpoint lineari,
+righe di rango bounded e fit descrittivi (GS-VER-220). Il risultato conserva
+l’appartenenza dell’esponente al dominio anche quando è falsa. La facciata
+headless `GlifiStudioLexicalStatistics` mantiene input, ordine e checkpoint
+espliciti e rifiuta i fit fuori dominio secondo il proprio contratto; i due
+percorsi conservano le rispettive semantiche di failure.
 
 Le primitive headless aggiunte in GS-VER-168 sono esposte separatamente dalle
 operazioni persistite, come candidati scientifici con limiti espliciti:

@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.17.3 |
+| Versione | 1.18.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Non applicabile; registro operativo |
 
 Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un esito positivo prova soltanto l'ambito dichiarato e non sostituisce l'approvazione dei requisiti o della baseline.
@@ -24,6 +24,9 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 - [GS-VER-169 — Ottimizzazione misurata degli algoritmi](GS-VER-169-ottimizzazione-algoritmi.md) — Superato nello snapshot storico sorgente: 13 confronti Release, 447 test e gate completo; compromessi dichiarati
 - [GS-VER-168 — Completamento degli algoritmi analitici](GS-VER-168-completamento-algoritmi.md) — Superato nello snapshot storico sorgente: 431 test, 152 righe di oracoli e gate completo; limiti scientifici dichiarati
 
+
+- [GS-VER-221 — Integrazione dei branch e allineamento di main](GS-VER-221-integrazione-branch.md) — Audit di conservazione dei contenuti completato; gate combinato in verifica
+- [GS-VER-220 — Osservazioni lessicali, `ZipfLogOLS-v1` e `HeapsLogOLS-v1`](GS-VER-220-leggi-lessicali-zipf-heaps.md) — CI storica `xcode-27` superata sulla head `b3e9926` di #38; verifica della nuova integrazione da eseguire; CMP-166 implemented
 - [GS-VER-167 — Validazione dei costi del riassunto](GS-VER-167-costi-riassunto.md) — Difetti riprodotti in isolamento; regressioni native e preflight da eseguire; CMP-164 torna implemented
 - [GS-VER-166 — Riassunto estrattivo `TextRankSentence-v1`](GS-VER-166-riassunto-textrank.md) — In verifica sul runner remoto; controlli statici superati localmente; CMP-165 implemented
 - [GS-VER-165 — Budget del riassunto estrattivo in caratteri](GS-VER-165-riassunto-budget-caratteri.md) — Superato: CI `xcode-27` sulla head `3c3cfef` di #31 e su `main` `4c59a50`; CMP-164 verified

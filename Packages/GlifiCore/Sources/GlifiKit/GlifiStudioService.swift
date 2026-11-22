@@ -782,6 +782,26 @@ public actor GlifiStudioProjectSession {
         }
     }
 
+    /// Observes rank-frequency, spectrum and vocabulary growth and fits `ZipfLogOLS-v1` and
+    /// `HeapsLogOLS-v1`.
+    public func analyzeLexicalLaws(
+        sourceRevisionIDs: [String],
+        parameters: GlifiStudioLexicalLawsParameters = .standard,
+        corpusOptions: GlifiStudioCorpusAnalysisOptions = .standard
+    ) async throws -> GlifiStudioLexicalLawsResult {
+        try await derivedOperation {
+            let ids = try sourceRevisionIDs.map(SourceRevisionID.init(canonicalValue:))
+            return try await GlifiStudioLexicalLawsResult(
+                engine.analyzeLexicalLaws(
+                    in: project,
+                    sourceRevisionIDs: ids,
+                    parameters: parameters.coreValue,
+                    corpusOptions: corpusOptions.coreValue
+                )
+            )
+        }
+    }
+
     /// Selects sentences within a declared budget and resolves extracted text and original spans.
     public func analyzeExtractiveSummary(
         sourceRevisionIDs: [String],
