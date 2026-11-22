@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-MET-001-16 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.1.1 |
+| Versione | 1.1.2 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -108,6 +108,14 @@ punteggi conservano l'ordine; il percorso senza overflow resta invariato.
 API, identità del metodo, archi paralleli deduplicati, self-loop esclusi e
 connessioni di peso zero non cambiano. GS-VER-174 registra regressioni, oracoli
 indipendenti e costi del fallback, senza promozione scientifica.
+
+Il percorso CPU può riusare la CSR e buffer indicizzati per visita, contatori,
+dipendenze e punteggi. I predecessori occupano blocchi contigui di capacità pari
+al grado entrante: l'append **DEVE** conservare l'ordine originale della BFS,
+senza riordinare le riduzioni. Dopo ogni sorgente si azzerano i soli nodi
+visitati; gli slot dei predecessori oltre la lunghezza corrente non si leggono.
+Lo scratch resta O(V+E), con contatori estesi allocati soltanto se necessari.
+GS-VER-177 registra confronti bitwise, reset fra componenti e misure Release.
 
 Fixture canoniche comprendono grafo vuoto, singleton, percorso, ciclo, stella,
 componenti disconnesse e grafo diretto con dangling node. Si verificano invariance

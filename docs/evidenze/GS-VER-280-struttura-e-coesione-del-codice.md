@@ -75,6 +75,14 @@ solo allineamento dei test è superato e non viene consegnato. Non si rimuove un
 guardia produttiva né si usa il primo gate fallito come evidenza di successo.
 La verifica finale riguarda la composizione aggiornata.
 
+Successivamente è incorporato anche `db2bac1` (GS-VER-177/178), pubblicato dalla
+chat algoritmica: ottimizzazioni di grafi ed export indipendenti dai cinque
+sorgenti del refactoring. Il passaggio precedente aveva già superato 550 test
+Core, 110 Kit, 99 definizioni native/319 esecuzioni, 95 controlli CLI, 22 punti di
+interruzione e tutte le build Debug/Release. Il packaging è stato interrotto
+intenzionalmente per aggiornare la base, senza usarlo come prova di successo.
+Il gate finale nel registro PR riguarda l’unione completa.
+
 ## Gate finale e riproduzione
 
 

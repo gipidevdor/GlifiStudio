@@ -4,9 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.20.1 |
-
-| Versione | 1.19.6 |
+| Versione | 1.20.2 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -15,6 +13,9 @@
 Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un esito positivo prova soltanto l'ambito dichiarato e non sostituisce l'approvazione dei requisiti o della baseline.
 
 ## Indice
+
+- [GS-VER-177 — Buffer indicizzati della betweenness](GS-VER-177-betweenness-indicizzata.md) — Riferimenti bitwise, misure sotto contesa e gate integrato superati
+- [GS-VER-178 — Codifica dei digest degli export visuali](GS-VER-178-digest-export-viste.md) — Byte invariati, misure distinte per fase e gate integrato superati
 
 - [GS-VER-270 — Grafici audio, comandi di documento e prova del Neural Engine](GS-VER-270-grafici-comandi-neural-engine.md)
 
@@ -273,7 +274,5 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 - [GS-VER-260 — Integrazioni native Apple](GS-VER-260-integrazioni-native-apple.md) — Verifica automatica del codice superata; packaging e CI nel registro PR; prove manuali e adozioni condizionali distinte
 
 - [GS-VER-234 — Riverifica di correttezza e completezza](GS-VER-234-riverifica-correttezza-completezza.md) — Superato nel perimetro locale: 660 test Core/Kit, 99 macOS, ASan/TSan e gate completo; limiti KH aperti
-
-- [GS-VER-234 — Riverifica di correttezza e completezza](GS-VER-234-riverifica-correttezza-completezza.md) — In verifica; controesempi e limiti di copertura espliciti
 
 - [GS-VER-280 — Struttura e coesione del codice](GS-VER-280-struttura-e-coesione-del-codice.md) — Confronti API/CLI e prove mirate superati; gate completo nel registro PR #42

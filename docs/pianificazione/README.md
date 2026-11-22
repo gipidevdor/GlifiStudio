@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.21 |
+| Versione | 1.6.22 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -40,6 +40,8 @@ preservando i confini del lavoro già in corso nell'altra chat.
 - [GS-DOR-175 — Integrità degli export scientifici](dor-integrita-export-viste.md) — Ready
 
 - [GS-DOR-174 — Betweenness con molti cammini minimi](dor-betweenness-cammini-estremi.md) — Ready
+- [GS-DOR-177 — Buffer indicizzati della betweenness](dor-betweenness-indicizzata.md) — Ready
+- [GS-DOR-178 — Codifica dei digest degli export visuali](dor-digest-export-viste.md) — Ready
 
 - [GS-DOR-173 — Layout e visite dei kernel analitici](dor-layout-e-visite-analitiche.md) — Ready
 

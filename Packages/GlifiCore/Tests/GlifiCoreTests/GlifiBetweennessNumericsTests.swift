@@ -195,6 +195,120 @@ func betweennessNumericsCollidingIdentities() throws {
     #expect(GlifiNetworkAnalysis.betweenness(empty).scores.isEmpty)
 }
 
+@Test("Il riuso Brandes ripulisce componenti, sink e isolati fra sorgenti intercalate")
+func betweennessNumericsReusesBuffersAcrossDisjointComponents() throws {
+    let edges: [GlifiGraphEdge<Int>] = [
+        .init(source: 0, target: 2, weight: 0),
+        .init(source: 0, target: 1),
+        .init(source: 2, target: 3),
+        .init(source: 1, target: 3, weight: 0),
+        .init(source: 3, target: 4),
+        .init(source: 0, target: 1, weight: 7),
+        .init(source: 1, target: 1, weight: 0),
+        .init(source: 5, target: 6),
+        .init(source: 6, target: 7, weight: 0),
+        .init(source: 7, target: 5),
+        .init(source: 8, target: 9, weight: 0),
+        .init(source: 9, target: 10),
+        .init(source: 13, target: 13, weight: 0),
+    ]
+    let interleaved = [13, 3, 7, 0, 14, 9, 5, 1, 12, 8, 4, 10, 6, 2, 11]
+    let orders = [
+        interleaved, Array(interleaved.reversed()),
+        Array(interleaved.dropFirst(4)) + Array(interleaved.prefix(4)), Array(0..<15),
+    ]
+    for nodes in orders {
+        let graph = try GlifiDirectedGraph(nodes: nodes, edges: edges)
+        let actual = GlifiNetworkAnalysis.betweenness(graph).scores
+        let legacy = legacyBetweenness(graph)
+        let independent = enumeratedBetweenness(graph)
+        #expect(actual.count == nodes.count)
+        #expect(nodes.map { actual[$0]?.bitPattern } == nodes.map { legacy[$0]?.bitPattern })
+        for node in nodes {
+            let score = try #require(actual[node])
+            let reference = try #require(independent[node])
+            #expect(abs(score - reference) <= 1e-12)
+        }
+        #expect(actual[3] == 3)
+        for node in [1, 2, 5, 6, 7, 9] { #expect(actual[node] == 1) }
+        for node in [0, 4, 8, 10, 11, 12, 13, 14] {
+            #expect(actual[node]?.bitPattern == 0)
+        }
+    }
+}
+
+@Test("Il riuso Brandes conserva i bit su componenti sintetiche e permutazioni delle sorgenti")
+func betweennessNumericsReusesBuffersAcrossSeededComponents() throws {
+    for seed in 1...12 {
+        var generator = GlifiSplitMix64(seed: UInt64(seed + 177))
+        let width = 5 + seed % 4
+        let count = 6 * width + 8
+        let identities = (0..<count).map { $0 * 19 - 700 }
+        var edges: [GlifiGraphEdge<Int>] = []
+        for component in 0..<6 {
+            let base = component * width
+            for offset in 0..<(width - 1) {
+                edges.append(
+                    .init(
+                        source: identities[base + offset], target: identities[base + offset + 1],
+                        weight: offset.isMultiple(of: 3) ? 0 : 1))
+            }
+            for index in 0..<(width * 3) {
+                let source = generator.index(below: width - 1)
+                let target = source + 1 + generator.index(below: width - source - 1)
+                edges.append(
+                    .init(
+                        source: identities[base + source], target: identities[base + target],
+                        weight: index.isMultiple(of: 3) ? 0 : Double(index % 7)))
+            }
+            if component.isMultiple(of: 2) {
+                edges.append(.init(source: identities[base + width - 1], target: identities[base]))
+            }
+            edges.append(.init(source: identities[base], target: identities[base], weight: 0))
+            edges.append(.init(source: identities[base], target: identities[base + 1], weight: 3))
+        }
+        var shuffled = identities
+        for index in stride(from: count - 1, through: 1, by: -1) {
+            shuffled.swapAt(index, generator.index(below: index + 1))
+        }
+        for nodes in [shuffled, Array(shuffled.reversed())] {
+            let graph = try GlifiDirectedGraph(nodes: nodes, edges: edges)
+            let actual = GlifiNetworkAnalysis.betweenness(graph).scores
+            let legacy = legacyBetweenness(graph)
+            #expect(actual.count == count)
+            #expect(nodes.map { actual[$0]?.bitPattern } == nodes.map { legacy[$0]?.bitPattern })
+            for node in identities.suffix(8) { #expect(actual[node]?.bitPattern == 0) }
+        }
+    }
+}
+
+@Test("Il riuso del fallback Brandes conserva i bit fra sorgenti estreme, ordinarie e isolate")
+func betweennessNumericsReusesExtendedCountersAcrossSourceOrders() throws {
+    let layers = 650
+    let uniform = try betweennessLayeredGraph(width: 3, layers: layers)
+    let omittedSink = layers * 3
+    let edges = uniform.edges.filter { $0.target != omittedSink }
+    let count = omittedSink + 2
+    // Early layers overflow, layer three is finite, and the last layer contains sinks.
+    // The omitted sink and the final extra identity are isolated in this fixture.
+    let priority = [0, 1_948, 1, 1_950, 7, 2, 1_951, 1_949, 4, 8, 3, 5, 9, 6]
+    let selected = Set(priority)
+    let remainder = (0..<count).map { ($0 * 37) % count }.filter { !selected.contains($0) }
+    let nodes = priority + remainder
+    let graph = try GlifiDirectedGraph(nodes: nodes, edges: edges)
+    let actual = GlifiNetworkAnalysis.betweenness(graph).scores
+    let reference = legacyBetweenness(graph)
+    #expect(actual.count == nodes.count)
+    #expect(reference.count == nodes.count)
+    let finite =
+        actual.values.allSatisfy { $0.isFinite }
+        && reference.values.allSatisfy { $0.isFinite }
+    #expect(finite)
+    guard finite else { return }
+    #expect(nodes.map { actual[$0]?.bitPattern } == nodes.map { reference[$0]?.bitPattern })
+    for node in [1_948, 1_949, 1_950, 1_951] { #expect(actual[node]?.bitPattern == 0) }
+}
+
 private struct BetweennessCollisionNode: Hashable, Sendable {
     let label: String
 
@@ -271,7 +385,12 @@ private func enumeratedBetweenness<Node>(_ graph: GlifiDirectedGraph<Node>) -> [
         uniqueKeysWithValues: graph.nodes.enumerated().map { ($0.element, scores[$0.offset]) })
 }
 
-/// Literal generic BFS and dependency accumulation from the finite-count implementation.
+private typealias BrandesPathCount = GlifiNetworkAnalysis.BrandesPathCount
+
+/// Literal generic BFS and dependency accumulation from the GS-VER-174 baseline.
+///
+/// The shared count representation isolates this differential test to layout and reset behavior;
+/// independent formula and path-enumeration tests above verify the mathematical definition.
 private func legacyBetweenness<Node>(_ graph: GlifiDirectedGraph<Node>) -> [Node: Double] {
     var seen = Dictionary(uniqueKeysWithValues: graph.nodes.map { ($0, Set<Node>()) })
     var neighbors = Dictionary(uniqueKeysWithValues: graph.nodes.map { ($0, [Node]()) })
@@ -280,7 +399,7 @@ private func legacyBetweenness<Node>(_ graph: GlifiDirectedGraph<Node>) -> [Node
         seen[edge.source, default: []].insert(edge.target)
         neighbors[edge.source, default: []].append(edge.target)
     }
-    var scores = Dictionary(uniqueKeysWithValues: graph.nodes.map { ($0, 0.0) })
+    var betweenness = Dictionary(uniqueKeysWithValues: graph.nodes.map { ($0, 0.0) })
     for source in graph.nodes {
         var distance: [Node: Int] = [source: 0]
         var sigma: [Node: Double] = [source: 1]
@@ -305,13 +424,49 @@ private func legacyBetweenness<Node>(_ graph: GlifiDirectedGraph<Node>) -> [Node
             }
         }
         var dependency = Dictionary(uniqueKeysWithValues: graph.nodes.map { ($0, 0.0) })
-        for node in order.reversed() where node != source {
-            for predecessor in predecessors[node] ?? [] {
-                let ratio = (sigma[predecessor] ?? 0) / (sigma[node] ?? 1)
-                dependency[predecessor, default: 0] += ratio * (1 + (dependency[node] ?? 0))
+        if sigma.values.contains(where: { !$0.isFinite }) {
+            let counts = extendedBrandesPathCounts(
+                source: source, order: order, predecessors: predecessors)
+            for node in order.reversed() where node != source {
+                guard let denominator = counts[node] else {
+                    preconditionFailure("Missing reachable Brandes path count")
+                }
+                for predecessor in predecessors[node] ?? [] {
+                    guard let numerator = counts[predecessor] else {
+                        preconditionFailure("Missing Brandes predecessor path count")
+                    }
+                    dependency[predecessor, default: 0] += numerator.dependencyContribution(
+                        dividingBy: denominator, dependency: dependency[node] ?? 0)
+                }
+                betweenness[node, default: 0] += dependency[node] ?? 0
             }
-            scores[node, default: 0] += dependency[node] ?? 0
+        } else {
+            for node in order.reversed() where node != source {
+                for predecessor in predecessors[node] ?? [] {
+                    let ratio = (sigma[predecessor] ?? 0) / (sigma[node] ?? 1)
+                    dependency[predecessor, default: 0] += ratio * (1 + (dependency[node] ?? 0))
+                }
+                betweenness[node, default: 0] += dependency[node] ?? 0
+            }
         }
     }
-    return scores
+    return betweenness
+}
+
+private func extendedBrandesPathCounts<Node>(
+    source: Node, order: [Node], predecessors: [Node: [Node]]
+) -> [Node: BrandesPathCount] {
+    var counts: [Node: BrandesPathCount] = [source: .one]
+    for node in order where node != source {
+        var count = BrandesPathCount.zero
+        for predecessor in predecessors[node] ?? [] {
+            // BFS order places every shortest-path predecessor before its child.
+            guard let previous = counts[predecessor] else {
+                preconditionFailure("Invalid Brandes predecessor order")
+            }
+            count = count.adding(previous)
+        }
+        counts[node] = count
+    }
+    return counts
 }

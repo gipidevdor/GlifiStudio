@@ -261,8 +261,17 @@ public enum GlifiStudioVisualExport {
         return formatter.string(from: date) == calendarTime
     }
 
+    private static let hexadecimalDigits = Array("0123456789abcdef".utf8)
+
     static func digest(_ data: Data) -> String {
-        "sha256:" + SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+        var bytes: [UInt8] = []
+        bytes.reserveCapacity(71)
+        bytes.append(contentsOf: "sha256:".utf8)
+        for byte in SHA256.hash(data: data) {
+            bytes.append(hexadecimalDigits[Int(byte >> 4)])
+            bytes.append(hexadecimalDigits[Int(byte & 15)])
+        }
+        return String(decoding: bytes, as: UTF8.self)
     }
 
     private static func canonicalJSON(_ value: some Encodable) throws -> Data {
