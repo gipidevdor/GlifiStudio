@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DEV-002 |
 | Tipo | Guida controllata del loop di sviluppo |
-| Versione | 1.5.0 |
+| Versione | 1.5.1 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -30,23 +30,24 @@ sostituire il gate completo `make verify`.
 | `make quality-static` | Iterazione senza toolchain Swift | Docs, compliance, segreti, tassonomia e messaggi delle failure, dialetto e baseline statiche |
 | `make quality` | Iterazione locale rapida | `quality-static` + formattazione, senza build Xcode |
 | `make check-recovery` | Modifiche a package, SQLite o commit | `SIGKILL` e riapertura su 12 checkpoint import/Artifact |
-| `make verify` | Prima di integrare | Gate completo locale macOS/iPadOS, identico al job CI `verify` |
-| `make verify-macos` | Focus macOS esplicitamente richiesto | Tutti i controlli condivisi e test/build macOS Debug/Release; omette soltanto build iPadOS |
-| `make verify-app-store` | Modifiche ad app o distribuzione | Verifica e packaging senza firma per entrambe le piattaforme |
-| `make verify-app-store-macos` | Preflight del focus macOS | `verify-macos`, analisi e archivio macOS senza firma; azioni iPadOS omesse |
+| `make verify` / `make verify-macos` | Prima di integrare; priorità corrente macOS | Tutti i controlli condivisi e test/build macOS Debug/Release, identici al job CI `verify` |
+| `make verify-all` | Verifica multipiattaforma richiesta esplicitamente | Profilo globale con build macOS e iPadOS |
+| `make verify-app-store` / `make verify-app-store-macos` | Preflight corrente macOS | Verifica condivisa, test/build, analisi e archivio macOS senza firma |
+| `make verify-app-store-all` | Preflight multipiattaforma richiesto esplicitamente | Include anche le azioni iPadOS |
 
-Il profilo macOS usa il flag esplicito `--macos-only` negli script di verifica
-e packaging. Senza argomenti il gate globale continua a verificare entrambe le
-piattaforme. Argomenti sconosciuti, duplicati o combinazioni non ammesse vengono
-rifiutati prima della creazione di temporanei e della preparazione della cache.
+Per richiesta ribadita dall’iniziatore il 2026-11-22, macOS è il profilo
+predefinito del Makefile e di entrambi i workflow CI. Tutti i controlli condivisi
+restano attivi: statici, confini architetturali, Core/Kit, CLI, oracoli, fixture,
+PDF/A e recovery, oltre a test e build Debug/Release macOS. Il preflight aggiunge
+analisi e archivio macOS senza firma. Lo sviluppo e la verifica dedicata iPadOS
+sono rinviati; non sono un requisito per chiudere il lavoro macOS.
 
-Per richiesta dell'iniziatore, il lavoro corrente completa prima macOS mediante
-soli test automatici; lo sviluppo dedicato iPadOS è rimandato. Il profilo conserva
-statici, confini architetturali, Core/Kit, CLI, oracoli, fixture, PDF/A e recovery.
-Un esito positivo di `verify-macos` **non equivale** a `make verify`, non certifica
-iPadOS e non chiude GUI, VoiceOver, dispositivi o G4. Gli eventuali controlli
-opzionali saltati devono essere dichiarati. La verifica globale resta necessaria
-quando si dichiara verificata la baseline multipiattaforma.
+Gli script mantengono `--macos-only` e, senza argomenti, il profilo globale per
+compatibilità. I target `*-all` lo selezionano esplicitamente. Argomenti sconosciuti,
+duplicati o combinazioni non ammesse falliscono prima di creare temporanei/cache.
+L’esito predefinito certifica soltanto il perimetro macOS e condiviso: non attesta
+iPadOS, firma, App Review, audit manuale, dispositivi o G4. Per dichiarare verificata
+la baseline multipiattaforma occorre il profilo `*-all` su richiesta esplicita.
 
 Non introdurre hook git obbligatori: il loop primario è Makefile + CI, come deciso
 in ADR-0020.
