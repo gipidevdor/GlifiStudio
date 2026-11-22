@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-VIZ-001 |
 | Tipo | Specifica di design delle visualizzazioni |
-| Versione | 1.1.0 |
+| Versione | 1.1.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -136,6 +136,12 @@ record, nell'ordine `view-spec.json`, `view.csv`, con media type rispettivamente
 `application/json` e `text/csv`. Record duplicati, file aggiuntivi e percorsi
 alternativi **DEVONO** essere rifiutati. Dimensione non negativa e SHA-256 di
 ciascun record **DEVONO** corrispondere ai byte effettivi del relativo payload.
+
+La resa canonica del digest è `sha256:` seguito da 64 cifre ASCII minuscole.
+La codifica diretta dei nibble in UTF-8 è un dettaglio privato: non sostituisce
+CryptoKit, non memorizza hash in cache e **DEVE** conservare tutti i byte,
+i controlli e i fallimenti del profilo. GS-VER-178 confronta i vettori SHA-256,
+il formatter precedente e l'intero bundle v1 prima e dopo l'ottimizzazione.
 
 La `VisualizationSpec` **DEVE** essere decodificabile e concordare con tutti i
 campi condivisi del manifest: Artifact, nodo analitico, analisi, metodo,

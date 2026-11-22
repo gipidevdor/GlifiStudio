@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.19.5 |
+| Versione | 1.19.6 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -13,6 +13,9 @@
 Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un esito positivo prova soltanto l'ambito dichiarato e non sostituisce l'approvazione dei requisiti o della baseline.
 
 ## Indice
+
+- [GS-VER-177 — Buffer indicizzati della betweenness](GS-VER-177-betweenness-indicizzata.md) — Verifica in corso
+- [GS-VER-178 — Codifica dei digest degli export visuali](GS-VER-178-digest-export-viste.md) — Verifica in corso
 
 - [GS-VER-270 — Grafici audio, comandi di documento e prova del Neural Engine](GS-VER-270-grafici-comandi-neural-engine.md)
 

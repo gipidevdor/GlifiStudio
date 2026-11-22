@@ -228,59 +228,93 @@ public enum GlifiNetworkAnalysis {
     public static func betweenness<Node>(
         _ graph: GlifiDirectedGraph<Node>
     ) -> GlifiBetweennessResult<Node> {
-        let outNeighbors = simpleOutNeighbors(graph)
-        var betweenness = Dictionary(uniqueKeysWithValues: graph.nodes.map { ($0, 0.0) })
-        for source in graph.nodes {
-            var distance: [Node: Int] = [source: 0]
-            var sigma: [Node: Double] = [source: 1]
-            var predecessors: [Node: [Node]] = [:]
-            var order: [Node] = []
-            var queue = [source]
+        let count = graph.nodes.count
+        guard count > 0 else { return GlifiBetweennessResult(scores: [:]) }
+        let adjacency = indexedSimpleOutNeighbors(graph)
+        // Each node owns a fixed block large enough for every distinct incoming neighbor.
+        var predecessorOffsets = [Int](repeating: 0, count: count + 1)
+        for target in adjacency.targets { predecessorOffsets[target + 1] += 1 }
+        for node in 0..<count {
+            predecessorOffsets[node + 1] += predecessorOffsets[node]
+        }
+        var predecessors = [Int](repeating: 0, count: adjacency.targets.count)
+        var predecessorCounts = [Int](repeating: 0, count: count)
+        var distance = [Int](repeating: -1, count: count)
+        var sigma = [Double](repeating: 0, count: count)
+        var dependency = [Double](repeating: 0, count: count)
+        var betweenness = [Double](repeating: 0, count: count)
+        // Extended counters are allocated only when a source exceeds binary64's range.
+        var counts: [BrandesPathCount] = []
+        var queue: [Int] = []
+        queue.reserveCapacity(count)
+        for source in 0..<count {
+            // A source with no non-self neighbors cannot contribute dependency.
+            guard adjacency.offsets[source] != adjacency.offsets[source + 1] else { continue }
+            distance[source] = 0
+            sigma[source] = 1
+            queue.append(source)
             var queueIndex = 0
             while queueIndex < queue.count {
                 let current = queue[queueIndex]
                 queueIndex += 1
-                order.append(current)
-                guard let currentDistance = distance[current] else { continue }
-                for neighbor in outNeighbors[current] ?? [] {
-                    if distance[neighbor] == nil {
-                        distance[neighbor] = currentDistance + 1
+                let nextDistance = distance[current] + 1
+                for edge in adjacency.offsets[current]..<adjacency.offsets[current + 1] {
+                    let neighbor = adjacency.targets[edge]
+                    if distance[neighbor] == -1 {
+                        distance[neighbor] = nextDistance
                         queue.append(neighbor)
                     }
-                    if distance[neighbor] == currentDistance + 1 {
-                        sigma[neighbor, default: 0] += sigma[current] ?? 0
-                        predecessors[neighbor, default: []].append(current)
+                    if distance[neighbor] == nextDistance {
+                        sigma[neighbor] += sigma[current]
+                        let slot = predecessorOffsets[neighbor] + predecessorCounts[neighbor]
+                        predecessors[slot] = current
+                        predecessorCounts[neighbor] += 1
                     }
                 }
             }
-            var dependency = Dictionary(uniqueKeysWithValues: graph.nodes.map { ($0, 0.0) })
-            if sigma.values.contains(where: { !$0.isFinite }) {
-                let counts = extendedBrandesPathCounts(
-                    source: source, order: order, predecessors: predecessors)
-                for node in order.reversed() where node != source {
-                    guard let denominator = counts[node] else {
-                        preconditionFailure("Missing reachable Brandes path count")
+            // The queue is also the original BFS visitation order.
+            if queue.contains(where: { !sigma[$0].isFinite }) {
+                if counts.isEmpty {
+                    counts = [BrandesPathCount](repeating: .zero, count: count)
+                }
+                extendedBrandesPathCounts(
+                    source: source, order: queue, predecessorOffsets: predecessorOffsets,
+                    predecessorCounts: predecessorCounts, predecessors: predecessors,
+                    counts: &counts)
+                for node in queue.reversed() where node != source {
+                    let end = predecessorOffsets[node] + predecessorCounts[node]
+                    for slot in predecessorOffsets[node]..<end {
+                        let predecessor = predecessors[slot]
+                        dependency[predecessor] += counts[predecessor].dependencyContribution(
+                            dividingBy: counts[node], dependency: dependency[node])
                     }
-                    for predecessor in predecessors[node] ?? [] {
-                        guard let numerator = counts[predecessor] else {
-                            preconditionFailure("Missing Brandes predecessor path count")
-                        }
-                        dependency[predecessor, default: 0] += numerator.dependencyContribution(
-                            dividingBy: denominator, dependency: dependency[node] ?? 0)
-                    }
-                    betweenness[node, default: 0] += dependency[node] ?? 0
+                    betweenness[node] += dependency[node]
                 }
             } else {
-                for node in order.reversed() where node != source {
-                    for predecessor in predecessors[node] ?? [] {
-                        let ratio = (sigma[predecessor] ?? 0) / (sigma[node] ?? 1)
-                        dependency[predecessor, default: 0] += ratio * (1 + (dependency[node] ?? 0))
+                for node in queue.reversed() where node != source {
+                    let end = predecessorOffsets[node] + predecessorCounts[node]
+                    for slot in predecessorOffsets[node]..<end {
+                        let predecessor = predecessors[slot]
+                        let ratio = sigma[predecessor] / sigma[node]
+                        dependency[predecessor] += ratio * (1 + dependency[node])
                     }
-                    betweenness[node, default: 0] += dependency[node] ?? 0
+                    betweenness[node] += dependency[node]
                 }
             }
+            // Only visited entries were written; stale predecessor slots are never read.
+            for node in queue {
+                distance[node] = -1
+                sigma[node] = 0
+                dependency[node] = 0
+                predecessorCounts[node] = 0
+            }
+            queue.removeAll(keepingCapacity: true)
         }
-        return GlifiBetweennessResult(scores: betweenness)
+        return GlifiBetweennessResult(
+            scores: Dictionary(
+                uniqueKeysWithValues: graph.nodes.enumerated().map {
+                    ($0.element, betweenness[$0.offset])
+                }))
     }
 
     /// Binary64 precision with an extended exponent; not an arbitrary-precision integer.
@@ -324,22 +358,20 @@ public enum GlifiNetworkAnalysis {
         }
     }
 
-    private static func extendedBrandesPathCounts<Node>(
-        source: Node, order: [Node], predecessors: [Node: [Node]]
-    ) -> [Node: BrandesPathCount] {
-        var counts: [Node: BrandesPathCount] = [source: .one]
+    private static func extendedBrandesPathCounts(
+        source: Int, order: [Int], predecessorOffsets: [Int], predecessorCounts: [Int],
+        predecessors: [Int], counts: inout [BrandesPathCount]
+    ) {
+        counts[source] = .one
         for node in order where node != source {
             var count = BrandesPathCount.zero
-            for predecessor in predecessors[node] ?? [] {
-                // BFS order places every shortest-path predecessor before its child.
-                guard let previous = counts[predecessor] else {
-                    preconditionFailure("Invalid Brandes predecessor order")
-                }
-                count = count.adding(previous)
+            let end = predecessorOffsets[node] + predecessorCounts[node]
+            for slot in predecessorOffsets[node]..<end {
+                // BFS order overwrites every predecessor before its child is evaluated.
+                count = count.adding(counts[predecessors[slot]])
             }
             counts[node] = count
         }
-        return counts
     }
 
     /// Computes `HarmonicCloseness-v1` over unweighted, directed hop-distance

@@ -4437,6 +4437,59 @@
       "gate": "G3",
       "status": "implemented",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-185",
+      "clause": "GS-MET-001-16 § Precisione di Betweenness-v1",
+      "specification": "docs/metodi-analitici/16-reti-lessicali.md",
+      "requirements": [
+        "RF-039",
+        "RQ-008",
+        "RQ-009",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiNetworkAnalysis.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiBetweennessNumericsTests.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiBetweennessNumericsBenchmarks.swift"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-177-betweenness-indicizzata.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-186",
+      "clause": "GS-VIZ-001 § Export e Conformità",
+      "specification": "docs/specifiche-di-design/08-visualizzazione-scientifica.md",
+      "requirements": [
+        "RF-084",
+        "RQ-028",
+        "RQ-044",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiVisualizationExport.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiVisualExportDigestOptimizationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiVisualExportIntegrityTests.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiVisualExportDigestOptimizationTests.swift"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-178-digest-export-viste.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }

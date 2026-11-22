@@ -55,6 +55,40 @@ func betweennessNumericsMeasurements() throws -> [Measurement] {
                 recipe: "160 chained directed diamonds; 481 reverse-declared nodes, "
                     + "640 ordered unit-weight edges; largest path count 2^160 is finite"))
     }
+    do {
+        let identities = (0..<800).map { "node-\($0)" }
+        let nodes = (0..<800).map { identities[($0 * 37) % 800] }
+        var edges: [GlifiGraphEdge<String>] = []
+        for component in 0..<20 {
+            let base = component * 30
+            let cyclic = component.isMultiple(of: 2)
+            for offset in 0..<(cyclic ? 30 : 29) {
+                edges.append(
+                    .init(
+                        source: identities[base + offset],
+                        target: identities[base + (offset + 1) % 30],
+                        weight: offset.isMultiple(of: 3) ? 0 : 1))
+            }
+            for offset in stride(from: 0, to: 30, by: 5) {
+                if cyclic || offset + 7 < 30 {
+                    edges.append(
+                        .init(
+                            source: identities[base + offset],
+                            target: identities[base + (offset + 7) % 30], weight: 0))
+                }
+            }
+            edges.append(.init(source: identities[base], target: identities[base], weight: 0))
+            edges.append(.init(source: identities[base], target: identities[base + 1], weight: 3))
+        }
+        measurements.append(
+            try betweennessNumericsMeasurement(
+                "betweenness-components-800-isolates200", nodes: nodes, edges: edges,
+                recipe: "20 disjoint components of30 nodes plus200 isolates; "
+                    + "10 directed rings with6 +7 shortcuts and10 chains with5 +7 shortcuts; "
+                    + "one zero self-loop and one parallel first edge per component; "
+                    + "backbone weights offset%3==0 ? 0 : 1, shortcuts/self0, parallel3; "
+                    + "740 ordered edges; declared node i=(i*37)%800"))
+    }
     return measurements
 }
 
@@ -81,7 +115,9 @@ private func betweennessNumericsMeasurement(
     return summary(
         identifier, "GS-MET-001-16, Betweenness-v1",
         recipe + "; warmups=1; samples=5; batch=1; inputSHA256=\(inputDigest)",
-        times, check: "outputSHA256=\(output.digest); scoreCount=\(result.scores.count)")
+        times,
+        check: "outputSHA256=\(output.digest); scoreCount=\(result.scores.count); "
+            + "samplesSeconds=\(times.map { String($0) }.joined(separator: ","))")
 }
 
 private func betweennessNumericsInputChecksum(
