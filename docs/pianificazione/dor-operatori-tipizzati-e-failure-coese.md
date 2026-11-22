@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-286 |
 | Tipo | Scheda Definition of Ready |
-| Versione | 1.0.1 |
+| Versione | 1.1.0 |
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -55,3 +55,26 @@ identiche. Il gate macOS corrente è registrato nella PR #46 dopo la sua
 esecuzione, distinto dal gate originario e dal precedente gate locale
 su `c61c80e` (832 test Core/Kit, 125 definizioni
 native e 409 esecuzioni).
+
+## Ampliamento Ready — checkpoint di cancellazione deterministici
+
+La CI sulla composizione `4205eee` ha rivelato una race del test preesistente
+di cancellazione MDS/SOM: il parent attende 2 ms sul pool cooperativo e può
+riprendere soltanto dopo il completamento del calcolo. Cancellare allora non
+può modificare retroattivamente il risultato. Test e kernel sono identici
+alla base `b401c08`; nessuna regressione del refactoring è dimostrata.
+
+Prima della correzione si registra questo ampliamento **Ready**, CMP-288:
+
+| Voce | Contratto aggiuntivo |
+| --- | --- |
+| outcome e stop | Rendere osservabile in modo deterministico il checkpoint già presente all’ingresso di ogni iterazione MDS/epoca SOM; rimuovere la dipendenza da sleep e scheduling nel test |
+| requisiti e API | RQ-007/011/060/063; overload interni con checkpoint sincrono nonescaping secondo il pattern del resampling, firme pubbliche e default invariati |
+| invarianti e failure | Le funzioni pubbliche forniscono Task.checkCancellation; stessi punti di controllo, validazioni, risorse, ordine del calcolo e risultati. Tutti i controlli più profondi restano invariati. Nessun hook globale, task nuovo o formato introdotto |
+| verifica e fixture | Controllo positivo con traccia 0/1 e identità fra risultato pubblico e overload neutro; auto-cancellazione reale al checkpoint 1, dopo un passo numerico completo, con CancellationError. Restano le prove pubbliche di pre-cancellazione; nessuno skip, retry o successo accettato al posto della cancellazione |
+| prestazioni e dati | Stessa complessità e budget, nessuna copia di matrice aggiuntiva o calcolo variato; nessuna promessa prestazionale e nessuna migrazione |
+| sicurezza e recupero | Checkpoint interni non esposti alle facciate; solo dati sintetici. Revert indipendente, nessun nuovo ADR perché il confine è quello interno già adottato dal resampling |
+| confini concorrenti | La diagnosi OCR sul server resta coordinata con il proprietario PDF/EPUB; questa correzione non modifica Vision o l’importazione |
+
+La scheda e la riga CMP-288 sono registrate prima di modificare i due kernel
+o il test. Il gate resta macOS e non viene indebolito per ottenere un esito verde.

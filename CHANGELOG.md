@@ -19,6 +19,9 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   (GS-DOR-286).
 - Condivisa la tabella di traduzione failure già identica fra TextAnalytics ed
   ExploratoryCompletion; le policy delle altre famiglie restano esplicite.
+- Resa deterministica la prova di cancellazione MDS/SOM dopo un passo completo,
+  con checkpoint interni e contratti pubblici invariati; eliminata la dipendenza
+  dal tempo di ripresa del test (CMP-288).
 
 ### Progetto Xcode completo — GS-DOR-306
 

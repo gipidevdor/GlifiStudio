@@ -6,12 +6,12 @@
 | --- | --- |
 | Identificatore | GS-VER-286 |
 | Tipo | Evidenza di refactoring interno |
-| Versione | 1.2.0 |
-| Stato | Superato nel perimetro macOS dichiarato |
+| Versione | 1.3.0 |
+| Stato | Prove indicate superate; gate finale corrente aperto |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Richiesta esplicita di perfezionare la razionalizzazione organica |
-| Riferimenti | [Issue #45](https://github.com/gipidevdor/GlifiStudio/issues/45); GS-DOR-286; CMP-286/287; GS-AD-001 |
+| Riferimenti | [Issue #45](https://github.com/gipidevdor/GlifiStudio/issues/45); GS-DOR-286; CMP-286/287/288; GS-AD-001 |
 
 ## Confini e invarianti
 
@@ -122,10 +122,10 @@ Il gate sul codice unito, i relativi conteggi finali e il preflight macOS sono
 registrati nella [PR #46](https://github.com/gipidevdor/GlifiStudio/pull/46)
 sul suo head finale, mantenendo distinta la provenienza delle evidenze.
 
-## Integrazione corrente PDF/EPUB
+## Integrazione PDF/EPUB sul checkpoint 4205eee
 
-Main ha poi pubblicato la pipeline documentale in `b401c08`. Il merge
-conserva integralmente i file upstream fuori dal delta del refactoring,
+Main ha poi pubblicato la pipeline documentale in `b401c08`. Nel checkpoint
+`4205eee`, prima dell’ampliamento CMP-288, il merge conserva integralmente i file upstream fuori dal delta del refactoring,
 compresi contenuti e permessi Git; 484 file di codice, configurazioni e test
 sono controllati separatamente. La matrice mantiene esattamente le 170 voci
 e le proprietà di primo livello upstream, con le sole aggiunte CMP-286/287.
@@ -145,3 +145,50 @@ confermate sulla baseline. L’allegato conserva i risultati e i digest dei
 rapporti completi. Il gate corrente sul codice unito e il preflight finale
 macOS restano distinti dalle verifiche precedenti e sono registrati nella
 [PR #46](https://github.com/gipidevdor/GlifiStudio/pull/46) sul relativo head.
+
+## Checkpoint MDS/SOM deterministici (CMP-288)
+
+La composizione `4205eee` ha superato localmente `make verify` macOS con
+713 test Core, 161 Kit, 126 definizioni native e 411 esecuzioni. Questo esito
+precede la presente correzione. La CI dello stesso checkpoint non è verde:
+ha esposto il test temporale MDS/SOM e una failure OCR, ancora in diagnosi
+presso il proprietario PDF/EPUB. Non si attribuisce qui una causa alla
+failure OCR e non si modifica il relativo codice.
+
+Il test preesistente attendeva 2 ms prima di cancellare un task: lo scheduling
+poteva far riprendere il parent solo dopo il completamento numerico. I due
+kernel e il test prima della correzione coincidono con la base `b401c08`;
+questo riscontro non dimostra una regressione causata dal refactoring.
+L’ampliamento Ready e CMP-288 sono registrati prima della patch.
+
+La correzione aggiunge due overload interni con checkpoint sincrono
+non escaping. Le API pubbliche mantengono firme e default e delegano con
+`Task.checkCancellation` agli stessi ingressi di iterazione MDS/epoca SOM.
+Il confronto testuale dei corpi conserva validazioni, calcolo, limiti e
+controlli profondi, normalizzando soltanto la sostituzione del checkpoint e
+il nome dell’indice MDS. Non compaiono hook globali o task di produzione.
+
+La prova positiva confronta l’intero risultato pubblico con l’overload
+a checkpoint neutro e richiede la traccia `[0, 1]`. La prova negativa
+auto-cancella il task al checkpoint 1, dopo un passo numerico completo, e
+richiede `CancellationError` e la stessa traccia. Nessuno sleep, skip, retry
+o risultato riuscito sostituisce l’asserzione di cancellazione; restano
+le prove pubbliche di pre-cancellazione. I sei sorgenti originari del
+refactoring e il loro digest A7 non cambiano.
+
+Il log `cancellation-targeted-tests.log` registra 9 definizioni Kit e 42 Core
+superate. La revisione indipendente non rileva regressioni azionabili.
+I confronti aggiornati confermano ancora API Core/Kit identiche a `b401c08`
+e 164 + 69 risposte CLI identiche byte per byte e per exit code, con 45
+aspettative esplicite sulla baseline. CMP-288 passa a `implemented`, senza
+promuovere la qualifica dell’intera composizione.
+
+Il nuovo `make verify` sulla patch è superato localmente: 713 test Core,
+161 Kit, 126 definizioni native e 411 esecuzioni senza errori o skip;
+build Debug/Release macOS. Superati 196 controlli CLI su 63 fixture testuali,
+264 confronti sulle 132 operazioni Kit/CLI, 51 rifiuti di trasporto,
+64 rifiuti della CLI di progetto, 22 checkpoint di recupero e due PDF/A-2u.
+I 189 controlli riportati per il checkpoint A7 restano una prova storica
+distinta. Log, digest e risultato locale sono nell’allegato; la CI e il
+preflight del relativo head restano aperti nella PR #46. Questo risultato
+locale non risolve né riclassifica l’errore OCR del runner remoto.

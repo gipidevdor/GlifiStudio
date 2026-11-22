@@ -5041,6 +5041,31 @@
       "gate": "G2",
       "status": "implemented",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-288",
+      "clause": "GS-STD-001-12 § 12.6; GS-DOR-286 checkpoint deterministici di cancellazione",
+      "specification": "docs/pianificazione/dor-operatori-tipizzati-e-failure-coese.md",
+      "requirements": [
+        "RQ-007",
+        "RQ-011",
+        "RQ-060",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiExploratoryCompletion.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiExploratoryAnalysis.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExploratoryCompletionTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-286-operatori-tipizzati-e-failure-coese.md"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }

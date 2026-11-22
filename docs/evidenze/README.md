@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.20.12 |
+| Versione | 1.20.13 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -296,4 +296,4 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 
 - [GS-VER-306 — Progetto Xcode completo e verificabile](GS-VER-306-progetto-xcode-completo.md) — Superato per automatici sul checkpoint 328169f7: gate, 125 definizioni/409 esecuzioni native in ciascuna configurazione Debug/Release e preflight macOS; nuovo Core 305 escluso
 
-- [GS-VER-286 — Operatori tipizzati e failure coese](GS-VER-286-operatori-tipizzati-e-failure-coese.md) — Compatibilità e gate macOS superati; operatori privati e policy di famiglia
+- [GS-VER-286 — Operatori tipizzati e failure coese](GS-VER-286-operatori-tipizzati-e-failure-coese.md) — Prove sui checkpoint dichiarati e mirati MDS/SOM superati; gate finale corrente aperto
