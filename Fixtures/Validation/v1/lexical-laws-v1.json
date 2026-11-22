@@ -9,7 +9,7 @@
     "HeapsLogOLS-v1"
   ],
   "status": "candidate",
-  "statusReason": "Test Swift e contract test CLI superati nella CI storica xcode-27 della PR #38 (GS-VER-220); nuova integrazione in verifica (GS-VER-221). Stato candidate conservato; nessuna promozione scientifica.",
+  "statusReason": "Test Swift e contract test CLI superati nella CI storica xcode-27 della PR #38 (GS-VER-220); gate locale combinato make verify superato con test, oracoli, contratti CLI e build macOS/iPadOS (GS-VER-221); preflight e CI finali nel record PR #38. Stato candidate conservato; nessuna promozione scientifica.",
   "license": "BSD-3-Clause",
   "toolchain": {
     "swiftLanguageMode": "6",
@@ -34,7 +34,7 @@
     },
     "V3": {
       "status": "pass",
-      "description": "Persistenza, riuso e parità GlifiCore/Kit/CLI nella revisione storica della PR #38 (GS-VER-220); nuova integrazione in verifica (GS-VER-221)."
+      "description": "Persistenza, riuso e parità GlifiCore/Kit/CLI nella revisione storica della PR #38 (GS-VER-220); gate locale combinato make verify superato con test, oracoli, contratti CLI e build macOS/iPadOS (GS-VER-221); preflight e CI finali nel record PR #38."
     },
     "V4": {
       "status": "pass",

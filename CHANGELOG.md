@@ -45,7 +45,7 @@ preservando i metodi upstream già pubblicati.
 
 - Audit di conservazione dei contenuti prima dell’integrazione: sette branch
   storici hanno alberi identici ai commit squash già in `main`; nuova integrazione
-  delle PR #37/#38 e gate combinato in verifica (GS-VER-221).
+  delle PR #37/#38 e gate locale `make verify` superato (GS-VER-221).
 
 - Unità di budget `Budget-characters-v1` del riassunto estrattivo: quattro controlli CI
   `xcode-27` sulla head di #31 e su `main` `4c59a50`; GS-VER-165 superata, CMP-164 `verified`.

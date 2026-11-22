@@ -86,3 +86,12 @@ locale.
 - Calcolo in memoria sulla sequenza del gruppo, non incrementale né esterno.
 - Oracolo Python indipendente, non pacchetto terzo; nessuna presentazione nelle app.
 - `make verify-app-store` non è stato eseguito su una macchina locale macOS 27.
+
+## Verifica dell’integrazione del 2026-11-22
+
+Il gate locale combinato `make verify` è superato con 423 test Core, 59 Kit e
+55 macOS, oltre ai contratti CLI e alle build di entrambe le piattaforme.
+L’oracolo è riprodotto insieme alle altre 194 righe numeriche. Revisione,
+comandi, limiti e collegamento al preflight e ai gate remoti definitivi sono
+registrati in [GS-VER-221](GS-VER-221-integrazione-branch.md).
+La capacità resta `candidate`, senza nuova promozione scientifica.

@@ -18,7 +18,7 @@
 La baseline iniziale locale e remota è `f6bba3e`. I branch remoti della PR #37
 (`a8e36fc`, decisioni sul preflight) e della PR #38 (`b937ca2`, leggi lessicali)
 contengono lavoro da integrare. Il branch breve di integrazione è
-`chore/integrate-all-20261122`; `20980f2` registra la prima integrazione della PR #37. La pubblicazione
+`chore/integrate-all-20261122`; `1a1571c` registra la prima integrazione della PR #37. La pubblicazione
 prevista riutilizza la PR #38 come proposta dell’insieme combinato, preservando
 il suo tip nella merge head prima dell’integrazione secondo la configurazione
 del repository. La verifica del risultato combinato deve precedere
@@ -72,14 +72,44 @@ nuova capacità resta `candidate` e la clausola resta `implemented`.
 
 ## Verifica del risultato combinato
 
-Il flusso principale ha eseguito i tre test mirati delle leggi lessicali con
-Apple Swift 6.4.2 e Xcode 27.2: tutti superati, incluso il caso limite dei
-checkpoint. Questo risultato copre il calcolo, i casi degeneri e il riuso
-persistito verificati da quei test. Il flusso principale ha inoltre riprodotto
-194 righe di oracoli selezionando Python 3.12.14 nel `PATH` e conservando il
-`PATH` originale per `Rscript`. `make verify` e controlli remoti restano da
-registrare sul risultato combinato in un worktree isolato.
+Il 2026-11-22 `make verify` è terminato con exit code 0 sul checkout pulito
+`8e2c87a`. Il suo albero è identico alle revisioni pubblicate `5a714c4` e
+`73fc6a1`, verificate con `git diff --exit-code`; quest’ultima incorpora il
+merge remoto della PR #37. Ambiente: Xcode 27.2 (27B52), Apple Swift 6.4.2,
+Python 3.12.14 già installato selezionato nel `PATH`, R disponibile per gli oracoli.
+Nessuna dipendenza o impostazione di sistema è stata aggiunta.
 
-L’identità degli alberi storici non costituisce una prova di compilazione o di
-correttezza del nuovo percorso persistito. Nessun esito della CI storica viene
-attribuito automaticamente a questa integrazione.
+Risultati osservati:
+
+- 423 test Core, 59 test Kit e 55 test dell’app macOS superati, senza failure;
+- 194 righe degli oracoli numerici riprodotte e collegate ai test Swift;
+- parità su 15 fixture condivise e 51 controlli CLI, 22 checkpoint kill/recovery;
+- controlli statici, documentali, conformità, localizzazione e formattazione superati;
+- smoke e contratti CLI, incluso `laws`, superati;
+- test macOS Debug e build Release macOS, build Debug e Release iPadOS senza firma.
+
+I tre test mirati delle leggi lessicali erano già superati separatamente,
+inclusa la regressione dei checkpoint con `Int.max`. La revisione indipendente
+del diff integrato non ha rilevato altri blocker né modifiche KWIC concorrenti.
+Le modifiche non committate delle altre sessioni restano escluse.
+
+Il preflight completo usa la stessa sequenza di `make verify-app-store`:
+`make verify`, seguito da `Scripts/check-app-store-packaging.sh` sullo stesso
+contenuto applicativo. Il secondo comando analizza e archivia macOS e iPadOS,
+senza ripetere il gate di base già concluso. L’esito conclusivo del packaging e
+i controlli remoti della head definitiva sono registrati nella
+[PR #38](https://github.com/gipidevdor/GlifiStudio/pull/38), che conserva anche
+l’autorevisione e il record di integrazione. Questi esiti restano distinti dal
+risultato locale sopra riportato; nessun controllo pendente vale come superato.
+
+Limiti osservati: `veraPDF` è assente, quindi il controllo PDF/A è saltato e non
+è attestato. Xcode segnala una versione CoreSimulator precedente a quella
+attesa: le build generiche iPadOS sono riuscite, ma non costituiscono prove su
+simulatore o dispositivo. La build iPadOS segnala inoltre la dichiarazione di
+apertura dei documenti in place assente; non viene attestata assenza di warning.
+Non sono coperti firma, TestFlight o audit manuali di accessibilità.
+
+La verifica locale copre l’albero applicativo combinato. Le successive modifiche
+al presente record e ai riferimenti di verifica non cambiano sorgenti, test o
+configurazioni di build e sono sottoposte ai controlli statici e documentali.
+Lo stato scientifico `candidate` e CMP-166 `implemented` restano invariati.
