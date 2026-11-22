@@ -287,7 +287,7 @@ nonisolated struct StudioLinguisticOutput: Sendable {
             case let .linguistic(value): .annotation(value)
             case let .linguisticCoding(value): .coding(value)
             case .ldaSelection, .communities, .graphLayout, .minimumSpanningForest, .mdsSearch,
-                .somAdvanced:
+                .somAdvanced, .kh:
                 throw invalidInput()
             }
         case .mds, .som, .clara, .classify, .validateClassifier, .lda, .coding, .codeCrosstab,

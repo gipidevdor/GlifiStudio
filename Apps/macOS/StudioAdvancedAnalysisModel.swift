@@ -1049,7 +1049,7 @@ nonisolated struct StudioAdvancedOutput: Sendable {
                             sourceIndices: value.foldAssignments.indices.map { Optional($0) }))
                 }
             case .communities, .graphLayout, .minimumSpanningForest, .linguistic,
-                .linguisticAvailability, .linguisticCoding:
+                .linguisticAvailability, .linguisticCoding, .kh:
                 throw unexpectedPayload()
             }
         }
