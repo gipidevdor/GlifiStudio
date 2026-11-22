@@ -107,10 +107,6 @@ func spanMapOptimizationPreservesBoundariesAndEncoding() throws {
 
 @Test("La decodifica legacy conserva ordine non conforme e risultati del percorso lineare")
 func spanMapOptimizationPreservesLegacyDecodedMaps() throws {
-    let inverted = try JSONDecoder().decode(
-        GlifiUTF8Range.self, from: Data("{\"start\":4,\"end\":2}".utf8))
-    let empty = try JSONDecoder().decode(
-        GlifiUTF8Range.self, from: Data("{\"start\":2,\"end\":2}".utf8))
     let variants: [[GlifiSpanMapSegment]] = [
         [
             try spanMapSegment(2, 4, inputs: [(10, 12)], kind: .exact),
@@ -119,16 +115,6 @@ func spanMapOptimizationPreservesLegacyDecodedMaps() throws {
         [
             try spanMapSegment(0, 4, inputs: [(0, 4)], kind: .exact),
             try spanMapSegment(2, 6, inputs: [(10, 14)], kind: .exact),
-        ],
-        [
-            try spanMapSegment(0, 2, inputs: [(0, 2)], kind: .exact),
-            GlifiSpanMapSegment(outputRange: inverted, inputRanges: [], kind: .synthetic),
-            try spanMapSegment(2, 4, inputs: [(10, 12)], kind: .exact),
-        ],
-        [
-            try spanMapSegment(0, 2, inputs: [(0, 2)], kind: .exact),
-            GlifiSpanMapSegment(outputRange: empty, inputRanges: [], kind: .synthetic),
-            try spanMapSegment(2, 4, inputs: [(10, 12)], kind: .exact),
         ],
         [
             try spanMapSegment(0, 2, inputs: [(0, 2)], kind: .exact),
@@ -156,18 +142,24 @@ func spanMapOptimizationPreservesLegacyDecodedMaps() throws {
         #expect(try outer.composed(after: map) == linearCompose(outer, after: map))
     }
 
-    // The existing initializer also accepts a nested range decoded without range validation.
-    let constructed = try GlifiSpanMap(
-        contractIdentifier: "spanmap-nested-legacy-v1",
-        sourceRevisionID: spanMapOptimizationRevision(),
+    // ADR-0042 preserves legacy map geometry with valid intervals, while every
+    // decoded nested interval now obeys the range constructor's invariants.
+    let valid = try GlifiSpanMap(
+        contractIdentifier: "spanmap-nested-v1", sourceRevisionID: spanMapOptimizationRevision(),
         inputByteCount: 4, outputByteCount: 4,
-        segments: [
-            spanMapSegment(0, 4, inputs: [], kind: .synthetic),
-            GlifiSpanMapSegment(outputRange: inverted, inputRanges: [], kind: .synthetic),
-            spanMapSegment(2, 4, inputs: [], kind: .synthetic),
-        ])
-    let query = try GlifiUTF8Range(start: 0, end: 4)
-    #expect(try constructed.sourceRanges(for: query) == linearSourceRanges(constructed, for: query))
+        segments: [spanMapSegment(0, 4, inputs: [], kind: .synthetic)])
+    let object = try #require(
+        JSONSerialization.jsonObject(with: spanMapCanonicalData(valid)) as? [String: Any])
+    for range in [["start": 4, "end": 2], ["start": 2, "end": 2]] {
+        var invalid = object
+        var segments = try #require(object["segments"] as? [[String: Any]])
+        segments[0]["outputRange"] = range
+        invalid["segments"] = segments
+        let data = try JSONSerialization.data(withJSONObject: invalid)
+        #expect(throws: GlifiFailure.self) {
+            try JSONDecoder().decode(GlifiSpanMap.self, from: data)
+        }
+    }
 }
 
 private struct SpanMapLookupFixture: Encodable {

@@ -31,3 +31,12 @@
 
 **Ready** prima del coding. Il codice produttivo resta fermo fino alla baseline.
 La revisione indipendente verifica anche equivalenza e limiti delle misure.
+
+## Riesame successivo del confine di decodifica
+
+La conservazione storica dell’accettazione non conforme è superata puntualmente
+da [ADR-0042](../adr/0042-invarianti-intervalli-utf8-decodificati.md) e
+[GS-VER-234](../evidenze/GS-VER-234-riverifica-correttezza-completezza.md): intervalli
+invalidi e segmenti localmente incoerenti sono rifiutati; forma JSON e geometrie
+legacy con segmenti validi conservano round-trip, ricerca lineare e composizione.
+Le prove storiche di questa scheda non vengono riscritte come nuova validazione.

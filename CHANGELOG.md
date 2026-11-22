@@ -29,6 +29,19 @@ working tree sorgente; la verifica della nuova integrazione su `fe6f654`
 conserva l’identità candidata distinta `TextRankSentence-configurable-v1`,
 preservando i metodi upstream già pubblicati.
 
+### Corretto
+
+- Il decoder UTF-8 rifiuta ora range negativi, vuoti o invertiti che il decoder
+  precedente lasciava passare; le span map verificano inoltre i vincoli locali
+  dei segmenti prima di lookup/composizione. JSON valido invariato; i dati
+  malformati richiedono correzione esplicita, senza riparazione automatica
+  (ADR-0042).
+- Riverifica analitica: intervalli/byte UTF-8, overflow dei conteggi, grammatica e
+  lavoro della codifica, ammissione Naive Bayes/KK/LDA, norme estreme SOM/CLARA/HAC.
+  Nuova `GirvanNewman-inverse-strength-exact-binary64-v2` con somme dei costi
+  rappresentati esatte e budget più restrittivi. Corrette le dichiarazioni di
+  completezza KH: alcune preparazioni e varianti restano assenti (GS-VER-234).
+
 ### Aggiunto
 
 - Grafici audio di VoiceOver per le mappe fattoriali, con sintesi specifica per

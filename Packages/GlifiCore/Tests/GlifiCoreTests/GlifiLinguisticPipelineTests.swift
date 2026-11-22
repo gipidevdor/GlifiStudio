@@ -199,13 +199,16 @@ func linguisticExternalAnnotationsRequireExactSourceBytes() throws {
             Issue.record("Unexpected synthetic mutation")
         }
         object["tokens"] = tokens
-        let decoded = try JSONDecoder().decode(
-            GlifiLinguisticAnnotation.self, from: JSONSerialization.data(withJSONObject: object))
         do {
+            let decoded = try JSONDecoder().decode(
+                GlifiLinguisticAnnotation.self, from: JSONSerialization.data(withJSONObject: object)
+            )
             _ = try decoded.codingDocument(id: "source")
             Issue.record("A corrupt annotation was accepted")
         } catch let failure as GlifiFailure {
-            #expect(failure.code == "linguistic.invalid-token-range")
+            #expect(
+                failure.code
+                    == (mutation == 1 ? "text.invalid-range" : "linguistic.invalid-token-range"))
             #expect(failure.category == .invalidInput && failure.retainedState == .unchanged)
         }
     }

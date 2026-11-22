@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-MET-001-23 |
 | Tipo | Specifica dei contratti numerici e della copertura |
-| Versione | 1.4.0 |
+| Versione | 1.4.1 |
 | Stato | Contratti revisionati; supporto numerico per variante |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -341,9 +341,12 @@ in output; la codifica aggregata ammette 10.000 unità entro lo stesso MiB.
 
 Gli operatori aggiunti restano `candidate`, anche quando i test locali passano:
 non ereditano i manifest delle nove varianti storiche per somiglianza del nome.
-[GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md) registra i mirati
-osservati e il gate globale ancora in verifica. GUI, persistenza, nuove lingue,
-V6 esterno e dispositivi non sono promossi da questo incremento.
+[GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md) conserva i mirati
+e il gate locale del completamento, superato nel suo perimetro storico.
+[GS-VER-234](../evidenze/GS-VER-234-riverifica-correttezza-completezza.md) registra
+la successiva riverifica, le correzioni e i limiti KH ancora aperti. GUI,
+persistenza, nuove lingue, V6 esterno e dispositivi non sono promossi da questo
+incremento.
 
 ## Riferimenti
 
