@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: BSD-3-Clause
+
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Rome
+    open-pull-requests-limit: 5
+    labels:
+      - type:dependencies
+      - area:ci
+    groups:
+      github-actions:
+        patterns:
+          - "*"

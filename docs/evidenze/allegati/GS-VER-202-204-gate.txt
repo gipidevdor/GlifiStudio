@@ -1,0 +1,1270 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Log osservato con percorsi personali sanificati.
+./Scripts/verify.sh
+Verification profile: macOS and iPadOS
+Repository: 824 versionable files, policy and CI baseline valid
+Secrets: no high-confidence credentials or signing material detected
+Toolchain: Xcode 27.2, Apple Swift 6.4.2, language mode 6, SwiftPM tools 6.4
+GitHub configuration: 20 labels, solo/team rulesets, issue forms, and ownership template valid
+Naming: Glifi Studio identity and technical identifiers valid
+Documentation: 408 files, 407 unique identifiers, valid local links, 23 scientific method specifications, 17 UX specifications, 10 implementation design specifications, 2 cross-cutting specifications, 41 Definition of Ready sheets
+Specification compliance: 130 clauses; blocked=8, implemented=21, specified=2, verified=99
+Oracoli numerici: 153 righe riprodotte e collegate ai test Swift
+Fixtures: Italian=8, gold=19, numerical=7, validation-manifests=25, adversarial-descriptors=10, query=7; markdown-spans=2; persistence-scenarios=2; seed status preserved
+Architecture boundaries: valid
+Localization: Italian source language, semantic keys, and it/en catalogs valid
+Failure taxonomy: 129 siti con categoria letterale conformi a GS-API-001 § 8
+Failure messages: 11 categorie con ripiego, 22 chiavi di GlifiKit localizzate
+Apple baseline: application safeguards and technology portfolio valid
+App Store baseline: identity, metadata, privacy and icon assets valid
+Swift dialect: tools 6.4, language mode 6, strict concurrency complete, 20 regole swift-format e loop make/CI coerenti
+Lint di formattazione Swift superato
+Building for debugging...
+[Computing dependencies]
+[Pre-planning 17 / 269]
+[Planning deferred tasks]
+[59 / 128]
+[60 / 129] GlifiCore
+[69 / 191]
+[73 / 191]
+[77 / 191]
+[81 / 191]
+[84 / 191]
+[85 / 191]
+[89 / 191]
+[90 / 191]
+[92 / 191]
+[95 / 191]
+[98 / 191]
+[100 / 191]
+[102 / 191]
+[103 / 191]
+[109 / 191]
+[110 / 191]
+[111 / 191]
+[122 / 191] GlifiCore
+[137 / 194]
+[140 / 269] GlifiKit
+[145 / 269]
+[147 / 269]
+[150 / 269]
+[154 / 269]
+[158 / 269]
+[161 / 269]
+[162 / 269] GlifiCore
+[162 / 269]
+[165 / 269]
+[166 / 269]
+[167 / 269]
+[169 / 269]
+[171 / 269]
+[175 / 269]
+[177 / 269]
+[178 / 269]
+[179 / 269]
+[180 / 269]
+[184 / 269]
+[186 / 269]
+[187 / 269] GlifiCore
+[190 / 269] GlifiCore
+[190 / 269] GlifiBenchmark-product
+[194 / 270]
+[204 / 270] GlifiKit
+[206 / 300] GlifiRecoveryHarness-product
+[207 / 300]
+[210 / 300]
+[214 / 300]
+[215 / 300]
+[216 / 300]
+[217 / 300]
+[220 / 300]
+[222 / 300]
+[226 / 300] GlifiKit
+[228 / 300] GlifiRecoveryHarness-product
+[231 / 300] GlifiBenchmark-product
+[231 / 300] GlifiKit
+[233 / 300] GlifiKit
+[241 / 300] GlifiKitTests-product
+[245 / 300] GlifiBenchmark-product
+[250 / 300]
+[253 / 301]
+[254 / 301]
+[257 / 301] GlifiCoreTests-product
+[260 / 304] GlifiCoreTests-product
+[261 / 304] GlifiKit
+[264 / 304] GlifiCoreTests-product
+[266 / 304] GlifiCoreTests-product
+[275 / 304] GlifiCLI-product
+[276 / 304] GlifiCoreTests-product
+[278 / 304]
+[284 / 305]
+[284 / 305] GlifiCoreTests-product
+[284 / 306] GlifiKitTests-product
+[288 / 316] GlifiKitTests-product
+[289 / 316] GlifiKitTests-product
+[289 / 316] GlifiCoreTests-product
+[292 / 316] GlifiCoreTests-product
+[297 / 316] GlifiKitTests-product
+[300 / 316] GlifiKitTests-product
+[300 / 316] AllIncludingTests
+[300 / 316] GlifiKitTests-product
+[300 / 316] GlifiCoreTests-product
+[302 / 316] GlifiCoreTests-product
+[306 / 316] GlifiCoreTests-product
+[306 / 316] GlifiKitTests-product
+[308 / 316] GlifiKitTests-product
+[312 / 316] GlifiCLI-product
+[314 / 316] GlifiCLI-product
+Build complete! (44,58 s)
+Test Suite 'All tests' started at 2026-11-21 21:02:55.718.
+Test Suite 'All tests' passed at 2026-11-21 21:02:55.720.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+Test Suite 'All tests' started at 2026-11-21 21:02:56.244.
+Test Suite 'All tests' passed at 2026-11-21 21:02:56.246.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test "La facciata conserva errori tipizzati, localizzabili e privi di testo sensibile" started.
+◇ Test "La facciata temporale propaga la tassonomia per date non valide e revisioni non valide" started.
+◇ Test "Il profilo Low Power Mode è propagato al piano e la fermata del monitor è conservativa" started.
+◇ Test "La facciata Welch conserva F, gradi di libertà e p dell'oracolo R" started.
+◇ Test "Tutte le fixture condividono trasporto, default e risultati Swift/JSON" started.
+◇ Test "I messaggi di riassunto precedenti conservano l'eleggibilità lessicale" started.
+◇ Test "I messaggi di riassunto precedenti non hanno ordine di selezione né politica MMR" started.
+◇ Test "RQ-046: le failure non contengono contenuto, query, path o nomi file" started.
+◇ Test "Trasporto numerico e diagnostica coincidono con la facciata diretta" started.
+◇ Test "I segmenti di frase sono intervalli codificabili del testo estratto" started.
+◇ Test "L'identità di categoria derivata dall'etichetta è stabile e valida" started.
+◇ Test "La cancellazione dopo l'admission della fonte mantiene la failure tipizzata e la generazione" started.
+◇ Test "GlifiKit persiste un piano spiegabile da una richiesta JSON minimale" started.
+◇ Test "GlifiKit confronta due gruppi espliciti senza esporre dettagli del package" started.
+◇ Test "Ordine delle chiavi e default omessi hanno la stessa identità; seed UInt64 integro" started.
+◇ Test "Limiti di byte, profondità, collezioni e valori non finiti precedono il calcolo" started.
+◇ Test "RF-077: ogni aggiornamento è una SourceRevision distinta e le fonti sono incorporate" started.
+◇ Test "La tabella equivalente si esporta in CSV RFC 4180 senza perdita dei valori" started.
+◇ Test "GlifiKit esegue il piano con uno stream bounded e un solo terminale" started.
+◇ Test "La facciata temporale conserva la cancellazione nella tassonomia pubblica" started.
+◇ Test "Le viste dei risultati estesi proiettano gli Artifact del piano senza ricalcolo" started.
+◇ Test "GlifiKit profila un file senza esporre i tipi interni del motore" started.
+◇ Test "GlifiKit confronta la similarità di corpus fra due gruppi espliciti" started.
+◇ Test "La facciata linguistica conserva metriche e contratti headless" started.
+◇ Test "Ogni troncamento del JSON minimo fallisce e le stringhe con parentesi restano integre" started.
+◇ Test "La facciata headless espone le nuove famiglie senza importare Core" started.
+◇ Test "GlifiKit gestisce codebook, codifiche, memo e accordo dalle codifiche persistite" started.
+◇ Test "Gli stati di validazione sono riferiti al metodo, senza promuovere identificatori ignoti" started.
+◇ Test "L'admission conserva la cancellazione tipizzata senza eseguire I/O" started.
+◇ Test "L'admission critica blocca importazione, query e analisi senza impedire letture e recupero" started.
+◇ Test "GlifiKit espone failure tipizzate e localizzabili" started.
+◇ Test "Chiavi duplicate anche escaped, ignote e null espliciti falliscono senza dati sensibili" started.
+◇ Test "Un'analisi dichiarata su fonti immutate è riusata dopo l'importazione di una fonte estranea" started.
+◇ Test "GlifiKit espone l'interpretazione descrittiva con valori tagged validati" started.
+◇ Test "La selezione libera risolve passaggi per frasi o per caratteri sui confini di carattere" started.
+◇ Test "Facciata lessicale: cancellazione tradotta nella tassonomia condivisa" started.
+◇ Test "Facciata lessicale: osservazioni, fit e descrittive riproducibili" started.
+◇ Test "GlifiKit distingue testo estratto e intervalli originali nel riassunto" started.
+◇ Test "Core e Kit producono lo stesso digest, gli stessi intervalli e lo stesso ordine" started.
+◇ Test "GlifiKit trasporta configurazione, convergenza, lineage e testo di TextRank/LexRank" started.
+◇ Test "La facciata linguistica conserva le failure tipizzate e la cancellazione" started.
+◇ Test "I segnali concorrenti conservano memoria critica ed energia senza aggiornamenti persi" started.
+◇ Test "GlifiKit profila Markdown attraverso la rappresentazione estratta" started.
+◇ Test "GlifiKit crea, importa, riapre e chiude una sessione di progetto" started.
+◇ Test "L'export di una vista scrive tabella, specifica e manifest verificabile con provenienza" started.
+◇ Test "GlifiKit persiste e riusa le analisi derivate su gruppi espliciti di fonti" started.
+◇ Test "La cancellazione prima dell'esecuzione resta una failure tipizzata senza risultato" started.
+◇ Test "GlifiKit conserva indagine, selezioni ramificate e storia dopo una nuova importazione" started.
+◇ Test "La facciata temporale conserva conteggi, precisione e revisione contribuente" started.
+◇ Test "L'ordine delle foglie coincide con hclust$order di R per ogni linkage" started.
+◇ Test "GlifiKit espone lo stato senza rivelare il tipo del motore" started.
+◇ Test "Il testo sorgente conserva il BOM e resta allineato ai byte della fonte" started.
+◇ Test case passing 1 argument tokenCount → 0 to "I messaggi di riassunto precedenti conservano l'eleggibilità lessicale" started.
+◇ Test case passing 1 argument tokenCount → 3 to "I messaggi di riassunto precedenti conservano l'eleggibilità lessicale" started.
+✔ Test "La facciata Welch conserva F, gradi di libertà e p dell'oracolo R" passed after 0.212 seconds.
+✔ Test "I messaggi di riassunto precedenti non hanno ordine di selezione né politica MMR" passed after 0.212 seconds.
+✔ Test "L'identità di categoria derivata dall'etichetta è stabile e valida" passed after 0.212 seconds.
+✔ Test "I messaggi di riassunto precedenti conservano l'eleggibilità lessicale" with 2 test cases passed after 0.212 seconds.
+✔ Test "La facciata conserva errori tipizzati, localizzabili e privi di testo sensibile" passed after 0.212 seconds.
+✔ Test "La facciata temporale propaga la tassonomia per date non valide e revisioni non valide" passed after 0.212 seconds.
+✔ Test "Ordine delle chiavi e default omessi hanno la stessa identità; seed UInt64 integro" passed after 0.212 seconds.
+✔ Test "Limiti di byte, profondità, collezioni e valori non finiti precedono il calcolo" passed after 0.212 seconds.
+✔ Test "La tabella equivalente si esporta in CSV RFC 4180 senza perdita dei valori" passed after 0.212 seconds.
+✔ Test "Trasporto numerico e diagnostica coincidono con la facciata diretta" passed after 0.212 seconds.
+✔ Test "GlifiKit profila un file senza esporre i tipi interni del motore" passed after 0.219 seconds.
+✔ Test "La facciata linguistica conserva metriche e contratti headless" passed after 0.219 seconds.
+✔ Test "Tutte le fixture condividono trasporto, default e risultati Swift/JSON" passed after 0.220 seconds.
+✔ Test "Ogni troncamento del JSON minimo fallisce e le stringhe con parentesi restano integre" passed after 0.219 seconds.
+✔ Test "La facciata headless espone le nuove famiglie senza importare Core" passed after 0.219 seconds.
+✔ Test "RQ-046: le failure non contengono contenuto, query, path o nomi file" passed after 0.220 seconds.
+✔ Test "Gli stati di validazione sono riferiti al metodo, senza promuovere identificatori ignoti" passed after 0.219 seconds.
+✔ Test "GlifiKit espone failure tipizzate e localizzabili" passed after 0.220 seconds.
+✔ Test "RF-077: ogni aggiornamento è una SourceRevision distinta e le fonti sono incorporate" passed after 0.220 seconds.
+✔ Test "L'admission critica blocca importazione, query e analisi senza impedire letture e recupero" passed after 0.220 seconds.
+✔ Test "Chiavi duplicate anche escaped, ignote e null espliciti falliscono senza dati sensibili" passed after 0.220 seconds.
+✔ Test "GlifiKit persiste un piano spiegabile da una richiesta JSON minimale" passed after 0.220 seconds.
+✔ Test "Facciata lessicale: osservazioni, fit e descrittive riproducibili" passed after 0.220 seconds.
+✔ Test "I segmenti di frase sono intervalli codificabili del testo estratto" passed after 0.226 seconds.
+✔ Test "GlifiKit confronta due gruppi espliciti senza esporre dettagli del package" passed after 0.226 seconds.
+✔ Test "Core e Kit producono lo stesso digest, gli stessi intervalli e lo stesso ordine" passed after 0.226 seconds.
+✔ Test "GlifiKit confronta la similarità di corpus fra due gruppi espliciti" passed after 0.226 seconds.
+✔ Test "GlifiKit profila Markdown attraverso la rappresentazione estratta" passed after 0.226 seconds.
+✔ Test "GlifiKit crea, importa, riapre e chiude una sessione di progetto" passed after 0.226 seconds.
+✔ Test "La selezione libera risolve passaggi per frasi o per caratteri sui confini di carattere" passed after 0.226 seconds.
+✔ Test "La facciata temporale conserva conteggi, precisione e revisione contribuente" passed after 0.226 seconds.
+✔ Test "L'ordine delle foglie coincide con hclust$order di R per ogni linkage" passed after 0.226 seconds.
+✔ Test "GlifiKit espone lo stato senza rivelare il tipo del motore" passed after 0.226 seconds.
+✔ Test "GlifiKit distingue testo estratto e intervalli originali nel riassunto" passed after 0.226 seconds.
+✔ Test "Il profilo Low Power Mode è propagato al piano e la fermata del monitor è conservativa" passed after 0.231 seconds.
+✔ Test "La facciata temporale conserva la cancellazione nella tassonomia pubblica" passed after 0.232 seconds.
+✔ Test "GlifiKit espone l'interpretazione descrittiva con valori tagged validati" passed after 0.231 seconds.
+✔ Test "L'admission conserva la cancellazione tipizzata senza eseguire I/O" passed after 0.232 seconds.
+✔ Test "Facciata lessicale: cancellazione tradotta nella tassonomia condivisa" passed after 0.232 seconds.
+✔ Test "La facciata linguistica conserva le failure tipizzate e la cancellazione" passed after 0.231 seconds.
+✔ Test "I segnali concorrenti conservano memoria critica ed energia senza aggiornamenti persi" passed after 0.231 seconds.
+✔ Test "La cancellazione prima dell'esecuzione resta una failure tipizzata senza risultato" passed after 0.231 seconds.
+✔ Test "La cancellazione dopo l'admission della fonte mantiene la failure tipizzata e la generazione" passed after 0.236 seconds.
+✔ Test "Il testo sorgente conserva il BOM e resta allineato ai byte della fonte" passed after 0.240 seconds.
+✔ Test "GlifiKit trasporta configurazione, convergenza, lineage e testo di TextRank/LexRank" passed after 0.297 seconds.
+✔ Test "GlifiKit esegue il piano con uno stream bounded e un solo terminale" passed after 0.326 seconds.
+✔ Test "Un'analisi dichiarata su fonti immutate è riusata dopo l'importazione di una fonte estranea" passed after 0.349 seconds.
+✔ Test "GlifiKit conserva indagine, selezioni ramificate e storia dopo una nuova importazione" passed after 0.420 seconds.
+✔ Test "GlifiKit gestisce codebook, codifiche, memo e accordo dalle codifiche persistite" passed after 0.435 seconds.
+✔ Test "L'export di una vista scrive tabella, specifica e manifest verificabile con provenienza" passed after 0.471 seconds.
+✔ Test "Le viste dei risultati estesi proiettano gli Artifact del piano senza ricalcolo" passed after 0.695 seconds.
+✔ Test "GlifiKit persiste e riusa le analisi derivate su gruppi espliciti di fonti" passed after 2.273 seconds.
+✔ Test run with 52 tests in 0 suites passed after 2.274 seconds.
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test "OneSampleT coincide con t=√2 e il p-value in forma chiusa con 4 gradi di libertà" started.
+◇ Test "I denominatori nulli seguono la policy e non producono accordo perfetto" started.
+◇ Test "Il descrittore v2 dichiara le revisioni senza cambiare l'identità dei descrittori v1" started.
+◇ Test "Regole: near, seq, frasi e confini di frase e paragrafo" started.
+◇ Test "MTLD-bidirectional-v1 coincide con l'implementazione indipendente in R" started.
+◇ Test "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "Il writer non segue link nella directory delle transazioni" started.
+◇ Test "Gli identificatori tipizzati hanno rappresentazioni distinte e round-trip stabile" started.
+◇ Test "I confini di frase bloccano la finestra salvo richiesta esplicita" started.
+◇ Test "La finestra simmetrica riproduce i conteggi e le misure calcolati a mano" started.
+◇ Test "Il package .glifi conserva una fonte e riapre la stessa generazione" started.
+◇ Test "La tassonomia di GS-API-001 § 8 copre ogni categoria e i default sono ammessi" started.
+◇ Test "Il metodo di punteggio è un parametro del descrittore: Artifact distinti, stesse frasi" started.
+◇ Test "Il budget di decodifica copre figli, array, prossimità e scope prima di costruire alberi profondi" started.
+◇ Test "Il payload revalida le identità e le opzioni rifiutano policy non monotone" started.
+◇ Test "La SVD troncata su 150×200 sparsa coincide con svd() di R" started.
+◇ Test "L'export scientifico inventaria JSON/Markdown/CSV/PDF e rileva manomissioni" started.
+◇ Test "Statistiche descrittive: missing espliciti, Q7 e varianza campionaria contro R" started.
+◇ Test "Mann–Whitney asintotico applica la correzione dei tie" started.
+◇ Test "Gli helper di failure parametrici restano nella tassonomia per ogni categoria" started.
+◇ Test "La cronologia dell'indagine è content-addressed, append-only e ramificabile" started.
+◇ Test "L'esecutore materializza ogni passo, emette progresso monotono e riusa gli Artifact" started.
+◇ Test "Kruskal–Wallis con tie applica il fattore di correzione" started.
+◇ Test "ZipfLogOLS-v1 e HeapsLogOLS-v1 coincidono con stats::lm indipendente" started.
+◇ Test "Analysis DAG rifiuta dipendenze mancanti, cicli e budget superati" started.
+◇ Test "La silhouette coincide con cluster::silhouette di R" started.
+◇ Test "Spearman esatto rifiuta NaN e infinito prima del ranking" started.
+◇ Test "La pressione critica protegge il sistema e rifiuta nuovo lavoro non interattivo" started.
+◇ Test "La correlazione fra metriche richiede tre documenti e variabilità" started.
+◇ Test "La legge esatta di W⁺ somma a 2ⁿ ed è simmetrica" started.
+◇ Test "Pearson conserva la correlazione per scale estreme finite" started.
+◇ Test "I quattro commit verificano il candidato e pubblicano la nuova generazione" started.
+◇ Test "Senza tie il confronto fra gruppi sceglie Mann–Whitney esatto" started.
+◇ Test "L'invariante del package accetta un Artifact legato alle sole revisioni dichiarate" started.
+◇ Test "La pressione arrivata prima della pianificazione non produce una generazione" started.
+◇ Test "Le nuove misure di similarità coincidono con le forme chiuse e KL indefinita è nil" started.
+◇ Test "La serie civile conserva il giorno bisestile, i bordi, i denominatori e il lineage" started.
+◇ Test "SOM aggregata coincide con la formula batch diretta su ogni prototipo" started.
+◇ Test "La diversità MTLD si persiste per documento e sulla sequenza concatenata" started.
+◇ Test "Il quantile di tipo 7 interpola linearmente fra le statistiche d'ordine" started.
+◇ Test "Jaccard e Dice rispettano i casi limite degli insiemi e i valori esatti attesi" started.
+◇ Test "Welch t su due campioni noti riproduce statistica e gradi di libertà per calcolo indipendente" started.
+◇ Test "Un package schema 2 migra in modo additivo prima di accettare la cronologia" started.
+◇ Test "PageRank senza archi resta al vettore di teleport e converge in una iterazione" started.
+◇ Test "L'intervallo di Fisher-z e il p esatto di Spearman coincidono con cor.test di R" started.
+◇ Test "CA e PCA con backend troncato coincidono con Jacobi, già verificato contro R" started.
+◇ Test "Componenti deboli e forti distinguono la direzione degli archi" started.
+◇ Test "La pressione fra nodi conserva soltanto generazioni complete e permette la ripresa" started.
+◇ Test "Il manifest schema 3 non accetta una radice Investigation mancante" started.
+◇ Test "NMF, HAC e KMeans rifiutano overflow e parametri di arresto non finiti" started.
+◇ Test "Il piano viene persistito e riusato dopo la riapertura" started.
+◇ Test "La SVD di Jacobi coincide con svd() di R e ricostruisce la matrice" started.
+◇ Test "Le autocoppie e le finestre non valide sono dichiarate, non implicite" started.
+◇ Test "Il planner distingue precondizioni, capability assenti e rinvio per budget" started.
+◇ Test "Il CSV deduplica per EvidenceID entro il Finding anche con disposition e reason diverse" started.
+◇ Test "Matrici di parole e codici condividono distanze, trasformazioni e ordine" started.
+◇ Test "Un universo interamente vuoto lascia tutte le misure non definite" started.
+◇ Test "TextRank e LexRank coincidono con il sistema stazionario indipendente Python" started.
+◇ Test "L'ordinamento descrittivo bounded coincide bitwise con sort anche ai fallback" started.
+◇ Test "Stress e autovalori non finiti vengono rifiutati anche se le coordinate sono finite" started.
+◇ Test "Regressione dal fuzz: un secondo BOM è contenuto e non viene scartato in silenzio" started.
+◇ Test "L'intervallo BCa coincide con la formula calcolata in R sugli stessi replicati" started.
+◇ Test "PageRank risolve identità con hash in collisione e rispetta cancellazione" started.
+◇ Test "Keyness rifiuta gruppi sovrapposti, degeneri e famiglie oltre limite" started.
+◇ Test "Il planner-v2 esegue le capability estese e le conserva nel lineage dell'interpretazione" started.
+◇ Test "La finestra a destra conserva la direzione node→collocato" started.
+◇ Test "La cancellazione già richiesta conserva l'esito del tokenizer legacy" started.
+◇ Test "Fuzz Markdown: 2.000 documenti annidati e malformati restano mappati sulla fonte" started.
+◇ Test "Dispersione per termine coincide con DP, norma e Juilland D esatti su due documenti uguali" started.
+◇ Test "Degree e WeightedDegree contano correttamente archi e self-loop" started.
+◇ Test "Il calendario gregoriano rifiuta date normalizzate e confini locali inesistenti" started.
+◇ Test "Un'app inattiva raggiunge l'idle sospendendo la manutenzione" started.
+◇ Test "Il controllo di profondità preserva le guardie sintattiche e la validazione regex separata" started.
+◇ Test "Composizione di mappe incompatibili e contributive con un solo intervallo sono rifiutate" started.
+◇ Test "La rete a finestra applica soglie, direzione e misure di grafo verificate" started.
+◇ Test "Collocazioni per presenza nei documenti coincidono con le tabelle e i valori attesi" started.
+◇ Test "HAC ottimizzato conserva esattamente il riferimento diretto per seed, linkage e tie" started.
+◇ Test "La similarità di corpus coincide con i valori esatti calcolati indipendentemente" started.
+◇ Test "I confini mantengono separate posizione, unità e documento esatti" started.
+◇ Test "Il recovery read-only fallisce quando il manifest è illeggibile" started.
+◇ Test "Il sottoinsieme regex bounded evita costrutti di backtracking" started.
+◇ Test "La ricerca e la composizione di SpanMap coincidono con il riferimento lineare completo" started.
+◇ Test "Regole: booleani, conteggi, variabili e riferimenti producono codifica multilabel" started.
+◇ Test "Le nuove directory sono private e il riuso non cambia i permessi esistenti" started.
+◇ Test "Il commit Artifact mantiene l'autorità prima e dopo il commit point" started.
+◇ Test "p(x,y)=1 usa esplicitamente il valore di continuità NPMI=1, non la formula generale" started.
+◇ Test "Gli estremi numerici non diventano risultati finiti ma falsi" started.
+◇ Test "La query Markdown conserva coordinate estratte e intervalli della fonte" started.
+◇ Test "Gli oggetti qualitativi non accettano link, file speciali o dimensioni incoerenti" started.
+◇ Test "La lettura export rispetta il budget a ogni confine di chunk" started.
+◇ Test "Uno store di schema 3 migra in modo additivo allo schema 4" started.
+◇ Test "HAC coincide con hclust di R nei quattro linkage" started.
+◇ Test "Le distribuzioni inferenziali rifiutano gradi di libertà infiniti" started.
+◇ Test "CentroidCosine-v1 coincide con l'oracolo Python: punteggi, rank e selezioni" started.
+◇ Test "Una directory già aperta non viene reindirizzata dal nuovo link" started.
+◇ Test "Hedges g e l'intervallo di d coincidono con R" started.
+◇ Test "Cohen's Kappa vale 1 sull'accordo perfetto e 0 sull'accordo casuale, per calcolo esatto" started.
+◇ Test "Il profilo nominale limita comunque il parallelismo alla policy" started.
+◇ Test "MTLD: +∞ senza fattori, sequenza vuota non definita, soglia fuori da (0,1) rifiutata" started.
+◇ Test "Le tre MDS iterative sono riproducibili e non aumentano il proprio obiettivo" started.
+◇ Test "SOM su quattro unità coincide con l'oracolo R indipendente su tutti i prototipi" started.
+◇ Test "Mann–Whitney esatto coincide con la distribuzione enumerata di U" started.
+◇ Test "Fleiss kappa coincide con R su quattro unità e tre codificatori" started.
+◇ Test case passing 2 arguments kind → .importedSource, mutation → .truncated to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test case passing 2 arguments kind → .importedSource, mutation → .extraByte to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "QueryAST JSON conserva algebra, digest e serializzazione canonica" started.
+◇ Test "Il limite risultati marca esplicitamente la troncatura" started.
+◇ Test "Bonferroni e Benjamini–Hochberg preservano l'ordine originale" started.
+◇ Test "Margini nulli vengono esclusi da χ², gradi di libertà e residui" started.
+◇ Test case passing 2 arguments kind → .importedSource, mutation → .oversizedSparse to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "Louvain ritrova due triangoli e la modularità coincide con 5/14" started.
+◇ Test "La finestra non attraversa i documenti e il risultato è deterministico" started.
+◇ Test "Il manifest non accetta hard link anche se i byte sono validi" started.
+◇ Test "SpanMap risolve una phrase Markdown in intervalli sorgente esatti" started.
+◇ Test "Fuzz TXT: 2.000 input con byte ostili producono esiti tipizzati e SpanMap valide" started.
+◇ Test "Il profilo di una fonte vuota dichiara le metriche lessicali non definite" started.
+◇ Test case passing 2 arguments kind → .importedSource, mutation → .symbolicLink to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "Il bootstrap a blocchi con L=1 coincide con il bootstrap i.i.d." started.
+◇ Test "Le ponderazioni rifiutano conteggi invalidi e overflow con failure tipizzate" started.
+◇ Test "AnalysisDescriptor ha round-trip canonico e identità semanticamente sensibile" started.
+◇ Test case passing 2 arguments kind → .importedSource, mutation → .hardLink to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test case passing 2 arguments kind → .importedSource, mutation → .fifo to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test case passing 2 arguments kind → .importedSource, mutation → .changedDigest to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "Le famiglie estese producono findings con le classi ADR-0026 e sopprimono i non eleggibili" started.
+◇ Test case passing 2 arguments kind → .artifact, mutation → .truncated to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "Regole accettano annotazioni esplicite senza inventare lemma o POS" started.
+◇ Test "Lee–Seung coincide con NMF::nmf (lee, senza riscalatura) dagli stessi fattori" started.
+◇ Test "NMF contigua interrompe i kernel senza consegnare un risultato parziale" started.
+◇ Test case passing 2 arguments kind → .artifact, mutation → .extraByte to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "La rete lessicale calcola grado, betweenness e closeness esatti su un triangolo" started.
+◇ Test "Un Artifact alterato rende il package corrotto" started.
+◇ Test "Entità e BOM conservano la relazione derivazionale e gli offset sorgente" started.
+◇ Test case passing 2 arguments kind → .artifact, mutation → .oversizedSparse to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "Le postings TextRank conservano bit per bit l'overlap diretto con ripetizioni, vuoti e disgiunzioni" started.
+◇ Test "I conteggi negativi vengono rifiutati con failure tipizzata" started.
+◇ Test "Regole rifiutano cicli, variabili o annotazioni mancanti e divisione per zero" started.
+◇ Test case passing 2 arguments kind → .artifact, mutation → .symbolicLink to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test case passing 2 arguments kind → .artifact, mutation → .hardLink to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "Tukey HSD coincide con TukeyHSD di R, intervalli compresi" started.
+◇ Test case passing 2 arguments kind → .artifact, mutation → .fifo to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "Le ponderazioni osservano cancellazione prima delle scansioni sparse" started.
+◇ Test "Totali degeneri e forme non valide vengono rifiutati con failure tipizzate" started.
+◇ Test case passing 2 arguments kind → .artifact, mutation → .changedDigest to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "Corpus identici producono similarità massima su ogni misura" started.
+◇ Test case passing 2 arguments kind → .qualitative, mutation → .truncated to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "Il grafo e PageRank rifiutano forme, riferimenti e parametri non validi" started.
+◇ Test case passing 2 arguments kind → .qualitative, mutation → .extraByte to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "L'accordo fra codificatori coincide con kappa 0 e alpha 1/8 esatti" started.
+◇ Test "L'analisi multivariata del corpus riproduce la matrice di R dal testo" started.
+◇ Test case passing 1 argument kind → .importedSource to "I quattro commit verificano il candidato e pubblicano la nuova generazione" started.
+◇ Test case passing 2 arguments kind → .qualitative, mutation → .oversizedSparse to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test case passing 1 argument kind → .artifact to "I quattro commit verificano il candidato e pubblicano la nuova generazione" started.
+◇ Test "Lidstone normalizza conteggi e prior enormi o subnormali senza perdere massa" started.
+◇ Test case passing 1 argument kind → .qualitative to "I quattro commit verificano il candidato e pubblicano la nuova generazione" started.
+◇ Test case passing 2 arguments kind → .qualitative, mutation → .symbolicLink to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test case passing 1 argument kind → .investigation to "I quattro commit verificano il candidato e pubblicano la nuova generazione" started.
+◇ Test case passing 2 arguments kind → .qualitative, mutation → .hardLink to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "La ridondanza è un parametro del descrittore: Artifact distinti, stessi punteggi" started.
+◇ Test case passing 2 arguments kind → .qualitative, mutation → .fifo to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "Lloyd rinumera centri e assegnazioni per prima apparizione e rifiuta limiti non validi" started.
+◇ Test "SOM a singola cella coincide con la media e con l'oracolo batch" started.
+◇ Test case passing 2 arguments kind → .qualitative, mutation → .changedDigest to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test case passing 2 arguments kind → .investigation, mutation → .truncated to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "Token e frasi restano ordinati, bounded e senza sovrapposizioni" started.
+◇ Test case passing 2 arguments kind → .investigation, mutation → .extraByte to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test case passing 2 arguments kind → .investigation, mutation → .oversizedSparse to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "Naive Bayes coincide con il conteggio multinomiale esatto e congela il vocabolario" started.
+◇ Test "BM25 conserva score finiti per k1 estremo senza azzerarli per overflow intermedio" started.
+◇ Test case passing 2 arguments kind → .investigation, mutation → .symbolicLink to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "Un nuovo motore segnala di essere pronto" started.
+◇ Test "Ogni operazione misurata restituisce il risultato senza modificarlo" started.
+◇ Test case passing 2 arguments kind → .investigation, mutation → .hardLink to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test case passing 2 arguments kind → .investigation, mutation → .fifo to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "MDS classica ricostruisce distanze e autovalori di cmdscale R" started.
+◇ Test "SpanMap conserva half-open, coalescenza, campi Codable e round-trip" started.
+◇ Test "L'ordinamento descrittivo bounded conserva la cancellazione" started.
+◇ Test "Il digest di corpus delle revisioni dichiarate è la radice ristretta a quelle revisioni" started.
+◇ Test case passing 2 arguments kind → .investigation, mutation → .changedDigest to "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" started.
+◇ Test "OneWayANOVA rifiuta gruppi insufficienti, vuoti o a varianza interna nulla" started.
+◇ Test "Markdown ostile termina al budget di lookahead" started.
+◇ Test "Il PDF pagina un rapporto lungo senza perdere testo o struttura" started.
+◇ Test "Il profilo è deterministico e ordina le frequenze con tie-break stabile" started.
+◇ Test "L'import conserva i byte, accetta il BOM e produce un digest stabile" started.
+◇ Test "Validazione del classificatore stratificata e senza dati di test nel training" started.
+◇ Test "Dopo il commit point la nuova generazione resta autorevole" started.
+◇ Test "Una sola unità non definisce norma o Juilland D ma calcola comunque DP" started.
+◇ Test "La rinomina e la creazione restano ancorate ai descriptor" started.
+◇ Test "N-grammi di caratteri con marcatori e di parole coincidono con i conteggi di R" started.
+◇ Test "Le letture export restano ancorate alla radice aperta e rifiutano nuove radici simboliche" started.
+◇ Test "Games–Howell coincide con q, gradi di libertà Welch e ptukey di R" started.
+◇ Test "Il validatore della xref accetta offset coerenti e rifiuta un offset spostato" started.
+◇ Test "La tabella d'accordo deriva dalle codifiche e coincide con coding-agreement-v2" started.
+◇ Test "Le transazioni interrotte conservano staging e file privati senza pubblicare il manifest" started.
+◇ Test "Nuovi package e file autorevoli hanno permessi privati" started.
+◇ Test "La storia qualitativa non segue directory simboliche" started.
+◇ Test "PairedT è il t a un campione sulle differenze appaiate" started.
+◇ Test "Il motore persiste analisi e keyness sulla generazione verificata" started.
+◇ Test "La valutazione rifiuta disallineamenti, annotazioni duplicate, offset e label invalidi" started.
+◇ Test "it-token-v1 coincide con tutti gli offset UTF-8 del seed" started.
+◇ Test "Chi-square, CramersV e residui coincidono con la tabella 2×3 di riferimento" started.
+◇ Test "Il motore profila testo UTF-8 tramite il contratto italiano" started.
+◇ Test "La distribuzione del range studentizzato coincide con ptukey di R" started.
+◇ Test "I termini Unicode conservano campi, forma esatta, digest e coordinate KWIC" started.
+◇ Test "Il test di permutazione esatto enumera le sei assegnazioni" started.
+◇ Test "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" started.
+◇ Test "La SVD troncata coincide con Jacobi sulla matrice di riferimento 5×4" started.
+◇ Test "Le collocazioni a finestra conservano posizioni, distanza media e peso 1/d" started.
+◇ Test "Modularità e qualità di Louvain coincidono con igraph sul karate club" started.
+◇ Test "La PCA coincide con prcomp di R, con e senza scaling" started.
+◇ Test "La Correspondence Analysis coincide con R e l'inerzia totale vale χ²/n" started.
+◇ Test "I componenti intermedi devono essere directory reali" started.
+◇ Test "Welch ANOVA rifiuta gruppi insufficienti, non finiti e degeneri" started.
+◇ Test "Booleani e prossimità usano lo scope e l'ordine canonici" started.
+◇ Test "Il recovery read-only riapre l'ultima generazione precedente interamente verificabile" started.
+◇ Test "Low Power Mode limita il lavoro richiesto e sospende quello discrezionale" started.
+◇ Test "L'import applica il limite prima della decodifica" started.
+◇ Test "CentroidCosine-v1: vettori nulli esclusi con diagnostica, payload senza isEligible" started.
+◇ Test "Il fuzz a seed fisso conserva token, frasi e componenti del tokenizer legacy" started.
+◇ Test "QueryAST JSON non aggira gli invarianti semantici e i flag regex ammessi" started.
+◇ Test "Le similarità conservano identità e omogeneità anche agli estremi di Double" started.
+◇ Test "Il post-hoc richiede almeno tre gruppi e riduce la famiglia ai test disponibili" started.
+◇ Test "I riferimenti ai codici sono binari e le parole riservate tra virgolette restano termini" started.
+◇ Test "Welch ANOVA coincide con oneway.test di R su gruppi sbilanciati" started.
+◇ Test "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test "La proiezione ricostruisce codebook, codifiche, ritrattazioni, mapping e memo" started.
+◇ Test "Lo staging nuovo è privato e conserva tutti i byte" started.
+◇ Test "SpanMap rifiuta coperture incomplete e richieste fuori rappresentazione" started.
+◇ Test "La correlazione perfetta ha t infinita e p nullo senza divisioni per zero" started.
+◇ Test "Rank-biserial deriva da U₁ con segno positivo se il primo campione è maggiore" started.
+◇ Test "La distribuzione esatta di U somma a C(m+n,m) e ha frequenze note" started.
+◇ Test "La sostituzione invalida i soli discendenti e un nuovo corpus tutti gli Artifact" started.
+◇ Test "Artifact e descriptor persistono con DAG e lettura verificati" started.
+◇ Test "Le ponderazioni ottimizzate coincidono con la definizione densa per ogni variante" started.
+◇ Test "Dunn coincide con z e p calcolati in R sui ranghi medi con tie" started.
+◇ Test "Welch ANOVA osserva la cancellazione prima delle scansioni" started.
+◇ Test "SentenceTFIDFMean-v1 coincide con l'oracolo Python: punteggi, rank e selezioni" started.
+◇ Test "Jensen-Shannon conserva distanze rappresentabili con contributi subnormali" started.
+◇ Test "Pesi e ranking BM25 si persistono come Artifact riusabili con query normalizzata" started.
+◇ Test "Le dimensioni diseguali escludono sempre Juilland D indipendentemente dalla frequenza" started.
+◇ Test "Pearson coincide con il calcolo a mano su cinque coppie" started.
+◇ Test "La selezione vuota produce soli header e le Evidence mancanti restano rifiutate" started.
+◇ Test "L'aggregazione temporale osserva la cancellazione prima di produrre la serie" started.
+◇ Test "LDA conserva token, normalizza distribuzioni ed è riproducibile per seed" started.
+◇ Test "Naive Bayes conserva log-probabilità finite con pseudoconteggio subnormale" started.
+◇ Test "Hellinger e Lidstone conservano contributi subnormali con risultati rappresentabili" started.
+◇ Test "Il renderer CSV coincide con il riferimento e misura soltanto workload espliciti" started.
+◇ Test "Coseno, euclidea e Manhattan coincidono con i valori attesi su vettori noti" started.
+◇ Test "Il taglio HAC a soglia include tutte le fusioni a pari altezza" started.
+◇ Test "p(x,y)=0 lascia PMI, NPMI, t-score e logDice non definiti ma calcola Dice e Jaccard" started.
+◇ Test "Il test di permutazione Monte Carlo è riproducibile e corretto con (b+1)/(m+1)" started.
+◇ Test "Gli errori operativi di creazione mantengono backoff e ultima generazione" started.
+◇ Test "Il p-value a un grado di libertà coincide con la forma chiusa erfc usata dal keyness" started.
+◇ Test "PageRank su due nodi con un pendente coincide con la soluzione del sistema lineare esatto" started.
+◇ Test "QueryAST JSON conserva la cancellazione senza convertirla in input non valido" started.
+◇ Test "I contrasti pianificati coincidono con lm di R e correggono la famiglia" started.
+◇ Test "Il quantile normale coincide con qnorm di R" started.
+◇ Test "Associazione documento×termine coincide con χ², V e p calcolati per frazioni esatte" started.
+◇ Test "Admission, piano non eseguibile e cancellazione terminano con failure tipizzate" started.
+◇ Test "Wilcoxon esatto scarta gli zeri e coincide con la legge enumerata di W⁺" started.
+◇ Test "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test "La dispersione su partizione dichiarata coincide con la primitiva sulle parti sommate" started.
+◇ Test "Phrase, prossimità, range e regex conservano parametri espliciti" started.
+◇ Test "Una distribuzione proporzionale all'opportunità produce DP e norma pari a zero" started.
+◇ Test "Un oggetto alterato rende il package corrotto senza modificarlo" started.
+◇ Test "SplitMix64 riproduce la sequenza di riferimento pubblicata" started.
+◇ Test "La profondità delle catene NEAR e BEFORE rispetta il limite dell'AST" started.
+◇ Test "Il bootstrap percentile è riproducibile dal seed e rispetta i vincoli" started.
+◇ Test "Le sei varianti TF coincidono con le formule indipendenti di R, riga vuota inclusa" started.
+◇ Test "Un'interruzione export non pubblica una destinazione parziale" started.
+◇ Test "I ranghi medi assegnano la media dei ranghi occupati e contano i tie" started.
+◇ Test "Una selezione editoriale estranea ai finding disponibili viene rifiutata" started.
+◇ Test "PageRank conserva la massa totale a 1 su un grafo asimmetrico con nodo pendente" started.
+◇ Test "Il profilo corpus riproduce conteggi, diversità, dispersione, n-grammi e matrice" started.
+◇ Test "NER separa span esatto e tipo e non abbina offset fra documenti" started.
+◇ Test "La perplexity predittiva LDA coincide con l'integrazione esatta, non con il prodotto delle medie" started.
+◇ Test "Conteggi lessicali e descrittive rispettano la cancellazione" started.
+◇ Test "Krippendorff alpha coincide con R ai livelli nominale, intervallo e ordinale" started.
+◇ Test "La traslazione dell'xref sposta solo gli offset a valle e riallinea startxref" started.
+◇ Test "MMR-v1 penalizza i duplicati, rifiuta λ fuori da [0, 1], decodifica payload senza ordine" started.
+◇ Test "Distribuzione lessicale: spectrum, tie stabili e crescita rispettano conteggi e ordine" started.
+◇ Test "Ogni arco booleano contribuisce alla profondità e la radice resta a zero" started.
+◇ Test "La tabella e l'associazione rifiutano forme, conteggi e dimensioni non valide" started.
+◇ Test "La classificazione ricostruisce confusion matrix, micro, macro e weighted" started.
+◇ Test "SOM e CLARA separano gruppi e conservano seed e identità dei medoidi" started.
+◇ Test "MMR-v1 coincide con l'oracolo Python: ordine di selezione, λ agli estremi e soglia" started.
+◇ Test "La rimozione del manifest dopo un commit lascia il package non riapribile" started.
+◇ Test "La matrice completa delle condizioni produce decisioni deterministiche e bounded" started.
+◇ Test "KL, Jensen-Shannon ed Hellinger coincidono con i casi noti in forma chiusa" started.
+◇ Test "Distribuzioni e fit rifiutano input ambigui, impossibili e modelli fuori dominio" started.
+◇ Test "La betweenness pesata usa la distanza 1/peso e divide i cammini a pari lunghezza" started.
+◇ Test "La valutazione osserva la cancellazione prima di produrre un risultato" started.
+◇ Test "Invarianti della storia qualitativa rifiutati con codici tipizzati" started.
+◇ Test "CohenD-pooled coincide con d=-3 e rifiuta varianza nulla" started.
+◇ Test "Betweenness e HarmonicCloseness su un percorso diretto coincidono con i valori esatti" started.
+◇ Test "La morfologia conserva tutti i casi di attributi assenti, errati e corretti" started.
+◇ Test "La qualità della tokenizzazione non scende sotto la linea di base registrata" started.
+◇ Test "La decodifica legacy conserva ordine non conforme e risultati del percorso lineare" started.
+◇ Test "PageRank mantiene la massa anche con pesi finiti estremi e tolleranze validate" started.
+◇ Test "OneWayANOVA su tre gruppi noti produce F=12 e p=0,2³ esatto per identità chiusa" started.
+◇ Test "URL, hashtag e mention restano unità speciali bounded" started.
+◇ Test "Un gruppo privo di termini viene rifiutato con failure tipizzata" started.
+◇ Test "Escape, AND implicito e canonicalizzazione restano deterministici" started.
+◇ Test "Il motore interroga la generazione persistita senza accesso laterale allo store" started.
+◇ Test "Una coppia di codici mai applicati non forma un arco di co-occorrenza" started.
+◇ Test "Il CSV conserva riferimenti condivisi e ripetuti, ordine, Unicode e protezione formula" started.
+◇ Test "L'import rifiuta UTF-8 malformato senza sostituzione lossy" started.
+◇ Test "La normalizzazione del termine conserva troncatura zero, parziale e completa" started.
+◇ Test "Wilcoxon asintotico applica la correzione dei tie e di continuità" started.
+◇ Test "Il parser rifiuta campi, sintassi e regex non conformi con span UTF-8" started.
+◇ Test "Un evento qualitativo manomesso rende il package non apribile" started.
+◇ Test "La composizione di SpanMap conserva ogni origine e i byte dei tratti exact" started.
+◇ Test "Il tokenizer conserva l'output legacy e misura soltanto workload espliciti" started.
+◇ Test "Fisher esatto coincide con fisher.test e il Monte Carlo approssima il p esatto" started.
+◇ Test "Il grafo vuoto e i self-loop non alterano Betweenness/HarmonicCloseness" started.
+◇ Test "La correlazione fra metriche coincide con Pearson e Spearman calcolati a mano" started.
+◇ Test "Invarianti e precondizioni di GS-MET-001-07 falliscono con codici tipizzati" started.
+◇ Test "Parametri e limiti dei grafi falliscono prima del calcolo non limitato" started.
+◇ Test case passing 1 argument interruption → .staged to "Il commit Artifact mantiene l'autorità prima e dopo il commit point" started.
+◇ Test "Il quantile della t coincide con qt di R" started.
+◇ Test "I limiti di byte, profondità e nodi sono applicati prima del lavoro non bounded" started.
+◇ Test "PageRank conserva ordine dei nodi, multiarchi, self-loop e dangling nella rappresentazione sparsa" started.
+◇ Test "L'eigenvector centrality coincide con eigen() di R, anche su un grafo bipartito" started.
+◇ Test "Morfologia conserva exact-set e conta valori errati come FP e FN" started.
+◇ Test "IDF, TF-IDF normalizzato L1/L2 e BM25-v1 coincidono con R" started.
+◇ Test "Gli operatori osservano la cancellazione prima del lavoro numerico" started.
+◇ Test "Un nuovo motore usa la configurazione linguistica italiana" started.
+◇ Test case passing 1 argument interruption → .objectPromoted to "Il commit Artifact mantiene l'autorità prima e dopo il commit point" started.
+◇ Test "Il planner produce un piano canonico con dipendenze e rationale completi" started.
+◇ Test "La partizione indicizzata conserva mancanti, esclusioni e bucket vuoti su input riordinato" started.
+◇ Test "Gli obiettivi MDS coincidono con le formule indipendenti R, comprese le parità" started.
+◇ Test "Riassunto: frase senza token a punteggio zero mai scelta, parità per posizione, budget" started.
+◇ Test "La revisione conserva distanze, ranking e logica su famiglie di input" started.
+◇ Test "MDS rifiuta input asimmetrici, non finiti e budget insufficienti" started.
+◇ Test "Il profilo Markdown usa soltanto il testo estratto con lineage" started.
+◇ Test "Le policy ADR-0026 applicano le soglie di confine dichiarate" started.
+◇ Test "MDS rifiuta underflow delle coordinate e Stress-1 privo di denominatore" started.
+◇ Test case passing 1 argument interruption → .databasePrepared to "Il commit Artifact mantiene l'autorità prima e dopo il commit point" started.
+◇ Test "Kruskal–Wallis senza tie coincide con H=7,2 e p=exp(-3,6)" started.
+◇ Test "La verifica export rifiuta manifest e payload non sicuri e riprende dopo il ripristino" started.
+◇ Test "Prima del commit point resta autorevole la generazione precedente" started.
+◇ Test "Stopword e soglie si applicano dopo il conteggio con esclusioni attribuite" started.
+◇ Test "Spearman usa i ranghi medi in presenza di tie" started.
+◇ Test "La normalizzazione descrittiva in-place conserva Q7 originali e fixture bitwise" started.
+◇ Test "LDA Gibbs coincide entro tolleranza con l'integrazione esatta di tutti gli stati" started.
+◇ Test "Analysis DAG deduplica, ordina, invalida e riusa soltanto rami validi" started.
+◇ Test case passing 1 argument interruption → .manifestPrepared to "Il commit Artifact mantiene l'autorità prima e dopo il commit point" started.
+◇ Test "Le policy di mancanti, dominio e tipo temporale sono fail-closed" started.
+◇ Test "La LSA tronca al rango richiesto con residuo pari alla norma dei valori scartati" started.
+◇ Test case passing 1 argument interruption → .manifestReplaced to "Il commit Artifact mantiene l'autorità prima e dopo il commit point" started.
+◇ Test "Punteggiatura, email e URL preservano tutti i limiti e i suffissi legacy" started.
+◇ Test "Pearson e Welch preservano piccole variazioni su un grande offset" started.
+◇ Test "La precedenza NOT, prossimità, AND e OR produce un AST stabile" started.
+◇ Test "L'accumulo temporale conserva termini nulli e lineage sparso nell'ordine canonico" started.
+◇ Test "Statistiche descrittive: vuoto, singleton, input non finiti e overflow espliciti" started.
+◇ Test "La varianza descrittiva conserva lo spread piccolo su un offset grande" started.
+◇ Test "I limiti corpus falliscono prima di materializzare risultati non bounded" started.
+◇ Test "Le misure d'accordo sono identiche bit a bit su richieste uguali e su tipi di categoria" started.
+◇ Test case passing 1 argument interruption → .databaseCommitted to "Il commit Artifact mantiene l'autorità prima e dopo il commit point" started.
+◇ Test "Betweenness e HarmonicCloseness su una stella coincidono con i valori esatti noti" started.
+◇ Test "PageRank su un ciclo simmetrico converge a 1/3 esatto per ogni nodo" started.
+◇ Test "Campi privi di capability falliscono senza simulare zero risultati" started.
+◇ Test "La LSA passa alla SVD troncata oltre il limite di Jacobi con lo stesso risultato" started.
+◇ Test "La serie temporale rifiuta revisioni duplicate, esposizione incoerente e overflow" started.
+◇ Test "NMF resta non negativa, riduce l'obiettivo e ricostruisce una matrice di rango esatto" started.
+◇ Test "Welch ANOVA a due gruppi equivale al quadrato del t di Welch" started.
+◇ Test "Il grafo conserva isolate, non inventa vettori nulli e dichiara la mancata convergenza" started.
+◇ Test "Le distanze metriche rispettano la disuguaglianza triangolare su tutte le terne" started.
+◇ Test "Le correlazioni rifiutano lunghezze diverse, campioni piccoli e varianza nulla" started.
+◇ Test "NMF contigua conserva bit per bit la definizione scalare per forme, seed e stopping" started.
+◇ Test "Cammini pesati e Louvain su 150 nodi e 600 archi coincidono con igraph" started.
+◇ Test "Le parità HAC seguono le identità canoniche anche dopo una fusione" started.
+◇ Test "Il writer rifiuta lock non regolari senza modificare la generazione" started.
+◇ Test "La baseline non consente telemetria o diagnostica automatica" started.
+◇ Test "Il profilo descrittivo produce Evidence e Finding content-addressed con lineage completo" started.
+◇ Test "Le osservazioni di progresso rifiutano invarianti impossibili" started.
+◇ Test "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test "Markdown estrae struttura e inline senza eseguire destinazioni o HTML" started.
+◇ Test "GTest, Fisher selezionato, IC ed effect size coincidono con il caso noto e con R" started.
+◇ Test "Il lavoro interattivo minimo resta disponibile sotto pressione critica" started.
+◇ Test "Associazione perfetta (b=c=0) produce NPMI=1, Dice=1, Jaccard=1 e valori esatti noti" started.
+◇ Test "QueryAST JSON rifiuta schema, grammatica e input malformato senza contenuto diagnostico" started.
+◇ Test "Krippendorff's Alpha vale 1 sull'accordo perfetto ed è non definito a disaccordo atteso nullo" started.
+◇ Test "Il descrittore distingue metodi e configurazioni del grafo e riusa lo stesso artefatto" started.
+◇ Test "Il post-hoc confronta ogni coppia e corregge ciascuna famiglia con Bonferroni e BH" started.
+◇ Test "Jaccard pesato, Dice multinsieme e KL con Lidstone coincidono con i valori a mano" started.
+◇ Test "Il confronto fra gruppi riproduce Welch t, ANOVA e la metrica di frequenza relativa" started.
+◇ Test "Un'importazione conserva gli Artifact legati a revisioni immutate e la loro catena" started.
+◇ Test "Una valutazione di termine già cancellata non avvia la scansione" started.
+◇ Test "Jensen-Shannon conserva il segnale quadratico vicino a distribuzioni identiche" started.
+◇ Test "Il planner rifiuta riferimenti ignoti o fuori scope senza modificare il piano" started.
+◇ Test "Termini, phrase e KWIC mantengono offset e normalizzazione" started.
+◇ Test "Il taglio HAC rifiuta alberi corrotti prima di attraversarne le identità" started.
+◇ Test "Regole ostili, profondità e riferimenti espansivi restano bounded" started.
+◇ Test "I bucket istante seguono le giornate di calendario anche con 23 o 25 ore" started.
+◇ Test "Fuzz query: 3.000 query valide e malformate hanno esito tipizzato e tempo limitato" started.
+◇ Test "Pearson e Welch gestiscono anchor con differenze oltre il massimo binary64" started.
+◇ Test "t appaiato e Wilcoxon appaiato esatto coincidono con t.test e wilcox.test di R" started.
+◇ Test "Il p-value t a un grado di libertà coincide con l'identità Cauchy in arcotangente" started.
+◇ Test "La precisione del metadato non viene affinata implicitamente" started.
+◇ Test "Le frequenze filtrate si persistono dal testo con la normalizzazione del profilo" started.
+◇ Test "NMF conserva inizializzazione e selezione dei restart contro la definizione scalare" started.
+◇ Test "La storia qualitativa si persiste, sopravvive a importazioni e riapertura" started.
+◇ Test "LDA a un topic coincide con il posteriore Dirichlet esatto" started.
+◇ Test "QueryAST JSON applica i limiti esatti di byte, nodi e profondità" started.
+◇ Test "Clustering su dissimilarità coincide con hclust R e alimenta una rete di codici" started.
+◇ Test "Lloyd coincide con kmeans di R a parità di centri e k-means++ è riproducibile" started.
+◇ Test "Con attese almeno 5 la regola di Cochran conserva il G-test e gli IC coincidono con R" started.
+◇ Test "Il riassunto estrattivo si persiste dal testo, si riusa e risolve le frasi scelte" started.
+◇ Test "KL e JS valutano probabilità subnormali nel dominio logaritmico" started.
+◇ Test "L'identità F(1,df2) = t²(df2) collega le due distribuzioni indipendentemente" started.
+◇ Test "La policy keyness ordina per famiglia, espone le cautele e limita i risultati" started.
+◇ Test "Il riassunto mappa le frasi estratte sugli originali Markdown e UTF-8 con BOM" started.
+◇ Test "Le scritture staged restano sui descriptor dopo sostituzioni" started.
+◇ Test "La cancellazione delle letture verificate non muta il package e permette una nuova lettura" started.
+◇ Test "Cammini pesati, eigenvector pesata e componenti coincidono con igraph" started.
+◇ Test "La concentrazione massima su parti uguali produce DP=2/3, norma=1 e JuillandD=0" started.
+◇ Test "Una collisione nella pubblicazione conserva file esterni e ultima generazione" started.
+◇ Test case passing 1 argument byteCount → 0 to "La lettura export rispetta il budget a ogni confine di chunk" started.
+◇ Test case passing 1 argument kind → "symbolicLink" to "Gli oggetti qualitativi non accettano link, file speciali o dimensioni incoerenti" started.
+◇ Test case passing 1 argument byteCount → 1 to "La lettura export rispetta il budget a ogni confine di chunk" started.
+◇ Test case passing 1 argument kind → "hardLink" to "Gli oggetti qualitativi non accettano link, file speciali o dimensioni incoerenti" started.
+◇ Test case passing 1 argument kind → "fifo" to "Gli oggetti qualitativi non accettano link, file speciali o dimensioni incoerenti" started.
+◇ Test case passing 1 argument byteCount → 65535 to "La lettura export rispetta il budget a ogni confine di chunk" started.
+◇ Test case passing 1 argument kind → "directory" to "Gli oggetti qualitativi non accettano link, file speciali o dimensioni incoerenti" started.
+◇ Test case passing 1 argument byteCount → 65536 to "La lettura export rispetta il budget a ogni confine di chunk" started.
+◇ Test case passing 1 argument kind → "oversized" to "Gli oggetti qualitativi non accettano link, file speciali o dimensioni incoerenti" started.
+◇ Test case passing 1 argument byteCount → 65537 to "La lettura export rispetta il budget a ogni confine di chunk" started.
+◇ Test case passing 1 argument kind → "truncated" to "Gli oggetti qualitativi non accettano link, file speciali o dimensioni incoerenti" started.
+◇ Test case passing 1 argument byteCount → 131073 to "La lettura export rispetta il budget a ogni confine di chunk" started.
+◇ Test case passing 1 argument replaceRoot → false to "Una directory già aperta non viene reindirizzata dal nuovo link" started.
+◇ Test case passing 1 argument replaceRoot → true to "Una directory già aperta non viene reindirizzata dal nuovo link" started.
+✔ Test "OneSampleT coincide con t=√2 e il p-value in forma chiusa con 4 gradi di libertà" passed after 0.400 seconds.
+✔ Test "I denominatori nulli seguono la policy e non producono accordo perfetto" passed after 0.402 seconds.
+✔ Test "MTLD-bidirectional-v1 coincide con l'implementazione indipendente in R" passed after 0.403 seconds.
+✔ Test "La tassonomia di GS-API-001 § 8 copre ogni categoria e i default sono ammessi" passed after 0.414 seconds.
+✔ Test "La finestra simmetrica riproduce i conteggi e le misure calcolati a mano" passed after 0.432 seconds.
+✔ Test "I confini di frase bloccano la finestra salvo richiesta esplicita" passed after 0.432 seconds.
+✔ Test "Regole: near, seq, frasi e confini di frase e paragrafo" passed after 0.456 seconds.
+✔ Test "Statistiche descrittive: missing espliciti, Q7 e varianza campionaria contro R" passed after 0.457 seconds.
+✔ Test "Gli identificatori tipizzati hanno rappresentazioni distinte e round-trip stabile" passed after 0.490 seconds.
+✔ Test "Mann–Whitney asintotico applica la correzione dei tie" passed after 0.490 seconds.
+✔ Test "Il descrittore v2 dichiara le revisioni senza cambiare l'identità dei descrittori v1" passed after 0.512 seconds.
+✔ Test "Kruskal–Wallis con tie applica il fattore di correzione" passed after 0.514 seconds.
+✔ Test "Gli helper di failure parametrici restano nella tassonomia per ogni categoria" passed after 0.514 seconds.
+✔ Test "ZipfLogOLS-v1 e HeapsLogOLS-v1 coincidono con stats::lm indipendente" passed after 0.544 seconds.
+✔ Test "La cronologia dell'indagine è content-addressed, append-only e ramificabile" passed after 0.564 seconds.
+✔ Test "La silhouette coincide con cluster::silhouette di R" passed after 0.564 seconds.
+✔ Test "Spearman esatto rifiuta NaN e infinito prima del ranking" passed after 0.564 seconds.
+✔ Test "La pressione critica protegge il sistema e rifiuta nuovo lavoro non interattivo" passed after 0.600 seconds.
+✔ Test "Analysis DAG rifiuta dipendenze mancanti, cicli e budget superati" passed after 0.600 seconds.
+✔ Test "Pearson conserva la correlazione per scale estreme finite" passed after 0.602 seconds.
+✔ Test "La correlazione fra metriche richiede tre documenti e variabilità" passed after 0.647 seconds.
+✔ Test "Il budget di decodifica copre figli, array, prossimità e scope prima di costruire alberi profondi" passed after 0.650 seconds.
+✔ Test "Il payload revalida le identità e le opzioni rifiutano policy non monotone" passed after 0.650 seconds.
+✔ Test "Senza tie il confronto fra gruppi sceglie Mann–Whitney esatto" passed after 0.650 seconds.
+✔ Test "La legge esatta di W⁺ somma a 2ⁿ ed è simmetrica" passed after 0.650 seconds.
+✔ Test "Il writer non segue link nella directory delle transazioni" passed after 0.651 seconds.
+✔ Test "Il package .glifi conserva una fonte e riapre la stessa generazione" passed after 0.650 seconds.
+✔ Test "Le nuove misure di similarità coincidono con le forme chiuse e KL indefinita è nil" passed after 0.653 seconds.
+✔ Test "I quattro commit verificano il candidato e pubblicano la nuova generazione" with 4 test cases passed after 0.654 seconds.
+✔ Test "La pressione arrivata prima della pianificazione non produce una generazione" passed after 0.654 seconds.
+✔ Test "SOM aggregata coincide con la formula batch diretta su ogni prototipo" passed after 0.654 seconds.
+✔ Test "Il quantile di tipo 7 interpola linearmente fra le statistiche d'ordine" passed after 0.676 seconds.
+✔ Test "La serie civile conserva il giorno bisestile, i bordi, i denominatori e il lineage" passed after 0.676 seconds.
+✔ Test "Jaccard e Dice rispettano i casi limite degli insiemi e i valori esatti attesi" passed after 0.707 seconds.
+✔ Test "Welch t su due campioni noti riproduce statistica e gradi di libertà per calcolo indipendente" passed after 0.707 seconds.
+✔ Test "PageRank senza archi resta al vettore di teleport e converge in una iterazione" passed after 0.707 seconds.
+✔ Test "CA e PCA con backend troncato coincidono con Jacobi, già verificato contro R" passed after 0.730 seconds.
+✔ Test "L'intervallo di Fisher-z e il p esatto di Spearman coincidono con cor.test di R" passed after 0.730 seconds.
+✔ Test "Componenti deboli e forti distinguono la direzione degli archi" passed after 0.736 seconds.
+✔ Test "Un package schema 2 migra in modo additivo prima di accettare la cronologia" passed after 0.772 seconds.
+✔ Test "NMF, HAC e KMeans rifiutano overflow e parametri di arresto non finiti" passed after 0.772 seconds.
+✔ Test "Il manifest schema 3 non accetta una radice Investigation mancante" passed after 0.782 seconds.
+✔ Test "La SVD di Jacobi coincide con svd() di R e ricostruisce la matrice" passed after 0.811 seconds.
+✔ Test "Le autocoppie e le finestre non valide sono dichiarate, non implicite" passed after 0.811 seconds.
+✔ Test "Il planner distingue precondizioni, capability assenti e rinvio per budget" passed after 0.817 seconds.
+✔ Test "Matrici di parole e codici condividono distanze, trasformazioni e ordine" passed after 0.817 seconds.
+✔ Test "Un universo interamente vuoto lascia tutte le misure non definite" passed after 0.818 seconds.
+◇ Test case passing 1 argument interruption → .manifestReplaced to "Dopo il commit point la nuova generazione resta autorevole" started.
+◇ Test case passing 1 argument interruption → .databaseCommitted to "Dopo il commit point la nuova generazione resta autorevole" started.
+✔ Test "Il CSV deduplica per EvidenceID entro il Finding anche con disposition e reason diverse" passed after 0.832 seconds.
+✔ Test "TextRank e LexRank coincidono con il sistema stazionario indipendente Python" passed after 0.832 seconds.
+◇ Test case passing 1 argument replaced → "root" to "La rinomina e la creazione restano ancorate ai descriptor" started.
+◇ Test case passing 1 argument replaced → "source" to "La rinomina e la creazione restano ancorate ai descriptor" started.
+◇ Test case passing 1 argument replaced → "destination" to "La rinomina e la creazione restano ancorate ai descriptor" started.
+✔ Test "Regressione dal fuzz: un secondo BOM è contenuto e non viene scartato in silenzio" passed after 0.853 seconds.
+✔ Test "Stress e autovalori non finiti vengono rifiutati anche se le coordinate sono finite" passed after 0.854 seconds.
+◇ Test case passing 2 arguments kind → .source, interruption → .staged to "Le transazioni interrotte conservano staging e file privati senza pubblicare il manifest" started.
+◇ Test case passing 2 arguments kind → .source, interruption → .manifestPrepared to "Le transazioni interrotte conservano staging e file privati senza pubblicare il manifest" started.
+◇ Test case passing 2 arguments kind → .artifact, interruption → .staged to "Le transazioni interrotte conservano staging e file privati senza pubblicare il manifest" started.
+◇ Test case passing 2 arguments kind → .artifact, interruption → .manifestPrepared to "Le transazioni interrotte conservano staging e file privati senza pubblicare il manifest" started.
+◇ Test case passing 2 arguments kind → .qualitative, interruption → .staged to "Le transazioni interrotte conservano staging e file privati senza pubblicare il manifest" started.
+◇ Test case passing 2 arguments kind → .qualitative, interruption → .manifestPrepared to "Le transazioni interrotte conservano staging e file privati senza pubblicare il manifest" started.
+◇ Test case passing 1 argument depth → 0 to "La storia qualitativa non segue directory simboliche" started.
+◇ Test case passing 1 argument depth → 1 to "La storia qualitativa non segue directory simboliche" started.
+◇ Test case passing 1 argument depth → 2 to "La storia qualitativa non segue directory simboliche" started.
+◇ Test case passing 1 argument depth → 3 to "La storia qualitativa non segue directory simboliche" started.
+✔ Test "L'invariante del package accetta un Artifact legato alle sole revisioni dichiarate" passed after 0.928 seconds.
+✔ Test "Keyness rifiuta gruppi sovrapposti, degeneri e famiglie oltre limite" passed after 0.947 seconds.
+✔ Test "Il metodo di punteggio è un parametro del descrittore: Artifact distinti, stesse frasi" passed after 0.947 seconds.
+◇ Test case passing 1 argument kind → "regular" to "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" started.
+◇ Test case passing 1 argument kind → "symbolicLink" to "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" started.
+◇ Test case passing 1 argument kind → "danglingLink" to "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" started.
+◇ Test case passing 1 argument kind → "hardLink" to "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" started.
+◇ Test case passing 1 argument kind → "fifo" to "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" started.
+◇ Test case passing 1 argument kind → "directory" to "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" started.
+✔ Test "La finestra a destra conserva la direzione node→collocato" passed after 0.960 seconds.
+◇ Test case passing 1 argument useFIFO → false to "I componenti intermedi devono essere directory reali" started.
+◇ Test case passing 1 argument useFIFO → true to "I componenti intermedi devono essere directory reali" started.
+✔ Test "L'intervallo BCa coincide con la formula calcolata in R sugli stessi replicati" passed after 0.982 seconds.
+✔ Test "Dispersione per termine coincide con DP, norma e Juilland D esatti su due documenti uguali" passed after 0.990 seconds.
+✔ Test "Degree e WeightedDegree contano correttamente archi e self-loop" passed after 0.999 seconds.
+◇ Test case passing 2 arguments kind → .source, depth → 0 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .source, depth → 1 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .source, depth → 2 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .source, depth → 3 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .artifact, depth → 0 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .artifact, depth → 1 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .artifact, depth → 2 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .artifact, depth → 3 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .descriptor, depth → 0 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .descriptor, depth → 1 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .descriptor, depth → 2 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .descriptor, depth → 3 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .investigation, depth → 0 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .investigation, depth → 1 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .investigation, depth → 2 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .investigation, depth → 3 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .qualitative, depth → 0 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .qualitative, depth → 1 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .qualitative, depth → 2 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments kind → .qualitative, depth → 3 to "La pubblicazione non scrive attraverso directory simboliche a nessun livello" started.
+◇ Test case passing 2 arguments target → .source, mutation → .valid to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .source, mutation → .sameLengthCorruption to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .source, mutation → .truncated to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .source, mutation → .grown to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .source, mutation → .symbolicLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .source, mutation → .hardLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .source, mutation → .fifo to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .source, mutation → .directory to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .valid to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .sameLengthCorruption to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .truncated to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .grown to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .symbolicLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .hardLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .fifo to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoverySource, mutation → .directory to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .artifact, mutation → .valid to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .artifact, mutation → .sameLengthCorruption to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .artifact, mutation → .truncated to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .artifact, mutation → .grown to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .artifact, mutation → .symbolicLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .artifact, mutation → .hardLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .artifact, mutation → .fifo to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .artifact, mutation → .directory to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .valid to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .sameLengthCorruption to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .truncated to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .grown to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .symbolicLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .hardLink to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .fifo to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 2 arguments target → .recoveryArtifact, mutation → .directory to "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" started.
+◇ Test case passing 1 argument byteCount → 0 to "Lo staging nuovo è privato e conserva tutti i byte" started.
+◇ Test case passing 1 argument byteCount → 1 to "Lo staging nuovo è privato e conserva tutti i byte" started.
+◇ Test case passing 1 argument byteCount → 1048577 to "Lo staging nuovo è privato e conserva tutti i byte" started.
+✔ Test "La diversità MTLD si persiste per documento e sulla sequenza concatenata" passed after 1.698 seconds.
+✔ Test "Un'app inattiva raggiunge l'idle sospendendo la manutenzione" passed after 1.702 seconds.
+✔ Test "Il controllo di profondità preserva le guardie sintattiche e la validazione regex separata" passed after 1.729 seconds.
+✔ Test "Composizione di mappe incompatibili e contributive con un solo intervallo sono rifiutate" passed after 1.729 seconds.
+◇ Test case passing 1 argument path → "" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 1 argument path → "/" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 1 argument path → "." to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 1 argument path → ".." to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 1 argument path → "./payload" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 1 argument path → "nested/../payload" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 1 argument path → "nested//payload" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 1 argument path → "nested/./payload" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 1 argument path → "nested/payload/" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 1 argument path → "nested\payload" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+◇ Test case passing 1 argument path → "payload◇ Test case passing 1 argument path → "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" to "I percorsi relativi anomali sono rifiutati prima della risoluzione" started.
+✔ Test "Il calendario gregoriano rifiuta date normalizzate e confini locali inesistenti" passed after 1.746 seconds.
+◇ Test case passing 1 argument operation → "NEAR" to "La profondità delle catene NEAR e BEFORE rispetta il limite dell'AST" started.
+◇ Test case passing 1 argument operation → "BEFORE" to "La profondità delle catene NEAR e BEFORE rispetta il limite dell'AST" started.
+✔ Test "Il piano viene persistito e riusato dopo la riapertura" passed after 1.756 seconds.
+◇ Test case passing 1 argument interruption → .payloadsWritten to "Un'interruzione export non pubblica una destinazione parziale" started.
+◇ Test case passing 1 argument interruption → .manifestWritten to "Un'interruzione export non pubblica una destinazione parziale" started.
+◇ Test case passing 1 argument interruption → .stagingValidated to "Un'interruzione export non pubblica una destinazione parziale" started.
+✔ Test "Collocazioni per presenza nei documenti coincidono con le tabelle e i valori attesi" passed after 1.786 seconds.
+✔ Test "La similarità di corpus coincide con i valori esatti calcolati indipendentemente" passed after 1.786 seconds.
+✔ Test "I confini mantengono separate posizione, unità e documento esatti" passed after 1.823 seconds.
+✔ Test "Il recovery read-only fallisce quando il manifest è illeggibile" passed after 1.823 seconds.
+✔ Test "Il sottoinsieme regex bounded evita costrutti di backtracking" passed after 1.823 seconds.
+✔ Test "La ricerca e la composizione di SpanMap coincidono con il riferimento lineare completo" passed after 1.859 seconds.
+✔ Test "Le nuove directory sono private e il riuso non cambia i permessi esistenti" passed after 1.876 seconds.
+✔ Test "Regole: booleani, conteggi, variabili e riferimenti producono codifica multilabel" passed after 1.876 seconds.
+✔ Test "p(x,y)=1 usa esplicitamente il valore di continuità NPMI=1, non la formula generale" passed after 1.899 seconds.
+✔ Test "Il commit Artifact mantiene l'autorità prima e dopo il commit point" with 6 test cases passed after 1.902 seconds.
+✔ Test "Gli estremi numerici non diventano risultati finiti ma falsi" passed after 1.907 seconds.
+✔ Test "La rete a finestra applica soglie, direzione e misure di grafo verificate" passed after 1.907 seconds.
+◇ Test case passing 2 arguments fileName → "export-manifest.json", damage → .symbolicLink to "La verifica export rifiuta manifest e payload non sicuri e riprende dopo il ripristino" started.
+◇ Test case passing 2 arguments fileName → "export-manifest.json", damage → .hardLink to "La verifica export rifiuta manifest e payload non sicuri e riprende dopo il ripristino" started.
+◇ Test case passing 2 arguments fileName → "export-manifest.json", damage → .directory to "La verifica export rifiuta manifest e payload non sicuri e riprende dopo il ripristino" started.
+◇ Test case passing 2 arguments fileName → "export-manifest.json", damage → .fifo to "La verifica export rifiuta manifest e payload non sicuri e riprende dopo il ripristino" started.
+◇ Test case passing 2 arguments fileName → "export-manifest.json", damage → .oversized to "La verifica export rifiuta manifest e payload non sicuri e riprende dopo il ripristino" started.
+◇ Test case passing 2 arguments fileName → "export-manifest.json", damage → .truncated to "La verifica export rifiuta manifest e payload non sicuri e riprende dopo il ripristino" started.
+◇ Test case passing 2 arguments fileName → "report.json", damage → .symbolicLink to "La verifica export rifiuta manifest e payload non sicuri e riprende dopo il ripristino" started.
+◇ Test case passing 2 arguments fileName → "report.json", damage → .hardLink to "La verifica export rifiuta manifest e payload non sicuri e riprende dopo il ripristino" started.
+◇ Test case passing 2 arguments fileName → "report.json", damage → .directory to "La verifica export rifiuta manifest e payload non sicuri e riprende dopo il ripristino" started.
+◇ Test case passing 2 arguments fileName → "report.json", damage → .fifo to "La verifica export rifiuta manifest e payload non sicuri e riprende dopo il ripristino" started.
+◇ Test case passing 2 arguments fileName → "report.json", damage → .oversized to "La verifica export rifiuta manifest e payload non sicuri e riprende dopo il ripristino" started.
+◇ Test case passing 2 arguments fileName → "report.json", damage → .truncated to "La verifica export rifiuta manifest e payload non sicuri e riprende dopo il ripristino" started.
+◇ Test case passing 1 argument interruption → .staged to "Prima del commit point resta autorevole la generazione precedente" started.
+◇ Test case passing 1 argument interruption → .objectPromoted to "Prima del commit point resta autorevole la generazione precedente" started.
+◇ Test case passing 1 argument interruption → .databasePrepared to "Prima del commit point resta autorevole la generazione precedente" started.
+◇ Test case passing 1 argument interruption → .manifestPrepared to "Prima del commit point resta autorevole la generazione precedente" started.
+✔ Test "L'export scientifico inventaria JSON/Markdown/CSV/PDF e rileva manomissioni" passed after 2.300 seconds.
+◇ Test case passing 1 argument kind → "symbolicLink" to "Il writer rifiuta lock non regolari senza modificare la generazione" started.
+◇ Test case passing 1 argument kind → "danglingLink" to "Il writer rifiuta lock non regolari senza modificare la generazione" started.
+◇ Test case passing 1 argument kind → "hardLink" to "Il writer rifiuta lock non regolari senza modificare la generazione" started.
+◇ Test case passing 1 argument kind → "fifo" to "Il writer rifiuta lock non regolari senza modificare la generazione" started.
+◇ Test case passing 1 argument kind → "directory" to "Il writer rifiuta lock non regolari senza modificare la generazione" started.
+◇ Test case passing 2 arguments kind → "source", depth → 0 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "source", depth → 1 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "source", depth → 2 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "source", depth → 3 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "artifact", depth → 0 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "artifact", depth → 1 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "artifact", depth → 2 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "artifact", depth → 3 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "descriptor", depth → 0 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "descriptor", depth → 1 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "descriptor", depth → 2 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "descriptor", depth → 3 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "investigation", depth → 0 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "investigation", depth → 1 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "investigation", depth → 2 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 2 arguments kind → "investigation", depth → 3 to "Le letture del package rifiutano directory simboliche a ogni livello" started.
+◇ Test case passing 1 argument replaced → "root" to "Le scritture staged restano sui descriptor dopo sostituzioni" started.
+◇ Test case passing 1 argument replaced → "transactions" to "Le scritture staged restano sui descriptor dopo sostituzioni" started.
+◇ Test case passing 1 argument replaced → "staging" to "Le scritture staged restano sui descriptor dopo sostituzioni" started.
+◇ Test case passing 1 argument target → .source to "La cancellazione delle letture verificate non muta il package e permette una nuova lettura" started.
+◇ Test case passing 1 argument target → .recoverySource to "La cancellazione delle letture verificate non muta il package e permette una nuova lettura" started.
+◇ Test case passing 1 argument target → .artifact to "La cancellazione delle letture verificate non muta il package e permette una nuova lettura" started.
+◇ Test case passing 1 argument target → .recoveryArtifact to "La cancellazione delle letture verificate non muta il package e permette una nuova lettura" started.
+◇ Test case passing 1 argument kind → "regular" to "Una collisione nella pubblicazione conserva file esterni e ultima generazione" started.
+◇ Test case passing 1 argument kind → "symbolicLink" to "Una collisione nella pubblicazione conserva file esterni e ultima generazione" started.
+◇ Test case passing 1 argument kind → "danglingLink" to "Una collisione nella pubblicazione conserva file esterni e ultima generazione" started.
+◇ Test case passing 1 argument kind → "hardLink" to "Una collisione nella pubblicazione conserva file esterni e ultima generazione" started.
+◇ Test case passing 1 argument kind → "fifo" to "Una collisione nella pubblicazione conserva file esterni e ultima generazione" started.
+◇ Test case passing 1 argument kind → "directory" to "Una collisione nella pubblicazione conserva file esterni e ultima generazione" started.
+◇ Test case passing 1 argument kind → "valid" to "Una collisione nella pubblicazione conserva file esterni e ultima generazione" started.
+✔ Test "La lettura export rispetta il budget a ogni confine di chunk" with 6 test cases passed after 3.072 seconds.
+✔ Test "L'esecutore materializza ogni passo, emette progresso monotono e riusa gli Artifact" passed after 3.073 seconds.
+✔ Test "La query Markdown conserva coordinate estratte e intervalli della fonte" passed after 3.072 seconds.
+✔ Test "Le distribuzioni inferenziali rifiutano gradi di libertà infiniti" passed after 3.072 seconds.
+✔ Test "HAC coincide con hclust di R nei quattro linkage" passed after 3.072 seconds.
+✔ Test "Gli oggetti qualitativi non accettano link, file speciali o dimensioni incoerenti" with 6 test cases passed after 3.072 seconds.
+✔ Test "CentroidCosine-v1 coincide con l'oracolo Python: punteggi, rank e selezioni" passed after 3.072 seconds.
+✔ Test "Uno store di schema 3 migra in modo additivo allo schema 4" passed after 3.072 seconds.
+✔ Test "Hedges g e l'intervallo di d coincidono con R" passed after 3.072 seconds.
+✔ Test "La pressione fra nodi conserva soltanto generazioni complete e permette la ripresa" passed after 3.073 seconds.
+✔ Test "Una directory già aperta non viene reindirizzata dal nuovo link" with 2 test cases passed after 3.072 seconds.
+✔ Test "Cohen's Kappa vale 1 sull'accordo perfetto e 0 sull'accordo casuale, per calcolo esatto" passed after 3.072 seconds.
+✔ Test "Il profilo nominale limita comunque il parallelismo alla policy" passed after 3.072 seconds.
+✔ Test "MTLD: +∞ senza fattori, sequenza vuota non definita, soglia fuori da (0,1) rifiutata" passed after 3.072 seconds.
+✔ Test "SOM su quattro unità coincide con l'oracolo R indipendente su tutti i prototipi" passed after 3.072 seconds.
+✔ Test "Mann–Whitney esatto coincide con la distribuzione enumerata di U" passed after 3.072 seconds.
+✔ Test "Fleiss kappa coincide con R su quattro unità e tre codificatori" passed after 3.072 seconds.
+✔ Test "Le tre MDS iterative sono riproducibili e non aumentano il proprio obiettivo" passed after 3.072 seconds.
+✔ Test "QueryAST JSON conserva algebra, digest e serializzazione canonica" passed after 3.072 seconds.
+✔ Test "Il limite risultati marca esplicitamente la troncatura" passed after 3.072 seconds.
+✔ Test "Bonferroni e Benjamini–Hochberg preservano l'ordine originale" passed after 3.072 seconds.
+✔ Test "Margini nulli vengono esclusi da χ², gradi di libertà e residui" passed after 3.072 seconds.
+✔ Test "Louvain ritrova due triangoli e la modularità coincide con 5/14" passed after 3.072 seconds.
+✔ Test "La finestra non attraversa i documenti e il risultato è deterministico" passed after 3.072 seconds.
+✔ Test "SpanMap risolve una phrase Markdown in intervalli sorgente esatti" passed after 3.072 seconds.
+✔ Test "Il manifest non accetta hard link anche se i byte sono validi" passed after 3.072 seconds.
+✔ Test "Il profilo di una fonte vuota dichiara le metriche lessicali non definite" passed after 3.071 seconds.
+✔ Test "Le ponderazioni rifiutano conteggi invalidi e overflow con failure tipizzate" passed after 3.071 seconds.
+✔ Test "Il bootstrap a blocchi con L=1 coincide con il bootstrap i.i.d." passed after 3.071 seconds.
+✔ Test "AnalysisDescriptor ha round-trip canonico e identità semanticamente sensibile" passed after 3.071 seconds.
+✔ Test "Le famiglie estese producono findings con le classi ADR-0026 e sopprimono i non eleggibili" passed after 3.070 seconds.
+✔ Test "Regole accettano annotazioni esplicite senza inventare lemma o POS" passed after 3.070 seconds.
+✔ Test "Fuzz TXT: 2.000 input con byte ostili producono esiti tipizzati e SpanMap valide" passed after 3.072 seconds.
+✔ Test "La rete lessicale calcola grado, betweenness e closeness esatti su un triangolo" passed after 3.070 seconds.
+✔ Test "Entità e BOM conservano la relazione derivazionale e gli offset sorgente" passed after 3.070 seconds.
+✔ Test "Lee–Seung coincide con NMF::nmf (lee, senza riscalatura) dagli stessi fattori" passed after 3.070 seconds.
+✔ Test "Un Artifact alterato rende il package corrotto" passed after 3.070 seconds.
+✔ Test "I conteggi negativi vengono rifiutati con failure tipizzata" passed after 3.068 seconds.
+✔ Test "Regole rifiutano cicli, variabili o annotazioni mancanti e divisione per zero" passed after 3.068 seconds.
+✔ Test "Totali degeneri e forme non valide vengono rifiutati con failure tipizzate" passed after 3.067 seconds.
+✔ Test "HAC ottimizzato conserva esattamente il riferimento diretto per seed, linkage e tie" passed after 3.074 seconds.
+✔ Test "Corpus identici producono similarità massima su ogni misura" passed after 3.066 seconds.
+✔ Test "Il grafo e PageRank rifiutano forme, riferimenti e parametri non validi" passed after 3.066 seconds.
+✔ Test "L'analisi multivariata del corpus riproduce la matrice di R dal testo" passed after 3.064 seconds.
+✔ Test "Lidstone normalizza conteggi e prior enormi o subnormali senza perdere massa" passed after 3.043 seconds.
+✔ Test "L'ordinamento descrittivo bounded coincide bitwise con sort anche ai fallback" passed after 3.074 seconds.
+✔ Test "Il planner-v2 esegue le capability estese e le conserva nel lineage dell'interpretazione" passed after 3.074 seconds.
+✔ Test "Lloyd rinumera centri e assegnazioni per prima apparizione e rifiuta limiti non validi" passed after 3.000 seconds.
+✔ Test "SOM a singola cella coincide con la media e con l'oracolo batch" passed after 3.000 seconds.
+✔ Test "Token e frasi restano ordinati, bounded e senza sovrapposizioni" passed after 2.990 seconds.
+✔ Test "L'accordo fra codificatori coincide con kappa 0 e alpha 1/8 esatti" passed after 3.066 seconds.
+✔ Test "Naive Bayes coincide con il conteggio multinomiale esatto e congela il vocabolario" passed after 2.983 seconds.
+✔ Test "BM25 conserva score finiti per k1 estremo senza azzerarli per overflow intermedio" passed after 2.977 seconds.
+✔ Test "Un nuovo motore segnala di essere pronto" passed after 2.977 seconds.
+✔ Test "Ogni operazione misurata restituisce il risultato senza modificarlo" passed after 2.977 seconds.
+✔ Test "MDS classica ricostruisce distanze e autovalori di cmdscale R" passed after 2.964 seconds.
+✔ Test "SpanMap conserva half-open, coalescenza, campi Codable e round-trip" passed after 2.964 seconds.
+✔ Test "OneWayANOVA rifiuta gruppi insufficienti, vuoti o a varianza interna nulla" passed after 2.960 seconds.
+✔ Test "La ridondanza è un parametro del descrittore: Artifact distinti, stessi punteggi" passed after 3.001 seconds.
+✔ Test "Markdown ostile termina al budget di lookahead" passed after 2.959 seconds.
+✔ Test "Il profilo è deterministico e ordina le frequenze con tie-break stabile" passed after 2.958 seconds.
+✔ Test "L'import conserva i byte, accetta il BOM e produce un digest stabile" passed after 2.957 seconds.
+✔ Test "Validazione del classificatore stratificata e senza dati di test nel training" passed after 2.957 seconds.
+✔ Test "Il digest di corpus delle revisioni dichiarate è la radice ristretta a quelle revisioni" passed after 2.960 seconds.
+✔ Test "Una sola unità non definisce norma o Juilland D ma calcola comunque DP" passed after 2.955 seconds.
+✔ Test "La rinomina e la creazione restano ancorate ai descriptor" with 3 test cases passed after 2.949 seconds.
+✔ Test "N-grammi di caratteri con marcatori e di parole coincidono con i conteggi di R" passed after 2.949 seconds.
+✔ Test "Dopo il commit point la nuova generazione resta autorevole" with 2 test cases passed after 2.957 seconds.
+✔ Test "Le letture export restano ancorate alla radice aperta e rifiutano nuove radici simboliche" passed after 2.949 seconds.
+✔ Test "Il validatore della xref accetta offset coerenti e rifiuta un offset spostato" passed after 2.949 seconds.
+✔ Test "Le postings TextRank conservano bit per bit l'overlap diretto con ripetizioni, vuoti e disgiunzioni" passed after 3.070 seconds.
+✔ Test "Le transazioni interrotte conservano staging e file privati senza pubblicare il manifest" with 6 test cases passed after 2.948 seconds.
+✔ Test "Nuovi package e file autorevoli hanno permessi privati" passed after 2.948 seconds.
+✔ Test "La storia qualitativa non segue directory simboliche" with 4 test cases passed after 2.948 seconds.
+✔ Test "PairedT è il t a un campione sulle differenze appaiate" passed after 2.948 seconds.
+✔ Test "it-token-v1 coincide con tutti gli offset UTF-8 del seed" passed after 2.939 seconds.
+✔ Test "Chi-square, CramersV e residui coincidono con la tabella 2×3 di riferimento" passed after 2.939 seconds.
+✔ Test "Il motore profila testo UTF-8 tramite il contratto italiano" passed after 2.939 seconds.
+✔ Test "I termini Unicode conservano campi, forma esatta, digest e coordinate KWIC" passed after 2.927 seconds.
+✔ Test "Il test di permutazione esatto enumera le sei assegnazioni" passed after 2.927 seconds.
+✔ Test "La rinomina esclusiva non sovrascrive nessun tipo di destinazione" with 6 test cases passed after 2.927 seconds.
+✔ Test "La SVD troncata coincide con Jacobi sulla matrice di riferimento 5×4" passed after 2.926 seconds.
+✔ Test "Le collocazioni a finestra conservano posizioni, distanza media e peso 1/d" passed after 2.926 seconds.
+✔ Test "Modularità e qualità di Louvain coincidono con igraph sul karate club" passed after 2.926 seconds.
+✔ Test "La PCA coincide con prcomp di R, con e senza scaling" passed after 2.926 seconds.
+✔ Test "La Correspondence Analysis coincide con R e l'inerzia totale vale χ²/n" passed after 2.926 seconds.
+✔ Test "I componenti intermedi devono essere directory reali" with 2 test cases passed after 2.926 seconds.
+✔ Test "Welch ANOVA rifiuta gruppi insufficienti, non finiti e degeneri" passed after 2.926 seconds.
+✔ Test "Booleani e prossimità usano lo scope e l'ordine canonici" passed after 2.924 seconds.
+✔ Test "La valutazione rifiuta disallineamenti, annotazioni duplicate, offset e label invalidi" passed after 2.939 seconds.
+✔ Test "Low Power Mode limita il lavoro richiesto e sospende quello discrezionale" passed after 2.920 seconds.
+✔ Test "L'import applica il limite prima della decodifica" passed after 2.919 seconds.
+✔ Test "CentroidCosine-v1: vettori nulli esclusi con diagnostica, payload senza isEligible" passed after 2.919 seconds.
+✔ Test "La tabella d'accordo deriva dalle codifiche e coincide con coding-agreement-v2" passed after 2.951 seconds.
+✔ Test "QueryAST JSON non aggira gli invarianti semantici e i flag regex ammessi" passed after 2.919 seconds.
+✔ Test "Le similarità conservano identità e omogeneità anche agli estremi di Double" passed after 2.919 seconds.
+✔ Test "Il recovery read-only riapre l'ultima generazione precedente interamente verificabile" passed after 2.921 seconds.
+✔ Test "I riferimenti ai codici sono binari e le parole riservate tra virgolette restano termini" passed after 2.919 seconds.
+✔ Test "Welch ANOVA coincide con oneway.test di R su gruppi sbilanciati" passed after 2.919 seconds.
+✔ Test "Il fuzz a seed fisso conserva token, frasi e componenti del tokenizer legacy" passed after 2.919 seconds.
+✔ Test "La pubblicazione non scrive attraverso directory simboliche a nessun livello" with 20 test cases passed after 2.919 seconds.
+✔ Test "Il PDF pagina un rapporto lungo senza perdere testo o struttura" passed after 2.961 seconds.
+✔ Test "Il motore persiste analisi e keyness sulla generazione verificata" passed after 2.940 seconds.
+✔ Test "Games–Howell coincide con q, gradi di libertà Welch e ptukey di R" passed after 2.951 seconds.
+✔ Test "Le letture di fonti e Artifact, anche in recovery, conservano digest, limiti e no-follow" with 32 test cases passed after 2.919 seconds.
+✔ Test "Fuzz Markdown: 2.000 documenti annidati e malformati restano mappati sulla fonte" passed after 3.077 seconds.
+✔ Test "La proiezione ricostruisce codebook, codifiche, ritrattazioni, mapping e memo" passed after 2.919 seconds.
+✔ Test "Lo staging nuovo è privato e conserva tutti i byte" with 3 test cases passed after 2.919 seconds.
+✔ Test "SpanMap rifiuta coperture incomplete e richieste fuori rappresentazione" passed after 2.919 seconds.
+✔ Test "La correlazione perfetta ha t infinita e p nullo senza divisioni per zero" passed after 2.919 seconds.
+✔ Test "Rank-biserial deriva da U₁ con segno positivo se il primo campione è maggiore" passed after 2.919 seconds.
+✔ Test "La distribuzione esatta di U somma a C(m+n,m) e ha frequenze note" passed after 2.919 seconds.
+✔ Test "Dunn coincide con z e p calcolati in R sui ranghi medi con tie" passed after 2.919 seconds.
+✔ Test "SentenceTFIDFMean-v1 coincide con l'oracolo Python: punteggi, rank e selezioni" passed after 2.919 seconds.
+✔ Test "Jensen-Shannon conserva distanze rappresentabili con contributi subnormali" passed after 2.919 seconds.
+✔ Test "Le dimensioni diseguali escludono sempre Juilland D indipendentemente dalla frequenza" passed after 2.919 seconds.
+✔ Test "Pearson coincide con il calcolo a mano su cinque coppie" passed after 2.919 seconds.
+✔ Test "La selezione vuota produce soli header e le Evidence mancanti restano rifiutate" passed after 2.919 seconds.
+✔ Test "LDA conserva token, normalizza distribuzioni ed è riproducibile per seed" passed after 2.919 seconds.
+✔ Test "Naive Bayes conserva log-probabilità finite con pseudoconteggio subnormale" passed after 2.919 seconds.
+✔ Test "Hellinger e Lidstone conservano contributi subnormali con risultati rappresentabili" passed after 2.919 seconds.
+✔ Test "Coseno, euclidea e Manhattan coincidono con i valori attesi su vettori noti" passed after 2.919 seconds.
+✔ Test "Il taglio HAC a soglia include tutte le fusioni a pari altezza" passed after 2.902 seconds.
+✔ Test "p(x,y)=0 lascia PMI, NPMI, t-score e logDice non definiti ma calcola Dice e Jaccard" passed after 2.902 seconds.
+✔ Test "Il renderer CSV coincide con il riferimento e misura soltanto workload espliciti" passed after 2.919 seconds.
+✔ Test "Gli errori operativi di creazione mantengono backoff e ultima generazione" passed after 2.902 seconds.
+✔ Test "Il p-value a un grado di libertà coincide con la forma chiusa erfc usata dal keyness" passed after 2.902 seconds.
+✔ Test "PageRank su due nodi con un pendente coincide con la soluzione del sistema lineare esatto" passed after 2.902 seconds.
+✔ Test "Artifact e descriptor persistono con DAG e lettura verificati" passed after 2.920 seconds.
+✔ Test "Il quantile normale coincide con qnorm di R" passed after 2.902 seconds.
+✔ Test "I contrasti pianificati coincidono con lm di R e correggono la famiglia" passed after 2.902 seconds.
+✔ Test "La sostituzione invalida i soli discendenti e un nuovo corpus tutti gli Artifact" passed after 2.920 seconds.
+✔ Test "Wilcoxon esatto scarta gli zeri e coincide con la legge enumerata di W⁺" passed after 2.901 seconds.
+✔ Test "I percorsi relativi anomali sono rifiutati prima della risoluzione" with 12 test cases passed after 2.901 seconds.
+✔ Test "Associazione documento×termine coincide con χ², V e p calcolati per frazioni esatte" passed after 2.902 seconds.
+✔ Test "La dispersione su partizione dichiarata coincide con la primitiva sulle parti sommate" passed after 2.901 seconds.
+✔ Test "Phrase, prossimità, range e regex conservano parametri espliciti" passed after 2.897 seconds.
+✔ Test "Una distribuzione proporzionale all'opportunità produce DP e norma pari a zero" passed after 2.897 seconds.
+✔ Test "SplitMix64 riproduce la sequenza di riferimento pubblicata" passed after 2.897 seconds.
+✔ Test "La profondità delle catene NEAR e BEFORE rispetta il limite dell'AST" with 2 test cases passed after 2.897 seconds.
+✔ Test "Le sei varianti TF coincidono con le formule indipendenti di R, riga vuota inclusa" passed after 2.897 seconds.
+✔ Test "Un oggetto alterato rende il package corrotto senza modificarlo" passed after 2.898 seconds.
+✔ Test "Il test di permutazione Monte Carlo è riproducibile e corretto con (b+1)/(m+1)" passed after 2.903 seconds.
+✔ Test "Il bootstrap percentile è riproducibile dal seed e rispetta i vincoli" passed after 2.897 seconds.
+✔ Test "I ranghi medi assegnano la media dei ranghi occupati e contano i tie" passed after 2.896 seconds.
+✔ Test "Una selezione editoriale estranea ai finding disponibili viene rifiutata" passed after 2.896 seconds.
+✔ Test "PageRank conserva la massa totale a 1 su un grafo asimmetrico con nodo pendente" passed after 2.896 seconds.
+✔ Test "Il profilo corpus riproduce conteggi, diversità, dispersione, n-grammi e matrice" passed after 2.896 seconds.
+✔ Test "NER separa span esatto e tipo e non abbina offset fra documenti" passed after 2.896 seconds.
+✔ Test "Le ponderazioni ottimizzate coincidono con la definizione densa per ogni variante" passed after 2.920 seconds.
+✔ Test "Pesi e ranking BM25 si persistono come Artifact riusabili con query normalizzata" passed after 2.920 seconds.
+✔ Test "La traslazione dell'xref sposta solo gli offset a valle e riallinea startxref" passed after 2.896 seconds.
+✔ Test "MMR-v1 penalizza i duplicati, rifiuta λ fuori da [0, 1], decodifica payload senza ordine" passed after 2.896 seconds.
+✔ Test "Distribuzione lessicale: spectrum, tie stabili e crescita rispettano conteggi e ordine" passed after 2.896 seconds.
+✔ Test "Ogni arco booleano contribuisce alla profondità e la radice resta a zero" passed after 2.896 seconds.
+✔ Test "La tabella e l'associazione rifiutano forme, conteggi e dimensioni non valide" passed after 2.896 seconds.
+✔ Test "La classificazione ricostruisce confusion matrix, micro, macro e weighted" passed after 2.896 seconds.
+✔ Test "SOM e CLARA separano gruppi e conservano seed e identità dei medoidi" passed after 2.896 seconds.
+✔ Test "MMR-v1 coincide con l'oracolo Python: ordine di selezione, λ agli estremi e soglia" passed after 2.896 seconds.
+✔ Test "La rimozione del manifest dopo un commit lascia il package non riapribile" passed after 2.870 seconds.
+✔ Test "La matrice completa delle condizioni produce decisioni deterministiche e bounded" passed after 2.870 seconds.
+✔ Test "KL, Jensen-Shannon ed Hellinger coincidono con i casi noti in forma chiusa" passed after 2.870 seconds.
+✔ Test "Distribuzioni e fit rifiutano input ambigui, impossibili e modelli fuori dominio" passed after 2.870 seconds.
+✔ Test "La betweenness pesata usa la distanza 1/peso e divide i cammini a pari lunghezza" passed after 2.870 seconds.
+✔ Test "Invarianti della storia qualitativa rifiutati con codici tipizzati" passed after 2.870 seconds.
+✔ Test "CohenD-pooled coincide con d=-3 e rifiuta varianza nulla" passed after 2.870 seconds.
+✔ Test "Betweenness e HarmonicCloseness su un percorso diretto coincidono con i valori esatti" passed after 2.870 seconds.
+✔ Test "La morfologia conserva tutti i casi di attributi assenti, errati e corretti" passed after 2.870 seconds.
+✔ Test "La qualità della tokenizzazione non scende sotto la linea di base registrata" passed after 2.870 seconds.
+✔ Test "La decodifica legacy conserva ordine non conforme e risultati del percorso lineare" passed after 2.870 seconds.
+✔ Test "PageRank mantiene la massa anche con pesi finiti estremi e tolleranze validate" passed after 2.870 seconds.
+✔ Test "OneWayANOVA su tre gruppi noti produce F=12 e p=0,2³ esatto per identità chiusa" passed after 2.870 seconds.
+✔ Test "URL, hashtag e mention restano unità speciali bounded" passed after 2.870 seconds.
+✔ Test "Un gruppo privo di termini viene rifiutato con failure tipizzata" passed after 2.870 seconds.
+✔ Test "Escape, AND implicito e canonicalizzazione restano deterministici" passed after 2.867 seconds.
+✔ Test "Un'interruzione export non pubblica una destinazione parziale" with 3 test cases passed after 2.898 seconds.
+✔ Test "Una coppia di codici mai applicati non forma un arco di co-occorrenza" passed after 2.867 seconds.
+✔ Test "Il CSV conserva riferimenti condivisi e ripetuti, ordine, Unicode e protezione formula" passed after 2.867 seconds.
+✔ Test "L'import rifiuta UTF-8 malformato senza sostituzione lossy" passed after 2.867 seconds.
+✔ Test "La normalizzazione del termine conserva troncatura zero, parziale e completa" passed after 2.867 seconds.
+✔ Test "Wilcoxon asintotico applica la correzione dei tie e di continuità" passed after 2.867 seconds.
+✔ Test "Il parser rifiuta campi, sintassi e regex non conformi con span UTF-8" passed after 2.865 seconds.
+✔ Test "Il motore interroga la generazione persistita senza accesso laterale allo store" passed after 2.867 seconds.
+✔ Test "Il tokenizer conserva l'output legacy e misura soltanto workload espliciti" passed after 2.865 seconds.
+✔ Test "Un evento qualitativo manomesso rende il package non apribile" passed after 2.865 seconds.
+✔ Test "Il grafo vuoto e i self-loop non alterano Betweenness/HarmonicCloseness" passed after 2.865 seconds.
+✔ Test "La correlazione fra metriche coincide con Pearson e Spearman calcolati a mano" passed after 2.865 seconds.
+✔ Test "Invarianti e precondizioni di GS-MET-001-07 falliscono con codici tipizzati" passed after 2.865 seconds.
+✔ Test "Il quantile della t coincide con qt di R" passed after 2.834 seconds.
+✔ Test "I limiti di byte, profondità e nodi sono applicati prima del lavoro non bounded" passed after 2.834 seconds.
+✔ Test "PageRank conserva ordine dei nodi, multiarchi, self-loop e dangling nella rappresentazione sparsa" passed after 2.834 seconds.
+✔ Test "L'eigenvector centrality coincide con eigen() di R, anche su un grafo bipartito" passed after 2.834 seconds.
+✔ Test "Morfologia conserva exact-set e conta valori errati come FP e FN" passed after 2.834 seconds.
+✔ Test "IDF, TF-IDF normalizzato L1/L2 e BM25-v1 coincidono con R" passed after 2.834 seconds.
+✔ Test "Un nuovo motore usa la configurazione linguistica italiana" passed after 2.834 seconds.
+✔ Test "Il planner produce un piano canonico con dipendenze e rationale completi" passed after 2.821 seconds.
+✔ Test "La partizione indicizzata conserva mancanti, esclusioni e bucket vuoti su input riordinato" passed after 2.821 seconds.
+✔ Test "Gli obiettivi MDS coincidono con le formule indipendenti R, comprese le parità" passed after 2.821 seconds.
+✔ Test "Riassunto: frase senza token a punteggio zero mai scelta, parità per posizione, budget" passed after 2.821 seconds.
+✔ Test "La composizione di SpanMap conserva ogni origine e i byte dei tratti exact" passed after 2.865 seconds.
+✔ Test "MDS rifiuta input asimmetrici, non finiti e budget insufficienti" passed after 2.821 seconds.
+✔ Test "Il profilo Markdown usa soltanto il testo estratto con lineage" passed after 2.821 seconds.
+✔ Test "Le policy ADR-0026 applicano le soglie di confine dichiarate" passed after 2.821 seconds.
+✔ Test "La revisione conserva distanze, ranking e logica su famiglie di input" passed after 2.821 seconds.
+✔ Test "Kruskal–Wallis senza tie coincide con H=7,2 e p=exp(-3,6)" passed after 2.801 seconds.
+✔ Test "MDS rifiuta underflow delle coordinate e Stress-1 privo di denominatore" passed after 2.821 seconds.
+✔ Test "Parametri e limiti dei grafi falliscono prima del calcolo non limitato" passed after 2.865 seconds.
+✔ Test "Krippendorff alpha coincide con R ai livelli nominale, intervallo e ordinale" passed after 2.898 seconds.
+✔ Test "La verifica export rifiuta manifest e payload non sicuri e riprende dopo il ripristino" with 12 test cases passed after 2.801 seconds.
+✔ Test "La distribuzione del range studentizzato coincide con ptukey di R" passed after 2.931 seconds.
+✔ Test "Tukey HSD coincide con TukeyHSD di R, intervalli compresi" passed after 3.073 seconds.
+✔ Test "La perplexity predittiva LDA coincide con l'integrazione esatta, non con il prodotto delle medie" passed after 2.898 seconds.
+✔ Test "Prima del commit point resta autorevole la generazione precedente" with 4 test cases passed after 2.801 seconds.
+✔ Test "Stopword e soglie si applicano dopo il conteggio con esclusioni attribuite" passed after 2.801 seconds.
+✔ Test "Spearman usa i ranghi medi in presenza di tie" passed after 2.801 seconds.
+✔ Test "La normalizzazione descrittiva in-place conserva Q7 originali e fixture bitwise" passed after 2.801 seconds.
+✔ Test "La LSA tronca al rango richiesto con residuo pari alla norma dei valori scartati" passed after 2.780 seconds.
+✔ Test "Analysis DAG deduplica, ordina, invalida e riusa soltanto rami validi" passed after 2.801 seconds.
+✔ Test "Pearson e Welch preservano piccole variazioni su un grande offset" passed after 2.766 seconds.
+✔ Test "La precedenza NOT, prossimità, AND e OR produce un AST stabile" passed after 2.766 seconds.
+✔ Test "Le policy di mancanti, dominio e tipo temporale sono fail-closed" passed after 2.780 seconds.
+✔ Test "L'accumulo temporale conserva termini nulli e lineage sparso nell'ordine canonico" passed after 2.766 seconds.
+✔ Test "La varianza descrittiva conserva lo spread piccolo su un offset grande" passed after 2.766 seconds.
+✔ Test "I limiti corpus falliscono prima di materializzare risultati non bounded" passed after 2.766 seconds.
+✔ Test "Statistiche descrittive: vuoto, singleton, input non finiti e overflow espliciti" passed after 2.766 seconds.
+✔ Test "Betweenness e HarmonicCloseness su una stella coincidono con i valori esatti noti" passed after 2.764 seconds.
+✔ Test "PageRank su un ciclo simmetrico converge a 1/3 esatto per ogni nodo" passed after 2.764 seconds.
+✔ Test "Campi privi di capability falliscono senza simulare zero risultati" passed after 2.764 seconds.
+✔ Test "Le misure d'accordo sono identiche bit a bit su richieste uguali e su tipi di categoria" passed after 2.766 seconds.
+✔ Test "La serie temporale rifiuta revisioni duplicate, esposizione incoerente e overflow" passed after 2.764 seconds.
+✔ Test "Welch ANOVA a due gruppi equivale al quadrato del t di Welch" passed after 2.764 seconds.
+✔ Test "Il grafo conserva isolate, non inventa vettori nulli e dichiara la mancata convergenza" passed after 2.764 seconds.
+✔ Test "Le distanze metriche rispettano la disuguaglianza triangolare su tutte le terne" passed after 2.764 seconds.
+✔ Test "Le correlazioni rifiutano lunghezze diverse, campioni piccoli e varianza nulla" passed after 2.764 seconds.
+✔ Test "Le parità HAC seguono le identità canoniche anche dopo una fusione" passed after 2.764 seconds.
+✔ Test "Il writer rifiuta lock non regolari senza modificare la generazione" with 5 test cases passed after 2.764 seconds.
+✔ Test "La baseline non consente telemetria o diagnostica automatica" passed after 2.764 seconds.
+✔ Test "Il profilo descrittivo produce Evidence e Finding content-addressed con lineage completo" passed after 2.764 seconds.
+✔ Test "Le osservazioni di progresso rifiutano invarianti impossibili" passed after 2.764 seconds.
+✔ Test "Le letture del package rifiutano directory simboliche a ogni livello" with 16 test cases passed after 2.764 seconds.
+✔ Test "Fisher esatto coincide con fisher.test e il Monte Carlo approssima il p esatto" passed after 2.867 seconds.
+✔ Test "NMF contigua conserva bit per bit la definizione scalare per forme, seed e stopping" passed after 2.765 seconds.
+✔ Test "Il post-hoc richiede almeno tre gruppi e riduce la famiglia ai test disponibili" passed after 2.924 seconds.
+✔ Test "LDA Gibbs coincide entro tolleranza con l'integrazione esatta di tutti gli stati" passed after 2.802 seconds.
+✔ Test "Cammini pesati e Louvain su 150 nodi e 600 archi coincidono con igraph" passed after 2.765 seconds.
+✔ Test "Markdown estrae struttura e inline senza eseguire destinazioni o HTML" passed after 2.764 seconds.
+✔ Test "Il lavoro interattivo minimo resta disponibile sotto pressione critica" passed after 2.764 seconds.
+✔ Test "Associazione perfetta (b=c=0) produce NPMI=1, Dice=1, Jaccard=1 e valori esatti noti" passed after 2.764 seconds.
+✔ Test "Krippendorff's Alpha vale 1 sull'accordo perfetto ed è non definito a disaccordo atteso nullo" passed after 2.764 seconds.
+✔ Test "QueryAST JSON rifiuta schema, grammatica e input malformato senza contenuto diagnostico" passed after 2.764 seconds.
+✔ Test "GTest, Fisher selezionato, IC ed effect size coincidono con il caso noto e con R" passed after 2.764 seconds.
+✔ Test "Jaccard pesato, Dice multinsieme e KL con Lidstone coincidono con i valori a mano" passed after 2.764 seconds.
+✔ Test "Jensen-Shannon conserva il segnale quadratico vicino a distribuzioni identiche" passed after 2.764 seconds.
+✔ Test "Il planner rifiuta riferimenti ignoti o fuori scope senza modificare il piano" passed after 2.764 seconds.
+✔ Test "Termini, phrase e KWIC mantengono offset e normalizzazione" passed after 2.764 seconds.
+✔ Test "Il taglio HAC rifiuta alberi corrotti prima di attraversarne le identità" passed after 2.764 seconds.
+✔ Test "I bucket istante seguono le giornate di calendario anche con 23 o 25 ore" passed after 2.764 seconds.
+✔ Test "Regole ostili, profondità e riferimenti espansivi restano bounded" passed after 2.764 seconds.
+✔ Test "Pearson e Welch gestiscono anchor con differenze oltre il massimo binary64" passed after 2.764 seconds.
+✔ Test "t appaiato e Wilcoxon appaiato esatto coincidono con t.test e wilcox.test di R" passed after 2.764 seconds.
+✔ Test "Il p-value t a un grado di libertà coincide con l'identità Cauchy in arcotangente" passed after 2.764 seconds.
+✔ Test "Il confronto fra gruppi riproduce Welch t, ANOVA e la metrica di frequenza relativa" passed after 2.764 seconds.
+✔ Test "La precisione del metadato non viene affinata implicitamente" passed after 2.764 seconds.
+✔ Test "NMF conserva inizializzazione e selezione dei restart contro la definizione scalare" passed after 2.764 seconds.
+✔ Test "Il descrittore distingue metodi e configurazioni del grafo e riusa lo stesso artefatto" passed after 2.765 seconds.
+✔ Test "LDA a un topic coincide con il posteriore Dirichlet esatto" passed after 2.764 seconds.
+✔ Test "Clustering su dissimilarità coincide con hclust R e alimenta una rete di codici" passed after 2.764 seconds.
+✔ Test "QueryAST JSON applica i limiti esatti di byte, nodi e profondità" passed after 2.764 seconds.
+✔ Test "Lloyd coincide con kmeans di R a parità di centri e k-means++ è riproducibile" passed after 2.764 seconds.
+✔ Test "Con attese almeno 5 la regola di Cochran conserva il G-test e gli IC coincidono con R" passed after 2.764 seconds.
+✔ Test "La storia qualitativa si persiste, sopravvive a importazioni e riapertura" passed after 2.764 seconds.
+✔ Test "L'identità F(1,df2) = t²(df2) collega le due distribuzioni indipendentemente" passed after 2.764 seconds.
+✔ Test "KL e JS valutano probabilità subnormali nel dominio logaritmico" passed after 2.764 seconds.
+✔ Test "Le frequenze filtrate si persistono dal testo con la normalizzazione del profilo" passed after 2.764 seconds.
+✔ Test "La policy keyness ordina per famiglia, espone le cautele e limita i risultati" passed after 2.764 seconds.
+✔ Test "Le scritture staged restano sui descriptor dopo sostituzioni" with 3 test cases passed after 2.764 seconds.
+✔ Test "Un'importazione conserva gli Artifact legati a revisioni immutate e la loro catena" passed after 2.765 seconds.
+✔ Test "Il riassunto estrattivo si persiste dal testo, si riusa e risolve le frasi scelte" passed after 2.765 seconds.
+✔ Test "Cammini pesati, eigenvector pesata e componenti coincidono con igraph" passed after 2.750 seconds.
+✔ Test "La concentrazione massima su parti uguali produce DP=2/3, norma=1 e JuillandD=0" passed after 2.750 seconds.
+✔ Test "PageRank risolve identità con hash in collisione e rispetta cancellazione" passed after 3.083 seconds.
+✔ Test "La cancellazione già richiesta conserva l'esito del tokenizer legacy" passed after 3.083 seconds.
+✔ Test "NMF contigua interrompe i kernel senza consegnare un risultato parziale" passed after 3.091 seconds.
+✔ Test "Le ponderazioni osservano cancellazione prima delle scansioni sparse" passed after 3.091 seconds.
+✔ Test "L'ordinamento descrittivo bounded conserva la cancellazione" passed after 2.988 seconds.
+✔ Test "Welch ANOVA osserva la cancellazione prima delle scansioni" passed after 2.941 seconds.
+✔ Test "L'aggregazione temporale osserva la cancellazione prima di produrre la serie" passed after 2.941 seconds.
+✔ Test "QueryAST JSON conserva la cancellazione senza convertirla in input non valido" passed after 2.923 seconds.
+✔ Test "Conteggi lessicali e descrittive rispettano la cancellazione" passed after 2.916 seconds.
+✔ Test "La valutazione osserva la cancellazione prima di produrre un risultato" passed after 2.890 seconds.
+✔ Test "Gli operatori osservano la cancellazione prima del lavoro numerico" passed after 2.853 seconds.
+✔ Test "Una valutazione di termine già cancellata non avvia la scansione" passed after 2.782 seconds.
+✔ Test "Una collisione nella pubblicazione conserva file esterni e ultima generazione" with 7 test cases passed after 2.766 seconds.
+✔ Test "Un candidato alterato viene rifiutato prima del publish e il commit sano resta utilizzabile" with 28 test cases passed after 3.099 seconds.
+✔ Test "La cancellazione delle letture verificate non muta il package e permette una nuova lettura" with 4 test cases passed after 2.783 seconds.
+✔ Test "Il riassunto mappa le frasi estratte sugli originali Markdown e UTF-8 con BOM" passed after 2.789 seconds.
+✔ Test "Punteggiatura, email e URL preservano tutti i limiti e i suffissi legacy" passed after 2.884 seconds.
+✔ Test "Admission, piano non eseguibile e cancellazione terminano con failure tipizzate" passed after 3.126 seconds.
+✔ Test "Fuzz query: 3.000 query valide e malformate hanno esito tipizzato e tempo limitato" passed after 3.131 seconds.
+✔ Test "La SVD troncata su 150×200 sparsa coincide con svd() di R" passed after 4.606 seconds.
+✔ Test "Il post-hoc confronta ogni coppia e corregge ciascuna famiglia con Bonferroni e BH" passed after 4.675 seconds.
+✔ Test "NMF resta non negativa, riduce l'obiettivo e ricostruisce una matrice di rango esatto" passed after 7.567 seconds.
+✔ Test "La LSA passa alla SVD troncata oltre il limite di Jacobi con lo stesso risultato" passed after 7.602 seconds.
+✔ Test run with 380 tests in 0 suites passed after 7.919 seconds.
+Validazione PDF/A-2u con veraPDF: 2 PDF conformi
+Building for debugging...
+[Planning deferred tasks]
+[2 / 10] GlifiCore
+[4 / 12] GlifiCore
+[9 / 11] GlifiCore
+[10 / 11] GlifiCLI-product
+Build complete! (3,59 s)
+Text analysis: 15 shared fixtures, 51 CLI checks, native parity within 1e-12
+Process-kill recovery: 22 commit checkpoints valid
+QueryAST CLI: parità, limiti, file ostili, permessi, argomenti e privacy superati
+2026-11-21 21:04:35.077 xcodebuild[7756:12483010]  DVTErrorPresenter: Unable to load simulator devices.
+Domain: DVTCoreSimulatorAdditionsErrorDomain
+Code: 3
+Failure Reason: The version of the CoreSimulator framework installed on this Mac is out-of-date and not supported by this version of Xcode.
+Recovery Suggestion: Please ensure that you have installed all available updates to your Mac's software, and that you are running the most recent version of Xcode supported by macOS.
+--
+CoreSimulator is out of date. Current version (1171.7.0) is older than build version (1174.21.0).
+Domain: DVTCoreSimulatorAdditionsErrorDomain
+Code: 3
+--
+
+2026-11-21 21:04:35.077 xcodebuild[7756:12483010]  iOSSimulator: [SimServiceContext sharedServiceContextForDeveloperDir:error:] returned nil (Error Domain=DVTCoreSimulatorAdditionsErrorDomain Code=3 "CoreSimulator is out of date. Current version (1171.7.0) is older than build version (1174.21.0)." UserInfo={NSLocalizedDescription=CoreSimulator is out of date. Current version (1171.7.0) is older than build version (1174.21.0).}). Simulator device support disabled.
+2026-11-21 21:05:25.692 xcodebuild[7756:12483266]  DVTAssertions: Warning in IDEFrameworks/IDEFoundation/Execution/LaunchSystem/IDELaunchSession.m:395
+Details:  setRunnablePIDWithDiagnostics:logSection:andCompletionHandler: called without a completion handler - blocking until diagnostics setup completes. Callers should migrate to using a completion handler for better performance.
+Object:   <IDELaunchSession: 0x74fc1b4300>
+Method:   -setRunnablePIDWithDiagnostics:logSection:andCompletionHandler:
+Thread:   <NSThread: 0x74fc26b500>{number = 20, name = (null)}
+Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-21 21:05:29.073 xcodebuild[7756:12482835] [MT] IDETestOperationsObserverDebug: 3.423 elapsed -- Testing started completed.
+2026-11-21 21:05:29.073 xcodebuild[7756:12482835] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-21 21:05:29.073 xcodebuild[7756:12482835] [MT] IDETestOperationsObserverDebug: 3.423 sec, +3.423 sec -- end
+Testing started
+2026-11-21 21:05:29.942 xcodebuild[8629:12486649]  DVTErrorPresenter: Unable to load simulator devices.
+Domain: DVTCoreSimulatorAdditionsErrorDomain
+Code: 3
+Failure Reason: The version of the CoreSimulator framework installed on this Mac is out-of-date and not supported by this version of Xcode.
+Recovery Suggestion: Please ensure that you have installed all available updates to your Mac's software, and that you are running the most recent version of Xcode supported by macOS.
+--
+CoreSimulator is out of date. Current version (1171.7.0) is older than build version (1174.21.0).
+Domain: DVTCoreSimulatorAdditionsErrorDomain
+Code: 3
+--
+
+2026-11-21 21:05:29.942 xcodebuild[8629:12486649]  iOSSimulator: [SimServiceContext sharedServiceContextForDeveloperDir:error:] returned nil (Error Domain=DVTCoreSimulatorAdditionsErrorDomain Code=3 "CoreSimulator is out of date. Current version (1171.7.0) is older than build version (1174.21.0)." UserInfo={NSLocalizedDescription=CoreSimulator is out of date. Current version (1171.7.0) is older than build version (1174.21.0).}). Simulator device support disabled.
+2026-11-21 21:05:31.020 xcodebuild[8629:12486542] [MT] IDESchemeActionsInvocationRecord: Device <IDEOSXSupportCore.IDEMacPlaceholder: 0x7c39b1d540 (Any Mac | undefined_arch)> is missing operatingSystemVersion, operatingSystemVersionWithBuildNumber.
+2026-11-21 21:07:49.629 xcodebuild[9867:12491784]  DVTErrorPresenter: Unable to load simulator devices.
+Domain: DVTCoreSimulatorAdditionsErrorDomain
+Code: 3
+Failure Reason: The version of the CoreSimulator framework installed on this Mac is out-of-date and not supported by this version of Xcode.
+Recovery Suggestion: Please ensure that you have installed all available updates to your Mac's software, and that you are running the most recent version of Xcode supported by macOS.
+--
+CoreSimulator is out of date. Current version (1171.7.0) is older than build version (1174.21.0).
+Domain: DVTCoreSimulatorAdditionsErrorDomain
+Code: 3
+--
+
+2026-11-21 21:07:49.630 xcodebuild[9867:12491784]  iOSSimulator: [SimServiceContext sharedServiceContextForDeveloperDir:error:] returned nil (Error Domain=DVTCoreSimulatorAdditionsErrorDomain Code=3 "CoreSimulator is out of date. Current version (1171.7.0) is older than build version (1174.21.0)." UserInfo={NSLocalizedDescription=CoreSimulator is out of date. Current version (1171.7.0) is older than build version (1174.21.0).}). Simulator device support disabled.
+2026-11-21 21:07:50.685 xcodebuild[9867:12491736] [MT] IDESchemeActionsInvocationRecord: Device <DVTiOSDeviceSimulatorPlaceholder: 0x7aadb05cc0 (Any iOS Simulator Device | undefined_arch)> is missing operatingSystemVersion, operatingSystemVersionWithBuildNumber.
+warning: The application supports opening files, but doesn't declare whether it supports opening them in place. You can add an LSSupportsOpeningDocumentsInPlace entry or an UISupportsDocumentBrowser entry to your Info.plist to declare support. (in target 'GlifiStudio-iPadOS' from project 'GlifiStudio')
+2026-11-21 21:08:28.193 xcodebuild[10402:12494118]  DVTErrorPresenter: Unable to load simulator devices.
+Domain: DVTCoreSimulatorAdditionsErrorDomain
+Code: 3
+Failure Reason: The version of the CoreSimulator framework installed on this Mac is out-of-date and not supported by this version of Xcode.
+Recovery Suggestion: Please ensure that you have installed all available updates to your Mac's software, and that you are running the most recent version of Xcode supported by macOS.
+--
+CoreSimulator is out of date. Current version (1171.7.0) is older than build version (1174.21.0).
+Domain: DVTCoreSimulatorAdditionsErrorDomain
+Code: 3
+--
+
+2026-11-21 21:08:28.193 xcodebuild[10402:12494118]  iOSSimulator: [SimServiceContext sharedServiceContextForDeveloperDir:error:] returned nil (Error Domain=DVTCoreSimulatorAdditionsErrorDomain Code=3 "CoreSimulator is out of date. Current version (1171.7.0) is older than build version (1174.21.0)." UserInfo={NSLocalizedDescription=CoreSimulator is out of date. Current version (1171.7.0) is older than build version (1174.21.0).}). Simulator device support disabled.
+2026-11-21 21:08:29.398 xcodebuild[10402:12494085] [MT] IDESchemeActionsInvocationRecord: Device <DVTiOSDeviceSimulatorPlaceholder: 0x78e3b2dcc0 (Any iOS Simulator Device | undefined_arch)> is missing operatingSystemVersion, operatingSystemVersionWithBuildNumber.
+warning: The application supports opening files, but doesn't declare whether it supports opening them in place. You can add an LSSupportsOpeningDocumentsInPlace entry or an UISupportsDocumentBrowser entry to your Info.plist to declare support. (in target 'GlifiStudio-iPadOS' from project 'GlifiStudio')
+Cache di build conservata in /tmp/GlifiStudioPipeline202-cache (GLIFI_VERIFY_KEEP_CACHE=1).

@@ -1,0 +1,6 @@
+{
+  "location": "~/Library/Caches/GlifiStudio/evidence/domain-205-208-2026-11-21/verified-benchmark-source.tar.gz",
+  "archiveSHA256": "a9f0ac28e3799f993f7d5e4c62991c87c1d0231247669ad95f775debb4e85da1",
+  "archiveByteCount": 729337,
+  "contents": "Frozen final Package/Fixtures, three baseline and two structures sources, three inventories, support/correction audits and additional final verification tests; no build cache"
+}

@@ -1,0 +1,13 @@
+{
+  "schema": "studio.glifi.linguistic-fixture-manifest",
+  "schemaVersion": 1,
+  "id": "it-token-v1-seed",
+  "languageTag": "it",
+  "locale": "it-IT",
+  "tokenContract": "it-token-v1",
+  "license": "BSD-3-Clause",
+  "provenance": "Testo sintetico originale del progetto; nessun dato personale o corpus di terzi.",
+  "purpose": "Seed V1 per offset UTF-8 e classi critiche; non costituisce corpus gold, lemma/POS/NER o soglia backend.",
+  "reviewStatus": "unreviewed-seed",
+  "cases": "Fixtures/Linguistics/it-v1/token-boundaries.json"
+}

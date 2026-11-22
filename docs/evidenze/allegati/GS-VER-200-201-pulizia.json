@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-21",
+  "removedDirectory": "/tmp/GlifiStudioOptimize200-cache",
+  "allocatedKiBBeforeRemoval": 2939008,
+  "allocatedGiBBeforeRemoval": 2.802856,
+  "directoryAbsentAfterRemoval": true,
+  "openFilesObservedBeforeRemoval": 0,
+  "preserved": [
+    "Allegati A/B, log sanificati e riepiloghi dei test in docs/evidenze/allegati",
+    "Archivio compatto con sorgenti benchmark congelati e coppia baseline",
+    "Toolchain e dipendenze attive",
+    "Cache e modifiche delle altre chat"
+  ],
+  "measurementScope": "Dimensione allocata del solo percorso prima della rimozione; non misura del delta di spazio libero del volume APFS"
+}

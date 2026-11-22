@@ -1,0 +1,138 @@
+{
+  "schema": "studio.glifi.validation-catalog",
+  "schemaVersion": 1,
+  "license": "BSD-3-Clause",
+  "updatedAt": "2026-11-21",
+  "manifests": [
+    {
+      "id": "validation-corpus-profile-it-v1",
+      "path": "Fixtures/Validation/v1/corpus-profile-it-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-term-weighting-bm25-v1",
+      "path": "Fixtures/Validation/v1/term-weighting-bm25-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-lexical-diversity-mtld-v1",
+      "path": "Fixtures/Validation/v1/lexical-diversity-mtld-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-lexical-laws-v1",
+      "path": "Fixtures/Validation/v1/lexical-laws-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-extractive-summary-v1",
+      "path": "Fixtures/Validation/v1/extractive-summary-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-ngram-frequencies-v1",
+      "path": "Fixtures/Validation/v1/ngram-frequencies-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-keyness-gtest-fisher-ha-ci-bh-v2",
+      "path": "Fixtures/Validation/v1/keyness-gtest-fisher-ha-ci-bh-v2.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-keyness-gtest-ha-bh-v1",
+      "path": "Fixtures/Validation/v1/keyness-gtest-ha-bh-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-glifi-query-v1",
+      "path": "Fixtures/Validation/v1/glifi-query-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-scientific-export-v1",
+      "path": "Fixtures/Validation/v1/scientific-export-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-planner-mvp-v1",
+      "path": "Fixtures/Validation/v1/planner-mvp-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-interpretation-mvp-v1",
+      "path": "Fixtures/Validation/v1/interpretation-mvp-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-investigation-history-v1",
+      "path": "Fixtures/Validation/v1/investigation-history-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-analysis-execution-v1",
+      "path": "Fixtures/Validation/v1/analysis-execution-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-kh-mds-classical-review-v1",
+      "path": "Fixtures/Validation/v1/kh-mds-classical-review-v1.json",
+      "status": "supported"
+    },
+    {
+      "id": "validation-kh-mds-iterative-review-v1",
+      "path": "Fixtures/Validation/v1/kh-mds-iterative-review-v1.json",
+      "status": "supported"
+    },
+    {
+      "id": "validation-kh-som-batch-review-v1",
+      "path": "Fixtures/Validation/v1/kh-som-batch-review-v1.json",
+      "status": "supported"
+    },
+    {
+      "id": "validation-kh-clara-review-v1",
+      "path": "Fixtures/Validation/v1/kh-clara-review-v1.json",
+      "status": "supported"
+    },
+    {
+      "id": "validation-kh-naive-bayes-review-v1",
+      "path": "Fixtures/Validation/v1/kh-naive-bayes-review-v1.json",
+      "status": "supported"
+    },
+    {
+      "id": "validation-kh-lda-review-v1",
+      "path": "Fixtures/Validation/v1/kh-lda-review-v1.json",
+      "status": "supported"
+    },
+    {
+      "id": "validation-kh-coding-review-v1",
+      "path": "Fixtures/Validation/v1/kh-coding-review-v1.json",
+      "status": "supported"
+    },
+    {
+      "id": "validation-lexical-statistics-v1",
+      "path": "Fixtures/Validation/v1/lexical-statistics-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-linguistic-evaluation-v1",
+      "path": "Fixtures/Validation/v1/linguistic-evaluation-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-summary-graph-v1",
+      "path": "Fixtures/Validation/v1/summary-graph-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-temporal-calendar-v1",
+      "path": "Fixtures/Validation/v1/temporal-calendar-v1.json",
+      "status": "candidate"
+    },
+    {
+      "id": "validation-welch-anova-v1",
+      "path": "Fixtures/Validation/v1/welch-anova-v1.json",
+      "status": "candidate"
+    }
+  ]
+}

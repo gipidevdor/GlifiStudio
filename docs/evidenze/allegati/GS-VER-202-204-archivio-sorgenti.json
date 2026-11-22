@@ -1,0 +1,6 @@
+{
+  "location": "~/Library/Caches/GlifiStudio/evidence/pipeline-202-204-2026-11-21/verified-benchmark-source.tar.gz",
+  "archiveSHA256": "3ef945ed177466487e25ddd997e48ca027b175285f677de53919a15fdf628a15",
+  "archiveByteCount": 664425,
+  "contents": "271 frozen Package/Fixtures files, three baseline product sources, two inventories and the additional final CSV regression; no build cache"
+}

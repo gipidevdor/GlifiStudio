@@ -1,0 +1,64 @@
+{
+  "schema": "studio.glifi.validation-manifest",
+  "schemaVersion": 1,
+  "id": "validation-planner-mvp-v1",
+  "capabilityIdentifier": "planner-mvp-v1",
+  "methodIdentifiers": [
+    "capability-catalog-mvp-v1",
+    "CollectionPlanningProfile-v1",
+    "AnalysisPlan-v1"
+  ],
+  "status": "candidate",
+  "license": "BSD-3-Clause",
+  "toolchain": {
+    "swiftLanguageMode": "6",
+    "swiftToolsVersion": "6.4",
+    "platforms": [
+      "macOS 27",
+      "iPadOS 27"
+    ]
+  },
+  "levels": {
+    "V0": {
+      "status": "pass",
+      "description": "Schema AnalysisPlan e catalogo capability verificati staticamente."
+    },
+    "V1": {
+      "status": "pass",
+      "description": "Decision table deterministica, budget e intenzioni nei test Core."
+    },
+    "V2": {
+      "status": "pass",
+      "description": "Riuso Artifact piano dopo riapertura; oracolo di ordine step."
+    },
+    "V3": {
+      "status": "pass",
+      "description": "Persistenza e fail-closed su request non supportate (GS-VER-027)."
+    },
+    "V4": {
+      "status": "pass",
+      "description": "UI Must localizza status/applicabilità come regressione operativa.",
+      "datasets": [
+        "Fixtures/Validation/v1/manifest.json"
+      ]
+    },
+    "V5": {
+      "status": "not-applicable",
+      "description": "Un solo planner MVP nel nucleo 0.1."
+    }
+  },
+  "limits": [
+    "Soglie di costo runtime hardware ancora aperte (DA-011).",
+    "CollectionProfile qualitativo completo non ancora nel planner."
+  ],
+  "evidence": [
+    "docs/evidenze/GS-VER-027-planner-mvp-deterministico.md",
+    "docs/evidenze/GS-VER-042-export-manifest-storia-piano.md"
+  ],
+  "numericAgreement": {
+    "comparisonMode": "structural",
+    "oracle": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisPlannerTests.swift",
+    "notes": "Ordine dei passi, costi dichiarati e identità del piano: confronto strutturale."
+  },
+  "statusReason": "L'oracolo di V2 è un test del prodotto, non un'implementazione indipendente: ADR-0031 non ammette l'approvazione."
+}

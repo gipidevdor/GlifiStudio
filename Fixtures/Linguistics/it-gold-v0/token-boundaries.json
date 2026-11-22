@@ -1,0 +1,212 @@
+{
+  "schema": "studio.glifi.token-boundary-fixtures",
+  "schemaVersion": 1,
+  "coordinateSpace": "sourceUTF8",
+  "intervalConvention": "half-open",
+  "cases": [
+    {
+      "id": "it-apostrophe-ascii",
+      "class": "apostrophe",
+      "text": "L'acqua è blu.",
+      "utf8Length": 15,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 7,
+          "surface": "L'acqua",
+          "kind": "word",
+          "components": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "L'"
+            },
+            {
+              "start": 2,
+              "end": 7,
+              "surface": "acqua"
+            }
+          ]
+        },
+        {
+          "start": 8,
+          "end": 10,
+          "surface": "è",
+          "kind": "word",
+          "components": []
+        },
+        {
+          "start": 11,
+          "end": 14,
+          "surface": "blu",
+          "kind": "word",
+          "components": []
+        },
+        {
+          "start": 14,
+          "end": 15,
+          "surface": ".",
+          "kind": "punctuation",
+          "components": []
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 15,
+          "surface": "L'acqua è blu."
+        }
+      ]
+    },
+    {
+      "id": "it-clitic-compound",
+      "class": "clitic",
+      "text": "Dimmelo, per favore.",
+      "utf8Length": 20,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 7,
+          "surface": "Dimmelo",
+          "kind": "word",
+          "components": []
+        },
+        {
+          "start": 7,
+          "end": 8,
+          "surface": ",",
+          "kind": "punctuation",
+          "components": []
+        },
+        {
+          "start": 9,
+          "end": 12,
+          "surface": "per",
+          "kind": "word",
+          "components": []
+        },
+        {
+          "start": 13,
+          "end": 19,
+          "surface": "favore",
+          "kind": "word",
+          "components": []
+        },
+        {
+          "start": 19,
+          "end": 20,
+          "surface": ".",
+          "kind": "punctuation",
+          "components": []
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 20,
+          "surface": "Dimmelo, per favore."
+        }
+      ]
+    },
+    {
+      "id": "it-abbreviation-boundary",
+      "class": "abbreviation",
+      "text": "Il dott. Rossi arriva.",
+      "utf8Length": 22,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 2,
+          "surface": "Il",
+          "kind": "word",
+          "components": []
+        },
+        {
+          "start": 3,
+          "end": 8,
+          "surface": "dott.",
+          "kind": "abbreviation",
+          "components": []
+        },
+        {
+          "start": 9,
+          "end": 14,
+          "surface": "Rossi",
+          "kind": "word",
+          "components": []
+        },
+        {
+          "start": 15,
+          "end": 21,
+          "surface": "arriva",
+          "kind": "word",
+          "components": []
+        },
+        {
+          "start": 21,
+          "end": 22,
+          "surface": ".",
+          "kind": "punctuation",
+          "components": []
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 22,
+          "surface": "Il dott. Rossi arriva."
+        }
+      ]
+    },
+    {
+      "id": "it-number-currency",
+      "class": "numeric-locale",
+      "text": "Costo: 12,50 €.",
+      "utf8Length": 17,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 5,
+          "surface": "Costo",
+          "kind": "word",
+          "components": []
+        },
+        {
+          "start": 5,
+          "end": 6,
+          "surface": ":",
+          "kind": "punctuation",
+          "components": []
+        },
+        {
+          "start": 7,
+          "end": 12,
+          "surface": "12,50",
+          "kind": "number",
+          "components": []
+        },
+        {
+          "start": 13,
+          "end": 16,
+          "surface": "€",
+          "kind": "currency",
+          "components": []
+        },
+        {
+          "start": 16,
+          "end": 17,
+          "surface": ".",
+          "kind": "punctuation",
+          "components": []
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 17,
+          "surface": "Costo: 12,50 €."
+        }
+      ]
+    }
+  ]
+}

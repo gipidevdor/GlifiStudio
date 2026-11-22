@@ -1,0 +1,7 @@
+{
+  "schema": "studio.glifi.gold-adjudications",
+  "schemaVersion": 1,
+  "license": "BSD-3-Clause",
+  "purpose": "Correzioni decise caso per caso quando l'annotazione indipendente e il tokenizzatore del prodotto divergono. Ogni voce dichiara la regola del contratto che decide la controversia.",
+  "decisions": []
+}

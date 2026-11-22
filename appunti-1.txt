@@ -1,0 +1,401 @@
+GlyphaStudio
+
+Documento di progetto e specifica architetturale
+
+1. Visione
+
+GlyphaStudio è un ambiente professionale nativo per macOS dedicato all’acquisizione, organizzazione, esplorazione e analisi quantitativa e qualitativa di grandi collezioni testuali.
+
+Il progetto nasce dall’esigenza di disporre di uno strumento di analisi testuale a profondità analitica professionale, progettato ex novo secondo i principi dell’ingegneria del software contemporanea e sfruttando direttamente le tecnologie offerte dalla piattaforma Apple.
+
+GlyphaStudio non deve essere concepito come una semplice applicazione per contare parole o visualizzare grafici. Deve costituire un vero ambiente di studio del testo, capace di accompagnare l’utente dall’acquisizione dei documenti fino all’analisi statistica, linguistica e semantica avanzata.
+
+Il progetto assume fin dall’origine che i corpus possano essere molto grandi. L’architettura non dovrà quindi dipendere dall’ipotesi che un documento, o addirittura l’intero corpus, possa essere caricato integralmente nella memoria centrale.
+
+La scalabilità non costituisce un’estensione futura del prodotto, ma un requisito fondamentale della sua progettazione.
+
+GlyphaStudio sarà innanzitutto un’applicazione macOS nativa. Swift costituirà il linguaggio principale e le tecnologie Apple saranno utilizzate ogni volta che offrano una soluzione tecnicamente adeguata.
+
+L’obiettivo non consiste semplicemente nel realizzare una versione Swift di un programma esistente. GlyphaStudio deve sfruttare le caratteristiche proprie dell’hardware e del software Apple contemporanei per costruire un ambiente di analisi testuale concepito specificamente per questa piattaforma.
+
+⸻
+
+2. Significato del nome
+
+Il nome GlyphaStudio richiama il concetto di glifo, ossia la manifestazione grafica di un segno appartenente a un sistema di scrittura.
+
+Il riferimento è particolarmente appropriato perché il progetto opera sull’intera catena che conduce dal documento materiale alla sua interpretazione computazionale: byte, codifica, caratteri, token, lemmi, strutture linguistiche, frequenze, relazioni e significati.
+
+Il termine Studio sottolinea invece la natura dell’applicazione come ambiente di lavoro.
+
+GlyphaStudio non è quindi una singola utility, ma uno spazio nel quale documenti, corpus, analisi e risultati convivono all’interno dello stesso progetto.
+
+Il nome permette inoltre di costruire una famiglia coerente di componenti software.
+
+GlyphaStudio identifica l’applicazione.
+
+GlyphaCore identifica il motore fondamentale.
+
+GlyphaKit può identificare l’API e il framework utilizzabile da altri programmi.
+
+GlyphaCLI può fornire accesso alle funzionalità fondamentali da terminale e consentire automazione, elaborazioni batch e integrazione in pipeline esterne.
+
+GlyphaStore, progetto già autonomamente esistente, appartiene naturalmente alla stessa famiglia nominale e potrà eventualmente essere integrato dove le sue caratteristiche risultino appropriate.
+
+L’identità commerciale del nome dovrà comunque essere sottoposta separatamente a verifica giuridica prima dell’eventuale registrazione del marchio.
+
+⸻
+
+3. Principi fondamentali
+
+La progettazione di GlyphaStudio deve privilegiare correttezza, robustezza, osservabilità e manutenibilità.
+
+Le prestazioni sono essenziali, ma non devono essere ottenute attraverso una complessità non giustificata.
+
+Ogni ottimizzazione significativa dovrà derivare da misurazioni effettuate mediante profiling e benchmark riproducibili.
+
+L’applicazione deve inoltre conservare una netta separazione fra rappresentazione dei dati, motore analitico e interfaccia grafica.
+
+L’interfaccia utente non dovrà contenere la logica scientifica dell’applicazione.
+
+Analogamente, il motore analitico non dovrà dipendere dalle modalità con cui i risultati vengono rappresentati graficamente.
+
+Questa separazione consentirà di utilizzare lo stesso nucleo da GlyphaStudio, GlyphaCLI, test automatici e, eventualmente, applicazioni future.
+
+⸻
+
+4. Filosofia Apple-native
+
+GlyphaStudio sarà progettato innanzitutto per Apple Silicon e per le versioni moderne di macOS.
+
+L’applicazione dovrà utilizzare direttamente le capacità offerte dal sistema operativo anziché introdurre livelli di astrazione multipiattaforma quando non necessari.
+
+Swift costituisce il linguaggio principale.
+
+SwiftUI rappresenta la tecnologia preferenziale per la costruzione dell’interfaccia moderna, mentre AppKit rimane disponibile per quei componenti nei quali consente maggiore controllo o prestazioni superiori.
+
+Foundation costituisce il livello fondamentale per gestione dei dati, URL, file, codifiche, processi e numerose primitive di sistema.
+
+PDFKit viene utilizzato per l’accesso ai PDF digitali.
+
+Vision può essere impiegato per OCR e analisi di documenti acquisiti come immagini.
+
+Natural Language fornisce primitive linguistiche native per tokenizzazione, identificazione della lingua, tagging e altre elaborazioni.
+
+Core ML consente l’esecuzione locale di modelli di machine learning.
+
+Accelerate deve essere utilizzato per algebra lineare, operazioni vettoriali, statistica numerica e calcoli nei quali le sue implementazioni ottimizzate offrano vantaggi rispetto a implementazioni manuali.
+
+Metal può essere introdotto per elaborazioni massivamente parallele quando benchmark concreti ne dimostrino l’utilità.
+
+Grand Central Dispatch e soprattutto Swift Concurrency costituiscono il fondamento della concorrenza.
+
+L’applicazione dovrà quindi sfruttare async/await, task group, actor e primitive di concorrenza strutturata, limitando attentamente lo stato condiviso.
+
+⸻
+
+5. Architettura generale
+
+L’architettura logica viene suddivisa in livelli.
+
+GlyphaStudio costituisce il livello applicativo e di presentazione.
+
+GlyphaKit espone le API pubbliche e i modelli necessari all’interazione con il motore.
+
+GlyphaCore implementa importazione, normalizzazione, segmentazione, indicizzazione, ricerca, linguistica computazionale e analisi.
+
+Sotto GlyphaCore possono essere presenti sottosistemi specializzati per persistenza, elaborazione numerica, machine learning e gestione dei formati.
+
+La dipendenza deve procedere prevalentemente dall’esterno verso l’interno.
+
+Il nucleo non deve conoscere l’interfaccia grafica.
+
+Questa caratteristica sarà verificata anche attraverso la struttura dei target e dei package, non soltanto attraverso convenzioni di programmazione.
+
+⸻
+
+6. Il progetto GlyphaStudio
+
+L’unità fondamentale per l’utente non sarà il singolo file, ma il progetto.
+
+Un progetto GlyphaStudio rappresenterà un ambiente analitico persistente contenente riferimenti ai documenti originali, metadati, corpus derivati, configurazioni linguistiche, indici, analisi effettuate e risultati.
+
+Il progetto dovrà poter essere chiuso e riaperto senza perdere lo stato del lavoro.
+
+Le operazioni computazionalmente costose già effettuate non dovranno essere ripetute inutilmente.
+
+Il progetto dovrà distinguere chiaramente i documenti originali dai dati derivati.
+
+Questa distinzione è fondamentale per la riproducibilità.
+
+Un risultato analitico dovrà poter essere ricondotto alla versione del corpus, alle trasformazioni applicate e ai parametri utilizzati.
+
+⸻
+
+7. Acquisizione documentale
+
+GlyphaStudio deve poter importare progressivamente numerosi formati.
+
+Il supporto iniziale comprenderà almeno testo semplice, Markdown, PDF e formati testuali strutturati ragionevolmente comuni.
+
+L’importazione di DOCX, RTF, HTML, CSV, JSON, XML ed EPUB potrà essere aggiunta mediante adattatori specifici.
+
+Il principio fondamentale consiste nel separare il formato sorgente dalla rappresentazione interna.
+
+Un PDF e un documento DOCX non devono continuare a essere trattati come entità radicalmente differenti una volta terminata l’estrazione.
+
+Ogni importer produce una rappresentazione documentale normalizzata accompagnata da metadati e informazioni sulla provenienza.
+
+⸻
+
+8. PDF
+
+Il PDF rappresenta un caso particolarmente importante.
+
+PDFKit consente di estrarre testo dai PDF che contengono un text layer.
+
+L’estrazione non deve tuttavia essere considerata banalmente equivalente alla lettura lineare di un file di testo.
+
+Il PDF è principalmente un formato di descrizione della pagina. Ordine visuale e ordine logico del testo possono divergere.
+
+GlyphaStudio dovrà pertanto mantenere, quando necessario, informazioni relative a pagina e posizione.
+
+Per documenti acquisiti mediante scanner e privi di testo digitale, potrà essere attivata una pipeline OCR basata su Vision.
+
+Il sistema deve distinguere esplicitamente testo originariamente digitale e testo ottenuto tramite riconoscimento ottico.
+
+L’incertezza introdotta dall’OCR costituisce infatti un’informazione scientificamente rilevante.
+
+⸻
+
+9. Documenti enormi
+
+La gestione di documenti molto grandi costituisce uno dei requisiti distintivi di GlyphaStudio.
+
+L’architettura deve evitare sistematicamente l’assunzione:
+
+contenuto del documento = String residente integralmente in RAM.
+
+I file dovranno poter essere elaborati mediante streaming, chunking e accesso incrementale.
+
+Quando possibile verrà utilizzato il memory mapping del sistema operativo.
+
+Le trasformazioni dovranno essere organizzate come pipeline.
+
+Un flusso concettuale potrà assumere la forma:
+
+sorgente → decodifica → normalizzazione → segmentazione → tokenizzazione → analisi → indicizzazione → persistenza.
+
+Ogni fase dovrà poter consumare progressivamente l’output della precedente.
+
+In questo modo la quantità di memoria necessaria dipenderà principalmente dalla finestra di elaborazione e dalle strutture indicizzate, non dalla dimensione complessiva del corpus.
+
+⸻
+
+10. Rappresentazione interna del testo
+
+Swift String fornisce un modello Unicode corretto e sofisticato, ma non deve necessariamente costituire la rappresentazione fisica di ogni porzione di corpus.
+
+Per dataset molto grandi sarà necessario distinguere almeno tre livelli.
+
+Il livello fisico contiene byte.
+
+Il livello testuale rappresenta sequenze Unicode decodificate.
+
+Il livello linguistico contiene token, lemmi, frasi e altre strutture derivate.
+
+Gli indici utilizzati internamente dovranno essere progettati con particolare attenzione alla semantica Unicode.
+
+Non è accettabile assumere implicitamente che un carattere corrisponda a un byte oppure a un’unità UTF-16.
+
+Le strutture ad alte prestazioni potranno utilizzare offset byte o altre rappresentazioni compatte, purché il loro significato sia esplicitamente definito.
+
+⸻
+
+11. Normalizzazione
+
+La normalizzazione non dovrà distruggere il testo originale.
+
+GlyphaStudio conserverà idealmente una distinzione fra sorgente e rappresentazioni normalizzate.
+
+Le trasformazioni potranno comprendere normalizzazione Unicode, gestione degli spazi, trattamento della punteggiatura, normalizzazione delle maiuscole, riconoscimento di strutture e altre operazioni configurabili.
+
+Ogni trasformazione significativa dovrà essere tracciabile.
+
+Questo consente sia di riprodurre un’analisi sia di comprendere perché due elaborazioni dello stesso documento abbiano prodotto risultati differenti.
+
+⸻
+
+12. Tokenizzazione
+
+La tokenizzazione costituisce uno dei servizi fondamentali di GlyphaCore.
+
+Il sistema deve essere Unicode-aware, language-aware e configurabile.
+
+Natural Language potrà fornire una prima implementazione robusta per numerose lingue.
+
+Tuttavia il modello architetturale non dovrà vincolare GlyphaStudio a un solo tokenizer.
+
+Il motore deve poter ospitare strategie alternative, tokenizer specializzati e, eventualmente, modelli esterni.
+
+Ogni token dovrà poter mantenere il collegamento alla propria posizione nel documento originale.
+
+Questa proprietà è fondamentale per concordanze, evidenziazione, verifica dei risultati e navigazione dal dato statistico al testo.
+
+⸻
+
+13. Analisi linguistica
+
+Il livello linguistico dovrà progressivamente comprendere identificazione della lingua, tokenizzazione, segmentazione delle frasi, lemmatizzazione quando disponibile, stemming opzionale, part-of-speech tagging e riconoscimento di entità.
+
+Le funzionalità offerte dai framework Apple potranno essere integrate con motori aggiuntivi qualora risultino necessarie per determinate lingue o metodologie.
+
+L’architettura dovrà pertanto distinguere il concetto di servizio linguistico dalla sua implementazione.
+
+⸻
+
+14. Corpus
+
+Un corpus sarà una vista logica su un insieme di documenti o loro porzioni.
+
+Uno stesso progetto potrà contenere più corpus.
+
+L’utente potrà creare sottoinsiemi mediante metadati, date, autori, categorie, origine documentale o altri criteri.
+
+Questa capacità è importante perché molte analisi comparative richiedono gruppi differenti dello stesso insieme documentale.
+
+Il corpus non deve necessariamente duplicare fisicamente i dati.
+
+Quando possibile sarà rappresentato come selezione o insieme di riferimenti verso strutture già indicizzate.
+
+⸻
+
+15. Metadati
+
+I documenti devono poter possedere metadati arbitrari oltre ai campi standard.
+
+Titolo, autore, data, fonte, lingua e categoria costituiscono esempi naturali.
+
+L’utente deve poter definire variabili proprie.
+
+Queste variabili potranno successivamente essere utilizzate per filtraggio, raggruppamento e analisi statistica.
+
+Questa caratteristica è essenziale per avvicinare GlyphaStudio agli strumenti utilizzati nella ricerca sociale, politica, giornalistica e accademica.
+
+⸻
+
+16. Indicizzazione
+
+L’indice costituisce uno dei componenti più critici del sistema.
+
+Non deve essere confuso con una semplice struttura [String: Int].
+
+Per corpus molto grandi sarà necessario costruire strutture persistenti capaci di rispondere rapidamente a interrogazioni quali frequenza di un termine, documenti nei quali compare, posizioni delle occorrenze, co-occorrenze e concordanze.
+
+Un inverted index costituisce la struttura naturale di partenza.
+
+Per ogni termine sarà possibile mantenere posting list contenenti documenti e posizioni.
+
+Le posting list potranno essere compresse.
+
+Il vocabolario dovrà utilizzare identificatori numerici compatti per evitare la ripetizione continua delle stringhe.
+
+Questa rappresentazione permette di trasformare molte operazioni linguistiche in elaborazioni efficienti su interi.
+
+⸻
+
+17. Persistenza
+
+La persistenza dovrà essere trattata come sottosistema autonomo.
+
+Non è necessario vincolare immediatamente GlyphaStudio a un singolo database.
+
+La rappresentazione persistente potrà utilizzare file strutturati, database embedded o una combinazione dei due.
+
+I dati voluminosi e sequenziali possono essere conservati in strutture binarie ottimizzate.
+
+I metadati e le relazioni possono invece beneficiare di un database transazionale.
+
+La scelta dovrà essere effettuata attraverso prototipi e benchmark.
+
+GlyphaStore potrà essere valutato come componente specializzato, ma la sua integrazione non dovrà avvenire esclusivamente per uniformità nominale.
+
+Il principio rimane che ogni componente deve giustificare tecnicamente la propria presenza.
+
+⸻
+
+18. Ricerca
+
+GlyphaStudio dovrà offrire una ricerca molto più ricca del semplice find.
+
+La ricerca dovrà comprendere parole, forme normalizzate, lemmi, frasi, espressioni regolari, combinazioni booleane e interrogazioni sui metadati.
+
+Una ricerca potrà essere limitata a documenti, corpus o sottoinsiemi.
+
+Il risultato dovrà conservare il contesto.
+
+L’utente deve poter passare direttamente dall’occorrenza trovata alla posizione corrispondente nel documento.
+
+⸻
+
+19. Concordanze
+
+Le concordanze costituiscono uno strumento centrale dell’analisi testuale.
+
+GlyphaStudio dovrà supportare visualizzazioni KWIC, Key Word In Context.
+
+La larghezza del contesto dovrà essere configurabile.
+
+Le concordanze dovranno poter essere ordinate e filtrate in base a metadati e caratteristiche linguistiche.
+
+Ogni riga dovrà rimanere collegata alla sorgente.
+
+⸻
+
+20. Frequenze
+
+Il sistema dovrà calcolare frequenze assolute e relative di token, lemmi, categorie grammaticali e altre unità.
+
+I risultati potranno essere confrontati fra corpus differenti.
+
+Dovranno essere disponibili soglie minime, stopword, filtri linguistici e criteri di inclusione.
+
+Le frequenze costituiscono una delle strutture fondamentali dalle quali derivano numerose analisi successive.
+
+⸻
+
+21. N-grammi
+
+GlyphaStudio dovrà supportare n-grammi di parole e, quando utile, di caratteri.
+
+Il sistema dovrà permettere di specificare dimensione, frequenza minima, corpus e criteri di normalizzazione.
+
+L’elaborazione dovrà essere progettata per funzionare anche su dataset di dimensioni considerevoli senza generare quantità incontrollate di oggetti Swift.
+
+⸻
+
+22. Collocazioni e co-occorrenze
+
+L’analisi delle co-occorrenze dovrà permettere di studiare quali termini compaiono frequentemente nello stesso contesto.
+
+Il concetto di contesto potrà essere definito come finestra di token, frase, paragrafo, documento o altra unità.
+
+Dovranno essere disponibili differenti misure di associazione.
+
+Queste strutture alimenteranno anche la costruzione di reti lessicali.
+
+⸻
+
+23. Statistica
+
+GlyphaStudio dovrà disporre di un vero sottosistema statistico.
+
+Le analisi iniziali comprenderanno statistiche descrittive, tabelle di contingenza, test di associazione e misure normalmente utilizzate nell’analisi quantitativa del testo.
+
+Progressivamente potranno essere aggiunte analisi multivariate.
+
+Il livello statistico dovrà essere indipendente dalla UI e sottoposto a test numerici contro implementazioni di riferimento.
+
+Accelerate costituisce uno strumento particolarmente importante per questo livello.
+
+Le routine BLAS e LAPACK e le altre primitive numeriche disponibili attraverso Accelerate devono essere preferite, quando appropriate, a implementazioni

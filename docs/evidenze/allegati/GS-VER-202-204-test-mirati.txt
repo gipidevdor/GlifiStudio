@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Log osservato con percorsi personali sanificati.
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test "Composizione di mappe incompatibili e contributive con un solo intervallo sono rifiutate" started.
+◇ Test "Il renderer CSV coincide con il riferimento e misura soltanto workload espliciti" started.
+◇ Test "La cancellazione già richiesta conserva l'esito del tokenizer legacy" started.
+◇ Test "La selezione vuota produce soli header e le Evidence mancanti restano rifiutate" started.
+◇ Test "La decodifica legacy conserva ordine non conforme e risultati del percorso lineare" started.
+◇ Test "Il CSV conserva riferimenti condivisi e ripetuti, ordine, Unicode e protezione formula" started.
+◇ Test "La ricerca e la composizione di SpanMap coincidono con il riferimento lineare completo" started.
+◇ Test "La composizione di SpanMap conserva ogni origine e i byte dei tratti exact" started.
+◇ Test "SpanMap conserva half-open, coalescenza, campi Codable e round-trip" started.
+◇ Test "Il fuzz a seed fisso conserva token, frasi e componenti del tokenizer legacy" started.
+◇ Test "Punteggiatura, email e URL preservano tutti i limiti e i suffissi legacy" started.
+◇ Test "Il tokenizer conserva l'output legacy e misura soltanto workload espliciti" started.
+✔ Test "La ricerca e la composizione di SpanMap coincidono con il riferimento lineare completo" passed after 0.002 seconds.
+✔ Test "SpanMap conserva half-open, coalescenza, campi Codable e round-trip" passed after 0.001 seconds.
+✔ Test "La decodifica legacy conserva ordine non conforme e risultati del percorso lineare" passed after 0.002 seconds.
+✔ Test "Il tokenizer conserva l'output legacy e misura soltanto workload espliciti" passed after 0.002 seconds.
+✔ Test "Composizione di mappe incompatibili e contributive con un solo intervallo sono rifiutate" passed after 0.002 seconds.
+✔ Test "La cancellazione già richiesta conserva l'esito del tokenizer legacy" passed after 0.004 seconds.
+✔ Test "La selezione vuota produce soli header e le Evidence mancanti restano rifiutate" passed after 0.004 seconds.
+✔ Test "Il CSV conserva riferimenti condivisi e ripetuti, ordine, Unicode e protezione formula" passed after 0.006 seconds.
+✔ Test "Il renderer CSV coincide con il riferimento e misura soltanto workload espliciti" passed after 0.006 seconds.
+✔ Test "La composizione di SpanMap conserva ogni origine e i byte dei tratti exact" passed after 0.011 seconds.
+✔ Test "Il fuzz a seed fisso conserva token, frasi e componenti del tokenizer legacy" passed after 0.017 seconds.
+✔ Test "Punteggiatura, email e URL preservano tutti i limiti e i suffissi legacy" passed after 0.129 seconds.
+✔ Test run with 12 tests in 0 suites passed after 0.129 seconds.

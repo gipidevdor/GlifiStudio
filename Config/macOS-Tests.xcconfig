@@ -1,0 +1,15 @@
+// SPDX-License-Identifier: BSD-3-Clause
+
+#include "Debug.xcconfig"
+
+PRODUCT_NAME = GlifiStudioMacTests
+PRODUCT_BUNDLE_IDENTIFIER = studio.glifi.GlifiStudio.MacTests
+SDKROOT = macosx
+SUPPORTED_PLATFORMS = macosx
+MACOSX_DEPLOYMENT_TARGET = 27.0
+INFOPLIST_FILE =
+GENERATE_INFOPLIST_FILE = YES
+SWIFT_EMIT_LOC_STRINGS = NO
+TEST_HOST =
+BUNDLE_LOADER =
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @loader_path/../Frameworks @executable_path/../Frameworks

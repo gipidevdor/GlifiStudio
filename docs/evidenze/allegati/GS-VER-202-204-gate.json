@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-21",
+  "command": "make verify",
+  "profile": "macOS and iPadOS",
+  "exitCode": 0,
+  "coreTests": 380,
+  "kitTests": 52,
+  "macOSDistinctTests": 46,
+  "macOSDeviceExecutions": 108,
+  "oracleRowsReproduced": 153,
+  "textAnalysisCLIChecks": 51,
+  "textAnalysisFixtures": 15,
+  "recoveryCheckpoints": 22,
+  "validPDFA2uFiles": 2,
+  "builds": [
+    "macOS Debug (test build)",
+    "macOS Release",
+    "iPadOS Debug",
+    "iPadOS Release"
+  ],
+  "simulatorRuntimeTestsExecuted": false,
+  "productSourceSHA256": {
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiSpanMap.swift": "3bda338c6c449ef2a2361091b27605262f2dd802c045158217110b30298c7d03",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiItalianTokenizer.swift": "536073b18e01d4d853e1a5f4df6a95c799218de4ebb9a746c4a1ad912031f1b5",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiScientificExportRenderer.swift": "d10d3480856f4a52a11d966968597baed8dc66d0c9fedf10b980cebb715e1476"
+  },
+  "logs": {
+    "GS-VER-202-204-gate.txt": {
+      "rawSHA256": "bfbf388ab89808fbf6b51e437f23e11602670ff77bf2378fe9d6ec675cfb271b",
+      "retainedSHA256": "64faa99d98bf56262f5a27b6b3ab45e668e1613167fda6871a024f941e96926e"
+    },
+    "GS-VER-202-204-test-mirati.txt": {
+      "rawSHA256": "c679db9fcb03491e90b83909e196ec11a2864cac9785d8a9cb1edb8bd7dc5ed8",
+      "retainedSHA256": "28171bc1b674111e312ac965f05f340784cfe4679e0ffd1a3ccc482f1c8ea289"
+    },
+    "GS-VER-202-204-ripasso-core-kit.txt": {
+      "rawSHA256": "c307bec08ef582115a32885d2d3c85597c4aefb8fb2b0cc4b9e965a28901af7c",
+      "retainedSHA256": "e4a0038898ab921839087ad5be9a448fb241160423993d07195fd904011a8535"
+    }
+  },
+  "followupCoreKit": {
+    "exitCode": 0,
+    "coreTests": 381,
+    "kitTests": 52,
+    "sourceAndTestFiles": 205,
+    "inputsUnchangedDuringRun": true,
+    "evidence": "GS-VER-202-204-ripasso-core-kit.json"
+  }
+}

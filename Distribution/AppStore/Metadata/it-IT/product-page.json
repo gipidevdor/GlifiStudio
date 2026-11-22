@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "locale": "it-IT",
+  "status": "draft",
+  "name": "Glifi Studio",
+  "subtitle": "Analisi testuale nativa",
+  "promotionalText": "",
+  "description": "Glifi Studio è un ambiente nativo per organizzare, esplorare e analizzare raccolte testuali su Mac e iPad. Questa scheda è una bozza editoriale e deve essere approvata soltanto dopo l'implementazione dei flussi descritti.",
+  "keywords": "testi,corpus,linguistica,ricerca,concordanze,analisi",
+  "whatsNew": "",
+  "supportURL": null,
+  "marketingURL": null,
+  "privacyPolicyURL": null
+}

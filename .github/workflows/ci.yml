@@ -1,0 +1,76 @@
+# SPDX-License-Identifier: BSD-3-Clause
+
+name: Verifica
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-quality:
+    name: static-quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Acquisizione sorgenti
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Dipendenze minime (zsh, ripgrep)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends zsh ripgrep
+
+      - name: Controlli statici, docs e dialetto
+        run: ./Scripts/quality-static.sh
+
+  format-check:
+    name: format-check
+    runs-on: xcode-27
+    timeout-minutes: 15
+    steps:
+      - name: Acquisizione sorgenti
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Dialetto Swift (contratto machine-readable)
+        run: ./Scripts/check-swift-dialect.py
+
+      - name: Formattazione Swift strict
+        run: ./Scripts/format.sh --check
+
+  verify:
+    name: verify
+    runs-on: xcode-27
+    needs:
+      - static-quality
+      - format-check
+    timeout-minutes: 45
+    steps:
+      - name: Acquisizione sorgenti
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Cache SwiftPM
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm
+          key: spm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('Packages/GlifiCore/Package.swift', 'Packages/GlifiCore/**/*.swift') }}
+          restore-keys: |
+            spm-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Quality gate completo
+        run: ./Scripts/verify.sh

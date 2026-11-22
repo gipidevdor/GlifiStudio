@@ -1,0 +1,56 @@
+{
+  "schema": "studio.glifi.query-fixture-cases",
+  "schemaVersion": 1,
+  "license": "BSD-3-Clause",
+  "coordinateSpace": "sourceUTF8",
+  "intervalConvention": "half-open",
+  "source": "Casa, casa sul mare. La casa guarda il mare.",
+  "cases": [
+    {
+      "id": "normalized-term",
+      "query": "normalized:casa",
+      "outcome": "succeeded",
+      "matches": [
+        {"start": 0, "end": 4, "surface": "Casa"},
+        {"start": 6, "end": 10, "surface": "casa"},
+        {"start": 24, "end": 28, "surface": "casa"}
+      ]
+    },
+    {
+      "id": "exact-form",
+      "query": "form:Casa",
+      "outcome": "succeeded",
+      "matches": [{"start": 0, "end": 4, "surface": "Casa"}]
+    },
+    {
+      "id": "exact-phrase",
+      "query": "\"casa sul mare\"",
+      "outcome": "succeeded",
+      "matches": [{"start": 6, "end": 19, "surface": "casa sul mare"}]
+    },
+    {
+      "id": "ordered-proximity",
+      "query": "normalized:casa BEFORE/1 normalized:mare",
+      "outcome": "succeeded",
+      "matches": [{"start": 6, "end": 19, "surface": "casa sul mare"}]
+    },
+    {
+      "id": "safe-regex",
+      "query": "form:/^Casa$/",
+      "outcome": "succeeded",
+      "matches": [{"start": 0, "end": 4, "surface": "Casa"}]
+    },
+    {
+      "id": "unsafe-regex",
+      "query": "form:/(a+)+/",
+      "outcome": "failed",
+      "failureCode": "query.regex-rejected"
+    },
+    {
+      "id": "unknown-field",
+      "query": "sconosciuto:casa",
+      "outcome": "failed",
+      "failureCode": "query.unknown-field"
+    }
+  ]
+}

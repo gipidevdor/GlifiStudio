@@ -1,0 +1,13 @@
+{
+  "schema": "studio.glifi.markdown-fixture-expected",
+  "schemaVersion": 1,
+  "license": "BSD-3-Clause",
+  "extractionContractIdentifier": "md-extract-v1",
+  "coordinateSpace": "sourceBytes",
+  "intervalConvention": "half-open",
+  "expectedTextSuffix": "Titolo\n\nUna fonte affidabile & locale.\n",
+  "matches": [
+    {"start": 64, "end": 69, "surface": "fonte"},
+    {"start": 83, "end": 88, "surface": "&amp;"}
+  ]
+}

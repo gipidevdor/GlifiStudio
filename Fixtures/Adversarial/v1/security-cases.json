@@ -1,0 +1,17 @@
+{
+  "schema": "studio.glifi.adversarial-case-descriptors",
+  "schemaVersion": 1,
+  "payloadPolicy": "descriptors-only",
+  "cases": [
+    {"id": "path-parent", "threat": "THR-004", "surface": "packagePath", "input": "../outside", "expectedCategory": "invalidInput", "limit": {"maxBytes": 128}},
+    {"id": "path-absolute", "threat": "THR-004", "surface": "packagePath", "input": "/tmp/outside", "expectedCategory": "invalidInput", "limit": {"maxBytes": 128}},
+    {"id": "unexpected-symlink", "threat": "THR-005", "surface": "packageEntry", "input": {"kind": "symbolicLink", "target": "../source"}, "expectedCategory": "corruption", "limit": {"maxEntries": 1}},
+    {"id": "unicode-case-collision", "threat": "THR-006", "surface": "packageEntries", "input": ["Dati.json", "dati.json"], "expectedCategory": "corruption", "limit": {"maxEntries": 2}},
+    {"id": "declared-expansion-bomb", "threat": "THR-003", "surface": "archiveDescriptor", "input": {"compressedBytes": 1024, "declaredExpandedBytes": 1073741824, "depth": 16}, "expectedCategory": "insufficientResources", "limit": {"maxExpandedBytes": 1048576, "maxDepth": 4}},
+    {"id": "redos-nested-repetition", "threat": "THR-009", "surface": "queryRegex", "input": {"pattern": "(a+)+$", "subjectShape": "a^N!"}, "expectedCategory": "invalidInput", "limit": {"maxPatternBytes": 64, "deadlineMilliseconds": 50}},
+    {"id": "manifest-generation-missing", "threat": "THR-007", "surface": "projectManifest", "input": {"generation": 2, "storeGenerations": [1]}, "expectedCategory": "corruption", "limit": {"maxManifestBytes": 65536}},
+    {"id": "csv-formula-cell", "threat": "THR-014", "surface": "csvExport", "input": "=1+1", "expectedCategory": "invalidInput", "limit": {"maxCellBytes": 1024}},
+    {"id": "log-content-canary", "threat": "THR-015", "surface": "diagnostics", "input": "GLIFI_PRIVATE_CANARY_DO_NOT_LOG", "expectedCategory": "invariantViolation", "limit": {"maxOccurrencesInLog": 0}},
+    {"id": "model-shape-overflow", "threat": "THR-016", "surface": "modelOutput", "input": {"declaredShape": [9223372036854775807, 2]}, "expectedCategory": "invalidInput", "limit": {"maxElements": 1048576}}
+  ]
+}

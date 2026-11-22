@@ -1,0 +1,10 @@
+{
+  "schema": "studio.glifi.adversarial-fixture-manifest",
+  "schemaVersion": 1,
+  "id": "adversarial-v1-descriptors",
+  "license": "BSD-3-Clause",
+  "provenance": "Descrittori sintetici originali; nessun exploit, malware o decompression bomb materializzata.",
+  "purpose": "Catalogo safe-by-construction per future fixture generate entro limiti CI.",
+  "reviewStatus": "descriptor-seed",
+  "cases": "Fixtures/Adversarial/v1/security-cases.json"
+}

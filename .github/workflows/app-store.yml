@@ -1,0 +1,40 @@
+# SPDX-License-Identifier: BSD-3-Clause
+
+name: App Store preflight
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: app-store-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app-store-baseline:
+    name: app-store-baseline
+    runs-on: xcode-27
+    timeout-minutes: 60
+    steps:
+      - name: Acquisizione sorgenti
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Cache SwiftPM
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm
+          key: spm-appstore-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('Packages/GlifiCore/Package.swift', 'Packages/GlifiCore/**/*.swift') }}
+          restore-keys: |
+            spm-appstore-${{ runner.os }}-${{ runner.arch }}-
+            spm-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Preflight App Store
+        run: ./Scripts/verify-app-store.sh

@@ -1,0 +1,35 @@
+{
+  "scope": "RSS dell'intera invocazione, inclusi SwiftPM, fixture, riferimenti e controlli; non per kernel o UI",
+  "processes": {
+    "baseline": {
+      "Graph": {
+        "maximumResidentSetBytesWholeInvocation": 128139264
+      },
+      "Projection": {
+        "maximumResidentSetBytesWholeInvocation": 73564160
+      },
+      "Digest": {
+        "maximumResidentSetBytesWholeInvocation": 384335872
+      }
+    },
+    "structures": {
+      "Graph": {
+        "maximumResidentSetBytesWholeInvocation": 131907584
+      },
+      "Projection": {
+        "maximumResidentSetBytesWholeInvocation": 73547776
+      }
+    },
+    "candidate": {
+      "Graph": {
+        "maximumResidentSetBytesWholeInvocation": 131776512
+      },
+      "Projection": {
+        "maximumResidentSetBytesWholeInvocation": 73531392
+      },
+      "Digest": {
+        "maximumResidentSetBytesWholeInvocation": 384466944
+      }
+    }
+  }
+}

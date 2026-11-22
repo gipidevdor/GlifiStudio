@@ -1,0 +1,756 @@
+// SPDX-License-Identifier: BSD-3-Clause
+
+import Foundation
+
+/// Unit of an extractive-summary budget.
+public enum GlifiSummaryBudgetUnit: String, Codable, Sendable {
+    /// Maximum number of selected sentences.
+    case sentences = "Budget-sentences-v1"
+    /// Maximum total number of lexical tokens in the selected sentences.
+    case lexicalTokens = "Budget-lexical-tokens-v1"
+    /// Maximum total number of Unicode scalars in the exact source intervals of the selected
+    /// sentences.
+    case characters = "Budget-characters-v1"
+}
+
+/// Declared budget of an extractive summary.
+public struct GlifiSummaryBudget: Codable, Equatable, Hashable, Sendable {
+    /// Largest budget accepted by the engine.
+    public static let maximumLimit = 10_000
+    /// Three sentences, the planner default.
+    public static let standard = GlifiSummaryBudget(unit: .sentences, limit: 3)
+
+    /// Unit the limit is expressed in.
+    public let unit: GlifiSummaryBudgetUnit
+    /// Positive limit in `unit`.
+    public let limit: Int
+
+    /// Creates a budget; validity is checked when the summary is computed.
+    public init(unit: GlifiSummaryBudgetUnit, limit: Int) {
+        self.unit = unit
+        self.limit = limit
+    }
+
+    /// Whether the limit is positive and within the engine bound.
+    public var isValid: Bool {
+        limit >= 1 && limit <= Self.maximumLimit
+    }
+}
+
+/// Versioned sentence-scoring method of an extractive summary (GS-MET-001-19).
+public enum GlifiSummaryScoringMethod: String, CaseIterable, Codable, Sendable {
+    /// Mean of the document TF-IDF weights of the sentence tokens; zero without tokens.
+    case sentenceTFIDFMean = "SentenceTFIDFMean-v1"
+    /// Cosine between the sentence vector and the centroid of the non-null sentence vectors.
+    case centroidCosine = "CentroidCosine-v1"
+    /// Stationary probability of the continuous cosine graph of the non-null sentence vectors.
+    case lexRank = "LexRankSentence-v1"
+    /// Stationary probability of the token-overlap graph of Mihalcea and Tarau over the
+    /// sentences with lexical tokens.
+    case textRank = "TextRankSentence-v1"
+    /// Configurable overlap graph and uniform-teleport PageRank, with convergence diagnostics.
+    case textRankConfigurable = "TextRankSentence-configurable-v1"
+    /// Configurable cosine graph without self-loops, followed by uniform-teleport PageRank.
+    case lexRankContinuous = "LexRankSentence-continuous-v1"
+    /// Configurable binary graph above a strict cosine threshold, without self-loops.
+    case lexRankThreshold = "LexRankSentence-threshold-v1"
+
+    /// Whether the method accepts explicit graph parameters rather than fixed legacy settings.
+    public var supportsGraphConfiguration: Bool {
+        switch self {
+        case .sentenceTFIDFMean, .centroidCosine, .lexRank, .textRank: false
+        case .textRankConfigurable, .lexRankContinuous, .lexRankThreshold: true
+        }
+    }
+
+    /// Eligibility policy: which scored sentences may enter the summary.
+    public var eligibilityPolicy: String {
+        switch self {
+        case .sentenceTFIDFMean, .textRank, .textRankConfigurable:
+            "eligibility.lexical-tokens-required-v1"
+        case .centroidCosine, .lexRank, .lexRankContinuous, .lexRankThreshold:
+            "eligibility.non-null-vector-v1"
+        }
+    }
+}
+
+/// Versioned redundancy policy applied while selecting sentences (GS-MET-001-19).
+public enum GlifiSummaryRedundancyPolicy: Equatable, Hashable, Sendable {
+    /// Selection walks the rank; identical sentences may both enter.
+    case none
+    /// Maximal Marginal Relevance: `λ·rel(s) − (1−λ)·max_{u∈S} sim(s,u)` with `0 ≤ λ ≤ 1`,
+    /// `rel` the method score and `sim` the cosine between sentence vectors.
+    case maximalMarginalRelevance(lambda: Double)
+
+    /// `redundancy.none-v1`.
+    public static let noneIdentifier = "redundancy.none-v1"
+    /// `MMR-v1`.
+    public static let maximalMarginalRelevanceIdentifier = "MMR-v1"
+    /// Cosine between the sentence vectors of the declared weighting scheme.
+    public static let sentenceVectorCosineIdentifier = "similarity.sentence-vector-cosine-v1"
+
+    /// Versioned identifier of the policy.
+    public var identifier: String {
+        switch self {
+        case .none: Self.noneIdentifier
+        case .maximalMarginalRelevance: Self.maximalMarginalRelevanceIdentifier
+        }
+    }
+
+    /// Trade-off `λ` between relevance and novelty; nil without redundancy control.
+    public var lambda: Double? {
+        switch self {
+        case .none: nil
+        case let .maximalMarginalRelevance(lambda): lambda
+        }
+    }
+
+    /// Similarity used by the penalty; nil without redundancy control.
+    public var similarityIdentifier: String? {
+        switch self {
+        case .none: nil
+        case .maximalMarginalRelevance: Self.sentenceVectorCosineIdentifier
+        }
+    }
+
+    /// Whether `λ` is finite and within `[0, 1]`.
+    public var isValid: Bool {
+        switch self {
+        case .none: true
+        case let .maximalMarginalRelevance(lambda): lambda.isFinite && lambda >= 0 && lambda <= 1
+        }
+    }
+}
+
+/// One candidate sentence of a document: source interval, length and normalized lexical tokens.
+public struct GlifiSummaryCandidateSentence: Equatable, Sendable {
+    /// Exact source interval of the sentence.
+    public let range: GlifiUTF8Range
+    /// Normalized lexical forms in source order, repetitions included.
+    public let terms: [String]
+    /// Positive Unicode scalar count of the exact source text of `range`, the
+    /// `Budget-characters-v1` cost; validated when the summary is computed.
+    public let characterCount: Int
+
+    /// Creates a candidate from its interval, its length in Unicode scalars and normalized tokens.
+    public init(range: GlifiUTF8Range, terms: [String], characterCount: Int) {
+        self.range = range
+        self.terms = terms
+        self.characterCount = characterCount
+    }
+}
+
+/// Candidate sentences of one document in source order.
+public struct GlifiSummaryDocument: Equatable, Sendable {
+    /// Analyzed revision.
+    public let sourceRevisionID: SourceRevisionID
+    /// Sentences in source order; the index is the `SentenceID`.
+    public let sentences: [GlifiSummaryCandidateSentence]
+
+    /// Creates a document from its ordered candidate sentences.
+    public init(sourceRevisionID: SourceRevisionID, sentences: [GlifiSummaryCandidateSentence]) {
+        self.sourceRevisionID = sourceRevisionID
+        self.sentences = sentences
+    }
+}
+
+/// One scored sentence with its stable identity and source position.
+public struct GlifiSummarySentence: Codable, Equatable, Sendable {
+    /// Document that owns the sentence.
+    public let sourceRevisionID: String
+    /// Zero-based position among the sentences of the document (`SentenceID`).
+    public let sentenceIndex: Int
+    /// Interval in the extracted UTF-8 text, before mapping to the original source.
+    public let range: GlifiUTF8Range
+    /// Lexical tokens included in the score.
+    public let tokenCount: Int
+    /// Score of the declared method; zero for an ineligible sentence.
+    public let score: Double
+    /// One-based rank by descending score, ties broken by source position.
+    public let rank: Int
+    /// Whether the sentence may be selected under the eligibility policy of the method.
+    public let isEligible: Bool
+    /// Whether the sentence enters the summary.
+    public let isSelected: Bool
+    /// One-based order in which the selection accepted the sentence; nil when not selected.
+    public let selectionOrder: Int?
+
+    init(
+        sourceRevisionID: String, sentenceIndex: Int, range: GlifiUTF8Range, tokenCount: Int,
+        score: Double, rank: Int, isEligible: Bool, isSelected: Bool, selectionOrder: Int?
+    ) {
+        self.sourceRevisionID = sourceRevisionID
+        self.sentenceIndex = sentenceIndex
+        self.range = range
+        self.tokenCount = tokenCount
+        self.score = score
+        self.rank = rank
+        self.isEligible = isEligible
+        self.isSelected = isSelected
+        self.selectionOrder = selectionOrder
+    }
+
+    /// Payloads written before `CentroidCosine-v1` omit `isEligible`: lexical tokens were required;
+    /// payloads written before `MMR-v1` omit `selectionOrder`.
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        sourceRevisionID = try container.decode(String.self, forKey: .sourceRevisionID)
+        sentenceIndex = try container.decode(Int.self, forKey: .sentenceIndex)
+        range = try container.decode(GlifiUTF8Range.self, forKey: .range)
+        tokenCount = try container.decode(Int.self, forKey: .tokenCount)
+        score = try container.decode(Double.self, forKey: .score)
+        rank = try container.decode(Int.self, forKey: .rank)
+        isEligible =
+            try container.decodeIfPresent(Bool.self, forKey: .isEligible) ?? (tokenCount > 0)
+        isSelected = try container.decode(Bool.self, forKey: .isSelected)
+        selectionOrder = try container.decodeIfPresent(Int.self, forKey: .selectionOrder)
+    }
+}
+
+/// Extractive summary over the sentences of a group with a declared scoring method.
+public struct GlifiCorpusExtractiveSummaryAnalysis: GlifiDerivedAnalysisResult {
+    /// Stable artifact payload schema.
+    public static let outputSchemaIdentifier =
+        "studio.glifi.artifact.corpus-extractive-summary.v1"
+    /// Versioned identity of this analysis bundle.
+    public static let analysisIdentifier = "corpus-extractive-summary-v1"
+    /// Default scoring method.
+    public static let standardMethod = GlifiSummaryScoringMethod.sentenceTFIDFMean
+    /// Backward-compatible identity of the default scoring method.
+    public static let methodIdentifier = standardMethod.rawValue
+    /// Damping factor `d` of `LexRankSentence-v1`.
+    public static let lexRankDamping = 0.85
+    /// Largest L1 change between iterations at which `LexRankSentence-v1` has converged.
+    public static let lexRankTolerance = 1e-12
+    /// Power iterations after which `LexRankSentence-v1` fails closed.
+    public static let lexRankMaximumIterations = 1_000
+    /// Largest number of graph nodes, the non-null sentence vectors, of `LexRankSentence-v1`;
+    /// `TextRankSentence-v1` shares the node, tolerance and iteration limits.
+    public static let lexRankMaximumNodes = 2_000
+    /// Damping factor `d` of `TextRankSentence-v1`.
+    public static let textRankDamping = 0.85
+    /// Edge weight of `TextRankSentence-v1`: shared types over the sum of the log token counts.
+    public static let textRankSimilarityIdentifier = "similarity.textrank-overlap-v1"
+    /// Dangling policy of `TextRankSentence-v1`: a node without edges jumps uniformly.
+    public static let textRankDanglingIdentifier = "dangling.uniform-v1"
+    /// Sublinear TF, smoothed IDF, no row normalization: defined for one document too.
+    public static let standardScheme = GlifiTermWeightingScheme(
+        termFrequency: .sublinear,
+        inverseDocumentFrequency: .smooth,
+        normalization: .none
+    )
+
+    /// Method identity serialized with the result.
+    public let analysisIdentifier: String
+    /// Scoring method identity.
+    public let methodIdentifier: String
+    /// Declared document-term weighting scheme.
+    public let scheme: GlifiTermWeightingScheme
+    /// Combined weighting identity.
+    public let combinedIdentifier: String
+    /// Declared budget.
+    public let budget: GlifiSummaryBudget
+    /// Budget actually consumed, in the budget unit.
+    public let consumedBudget: Int
+    /// Redundancy policy: `redundancy.none-v1` or `MMR-v1`.
+    public let redundancyPolicy: String
+    /// Trade-off `λ` of `MMR-v1`; nil without redundancy control, as in earlier payloads.
+    public let redundancyLambda: Double?
+    /// Similarity used by the redundancy penalty; nil without redundancy control.
+    public let similarityIdentifier: String?
+    /// Tie-break: canonical document order, then sentence position.
+    public let tieBreakIdentifier: String
+    /// Eligibility of the method: an ineligible sentence is ranked at zero but never selected.
+    public let eligibilityPolicy: String
+    /// Order of `sentences`: canonical document order, then sentence position.
+    public let outputOrderIdentifier: String
+    /// Token-to-type mapping.
+    public let typeMappingIdentifier: String
+    /// Documents in canonical order.
+    public let sourceRevisionIDs: [String]
+    /// Every candidate sentence in source order, scored and ranked.
+    public let sentences: [GlifiSummarySentence]
+    /// Configuration and convergence of configurable graph variants; absent for legacy methods.
+    public let graphDiagnostics: GlifiSummaryGraphDiagnostics?
+
+    /// Selected sentences in source order.
+    public var selectedSentences: [GlifiSummarySentence] {
+        sentences.filter(\.isSelected)
+    }
+
+    /// Every sentence ordered by rank.
+    public var rankedSentences: [GlifiSummarySentence] {
+        sentences.sorted { $0.rank < $1.rank }
+    }
+
+    /// Scores and selects the sentences of documents given with normalized tokens.
+    public init(
+        documents: [GlifiSummaryDocument],
+        budget: GlifiSummaryBudget,
+        scheme: GlifiTermWeightingScheme,
+        method: GlifiSummaryScoringMethod = standardMethod,
+        redundancy: GlifiSummaryRedundancyPolicy = .none,
+        graphConfiguration: GlifiSummaryGraphConfiguration? = nil
+    ) throws {
+        guard !documents.isEmpty else {
+            throw derivedAnalysisFailure(
+                "summary.insufficient-sources", category: .insufficientData)
+        }
+        guard budget.isValid else {
+            throw derivedAnalysisFailure("summary.invalid-budget")
+        }
+        guard redundancy.isValid else {
+            throw derivedAnalysisFailure("summary.invalid-redundancy")
+        }
+        guard graphConfiguration == nil || method.supportsGraphConfiguration else {
+            throw derivedAnalysisFailure("summary.graph-configuration-without-method")
+        }
+        if method.supportsGraphConfiguration {
+            guard (graphConfiguration ?? .standard).isValid else {
+                throw derivedAnalysisFailure("summary.invalid-graph-configuration")
+            }
+            let sentenceCount = documents.reduce(0) { $0 + $1.sentences.count }
+            guard sentenceCount <= GlifiSummaryGraphConfiguration.maximumSentenceCount else {
+                throw derivedAnalysisFailure(
+                    "summary.graph-sentence-limit", category: .insufficientResources)
+            }
+        }
+        let ordered = documents.sorted {
+            $0.sourceRevisionID.canonicalValue < $1.sourceRevisionID.canonicalValue
+        }
+        guard Set(ordered.map(\.sourceRevisionID)).count == ordered.count else {
+            throw derivedAnalysisFailure("summary.duplicate-source")
+        }
+        guard ordered.allSatisfy({ $0.sentences.allSatisfy { $0.characterCount > 0 } }) else {
+            throw derivedAnalysisFailure("summary.invalid-character-count")
+        }
+
+        let vocabulary = Array(
+            Set(ordered.flatMap { $0.sentences.flatMap(\.terms) })
+        ).sorted()
+        let columnIndex = Dictionary(
+            uniqueKeysWithValues: vocabulary.enumerated().map { ($0.element, $0.offset) }
+        )
+        let rows: [[Int: Int]] = ordered.map { document in
+            var counts: [Int: Int] = [:]
+            for sentence in document.sentences {
+                for term in sentence.terms {
+                    guard let column = columnIndex[term] else { continue }
+                    counts[column, default: 0] += 1
+                }
+            }
+            return counts
+        }
+        let weights = try GlifiTermWeighting.weigh(
+            rows: rows, columnCount: vocabulary.count, scheme: scheme)
+
+        struct Scored {
+            let document: Int
+            let sentenceIndex: Int
+            let range: GlifiUTF8Range
+            let tokenCount: Int
+            let characterCount: Int
+            let isEligible: Bool
+            let score: Double
+        }
+        // Sentence vector: token count × document weight per type, sorted by column; shared by
+        // the centroid method and by the MMR similarity.
+        struct Vector {
+            let entries: [(column: Int, value: Double)]
+            let norm: Double
+        }
+        let needsVectors: Bool
+        switch method {
+        case .centroidCosine, .lexRank, .textRank, .lexRankContinuous, .lexRankThreshold:
+            needsVectors = true
+        case .sentenceTFIDFMean, .textRankConfigurable:
+            needsVectors = redundancy.lambda.map { $0 < 1 } ?? false
+        }
+        var vectors: [Vector] = []
+        if needsVectors {
+            for (documentIndex, document) in ordered.enumerated() {
+                for sentence in document.sentences {
+                    var counts: [Int: Int] = [:]
+                    for term in sentence.terms {
+                        guard let column = columnIndex[term] else { continue }
+                        counts[column, default: 0] += 1
+                    }
+                    let entries: [(column: Int, value: Double)] = counts.keys.sorted().compactMap {
+                        column in
+                        let value =
+                            Double(counts[column] ?? 0) * (weights[documentIndex][column] ?? 0)
+                        return value == 0 ? nil : (column: column, value: value)
+                    }
+                    let norm = entries.reduce(0.0) { $0 + $1.value * $1.value }.squareRoot()
+                    vectors.append(Vector(entries: entries, norm: norm))
+                }
+            }
+        }
+        func cosine(_ lhs: Vector, _ rhs: Vector) -> Double {
+            guard lhs.norm > 0, rhs.norm > 0 else { return 0 }
+            var dot = 0.0
+            var left = 0
+            var right = 0
+            while left < lhs.entries.count, right < rhs.entries.count {
+                let a = lhs.entries[left]
+                let b = rhs.entries[right]
+                if a.column == b.column {
+                    dot += a.value * b.value
+                    left += 1
+                    right += 1
+                } else if a.column < b.column {
+                    left += 1
+                } else {
+                    right += 1
+                }
+            }
+            return dot / (lhs.norm * rhs.norm)
+        }
+
+        var scored: [Scored] = []
+        var graphDiagnostics: GlifiSummaryGraphDiagnostics?
+        switch method {
+        case .sentenceTFIDFMean:
+            for (documentIndex, document) in ordered.enumerated() {
+                for (sentenceIndex, sentence) in document.sentences.enumerated() {
+                    let tokenCount = sentence.terms.count
+                    var sum = 0.0
+                    for term in sentence.terms {
+                        guard let column = columnIndex[term] else { continue }
+                        sum += weights[documentIndex][column] ?? 0
+                    }
+                    scored.append(
+                        Scored(
+                            document: documentIndex,
+                            sentenceIndex: sentenceIndex,
+                            range: sentence.range,
+                            tokenCount: tokenCount,
+                            characterCount: sentence.characterCount,
+                            isEligible: tokenCount > 0,
+                            score: tokenCount == 0 ? 0 : sum / Double(tokenCount)
+                        )
+                    )
+                }
+            }
+        case .centroidCosine:
+            // The centroid is the mean of the non-null vectors. Null vectors score zero and are
+            // never selected.
+            var centroid: [Int: Double] = [:]
+            var centroidCount = 0
+            for vector in vectors where vector.norm > 0 {
+                centroidCount += 1
+                for entry in vector.entries {
+                    centroid[entry.column, default: 0] += entry.value
+                }
+            }
+            var centroidNorm = 0.0
+            if centroidCount > 0 {
+                for column in centroid.keys.sorted() {
+                    centroid[column] = (centroid[column] ?? 0) / Double(centroidCount)
+                    centroidNorm += (centroid[column] ?? 0) * (centroid[column] ?? 0)
+                }
+                centroidNorm = centroidNorm.squareRoot()
+            }
+            var position = 0
+            for (documentIndex, document) in ordered.enumerated() {
+                for (sentenceIndex, sentence) in document.sentences.enumerated() {
+                    let vector = vectors[position]
+                    position += 1
+                    let isEligible = vector.norm > 0 && centroidNorm > 0
+                    var dot = 0.0
+                    if isEligible {
+                        for entry in vector.entries {
+                            dot += entry.value * (centroid[entry.column] ?? 0)
+                        }
+                    }
+                    scored.append(
+                        Scored(
+                            document: documentIndex,
+                            sentenceIndex: sentenceIndex,
+                            range: sentence.range,
+                            tokenCount: sentence.terms.count,
+                            characterCount: sentence.characterCount,
+                            isEligible: isEligible,
+                            score: isEligible ? dot / (vector.norm * centroidNorm) : 0
+                        )
+                    )
+                }
+            }
+        case .textRank:
+            // Nodes are the sentences with lexical tokens; the edge weight is the number of
+            // shared types over `log|s| + log|u|` (zero when both have one token), without
+            // self-loops; a node without edges jumps uniformly (dangling.uniform-v1).
+            var position = 0
+            var nodes: [(index: Int, types: Set<String>, count: Int)] = []
+            for document in ordered {
+                for sentence in document.sentences {
+                    if !sentence.terms.isEmpty {
+                        nodes.append(
+                            (
+                                index: position, types: Set(sentence.terms),
+                                count: sentence.terms.count
+                            ))
+                    }
+                    position += 1
+                }
+            }
+            guard nodes.count <= Self.lexRankMaximumNodes else {
+                throw derivedAnalysisFailure(
+                    "summary.graph-limit-exceeded", category: .insufficientResources)
+            }
+            let transition = nodes.indices.map { source in
+                let row = nodes.indices.map { target -> Double in
+                    guard source != target else { return 0 }
+                    let overlap = nodes[source].types.intersection(nodes[target].types).count
+                    let denominator =
+                        log(Double(nodes[source].count)) + log(Double(nodes[target].count))
+                    return overlap > 0 && denominator > 0 ? Double(overlap) / denominator : 0
+                }
+                let total = row.reduce(0, +)
+                return total > 0
+                    ? row.map { $0 / total }
+                    : Array(repeating: 1 / Double(nodes.count), count: nodes.count)
+            }
+            let stationary = try Self.centralityStationary(
+                transition, damping: Self.textRankDamping)
+            var centrality = Array(repeating: Double?.none, count: vectors.count)
+            for (node, probability) in zip(nodes, stationary) {
+                centrality[node.index] = probability
+            }
+            position = 0
+            for (documentIndex, document) in ordered.enumerated() {
+                for (sentenceIndex, sentence) in document.sentences.enumerated() {
+                    let probability = centrality[position]
+                    position += 1
+                    scored.append(
+                        Scored(
+                            document: documentIndex,
+                            sentenceIndex: sentenceIndex,
+                            range: sentence.range,
+                            tokenCount: sentence.terms.count,
+                            characterCount: sentence.characterCount,
+                            isEligible: probability != nil,
+                            score: probability ?? 0
+                        )
+                    )
+                }
+            }
+        case .lexRank:
+            // Nodes are the non-null vectors; null vectors score zero and are never selected.
+            let nodes = vectors.indices.filter { vectors[$0].norm > 0 }
+            guard nodes.count <= Self.lexRankMaximumNodes else {
+                throw derivedAnalysisFailure(
+                    "summary.graph-limit-exceeded", category: .insufficientResources)
+            }
+            let transition = nodes.map { source in
+                let row = nodes.map { target in cosine(vectors[source], vectors[target]) }
+                let total = row.reduce(0, +)
+                return row.map { $0 / total }
+            }
+            let stationary = try Self.lexRankStationary(transition)
+            var centrality = Array(repeating: Double?.none, count: vectors.count)
+            for (node, probability) in zip(nodes, stationary) {
+                centrality[node] = probability
+            }
+            var position = 0
+            for (documentIndex, document) in ordered.enumerated() {
+                for (sentenceIndex, sentence) in document.sentences.enumerated() {
+                    let probability = centrality[position]
+                    position += 1
+                    scored.append(
+                        Scored(
+                            document: documentIndex,
+                            sentenceIndex: sentenceIndex,
+                            range: sentence.range,
+                            tokenCount: sentence.terms.count,
+                            characterCount: sentence.characterCount,
+                            isEligible: probability != nil,
+                            score: probability ?? 0
+                        )
+                    )
+                }
+            }
+        case .textRankConfigurable, .lexRankContinuous, .lexRankThreshold:
+            let graph = try summaryGraphScores(
+                terms: ordered.flatMap { $0.sentences.map(\.terms) },
+                nonNullVectors: vectors.map { $0.norm > 0 }, method: method,
+                configuration: graphConfiguration ?? .standard,
+                cosine: { cosine(vectors[$0], vectors[$1]) })
+            graphDiagnostics = graph.diagnostics
+            var position = 0
+            for (documentIndex, document) in ordered.enumerated() {
+                for (sentenceIndex, sentence) in document.sentences.enumerated() {
+                    scored.append(
+                        Scored(
+                            document: documentIndex, sentenceIndex: sentenceIndex,
+                            range: sentence.range, tokenCount: sentence.terms.count,
+                            characterCount: sentence.characterCount,
+                            isEligible: graph.eligibility[position], score: graph.scores[position]))
+                    position += 1
+                }
+            }
+        }
+        let rankedOrder = scored.indices.sorted { lhs, rhs in
+            let left = scored[lhs]
+            let right = scored[rhs]
+            if left.score != right.score { return left.score > right.score }
+            if left.document != right.document { return left.document < right.document }
+            return left.sentenceIndex < right.sentenceIndex
+        }
+        var ranks = Array(repeating: 0, count: scored.count)
+        var selected = Array(repeating: false, count: scored.count)
+        var order = Array(repeating: Int?.none, count: scored.count)
+        var consumed = 0
+        func cost(_ candidate: Scored) -> Int {
+            switch budget.unit {
+            case .sentences: 1
+            case .lexicalTokens: candidate.tokenCount
+            case .characters: candidate.characterCount
+            }
+        }
+        for (position, index) in rankedOrder.enumerated() {
+            ranks[index] = position + 1
+        }
+        switch redundancy {
+        case .none:
+            var accepted = 0
+            for index in rankedOrder {
+                let candidate = scored[index]
+                guard candidate.isEligible, cost(candidate) <= budget.limit - consumed else {
+                    continue
+                }
+                consumed += cost(candidate)
+                accepted += 1
+                selected[index] = true
+                order[index] = accepted
+            }
+        case let .maximalMarginalRelevance(lambda):
+            // Greedy: each step takes the eligible, unselected sentence that fits the residual
+            // budget with the largest `λ·score − (1−λ)·max cosine to the selected`; the first in
+            // source order wins a tie; the loop stops when no sentence fits. The penalty of every
+            // candidate is the running maximum over the accepted sentences, updated once per
+            // acceptance: `k` accepted sentences cost `k·n` cosines.
+            var penalties = Array(repeating: 0.0, count: scored.count)
+            var accepted = 0
+            while true {
+                var best: Int?
+                var bestObjective = -Double.infinity
+                for index in scored.indices {
+                    let candidate = scored[index]
+                    guard candidate.isEligible, !selected[index],
+                        cost(candidate) <= budget.limit - consumed
+                    else { continue }
+                    let objective = lambda * candidate.score - (1 - lambda) * penalties[index]
+                    if objective > bestObjective {
+                        bestObjective = objective
+                        best = index
+                    }
+                }
+                guard let best else { break }
+                consumed += cost(scored[best])
+                accepted += 1
+                selected[best] = true
+                order[best] = accepted
+                if lambda < 1 {
+                    for index in scored.indices where !selected[index] && scored[index].isEligible {
+                        penalties[index] = max(
+                            penalties[index], cosine(vectors[index], vectors[best]))
+                    }
+                }
+            }
+        }
+
+        analysisIdentifier = Self.analysisIdentifier
+        methodIdentifier = method.rawValue
+        self.scheme = scheme
+        combinedIdentifier = scheme.combinedIdentifier
+        self.budget = budget
+        consumedBudget = consumed
+        redundancyPolicy = redundancy.identifier
+        redundancyLambda = redundancy.lambda
+        similarityIdentifier = redundancy.similarityIdentifier
+        tieBreakIdentifier = "tie-break.source-position-v1"
+        eligibilityPolicy = method.eligibilityPolicy
+        outputOrderIdentifier = "output-order.source-v1"
+        typeMappingIdentifier = "it-token-v1-nfc-lowercase-v1"
+        sourceRevisionIDs = ordered.map(\.sourceRevisionID.canonicalValue)
+        self.graphDiagnostics = graphDiagnostics
+        sentences = scored.indices.map { index in
+            let candidate = scored[index]
+            return GlifiSummarySentence(
+                sourceRevisionID: ordered[candidate.document].sourceRevisionID.canonicalValue,
+                sentenceIndex: candidate.sentenceIndex,
+                range: candidate.range,
+                tokenCount: candidate.tokenCount,
+                score: candidate.score,
+                rank: ranks[index],
+                isEligible: candidate.isEligible,
+                isSelected: selected[index],
+                selectionOrder: order[index]
+            )
+        }
+    }
+
+    /// Power iteration `p ← (1 − d) / N + d · Mᵀp` from the uniform vector over a
+    /// row-stochastic transition matrix; fails closed without convergence.
+    static func lexRankStationary(_ transition: [[Double]]) throws -> [Double] {
+        try centralityStationary(transition, damping: lexRankDamping)
+    }
+
+    /// Power iteration with the given damping; shared by `LexRankSentence-v1` and
+    /// `TextRankSentence-v1`, which also share tolerance and iteration limit.
+    static func centralityStationary(_ transition: [[Double]], damping: Double) throws
+        -> [Double]
+    {
+        let count = transition.count
+        guard count > 0 else { return [] }
+        let teleport = (1 - damping) / Double(count)
+        var probabilities = Array(repeating: 1 / Double(count), count: count)
+        for _ in 0..<lexRankMaximumIterations {
+            var next = Array(repeating: 0.0, count: count)
+            for target in 0..<count {
+                var sum = 0.0
+                for source in 0..<count {
+                    sum += transition[source][target] * probabilities[source]
+                }
+                next[target] = teleport + damping * sum
+            }
+            var change = 0.0
+            for index in 0..<count {
+                change += abs(next[index] - probabilities[index])
+            }
+            probabilities = next
+            if change <= lexRankTolerance { return probabilities }
+        }
+        throw derivedAnalysisFailure(
+            "summary.centrality-not-converged", category: .invariantViolation)
+    }
+}
+
+/// One selected sentence resolved against its extracted text and original-source intervals.
+public struct GlifiResolvedSummarySentence: Codable, Equatable, Sendable {
+    /// Scored sentence.
+    public let sentence: GlifiSummarySentence
+    /// Exact extracted text of the interval, unchanged.
+    public let text: String
+    /// Original-source UTF-8 intervals contributing to the extracted sentence.
+    ///
+    ///
+    /// Empty when decoding an earlier message without mapping information.
+    public let sourceRanges: [GlifiUTF8Range]
+
+    init(sentence: GlifiSummarySentence, text: String, sourceRanges: [GlifiUTF8Range]) {
+        self.sentence = sentence
+        self.text = text
+        self.sourceRanges = sourceRanges
+    }
+
+    /// Decodes earlier messages without inventing original-source coordinates.
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        sentence = try container.decode(GlifiSummarySentence.self, forKey: .sentence)
+        text = try container.decode(String.self, forKey: .text)
+        sourceRanges =
+            try container.decodeIfPresent([GlifiUTF8Range].self, forKey: .sourceRanges) ?? []
+    }
+}

@@ -1,0 +1,8 @@
+{
+  "purpose": "Controllo negativo della misura esplicita in Debug, separato dal gate",
+  "expectedExitCode": 1,
+  "actualExitCode": 1,
+  "releaseConfigurationRequiredObserved": true,
+  "noBenchmarkReportsWritten": true,
+  "passed": true
+}

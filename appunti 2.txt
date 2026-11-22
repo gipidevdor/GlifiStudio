@@ -1,0 +1,576 @@
+GlyphaStudio
+
+Documento Fondativo di Ingegneria del Software
+
+Stato del documento
+
+Questo documento definisce i principi architetturali, gli invarianti, i criteri di qualità e le decisioni fondamentali sui quali deve essere costruito GlyphaStudio.
+
+Non è un manuale utente, una specifica dell’interfaccia grafica, un elenco di funzionalità né una descrizione contingente dell’implementazione.
+
+Il suo compito è stabilire ciò che deve rimanere vero durante l’evoluzione del sistema.
+
+Le implementazioni potranno cambiare. Gli algoritmi potranno essere sostituiti. I formati potranno evolvere. Nuovi framework Apple potranno prendere il posto di quelli attuali. Le capacità analitiche potranno crescere considerevolmente.
+
+L’architettura deve consentire questa evoluzione senza richiedere periodiche riscritture del sistema.
+
+GlyphaStudio viene pertanto progettato non soltanto per essere implementato, ma per poter evolvere.
+
+⸻
+
+I. Natura del sistema
+
+1. Visione
+
+GlyphaStudio è un ambiente computazionale nativo per macOS destinato all’analisi di documenti, corpus e grandi collezioni testuali.
+
+Il sistema deve permettere di trasformare documenti eterogenei in rappresentazioni computazionali interrogabili e successivamente applicare a esse procedure linguistiche, statistiche, semantiche e visuali.
+
+Il dominio applicativo comprende linguistica computazionale, text mining, content analysis, corpus analysis, ricerca documentale e analisi quantitativa del testo.
+
+L’applicazione deve poter servire tanto l’analisi interattiva di un singolo documento quanto l’elaborazione sistematica di collezioni contenenti milioni di unità linguistiche.
+
+La dimensione del corpus non deve modificare concettualmente il funzionamento del sistema.
+
+Deve modificarne soltanto il costo computazionale.
+
+Questo principio ha conseguenze profonde sull’architettura.
+
+GlyphaStudio non sarà progettato come un editor di testo al quale vengono progressivamente aggiunte funzioni analitiche.
+
+Sarà progettato come un motore di elaborazione documentale al quale viene fornita un’interfaccia interattiva.
+
+⸻
+
+II. Principi costituzionali
+
+2. Correttezza prima della convenienza
+
+Una risposta errata prodotta rapidamente è un fallimento.
+
+La correttezza semantica, numerica e documentale ha priorità sulle ottimizzazioni.
+
+Ogni rappresentazione interna deve possedere una semantica definita.
+
+Ogni trasformazione deve specificare input, output, precondizioni e proprietà preservate.
+
+Gli algoritmi statistici devono essere verificabili mediante implementazioni o dataset di riferimento.
+
+La normalizzazione testuale non deve produrre modificazioni implicite delle quali il sistema perda traccia.
+
+La provenienza del dato costituisce parte del dato stesso.
+
+⸻
+
+3. Prestazioni come proprietà architetturale
+
+Le prestazioni non vengono considerate una fase di ottimizzazione successiva.
+
+Devono essere preservate dall’architettura.
+
+Questo non significa effettuare prematuramente micro-ottimizzazioni.
+
+Significa evitare decisioni strutturali che rendano impossibile raggiungere prestazioni elevate in seguito.
+
+Il sistema deve quindi evitare copie inutili, materializzazioni premature, rappresentazioni eccessivamente ridondanti, allocazioni massive di piccoli oggetti e attraversamenti ripetuti dello stesso corpus.
+
+La complessità algoritmica costituisce un criterio di progetto.
+
+Per ogni struttura fondamentale deve essere possibile ragionare esplicitamente in termini di costo temporale, costo spaziale e comportamento rispetto alla località della memoria.
+
+⸻
+
+4. Misurare prima di ottimizzare
+
+Nessuna ottimizzazione non banale deve essere introdotta esclusivamente sulla base dell’intuizione.
+
+GlyphaStudio dovrà possedere una suite permanente di benchmark.
+
+Saranno misurati almeno throughput di importazione, tokenizzazione e indicizzazione, latenza delle query, memoria residente, quantità di dati letti e scritti e comportamento sui corpus di riferimento.
+
+Instruments, MetricKit, XCTest e gli strumenti di profiling disponibili sulla piattaforma Apple dovranno essere parte normale dello sviluppo.
+
+Una regressione prestazionale significativa deve essere considerata alla stessa stregua di una regressione funzionale.
+
+⸻
+
+III. Architettura
+
+5. Separazione fra prodotto e motore
+
+La prima separazione fondamentale è:
+
+GlyphaStudio ≠ GlyphaCore.
+
+GlyphaStudio costituisce il prodotto interattivo.
+
+GlyphaCore costituisce il sistema computazionale.
+
+La GUI deve essere un cliente di GlyphaCore.
+
+Il motore deve poter funzionare senza che esista una finestra, una view SwiftUI o un’applicazione macOS.
+
+Questa proprietà dovrà essere verificabile automaticamente.
+
+GlyphaCore non deve importare SwiftUI o AppKit.
+
+Da questa decisione derivano GlyphaCLI, test headless, benchmark, elaborazioni batch e possibili API future senza duplicazione della logica.
+
+⸻
+
+6. Architettura stratificata
+
+La struttura concettuale fondamentale sarà:
+
+GlyphaStudio
+
+↓
+
+GlyphaKit
+
+↓
+
+GlyphaCore
+
+↓
+
+servizi fondamentali
+
+↓
+
+Foundation / Accelerate / Natural Language / Vision / Core ML / Metal / sistema operativo.
+
+GlyphaKit costituisce il contratto programmatico stabile attraverso il quale il prodotto accede alle capacità del motore.
+
+GlyphaCore contiene l’implementazione.
+
+Questa separazione permette di far evolvere l’implementazione senza propagare indiscriminatamente le modifiche verso l’applicazione.
+
+⸻
+
+7. Modularità
+
+GlyphaCore non deve diventare un monolite.
+
+Il sistema verrà suddiviso per responsabilità.
+
+Una possibile decomposizione comprende:
+
+GlyphaDocument
+GlyphaText
+GlyphaCorpus
+GlyphaIndex
+GlyphaSearch
+GlyphaLinguistics
+GlyphaStatistics
+GlyphaAnalysis
+GlyphaPersistence
+GlyphaCompute.
+
+Questi nomi non costituiscono necessariamente i package definitivi.
+
+Esprimono confini architetturali.
+
+Ogni modulo deve avere una responsabilità definita e una superficie pubblica deliberatamente ridotta.
+
+Un modulo non deve conoscere dettagli interni di un altro modulo quando è sufficiente conoscerne il contratto.
+
+⸻
+
+IV. Regola delle dipendenze
+
+8. Grafo aciclico
+
+Le dipendenze fra moduli devono formare un grafo diretto aciclico.
+
+Le dipendenze circolari costituiscono un errore architetturale.
+
+La direzione delle dipendenze deve seguire la stabilità.
+
+I componenti più generali e stabili non devono dipendere dai componenti applicativi più volatili.
+
+In particolare:
+
+il dominio non dipende dalla GUI;
+
+gli algoritmi non dipendono dalla persistenza;
+
+la persistenza non determina il modello concettuale;
+
+l’importazione dei formati non determina la rappresentazione interna;
+
+la visualizzazione non determina il formato dei risultati analitici.
+
+Questa regola deve rimanere valida indipendentemente dalle tecnologie utilizzate.
+
+⸻
+
+V. Il modello documentale
+
+9. Sorgente e rappresentazione
+
+Il documento originale è immutabile dal punto di vista analitico.
+
+GlyphaStudio non deve modificare implicitamente la sorgente.
+
+Da essa vengono prodotte rappresentazioni derivate.
+
+Possiamo descrivere concettualmente:
+
+S₀ = sorgente originale
+
+S₁ = testo estratto
+
+S₂ = testo normalizzato
+
+S₃ = segmentazione
+
+S₄ = tokenizzazione
+
+S₅ = annotazione linguistica
+
+S₆ = strutture analitiche.
+
+Ogni livello deriva da quello precedente mediante una trasformazione identificabile.
+
+Questo costituisce una forma di lineage dei dati.
+
+Un risultato deve poter essere ricondotto alla trasformazione che lo ha prodotto.
+
+⸻
+
+10. Identità
+
+Ogni entità persistente significativa deve possedere un’identità stabile.
+
+Documenti, corpus, analisi e artefatti derivati non devono essere identificati esclusivamente mediante posizione, nome visualizzato o pathname.
+
+Il pathname è una proprietà contingente.
+
+L’identità è una proprietà logica.
+
+Questo permette spostamenti, ridenominazioni, caching, deduplicazione e sincronizzazione senza confondere identità e collocazione.
+
+⸻
+
+VI. Il testo come dato massivo
+
+11. Nessuna assunzione di residenza completa
+
+Uno degli invarianti più importanti dell’intero progetto è:
+
+Nessun algoritmo fondamentale può richiedere, per definizione, che l’intero corpus risieda simultaneamente in memoria.
+
+Sono consentiti algoritmi che operano su dataset completamente residenti quando ciò costituisce un’ottimizzazione.
+
+Non è consentito renderlo un requisito.
+
+Questa distinzione permette a GlyphaStudio di comportarsi efficientemente con un corpus da 10 MB senza impedire l’elaborazione futura di corpus da centinaia di gigabyte.
+
+⸻
+
+12. Elaborazione incrementale
+
+La pipeline fondamentale deve essere incrementalizzabile.
+
+Idealmente:
+
+byte → scalari Unicode → segmenti → token → annotazioni → indice.
+
+Ogni stadio deve consumare quantità limitate di input e produrre progressivamente output.
+
+Il backpressure deve poter impedire a un produttore di generare dati molto più rapidamente di quanto il consumatore possa elaborarli.
+
+La concorrenza non deve trasformarsi in crescita incontrollata della memoria.
+
+⸻
+
+VII. Modello della memoria
+
+13. Riduzione delle allocazioni
+
+I corpus possono contenere centinaia di milioni di token.
+
+Rappresentare ogni token mediante un oggetto indipendente sarebbe una scelta estremamente costosa.
+
+Le strutture fondamentali devono quindi privilegiare rappresentazioni compatte.
+
+Un token potrà essere descritto, per esempio, mediante identificatori numerici, offset e attributi codificati.
+
+Le stringhe ripetute devono essere internate o rappresentate attraverso un vocabolario.
+
+Un lemma presente dieci milioni di volte non deve richiedere dieci milioni di copie della stessa sequenza di caratteri.
+
+⸻
+
+14. Località dei dati
+
+Le moderne CPU Apple Silicon sono estremamente veloci, ma la distanza prestazionale fra operazioni aritmetiche e accessi inefficienti alla memoria rimane fondamentale.
+
+Le strutture attraversate sequenzialmente devono pertanto essere possibilmente contigue.
+
+Dove appropriato verranno preferite strutture data-oriented rispetto a grandi grafi di oggetti.
+
+La rappresentazione interna deve favorire cache locality, prefetching e vettorizzazione.
+
+Questa scelta sarà particolarmente importante nel motore statistico e negli algoritmi che attraversano miliardi di elementi.
+
+⸻
+
+15. Copy-on-write
+
+Swift offre copy-on-write per numerose strutture standard.
+
+Questa proprietà è utile, ma non deve essere trattata come garanzia universale di assenza di copie.
+
+Le copie effettive devono essere comprese e misurate.
+
+Le API interne dovranno evitare passaggi che provochino materializzazioni involontarie di grandi buffer.
+
+⸻
+
+VIII. Identificatori e vocabolari
+
+16. Dal testo agli interi
+
+Una delle trasformazioni fondamentali di GlyphaCore consiste nel convertire progressivamente entità linguistiche ripetitive in identificatori compatti.
+
+Ad esempio:
+
+"democrazia" → TermID(18472)
+
+Da quel momento molte elaborazioni non hanno più bisogno di confrontare continuamente stringhe Unicode.
+
+Possono operare su interi.
+
+Questo riduce memoria, costo dei confronti e dimensione degli indici.
+
+TermID, DocumentID, CorpusID e identificatori analoghi devono essere tipi distinti anche quando utilizzano la stessa rappresentazione numerica sottostante.
+
+Il type system di Swift deve impedire di confondere accidentalmente entità semanticamente differenti.
+
+⸻
+
+IX. Indicizzazione
+
+17. L’indice come infrastruttura fondamentale
+
+L’indicizzazione non costituisce una funzione accessoria.
+
+È una delle fondamenta di GlyphaStudio.
+
+La struttura iniziale naturale è un inverted index:
+
+TermID → posting list.
+
+Ogni posting può contenere DocumentID, frequenza, posizioni e informazioni aggiuntive quando necessarie.
+
+Le posting list devono poter essere compresse.
+
+Tecniche quali delta encoding, variable-byte encoding, bit packing e altre codifiche dovranno essere valutate mediante benchmark.
+
+La rappresentazione deve consentire di non decomprimere informazioni non necessarie.
+
+⸻
+
+18. Indici specializzati
+
+Non deve esistere l’assunzione che un unico indice risolva ogni problema.
+
+Il sistema potrà costruire strutture specializzate per:
+
+full-text search,
+
+lemma search,
+
+n-grammi,
+
+metadati,
+
+co-occorrenze,
+
+similarità,
+
+vettori semantici.
+
+Ogni indice deve dichiarare la propria origine, versione e validità rispetto al corpus.
+
+⸻
+
+X. Persistenza
+
+19. Persistenza come implementazione sostituibile
+
+Il modello del dominio non deve essere modellato sulla struttura di un database particolare.
+
+Database e filesystem sono meccanismi di persistenza.
+
+Non costituiscono il dominio.
+
+Questa distinzione consentirà di utilizzare tecnologie differenti per differenti classi di dati.
+
+Metadati transazionali, posting list, matrici, cache e documenti originali hanno caratteristiche profondamente differenti.
+
+Pretendere di rappresentarli tutti mediante la stessa tecnologia sarebbe una semplificazione architetturalmente costosa.
+
+⸻
+
+20. Formati binari
+
+Per le strutture ad alta densità potrà essere definito un formato binario Glypha.
+
+Il formato dovrà essere:
+
+versionato;
+
+endianness-aware;
+
+validabile;
+
+documentato;
+
+estensibile;
+
+resistente a input corrotti.
+
+Non devono essere serializzati direttamente layout di strutture Swift presumendo che rimangano stabili fra compilatori o versioni.
+
+Il formato su disco è un protocollo.
+
+Come tale deve possedere una specifica indipendente dall’implementazione.
+
+⸻
+
+XI. Concorrenza
+
+21. Structured concurrency
+
+Swift Concurrency costituisce il modello principale.
+
+async/await, task group e actor devono essere preferiti alla proliferazione incontrollata di thread e callback.
+
+La concorrenza deve avere ownership comprensibile.
+
+Ogni task significativo deve appartenere a una struttura che ne governa durata, cancellazione ed errori.
+
+⸻
+
+22. Actor non significa automaticamente prestazioni
+
+Gli actor costituiscono un meccanismo di isolamento, non un sostituto del progetto dei dati.
+
+Non verrà creato un actor per ogni entità.
+
+L’uso eccessivo degli actor può serializzare accidentalmente workload paralleli.
+
+La granularità dell’isolamento dovrà quindi essere deliberata e misurata.
+
+⸻
+
+23. Immutabilità
+
+Le strutture immutabili sono preferite quando possibile.
+
+Un corpus indicizzato dovrebbe essere concettualmente una fotografia coerente.
+
+Le modifiche possono produrre nuove versioni o invalidare esplicitamente gli artefatti derivati.
+
+Questo modello semplifica concorrenza, caching, riproducibilità e ragionamento sul sistema.
+
+⸻
+
+XII. Parallelismo numerico
+
+24. Accelerate
+
+Accelerate costituisce il primo livello di accelerazione numerica.
+
+Quando un problema può essere espresso mediante operazioni vettoriali, matriciali o statistiche supportate dal framework, devono essere valutate le implementazioni ottimizzate Apple prima di scrivere kernel personalizzati.
+
+BLAS, LAPACK, vDSP e le altre primitive appropriate consentono di sfruttare implementazioni fortemente ottimizzate per Apple Silicon.
+
+⸻
+
+25. Metal
+
+Metal non deve essere utilizzato perché la GPU è disponibile.
+
+Deve essere utilizzato quando il problema presenta parallelismo sufficiente e il costo del trasferimento e della preparazione dei dati è giustificato.
+
+Il CPU path deve rimanere un’implementazione corretta e testabile.
+
+Quando possibile, CPU e GPU devono poter essere confrontate sugli stessi dataset.
+
+⸻
+
+XIII. Machine learning
+
+26. Core ML come backend, non come dominio
+
+Core ML potrà fornire inferenza locale.
+
+Il modello del dominio non deve tuttavia dipendere direttamente da Core ML.
+
+GlyphaCore deve ragionare in termini di servizi semantici, classificatori, embedding o altri concetti del dominio.
+
+Core ML costituisce una possibile implementazione.
+
+Questa separazione permetterà di sostituire modelli e tecnologie senza modificare l’intero sistema.
+
+⸻
+
+XIV. API
+
+27. API piccole e semanticamente forti
+
+Le API pubbliche devono essere intenzionalmente piccole.
+
+Rendere pubblico un simbolo costituisce un impegno architetturale.
+
+I tipi interni devono rimanere interni finché non esiste una ragione concreta per esporli.
+
+Le API devono esprimere concetti del dominio, non dettagli dell’implementazione.
+
+⸻
+
+28. Value semantics
+
+Quando appropriato, GlyphaStudio deve sfruttare la value semantics di Swift.
+
+Le entità che rappresentano valori devono comportarsi come valori.
+
+Le entità che rappresentano identità persistenti devono invece rendere esplicita tale identità.
+
+La scelta fra struct, class e actor deve derivare dalla semantica e non da preferenze stilistiche.
+
+⸻
+
+XV. Errori
+
+29. Gli errori fanno parte dell’API
+
+Un errore non è semplicemente una stringa da mostrare all’utente.
+
+Gli errori del dominio devono possedere una rappresentazione strutturata.
+
+Devono distinguere almeno condizioni recuperabili, errori di input, inconsistenza dei dati, errori di I/O, incompatibilità di formato e violazioni di invarianti.
+
+La GUI trasformerà successivamente questi errori in comunicazioni comprensibili.
+
+⸻
+
+30. Fail fast sulle invarianti
+
+Quando viene violata un’invariante interna che dovrebbe essere impossibile, il sistema non deve nascondere silenziosamente il problema.
+
+In fase di sviluppo le violazioni devono emergere immediatamente.
+
+Nei percorsi che manipolano dati esterni, invece, input arbitrari devono essere considerati non affidabili e validati.
+
+Questa distinzione è fondamentale.
+
+⸻
+
+XVI. Riproducibilità
+
+31

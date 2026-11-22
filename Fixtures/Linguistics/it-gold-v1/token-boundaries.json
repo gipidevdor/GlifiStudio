@@ -1,0 +1,2543 @@
+{
+  "schema": "studio.glifi.linguistic-fixture",
+  "schemaVersion": 1,
+  "coordinateSpace": "sourceUTF8",
+  "intervalConvention": "half-open",
+  "cases": [
+    {
+      "id": "pinocchio-00",
+      "class": "prosa-narrativa-ottocentesca",
+      "text": "Non era un legno di lusso, ma un semplice pezzo da catasta, di quelli che d’inverno si mettono nelle stufe e nei caminetti per accendere il fuoco e per riscaldare le stanze.",
+      "utf8Length": 175,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 3,
+          "surface": "Non"
+        },
+        {
+          "start": 4,
+          "end": 7,
+          "surface": "era"
+        },
+        {
+          "start": 8,
+          "end": 10,
+          "surface": "un"
+        },
+        {
+          "start": 11,
+          "end": 16,
+          "surface": "legno"
+        },
+        {
+          "start": 17,
+          "end": 19,
+          "surface": "di"
+        },
+        {
+          "start": 20,
+          "end": 25,
+          "surface": "lusso"
+        },
+        {
+          "start": 27,
+          "end": 29,
+          "surface": "ma"
+        },
+        {
+          "start": 30,
+          "end": 32,
+          "surface": "un"
+        },
+        {
+          "start": 33,
+          "end": 41,
+          "surface": "semplice"
+        },
+        {
+          "start": 42,
+          "end": 47,
+          "surface": "pezzo"
+        },
+        {
+          "start": 48,
+          "end": 50,
+          "surface": "da"
+        },
+        {
+          "start": 51,
+          "end": 58,
+          "surface": "catasta"
+        },
+        {
+          "start": 60,
+          "end": 62,
+          "surface": "di"
+        },
+        {
+          "start": 63,
+          "end": 69,
+          "surface": "quelli"
+        },
+        {
+          "start": 70,
+          "end": 73,
+          "surface": "che"
+        },
+        {
+          "start": 74,
+          "end": 85,
+          "surface": "d’inverno",
+          "components": [
+            {
+              "start": 74,
+              "end": 78,
+              "surface": "d’"
+            },
+            {
+              "start": 78,
+              "end": 85,
+              "surface": "inverno"
+            }
+          ]
+        },
+        {
+          "start": 86,
+          "end": 88,
+          "surface": "si"
+        },
+        {
+          "start": 89,
+          "end": 96,
+          "surface": "mettono"
+        },
+        {
+          "start": 97,
+          "end": 102,
+          "surface": "nelle"
+        },
+        {
+          "start": 103,
+          "end": 108,
+          "surface": "stufe"
+        },
+        {
+          "start": 109,
+          "end": 110,
+          "surface": "e"
+        },
+        {
+          "start": 111,
+          "end": 114,
+          "surface": "nei"
+        },
+        {
+          "start": 115,
+          "end": 124,
+          "surface": "caminetti"
+        },
+        {
+          "start": 125,
+          "end": 128,
+          "surface": "per"
+        },
+        {
+          "start": 129,
+          "end": 138,
+          "surface": "accendere"
+        },
+        {
+          "start": 139,
+          "end": 141,
+          "surface": "il"
+        },
+        {
+          "start": 142,
+          "end": 147,
+          "surface": "fuoco"
+        },
+        {
+          "start": 148,
+          "end": 149,
+          "surface": "e"
+        },
+        {
+          "start": 150,
+          "end": 153,
+          "surface": "per"
+        },
+        {
+          "start": 154,
+          "end": 164,
+          "surface": "riscaldare"
+        },
+        {
+          "start": 165,
+          "end": 167,
+          "surface": "le"
+        },
+        {
+          "start": 168,
+          "end": 174,
+          "surface": "stanze"
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 175,
+          "surface": "Non era un legno di lusso, ma un semplice pezzo da catasta, di quelli che d’inverno si mettono nelle stufe e nei caminetti per accendere il fuoco e per riscaldare le stanze."
+        }
+      ]
+    },
+    {
+      "id": "pinocchio-01",
+      "class": "prosa-narrativa-ottocentesca",
+      "text": "Non so come andasse, ma il fatto gli è che un bel giorno questo pezzo di legno capitò nella bottega di un vecchio falegname, il quale aveva nome mastr’Antonio, se non che tutti lo chiamavano maestro Ciliegia, per via della punta del suo naso, che era sempre lustra e paonazza, come una ciliegia matura.",
+      "utf8Length": 306,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 3,
+          "surface": "Non"
+        },
+        {
+          "start": 4,
+          "end": 6,
+          "surface": "so"
+        },
+        {
+          "start": 7,
+          "end": 11,
+          "surface": "come"
+        },
+        {
+          "start": 12,
+          "end": 19,
+          "surface": "andasse"
+        },
+        {
+          "start": 21,
+          "end": 23,
+          "surface": "ma"
+        },
+        {
+          "start": 24,
+          "end": 26,
+          "surface": "il"
+        },
+        {
+          "start": 27,
+          "end": 32,
+          "surface": "fatto"
+        },
+        {
+          "start": 33,
+          "end": 36,
+          "surface": "gli"
+        },
+        {
+          "start": 37,
+          "end": 39,
+          "surface": "è"
+        },
+        {
+          "start": 40,
+          "end": 43,
+          "surface": "che"
+        },
+        {
+          "start": 44,
+          "end": 46,
+          "surface": "un"
+        },
+        {
+          "start": 47,
+          "end": 50,
+          "surface": "bel"
+        },
+        {
+          "start": 51,
+          "end": 57,
+          "surface": "giorno"
+        },
+        {
+          "start": 58,
+          "end": 64,
+          "surface": "questo"
+        },
+        {
+          "start": 65,
+          "end": 70,
+          "surface": "pezzo"
+        },
+        {
+          "start": 71,
+          "end": 73,
+          "surface": "di"
+        },
+        {
+          "start": 74,
+          "end": 79,
+          "surface": "legno"
+        },
+        {
+          "start": 80,
+          "end": 87,
+          "surface": "capitò"
+        },
+        {
+          "start": 88,
+          "end": 93,
+          "surface": "nella"
+        },
+        {
+          "start": 94,
+          "end": 101,
+          "surface": "bottega"
+        },
+        {
+          "start": 102,
+          "end": 104,
+          "surface": "di"
+        },
+        {
+          "start": 105,
+          "end": 107,
+          "surface": "un"
+        },
+        {
+          "start": 108,
+          "end": 115,
+          "surface": "vecchio"
+        },
+        {
+          "start": 116,
+          "end": 125,
+          "surface": "falegname"
+        },
+        {
+          "start": 127,
+          "end": 129,
+          "surface": "il"
+        },
+        {
+          "start": 130,
+          "end": 135,
+          "surface": "quale"
+        },
+        {
+          "start": 136,
+          "end": 141,
+          "surface": "aveva"
+        },
+        {
+          "start": 142,
+          "end": 146,
+          "surface": "nome"
+        },
+        {
+          "start": 147,
+          "end": 162,
+          "surface": "mastr’Antonio",
+          "components": [
+            {
+              "start": 147,
+              "end": 155,
+              "surface": "mastr’"
+            },
+            {
+              "start": 155,
+              "end": 162,
+              "surface": "Antonio"
+            }
+          ]
+        },
+        {
+          "start": 164,
+          "end": 166,
+          "surface": "se"
+        },
+        {
+          "start": 167,
+          "end": 170,
+          "surface": "non"
+        },
+        {
+          "start": 171,
+          "end": 174,
+          "surface": "che"
+        },
+        {
+          "start": 175,
+          "end": 180,
+          "surface": "tutti"
+        },
+        {
+          "start": 181,
+          "end": 183,
+          "surface": "lo"
+        },
+        {
+          "start": 184,
+          "end": 194,
+          "surface": "chiamavano"
+        },
+        {
+          "start": 195,
+          "end": 202,
+          "surface": "maestro"
+        },
+        {
+          "start": 203,
+          "end": 211,
+          "surface": "Ciliegia"
+        },
+        {
+          "start": 213,
+          "end": 216,
+          "surface": "per"
+        },
+        {
+          "start": 217,
+          "end": 220,
+          "surface": "via"
+        },
+        {
+          "start": 221,
+          "end": 226,
+          "surface": "della"
+        },
+        {
+          "start": 227,
+          "end": 232,
+          "surface": "punta"
+        },
+        {
+          "start": 233,
+          "end": 236,
+          "surface": "del"
+        },
+        {
+          "start": 237,
+          "end": 240,
+          "surface": "suo"
+        },
+        {
+          "start": 241,
+          "end": 245,
+          "surface": "naso"
+        },
+        {
+          "start": 247,
+          "end": 250,
+          "surface": "che"
+        },
+        {
+          "start": 251,
+          "end": 254,
+          "surface": "era"
+        },
+        {
+          "start": 255,
+          "end": 261,
+          "surface": "sempre"
+        },
+        {
+          "start": 262,
+          "end": 268,
+          "surface": "lustra"
+        },
+        {
+          "start": 269,
+          "end": 270,
+          "surface": "e"
+        },
+        {
+          "start": 271,
+          "end": 279,
+          "surface": "paonazza"
+        },
+        {
+          "start": 281,
+          "end": 285,
+          "surface": "come"
+        },
+        {
+          "start": 286,
+          "end": 289,
+          "surface": "una"
+        },
+        {
+          "start": 290,
+          "end": 298,
+          "surface": "ciliegia"
+        },
+        {
+          "start": 299,
+          "end": 305,
+          "surface": "matura"
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 306,
+          "surface": "Non so come andasse, ma il fatto gli è che un bel giorno questo pezzo di legno capitò nella bottega di un vecchio falegname, il quale aveva nome mastr’Antonio, se non che tutti lo chiamavano maestro Ciliegia, per via della punta del suo naso, che era sempre lustra e paonazza, come una ciliegia matura."
+        }
+      ]
+    },
+    {
+      "id": "pinocchio-02",
+      "class": "prosa-narrativa-ottocentesca",
+      "text": "Appena maestro Ciliegia ebbe visto quel pezzo di legno, si rallegrò tutto; e dandosi una fregatina di mani per la contentezza, borbottò a mezza voce:",
+      "utf8Length": 151,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 6,
+          "surface": "Appena"
+        },
+        {
+          "start": 7,
+          "end": 14,
+          "surface": "maestro"
+        },
+        {
+          "start": 15,
+          "end": 23,
+          "surface": "Ciliegia"
+        },
+        {
+          "start": 24,
+          "end": 28,
+          "surface": "ebbe"
+        },
+        {
+          "start": 29,
+          "end": 34,
+          "surface": "visto"
+        },
+        {
+          "start": 35,
+          "end": 39,
+          "surface": "quel"
+        },
+        {
+          "start": 40,
+          "end": 45,
+          "surface": "pezzo"
+        },
+        {
+          "start": 46,
+          "end": 48,
+          "surface": "di"
+        },
+        {
+          "start": 49,
+          "end": 54,
+          "surface": "legno"
+        },
+        {
+          "start": 56,
+          "end": 58,
+          "surface": "si"
+        },
+        {
+          "start": 59,
+          "end": 68,
+          "surface": "rallegrò"
+        },
+        {
+          "start": 69,
+          "end": 74,
+          "surface": "tutto"
+        },
+        {
+          "start": 76,
+          "end": 77,
+          "surface": "e"
+        },
+        {
+          "start": 78,
+          "end": 85,
+          "surface": "dandosi"
+        },
+        {
+          "start": 86,
+          "end": 89,
+          "surface": "una"
+        },
+        {
+          "start": 90,
+          "end": 99,
+          "surface": "fregatina"
+        },
+        {
+          "start": 100,
+          "end": 102,
+          "surface": "di"
+        },
+        {
+          "start": 103,
+          "end": 107,
+          "surface": "mani"
+        },
+        {
+          "start": 108,
+          "end": 111,
+          "surface": "per"
+        },
+        {
+          "start": 112,
+          "end": 114,
+          "surface": "la"
+        },
+        {
+          "start": 115,
+          "end": 126,
+          "surface": "contentezza"
+        },
+        {
+          "start": 128,
+          "end": 137,
+          "surface": "borbottò"
+        },
+        {
+          "start": 138,
+          "end": 139,
+          "surface": "a"
+        },
+        {
+          "start": 140,
+          "end": 145,
+          "surface": "mezza"
+        },
+        {
+          "start": 146,
+          "end": 150,
+          "surface": "voce"
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 151,
+          "surface": "Appena maestro Ciliegia ebbe visto quel pezzo di legno, si rallegrò tutto; e dandosi una fregatina di mani per la contentezza, borbottò a mezza voce:"
+        }
+      ]
+    },
+    {
+      "id": "pinocchio-03",
+      "class": "prosa-narrativa-ottocentesca",
+      "text": "Detto fatto, prese subito l’ascia arrotata per cominciare a levargli la scorza e a digrossarlo; ma quando fu lì per lasciare andare la prima asciata, rimase col braccio sospeso in aria, perchè sentì una vocina sottile sottile, che disse raccomandandosi:",
+      "utf8Length": 258,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 5,
+          "surface": "Detto"
+        },
+        {
+          "start": 6,
+          "end": 11,
+          "surface": "fatto"
+        },
+        {
+          "start": 13,
+          "end": 18,
+          "surface": "prese"
+        },
+        {
+          "start": 19,
+          "end": 25,
+          "surface": "subito"
+        },
+        {
+          "start": 26,
+          "end": 35,
+          "surface": "l’ascia",
+          "components": [
+            {
+              "start": 26,
+              "end": 30,
+              "surface": "l’"
+            },
+            {
+              "start": 30,
+              "end": 35,
+              "surface": "ascia"
+            }
+          ]
+        },
+        {
+          "start": 36,
+          "end": 44,
+          "surface": "arrotata"
+        },
+        {
+          "start": 45,
+          "end": 48,
+          "surface": "per"
+        },
+        {
+          "start": 49,
+          "end": 59,
+          "surface": "cominciare"
+        },
+        {
+          "start": 60,
+          "end": 61,
+          "surface": "a"
+        },
+        {
+          "start": 62,
+          "end": 70,
+          "surface": "levargli"
+        },
+        {
+          "start": 71,
+          "end": 73,
+          "surface": "la"
+        },
+        {
+          "start": 74,
+          "end": 80,
+          "surface": "scorza"
+        },
+        {
+          "start": 81,
+          "end": 82,
+          "surface": "e"
+        },
+        {
+          "start": 83,
+          "end": 84,
+          "surface": "a"
+        },
+        {
+          "start": 85,
+          "end": 96,
+          "surface": "digrossarlo"
+        },
+        {
+          "start": 98,
+          "end": 100,
+          "surface": "ma"
+        },
+        {
+          "start": 101,
+          "end": 107,
+          "surface": "quando"
+        },
+        {
+          "start": 108,
+          "end": 110,
+          "surface": "fu"
+        },
+        {
+          "start": 111,
+          "end": 114,
+          "surface": "lì"
+        },
+        {
+          "start": 115,
+          "end": 118,
+          "surface": "per"
+        },
+        {
+          "start": 119,
+          "end": 127,
+          "surface": "lasciare"
+        },
+        {
+          "start": 128,
+          "end": 134,
+          "surface": "andare"
+        },
+        {
+          "start": 135,
+          "end": 137,
+          "surface": "la"
+        },
+        {
+          "start": 138,
+          "end": 143,
+          "surface": "prima"
+        },
+        {
+          "start": 144,
+          "end": 151,
+          "surface": "asciata"
+        },
+        {
+          "start": 153,
+          "end": 159,
+          "surface": "rimase"
+        },
+        {
+          "start": 160,
+          "end": 163,
+          "surface": "col"
+        },
+        {
+          "start": 164,
+          "end": 171,
+          "surface": "braccio"
+        },
+        {
+          "start": 172,
+          "end": 179,
+          "surface": "sospeso"
+        },
+        {
+          "start": 180,
+          "end": 182,
+          "surface": "in"
+        },
+        {
+          "start": 183,
+          "end": 187,
+          "surface": "aria"
+        },
+        {
+          "start": 189,
+          "end": 196,
+          "surface": "perchè"
+        },
+        {
+          "start": 197,
+          "end": 203,
+          "surface": "sentì"
+        },
+        {
+          "start": 204,
+          "end": 207,
+          "surface": "una"
+        },
+        {
+          "start": 208,
+          "end": 214,
+          "surface": "vocina"
+        },
+        {
+          "start": 215,
+          "end": 222,
+          "surface": "sottile"
+        },
+        {
+          "start": 223,
+          "end": 230,
+          "surface": "sottile"
+        },
+        {
+          "start": 232,
+          "end": 235,
+          "surface": "che"
+        },
+        {
+          "start": 236,
+          "end": 241,
+          "surface": "disse"
+        },
+        {
+          "start": 242,
+          "end": 257,
+          "surface": "raccomandandosi"
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 258,
+          "surface": "Detto fatto, prese subito l’ascia arrotata per cominciare a levargli la scorza e a digrossarlo; ma quando fu lì per lasciare andare la prima asciata, rimase col braccio sospeso in aria, perchè sentì una vocina sottile sottile, che disse raccomandandosi:"
+        }
+      ]
+    },
+    {
+      "id": "pinocchio-04",
+      "class": "prosa-narrativa-ottocentesca",
+      "text": "Figuratevi come rimase quel buon vecchio di maestro Ciliegia!",
+      "utf8Length": 61,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 10,
+          "surface": "Figuratevi"
+        },
+        {
+          "start": 11,
+          "end": 15,
+          "surface": "come"
+        },
+        {
+          "start": 16,
+          "end": 22,
+          "surface": "rimase"
+        },
+        {
+          "start": 23,
+          "end": 27,
+          "surface": "quel"
+        },
+        {
+          "start": 28,
+          "end": 32,
+          "surface": "buon"
+        },
+        {
+          "start": 33,
+          "end": 40,
+          "surface": "vecchio"
+        },
+        {
+          "start": 41,
+          "end": 43,
+          "surface": "di"
+        },
+        {
+          "start": 44,
+          "end": 51,
+          "surface": "maestro"
+        },
+        {
+          "start": 52,
+          "end": 60,
+          "surface": "Ciliegia"
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 61,
+          "surface": "Figuratevi come rimase quel buon vecchio di maestro Ciliegia!"
+        }
+      ]
+    },
+    {
+      "id": "pinocchio-05",
+      "class": "prosa-narrativa-ottocentesca",
+      "text": "Girò gli occhi smarriti intorno alla stanza per vedere di dove mai poteva essere uscita quella vocina, e non vide nessuno! Guardò sotto il banco, e nessuno: guardò dentro un armadio che stava sempre chiuso, e nessuno; guardò nel corbello dei trucioli e della segatura, e nessuno; aprì l’uscio di bottega per dare un’occhiata anche sulla strada, e nessuno. O dunque?...",
+      "utf8Length": 377,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 5,
+          "surface": "Girò"
+        },
+        {
+          "start": 6,
+          "end": 9,
+          "surface": "gli"
+        },
+        {
+          "start": 10,
+          "end": 15,
+          "surface": "occhi"
+        },
+        {
+          "start": 16,
+          "end": 24,
+          "surface": "smarriti"
+        },
+        {
+          "start": 25,
+          "end": 32,
+          "surface": "intorno"
+        },
+        {
+          "start": 33,
+          "end": 37,
+          "surface": "alla"
+        },
+        {
+          "start": 38,
+          "end": 44,
+          "surface": "stanza"
+        },
+        {
+          "start": 45,
+          "end": 48,
+          "surface": "per"
+        },
+        {
+          "start": 49,
+          "end": 55,
+          "surface": "vedere"
+        },
+        {
+          "start": 56,
+          "end": 58,
+          "surface": "di"
+        },
+        {
+          "start": 59,
+          "end": 63,
+          "surface": "dove"
+        },
+        {
+          "start": 64,
+          "end": 67,
+          "surface": "mai"
+        },
+        {
+          "start": 68,
+          "end": 74,
+          "surface": "poteva"
+        },
+        {
+          "start": 75,
+          "end": 81,
+          "surface": "essere"
+        },
+        {
+          "start": 82,
+          "end": 88,
+          "surface": "uscita"
+        },
+        {
+          "start": 89,
+          "end": 95,
+          "surface": "quella"
+        },
+        {
+          "start": 96,
+          "end": 102,
+          "surface": "vocina"
+        },
+        {
+          "start": 104,
+          "end": 105,
+          "surface": "e"
+        },
+        {
+          "start": 106,
+          "end": 109,
+          "surface": "non"
+        },
+        {
+          "start": 110,
+          "end": 114,
+          "surface": "vide"
+        },
+        {
+          "start": 115,
+          "end": 122,
+          "surface": "nessuno"
+        },
+        {
+          "start": 124,
+          "end": 131,
+          "surface": "Guardò"
+        },
+        {
+          "start": 132,
+          "end": 137,
+          "surface": "sotto"
+        },
+        {
+          "start": 138,
+          "end": 140,
+          "surface": "il"
+        },
+        {
+          "start": 141,
+          "end": 146,
+          "surface": "banco"
+        },
+        {
+          "start": 148,
+          "end": 149,
+          "surface": "e"
+        },
+        {
+          "start": 150,
+          "end": 157,
+          "surface": "nessuno"
+        },
+        {
+          "start": 159,
+          "end": 166,
+          "surface": "guardò"
+        },
+        {
+          "start": 167,
+          "end": 173,
+          "surface": "dentro"
+        },
+        {
+          "start": 174,
+          "end": 176,
+          "surface": "un"
+        },
+        {
+          "start": 177,
+          "end": 184,
+          "surface": "armadio"
+        },
+        {
+          "start": 185,
+          "end": 188,
+          "surface": "che"
+        },
+        {
+          "start": 189,
+          "end": 194,
+          "surface": "stava"
+        },
+        {
+          "start": 195,
+          "end": 201,
+          "surface": "sempre"
+        },
+        {
+          "start": 202,
+          "end": 208,
+          "surface": "chiuso"
+        },
+        {
+          "start": 210,
+          "end": 211,
+          "surface": "e"
+        },
+        {
+          "start": 212,
+          "end": 219,
+          "surface": "nessuno"
+        },
+        {
+          "start": 221,
+          "end": 228,
+          "surface": "guardò"
+        },
+        {
+          "start": 229,
+          "end": 232,
+          "surface": "nel"
+        },
+        {
+          "start": 233,
+          "end": 241,
+          "surface": "corbello"
+        },
+        {
+          "start": 242,
+          "end": 245,
+          "surface": "dei"
+        },
+        {
+          "start": 246,
+          "end": 254,
+          "surface": "trucioli"
+        },
+        {
+          "start": 255,
+          "end": 256,
+          "surface": "e"
+        },
+        {
+          "start": 257,
+          "end": 262,
+          "surface": "della"
+        },
+        {
+          "start": 263,
+          "end": 271,
+          "surface": "segatura"
+        },
+        {
+          "start": 273,
+          "end": 274,
+          "surface": "e"
+        },
+        {
+          "start": 275,
+          "end": 282,
+          "surface": "nessuno"
+        },
+        {
+          "start": 284,
+          "end": 289,
+          "surface": "aprì"
+        },
+        {
+          "start": 290,
+          "end": 299,
+          "surface": "l’uscio",
+          "components": [
+            {
+              "start": 290,
+              "end": 294,
+              "surface": "l’"
+            },
+            {
+              "start": 294,
+              "end": 299,
+              "surface": "uscio"
+            }
+          ]
+        },
+        {
+          "start": 300,
+          "end": 302,
+          "surface": "di"
+        },
+        {
+          "start": 303,
+          "end": 310,
+          "surface": "bottega"
+        },
+        {
+          "start": 311,
+          "end": 314,
+          "surface": "per"
+        },
+        {
+          "start": 315,
+          "end": 319,
+          "surface": "dare"
+        },
+        {
+          "start": 320,
+          "end": 333,
+          "surface": "un’occhiata",
+          "components": [
+            {
+              "start": 320,
+              "end": 325,
+              "surface": "un’"
+            },
+            {
+              "start": 325,
+              "end": 333,
+              "surface": "occhiata"
+            }
+          ]
+        },
+        {
+          "start": 334,
+          "end": 339,
+          "surface": "anche"
+        },
+        {
+          "start": 340,
+          "end": 345,
+          "surface": "sulla"
+        },
+        {
+          "start": 346,
+          "end": 352,
+          "surface": "strada"
+        },
+        {
+          "start": 354,
+          "end": 355,
+          "surface": "e"
+        },
+        {
+          "start": 356,
+          "end": 363,
+          "surface": "nessuno"
+        },
+        {
+          "start": 365,
+          "end": 366,
+          "surface": "O"
+        },
+        {
+          "start": 367,
+          "end": 373,
+          "surface": "dunque"
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 123,
+          "surface": "Girò gli occhi smarriti intorno alla stanza per vedere di dove mai poteva essere uscita quella vocina, e non vide nessuno!"
+        },
+        {
+          "start": 124,
+          "end": 364,
+          "surface": "Guardò sotto il banco, e nessuno: guardò dentro un armadio che stava sempre chiuso, e nessuno; guardò nel corbello dei trucioli e della segatura, e nessuno; aprì l’uscio di bottega per dare un’occhiata anche sulla strada, e nessuno."
+        },
+        {
+          "start": 365,
+          "end": 377,
+          "surface": "O dunque?..."
+        }
+      ]
+    },
+    {
+      "id": "pinocchio-06",
+      "class": "prosa-narrativa-ottocentesca",
+      "text": "E ripresa l’ascia in mano, tirò giù un solennissimo colpo sul pezzo di legno.",
+      "utf8Length": 81,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 1,
+          "surface": "E"
+        },
+        {
+          "start": 2,
+          "end": 9,
+          "surface": "ripresa"
+        },
+        {
+          "start": 10,
+          "end": 19,
+          "surface": "l’ascia",
+          "components": [
+            {
+              "start": 10,
+              "end": 14,
+              "surface": "l’"
+            },
+            {
+              "start": 14,
+              "end": 19,
+              "surface": "ascia"
+            }
+          ]
+        },
+        {
+          "start": 20,
+          "end": 22,
+          "surface": "in"
+        },
+        {
+          "start": 23,
+          "end": 27,
+          "surface": "mano"
+        },
+        {
+          "start": 29,
+          "end": 34,
+          "surface": "tirò"
+        },
+        {
+          "start": 35,
+          "end": 39,
+          "surface": "giù"
+        },
+        {
+          "start": 40,
+          "end": 42,
+          "surface": "un"
+        },
+        {
+          "start": 43,
+          "end": 55,
+          "surface": "solennissimo"
+        },
+        {
+          "start": 56,
+          "end": 61,
+          "surface": "colpo"
+        },
+        {
+          "start": 62,
+          "end": 65,
+          "surface": "sul"
+        },
+        {
+          "start": 66,
+          "end": 71,
+          "surface": "pezzo"
+        },
+        {
+          "start": 72,
+          "end": 74,
+          "surface": "di"
+        },
+        {
+          "start": 75,
+          "end": 80,
+          "surface": "legno"
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 81,
+          "surface": "E ripresa l’ascia in mano, tirò giù un solennissimo colpo sul pezzo di legno."
+        }
+      ]
+    },
+    {
+      "id": "pinocchio-07",
+      "class": "prosa-narrativa-ottocentesca",
+      "text": "Questa volta maestro Ciliegia restò di stucco, cogli occhi fuori del capo per la paura, colla bocca spalancata e colla lingua giù ciondoloni fino al mento, come un mascherone da fontana.",
+      "utf8Length": 188,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 6,
+          "surface": "Questa"
+        },
+        {
+          "start": 7,
+          "end": 12,
+          "surface": "volta"
+        },
+        {
+          "start": 13,
+          "end": 20,
+          "surface": "maestro"
+        },
+        {
+          "start": 21,
+          "end": 29,
+          "surface": "Ciliegia"
+        },
+        {
+          "start": 30,
+          "end": 36,
+          "surface": "restò"
+        },
+        {
+          "start": 37,
+          "end": 39,
+          "surface": "di"
+        },
+        {
+          "start": 40,
+          "end": 46,
+          "surface": "stucco"
+        },
+        {
+          "start": 48,
+          "end": 53,
+          "surface": "cogli"
+        },
+        {
+          "start": 54,
+          "end": 59,
+          "surface": "occhi"
+        },
+        {
+          "start": 60,
+          "end": 65,
+          "surface": "fuori"
+        },
+        {
+          "start": 66,
+          "end": 69,
+          "surface": "del"
+        },
+        {
+          "start": 70,
+          "end": 74,
+          "surface": "capo"
+        },
+        {
+          "start": 75,
+          "end": 78,
+          "surface": "per"
+        },
+        {
+          "start": 79,
+          "end": 81,
+          "surface": "la"
+        },
+        {
+          "start": 82,
+          "end": 87,
+          "surface": "paura"
+        },
+        {
+          "start": 89,
+          "end": 94,
+          "surface": "colla"
+        },
+        {
+          "start": 95,
+          "end": 100,
+          "surface": "bocca"
+        },
+        {
+          "start": 101,
+          "end": 111,
+          "surface": "spalancata"
+        },
+        {
+          "start": 112,
+          "end": 113,
+          "surface": "e"
+        },
+        {
+          "start": 114,
+          "end": 119,
+          "surface": "colla"
+        },
+        {
+          "start": 120,
+          "end": 126,
+          "surface": "lingua"
+        },
+        {
+          "start": 127,
+          "end": 131,
+          "surface": "giù"
+        },
+        {
+          "start": 132,
+          "end": 142,
+          "surface": "ciondoloni"
+        },
+        {
+          "start": 143,
+          "end": 147,
+          "surface": "fino"
+        },
+        {
+          "start": 148,
+          "end": 150,
+          "surface": "al"
+        },
+        {
+          "start": 151,
+          "end": 156,
+          "surface": "mento"
+        },
+        {
+          "start": 158,
+          "end": 162,
+          "surface": "come"
+        },
+        {
+          "start": 163,
+          "end": 165,
+          "surface": "un"
+        },
+        {
+          "start": 166,
+          "end": 176,
+          "surface": "mascherone"
+        },
+        {
+          "start": 177,
+          "end": 179,
+          "surface": "da"
+        },
+        {
+          "start": 180,
+          "end": 187,
+          "surface": "fontana"
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 188,
+          "surface": "Questa volta maestro Ciliegia restò di stucco, cogli occhi fuori del capo per la paura, colla bocca spalancata e colla lingua giù ciondoloni fino al mento, come un mascherone da fontana."
+        }
+      ]
+    },
+    {
+      "id": "pinocchio-08",
+      "class": "prosa-narrativa-ottocentesca",
+      "text": "Appena riebbe l’uso della parola, cominciò a dire tremando e balbettando dallo spavento:",
+      "utf8Length": 91,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 6,
+          "surface": "Appena"
+        },
+        {
+          "start": 7,
+          "end": 13,
+          "surface": "riebbe"
+        },
+        {
+          "start": 14,
+          "end": 21,
+          "surface": "l’uso",
+          "components": [
+            {
+              "start": 14,
+              "end": 18,
+              "surface": "l’"
+            },
+            {
+              "start": 18,
+              "end": 21,
+              "surface": "uso"
+            }
+          ]
+        },
+        {
+          "start": 22,
+          "end": 27,
+          "surface": "della"
+        },
+        {
+          "start": 28,
+          "end": 34,
+          "surface": "parola"
+        },
+        {
+          "start": 36,
+          "end": 45,
+          "surface": "cominciò"
+        },
+        {
+          "start": 46,
+          "end": 47,
+          "surface": "a"
+        },
+        {
+          "start": 48,
+          "end": 52,
+          "surface": "dire"
+        },
+        {
+          "start": 53,
+          "end": 61,
+          "surface": "tremando"
+        },
+        {
+          "start": 62,
+          "end": 63,
+          "surface": "e"
+        },
+        {
+          "start": 64,
+          "end": 75,
+          "surface": "balbettando"
+        },
+        {
+          "start": 76,
+          "end": 81,
+          "surface": "dallo"
+        },
+        {
+          "start": 82,
+          "end": 90,
+          "surface": "spavento"
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 91,
+          "surface": "Appena riebbe l’uso della parola, cominciò a dire tremando e balbettando dallo spavento:"
+        }
+      ]
+    },
+    {
+      "id": "pinocchio-09",
+      "class": "prosa-narrativa-ottocentesca",
+      "text": "E così dicendo, agguantò con tutt’e due le mani quel povero pezzo di legno, e si pose a sbatacchiarlo senza carità contro le pareti della stanza.",
+      "utf8Length": 150,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 1,
+          "surface": "E"
+        },
+        {
+          "start": 2,
+          "end": 7,
+          "surface": "così"
+        },
+        {
+          "start": 8,
+          "end": 15,
+          "surface": "dicendo"
+        },
+        {
+          "start": 17,
+          "end": 26,
+          "surface": "agguantò"
+        },
+        {
+          "start": 27,
+          "end": 30,
+          "surface": "con"
+        },
+        {
+          "start": 31,
+          "end": 39,
+          "surface": "tutt’e",
+          "components": [
+            {
+              "start": 31,
+              "end": 38,
+              "surface": "tutt’"
+            },
+            {
+              "start": 38,
+              "end": 39,
+              "surface": "e"
+            }
+          ]
+        },
+        {
+          "start": 40,
+          "end": 43,
+          "surface": "due"
+        },
+        {
+          "start": 44,
+          "end": 46,
+          "surface": "le"
+        },
+        {
+          "start": 47,
+          "end": 51,
+          "surface": "mani"
+        },
+        {
+          "start": 52,
+          "end": 56,
+          "surface": "quel"
+        },
+        {
+          "start": 57,
+          "end": 63,
+          "surface": "povero"
+        },
+        {
+          "start": 64,
+          "end": 69,
+          "surface": "pezzo"
+        },
+        {
+          "start": 70,
+          "end": 72,
+          "surface": "di"
+        },
+        {
+          "start": 73,
+          "end": 78,
+          "surface": "legno"
+        },
+        {
+          "start": 80,
+          "end": 81,
+          "surface": "e"
+        },
+        {
+          "start": 82,
+          "end": 84,
+          "surface": "si"
+        },
+        {
+          "start": 85,
+          "end": 89,
+          "surface": "pose"
+        },
+        {
+          "start": 90,
+          "end": 91,
+          "surface": "a"
+        },
+        {
+          "start": 92,
+          "end": 105,
+          "surface": "sbatacchiarlo"
+        },
+        {
+          "start": 106,
+          "end": 111,
+          "surface": "senza"
+        },
+        {
+          "start": 112,
+          "end": 119,
+          "surface": "carità"
+        },
+        {
+          "start": 120,
+          "end": 126,
+          "surface": "contro"
+        },
+        {
+          "start": 127,
+          "end": 129,
+          "surface": "le"
+        },
+        {
+          "start": 130,
+          "end": 136,
+          "surface": "pareti"
+        },
+        {
+          "start": 137,
+          "end": 142,
+          "surface": "della"
+        },
+        {
+          "start": 143,
+          "end": 149,
+          "surface": "stanza"
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 150,
+          "surface": "E così dicendo, agguantò con tutt’e due le mani quel povero pezzo di legno, e si pose a sbatacchiarlo senza carità contro le pareti della stanza."
+        }
+      ]
+    },
+    {
+      "id": "pinocchio-10",
+      "class": "prosa-narrativa-ottocentesca",
+      "text": "Poi si messe in ascolto, per sentire se c’era qualche vocina che si lamentasse. Aspettò due minuti, e nulla; cinque minuti, e nulla; dieci minuti, e nulla!",
+      "utf8Length": 158,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 3,
+          "surface": "Poi"
+        },
+        {
+          "start": 4,
+          "end": 6,
+          "surface": "si"
+        },
+        {
+          "start": 7,
+          "end": 12,
+          "surface": "messe"
+        },
+        {
+          "start": 13,
+          "end": 15,
+          "surface": "in"
+        },
+        {
+          "start": 16,
+          "end": 23,
+          "surface": "ascolto"
+        },
+        {
+          "start": 25,
+          "end": 28,
+          "surface": "per"
+        },
+        {
+          "start": 29,
+          "end": 36,
+          "surface": "sentire"
+        },
+        {
+          "start": 37,
+          "end": 39,
+          "surface": "se"
+        },
+        {
+          "start": 40,
+          "end": 47,
+          "surface": "c’era",
+          "components": [
+            {
+              "start": 40,
+              "end": 44,
+              "surface": "c’"
+            },
+            {
+              "start": 44,
+              "end": 47,
+              "surface": "era"
+            }
+          ]
+        },
+        {
+          "start": 48,
+          "end": 55,
+          "surface": "qualche"
+        },
+        {
+          "start": 56,
+          "end": 62,
+          "surface": "vocina"
+        },
+        {
+          "start": 63,
+          "end": 66,
+          "surface": "che"
+        },
+        {
+          "start": 67,
+          "end": 69,
+          "surface": "si"
+        },
+        {
+          "start": 70,
+          "end": 80,
+          "surface": "lamentasse"
+        },
+        {
+          "start": 82,
+          "end": 90,
+          "surface": "Aspettò"
+        },
+        {
+          "start": 91,
+          "end": 94,
+          "surface": "due"
+        },
+        {
+          "start": 95,
+          "end": 101,
+          "surface": "minuti"
+        },
+        {
+          "start": 103,
+          "end": 104,
+          "surface": "e"
+        },
+        {
+          "start": 105,
+          "end": 110,
+          "surface": "nulla"
+        },
+        {
+          "start": 112,
+          "end": 118,
+          "surface": "cinque"
+        },
+        {
+          "start": 119,
+          "end": 125,
+          "surface": "minuti"
+        },
+        {
+          "start": 127,
+          "end": 128,
+          "surface": "e"
+        },
+        {
+          "start": 129,
+          "end": 134,
+          "surface": "nulla"
+        },
+        {
+          "start": 136,
+          "end": 141,
+          "surface": "dieci"
+        },
+        {
+          "start": 142,
+          "end": 148,
+          "surface": "minuti"
+        },
+        {
+          "start": 150,
+          "end": 151,
+          "surface": "e"
+        },
+        {
+          "start": 152,
+          "end": 157,
+          "surface": "nulla"
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 81,
+          "surface": "Poi si messe in ascolto, per sentire se c’era qualche vocina che si lamentasse."
+        },
+        {
+          "start": 82,
+          "end": 158,
+          "surface": "Aspettò due minuti, e nulla; cinque minuti, e nulla; dieci minuti, e nulla!"
+        }
+      ]
+    },
+    {
+      "id": "pinocchio-11",
+      "class": "prosa-narrativa-ottocentesca",
+      "text": "E perchè gli era entrato addosso una gran paura, si provò a canterellare per farsi un po’ di coraggio.",
+      "utf8Length": 106,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 1,
+          "surface": "E"
+        },
+        {
+          "start": 2,
+          "end": 9,
+          "surface": "perchè"
+        },
+        {
+          "start": 10,
+          "end": 13,
+          "surface": "gli"
+        },
+        {
+          "start": 14,
+          "end": 17,
+          "surface": "era"
+        },
+        {
+          "start": 18,
+          "end": 25,
+          "surface": "entrato"
+        },
+        {
+          "start": 26,
+          "end": 33,
+          "surface": "addosso"
+        },
+        {
+          "start": 34,
+          "end": 37,
+          "surface": "una"
+        },
+        {
+          "start": 38,
+          "end": 42,
+          "surface": "gran"
+        },
+        {
+          "start": 43,
+          "end": 48,
+          "surface": "paura"
+        },
+        {
+          "start": 50,
+          "end": 52,
+          "surface": "si"
+        },
+        {
+          "start": 53,
+          "end": 59,
+          "surface": "provò"
+        },
+        {
+          "start": 60,
+          "end": 61,
+          "surface": "a"
+        },
+        {
+          "start": 62,
+          "end": 74,
+          "surface": "canterellare"
+        },
+        {
+          "start": 75,
+          "end": 78,
+          "surface": "per"
+        },
+        {
+          "start": 79,
+          "end": 84,
+          "surface": "farsi"
+        },
+        {
+          "start": 85,
+          "end": 87,
+          "surface": "un"
+        },
+        {
+          "start": 88,
+          "end": 93,
+          "surface": "po’"
+        },
+        {
+          "start": 94,
+          "end": 96,
+          "surface": "di"
+        },
+        {
+          "start": 97,
+          "end": 105,
+          "surface": "coraggio"
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 106,
+          "surface": "E perchè gli era entrato addosso una gran paura, si provò a canterellare per farsi un po’ di coraggio."
+        }
+      ]
+    },
+    {
+      "id": "pinocchio-12",
+      "class": "prosa-narrativa-ottocentesca",
+      "text": "Intanto, posata da una parte l’ascia, prese in mano la pialla, per piallare e tirare a pulimento il pezzo di legno; ma nel mentre che lo piallava in su e in giù, sentì la solita vocina che gli disse ridendo:",
+      "utf8Length": 211,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 7,
+          "surface": "Intanto"
+        },
+        {
+          "start": 9,
+          "end": 15,
+          "surface": "posata"
+        },
+        {
+          "start": 16,
+          "end": 18,
+          "surface": "da"
+        },
+        {
+          "start": 19,
+          "end": 22,
+          "surface": "una"
+        },
+        {
+          "start": 23,
+          "end": 28,
+          "surface": "parte"
+        },
+        {
+          "start": 29,
+          "end": 38,
+          "surface": "l’ascia",
+          "components": [
+            {
+              "start": 29,
+              "end": 33,
+              "surface": "l’"
+            },
+            {
+              "start": 33,
+              "end": 38,
+              "surface": "ascia"
+            }
+          ]
+        },
+        {
+          "start": 40,
+          "end": 45,
+          "surface": "prese"
+        },
+        {
+          "start": 46,
+          "end": 48,
+          "surface": "in"
+        },
+        {
+          "start": 49,
+          "end": 53,
+          "surface": "mano"
+        },
+        {
+          "start": 54,
+          "end": 56,
+          "surface": "la"
+        },
+        {
+          "start": 57,
+          "end": 63,
+          "surface": "pialla"
+        },
+        {
+          "start": 65,
+          "end": 68,
+          "surface": "per"
+        },
+        {
+          "start": 69,
+          "end": 77,
+          "surface": "piallare"
+        },
+        {
+          "start": 78,
+          "end": 79,
+          "surface": "e"
+        },
+        {
+          "start": 80,
+          "end": 86,
+          "surface": "tirare"
+        },
+        {
+          "start": 87,
+          "end": 88,
+          "surface": "a"
+        },
+        {
+          "start": 89,
+          "end": 98,
+          "surface": "pulimento"
+        },
+        {
+          "start": 99,
+          "end": 101,
+          "surface": "il"
+        },
+        {
+          "start": 102,
+          "end": 107,
+          "surface": "pezzo"
+        },
+        {
+          "start": 108,
+          "end": 110,
+          "surface": "di"
+        },
+        {
+          "start": 111,
+          "end": 116,
+          "surface": "legno"
+        },
+        {
+          "start": 118,
+          "end": 120,
+          "surface": "ma"
+        },
+        {
+          "start": 121,
+          "end": 124,
+          "surface": "nel"
+        },
+        {
+          "start": 125,
+          "end": 131,
+          "surface": "mentre"
+        },
+        {
+          "start": 132,
+          "end": 135,
+          "surface": "che"
+        },
+        {
+          "start": 136,
+          "end": 138,
+          "surface": "lo"
+        },
+        {
+          "start": 139,
+          "end": 147,
+          "surface": "piallava"
+        },
+        {
+          "start": 148,
+          "end": 150,
+          "surface": "in"
+        },
+        {
+          "start": 151,
+          "end": 153,
+          "surface": "su"
+        },
+        {
+          "start": 154,
+          "end": 155,
+          "surface": "e"
+        },
+        {
+          "start": 156,
+          "end": 158,
+          "surface": "in"
+        },
+        {
+          "start": 159,
+          "end": 163,
+          "surface": "giù"
+        },
+        {
+          "start": 165,
+          "end": 171,
+          "surface": "sentì"
+        },
+        {
+          "start": 172,
+          "end": 174,
+          "surface": "la"
+        },
+        {
+          "start": 175,
+          "end": 181,
+          "surface": "solita"
+        },
+        {
+          "start": 182,
+          "end": 188,
+          "surface": "vocina"
+        },
+        {
+          "start": 189,
+          "end": 192,
+          "surface": "che"
+        },
+        {
+          "start": 193,
+          "end": 196,
+          "surface": "gli"
+        },
+        {
+          "start": 197,
+          "end": 202,
+          "surface": "disse"
+        },
+        {
+          "start": 203,
+          "end": 210,
+          "surface": "ridendo"
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 211,
+          "surface": "Intanto, posata da una parte l’ascia, prese in mano la pialla, per piallare e tirare a pulimento il pezzo di legno; ma nel mentre che lo piallava in su e in giù, sentì la solita vocina che gli disse ridendo:"
+        }
+      ]
+    },
+    {
+      "id": "pinocchio-13",
+      "class": "prosa-narrativa-ottocentesca",
+      "text": "Questa volta il povero maestro Ciliegia cadde giù come fulminato. Quando riaprì gli occhi, si trovò seduto per terra.",
+      "utf8Length": 120,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 6,
+          "surface": "Questa"
+        },
+        {
+          "start": 7,
+          "end": 12,
+          "surface": "volta"
+        },
+        {
+          "start": 13,
+          "end": 15,
+          "surface": "il"
+        },
+        {
+          "start": 16,
+          "end": 22,
+          "surface": "povero"
+        },
+        {
+          "start": 23,
+          "end": 30,
+          "surface": "maestro"
+        },
+        {
+          "start": 31,
+          "end": 39,
+          "surface": "Ciliegia"
+        },
+        {
+          "start": 40,
+          "end": 45,
+          "surface": "cadde"
+        },
+        {
+          "start": 46,
+          "end": 50,
+          "surface": "giù"
+        },
+        {
+          "start": 51,
+          "end": 55,
+          "surface": "come"
+        },
+        {
+          "start": 56,
+          "end": 65,
+          "surface": "fulminato"
+        },
+        {
+          "start": 67,
+          "end": 73,
+          "surface": "Quando"
+        },
+        {
+          "start": 74,
+          "end": 81,
+          "surface": "riaprì"
+        },
+        {
+          "start": 82,
+          "end": 85,
+          "surface": "gli"
+        },
+        {
+          "start": 86,
+          "end": 91,
+          "surface": "occhi"
+        },
+        {
+          "start": 93,
+          "end": 95,
+          "surface": "si"
+        },
+        {
+          "start": 96,
+          "end": 102,
+          "surface": "trovò"
+        },
+        {
+          "start": 103,
+          "end": 109,
+          "surface": "seduto"
+        },
+        {
+          "start": 110,
+          "end": 113,
+          "surface": "per"
+        },
+        {
+          "start": 114,
+          "end": 119,
+          "surface": "terra"
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 66,
+          "surface": "Questa volta il povero maestro Ciliegia cadde giù come fulminato."
+        },
+        {
+          "start": 67,
+          "end": 120,
+          "surface": "Quando riaprì gli occhi, si trovò seduto per terra."
+        }
+      ]
+    },
+    {
+      "id": "pinocchio-14",
+      "class": "prosa-narrativa-ottocentesca",
+      "text": "Il suo viso pareva trasfigurito, e perfino la punta del naso, di paonazza come era quasi sempre, gli era diventata turchina dalla gran paura.",
+      "utf8Length": 141,
+      "tokens": [
+        {
+          "start": 0,
+          "end": 2,
+          "surface": "Il"
+        },
+        {
+          "start": 3,
+          "end": 6,
+          "surface": "suo"
+        },
+        {
+          "start": 7,
+          "end": 11,
+          "surface": "viso"
+        },
+        {
+          "start": 12,
+          "end": 18,
+          "surface": "pareva"
+        },
+        {
+          "start": 19,
+          "end": 31,
+          "surface": "trasfigurito"
+        },
+        {
+          "start": 33,
+          "end": 34,
+          "surface": "e"
+        },
+        {
+          "start": 35,
+          "end": 42,
+          "surface": "perfino"
+        },
+        {
+          "start": 43,
+          "end": 45,
+          "surface": "la"
+        },
+        {
+          "start": 46,
+          "end": 51,
+          "surface": "punta"
+        },
+        {
+          "start": 52,
+          "end": 55,
+          "surface": "del"
+        },
+        {
+          "start": 56,
+          "end": 60,
+          "surface": "naso"
+        },
+        {
+          "start": 62,
+          "end": 64,
+          "surface": "di"
+        },
+        {
+          "start": 65,
+          "end": 73,
+          "surface": "paonazza"
+        },
+        {
+          "start": 74,
+          "end": 78,
+          "surface": "come"
+        },
+        {
+          "start": 79,
+          "end": 82,
+          "surface": "era"
+        },
+        {
+          "start": 83,
+          "end": 88,
+          "surface": "quasi"
+        },
+        {
+          "start": 89,
+          "end": 95,
+          "surface": "sempre"
+        },
+        {
+          "start": 97,
+          "end": 100,
+          "surface": "gli"
+        },
+        {
+          "start": 101,
+          "end": 104,
+          "surface": "era"
+        },
+        {
+          "start": 105,
+          "end": 114,
+          "surface": "diventata"
+        },
+        {
+          "start": 115,
+          "end": 123,
+          "surface": "turchina"
+        },
+        {
+          "start": 124,
+          "end": 129,
+          "surface": "dalla"
+        },
+        {
+          "start": 130,
+          "end": 134,
+          "surface": "gran"
+        },
+        {
+          "start": 135,
+          "end": 140,
+          "surface": "paura"
+        }
+      ],
+      "sentences": [
+        {
+          "start": 0,
+          "end": 141,
+          "surface": "Il suo viso pareva trasfigurito, e perfino la punta del naso, di paonazza come era quasi sempre, gli era diventata turchina dalla gran paura."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "studio.glifi.validation-manifest",
+  "schemaVersion": 1,
+  "id": "validation-interpretation-mvp-v1",
+  "capabilityIdentifier": "interpretation-mvp-v1",
+  "methodIdentifiers": [
+    "Evidence-v1",
+    "Finding-v1",
+    "Caveat-v1",
+    "SupportPolicy-descriptive-keyness-v1",
+    "EditorialRankFactors-v1"
+  ],
+  "status": "candidate",
+  "license": "BSD-3-Clause",
+  "toolchain": {
+    "swiftLanguageMode": "6",
+    "swiftToolsVersion": "6.4",
+    "platforms": [
+      "macOS 27",
+      "iPadOS 27"
+    ]
+  },
+  "levels": {
+    "V0": {
+      "status": "pass",
+      "description": "Schema Evidence/Finding/Caveat e assessment tipizzati verificati staticamente."
+    },
+    "V1": {
+      "status": "pass",
+      "description": "Policy descrittiva/keyness, insufficientEvidence e ranking lessicografico nei test Core."
+    },
+    "V2": {
+      "status": "pass",
+      "description": "Riuso Artifact interpretazione dopo riapertura; fail-closed su identità Evidence alterata."
+    },
+    "V3": {
+      "status": "pass",
+      "description": "Persistenza interpretazione nella generazione e superfici Kit/CLI (GS-VER-030)."
+    },
+    "V4": {
+      "status": "pass",
+      "description": "UI Must espone assessment, ranking e misure Evidence come regressione operativa.",
+      "datasets": [
+        "Fixtures/Validation/v1/manifest.json"
+      ]
+    },
+    "V5": {
+      "status": "not-applicable",
+      "description": "Famiglie oltre descrittiva/keyness fuori dal nucleo 0.1."
+    }
+  },
+  "limits": [
+    "Dataset di ranking empirico e conflitti cross-family ancora aperti (CMP-018).",
+    "Validazione scientifica esterna non inclusa."
+  ],
+  "evidence": [
+    "docs/evidenze/GS-VER-030-evidence-finding-caveat.md",
+    "docs/evidenze/GS-VER-045-ranking-diversity-ui.md",
+    "docs/evidenze/GS-VER-047-evidence-measures-artifact-ui.md"
+  ],
+  "numericAgreement": {
+    "comparisonMode": "structural",
+    "oracle": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiInterpretationTests.swift",
+    "notes": "Regole deterministiche e lineage delle evidenze: confronto strutturale."
+  },
+  "statusReason": "L'oracolo di V2 è un test del prodotto, non un'implementazione indipendente: ADR-0031 non ammette l'approvazione."
+}

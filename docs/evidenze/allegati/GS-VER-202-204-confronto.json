@@ -1,0 +1,206 @@
+{
+  "sourceChanges": [
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiItalianTokenizer.swift",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiScientificExportRenderer.swift",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiSpanMap.swift"
+  ],
+  "sourceSHA256": {
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiItalianTokenizer.swift": {
+      "baseline": "bb054f7f60b69bd75f84de0172ee473936d7eb77a37083a11c618cd2b0c67d83",
+      "candidate": "536073b18e01d4d853e1a5f4df6a95c799218de4ebb9a746c4a1ad912031f1b5"
+    },
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiScientificExportRenderer.swift": {
+      "baseline": "dea51e7a80f68a06487b446aa70eba6f4259e3123b11f421719b1b1fd3f550c2",
+      "candidate": "d10d3480856f4a52a11d966968597baed8dc66d0c9fedf10b980cebb715e1476"
+    },
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiSpanMap.swift": {
+      "baseline": "38baad1d31c34dcaf9ea62e953dd950229959c58feee80694dca8731becb5e0d",
+      "candidate": "3bda338c6c449ef2a2361091b27605262f2dd802c045158217110b30298c7d03"
+    }
+  },
+  "unchangedFrozenFiles": 268,
+  "measurements": [
+    {
+      "identifier": "csv-evidence-index-2048",
+      "baselineMedianMilliseconds": 385.53749999999997,
+      "baselineRangeMilliseconds": [
+        381.379833,
+        389.48925
+      ],
+      "candidateMedianMilliseconds": 234.296875,
+      "candidateRangeMilliseconds": [
+        225.753125,
+        237.189334
+      ],
+      "speedup": 1.6455085028342782,
+      "reductionPercent": 39.22851214213922,
+      "fixtureDigest": "sha256:fb6661f7843b6a1608cf046cdbd5b3fc11dfdf509c7143f5d850aa994d039a71",
+      "resultDigest": "sha256:f3c8b29220f83a6d360e6c03f545fe12cacf1770f79696cab43e86ff64982ac1",
+      "exactResultChecksPerSide": 8
+    },
+    {
+      "identifier": "csv-evidence-index-256",
+      "baselineMedianMilliseconds": 30.423041,
+      "baselineRangeMilliseconds": [
+        29.73225,
+        30.569665999999998
+      ],
+      "candidateMedianMilliseconds": 27.925124999999998,
+      "candidateRangeMilliseconds": [
+        27.763125,
+        28.143958
+      ],
+      "speedup": 1.0894504858975564,
+      "reductionPercent": 8.210605902283085,
+      "fixtureDigest": "sha256:327f43c66feafe09c21c4966bb8ab02707a2e96d66950570108a8d05fe31c256",
+      "resultDigest": "sha256:a57a427571d0b9bc2f487a737b4cc519f661bc35c3634831229c1a959d1c87d1",
+      "exactResultChecksPerSide": 8
+    },
+    {
+      "identifier": "spanmap-compose-5000x5000",
+      "baselineMedianMilliseconds": 20.565083,
+      "baselineRangeMilliseconds": [
+        20.522292,
+        20.694
+      ],
+      "candidateMedianMilliseconds": 1.066167,
+      "candidateRangeMilliseconds": [
+        1.059167,
+        1.168917
+      ],
+      "speedup": 19.288800910176363,
+      "reductionPercent": 94.81564455635798,
+      "fixtureDigest": "sha256:8dde4c93524a0b61318219ad505466ea315d5ca11eb268091f5c63d5adb50064",
+      "resultDigest": "sha256:780839a606d600a27d8f8d3f08b97f64294064f03e81502789fde5809e1cf260",
+      "exactResultChecksPerSide": 8
+    },
+    {
+      "identifier": "spanmap-construct-20000",
+      "baselineMedianMilliseconds": 0.202625,
+      "baselineRangeMilliseconds": [
+        0.19262500000000002,
+        0.212167
+      ],
+      "candidateMedianMilliseconds": 0.18475,
+      "candidateRangeMilliseconds": [
+        0.176167,
+        0.272542
+      ],
+      "speedup": 1.0967523680649527,
+      "reductionPercent": 8.82171499074646,
+      "fixtureDigest": "sha256:b9023553c77d0aec0659e84199ff600a6bcb1bd3ec8dbd4ea450a82132b64ef1",
+      "resultDigest": "sha256:b9023553c77d0aec0659e84199ff600a6bcb1bd3ec8dbd4ea450a82132b64ef1",
+      "exactResultChecksPerSide": 8
+    },
+    {
+      "identifier": "spanmap-sparse-20000x1000",
+      "baselineMedianMilliseconds": 19.738333,
+      "baselineRangeMilliseconds": [
+        19.417458,
+        19.751125000000002
+      ],
+      "candidateMedianMilliseconds": 0.417208,
+      "candidateRangeMilliseconds": [
+        0.414708,
+        0.43483299999999997
+      ],
+      "speedup": 47.3105333550651,
+      "reductionPercent": 97.88630579897503,
+      "fixtureDigest": "sha256:e5b0a8228a65390aa53097760c5ada6dc4b719f77697cf8ec883d01e46e34810",
+      "resultDigest": "sha256:90185112b75d8a23f667626e26ef959c215729230c0cc80909ae8acf48daf536",
+      "exactResultChecksPerSide": 8
+    },
+    {
+      "identifier": "tokenizer-email-url-control",
+      "baselineMedianMilliseconds": 1.4205,
+      "baselineRangeMilliseconds": [
+        1.414208,
+        1.4241659999999998
+      ],
+      "candidateMedianMilliseconds": 1.409792,
+      "candidateRangeMilliseconds": [
+        1.401292,
+        1.4180830000000002
+      ],
+      "speedup": 1.0075954467041948,
+      "reductionPercent": 0.7538190777895187,
+      "fixtureDigest": "sha256:849210bfad1958242d6490478b531ea2df4d5e1227a019bcca1328b0facf95c5",
+      "resultDigest": "sha256:8137951b7811f17e13cefc4dfcf5f623ee77e5c6642599d8c5eb1954f53240e6",
+      "exactResultChecksPerSide": 8
+    },
+    {
+      "identifier": "tokenizer-punctuation-1000",
+      "baselineMedianMilliseconds": 12.497083000000002,
+      "baselineRangeMilliseconds": [
+        12.479917,
+        12.540667000000001
+      ],
+      "candidateMedianMilliseconds": 0.65325,
+      "candidateRangeMilliseconds": [
+        0.642667,
+        0.72075
+      ],
+      "speedup": 19.130628396479146,
+      "reductionPercent": 94.77278017598188,
+      "fixtureDigest": "sha256:cd655a7430ce60013e5d7f4cd17adbce031bc633491d212688cfad499367bd8b",
+      "resultDigest": "sha256:f0511b88bc663395600fc609c190bba1f833018d81e70e4e238fcac4279a3108",
+      "exactResultChecksPerSide": 8
+    },
+    {
+      "identifier": "tokenizer-punctuation-4000",
+      "baselineMedianMilliseconds": 191.901625,
+      "baselineRangeMilliseconds": [
+        191.58154199999998,
+        193.235333
+      ],
+      "candidateMedianMilliseconds": 2.610791,
+      "candidateRangeMilliseconds": [
+        2.576791,
+        2.809125
+      ],
+      "speedup": 73.50325054743945,
+      "reductionPercent": 98.63951594990402,
+      "fixtureDigest": "sha256:918c3bd3f87ca8fa969421d68e0798fb1c9609d331b53cbc66e5dcfbd7d37510",
+      "resultDigest": "sha256:3dabe07387736f2f6eb19bfe5faf0d912171aafa4336ec09c5c8b5187ef33891",
+      "exactResultChecksPerSide": 8
+    },
+    {
+      "identifier": "tokenizer-punctuation-8000",
+      "baselineMedianMilliseconds": 764.499292,
+      "baselineRangeMilliseconds": [
+        763.124667,
+        773.829459
+      ],
+      "candidateMedianMilliseconds": 5.236375,
+      "candidateRangeMilliseconds": [
+        5.050875,
+        5.312875
+      ],
+      "speedup": 145.99781184502638,
+      "reductionPercent": 99.31505822767983,
+      "fixtureDigest": "sha256:8cc17640937543bafb723b272175675ac5816d9ba47e88df94f08d4fa0f4584b",
+      "resultDigest": "sha256:4c1495cfff53ae79e1f3e9e34ea37b453693eda647b49c598da4b47a90489ab8",
+      "exactResultChecksPerSide": 8
+    },
+    {
+      "identifier": "tokenizer-unicode-prose-control",
+      "baselineMedianMilliseconds": 3.2326249999999996,
+      "baselineRangeMilliseconds": [
+        3.2262079999999997,
+        3.2482919999999997
+      ],
+      "candidateMedianMilliseconds": 3.15725,
+      "candidateRangeMilliseconds": [
+        3.1280409999999996,
+        3.1789169999999998
+      ],
+      "speedup": 1.0238736241982738,
+      "reductionPercent": 2.3316963767835714,
+      "fixtureDigest": "sha256:02c0d17fd8f52fbad02bbbd515194d6579058bc8aaf2225c637e81055b181cb3",
+      "resultDigest": "sha256:895bbce6c2b13d08c616a99518738020ac6769c284e65f7d4632bc2b42cab0db",
+      "exactResultChecksPerSide": 8
+    }
+  ],
+  "baselineInventorySHA256": "60efee04fa6f582259e5ebd6e63c59a4781b889d214d6dbce523fc22a22dd820",
+  "candidateInventorySHA256": "60c5841e755db2664ff8264f1bea2a36b6379ce794d59058bbfb29d9fd9fb551"
+}

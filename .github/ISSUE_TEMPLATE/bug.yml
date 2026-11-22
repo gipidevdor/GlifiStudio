@@ -1,0 +1,62 @@
+# SPDX-License-Identifier: BSD-3-Clause
+
+name: Difetto
+description: Descrivi un errore riproducibile con dati sintetici.
+title: "fix: "
+labels:
+  - type:bug
+  - status:triage
+body:
+  - type: markdown
+    attributes:
+      value: Non inserire documenti reali, dati personali, credenziali o dettagli di vulnerabilità.
+  - type: textarea
+    id: risultato
+    attributes:
+      label: Risultato osservato
+      description: Cosa accade? Perché è un errore?
+    validations:
+      required: true
+  - type: textarea
+    id: riproduzione
+    attributes:
+      label: Riproduzione minima
+      description: Elenca passaggi ripetibili con soli dati sintetici.
+    validations:
+      required: true
+  - type: textarea
+    id: atteso
+    attributes:
+      label: Risultato atteso
+    validations:
+      required: true
+  - type: input
+    id: revisione
+    attributes:
+      label: Revisione
+      description: Commit, branch o versione della build.
+    validations:
+      required: true
+  - type: dropdown
+    id: piattaforma
+    attributes:
+      label: Piattaforma
+      options:
+        - macOS 27
+        - iPadOS 27
+        - Package o CLI
+        - Documentazione o infrastruttura
+    validations:
+      required: true
+  - type: textarea
+    id: contesto
+    attributes:
+      label: Ambiente e log
+      description: Hardware, Xcode e log senza dati riservati.
+  - type: checkboxes
+    id: sicurezza
+    attributes:
+      label: Controllo dei dati
+      options:
+        - label: Ho escluso segreti, dati personali, corpus reali e dettagli di sicurezza.
+          required: true
