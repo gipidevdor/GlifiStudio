@@ -55,6 +55,8 @@
       ],
       "code": [
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Apps/Shared/StudioHomeModel.swift"
       ],
@@ -278,6 +280,8 @@
       ],
       "code": [
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift"
       ],
       "tests": [
@@ -302,6 +306,8 @@
       "code": [
         "Packages/GlifiCore/Sources/GlifiKit/GlifiAnalysisExecutionPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Apps/Shared/StudioHomeModel.swift"
       ],
@@ -352,6 +358,8 @@
       ],
       "code": [
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift",
         "Apps/Shared/StudioHomeModel.swift",
@@ -652,6 +660,8 @@
       ],
       "code": [
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Packages/GlifiCore/Sources/GlifiCore/GlifiTextAnalyzer.swift"
       ],
@@ -750,6 +760,8 @@
       ],
       "code": [
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -810,6 +822,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiSpanMap.swift",
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -879,6 +893,8 @@
       "code": [
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift",
         "Apps/Shared/StudioHomeModel.swift",
         "Apps/Shared/StudioHomeView.swift"
@@ -944,6 +960,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiCorpusAnalysisPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1003,6 +1021,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiKeynessPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1153,6 +1173,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiAnalysisPlanPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1186,6 +1208,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiAnalysisExecutionPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1266,6 +1290,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiInvestigationPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1482,6 +1508,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiCorpusSimilarityPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1515,6 +1543,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1546,6 +1576,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1580,6 +1612,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1611,6 +1645,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1642,6 +1678,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1673,6 +1711,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1763,6 +1803,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1827,6 +1869,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1862,6 +1906,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1897,6 +1943,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -1964,6 +2012,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiResamplingStatistics.swift",
         "Packages/GlifiCore/Sources/GlifiCore/GlifiScientificExportRenderer.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -2099,6 +2149,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiVisualizationPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Apps/Shared/StudioVisualizationView.swift"
       ],
       "tests": [
@@ -2304,6 +2356,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryEvaluator.swift",
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -2334,6 +2388,8 @@
       "code": [
         "Packages/GlifiCore/Sources/GlifiKit/GlifiVisualizationExport.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Apps/Shared/StudioVisualizationView.swift"
       ],
       "tests": [
@@ -2357,6 +2413,8 @@
       ],
       "code": [
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Scripts/verify.sh"
       ],
       "tests": [
@@ -2434,6 +2492,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineQualitative.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiQualitativePresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift",
         "Apps/Shared/StudioCodingView.swift",
         "Apps/Shared/StudioHomeModel.swift"
@@ -2717,6 +2777,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiExtractiveSummaryPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -2862,6 +2924,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiExtractiveSummaryPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -2918,6 +2982,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiExtractiveSummaryPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -2949,6 +3015,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiExtractiveSummaryPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -3010,6 +3078,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiLexicalLawsPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
@@ -3465,6 +3535,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiExtractiveSummaryAnalysis.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiExtractiveSummaryPresentation.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Apps/Shared/StudioHomeModel.swift",
         "Apps/Shared/StudioHomeView.swift",
         "Apps/macOS/StudioTextAnalysisView.swift",
@@ -3556,6 +3628,8 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioRuntimeEnvironment.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift",
         "Apps/macOS/StudioMacRuntimeMonitor.swift",
         "Apps/macOS/GlifiStudioMacApp.swift",
         "Apps/Shared/StudioHomeView.swift"
@@ -4349,7 +4423,9 @@
       ],
       "code": [
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProcessActivity.swift",
-        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift"
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift"
       ],
       "tests": [
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioProcessActivityTests.swift"
@@ -4508,6 +4584,111 @@
       ],
       "evidence": [
         "docs/evidenze/GS-VER-178-digest-export-viste.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-280",
+      "clause": "GS-STD-001-10 § 10.4; Coesione dei contratti Kit e confine della sessione",
+      "specification": "docs/standard/10-architettura-e-design.md",
+      "requirements": [
+        "RQ-005",
+        "RQ-011",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioServiceTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioRuntimeEnvironmentTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioProcessActivityTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-280-struttura-e-coesione-del-codice.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-281",
+      "clause": "GS-STD-001-10 § 10.4; Costruzione privata condivisa delle transazioni del package",
+      "specification": "docs/standard/10-architettura-e-design.md",
+      "requirements": [
+        "RQ-005",
+        "RQ-010",
+        "RQ-023",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiProjectPackage.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiProjectPackageTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiQualitativePersistenceTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-280-struttura-e-coesione-del-codice.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-282",
+      "clause": "GS-STD-001-10 § 10.4; Ownership uniforme della sessione CLI",
+      "specification": "docs/standard/10-architettura-e-design.md",
+      "requirements": [
+        "RQ-005",
+        "RQ-011",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
+      ],
+      "tests": [
+        "Scripts/check-text-analysis-cli.py",
+        "Scripts/check-query-ast.py",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-280-struttura-e-coesione-del-codice.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-283",
+      "clause": "GS-DEV-002 Ingressi canonici; GS-STD-001-20 § 20.1/20.2; priorità macOS esplicita",
+      "specification": "docs/loop-di-sviluppo-e-qualita.md",
+      "requirements": [
+        "RQ-005",
+        "RQ-063"
+      ],
+      "code": [
+        "Makefile",
+        ".github/workflows/ci.yml",
+        ".github/workflows/app-store.yml",
+        "AGENTS.md"
+      ],
+      "tests": [
+        "Scripts/check-swift-dialect.py",
+        "Scripts/check-github-config.py",
+        "Scripts/verify.sh",
+        "Scripts/check-app-store-packaging.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-280-struttura-e-coesione-del-codice.md"
       ],
       "gate": "G3",
       "status": "implemented",

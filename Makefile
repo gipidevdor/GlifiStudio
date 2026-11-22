@@ -107,13 +107,21 @@ cache-size:
 	@du -sh "$${GLIFI_VERIFY_CACHE:-$$HOME/Library/Caches/GlifiStudio/verify}" 2>/dev/null || echo "Nessuna cache presente."
 
 verify:
-	./Scripts/verify.sh
+	./Scripts/verify.sh --macos-only
 
 verify-macos:
 	./Scripts/verify.sh --macos-only
 
+verify-all:
+	./Scripts/verify.sh
+
 verify-app-store:
-	./Scripts/verify-app-store.sh
+	./Scripts/verify-app-store.sh --macos-only
 
 verify-app-store-macos:
 	./Scripts/verify-app-store.sh --macos-only
+
+verify-app-store-all:
+	./Scripts/verify-app-store.sh
+
+.PHONY: verify-all verify-app-store-all

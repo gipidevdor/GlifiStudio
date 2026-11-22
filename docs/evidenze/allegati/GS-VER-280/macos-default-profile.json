@@ -1,0 +1,49 @@
+{
+  "schemaIdentifier": "studio.glifi.verification.macos-default-profile.v1",
+  "authorization": "User explicitly reiterated macOS priority; iPadOS deferred",
+  "makeDryRun": [
+    "./Scripts/verify.sh --macos-only",
+    "./Scripts/verify.sh --macos-only",
+    "./Scripts/verify.sh",
+    "./Scripts/verify-app-store.sh --macos-only",
+    "./Scripts/verify-app-store.sh --macos-only",
+    "./Scripts/verify-app-store.sh"
+  ],
+  "profileChecks": [
+    {
+      "case": "current-macos-default",
+      "rejected": false,
+      "errors": []
+    },
+    {
+      "case": "reject-implicit-global-make",
+      "rejected": true,
+      "errors": [
+        "Makefile: profilo canonico non rispettato per verify"
+      ]
+    },
+    {
+      "case": "reject-implicit-global-ci",
+      "rejected": true,
+      "errors": [
+        "ci.yml: il gate corrente deve selezionare macOS esplicitamente"
+      ]
+    },
+    {
+      "case": "reject-implicit-global-preflight",
+      "rejected": true,
+      "errors": [
+        "app-store.yml: il preflight corrente deve selezionare macOS esplicitamente"
+      ]
+    },
+    {
+      "case": "retain-explicit-global-profile",
+      "rejected": true,
+      "errors": [
+        "Makefile: profilo canonico non rispettato per verify-all"
+      ]
+    }
+  ],
+  "sharedControls": "Unchanged; only platform-specific iPadOS actions deferred",
+  "scriptDefaultCompatibility": "Scripts without arguments still run both platforms; explicit Make *-all targets preserve access"
+}

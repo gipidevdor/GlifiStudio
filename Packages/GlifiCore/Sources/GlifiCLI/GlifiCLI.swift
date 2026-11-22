@@ -53,19 +53,21 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
         case let .projectCreate(projectURL):
-            let session = try await service.createProject(at: projectURL)
-            let snapshot = try await session.snapshot()
-            await session.close()
+            let snapshot = try await withProjectSession(
+                try await service.createProject(at: projectURL)
+            ) { session in
+                try await session.snapshot()
+            }
             try writeProjectResult(snapshot, request: request, action: "creato")
         case let .projectInfo(projectURL):
-            let session = try await service.openProject(at: projectURL)
-            let snapshot = try await session.snapshot()
-            await session.close()
+            let snapshot = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.snapshot()
+            }
             try writeProjectResult(snapshot, request: request, action: "valido")
         case let .projectValidate(projectURL):
-            let session = try await service.openProject(at: projectURL)
-            let snapshot = try await session.snapshot()
-            await session.close()
+            let snapshot = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.snapshot()
+            }
             switch request.format {
             case .text:
                 print("Progetto valido · generazione \(snapshot.generation)")
@@ -78,16 +80,19 @@ enum GlifiCLI {
                 )
             }
         case let .importSources(projectURL, sourceURLs):
-            let session = try await service.openProject(at: projectURL)
-            var lastResult: GlifiStudioProjectImportResult?
-            for sourceURL in sourceURLs {
-                try Task.checkCancellation()
-                lastResult = try await session.importText(
-                    at: sourceURL,
-                    format: sourceURL.pathExtension.lowercased() == "txt" ? .plainText : .markdown
-                )
+            let lastResult = try await withOpenProject(at: projectURL, service: service) {
+                session in
+                var lastResult: GlifiStudioProjectImportResult?
+                for sourceURL in sourceURLs {
+                    try Task.checkCancellation()
+                    lastResult = try await session.importText(
+                        at: sourceURL,
+                        format: sourceURL.pathExtension.lowercased() == "txt"
+                            ? .plainText : .markdown
+                    )
+                }
+                return lastResult
             }
-            await session.close()
             guard let lastResult else {
                 throw CLIUsageError.invalidArguments
             }
@@ -114,19 +119,13 @@ enum GlifiCLI {
             case .text: astData = nil
             case let .ast(url): astData = try readQueryAST(at: url)
             }
-            let session = try await service.openProject(at: projectURL)
-            let result: GlifiStudioProjectQueryResult
-            do {
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
                 switch input {
-                case let .text(text): result = try await session.query(text)
+                case let .text(text): return try await session.query(text)
                 case .ast:
                     guard let astData else { throw CLIError.internalFailure }
-                    result = try await session.query(canonicalAST: astData)
+                    return try await session.query(canonicalAST: astData)
                 }
-                await session.close()
-            } catch {
-                await session.close()
-                throw error
             }
             switch request.format {
             case .text:
@@ -146,9 +145,9 @@ enum GlifiCLI {
             }
         case let .plan(projectURL, requestURL):
             let planRequest = try readPlanRequest(at: requestURL)
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.planAnalysis(planRequest)
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.planAnalysis(planRequest)
+            }
             switch request.format {
             case .text:
                 print(
@@ -166,92 +165,61 @@ enum GlifiCLI {
             }
         case let .executePlan(projectURL, requestURL):
             let planRequest = try readPlanRequest(at: requestURL, operation: "executePlan")
-            let session = try await service.openProject(at: projectURL)
-            do {
+            let completedResult = try await withOpenProject(at: projectURL, service: service) {
+                session in
                 let execution = try await session.executeAnalysisPlan(planRequest)
-                var completedResult: GlifiStudioAnalysisExecutionResult?
-                for try await event in execution.events {
-                    switch event {
-                    case let .progress(progress):
-                        if request.format == .text, request.showsProgress {
-                            writeExecutionProgress(progress)
-                        }
-                    case let .completed(result):
-                        guard completedResult == nil else {
-                            throw CLIError.internalFailure
-                        }
-                        completedResult = result
+                return try await collectExecutionResult(from: execution) { progress in
+                    if request.format == .text, request.showsProgress {
+                        writeExecutionProgress(progress)
                     }
                 }
-                guard let completedResult else {
-                    throw CLIError.internalFailure
-                }
-                await session.close()
-                switch request.format {
-                case .text:
-                    let interpretationSummary =
-                        completedResult.interpretation.insufficientEvidence == nil
-                        ? "\(completedResult.interpretation.findings.count) Finding"
-                        : "evidenza insufficiente"
-                    print(
-                        "Piano eseguito · \(completedResult.terminalState) · generazione \(completedResult.generation) · \(completedResult.artifacts.count) Artifact analitici · \(interpretationSummary)"
+            }
+            switch request.format {
+            case .text:
+                let interpretationSummary =
+                    completedResult.interpretation.insufficientEvidence == nil
+                    ? "\(completedResult.interpretation.findings.count) Finding"
+                    : "evidenza insufficiente"
+                print(
+                    "Piano eseguito · \(completedResult.terminalState) · generazione \(completedResult.generation) · \(completedResult.artifacts.count) Artifact analitici · \(interpretationSummary)"
+                )
+            case .json:
+                try writeJSON(
+                    SuccessEnvelope(
+                        command: request.command.name,
+                        result: completedResult
                     )
-                case .json:
-                    try writeJSON(
-                        SuccessEnvelope(
-                            command: request.command.name,
-                            result: completedResult
-                        )
-                    )
-                }
-            } catch {
-                await session.close()
-                throw error
+                )
             }
         case let .visualize(projectURL, requestURL):
             let planRequest = try readPlanRequest(at: requestURL, operation: "executePlan")
-            let session = try await service.openProject(at: projectURL)
-            do {
+            let visualizations = try await withOpenProject(at: projectURL, service: service) {
+                session in
                 let execution = try await session.executeAnalysisPlan(planRequest)
-                var completedResult: GlifiStudioAnalysisExecutionResult?
-                for try await event in execution.events {
-                    if case let .completed(result) = event {
-                        guard completedResult == nil else {
-                            throw CLIError.internalFailure
-                        }
-                        completedResult = result
-                    }
-                }
-                guard let completedResult else {
-                    throw CLIError.internalFailure
-                }
-                let visualizations = try await session.visualizations(for: completedResult)
-                await session.close()
-                switch request.format {
-                case .text:
-                    print("Viste · \(visualizations.count)")
-                    for visualization in visualizations {
-                        print(
-                            "\(visualization.specificationIdentifier) · \(visualization.methodIdentifier) · \(visualization.visibleObservationCount)/\(visualization.totalObservationCount) osservazioni"
-                        )
-                    }
-                case .json:
-                    try writeJSON(
-                        SuccessEnvelope(command: request.command.name, result: visualizations)
+                let result = try await collectExecutionResult(from: execution)
+                return try await session.visualizations(for: result)
+            }
+            switch request.format {
+            case .text:
+                print("Viste · \(visualizations.count)")
+                for visualization in visualizations {
+                    print(
+                        "\(visualization.specificationIdentifier) · \(visualization.methodIdentifier) · \(visualization.visibleObservationCount)/\(visualization.totalObservationCount) osservazioni"
                     )
                 }
-            } catch {
-                await session.close()
-                throw error
+            case .json:
+                try writeJSON(
+                    SuccessEnvelope(command: request.command.name, result: visualizations)
+                )
             }
         case let .investigationCreate(projectURL, requestURL):
             let creationRequest: GlifiStudioInvestigationCreationRequest = try readRequest(
                 at: requestURL,
                 operation: "investigate"
             )
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.createInvestigation(creationRequest)
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.createInvestigation(creationRequest)
+            }
             switch request.format {
             case .text:
                 print(
@@ -265,9 +233,9 @@ enum GlifiCLI {
                 at: requestURL,
                 operation: "investigate"
             )
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.reviseInvestigationSelection(selectionRequest)
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.reviseInvestigationSelection(selectionRequest)
+            }
             switch request.format {
             case .text:
                 print(
@@ -277,9 +245,9 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
         case let .investigationList(projectURL):
-            let session = try await service.openProject(at: projectURL)
-            let heads = try await session.investigationHeads()
-            await session.close()
+            let heads = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.investigationHeads()
+            }
             switch request.format {
             case .text:
                 for head in heads {
@@ -293,31 +261,26 @@ enum GlifiCLI {
                 at: requestURL,
                 operation: "export"
             )
-            let session = try await service.openProject(at: projectURL)
-            do {
-                let receipt = try await session.exportInvestigation(
+            let receipt = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.exportInvestigation(
                     exportRequest,
                     to: outputURL
                 )
-                await session.close()
-                switch request.format {
-                case .text:
-                    print(
-                        "Esportazione verificata · \(receipt.fileCount) file · manifest \(receipt.manifestDigest)"
-                    )
-                case .json:
-                    try writeJSON(
-                        SuccessEnvelope(command: request.command.name, result: receipt)
-                    )
-                }
-            } catch {
-                await session.close()
-                throw error
+            }
+            switch request.format {
+            case .text:
+                print(
+                    "Esportazione verificata · \(receipt.fileCount) file · manifest \(receipt.manifestDigest)"
+                )
+            case .json:
+                try writeJSON(
+                    SuccessEnvelope(command: request.command.name, result: receipt)
+                )
             }
         case let .analyze(projectURL):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.analyzeCorpus()
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.analyzeCorpus()
+            }
             switch request.format {
             case .text:
                 print(
@@ -334,12 +297,12 @@ enum GlifiCLI {
                 )
             }
         case let .keyness(projectURL, targetSourceRevisionIDs, referenceSourceRevisionIDs):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.compareKeyness(
-                targetSourceRevisionIDs: targetSourceRevisionIDs,
-                referenceSourceRevisionIDs: referenceSourceRevisionIDs
-            )
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.compareKeyness(
+                    targetSourceRevisionIDs: targetSourceRevisionIDs,
+                    referenceSourceRevisionIDs: referenceSourceRevisionIDs
+                )
+            }
             switch request.format {
             case .text:
                 print(
@@ -356,12 +319,12 @@ enum GlifiCLI {
                 )
             }
         case let .similarity(projectURL, targetSourceRevisionIDs, referenceSourceRevisionIDs):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.compareSimilarity(
-                targetSourceRevisionIDs: targetSourceRevisionIDs,
-                referenceSourceRevisionIDs: referenceSourceRevisionIDs
-            )
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.compareSimilarity(
+                    targetSourceRevisionIDs: targetSourceRevisionIDs,
+                    referenceSourceRevisionIDs: referenceSourceRevisionIDs
+                )
+            }
             switch request.format {
             case .text:
                 print(
@@ -373,10 +336,10 @@ enum GlifiCLI {
                 )
             }
         case let .weighting(projectURL, sourceRevisionIDs, scheme):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.analyzeTermWeighting(
-                sourceRevisionIDs: sourceRevisionIDs, scheme: scheme)
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.analyzeTermWeighting(
+                    sourceRevisionIDs: sourceRevisionIDs, scheme: scheme)
+            }
             switch request.format {
             case .text:
                 print(
@@ -386,11 +349,11 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
         case let .ngrams(projectURL, sourceRevisionIDs, unit, filter, maximumRows):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.analyzeNGramFrequencies(
-                sourceRevisionIDs: sourceRevisionIDs, unit: unit, filter: filter,
-                maximumRowCount: maximumRows)
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.analyzeNGramFrequencies(
+                    sourceRevisionIDs: sourceRevisionIDs, unit: unit, filter: filter,
+                    maximumRowCount: maximumRows)
+            }
             switch request.format {
             case .text:
                 print(
@@ -405,9 +368,9 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
         case let .qualitativeState(projectURL):
-            let session = try await service.openProject(at: projectURL)
-            let state = try await session.qualitativeState()
-            await session.close()
+            let state = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.qualitativeState()
+            }
             switch request.format {
             case .text:
                 let active = state.codings.filter { $0.retractionEventID == nil }.count
@@ -420,9 +383,9 @@ enum GlifiCLI {
         case let .qualitativeAppend(projectURL, requestURL):
             let change: GlifiStudioQualitativeChange = try readRequest(
                 at: requestURL, operation: "investigate")
-            let session = try await service.openProject(at: projectURL)
-            let state = try await session.appendQualitativeChange(change)
-            await session.close()
+            let state = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.appendQualitativeChange(change)
+            }
             switch request.format {
             case .text:
                 print("Evento qualitativo registrato · testa \(state.headEventID ?? "")")
@@ -430,9 +393,9 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: state))
             }
         case let .qualitativeSegments(projectURL, sourceRevisionID):
-            let session = try await service.openProject(at: projectURL)
-            let segments = try await session.textSegments(sourceRevisionID: sourceRevisionID)
-            await session.close()
+            let segments = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.textSegments(sourceRevisionID: sourceRevisionID)
+            }
             switch request.format {
             case .text:
                 print("Segmenti selezionabili · \(segments.count) frasi")
@@ -443,10 +406,10 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: segments))
             }
         case let .qualitativePassage(projectURL, sourceRevisionID, selection):
-            let session = try await service.openProject(at: projectURL)
-            let passage = try await session.passage(
-                sourceRevisionID: sourceRevisionID, selection: selection)
-            await session.close()
+            let passage = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.passage(
+                    sourceRevisionID: sourceRevisionID, selection: selection)
+            }
             switch request.format {
             case .text:
                 print("Passaggio · byte \(passage.startUTF8)–\(passage.endUTF8)")
@@ -455,10 +418,10 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: passage))
             }
         case let .qualitativeAgreement(projectURL, codebookID, revision, coderIDs):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.assessStoredCodingAgreement(
-                codebookID: codebookID, codebookRevision: revision, coderIDs: coderIDs)
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.assessStoredCodingAgreement(
+                    codebookID: codebookID, codebookRevision: revision, coderIDs: coderIDs)
+            }
             switch request.format {
             case .text:
                 print(
@@ -468,10 +431,10 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
         case let .diversity(projectURL, sourceRevisionIDs, threshold):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.analyzeLexicalDiversity(
-                sourceRevisionIDs: sourceRevisionIDs, threshold: threshold)
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.analyzeLexicalDiversity(
+                    sourceRevisionIDs: sourceRevisionIDs, threshold: threshold)
+            }
             switch request.format {
             case .text:
                 let pooled = result.pooled.map { "\($0.value.doubleValue)" } ?? "non definito"
@@ -484,10 +447,10 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
         case let .laws(projectURL, sourceRevisionIDs, parameters):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.analyzeLexicalLaws(
-                sourceRevisionIDs: sourceRevisionIDs, parameters: parameters)
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.analyzeLexicalLaws(
+                    sourceRevisionIDs: sourceRevisionIDs, parameters: parameters)
+            }
             switch request.format {
             case .text:
                 print("Leggi lessicali · N=\(result.tokenCount) · V=\(result.typeCount)")
@@ -507,11 +470,11 @@ enum GlifiCLI {
             }
         case let .summarize(
             projectURL, sourceRevisionIDs, budget, scheme, method, redundancy, graphConfiguration):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.analyzeExtractiveSummary(
-                sourceRevisionIDs: sourceRevisionIDs, budget: budget, scheme: scheme,
-                method: method, redundancy: redundancy, graphConfiguration: graphConfiguration)
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.analyzeExtractiveSummary(
+                    sourceRevisionIDs: sourceRevisionIDs, budget: budget, scheme: scheme,
+                    method: method, redundancy: redundancy, graphConfiguration: graphConfiguration)
+            }
             switch request.format {
             case .text:
                 let redundancyLabel = result.redundancyLambda.map {
@@ -530,10 +493,10 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
         case let .bm25(projectURL, sourceRevisionIDs, query, k1, b):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.rankDocumentsBM25(
-                sourceRevisionIDs: sourceRevisionIDs, query: query, k1: k1, b: b)
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.rankDocumentsBM25(
+                    sourceRevisionIDs: sourceRevisionIDs, query: query, k1: k1, b: b)
+            }
             switch request.format {
             case .text:
                 print("BM25-v1 · k1=\(result.k1) b=\(result.b) · N=\(result.documentCount)")
@@ -544,9 +507,9 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
         case let .association(projectURL, sourceRevisionIDs):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.analyzeAssociation(sourceRevisionIDs: sourceRevisionIDs)
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.analyzeAssociation(sourceRevisionIDs: sourceRevisionIDs)
+            }
             switch request.format {
             case .text:
                 print(
@@ -561,12 +524,12 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
         case let .dispersion(projectURL, sourceRevisionIDs, parts):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.analyzeDispersion(
-                sourceRevisionIDs: sourceRevisionIDs,
-                partition: parts
-            )
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.analyzeDispersion(
+                    sourceRevisionIDs: sourceRevisionIDs,
+                    partition: parts
+                )
+            }
             switch request.format {
             case .text:
                 print(
@@ -582,13 +545,13 @@ enum GlifiCLI {
             }
         case let .groupMetric(projectURL, groups, term, flags):
             let options = try flags.options()
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.compareGroupMetric(
-                groups: groups,
-                metric: term.map { .termRelativeFrequency($0) } ?? .lexicalTokenCount,
-                options: options
-            )
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.compareGroupMetric(
+                    groups: groups,
+                    metric: term.map { .termRelativeFrequency($0) } ?? .lexicalTokenCount,
+                    options: options
+                )
+            }
             switch request.format {
             case .text:
                 print(
@@ -664,12 +627,12 @@ enum GlifiCLI {
             }
         case let .collocations(projectURL, sourceRevisionIDs, flags):
             let options = try flags.options()
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.analyzeCollocations(
-                sourceRevisionIDs: sourceRevisionIDs,
-                options: options
-            )
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.analyzeCollocations(
+                    sourceRevisionIDs: sourceRevisionIDs,
+                    options: options
+                )
+            }
             switch request.format {
             case .text:
                 print(
@@ -684,12 +647,12 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
         case let .postHoc(projectURL, groups, term):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.postHocGroupMetric(
-                groups: groups,
-                metric: term.map { .termRelativeFrequency($0) } ?? .lexicalTokenCount
-            )
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.postHocGroupMetric(
+                    groups: groups,
+                    metric: term.map { .termRelativeFrequency($0) } ?? .lexicalTokenCount
+                )
+            }
             switch request.format {
             case .text:
                 print(
@@ -724,13 +687,13 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
         case let .multivariate(projectURL, sourceRevisionIDs, method, maximumTermCount):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.analyzeMultivariate(
-                sourceRevisionIDs: sourceRevisionIDs,
-                method: method,
-                maximumTermCount: maximumTermCount
-            )
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.analyzeMultivariate(
+                    sourceRevisionIDs: sourceRevisionIDs,
+                    method: method,
+                    maximumTermCount: maximumTermCount
+                )
+            }
             switch request.format {
             case .text:
                 print(
@@ -749,13 +712,13 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
         case let .paired(projectURL, sourceRevisionIDs, first, second):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.comparePairedMetrics(
-                sourceRevisionIDs: sourceRevisionIDs,
-                first: first.metric,
-                second: second.metric
-            )
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.comparePairedMetrics(
+                    sourceRevisionIDs: sourceRevisionIDs,
+                    first: first.metric,
+                    second: second.metric
+                )
+            }
             switch request.format {
             case .text:
                 print(
@@ -781,13 +744,13 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
         case let .correlate(projectURL, sourceRevisionIDs, first, second):
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.correlateMetrics(
-                sourceRevisionIDs: sourceRevisionIDs,
-                first: first.metric,
-                second: second.metric
-            )
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.correlateMetrics(
+                    sourceRevisionIDs: sourceRevisionIDs,
+                    first: first.metric,
+                    second: second.metric
+                )
+            }
             switch request.format {
             case .text:
                 print(
@@ -818,14 +781,14 @@ enum GlifiCLI {
             }
         case let .windowNetwork(projectURL, sourceRevisionIDs, flags, threshold, weighted):
             let window = try flags.options()
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.analyzeWindowNetwork(
-                sourceRevisionIDs: sourceRevisionIDs,
-                window: window,
-                minimumLogDice: threshold,
-                usesWeightedJointCount: weighted
-            )
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.analyzeWindowNetwork(
+                    sourceRevisionIDs: sourceRevisionIDs,
+                    window: window,
+                    minimumLogDice: threshold,
+                    usesWeightedJointCount: weighted
+                )
+            }
             switch request.format {
             case .text:
                 print(
@@ -841,12 +804,12 @@ enum GlifiCLI {
             }
         case let .windowCollocations(projectURL, sourceRevisionIDs, flags):
             let options = try flags.options()
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.analyzeWindowCollocations(
-                sourceRevisionIDs: sourceRevisionIDs,
-                options: options
-            )
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.analyzeWindowCollocations(
+                    sourceRevisionIDs: sourceRevisionIDs,
+                    options: options
+                )
+            }
             switch request.format {
             case .text:
                 print(
@@ -862,12 +825,12 @@ enum GlifiCLI {
             }
         case let .network(projectURL, sourceRevisionIDs, flags):
             let options = try flags.options()
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.analyzeLexicalNetwork(
-                sourceRevisionIDs: sourceRevisionIDs,
-                options: options
-            )
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.analyzeLexicalNetwork(
+                    sourceRevisionIDs: sourceRevisionIDs,
+                    options: options
+                )
+            }
             switch request.format {
             case .text:
                 print(
@@ -886,9 +849,9 @@ enum GlifiCLI {
                 at: requestURL,
                 operation: "analyze"
             )
-            let session = try await service.openProject(at: projectURL)
-            let result = try await session.assessCodingAgreement(codingRequest)
-            await session.close()
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await session.assessCodingAgreement(codingRequest)
+            }
             switch request.format {
             case .text:
                 print(
@@ -911,6 +874,50 @@ enum GlifiCLI {
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
         }
+    }
+
+    /// Owns an existing project's session until its operation has produced a result or failure.
+    private static func withOpenProject<Result: Sendable>(
+        at url: URL,
+        service: GlifiStudioService,
+        operation: (GlifiStudioProjectSession) async throws -> Result
+    ) async throws -> Result {
+        try await withProjectSession(
+            try await service.openProject(at: url), operation: operation)
+    }
+
+    /// Releases the session before presentation, preserving the operation's original outcome.
+    private static func withProjectSession<Result: Sendable>(
+        _ session: GlifiStudioProjectSession,
+        operation: (GlifiStudioProjectSession) async throws -> Result
+    ) async rethrows -> Result {
+        do {
+            let result = try await operation(session)
+            await session.close()
+            return result
+        } catch {
+            await session.close()
+            throw error
+        }
+    }
+
+    /// Requires exactly one completion while allowing each command to choose its progress output.
+    private static func collectExecutionResult(
+        from execution: GlifiStudioAnalysisExecution,
+        onProgress: (GlifiStudioOperationProgress) -> Void = { _ in }
+    ) async throws -> GlifiStudioAnalysisExecutionResult {
+        var result: GlifiStudioAnalysisExecutionResult?
+        for try await event in execution.events {
+            switch event {
+            case let .progress(progress):
+                onProgress(progress)
+            case let .completed(completed):
+                guard result == nil else { throw CLIError.internalFailure }
+                result = completed
+            }
+        }
+        guard let result else { throw CLIError.internalFailure }
+        return result
     }
 
     private static func writeProjectResult(

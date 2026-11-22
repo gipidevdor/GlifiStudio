@@ -73,8 +73,9 @@ make verify
 ```
 
 Esegue controlli statici, test Core/Kit e macOS, verifiche CLI e build Debug/Release
-di entrambe le app senza firma. Gli esiti e gli eventuali controlli saltati vanno
-registrati per la revisione verificata.
+dell'app macOS senza firma, secondo la priorità corrente del progetto. Il profilo
+di entrambe le piattaforme è esplicito con `make verify-all`; iPadOS è rinviato.
+Gli esiti e gli eventuali controlli saltati vanno registrati per la revisione verificata.
 
 Per il feedback rapido usa `make quality`. Profili macOS, preflight App Store e
 criteri di integrazione sono descritti nel

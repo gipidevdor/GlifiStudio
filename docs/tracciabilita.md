@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.8 |
+| Versione | 0.92.10 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -563,3 +563,22 @@ RQ-058). Non sono promossi nuovi backend scientifici o audit GUI non eseguiti.
 
 Il sort vDSP valutato per RQ-063 è scartato; la prova bitwise e prestazionale
 rimane in GS-VER-260 senza modificare il backend numerico di produzione.
+
+## Struttura e coesione dei confini applicativi
+
+| Clausola | Attuazione | Verifica |
+| --- | --- | --- |
+| CMP-280; RQ-005/011/063 | Bootstrap, contratti valore e actor Kit separati; policy equivalenti condivise, mapping specializzati e ownership preservati | GS-DOR-280; [GS-VER-280](evidenze/GS-VER-280-struttura-e-coesione-del-codice.md); confronto API e suite di sessione/runtime |
+| CMP-281; RQ-005/010/023/063 | Factory private di staging e digest/manifest; ordine I/O, checkpoint e confini delle quattro famiglie invariati | Suite package/qualitative, fault injection e recovery; gate process-kill |
+| CMP-282; RQ-005/011/063 | Owner privato della sessione CLI su ogni uscita, collector condiviso e presentazione dopo chiusura | Confronto completo di byte/exit in 98 casi, CLI contrattuale e gate completo |
+
+Nessun modulo, backend, formato o stato scientifico cambia. Gli indicatori di
+coesione e duplicazione non costituiscono una promessa di prestazioni.
+
+### Priorità operativa macOS
+
+CMP-283, RQ-005/RQ-063: richiesta esplicita ribadita dall’iniziatore; Make e CI
+predefiniti sul profilo macOS, ingressi `*-all` per entrambe le piattaforme solo
+su richiesta. AGENTS e GS-DEV-002 conservano la priorità; il checker del loop
+verifica i comandi canonici con prove negative. Nessun controllo condiviso o
+macOS viene rimosso, né è attestata verifica iPadOS dal profilo predefinito.
