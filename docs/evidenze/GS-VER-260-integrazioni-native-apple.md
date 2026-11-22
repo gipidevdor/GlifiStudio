@@ -7,7 +7,7 @@
 | Identificatore | GS-VER-260 |
 | Tipo | Evidenza di integrazione, correttezza e misure |
 | Versione | 1.0.0 |
-| Stato | In verifica |
+| Stato | Verifica automatica del codice completata; packaging e CI nel registro PR |
 | Responsabile | Iniziatore del progetto, con supporto Codex |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Richiesta esplicita di valutare e integrare le tecnologie Apple appropriate rispettando le altre chat |
@@ -29,8 +29,41 @@ compresi quattro test numerici dell’esperimento. Dopo lo scarto del candidato,
 i 14 test nuovi nel prodotto riguardano letture bounded, crescita, file non
 regolari, cancellazione, riuso dell’URL coordinato e ownership/reentrancy delle
 attività. I quattro test numerici restano soltanto nella patch riproducibile.
-`make quality-static` è superato sul lotto isolato; il gate completo sul candidato
-integrato resta da concludere e non è dichiarato superato.
+`make quality-static` è superato sul lotto isolato. `make verify` è poi superato
+sul candidato integrato con `b59292f`, senza modifiche successive al codice.
+
+| Controllo finale | Esito osservato |
+| --- | --- |
+| Gate statici, oracoli e formattazione | Superati nel gate completo |
+| Swift Testing GlifiCore | 441 test superati |
+| Swift Testing GlifiKit | 65 test superati |
+| Parità CLI analisi testuale | 15 fixture condivise, 51 verifiche entro 1e-12 |
+| Recovery con interruzione reale del processo | 22 checkpoint di commit superati |
+| QueryAST e smoke CLI/progetto/export | Superati |
+| Test app nativa macOS | 55 definizioni, 195 esecuzioni; zero failure o skip |
+| Build macOS e iPadOS Simulator | Debug e Release superate; firma disabilitata |
+| veraPDF PDF/A-2u | 2 PDF conformi con controllo esplicito `--require` |
+| Analisi statica e archivi unsigned macOS/iPadOS | Esito registrato separatamente nella [PR #40](https://github.com/gipidevdor/GlifiStudio/pull/40), dopo il preflight |
+
+La revisione del codice all’avvio del gate è `64d34d16aca0f78124f92b58574b923111237738`;
+`2686f02` aggiunge soltanto chiarimenti documentali e il riferimento all’issue.
+Toolchain osservata: Xcode 27.2, Apple Swift 6.4.2, macOS 27.2.1.
+La prima ricerca di veraPDF usava un wrapper non più presente e il passo opzionale
+è stato saltato. Il controllo supplementare sui medesimi PDF esportati usa il
+validatore 1.30.4 già installato, `--require` ed exit 0: nessuna conformità PDF/A
+viene dedotta dal passo saltato.
+
+Il preflight esegue in sequenza `make verify` e
+`Scripts/check-app-store-packaging.sh`, cioè i due componenti di
+`make verify-app-store`, senza ripetere il gate già superato.
+Gli esiti tardivi del packaging e della CI sono registrati nella PR #40 sulla
+head definitiva, senza anticiparli in questo documento né cambiare il codice
+verificato. Il [riepilogo automatico](allegati/GS-VER-260/verifica-automatica.json)
+conserva i risultati già conclusi e gli hash dei log locali.
+
+I warning del sistema CoreSimulator 1171.7 rispetto a 1174.21 e dell’apertura
+in-place iPadOS non hanno impedito le build. Non attestano esecuzione dei test
+su un runtime iPadOS: quel runtime non è stato verificato.
 
 ## Esperimento Accelerate
 

@@ -7,7 +7,7 @@
 | Identificatore | GS-APL-016 |
 | Tipo | Valutazione applicativa controllata |
 | Versione | 1.0.0 |
-| Stato | In verifica; non sostituisce i gate dei singoli profili Apple |
+| Stato | Valutazione completata; non sostituisce i gate dei singoli profili Apple |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Richiesta esplicita di valutare Accelerate, Metal e le altre tecnologie Apple e integrare le adozioni pertinenti |

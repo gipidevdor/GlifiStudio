@@ -1,0 +1,90 @@
+{
+  "schemaIdentifier": "studio.glifi.verification.native-apple.v1",
+  "date": "2026-11-22",
+  "codeRevision": "64d34d16aca0f78124f92b58574b923111237738",
+  "integratedMainRevision": "b59292fd3386d991dd02d1ba837335a9450e8d66",
+  "toolchain": {
+    "xcode": "27.2",
+    "appleSwift": "6.4.2",
+    "swiftLanguageMode": 6,
+    "macOS": "27.2.1"
+  },
+  "sourceSHA256": {
+    "Apps/macOS/GlifiStudioMacApp.swift": "301b70b85c83e874e53820de7a18b5b78454f72520022f725a1458aeeabe5a5e",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift": "3257ba566ede3a481729410083d9984484e4bbd4656130c578455e06d1812342",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiSourceFileReader.swift": "93a8fffd270c7f3ecc501e0daa069a99c6d47b69940c97003551963395a88098",
+    "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProcessActivity.swift": "87f21e80f0168205341dd9d03c1a1dcf3dce770252b3fee9647125868fda09ad",
+    "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift": "9d03d7acc2876d8caf9f9106dc15b6c59d2d1699932aaab2028b1afd3ae5bedb",
+    "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSourceFileReaderTests.swift": "1cf0f8b5d17681ddcef68d140915bfc2410920e615425474fdad894f8d8df799",
+    "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioProcessActivityTests.swift": "00bff9f7e2268068bdad6f6d93361cfcd7b64f2b595db5fceca98aba236be332"
+  },
+  "completedChecks": [
+    {
+      "command": "make verify",
+      "scope": "macOS and iPadOS",
+      "exitCode": 0,
+      "glifiCoreTests": 441,
+      "glifiKitTests": 65,
+      "cliSharedFixtures": 15,
+      "cliParityChecks": 51,
+      "processKillRecoveryCheckpoints": 22,
+      "nativeAppTests": {
+        "result": "Passed",
+        "totalTestCount": 55,
+        "passedTests": 55,
+        "failedTests": 0,
+        "skippedTests": 0,
+        "expectedFailures": 0,
+        "runtimeWarnings": [],
+        "statistics": [
+          {
+            "subtitle": "149 test runs",
+            "title": "9 tests ran with dynamic parameters"
+          }
+        ],
+        "devicesAndConfigurations": [
+          {
+            "architecture": "arm64",
+            "osVersion": "27.2.1",
+            "passedRuns": 195,
+            "failedRuns": 0
+          }
+        ]
+      },
+      "buildConfigurations": [
+        "macOS Debug",
+        "macOS Release",
+        "iPadOS Simulator Debug",
+        "iPadOS Simulator Release"
+      ]
+    },
+    {
+      "command": "Scripts/check-pdfa.py --require --directory <same generated PDF directory>",
+      "exitCode": 0,
+      "veraPDFVersion": "1.30.4",
+      "conformingPDFs": 2,
+      "note": "Explicit follow-up after optional lookup skipped a removed wrapper"
+    }
+  ],
+  "localLogDigests": {
+    "make-verify.log": {
+      "sha256": "865ec635441e670993dea3b1f568b25b38802d2c7b376432b6c9217056e99697",
+      "retention": "Useful local verification evidence; private paths are not published"
+    },
+    "pdfa-required.log": {
+      "sha256": "38a16365861e06f2fa4241f2c05c0f4be519b8f8fa5bbf4d401573876a563667",
+      "retention": "Useful local verification evidence; private paths are not published"
+    },
+    "native-tests-summary.json": {
+      "sha256": "3e2570b68d289d007fde98060baaf9307859017674577940b6baff8bc180e595",
+      "retention": "Useful local verification evidence; private paths are not published"
+    }
+  },
+  "latePackagingAndCIResultsURL": "https://github.com/gipidevdor/GlifiStudio/pull/40",
+  "limits": [
+    "No iPadOS runtime test claimed",
+    "No manual assistive technology audit claimed",
+    "No App Nap or energy profiling claimed",
+    "No arbitrary provider or uncooperative writer atomicity claimed"
+  ]
+}

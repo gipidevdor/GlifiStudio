@@ -246,4 +246,4 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 
 - [GS-VER-163 — Integrità dei documenti macOS](GS-VER-163-integrita-documenti-macos.md) — Superato: suite del modello macOS in locale e gate CI `xcode-27` su `main` `a86a53b`; CMP-107 verified
 
-- [GS-VER-260 — Integrazioni native Apple](GS-VER-260-integrazioni-native-apple.md) — In verifica; correttezza, misure e gate distinti dalle adozioni condizionali
+- [GS-VER-260 — Integrazioni native Apple](GS-VER-260-integrazioni-native-apple.md) — Verifica automatica del codice superata; packaging e CI nel registro PR; prove manuali e adozioni condizionali distinte
