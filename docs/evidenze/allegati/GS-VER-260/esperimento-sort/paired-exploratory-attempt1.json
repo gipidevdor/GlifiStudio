@@ -1,0 +1,779 @@
+{
+  "activeProcessorCount" : 10,
+  "candidateMinimumCount" : 32768,
+  "configuration" : "Release; --apple-descriptive-sort; mode=paired",
+  "device" : "Mac16,3",
+  "generatedAt" : "2026-11-22T08:47:30Z",
+  "lowPowerModeAtEnd" : true,
+  "lowPowerModeAtStart" : true,
+  "measurements" : [
+    {
+      "allResultsMatchReferenceBitwise" : true,
+      "candidate" : {
+        "maximumSeconds" : 0.000445708,
+        "medianSeconds" : 0.000390917,
+        "minimumSeconds" : 0.000381208,
+        "rawSeconds" : [
+          0.000445708,
+          0.000390917,
+          0.000399125,
+          0.000394083,
+          0.000385709,
+          0.000385,
+          0.000381208
+        ]
+      },
+      "identifier" : "continuous-4096",
+      "inputSHA256" : "5a1ad5aed5d2dd6be3d0e4b5ec4d7c205fe54d0a3f45344df72b1e442242fdd5",
+      "observationCount" : 4096,
+      "outputSHA256" : "7bc87af59e689d2ef97aef48caa9171022b2c0226fb1eb720fe80a198a92087e",
+      "processPeakRSSBytesAfter" : 7782400,
+      "processPeakRSSBytesBefore" : 7389184,
+      "recipe" : "SplitMix64 seed260; alternating signs; magnitude1+uniform*1e6; all normal",
+      "reference" : {
+        "maximumSeconds" : 0.000384833,
+        "medianSeconds" : 0.0003615,
+        "minimumSeconds" : 0.000350042,
+        "rawSeconds" : [
+          0.000384833,
+          0.000372541,
+          0.000368375,
+          0.0003615,
+          0.000354333,
+          0.000350875,
+          0.000350042
+        ]
+      },
+      "sampleOrder" : [
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate"
+      ],
+      "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+      "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+      "validCount" : 4096
+    },
+    {
+      "allResultsMatchReferenceBitwise" : true,
+      "candidate" : {
+        "maximumSeconds" : 0.002131958,
+        "medianSeconds" : 0.002050916,
+        "minimumSeconds" : 0.001868584,
+        "rawSeconds" : [
+          0.002102666,
+          0.001868584,
+          0.002131958,
+          0.002050916,
+          0.0020485,
+          0.002050708,
+          0.002052167
+        ]
+      },
+      "identifier" : "continuous-16384",
+      "inputSHA256" : "1517c41a6f8ada924fba0ef86628584c171bbc1c1b04126758f8f654e44c317f",
+      "observationCount" : 16384,
+      "outputSHA256" : "fa5f9bebd7e63127893cc729e49eab0e098285d64781d07a3c5bcf732a7c8985",
+      "processPeakRSSBytesAfter" : 8617984,
+      "processPeakRSSBytesBefore" : 8454144,
+      "recipe" : "SplitMix64 seed260; alternating signs; magnitude1+uniform*1e6; all normal",
+      "reference" : {
+        "maximumSeconds" : 0.001908208,
+        "medianSeconds" : 0.001855042,
+        "minimumSeconds" : 0.001846958,
+        "rawSeconds" : [
+          0.001908208,
+          0.001872542,
+          0.001874541,
+          0.001855042,
+          0.001846958,
+          0.001847792,
+          0.001850417
+        ]
+      },
+      "sampleOrder" : [
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate"
+      ],
+      "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+      "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+      "validCount" : 16384
+    },
+    {
+      "allResultsMatchReferenceBitwise" : true,
+      "candidate" : {
+        "maximumSeconds" : 0.004485166,
+        "medianSeconds" : 0.004287958,
+        "minimumSeconds" : 0.004226375,
+        "rawSeconds" : [
+          0.004342792,
+          0.004279875,
+          0.004485166,
+          0.004409834,
+          0.004287958,
+          0.00424625,
+          0.004226375
+        ]
+      },
+      "identifier" : "continuous-32768",
+      "inputSHA256" : "9a75039cada27eb17981d5b6a34dbfc6c5e37e71ac17d8fc6a4320b17f2093cc",
+      "observationCount" : 32768,
+      "outputSHA256" : "83fb49205f9302037e203ec3e9ce0b63e79f6a9009c7a226d4553730e19868b4",
+      "processPeakRSSBytesAfter" : 9240576,
+      "processPeakRSSBytesBefore" : 9240576,
+      "recipe" : "SplitMix64 seed260; alternating signs; magnitude1+uniform*1e6; all normal",
+      "reference" : {
+        "maximumSeconds" : 0.0042765,
+        "medianSeconds" : 0.004132667,
+        "minimumSeconds" : 0.004025291,
+        "rawSeconds" : [
+          0.004054625,
+          0.004025291,
+          0.004221292,
+          0.0042765,
+          0.004189209,
+          0.004132667,
+          0.004076625
+        ]
+      },
+      "sampleOrder" : [
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate"
+      ],
+      "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+      "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+      "validCount" : 32768
+    },
+    {
+      "allResultsMatchReferenceBitwise" : true,
+      "candidate" : {
+        "maximumSeconds" : 0.009377,
+        "medianSeconds" : 0.009323209,
+        "minimumSeconds" : 0.0092345,
+        "rawSeconds" : [
+          0.009377,
+          0.009247667,
+          0.009323209,
+          0.0092345,
+          0.009330667,
+          0.009243292,
+          0.00935125
+        ]
+      },
+      "identifier" : "continuous-65536",
+      "inputSHA256" : "db98155f52201154566082306e8e3a57b16909ba68d24c41ad28a56d12e9ec60",
+      "observationCount" : 65536,
+      "outputSHA256" : "27e71082aba57e44c4d1aa43dc68a1ade56677c83f6a06cef349e4225f970211",
+      "processPeakRSSBytesAfter" : 10616832,
+      "processPeakRSSBytesBefore" : 10616832,
+      "recipe" : "SplitMix64 seed260; alternating signs; magnitude1+uniform*1e6; all normal",
+      "reference" : {
+        "maximumSeconds" : 0.00924675,
+        "medianSeconds" : 0.008862833,
+        "minimumSeconds" : 0.00882,
+        "rawSeconds" : [
+          0.008957667,
+          0.008862833,
+          0.00898275,
+          0.008841458,
+          0.008845541,
+          0.00924675,
+          0.00882
+        ]
+      },
+      "sampleOrder" : [
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate"
+      ],
+      "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+      "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+      "validCount" : 65536
+    },
+    {
+      "allResultsMatchReferenceBitwise" : true,
+      "candidate" : {
+        "maximumSeconds" : 0.019861375,
+        "medianSeconds" : 0.019713625,
+        "minimumSeconds" : 0.01965975,
+        "rawSeconds" : [
+          0.019829958,
+          0.019802083,
+          0.019861375,
+          0.019688083,
+          0.019675541,
+          0.019713625,
+          0.01965975
+        ]
+      },
+      "identifier" : "continuous-131072",
+      "inputSHA256" : "427f1a66cb05d13547d7294a2642d161d968adee59a127cd4622ef406e572372",
+      "observationCount" : 131072,
+      "outputSHA256" : "059f702e8d589eea8a973d6d03e0adbc8a2480b82ac2b4270feefc0e214e9f5f",
+      "processPeakRSSBytesAfter" : 16629760,
+      "processPeakRSSBytesBefore" : 13647872,
+      "recipe" : "SplitMix64 seed260; alternating signs; magnitude1+uniform*1e6; all normal",
+      "reference" : {
+        "maximumSeconds" : 0.019461917,
+        "medianSeconds" : 0.019060375,
+        "minimumSeconds" : 0.019043917,
+        "rawSeconds" : [
+          0.019461917,
+          0.019060375,
+          0.01904775,
+          0.019074667,
+          0.019043917,
+          0.019316875,
+          0.019052292
+        ]
+      },
+      "sampleOrder" : [
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate"
+      ],
+      "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+      "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+      "validCount" : 131072
+    },
+    {
+      "allResultsMatchReferenceBitwise" : true,
+      "candidate" : {
+        "maximumSeconds" : 0.083048792,
+        "medianSeconds" : 0.082520625,
+        "minimumSeconds" : 0.077899041,
+        "rawSeconds" : [
+          0.082862,
+          0.083048792,
+          0.082520625,
+          0.07966225,
+          0.082453458,
+          0.082756291,
+          0.077899041
+        ]
+      },
+      "identifier" : "continuous-500000",
+      "inputSHA256" : "0191a4252bd0f2c6529b4d8a52598b92c447a2f759057895309122dd9fcb85cd",
+      "observationCount" : 500000,
+      "outputSHA256" : "963fe4f0d355b7dea85dc927efa0009f38adcd40385b9c797f8b4dbb4305edc0",
+      "processPeakRSSBytesAfter" : 32423936,
+      "processPeakRSSBytesBefore" : 32407552,
+      "recipe" : "SplitMix64 seed260; alternating signs; magnitude1+uniform*1e6; all normal",
+      "reference" : {
+        "maximumSeconds" : 0.083706917,
+        "medianSeconds" : 0.083423667,
+        "minimumSeconds" : 0.081759333,
+        "rawSeconds" : [
+          0.083706917,
+          0.081759333,
+          0.083423667,
+          0.083346875,
+          0.083695833,
+          0.08241475,
+          0.083668125
+        ]
+      },
+      "sampleOrder" : [
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate"
+      ],
+      "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+      "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+      "validCount" : 500000
+    },
+    {
+      "allResultsMatchReferenceBitwise" : true,
+      "candidate" : {
+        "maximumSeconds" : 0.174715583,
+        "medianSeconds" : 0.172326958,
+        "minimumSeconds" : 0.15973225,
+        "rawSeconds" : [
+          0.172326958,
+          0.170695417,
+          0.167434291,
+          0.174411084,
+          0.15973225,
+          0.174715583,
+          0.174057292
+        ]
+      },
+      "identifier" : "continuous-1000000",
+      "inputSHA256" : "749e41d90977bbc3e00fe4e66cda79ac93a84bfb1f3e226687a4d429c9bf5d18",
+      "observationCount" : 1000000,
+      "outputSHA256" : "8582b70f79afef47d4d90894548fe67f26727adc91364f10cb29e4fd100f2d80",
+      "processPeakRSSBytesAfter" : 59293696,
+      "processPeakRSSBytesBefore" : 58785792,
+      "recipe" : "SplitMix64 seed260; alternating signs; magnitude1+uniform*1e6; all normal",
+      "reference" : {
+        "maximumSeconds" : 0.175515625,
+        "medianSeconds" : 0.175274667,
+        "minimumSeconds" : 0.173051875,
+        "rawSeconds" : [
+          0.175028208,
+          0.175445416,
+          0.175274667,
+          0.175289625,
+          0.173051875,
+          0.175515625,
+          0.174181708
+        ]
+      },
+      "sampleOrder" : [
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate"
+      ],
+      "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+      "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+      "validCount" : 1000000
+    },
+    {
+      "allResultsMatchReferenceBitwise" : true,
+      "candidate" : {
+        "maximumSeconds" : 0.077292792,
+        "medianSeconds" : 0.077144666,
+        "minimumSeconds" : 0.074493958,
+        "rawSeconds" : [
+          0.077251417,
+          0.077260709,
+          0.076745209,
+          0.075073542,
+          0.074493958,
+          0.077292792,
+          0.077144666
+        ]
+      },
+      "identifier" : "continuous-missing-500000",
+      "inputSHA256" : "e5c3d514cc4bdc7544735b001f5ca5db89c882081e3eaf883594ace769fbfd7f",
+      "observationCount" : 500000,
+      "outputSHA256" : "37d82cbb179dba4db097b71803e1f88d13e2aa5bf223c08826d5058428c98471",
+      "processPeakRSSBytesAfter" : 59342848,
+      "processPeakRSSBytesBefore" : 59326464,
+      "recipe" : "SplitMix64 seed260; origin1e12; integer spread1000003\/8; every17th missing",
+      "reference" : {
+        "maximumSeconds" : 0.078226875,
+        "medianSeconds" : 0.077929333,
+        "minimumSeconds" : 0.077051041,
+        "rawSeconds" : [
+          0.077988833,
+          0.077647583,
+          0.078226875,
+          0.077929333,
+          0.077946,
+          0.077772917,
+          0.077051041
+        ]
+      },
+      "sampleOrder" : [
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate"
+      ],
+      "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+      "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+      "validCount" : 470588
+    },
+    {
+      "allResultsMatchReferenceBitwise" : true,
+      "candidate" : {
+        "maximumSeconds" : 0.016754417,
+        "medianSeconds" : 0.016634708,
+        "minimumSeconds" : 0.016587458,
+        "rawSeconds" : [
+          0.016694375,
+          0.016634708,
+          0.016754417,
+          0.016587458,
+          0.016592667,
+          0.016641167,
+          0.016602208
+        ]
+      },
+      "identifier" : "repeated-500000",
+      "inputSHA256" : "8cb3aad2ba949e68298fae428365ff28722c40f1703d1f7a63baaca1f6b00b87",
+      "observationCount" : 500000,
+      "outputSHA256" : "c400fca45c8a64a8d8a292c9d8fa5f74418e8ff23d43dba037bca3ebd4e7eb24",
+      "processPeakRSSBytesAfter" : 59408384,
+      "processPeakRSSBytesBefore" : 59342848,
+      "recipe" : "31 cyclic normal values1+(index%31)\/8; counted-sort control",
+      "reference" : {
+        "maximumSeconds" : 0.015422167,
+        "medianSeconds" : 0.015377459,
+        "minimumSeconds" : 0.015340625,
+        "rawSeconds" : [
+          0.015387917,
+          0.015340625,
+          0.015377459,
+          0.015398792,
+          0.015350959,
+          0.015422167,
+          0.015374667
+        ]
+      },
+      "sampleOrder" : [
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate"
+      ],
+      "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+      "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+      "validCount" : 500000
+    },
+    {
+      "allResultsMatchReferenceBitwise" : true,
+      "candidate" : {
+        "maximumSeconds" : 0.008432292,
+        "medianSeconds" : 0.008395542,
+        "minimumSeconds" : 0.008363417,
+        "rawSeconds" : [
+          0.008363417,
+          0.008395542,
+          0.008432292,
+          0.008413292,
+          0.008423375,
+          0.008381875,
+          0.008368459
+        ]
+      },
+      "identifier" : "nearly-sorted-500000",
+      "inputSHA256" : "a4d4df5516195faeb678c5cb172a8a8d4dc33f2ae8fb0eb7ce119aea6bbbb47b",
+      "observationCount" : 500000,
+      "outputSHA256" : "f4de203c4bd5ced37439f1edf7e2e12752cf6d55424746ad47bc806eb53e20b7",
+      "processPeakRSSBytesAfter" : 59441152,
+      "processPeakRSSBytesBefore" : 59441152,
+      "recipe" : "ascending values1+index\/8; final adjacent pair inverted; no early inversion",
+      "reference" : {
+        "maximumSeconds" : 0.00853475,
+        "medianSeconds" : 0.008470875,
+        "minimumSeconds" : 0.008454375,
+        "rawSeconds" : [
+          0.008454375,
+          0.00853475,
+          0.008466667,
+          0.0085235,
+          0.008470875,
+          0.008457791,
+          0.008487875
+        ]
+      },
+      "sampleOrder" : [
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate"
+      ],
+      "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+      "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+      "validCount" : 500000
+    },
+    {
+      "allResultsMatchReferenceBitwise" : true,
+      "candidate" : {
+        "maximumSeconds" : 0.009060667,
+        "medianSeconds" : 0.009043958,
+        "minimumSeconds" : 0.00701875,
+        "rawSeconds" : [
+          0.009043958,
+          0.009055,
+          0.00701875,
+          0.008398125,
+          0.009060667,
+          0.009044625,
+          0.009032042
+        ]
+      },
+      "identifier" : "late-cardinality-500000",
+      "inputSHA256" : "09727cdd61b4140dc30bcfa01a8253576bd0fe0b1a1f0afd4e7b91090019b088",
+      "observationCount" : 500000,
+      "outputSHA256" : "74ff775438b58b21c95ab535c0df5c27fdd4d39660299a04ce81a181e94c230e",
+      "processPeakRSSBytesAfter" : 59457536,
+      "processPeakRSSBytesBefore" : 59457536,
+      "recipe" : "256 ascending nonzero blocks, one midpoint inversion, then256 new types",
+      "reference" : {
+        "maximumSeconds" : 0.009188583,
+        "medianSeconds" : 0.009095583,
+        "minimumSeconds" : 0.008628334,
+        "rawSeconds" : [
+          0.009188583,
+          0.00909175,
+          0.008803375,
+          0.008628334,
+          0.009126125,
+          0.009097875,
+          0.009095583
+        ]
+      },
+      "sampleOrder" : [
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate"
+      ],
+      "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+      "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+      "validCount" : 500000
+    },
+    {
+      "allResultsMatchReferenceBitwise" : true,
+      "candidate" : {
+        "maximumSeconds" : 0.010680084,
+        "medianSeconds" : 0.010623042,
+        "minimumSeconds" : 0.010607375,
+        "rawSeconds" : [
+          0.010623042,
+          0.010680084,
+          0.010623,
+          0.01061275,
+          0.010638667,
+          0.010624291,
+          0.010607375
+        ]
+      },
+      "identifier" : "signed-zero-tail-500000",
+      "inputSHA256" : "b471f035229c4cdafecd97d8857927e399329390b7e21ad3ec63573d60be7f3f",
+      "observationCount" : 500004,
+      "outputSHA256" : "90ae1edf6247ec821331244d5941c17c56c7979afb9205c5d94f3b04fac6a615",
+      "processPeakRSSBytesAfter" : 59490304,
+      "processPeakRSSBytesBefore" : 59490304,
+      "recipe" : "descending normal values1+(count-index)\/8; append +0,-0,+0,-0",
+      "reference" : {
+        "maximumSeconds" : 0.010113834,
+        "medianSeconds" : 0.010077417,
+        "minimumSeconds" : 0.010062208,
+        "rawSeconds" : [
+          0.010062208,
+          0.01007425,
+          0.0101085,
+          0.010113834,
+          0.010078625,
+          0.010077417,
+          0.010071333
+        ]
+      },
+      "sampleOrder" : [
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate"
+      ],
+      "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+      "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+      "validCount" : 500004
+    },
+    {
+      "allResultsMatchReferenceBitwise" : true,
+      "candidate" : {
+        "maximumSeconds" : 0.009196458,
+        "medianSeconds" : 0.009172709,
+        "minimumSeconds" : 0.009166291,
+        "rawSeconds" : [
+          0.009166917,
+          0.009166458,
+          0.009172709,
+          0.009166291,
+          0.009190625,
+          0.009187958,
+          0.009196458
+        ]
+      },
+      "identifier" : "subnormal-tail-500000",
+      "inputSHA256" : "c24b7f012e655a662d5d68c15bd73f86bf9fc91320c5ca08916c60e7837cbbd4",
+      "observationCount" : 500002,
+      "outputSHA256" : "a551b55a00bdf636e8206f579296559a5896cde0d4d083df347704ddc9c62d6e",
+      "processPeakRSSBytesAfter" : 59506688,
+      "processPeakRSSBytesBefore" : 59506688,
+      "recipe" : "descending normal values1+(count-index)\/8; append +\/-leastNonzeroMagnitude",
+      "reference" : {
+        "maximumSeconds" : 0.008655041,
+        "medianSeconds" : 0.008638,
+        "minimumSeconds" : 0.008617375,
+        "rawSeconds" : [
+          0.008632833,
+          0.0086195,
+          0.008648708,
+          0.008617375,
+          0.008638,
+          0.008647208,
+          0.008655041
+        ]
+      },
+      "sampleOrder" : [
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate"
+      ],
+      "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+      "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+      "validCount" : 500002
+    },
+    {
+      "allResultsMatchReferenceBitwise" : true,
+      "candidate" : {
+        "maximumSeconds" : 0.000514834,
+        "medianSeconds" : 0.000512958,
+        "minimumSeconds" : 0.000511583,
+        "rawSeconds" : [
+          0.000514834,
+          0.000513958,
+          0.000512958,
+          0.000511791,
+          0.000511958,
+          0.000511583,
+          0.000513292
+        ]
+      },
+      "identifier" : "sparse-missing-500000",
+      "inputSHA256" : "d81455003b347d1c1ced11f3849d43193fad0394a41d92dd72204bebb653d290",
+      "observationCount" : 500000,
+      "outputSHA256" : "224a0197e2851cdc8efa19d42463b5849367d91a51d1ffbfb0c11bd7c4d94b4a",
+      "processPeakRSSBytesAfter" : 59506688,
+      "processPeakRSSBytesBefore" : 59506688,
+      "recipe" : "every1024th observation finite1+(index%31)\/8; other observations missing",
+      "reference" : {
+        "maximumSeconds" : 0.000514625,
+        "medianSeconds" : 0.000510583,
+        "minimumSeconds" : 0.000510292,
+        "rawSeconds" : [
+          0.000514625,
+          0.000514125,
+          0.000511083,
+          0.000510542,
+          0.000510292,
+          0.000510375,
+          0.000510583
+        ]
+      },
+      "sampleOrder" : [
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate"
+      ],
+      "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+      "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+      "validCount" : 489
+    },
+    {
+      "allResultsMatchReferenceBitwise" : true,
+      "candidate" : {
+        "maximumSeconds" : 0.000501708,
+        "medianSeconds" : 0.000493542,
+        "minimumSeconds" : 0.000493041,
+        "rawSeconds" : [
+          0.000493542,
+          0.000495542,
+          0.000497709,
+          0.000493208,
+          0.000493041,
+          0.00049325,
+          0.000501708
+        ]
+      },
+      "identifier" : "all-missing-500000",
+      "inputSHA256" : "dcd721758d5e72b4d674be08002f2466a9ed4db1336b4ec85e9af84214488c05",
+      "observationCount" : 500000,
+      "outputSHA256" : "258a1cc324e8e3e132a64102a42d2aade1efd6b2e6b4ebcf29174566d5c52d3a",
+      "processPeakRSSBytesAfter" : 59506688,
+      "processPeakRSSBytesBefore" : 59506688,
+      "recipe" : "500000 missing observations; no sorting work",
+      "reference" : {
+        "maximumSeconds" : 0.000502875,
+        "medianSeconds" : 0.000493209,
+        "minimumSeconds" : 0.000493084,
+        "rawSeconds" : [
+          0.000493209,
+          0.000493084,
+          0.00049325,
+          0.000493125,
+          0.000493125,
+          0.000495709,
+          0.000502875
+        ]
+      },
+      "sampleOrder" : [
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate",
+        "candidate,reference",
+        "reference,candidate"
+      ],
+      "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+      "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+      "validCount" : 0
+    }
+  ],
+  "operatingSystem" : "Version 27.2.1 (Build 26B131)",
+  "physicalMemoryBytes" : 17179869184,
+  "processPeakRSSBytesAtEnd" : 62816256,
+  "processPeakRSSBytesAtStart" : 6930432,
+  "reference" : "Complete pre-Accelerate Swift summary, including bounded counted sort and fallback",
+  "rssScope" : "Darwin getrusage process high-water RSS in bytes; includes fixture generation, both implementations, untimed checks and digest buffers; not isolated kernel memory",
+  "samplesPerImplementation" : 7,
+  "schema" : "studio.glifi.benchmark.apple-descriptive-sort.v1",
+  "sourceHashes" : {
+    "GlifiBenchmark\/GlifiAppleDescriptiveSortingBenchmarks.swift" : "b6bc4950afe6b056e45d4d55228c0932d9fb23fe206ef23ab5baa52c284ad056",
+    "GlifiBenchmark\/main.swift" : "df90c7d9b53461637bef144c77977c66fe6c6d9a1d6528f7406ab377d63edebb",
+    "GlifiCore\/GlifiDescriptiveStatistics.swift" : "999f7a06fcb84c79a4da8a8fd8cb1c4cddc611a9f70b4daa53b07c25fab34ca5"
+  },
+  "thermalStateAtEnd" : "NSProcessInfoThermalState(rawValue: 0)",
+  "thermalStateAtStart" : "NSProcessInfoThermalState(rawValue: 0)",
+  "timingScope" : "Complete summarize call: validation, compaction\/copies, eligibility, sort, Q7 and all numeric reductions; fixture setup and complete bitwise checks are untimed",
+  "toolchain" : "swift-driver version: 1.168.6 Apple Swift version 6.4.2 (swiftlang-6.4.2.1.9 clang-2100.4.1.1)\nTarget: arm64-apple-macosx27.2.0",
+  "warmUpRunsPerImplementation" : 1
+}

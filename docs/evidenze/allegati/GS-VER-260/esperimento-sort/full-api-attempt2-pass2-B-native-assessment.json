@@ -1,0 +1,272 @@
+{
+  "label": "full-api-attempt2-pass2-B-native",
+  "binaryRole": "native",
+  "binarySHA256": "d7abcdf14045aa244e61b446883cc8e08d8c03de1983c94329ecf5d24745f530",
+  "runnerArgumentMeaning": "--candidate-only invokes the same public GlifiDescriptiveStatistics.summarize API in both executables; binaryRole selects the frozen pre-patch or Accelerate implementation",
+  "exitCode": 0,
+  "contentionObserved": false,
+  "observationCount": 10,
+  "sourceHashes": {
+    "GlifiBenchmark/GlifiAppleDescriptiveSortingBenchmarks.swift": "b6bc4950afe6b056e45d4d55228c0932d9fb23fe206ef23ab5baa52c284ad056",
+    "GlifiBenchmark/main.swift": "df90c7d9b53461637bef144c77977c66fe6c6d9a1d6528f7406ab377d63edebb",
+    "GlifiCore/GlifiDescriptiveStatistics.swift": "999f7a06fcb84c79a4da8a8fd8cb1c4cddc611a9f70b4daa53b07c25fab34ca5"
+  },
+  "allResultsMatchReferenceBitwise": true,
+  "cases": [
+    {
+      "identifier": "continuous-4096",
+      "inputSHA256": "5a1ad5aed5d2dd6be3d0e4b5ec4d7c205fe54d0a3f45344df72b1e442242fdd5",
+      "outputSHA256": "7bc87af59e689d2ef97aef48caa9171022b2c0226fb1eb720fe80a198a92087e",
+      "medianSeconds": 0.000350709,
+      "minimumSeconds": 0.00033775,
+      "maximumSeconds": 0.000414833,
+      "rawSeconds": [
+        0.000414833,
+        0.0003845,
+        0.0003635,
+        0.000350709,
+        0.000345209,
+        0.000341041,
+        0.00033775
+      ]
+    },
+    {
+      "identifier": "continuous-16384",
+      "inputSHA256": "1517c41a6f8ada924fba0ef86628584c171bbc1c1b04126758f8f654e44c317f",
+      "outputSHA256": "fa5f9bebd7e63127893cc729e49eab0e098285d64781d07a3c5bcf732a7c8985",
+      "medianSeconds": 0.001821166,
+      "minimumSeconds": 0.001814292,
+      "maximumSeconds": 0.001869083,
+      "rawSeconds": [
+        0.001869083,
+        0.001834417,
+        0.001821166,
+        0.001818458,
+        0.001815583,
+        0.001814292,
+        0.001822416
+      ]
+    },
+    {
+      "identifier": "continuous-32768",
+      "inputSHA256": "9a75039cada27eb17981d5b6a34dbfc6c5e37e71ac17d8fc6a4320b17f2093cc",
+      "outputSHA256": "83fb49205f9302037e203ec3e9ce0b63e79f6a9009c7a226d4553730e19868b4",
+      "medianSeconds": 0.004227375,
+      "minimumSeconds": 0.004204708,
+      "maximumSeconds": 0.004358458,
+      "rawSeconds": [
+        0.004358458,
+        0.004284792,
+        0.004235042,
+        0.004227375,
+        0.004213333,
+        0.004204708,
+        0.004206083
+      ]
+    },
+    {
+      "identifier": "continuous-65536",
+      "inputSHA256": "db98155f52201154566082306e8e3a57b16909ba68d24c41ad28a56d12e9ec60",
+      "outputSHA256": "27e71082aba57e44c4d1aa43dc68a1ade56677c83f6a06cef349e4225f970211",
+      "medianSeconds": 0.009197375,
+      "minimumSeconds": 0.0091165,
+      "maximumSeconds": 0.009365208,
+      "rawSeconds": [
+        0.009286375,
+        0.009228084,
+        0.009365208,
+        0.009197375,
+        0.009175917,
+        0.0091165,
+        0.009123167
+      ]
+    },
+    {
+      "identifier": "continuous-131072",
+      "inputSHA256": "427f1a66cb05d13547d7294a2642d161d968adee59a127cd4622ef406e572372",
+      "outputSHA256": "059f702e8d589eea8a973d6d03e0adbc8a2480b82ac2b4270feefc0e214e9f5f",
+      "medianSeconds": 0.01963475,
+      "minimumSeconds": 0.0196125,
+      "maximumSeconds": 0.0197035,
+      "rawSeconds": [
+        0.0197035,
+        0.0196255,
+        0.01963475,
+        0.0196645,
+        0.01962825,
+        0.0196515,
+        0.0196125
+      ]
+    },
+    {
+      "identifier": "continuous-500000",
+      "inputSHA256": "0191a4252bd0f2c6529b4d8a52598b92c447a2f759057895309122dd9fcb85cd",
+      "outputSHA256": "963fe4f0d355b7dea85dc927efa0009f38adcd40385b9c797f8b4dbb4305edc0",
+      "medianSeconds": 0.082916292,
+      "minimumSeconds": 0.082640625,
+      "maximumSeconds": 0.0832275,
+      "rawSeconds": [
+        0.082751292,
+        0.082640625,
+        0.082916292,
+        0.083218,
+        0.08297925,
+        0.0832275,
+        0.082865833
+      ]
+    },
+    {
+      "identifier": "continuous-1000000",
+      "inputSHA256": "749e41d90977bbc3e00fe4e66cda79ac93a84bfb1f3e226687a4d429c9bf5d18",
+      "outputSHA256": "8582b70f79afef47d4d90894548fe67f26727adc91364f10cb29e4fd100f2d80",
+      "medianSeconds": 0.175399958,
+      "minimumSeconds": 0.174838792,
+      "maximumSeconds": 0.17601275,
+      "rawSeconds": [
+        0.175399958,
+        0.174838792,
+        0.175005375,
+        0.175039416,
+        0.175848125,
+        0.175741417,
+        0.17601275
+      ]
+    },
+    {
+      "identifier": "continuous-missing-500000",
+      "inputSHA256": "e5c3d514cc4bdc7544735b001f5ca5db89c882081e3eaf883594ace769fbfd7f",
+      "outputSHA256": "37d82cbb179dba4db097b71803e1f88d13e2aa5bf223c08826d5058428c98471",
+      "medianSeconds": 0.07765125,
+      "minimumSeconds": 0.077477,
+      "maximumSeconds": 0.0778325,
+      "rawSeconds": [
+        0.077477,
+        0.077751333,
+        0.0778325,
+        0.077547416,
+        0.07765125,
+        0.077704083,
+        0.077589541
+      ]
+    },
+    {
+      "identifier": "repeated-500000",
+      "inputSHA256": "8cb3aad2ba949e68298fae428365ff28722c40f1703d1f7a63baaca1f6b00b87",
+      "outputSHA256": "c400fca45c8a64a8d8a292c9d8fa5f74418e8ff23d43dba037bca3ebd4e7eb24",
+      "medianSeconds": 0.015804708,
+      "minimumSeconds": 0.015778917,
+      "maximumSeconds": 0.015849583,
+      "rawSeconds": [
+        0.015808958,
+        0.01579675,
+        0.015778917,
+        0.015825667,
+        0.015849583,
+        0.0157855,
+        0.015804708
+      ]
+    },
+    {
+      "identifier": "nearly-sorted-500000",
+      "inputSHA256": "a4d4df5516195faeb678c5cb172a8a8d4dc33f2ae8fb0eb7ce119aea6bbbb47b",
+      "outputSHA256": "f4de203c4bd5ced37439f1edf7e2e12752cf6d55424746ad47bc806eb53e20b7",
+      "medianSeconds": 0.008418875,
+      "minimumSeconds": 0.008386209,
+      "maximumSeconds": 0.008490417,
+      "rawSeconds": [
+        0.008386209,
+        0.008402667,
+        0.008418875,
+        0.008402416,
+        0.008463584,
+        0.008490417,
+        0.008452792
+      ]
+    },
+    {
+      "identifier": "late-cardinality-500000",
+      "inputSHA256": "09727cdd61b4140dc30bcfa01a8253576bd0fe0b1a1f0afd4e7b91090019b088",
+      "outputSHA256": "74ff775438b58b21c95ab535c0df5c27fdd4d39660299a04ce81a181e94c230e",
+      "medianSeconds": 0.009067291,
+      "minimumSeconds": 0.009056458,
+      "maximumSeconds": 0.009091084,
+      "rawSeconds": [
+        0.009091084,
+        0.009061834,
+        0.009081958,
+        0.009066,
+        0.009067291,
+        0.009056458,
+        0.009081875
+      ]
+    },
+    {
+      "identifier": "signed-zero-tail-500000",
+      "inputSHA256": "b471f035229c4cdafecd97d8857927e399329390b7e21ad3ec63573d60be7f3f",
+      "outputSHA256": "90ae1edf6247ec821331244d5941c17c56c7979afb9205c5d94f3b04fac6a615",
+      "medianSeconds": 0.010622541,
+      "minimumSeconds": 0.009813958,
+      "maximumSeconds": 0.010644417,
+      "rawSeconds": [
+        0.010133292,
+        0.009961666,
+        0.009813958,
+        0.010622541,
+        0.010630625,
+        0.010644417,
+        0.010643083
+      ]
+    },
+    {
+      "identifier": "subnormal-tail-500000",
+      "inputSHA256": "c24b7f012e655a662d5d68c15bd73f86bf9fc91320c5ca08916c60e7837cbbd4",
+      "outputSHA256": "a551b55a00bdf636e8206f579296559a5896cde0d4d083df347704ddc9c62d6e",
+      "medianSeconds": 0.009214958,
+      "minimumSeconds": 0.009198625,
+      "maximumSeconds": 0.009246792,
+      "rawSeconds": [
+        0.009204583,
+        0.009198625,
+        0.009221375,
+        0.009237542,
+        0.009246792,
+        0.009214958,
+        0.00919875
+      ]
+    },
+    {
+      "identifier": "sparse-missing-500000",
+      "inputSHA256": "d81455003b347d1c1ced11f3849d43193fad0394a41d92dd72204bebb653d290",
+      "outputSHA256": "224a0197e2851cdc8efa19d42463b5849367d91a51d1ffbfb0c11bd7c4d94b4a",
+      "medianSeconds": 0.0005115,
+      "minimumSeconds": 0.000510459,
+      "maximumSeconds": 0.000512791,
+      "rawSeconds": [
+        0.000510667,
+        0.000510459,
+        0.000511542,
+        0.0005115,
+        0.000512042,
+        0.000511125,
+        0.000512791
+      ]
+    },
+    {
+      "identifier": "all-missing-500000",
+      "inputSHA256": "dcd721758d5e72b4d674be08002f2466a9ed4db1336b4ec85e9af84214488c05",
+      "outputSHA256": "258a1cc324e8e3e132a64102a42d2aade1efd6b2e6b4ebcf29174566d5c52d3a",
+      "medianSeconds": 0.000494958,
+      "minimumSeconds": 0.000493375,
+      "maximumSeconds": 0.000500208,
+      "rawSeconds": [
+        0.000495083,
+        0.000493875,
+        0.000494958,
+        0.000499584,
+        0.000494542,
+        0.000493375,
+        0.000500208
+      ]
+    }
+  ]
+}

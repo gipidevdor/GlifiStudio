@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.15 |
+| Versione | 1.6.16 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -112,3 +112,5 @@ preservando i confini del lavoro già in corso nell'altra chat.
 - [GS-DOR-208 — Supporto condiviso dei benchmark dei test](dor-ottimizzazione-supporto-benchmark-test.md) — Ready
 
 - [GS-DOR-233 — Completamento delle varianti native KH Coder](dor-completamento-kh-coder.md) — Ready per prosecuzione e verifica; registrazione successiva all’avvio autorizzato
+
+- [GS-DOR-260 — Integrazioni native Apple coordinate](dor-integrazioni-native-apple.md) — Ready; letture bounded, attività macOS, comandi nativi e candidato Accelerate misurato

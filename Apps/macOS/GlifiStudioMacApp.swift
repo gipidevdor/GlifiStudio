@@ -23,5 +23,9 @@ struct GlifiStudioMacApp: App {
             )
         }
         .defaultSize(width: 1100, height: 740)
+        .commands {
+            SidebarCommands()
+            ToolbarCommands()
+        }
     }
 }

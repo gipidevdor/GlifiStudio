@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-APL-011 |
 | Tipo | Standard applicativo Apple |
-| Versione | 1.1.0 |
+| Versione | 1.1.1 |
 | Stato | Approvato |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | ADR-0008 |
 
 ## Obiettivo
@@ -66,3 +66,14 @@ ML Compute **NON DEVE** essere adottato perché deprecato; per nuovi lavori si u
 - [Core ML](https://developer.apple.com/documentation/coreml)
 - [Metal feature set tables](https://developer.apple.com/metal/capabilities/)
 - [ML Compute — deprecated](https://developer.apple.com/documentation/mlcompute)
+
+## Ordinamento descrittivo
+
+GS-DOR-260 ha confrontato `vDSP_vsortD` con il sort Swift nel fallback ad alta
+cardinalità delle descrittive. Il confronto della stessa API Core in due binari
+Release conserva tutti i bit, ma non dimostra un beneficio robusto: sui casi
+grandi si osserva quasi parità e sui casi economici regressioni. Il candidato è
+scartato; produzione, riduzioni, Q7, zeri e subnormali mantengono la baseline.
+La prova riproducibile è in [GS-VER-260](../evidenze/GS-VER-260-integrazioni-native-apple.md).
+La disponibilità di un kernel nativo non autorizza la sua adozione senza un
+beneficio verificato. Non viene introdotto un nuovo backend scientifico.

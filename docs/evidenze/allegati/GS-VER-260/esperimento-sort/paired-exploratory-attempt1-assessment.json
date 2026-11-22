@@ -1,0 +1,102 @@
+{
+  "mode": "exploratory",
+  "label": "paired-exploratory-attempt1",
+  "exitCode": 0,
+  "contentionObserved": true,
+  "observationCount": 17,
+  "binarySHA256": "d7abcdf14045aa244e61b446883cc8e08d8c03de1983c94329ecf5d24745f530",
+  "notPromotionEvidence": true,
+  "allResultsMatchReferenceBitwise": true,
+  "cases": [
+    {
+      "identifier": "continuous-4096",
+      "referenceMedianSeconds": 0.0003615,
+      "candidateMedianSeconds": 0.000390917,
+      "referenceOverCandidate": 0.9247487318279839
+    },
+    {
+      "identifier": "continuous-16384",
+      "referenceMedianSeconds": 0.001855042,
+      "candidateMedianSeconds": 0.002050916,
+      "referenceOverCandidate": 0.904494382022472
+    },
+    {
+      "identifier": "continuous-32768",
+      "referenceMedianSeconds": 0.004132667,
+      "candidateMedianSeconds": 0.004287958,
+      "referenceOverCandidate": 0.9637843934105698
+    },
+    {
+      "identifier": "continuous-65536",
+      "referenceMedianSeconds": 0.008862833,
+      "candidateMedianSeconds": 0.009323209,
+      "referenceOverCandidate": 0.9506204355174275
+    },
+    {
+      "identifier": "continuous-131072",
+      "referenceMedianSeconds": 0.019060375,
+      "candidateMedianSeconds": 0.019713625,
+      "referenceOverCandidate": 0.9668630198657021
+    },
+    {
+      "identifier": "continuous-500000",
+      "referenceMedianSeconds": 0.083423667,
+      "candidateMedianSeconds": 0.082520625,
+      "referenceOverCandidate": 1.0109432278294064
+    },
+    {
+      "identifier": "continuous-1000000",
+      "referenceMedianSeconds": 0.175274667,
+      "candidateMedianSeconds": 0.172326958,
+      "referenceOverCandidate": 1.0171053271885644
+    },
+    {
+      "identifier": "continuous-missing-500000",
+      "referenceMedianSeconds": 0.077929333,
+      "candidateMedianSeconds": 0.077144666,
+      "referenceOverCandidate": 1.0101713707594508
+    },
+    {
+      "identifier": "repeated-500000",
+      "referenceMedianSeconds": 0.015377459,
+      "candidateMedianSeconds": 0.016634708,
+      "referenceOverCandidate": 0.9244201340955307
+    },
+    {
+      "identifier": "nearly-sorted-500000",
+      "referenceMedianSeconds": 0.008470875,
+      "candidateMedianSeconds": 0.008395542,
+      "referenceOverCandidate": 1.0089729763724604
+    },
+    {
+      "identifier": "late-cardinality-500000",
+      "referenceMedianSeconds": 0.009095583,
+      "candidateMedianSeconds": 0.009043958,
+      "referenceOverCandidate": 1.0057082308431775
+    },
+    {
+      "identifier": "signed-zero-tail-500000",
+      "referenceMedianSeconds": 0.010077417,
+      "candidateMedianSeconds": 0.010623042,
+      "referenceOverCandidate": 0.9486375936384325
+    },
+    {
+      "identifier": "subnormal-tail-500000",
+      "referenceMedianSeconds": 0.008638,
+      "candidateMedianSeconds": 0.009172709,
+      "referenceOverCandidate": 0.9417065340239181
+    },
+    {
+      "identifier": "sparse-missing-500000",
+      "referenceMedianSeconds": 0.000510583,
+      "candidateMedianSeconds": 0.000512958,
+      "referenceOverCandidate": 0.9953699913053311
+    },
+    {
+      "identifier": "all-missing-500000",
+      "referenceMedianSeconds": 0.000493209,
+      "candidateMedianSeconds": 0.000493542,
+      "referenceOverCandidate": 0.9993252853860461
+    }
+  ]
+}

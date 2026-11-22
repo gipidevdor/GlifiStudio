@@ -3539,6 +3539,77 @@
       "gate": "G3",
       "status": "implemented",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-261",
+      "clause": "GS-APL-005 § Lettura bounded delle fonti",
+      "specification": "docs/apple/05-documenti-e-accesso-ai-file.md",
+      "requirements": [
+        "RF-002",
+        "RF-003",
+        "RQ-002",
+        "RQ-007",
+        "RQ-011",
+        "RQ-013"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiSourceFileReader.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSourceFileReaderTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-260-integrazioni-native-apple.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-262",
+      "clause": "GS-APL-015 § Attività del piano utente",
+      "specification": "docs/apple/15-sostenibilita-di-sistema-macos.md",
+      "requirements": [
+        "RQ-053",
+        "RQ-054"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProcessActivity.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioProcessActivityTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-260-integrazioni-native-apple.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-264",
+      "clause": "GS-APL-013 § Comandi nativi macOS",
+      "specification": "docs/apple/13-integrazione-di-sistema-e-lavoro-prolungato.md",
+      "requirements": [
+        "RQ-058"
+      ],
+      "code": [
+        "Apps/macOS/GlifiStudioMacApp.swift"
+      ],
+      "tests": [
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-260-integrazioni-native-apple.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }

@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-ADR-IDX-001 |
 | Tipo | Registro delle decisioni architetturali |
-| Versione | 0.31.0 |
+| Versione | 0.31.1 |
 | Stato | Attivo |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -62,3 +62,5 @@ Ogni ADR deve contenere titolo, stato, contesto, decisione, conseguenze e, quand
 - [ADR-0033 — Completamento del laboratorio di analisi testuale macOS](0033-laboratorio-analisi-testuale-macos.md) — Programma e confini accettati; verifiche per incremento
 
 - [ADR-0035 — Completamento nativo delle varianti KH Coder](0035-completamento-nativo-kh-coder.md) — Ambito e architettura accettati; gate in verifica e varianti nuove candidate
+
+- [ADR-0040 — Integrazioni native Apple coordinate e misurate](0040-integrazioni-native-misurate.md) — Attuazione dei contratti esistenti; prove separate

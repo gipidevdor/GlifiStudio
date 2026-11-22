@@ -471,3 +471,14 @@ nessuna promozione di soglie, famiglia linguistica o prestazioni dell'app.
 Sedici workload Release e undici riscontri intermedi isolano gli effetti delle
 strutture dal digest usato anche dal DAG. Campioni, inventari e risultati
 completi sono conservati; nessuna nuova soglia o promessa di prestazione UI.
+
+## Integrazioni native Apple coordinate
+
+GS-DOR-260, ADR-0040 e GS-APL-016 distinguono adozioni effettive e tecnologie
+condizionali. [GS-VER-260](evidenze/GS-VER-260-integrazioni-native-apple.md) registra
+CMP-261 (fonti bounded, RF-002/003 e RQ-002/007/011/013), CMP-262 (attività finita,
+RQ-053/054) e CMP-264 (comandi nativi,
+RQ-058). Non sono promossi nuovi backend scientifici o audit GUI non eseguiti.
+
+Il sort vDSP valutato per RQ-063 è scartato; la prova bitwise e prestazionale
+rimane in GS-VER-260 senza modificare il backend numerico di produzione.

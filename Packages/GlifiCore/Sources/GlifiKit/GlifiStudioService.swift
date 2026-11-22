@@ -267,16 +267,19 @@ public actor GlifiStudioProjectSession {
     private let engine: GlifiEngine
     private let project: GlifiProjectPackage
     private let runtimeEnvironment: GlifiStudioRuntimeEnvironment
+    private let activityProvider: GlifiStudioActivityProvider
     private var isClosed = false
     private var activeAnalysisExecutions: [OperationID: Task<Void, Never>] = [:]
 
     init(
         engine: GlifiEngine, project: GlifiProjectPackage,
-        runtimeEnvironment: GlifiStudioRuntimeEnvironment = .headless
+        runtimeEnvironment: GlifiStudioRuntimeEnvironment = .headless,
+        activityProvider: GlifiStudioActivityProvider = .system
     ) {
         self.engine = engine
         self.project = project
         self.runtimeEnvironment = runtimeEnvironment
+        self.activityProvider = activityProvider
     }
 
     /// Returns the current verified generation while the session is open.
@@ -459,19 +462,22 @@ public actor GlifiStudioProjectSession {
             throwing: (any Error).self,
             bufferingPolicy: .bufferingNewest(32)
         )
-        let task = Task(priority: .userInitiated) { [engine, project, runtimeEnvironment] in
+        let task = Task(priority: .userInitiated) {
+            [engine, project, runtimeEnvironment, activityProvider] in
             do {
-                let result = try await engine.executeAnalysisPlan(
-                    in: project,
-                    request: coreRequest,
-                    operationID: operationID,
-                    systemConditionsProvider: GlifiSystemConditionsProvider {
-                        runtimeEnvironment.snapshot().coreValue
+                let result = try await activityProvider.perform {
+                    try await engine.executeAnalysisPlan(
+                        in: project,
+                        request: coreRequest,
+                        operationID: operationID,
+                        systemConditionsProvider: GlifiSystemConditionsProvider {
+                            runtimeEnvironment.snapshot().coreValue
+                        }
+                    ) { progress in
+                        _ = continuation.yield(
+                            .progress(GlifiStudioOperationProgress(progress))
+                        )
                     }
-                ) { progress in
-                    _ = continuation.yield(
-                        .progress(GlifiStudioOperationProgress(progress))
-                    )
                 }
                 _ = continuation.yield(
                     .completed(GlifiStudioAnalysisExecutionResult(result))
