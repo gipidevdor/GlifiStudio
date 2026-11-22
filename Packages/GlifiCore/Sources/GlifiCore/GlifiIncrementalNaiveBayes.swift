@@ -4,11 +4,17 @@ import Foundation
 
 /// Sufficient statistics for exact-count continuation without retaining source documents.
 public struct GlifiNaiveBayesTrainingState: Equatable, Sendable {
+    /// Count-based continuation contract, independent of the project or transport schema.
     public static let identifier = "MultinomialNaiveBayes-incremental-counts-v1"
+    /// Unique category labels in strictly increasing canonical order.
     public let classes: [String]
+    /// Training vocabulary, expanded and reindexed on subsequent batches.
     public let vocabulary: [String]
+    /// Positive observed document count for every category, without smoothing.
     public let documentCounts: [Int]
+    /// Exact nonnegative token counts, category by vocabulary position.
     public let tokenCounts: [[Int]]
+    /// Positive symmetric pseudocount used when constructing the probability model.
     public let smoothing: Double
 
     /// Restores transient statistics only after validating identities, counts and resource bounds.
@@ -87,6 +93,7 @@ public struct GlifiNaiveBayesTrainingState: Equatable, Sendable {
 
 /// Incremental multinomial training with canonical class/vocabulary expansion.
 public enum GlifiIncrementalNaiveBayes {
+    /// Creates sufficient statistics, admitting an initial batch with only one category.
     public static func train(
         documents: [[String]], labels: [String], smoothing: Double = 1,
         limits: GlifiExploratoryLimits = .standard
@@ -208,12 +215,16 @@ public enum GlifiIncrementalNaiveBayes {
 
 /// Held-out evaluation and nominal chance-corrected agreement on the same predictions.
 public struct GlifiNaiveBayesAgreementEvaluation: Equatable, Sendable {
+    /// Held-out evaluation and agreement composition, without changing the fitted model.
     public static let identifier = "MultinomialNaiveBayes-stratified-CV-CohenKappa-v1"
+    /// Confusion matrix, accuracy, held-out labels and stratified fold assignments.
     public let evaluation: GlifiClassificationEvaluation
+    /// Observed/expected agreement and nominal kappa over those same held-out labels.
     public let agreement: GlifiCohenKappaResult
 }
 
 extension GlifiNaiveBayes {
+    /// Fits within each fold only and evaluates the resulting predictions against their actual labels.
     public static func crossValidateWithAgreement(
         documents: [[String]], labels: [String], folds: Int, seed: UInt64,
         smoothing: Double = 1, limits: GlifiExploratoryLimits = .standard

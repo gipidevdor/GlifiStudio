@@ -1,0 +1,28 @@
+{
+  "$comment": "SPDX-License-Identifier: BSD-3-Clause",
+  "date": "2026-11-22",
+  "status": "In verifica",
+  "initialBase": "db2bac1",
+  "integratedMain": "1728fc1ed0e7b79b730ad2a577049fa94bed9f40",
+  "newOperationTags": 14,
+  "fixtureCount": 52,
+  "newFixtures": 22,
+  "oracleRows": 215,
+  "preservedOracleRows": 194,
+  "newOracleRows": 21,
+  "binary64FractionCases": 64,
+  "initialTargeted": {
+    "coreTests": 80,
+    "kitTests": 11,
+    "exitCode": 0
+  },
+  "initialCLI": {
+    "fixtures": 52,
+    "checks": 139,
+    "exitCode": 0
+  },
+  "finalVerification": null,
+  "externalV6Approval": false,
+  "closedEditionParityCertified": false,
+  "iPadOSVerified": false
+}

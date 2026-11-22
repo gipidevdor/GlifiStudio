@@ -20,6 +20,20 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   integrità invariati; misure distinte del digest e delle operazioni complete
   (GS-VER-178). Le misure locali sotto contesa restano informative.
 
+### Struttura interna e ownership
+
+- Priorità operativa macOS persistita in Make, CI e istruzioni: ingressi predefiniti
+  sul profilo macOS con tutti i controlli condivisi; iPadOS rinviato ai target
+  espliciti `*-all`. Comandi e policy verificati dal checker del loop.
+
+- Contratti valore, bootstrap e sessione Kit separati per responsabilità; policy
+  ordinarie condivise senza cambiare API o mapping specializzati.
+- Staging e costruzione digest/manifest del package centralizzati in helper
+  privati, conservando ordine I/O e checkpoint delle quattro famiglie.
+- Sessioni CLI chiuse anche su failure e cancellazione prima della presentazione;
+  raccolta dei risultati execute/visualize condivisa, protocollo invariato
+  (GS-VER-280).
+
 ### Integrazioni native Apple coordinate
 
 - Letture esterne Foundation coordinate e bounded prima della decodifica, con
@@ -51,6 +65,12 @@ preservando i metodi upstream già pubblicati.
   completezza KH: alcune preparazioni e varianti restano assenti (GS-VER-234).
 
 ### Aggiunto
+
+- Profili KH pubblici completati in Core/Kit/CLI: preparazione e contesti,
+  tie MDS primary, SOM online a due fasi/PCA, scaling CA, MI3/Z, LR/FLR e
+  classificazione incrementale con valutazione kappa. Contratti e limiti in
+  GS-VER-300; nessuna promozione scientifica automatica.
+
 
 - Grafici audio di VoiceOver per le mappe fattoriali, con sintesi specifica per
   CA, PCA e LSA. Le righe delle fusioni del dendrogramma aprono le fonti anche

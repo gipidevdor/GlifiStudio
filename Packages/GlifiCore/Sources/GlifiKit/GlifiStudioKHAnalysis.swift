@@ -5,6 +5,7 @@ import GlifiCore
 
 /// Bounded native KH profiles; both Swift and external JSON use the same execution path.
 public enum GlifiStudioKHAnalysis {
+    /// Executes the same canonical request, domain failures and result envelope as CLI text-analysis.
     @concurrent public static func execute(
         _ request: GlifiStudioKHAnalysisRequest
     ) async throws(GlifiStudioFailure) -> GlifiStudioTextAnalysisResult {
@@ -58,10 +59,11 @@ extension GlifiStudioKHAnalysisRequest {
                 let result = try GlifiExploratoryAnalysis.khSelfOrganizingMapPCAInitialization(
                     matrix, width: width, height: height)
                 return ("SOM-PCA-linear-unscaled-canonical-v1", .matrix(result))
-            case let .somKH(matrix, width, height, first, second, topology, initial):
+            case let .somKH(matrix, width, height, first, second, topology, initial, clusters):
                 let result = try GlifiExploratoryAnalysis.khSelfOrganizingMap(
                     matrix, width: width, height: height, firstPhase: first?.core,
-                    secondPhase: second?.core, topology: topology.core, initialCodebooks: initial)
+                    secondPhase: second?.core, topology: topology.core, initialCodebooks: initial,
+                    codebookClusterCount: clusters)
                 return (result.methodIdentifier, .som(.init(result)))
             case let .collocationScores(input):
                 let result = try GlifiKHCollocationAnalysis.scores(input.core())

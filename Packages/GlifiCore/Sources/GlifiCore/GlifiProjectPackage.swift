@@ -1328,6 +1328,99 @@ private enum GlifiProjectPackageIO {
         return event
     }
 
+    private struct StagedTransaction {
+        let url: URL
+        let packageDirectory: GlifiPackageDirectory
+        let directory: GlifiPackageDirectory
+        let targetGeneration: Int
+    }
+
+    private struct GenerationRoot {
+        let digest: String
+        let count: Int
+    }
+
+    /// Creates transaction metadata; each mutation retains its own payload and checkpoint order.
+    private static func stageTransaction(
+        in packageURL: URL,
+        baseGeneration: Int
+    ) throws -> StagedTransaction {
+        let transactionID = UUID().uuidString.lowercased()
+        let transactionURL = packageURL.appending(
+            path: "transactions/\(transactionID)",
+            directoryHint: .isDirectory
+        )
+        let packageDirectory = try GlifiPackageDirectory(at: packageURL)
+        let transactionDirectory = try packageDirectory.openDirectory(named: "transactions")
+            .createNewDirectory(named: transactionID)
+        let targetGeneration = baseGeneration + 1
+        let transactionState = TransactionState(
+            transactionID: transactionID,
+            baseGeneration: baseGeneration,
+            targetGeneration: targetGeneration,
+            state: "staging"
+        )
+        try transactionDirectory.writeFile(
+            try GlifiCanonicalJSON.encode(transactionState), named: "transaction.json")
+        return StagedTransaction(
+            url: transactionURL, packageDirectory: packageDirectory,
+            directory: transactionDirectory, targetGeneration: targetGeneration)
+    }
+
+    /// Builds the manifest and its generation digest from one set of roots, without I/O.
+    private static func makeCandidateManifest(
+        after snapshot: GlifiProjectSnapshot,
+        generation: Int,
+        sourceRoot: GenerationRoot? = nil,
+        artifactRoot: GenerationRoot? = nil,
+        investigationRoot: GenerationRoot? = nil,
+        qualitativeRoot: GenerationRoot? = nil
+    ) throws -> GlifiProjectManifest {
+        let sourceRoot =
+            sourceRoot
+            ?? GenerationRoot(
+                digest: snapshot.sourceRootDigest, count: snapshot.sources.count)
+        let artifactRoot =
+            artifactRoot
+            ?? GenerationRoot(
+                digest: snapshot.artifactRootDigest, count: snapshot.artifacts.count)
+        let investigationRoot =
+            investigationRoot
+            ?? GenerationRoot(
+                digest: snapshot.investigationRootDigest, count: snapshot.investigationEvents.count)
+        let qualitativeRoot =
+            qualitativeRoot
+            ?? GenerationRoot(
+                digest: snapshot.qualitativeRootDigest, count: snapshot.qualitativeEvents.count)
+        let recordDigest = try generationRecordDigest(
+            projectID: snapshot.projectID,
+            generation: generation,
+            baseGeneration: snapshot.generation,
+            sourceRootDigest: sourceRoot.digest,
+            sourceCount: sourceRoot.count,
+            artifactRootDigest: artifactRoot.digest,
+            artifactCount: artifactRoot.count,
+            investigationRootDigest: investigationRoot.digest,
+            investigationEventCount: investigationRoot.count,
+            qualitativeRootDigest: qualitativeRoot.digest,
+            qualitativeEventCount: qualitativeRoot.count
+        )
+        return GlifiProjectManifest(
+            projectID: snapshot.projectID,
+            generation: generation,
+            baseGeneration: snapshot.generation,
+            generationRecordDigest: recordDigest,
+            sourceRootDigest: sourceRoot.digest,
+            sourceCount: sourceRoot.count,
+            artifactRootDigest: artifactRoot.digest,
+            artifactCount: artifactRoot.count,
+            investigationRootDigest: investigationRoot.digest,
+            investigationEventCount: investigationRoot.count,
+            qualitativeRootDigest: qualitativeRoot.digest,
+            qualitativeEventCount: qualitativeRoot.count
+        )
+    }
+
     static func commitImport(
         _ importedText: GlifiImportedText,
         sourceID: SourceID,
@@ -1356,24 +1449,8 @@ private enum GlifiProjectPackageIO {
             )
         }
 
-        let transactionID = UUID().uuidString.lowercased()
-        let transactionURL = packageURL.appending(
-            path: "transactions/\(transactionID)",
-            directoryHint: .isDirectory
-        )
-        let packageDirectory = try GlifiPackageDirectory(at: packageURL)
-        let transactionDirectory = try packageDirectory.openDirectory(named: "transactions")
-            .createNewDirectory(named: transactionID)
-        let transactionState = TransactionState(
-            transactionID: transactionID,
-            baseGeneration: observedSnapshot.generation,
-            targetGeneration: observedSnapshot.generation + 1,
-            state: "staging"
-        )
-        try transactionDirectory.writeFile(
-            try GlifiCanonicalJSON.encode(transactionState),
-            named: "transaction.json"
-        )
+        let transaction = try stageTransaction(
+            in: packageURL, baseGeneration: observedSnapshot.generation)
         try interruptIfRequested(.staged, interruption, behavior: interruptionBehavior)
 
         let objectPath = try objectPath(for: importedText.contentDigest)
@@ -1385,9 +1462,10 @@ private enum GlifiProjectPackageIO {
             byteCount: importedText.bytes.count,
             objectPath: objectPath
         )
-        try transactionDirectory.writeFile(importedText.bytes, named: "source-object")
+        try transaction.directory.writeFile(importedText.bytes, named: "source-object")
         try promoteObject(
-            "source-object", from: transactionDirectory, source: source, in: packageDirectory)
+            "source-object", from: transaction.directory, source: source,
+            in: transaction.packageDirectory)
         try interruptIfRequested(.objectPromoted, interruption, behavior: interruptionBehavior)
 
         var sources = observedSnapshot.sources
@@ -1400,26 +1478,17 @@ private enum GlifiProjectPackageIO {
             observedSnapshot.artifacts, sources: sources, rootDigest: sourceRootDigest)
         let artifactRootDigest = try artifactRootDigest(artifacts)
         let investigationRootDigest = observedSnapshot.investigationRootDigest
-        let targetGeneration = observedSnapshot.generation + 1
-        let recordDigest = try generationRecordDigest(
-            projectID: observedSnapshot.projectID,
-            generation: targetGeneration,
-            baseGeneration: observedSnapshot.generation,
-            sourceRootDigest: sourceRootDigest,
-            sourceCount: sources.count,
-            artifactRootDigest: artifactRootDigest,
-            artifactCount: artifacts.count,
-            investigationRootDigest: investigationRootDigest,
-            investigationEventCount: observedSnapshot.investigationEvents.count,
-            qualitativeRootDigest: observedSnapshot.qualitativeRootDigest,
-            qualitativeEventCount: observedSnapshot.qualitativeEvents.count
+        let manifest = try makeCandidateManifest(
+            after: observedSnapshot, generation: transaction.targetGeneration,
+            sourceRoot: .init(digest: sourceRootDigest, count: sources.count),
+            artifactRoot: .init(digest: artifactRootDigest, count: artifacts.count)
         )
         let database = try GlifiSQLiteProjectStore.open(at: databaseURL(in: packageURL))
         try database.discardGenerations(after: observedSnapshot.generation)
         try database.prepareSourceGeneration(
-            generation: targetGeneration,
+            generation: transaction.targetGeneration,
             baseGeneration: observedSnapshot.generation,
-            recordDigest: recordDigest,
+            recordDigest: manifest.generationRecordDigest,
             sourceRootDigest: sourceRootDigest,
             artifactRootDigest: artifactRootDigest,
             artifacts: artifacts.map(storedRecord),
@@ -1428,33 +1497,19 @@ private enum GlifiProjectPackageIO {
         )
         try interruptIfRequested(.databasePrepared, interruption, behavior: interruptionBehavior)
 
-        let manifest = GlifiProjectManifest(
-            projectID: observedSnapshot.projectID,
-            generation: targetGeneration,
-            baseGeneration: observedSnapshot.generation,
-            generationRecordDigest: recordDigest,
-            sourceRootDigest: sourceRootDigest,
-            sourceCount: sources.count,
-            artifactRootDigest: artifactRootDigest,
-            artifactCount: artifacts.count,
-            investigationRootDigest: investigationRootDigest,
-            investigationEventCount: observedSnapshot.investigationEvents.count,
-            qualitativeRootDigest: observedSnapshot.qualitativeRootDigest,
-            qualitativeEventCount: observedSnapshot.qualitativeEvents.count
-        )
-        let candidateURL = transactionURL.appending(path: "manifest.json")
+        let candidateURL = transaction.url.appending(path: "manifest.json")
         try prepareCandidateManifest(
-            manifest, in: transactionDirectory,
+            manifest, in: transaction.directory,
             interruption: interruption, interruptionBehavior: interruptionBehavior)
 
         let rootManifestURL = manifestURL(in: packageURL)
         _ = try fileManager.replaceItemAt(rootManifestURL, withItemAt: candidateURL)
         try interruptIfRequested(.manifestReplaced, interruption, behavior: interruptionBehavior)
 
-        try database.markCommitted(generation: targetGeneration)
+        try database.markCommitted(generation: transaction.targetGeneration)
         try interruptIfRequested(.databaseCommitted, interruption, behavior: interruptionBehavior)
 
-        try? fileManager.removeItem(at: transactionURL)
+        try? fileManager.removeItem(at: transaction.url)
         return try openVerified(at: packageURL)
     }
 
@@ -1572,68 +1627,42 @@ private enum GlifiProjectPackageIO {
             )
         }
 
-        let transactionID = UUID().uuidString.lowercased()
-        let transactionURL = packageURL.appending(
-            path: "transactions/\(transactionID)",
-            directoryHint: .isDirectory
-        )
-        let packageDirectory = try GlifiPackageDirectory(at: packageURL)
-        let transactionDirectory = try packageDirectory.openDirectory(named: "transactions")
-            .createNewDirectory(named: transactionID)
-        let targetGeneration = observedSnapshot.generation + 1
-        let transactionState = TransactionState(
-            transactionID: transactionID,
-            baseGeneration: observedSnapshot.generation,
-            targetGeneration: targetGeneration,
-            state: "staging"
-        )
-        try transactionDirectory.writeFile(
-            try GlifiCanonicalJSON.encode(transactionState),
-            named: "transaction.json"
-        )
+        let transaction = try stageTransaction(
+            in: packageURL, baseGeneration: observedSnapshot.generation)
         try interruptIfRequested(.staged, interruption, behavior: interruptionBehavior)
 
-        try transactionDirectory.writeFile(descriptorData, named: "descriptor-object")
+        try transaction.directory.writeFile(descriptorData, named: "descriptor-object")
         try promoteArtifactObject(
-            "descriptor-object", from: transactionDirectory,
+            "descriptor-object", from: transaction.directory,
             relativePath: artifact.descriptorObjectPath,
             expectedDigest: artifact.descriptorDigest,
             expectedByteCount: artifact.descriptorByteCount,
             maximumByteCount: GlifiProjectPackage.maximumDescriptorByteCount,
-            in: packageDirectory
+            in: transaction.packageDirectory
         )
-        try transactionDirectory.writeFile(data, named: "artifact-object")
+        try transaction.directory.writeFile(data, named: "artifact-object")
         try promoteArtifactObject(
-            "artifact-object", from: transactionDirectory,
+            "artifact-object", from: transaction.directory,
             relativePath: artifact.objectPath,
             expectedDigest: artifact.contentDigest,
             expectedByteCount: artifact.byteCount,
             maximumByteCount: GlifiProjectPackage.maximumArtifactByteCount,
-            in: packageDirectory
+            in: transaction.packageDirectory
         )
         try interruptIfRequested(.objectPromoted, interruption, behavior: interruptionBehavior)
 
         let artifactRootDigest = try artifactRootDigest(artifacts)
         let investigationRootDigest = observedSnapshot.investigationRootDigest
-        let recordDigest = try generationRecordDigest(
-            projectID: observedSnapshot.projectID,
-            generation: targetGeneration,
-            baseGeneration: observedSnapshot.generation,
-            sourceRootDigest: observedSnapshot.sourceRootDigest,
-            sourceCount: observedSnapshot.sources.count,
-            artifactRootDigest: artifactRootDigest,
-            artifactCount: artifacts.count,
-            investigationRootDigest: investigationRootDigest,
-            investigationEventCount: observedSnapshot.investigationEvents.count,
-            qualitativeRootDigest: observedSnapshot.qualitativeRootDigest,
-            qualitativeEventCount: observedSnapshot.qualitativeEvents.count
+        let manifest = try makeCandidateManifest(
+            after: observedSnapshot, generation: transaction.targetGeneration,
+            artifactRoot: .init(digest: artifactRootDigest, count: artifacts.count)
         )
         let database = try GlifiSQLiteProjectStore.open(at: databaseURL(in: packageURL))
         try database.discardGenerations(after: observedSnapshot.generation)
         try database.prepareArtifactGeneration(
-            generation: targetGeneration,
+            generation: transaction.targetGeneration,
             baseGeneration: observedSnapshot.generation,
-            recordDigest: recordDigest,
+            recordDigest: manifest.generationRecordDigest,
             sourceRootDigest: observedSnapshot.sourceRootDigest,
             artifactRootDigest: artifactRootDigest,
             artifacts: artifacts.map(storedRecord),
@@ -1641,31 +1670,17 @@ private enum GlifiProjectPackageIO {
         )
         try interruptIfRequested(.databasePrepared, interruption, behavior: interruptionBehavior)
 
-        let manifest = GlifiProjectManifest(
-            projectID: observedSnapshot.projectID,
-            generation: targetGeneration,
-            baseGeneration: observedSnapshot.generation,
-            generationRecordDigest: recordDigest,
-            sourceRootDigest: observedSnapshot.sourceRootDigest,
-            sourceCount: observedSnapshot.sources.count,
-            artifactRootDigest: artifactRootDigest,
-            artifactCount: artifacts.count,
-            investigationRootDigest: investigationRootDigest,
-            investigationEventCount: observedSnapshot.investigationEvents.count,
-            qualitativeRootDigest: observedSnapshot.qualitativeRootDigest,
-            qualitativeEventCount: observedSnapshot.qualitativeEvents.count
-        )
-        let candidateURL = transactionURL.appending(path: "manifest.json")
+        let candidateURL = transaction.url.appending(path: "manifest.json")
         try prepareCandidateManifest(
-            manifest, in: transactionDirectory,
+            manifest, in: transaction.directory,
             interruption: interruption, interruptionBehavior: interruptionBehavior)
 
         _ = try fileManager.replaceItemAt(manifestURL(in: packageURL), withItemAt: candidateURL)
         try interruptIfRequested(.manifestReplaced, interruption, behavior: interruptionBehavior)
-        try database.markCommitted(generation: targetGeneration)
+        try database.markCommitted(generation: transaction.targetGeneration)
         try interruptIfRequested(.databaseCommitted, interruption, behavior: interruptionBehavior)
 
-        try? fileManager.removeItem(at: transactionURL)
+        try? fileManager.removeItem(at: transaction.url)
         return try openVerified(at: packageURL)
     }
 
@@ -1735,85 +1750,44 @@ private enum GlifiProjectPackageIO {
         _ = try GlifiQualitativeState(events: events)
         let records = observedSnapshot.qualitativeEvents + [record]
 
-        let transactionID = UUID().uuidString.lowercased()
-        let transactionURL = packageURL.appending(
-            path: "transactions/\(transactionID)",
-            directoryHint: .isDirectory
-        )
-        let packageDirectory = try GlifiPackageDirectory(at: packageURL)
-        let transactionDirectory = try packageDirectory.openDirectory(named: "transactions")
-            .createNewDirectory(named: transactionID)
-        let targetGeneration = observedSnapshot.generation + 1
-        try transactionDirectory.writeFile(
-            try GlifiCanonicalJSON.encode(
-                TransactionState(
-                    transactionID: transactionID,
-                    baseGeneration: observedSnapshot.generation,
-                    targetGeneration: targetGeneration,
-                    state: "staging"
-                )
-            ),
-            named: "transaction.json"
-        )
-        try transactionDirectory.writeFile(data, named: "qualitative-event")
+        let transaction = try stageTransaction(
+            in: packageURL, baseGeneration: observedSnapshot.generation)
+        try transaction.directory.writeFile(data, named: "qualitative-event")
         try interruptIfRequested(.staged, interruption, behavior: interruptionBehavior)
         try promoteArtifactObject(
-            "qualitative-event", from: transactionDirectory,
+            "qualitative-event", from: transaction.directory,
             relativePath: record.objectPath,
             expectedDigest: record.contentDigest,
             expectedByteCount: record.byteCount,
             maximumByteCount: GlifiProjectPackage.maximumInvestigationEventByteCount,
-            in: packageDirectory
+            in: transaction.packageDirectory
         )
         try interruptIfRequested(.objectPromoted, interruption, behavior: interruptionBehavior)
         let rootDigest = try qualitativeRootDigest(records)
-        let recordDigest = try generationRecordDigest(
-            projectID: observedSnapshot.projectID,
-            generation: targetGeneration,
-            baseGeneration: observedSnapshot.generation,
-            sourceRootDigest: observedSnapshot.sourceRootDigest,
-            sourceCount: observedSnapshot.sources.count,
-            artifactRootDigest: observedSnapshot.artifactRootDigest,
-            artifactCount: observedSnapshot.artifacts.count,
-            investigationRootDigest: observedSnapshot.investigationRootDigest,
-            investigationEventCount: observedSnapshot.investigationEvents.count,
-            qualitativeRootDigest: rootDigest,
-            qualitativeEventCount: records.count
+        let manifest = try makeCandidateManifest(
+            after: observedSnapshot, generation: transaction.targetGeneration,
+            qualitativeRoot: .init(digest: rootDigest, count: records.count)
         )
         let database = try GlifiSQLiteProjectStore.open(at: databaseURL(in: packageURL))
         try database.discardGenerations(after: observedSnapshot.generation)
         try database.prepareQualitativeGeneration(
-            generation: targetGeneration,
+            generation: transaction.targetGeneration,
             baseGeneration: observedSnapshot.generation,
-            recordDigest: recordDigest,
+            recordDigest: manifest.generationRecordDigest,
             qualitativeRootDigest: rootDigest,
             event: record,
             sequence: observedSnapshot.qualitativeEvents.count
         )
         try interruptIfRequested(.databasePrepared, interruption, behavior: interruptionBehavior)
-        let manifest = GlifiProjectManifest(
-            projectID: observedSnapshot.projectID,
-            generation: targetGeneration,
-            baseGeneration: observedSnapshot.generation,
-            generationRecordDigest: recordDigest,
-            sourceRootDigest: observedSnapshot.sourceRootDigest,
-            sourceCount: observedSnapshot.sources.count,
-            artifactRootDigest: observedSnapshot.artifactRootDigest,
-            artifactCount: observedSnapshot.artifacts.count,
-            investigationRootDigest: observedSnapshot.investigationRootDigest,
-            investigationEventCount: observedSnapshot.investigationEvents.count,
-            qualitativeRootDigest: rootDigest,
-            qualitativeEventCount: records.count
-        )
-        let candidateURL = transactionURL.appending(path: "manifest.json")
+        let candidateURL = transaction.url.appending(path: "manifest.json")
         try prepareCandidateManifest(
-            manifest, in: transactionDirectory,
+            manifest, in: transaction.directory,
             interruption: interruption, interruptionBehavior: interruptionBehavior)
         _ = try fileManager.replaceItemAt(manifestURL(in: packageURL), withItemAt: candidateURL)
         try interruptIfRequested(.manifestReplaced, interruption, behavior: interruptionBehavior)
-        try database.markCommitted(generation: targetGeneration)
+        try database.markCommitted(generation: transaction.targetGeneration)
         try interruptIfRequested(.databaseCommitted, interruption, behavior: interruptionBehavior)
-        try? fileManager.removeItem(at: transactionURL)
+        try? fileManager.removeItem(at: transaction.url)
         return try openVerified(at: packageURL)
     }
 
@@ -1910,83 +1884,42 @@ private enum GlifiProjectPackageIO {
             )
         }
 
-        let transactionID = UUID().uuidString.lowercased()
-        let transactionURL = packageURL.appending(
-            path: "transactions/\(transactionID)",
-            directoryHint: .isDirectory
-        )
-        let packageDirectory = try GlifiPackageDirectory(at: packageURL)
-        let transactionDirectory = try packageDirectory.openDirectory(named: "transactions")
-            .createNewDirectory(named: transactionID)
-        let targetGeneration = observedSnapshot.generation + 1
-        try transactionDirectory.writeFile(
-            try GlifiCanonicalJSON.encode(
-                TransactionState(
-                    transactionID: transactionID,
-                    baseGeneration: observedSnapshot.generation,
-                    targetGeneration: targetGeneration,
-                    state: "staging"
-                )
-            ),
-            named: "transaction.json"
-        )
-        try transactionDirectory.writeFile(data, named: "investigation-event")
+        let transaction = try stageTransaction(
+            in: packageURL, baseGeneration: observedSnapshot.generation)
+        try transaction.directory.writeFile(data, named: "investigation-event")
         try promoteArtifactObject(
-            "investigation-event", from: transactionDirectory,
+            "investigation-event", from: transaction.directory,
             relativePath: record.objectPath,
             expectedDigest: record.contentDigest,
             expectedByteCount: record.byteCount,
             maximumByteCount: GlifiProjectPackage.maximumInvestigationEventByteCount,
-            in: packageDirectory
+            in: transaction.packageDirectory
         )
 
         let investigationRootDigest = try investigationRootDigest(events)
-        let recordDigest = try generationRecordDigest(
-            projectID: observedSnapshot.projectID,
-            generation: targetGeneration,
-            baseGeneration: observedSnapshot.generation,
-            sourceRootDigest: observedSnapshot.sourceRootDigest,
-            sourceCount: observedSnapshot.sources.count,
-            artifactRootDigest: observedSnapshot.artifactRootDigest,
-            artifactCount: observedSnapshot.artifacts.count,
-            investigationRootDigest: investigationRootDigest,
-            investigationEventCount: events.count,
-            qualitativeRootDigest: observedSnapshot.qualitativeRootDigest,
-            qualitativeEventCount: observedSnapshot.qualitativeEvents.count
+        let manifest = try makeCandidateManifest(
+            after: observedSnapshot, generation: transaction.targetGeneration,
+            investigationRoot: .init(digest: investigationRootDigest, count: events.count)
         )
         let database = try GlifiSQLiteProjectStore.open(at: databaseURL(in: packageURL))
         try database.discardGenerations(after: observedSnapshot.generation)
         try database.prepareInvestigationGeneration(
-            generation: targetGeneration,
+            generation: transaction.targetGeneration,
             baseGeneration: observedSnapshot.generation,
-            recordDigest: recordDigest,
+            recordDigest: manifest.generationRecordDigest,
             sourceRootDigest: observedSnapshot.sourceRootDigest,
             artifactRootDigest: observedSnapshot.artifactRootDigest,
             investigationRootDigest: investigationRootDigest,
             events: events
         )
 
-        let manifest = GlifiProjectManifest(
-            projectID: observedSnapshot.projectID,
-            generation: targetGeneration,
-            baseGeneration: observedSnapshot.generation,
-            generationRecordDigest: recordDigest,
-            sourceRootDigest: observedSnapshot.sourceRootDigest,
-            sourceCount: observedSnapshot.sources.count,
-            artifactRootDigest: observedSnapshot.artifactRootDigest,
-            artifactCount: observedSnapshot.artifacts.count,
-            investigationRootDigest: investigationRootDigest,
-            investigationEventCount: events.count,
-            qualitativeRootDigest: observedSnapshot.qualitativeRootDigest,
-            qualitativeEventCount: observedSnapshot.qualitativeEvents.count
-        )
-        let candidateURL = transactionURL.appending(path: "manifest.json")
+        let candidateURL = transaction.url.appending(path: "manifest.json")
         try prepareCandidateManifest(
-            manifest, in: transactionDirectory,
+            manifest, in: transaction.directory,
             interruption: interruption, interruptionBehavior: interruptionBehavior)
         _ = try fileManager.replaceItemAt(manifestURL(in: packageURL), withItemAt: candidateURL)
-        try database.markCommitted(generation: targetGeneration)
-        try? fileManager.removeItem(at: transactionURL)
+        try database.markCommitted(generation: transaction.targetGeneration)
+        try? fileManager.removeItem(at: transaction.url)
         return try openVerified(at: packageURL)
     }
 

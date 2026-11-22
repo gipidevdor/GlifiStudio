@@ -1417,7 +1417,8 @@
           [
             4
           ]
-        ]
+        ],
+        "codebookClusterCount": 1
       },
       "methodIdentifier": "SOM-KH-online-inverse-two-phase-rectangular-v1",
       "validationStatus": "candidate",
@@ -1430,7 +1431,13 @@
           [
             4
           ]
-        ]
+        ],
+        "codebookClustering": {
+          "assignments": [
+            0,
+            0
+          ]
+        }
       }
     },
     {
@@ -1524,8 +1531,8 @@
               "a"
             ],
             "frequency": 2,
-            "lr": 3,
-            "flr": 6
+            "lr": 3.0,
+            "flr": 6.0
           }
         ],
         "independentOccurrenceCount": 2
@@ -1559,8 +1566,8 @@
               "a"
             ],
             "frequency": 2,
-            "lr": 2,
-            "flr": 4
+            "lr": 2.0,
+            "flr": 4.0
           }
         ],
         "independentOccurrenceCount": 2

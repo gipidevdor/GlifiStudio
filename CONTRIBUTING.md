@@ -28,6 +28,10 @@ make verify-app-store
 Swift e formattazione; non sostituiscono `make verify`. Segui il
 [contratto del loop di sviluppo](docs/loop-di-sviluppo-e-qualita.md).
 
+La priorità corrente è macOS: gli ingressi predefiniti e la CI usano il profilo
+macOS. `make verify-all` e `make verify-app-store-all` includono iPadOS e si usano
+soltanto quando viene richiesta la verifica di entrambe le piattaforme.
+
 Includi un test di regressione per ogni correzione riproducibile. Accompagna le
 modifiche agli hot path con benchmark, ai formati con prove di compatibilità e
 alla persistenza con prove di migrazione. L'interfaccia nasce in italiano:

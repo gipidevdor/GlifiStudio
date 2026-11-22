@@ -149,6 +149,35 @@ def main():
                          "labels": [f"c{i}" for i in range(2_250) for _ in range(2)],
                          "folds": 2, "seed": 0}), 7, "insufficientResources")
 
+        rejects(encoded({"operation": "som-kh", "matrix": [[0], [1]], "width": 1, "height": 1,
+                         "initialCodebooks": None}), 3, "invalidInput")
+        rejects(encoded({"operation": "som-kh", "matrix": [[0], [1]], "width": 1, "height": 1,
+                         "codebookClusterCount": None}), 3, "invalidInput")
+        rejects(encoded({"operation": "som-kh", "matrix": [[0], [1]], "width": 1, "height": 1,
+                         "firstPhase": {"steps": 1, "initialLearningRate": .05,
+                                        "initialRadius": 1, "secret-canary": 1}}), 3, "invalidInput")
+        rejects(encoded({"operation": "matrix-per-thousand", "matrix": [[1]], "exposures": [0]}), 5, "insufficientData")
+        rejects(encoded({"operation": "matrix-zscore", "matrix": [[2, 2]], "axis": "rows"}), 5, "insufficientData")
+        rejects(encoded({"operation": "word-context", "targetIDs": ["a"], "contextIDs": ["b"],
+                         "levels": [{"level": "sentence", "targetCounts": [[1]],
+                                     "contextCounts": [[1], [2]]}]}), 3, "invalidInput")
+        rejects(encoded({"operation": "mds-ordinal", "matrix": [[0, 1], [1, 0]],
+                         "dimensions": 1, "ties": "tertiary"}), 3, "invalidInput")
+        rejects(encoded({"operation": "kh-collocation", "counts": {"jointCount": 1,
+                         "nodeFrequency": 10, "collocateFrequency": 20,
+                         "corpusTokenCount": 15, "windowSpan": 10}}), 3, "invalidInput")
+        rejects(encoded({"operation": "term-scores", "candidates": [{"components": ["a"], "frequency": 0}],
+                         "preprocessingIdentifier": "synthetic-v1"}), 3, "invalidInput")
+        rejects(encoded({"operation": "term-scores", "candidates": [{"components": ["a", "b"], "frequency": 1}],
+                         "preprocessingIdentifier": "synthetic-v1", "maximumWork": 1}), 7, "insufficientResources")
+        rejects(encoded({"operation": "incremental-classifier", "documents": [["a"]], "labels": ["A"],
+                         "predictionDocuments": [["a"]]}), 5, "insufficientData")
+        rejects(encoded({"operation": "continue-classifier", "documents": [], "labels": [],
+                         "state": {"classes": ["A", "B"], "vocabulary": ["a"],
+                                   "documentCounts": [1, 1], "tokenCounts": [[-1], [1]], "smoothing": 1}}), 3, "invalidInput")
+        rejects(encoded({"operation": "validate-classifier-kappa", "documents": [["a"], ["b"]],
+                         "labels": ["A", "B"], "folds": 2, "seed": 0}), 5, "insufficientData")
+
         if os.geteuid() != 0:
             protected = directory / "secret-canary-protected.json"
             protected.write_text(json.dumps(cases[0]["request"]))

@@ -24,10 +24,15 @@ public enum GlifiStudioTermAdjacencyMode: String, Codable, Sendable { case token
 
 /// Aligned target/context counts within one declared aggregation level.
 public struct GlifiStudioKHContextCounts: Codable, Equatable, Sendable {
+    /// Caller-declared sentence, paragraph or heading aggregation unit.
     public let level: GlifiStudioKHContextLevel
+    /// Finite coefficient of this level; omitted input resolves to one.
     public let alpha: Double
+    /// Units by target words; a positive count selects its unit once, regardless of TF.
     public let targetCounts: [[Double]]
+    /// The same units by context words, aligned row for row with targetCounts.
     public let contextCounts: [[Double]]
+    /// Stores aligned count matrices and an explicit level weight for execution-time validation.
     public init(
         level: GlifiStudioKHContextLevel, alpha: Double = 1,
         targetCounts: [[Double]], contextCounts: [[Double]]
@@ -37,6 +42,7 @@ public struct GlifiStudioKHContextCounts: Codable, Equatable, Sendable {
         self.targetCounts = targetCounts
         self.contextCounts = contextCounts
     }
+    /// Decodes the four declared fields, rejecting unknown keys and resolving an omitted alpha to one.
     public init(from decoder: any Decoder) throws {
         let f = try khFields(decoder, allowed: ["level", "alpha", "targetCounts", "contextCounts"])
         self.init(
@@ -48,14 +54,19 @@ public struct GlifiStudioKHContextCounts: Codable, Equatable, Sendable {
 
 /// One continuous online SOM phase; these are observation updates, not epochs.
 public struct GlifiStudioKHSOMPhase: Codable, Equatable, Sendable {
+    /// Number of sequential observation updates, rather than complete data epochs.
     public let steps: Int
+    /// Positive initial coefficient of the inverse-time learning-rate schedule.
     public let initialLearningRate: Double
+    /// Positive starting neighborhood radius in grid-distance units, tending linearly to one.
     public let initialRadius: Double
+    /// Stores one continuous phase schedule, which the training operator validates before use.
     public init(steps: Int, initialLearningRate: Double, initialRadius: Double) {
         self.steps = steps
         self.initialLearningRate = initialLearningRate
         self.initialRadius = initialRadius
     }
+    /// Decodes the three required phase parameters without inferring a schedule.
     public init(from decoder: any Decoder) throws {
         let f = try khFields(decoder, allowed: ["steps", "initialLearningRate", "initialRadius"])
         self.init(
@@ -71,11 +82,17 @@ public struct GlifiStudioKHSOMPhase: Codable, Equatable, Sendable {
 
 /// Global token counts and window observations; the universe differs from a 2×2 window table.
 public struct GlifiStudioKHCollocationInput: Codable, Equatable, Sendable {
+    /// Observed node-collocate pairs within the declared window, including overlapping windows.
     public let jointCount: Int
+    /// Node occurrences in the complete corpus before vocabulary filtering.
     public let nodeFrequency: Int
+    /// Collocate occurrences in the same complete corpus.
     public let collocateFrequency: Int
+    /// Complete corpus token exposure, rather than the number of window opportunities.
     public let corpusTokenCount: Int
+    /// Number of admitted offsets around a node occurrence, excluding its own position.
     public let windowSpan: Int
+    /// Stores global frequencies and window observations for validation by the score operator.
     public init(
         jointCount: Int, nodeFrequency: Int, collocateFrequency: Int,
         corpusTokenCount: Int, windowSpan: Int
@@ -86,6 +103,7 @@ public struct GlifiStudioKHCollocationInput: Codable, Equatable, Sendable {
         self.corpusTokenCount = corpusTokenCount
         self.windowSpan = windowSpan
     }
+    /// Decodes the five required counts while rejecting unknown input fields.
     public init(from decoder: any Decoder) throws {
         let f = try khFields(
             decoder,
@@ -110,12 +128,16 @@ public struct GlifiStudioKHCollocationInput: Codable, Equatable, Sendable {
 
 /// An independently observed compound; nested occurrences must not be counted twice.
 public struct GlifiStudioTermCandidate: Codable, Equatable, Sendable {
+    /// Ordered lexical keys already segmented by the caller, without an inferred join operation.
     public let components: [String]
+    /// Positive independent occurrences of this complete candidate, excluding nested occurrences.
     public let frequency: Int
+    /// Stores a declared candidate and its independent frequency without inferring linguistic structure.
     public init(components: [String], frequency: Int) {
         self.components = components
         self.frequency = frequency
     }
+    /// Decodes the required component sequence and frequency, rejecting unknown keys.
     public init(from decoder: any Decoder) throws {
         let f = try khFields(decoder, allowed: ["components", "frequency"])
         self.init(
@@ -125,13 +147,21 @@ public struct GlifiStudioTermCandidate: Codable, Equatable, Sendable {
 
 /// A caller-annotated lexical token, retaining exact UTF-8 source coordinates.
 public struct GlifiStudioTermToken: Codable, Equatable, Sendable {
+    /// Exact token surface whose UTF-8 bytes must match the indicated source interval.
     public let surface: String
+    /// Caller-supplied lexical key used for candidate formation, without automatic lemmatization.
     public let base: String
+    /// Exact backend POS label, or nil when unavailable; extraction requiring POS then fails.
     public let partOfSpeech: String?
+    /// Inclusive byte offset of the token in the original document text.
     public let startUTF8: Int
+    /// Exclusive byte offset of the token in the original document text.
     public let endUTF8: Int
+    /// Zero-based caller sentence identity used to prevent cross-sentence compounds.
     public let sentence: Int
+    /// Zero-based caller paragraph identity used to prevent cross-paragraph compounds.
     public let paragraph: Int
+    /// Stores explicit lexical annotations and half-open source offsets for later validation.
     public init(
         surface: String, base: String, partOfSpeech: String? = nil,
         startUTF8: Int, endUTF8: Int, sentence: Int = 0, paragraph: Int = 0
@@ -144,6 +174,7 @@ public struct GlifiStudioTermToken: Codable, Equatable, Sendable {
         self.sentence = sentence
         self.paragraph = paragraph
     }
+    /// Decodes token evidence, preserving an absent or null POS and omitted boundary identities as zero.
     public init(from decoder: any Decoder) throws {
         let f = try khFields(
             decoder,
@@ -166,10 +197,15 @@ public struct GlifiStudioTermToken: Codable, Equatable, Sendable {
 
 /// A preannotated document; no tokenizer or language model is silently selected.
 public struct GlifiStudioTermDocument: Codable, Equatable, Sendable {
+    /// Caller document identity retained in every extracted occurrence.
     public let id: String
+    /// Original source text used to validate exact UTF-8 surfaces and evidence intervals.
     public let text: String
+    /// Caller-annotated tokens in source order, without an implicit tokenizer or tagger.
     public let tokens: [GlifiStudioTermToken]
+    /// Caller provenance identifying how lexical keys and POS annotations were produced.
     public let linguisticContract: String
+    /// Stores a source document and its declared annotations without selecting a language backend.
     public init(
         id: String, text: String, tokens: [GlifiStudioTermToken], linguisticContract: String
     ) {
@@ -178,6 +214,7 @@ public struct GlifiStudioTermDocument: Codable, Equatable, Sendable {
         self.tokens = tokens
         self.linguisticContract = linguisticContract
     }
+    /// Decodes the four required document fields, rejecting unknown input keys.
     public init(from decoder: any Decoder) throws {
         let f = try khFields(decoder, allowed: ["id", "text", "tokens", "linguisticContract"])
         self.init(
@@ -194,11 +231,17 @@ public struct GlifiStudioTermDocument: Codable, Equatable, Sendable {
 
 /// Explicit POS runs and exclusion keys used to form independent compounds.
 public struct GlifiStudioTermExtractionRule: Codable, Equatable, Sendable {
+    /// Caller versioned identity of the complete candidate-formation policy.
     public let identifier: String
+    /// Exact POS labels admitted into a maximal candidate run.
     public let allowedPartsOfSpeech: [String]
+    /// Explicit excluded lexical keys that split runs, with no inferred stopword list.
     public let ignoredKeys: [String]
+    /// Minimum admitted maximal-run length; the default two selects compounds.
     public let minimumComponents: Int
+    /// Maximum admitted maximal-run length; longer runs fail rather than truncate.
     public let maximumComponents: Int
+    /// Stores explicit POS and exclusion policies, defaulting compound lengths to two through 64.
     public init(
         identifier: String, allowedPartsOfSpeech: [String], ignoredKeys: [String] = [],
         minimumComponents: Int = 2, maximumComponents: Int = 64
@@ -209,6 +252,7 @@ public struct GlifiStudioTermExtractionRule: Codable, Equatable, Sendable {
         self.minimumComponents = minimumComponents
         self.maximumComponents = maximumComponents
     }
+    /// Decodes the declared rule and resolves only omitted exclusions and component bounds to defaults.
     public init(from decoder: any Decoder) throws {
         let f = try khFields(
             decoder,
@@ -233,11 +277,17 @@ public struct GlifiStudioTermExtractionRule: Codable, Equatable, Sendable {
 
 /// Serializable transient sufficient statistics; this does not change the project format.
 public struct GlifiStudioNaiveBayesTrainingState: Codable, Equatable, Sendable {
+    /// Unique class labels in the canonical order required when restoring Core statistics.
     public let classes: [String]
+    /// Unique training terms in canonical order, including newly learned terms after continuation.
     public let vocabulary: [String]
+    /// Positive training-document totals aligned with classes, including empty documents.
     public let documentCounts: [Int]
+    /// Nonnegative exact integer counts indexed by class and then vocabulary position.
     public let tokenCounts: [[Int]]
+    /// Positive symmetric pseudocount retained across all updates, defaulting to one.
     public let smoothing: Double
+    /// Stores transient sufficient statistics for validation before restoration or continuation.
     public init(
         classes: [String], vocabulary: [String], documentCounts: [Int],
         tokenCounts: [[Int]], smoothing: Double = 1
@@ -248,6 +298,7 @@ public struct GlifiStudioNaiveBayesTrainingState: Codable, Equatable, Sendable {
         self.tokenCounts = tokenCounts
         self.smoothing = smoothing
     }
+    /// Decodes only the declared statistics, resolving an omitted smoothing value to one.
     public init(from decoder: any Decoder) throws {
         let f = try khFields(
             decoder,

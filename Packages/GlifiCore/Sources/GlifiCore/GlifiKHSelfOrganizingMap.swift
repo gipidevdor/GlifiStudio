@@ -50,6 +50,10 @@ public struct GlifiKHSOMResult: Equatable, Sendable {
     public let neighborhoodDistortion: Double
     /// Fraction whose first two matching units are not immediate grid neighbors.
     public let topographicError: Double
+    /// Median Euclidean distance to immediate grid neighbors, in row-major order.
+    public let uMatrix: [Double]
+    /// Optional Ward hierarchy and cut of these final codebooks, without another SOM fit.
+    public let codebookClustering: GlifiSOMCodebookClustering?
     /// Completed observation updates; the profile always completes both declared schedules.
     public var completedSteps: Int { firstPhase.steps + secondPhase.steps }
 }
@@ -85,10 +89,13 @@ extension GlifiExploratoryAnalysis {
     /// Input is already prepared numerical data: no implicit z-scores or text weighting.
     /// The native scalar-update implementation is original; R RNG or degenerate PCA
     /// basis identity is not promised. Nonrepresentable restored diagnostics fail closed.
+    /// U-matrix diagnostics always use the final codebooks. An optional Ward cut in
+    /// 1...width*height reuses those codebooks; its full work and cells are admitted before fitting.
     public static func khSelfOrganizingMap(
         _ matrix: [[Double]], width: Int, height: Int,
         firstPhase: GlifiKHSOMPhase? = nil, secondPhase: GlifiKHSOMPhase? = nil,
         topology: GlifiSOMTopology = .hexagonal, initialCodebooks: [[Double]]? = nil,
+        codebookClusterCount: Int? = nil,
         limits: GlifiExploratoryLimits = .standard
     ) throws -> GlifiKHSOMResult {
         let columns = try validateExploratoryMatrix(matrix, limits: limits)
@@ -106,7 +113,7 @@ extension GlifiExploratoryAnalysis {
             radius: Double(min(3, min(width, height))))
         try khSOMAdmission(
             rows: matrix.count, columns: columns, units: units, phases: [first, second],
-            pca: initialCodebooks == nil, limits: limits)
+            pca: initialCodebooks == nil, clusterCount: codebookClusterCount, limits: limits)
         if let initialCodebooks {
             for row in initialCodebooks {
                 try Task.checkCancellation()
@@ -118,7 +125,9 @@ extension GlifiExploratoryAnalysis {
         let normalized = try khSOMNormalized(matrix, codebooks: initialCodebooks)
         var codebooks =
             try normalized.codebooks
-            ?? khSOMPCA(normalized.values, width: width, height: height, limits: limits)
+            ?? khSOMPCA(
+                normalized.values, width: width, height: height,
+                codebookAnalyses: true, clusterCount: codebookClusterCount, limits: limits)
         let initial = try initialCodebooks ?? khSOMRestore(codebooks, scale: normalized.scale)
         try khSOMTrain(
             normalized.values, codebooks: &codebooks, phase: first,
@@ -131,6 +140,16 @@ extension GlifiExploratoryAnalysis {
             normalized.values, codebooks: codebooks, width: width,
             topology: topology, scale: normalized.scale)
         let output = try khSOMRestore(codebooks, scale: normalized.scale)
+        // Only geometry/codebooks are consumed by these existing operations. The adapter's
+        // batch identifier, epochs, convergence and seed are never returned or presented.
+        let geometry = GlifiSOMResult(
+            topology: topology, width: width, height: height, prototypes: output,
+            assignments: [], quantizationError: 0, topographicError: 0,
+            epochs: 0, converged: false, seed: 0)
+        let uMatrix = try selfOrganizingMapUMatrix(geometry, limits: limits)
+        let clustering = try codebookClusterCount.map {
+            try clusterSelfOrganizingMapCodebooks(geometry, clusterCount: $0, limits: limits)
+        }
         try Task.checkCancellation()
         return GlifiKHSOMResult(
             methodIdentifier: topology == .hexagonal
@@ -143,7 +162,8 @@ extension GlifiExploratoryAnalysis {
             initialCodebooks: initial, firstPhaseCodebooks: intermediate, prototypes: output,
             assignments: diagnostics.assignments, quantizationError: diagnostics.error,
             neighborhoodDistortion: diagnostics.distortion,
-            topographicError: diagnostics.topographic)
+            topographicError: diagnostics.topographic, uMatrix: uMatrix,
+            codebookClustering: clustering)
     }
 }
 
@@ -189,7 +209,7 @@ private func khSOMConsume(_ factors: [Int], budget: inout Int) throws {
 
 private func khSOMAdmission(
     rows: Int, columns: Int, units: Int, phases: [GlifiKHSOMPhase],
-    pca: Bool, limits: GlifiExploratoryLimits
+    pca: Bool, clusterCount: Int? = nil, limits: GlifiExploratoryLimits
 ) throws {
     var cells = limits.maximumCells
     try khSOMConsume([3, rows, columns], budget: &cells)
@@ -210,7 +230,34 @@ private func khSOMAdmission(
         try khSOMConsume([2, phase.steps, units, columns], budget: &work)
     }
     try khSOMConsume([2, rows, units, columns], budget: &work)
+    if !phases.isEmpty {
+        if let clusterCount {
+            guard clusterCount >= 1, clusterCount <= units else {
+                throw exploratoryFailure("som.invalid-cluster-count")
+            }
+            guard units <= limits.maximumPairwiseObjects else {
+                throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
+            }
+        }
+        try khSOMCodebookAnalysisCells(units: units, clusterCount: clusterCount, budget: &cells)
+        try khSOMConsume([7, units, columns], budget: &work)
+        if clusterCount != nil {
+            try khSOMConsume([units, units, units, columns], budget: &work)
+            try khSOMConsume([units, units, columns], budget: &work)
+            try khSOMConsume([3, units, columns], budget: &work)
+        }
+    }
     try Task.checkCancellation()
+}
+
+private func khSOMCodebookAnalysisCells(units: Int, clusterCount: Int?, budget: inout Int) throws {
+    try khSOMConsume([units], budget: &budget)
+    // Bounded neighbor/median scratch buffers of the existing U-matrix implementation.
+    try khSOMConsume([32], budget: &budget)
+    if clusterCount != nil {
+        try khSOMConsume([4, units, units], budget: &budget)
+        try khSOMConsume([8, units], budget: &budget)
+    }
 }
 
 private func khSOMNormalized(_ matrix: [[Double]], codebooks: [[Double]]? = nil) throws
@@ -240,7 +287,9 @@ private func khSOMNormalized(_ matrix: [[Double]], codebooks: [[Double]]? = nil)
 }
 
 private func khSOMPCA(
-    _ data: [[Double]], width: Int, height: Int, limits: GlifiExploratoryLimits
+    _ data: [[Double]], width: Int, height: Int,
+    codebookAnalyses: Bool = false, clusterCount: Int? = nil,
+    limits: GlifiExploratoryLimits
 ) throws -> [[Double]] {
     let columns = data[0].count
     let means = (0..<columns).map { axis in
@@ -251,7 +300,9 @@ private func khSOMPCA(
         return Array(repeating: means, count: width * height)
     }
     let centered = data.map { row in row.indices.map { row[$0] - means[$0] } }
-    let svd = try khSOMPrincipalAxes(centered, units: width * height, limits: limits)
+    let svd = try khSOMPrincipalAxes(
+        centered, units: width * height, codebookAnalyses: codebookAnalyses,
+        clusterCount: clusterCount, limits: limits)
     try Task.checkCancellation()
     func offset(_ axis: Int, _ column: Int) -> Double {
         guard axis < svd.values.count else { return 0 }
@@ -272,7 +323,8 @@ private func khSOMPCA(
 /// Only thin right vectors are computed (no U); the returned representation retains
 /// two axes. The standard dgesvd API computes all min(m,n) thin right vectors.
 private func khSOMPrincipalAxes(
-    _ input: [[Double]], units: Int, limits: GlifiExploratoryLimits
+    _ input: [[Double]], units: Int, codebookAnalyses: Bool, clusterCount: Int?,
+    limits: GlifiExploratoryLimits
 ) throws -> (values: [Double], vectors: [[Double]]) {
     try Task.checkCancellation()
     let rows = input.count
@@ -286,6 +338,9 @@ private func khSOMPrincipalAxes(
     try khSOMConsume([7, rows, columns], budget: &remaining)
     try khSOMConsume([4, rank, rank], budget: &remaining)
     try khSOMConsume([4, units, columns], budget: &remaining)
+    if codebookAnalyses {
+        try khSOMCodebookAnalysisCells(units: units, clusterCount: clusterCount, budget: &remaining)
+    }
     var matrix = (0..<columns).flatMap { column in input.map { $0[column] } }
     var values = [Double](repeating: 0, count: rank)
     var right = [Double](repeating: 0, count: rank * columns)

@@ -91,6 +91,33 @@ func naiveBayesVocabularyBudgetSparseOrdering() throws {
     #expect(output[0].ignoredTokenCount == 0)
 }
 
+@Test("Cross-validation reserves repeated vocabulary and raw token bytes across all folds")
+func naiveBayesVocabularyBudgetCrossValidation() throws {
+    let rare = String(repeating: "r", count: 300)
+    var documents = [[String]](repeating: ["x"], count: 12)
+    documents[0] = [rare]
+    let labels = [String](repeating: "A", count: 6) + [String](repeating: "B", count: 6)
+    for maximumWork in [1_000, 3_000] {
+        do {
+            _ = try GlifiNaiveBayes.crossValidate(
+                documents: documents, labels: labels, folds: 6, seed: 300,
+                limits: .init(maximumWork: maximumWork))
+            Issue.record("Fold-specific identity and token hashing escaped the cumulative budget")
+        } catch let failure as GlifiFailure {
+            #expect(failure.category == .insufficientResources)
+        }
+    }
+    let original = try GlifiNaiveBayes.crossValidate(
+        documents: documents, labels: labels, folds: 6, seed: 300)
+    let bounded = try GlifiNaiveBayes.crossValidate(
+        documents: documents, labels: labels, folds: 6, seed: 300,
+        limits: .init(maximumWork: 100_000))
+    #expect(bounded == original)
+    #expect(bounded.foldAssignments.count == 12)
+    #expect(bounded.predictions.count == 12)
+    #expect(bounded.confusion.flatMap { $0 }.reduce(0, +) == 12)
+}
+
 private func vocabularyBudgetUniformModel(_ vocabulary: [String]) -> GlifiNaiveBayesModel {
     GlifiNaiveBayesModel(
         classes: ["A", "B"], vocabulary: vocabulary,

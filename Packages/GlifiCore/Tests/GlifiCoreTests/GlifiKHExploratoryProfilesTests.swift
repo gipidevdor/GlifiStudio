@@ -232,7 +232,7 @@ func khClosureSOMDegenerateAndExtremeData() throws {
 @Test("SOM ammette il totale di fasi e buffer, rifiuta parametri incoerenti e cancella")
 func khClosureSOMAdmissionAndCancellation() async throws {
     let phase = GlifiKHSOMPhase(steps: 1, initialLearningRate: 0.05, initialRadius: 1)
-    for limits in [GlifiExploratoryLimits(maximumCells: 13), .init(maximumWork: 17)] {
+    for limits in [GlifiExploratoryLimits(maximumCells: 47), .init(maximumWork: 31)] {
         #expect(throws: GlifiFailure.self) {
             try GlifiExploratoryAnalysis.khSelfOrganizingMap(
                 [[0], [1]], width: 2, height: 1, firstPhase: phase, secondPhase: phase,
@@ -241,7 +241,7 @@ func khClosureSOMAdmissionAndCancellation() async throws {
     }
     _ = try GlifiExploratoryAnalysis.khSelfOrganizingMap(
         [[0], [1]], width: 2, height: 1, firstPhase: phase, secondPhase: phase,
-        initialCodebooks: [[0], [1]], limits: .init(maximumCells: 14, maximumWork: 18))
+        initialCodebooks: [[0], [1]], limits: .init(maximumCells: 48, maximumWork: 32))
     for invalid in [
         GlifiKHSOMPhase(steps: 0, initialLearningRate: 0.05, initialRadius: 1),
         .init(steps: 1, initialLearningRate: .nan, initialRadius: 1),
@@ -268,6 +268,57 @@ func khClosureSOMAdmissionAndCancellation() async throws {
             [[0, 1, 1], [1, 0, 2], [1, 2, 0]], ties: .primary)
     }
     await #expect(throws: CancellationError.self) { try await ordinal.value }
+}
+
+@Test("UMatrix e Ward del profilo online riusano i codebook finali e i vicini geometrici esatti")
+func khClosureSOMCodebookCompositions() throws {
+    let phase = GlifiKHSOMPhase(steps: 1, initialLearningRate: 0.05, initialRadius: 1)
+    for topology in [GlifiSOMTopology.hexagonal, .rectangular] {
+        let result = try GlifiExploratoryAnalysis.khSelfOrganizingMap(
+            [[0, 0], [4, 3]], width: 2, height: 2,
+            firstPhase: phase, secondPhase: phase, topology: topology,
+            initialCodebooks: [[0, 0], [4, 0], [0, 3], [4, 3]], codebookClusterCount: 2)
+        func distance(_ left: Int, _ right: Int) -> Double {
+            let x = result.prototypes[left][0] - result.prototypes[right][0]
+            let y = result.prototypes[left][1] - result.prototypes[right][1]
+            return sqrt(x * x + y * y)
+        }
+        let a = distance(0, 1)
+        let b = distance(0, 2)
+        let c = distance(1, 2)
+        let d = distance(1, 3)
+        let e = distance(2, 3)
+        let expected: [Double]
+        switch topology {
+        case .hexagonal:
+            expected = [(a + b) / 2, [a, c, d].sorted()[1], [b, c, e].sorted()[1], (d + e) / 2]
+        case .rectangular:
+            expected = [(a + b) / 2, (a + d) / 2, (b + e) / 2, (d + e) / 2]
+        }
+        khClosureExpectClose([result.uMatrix], [expected])
+        let cut = try #require(result.codebookClustering)
+        #expect(cut.assignments == [0, 1, 0, 1])
+        #expect(cut.tree.merges.count == 3)
+        #expect(result.methodIdentifier.contains("online-inverse-two-phase"))
+    }
+    for limits in [GlifiExploratoryLimits(maximumCells: 79), .init(maximumWork: 49)] {
+        #expect(throws: GlifiFailure.self) {
+            try GlifiExploratoryAnalysis.khSelfOrganizingMap(
+                [[0], [1]], width: 2, height: 1, firstPhase: phase, secondPhase: phase,
+                initialCodebooks: [[0], [1]], codebookClusterCount: 2, limits: limits)
+        }
+    }
+    let minimum = try GlifiExploratoryAnalysis.khSelfOrganizingMap(
+        [[0], [1]], width: 2, height: 1, firstPhase: phase, secondPhase: phase,
+        initialCodebooks: [[0], [1]], codebookClusterCount: 2,
+        limits: .init(maximumCells: 80, maximumWork: 50))
+    #expect(minimum.codebookClustering?.assignments == [0, 1])
+    for count in [0, 3] {
+        #expect(throws: GlifiFailure.self) {
+            try GlifiExploratoryAnalysis.khSelfOrganizingMap(
+                [[0], [1]], width: 2, height: 1, codebookClusterCount: count)
+        }
+    }
 }
 
 private func khClosurePairs() -> [GlifiOrdinalPair] {

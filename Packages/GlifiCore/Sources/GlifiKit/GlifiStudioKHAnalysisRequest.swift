@@ -4,6 +4,7 @@ import Foundation
 
 /// Explicit KH public profiles, sharing the canonical text-analysis envelope and CLI.
 public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
+    /// Sample n−1 standardization with an explicit treatment of constant vectors.
     case sampleZScores(
         matrix: [[Double]], axis: GlifiStudioKHMatrixAxis,
         constantPolicy: GlifiStudioKHConstantPolicy = .reject)
@@ -25,7 +26,8 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
     case somKH(
         matrix: [[Double]], width: Int, height: Int,
         firstPhase: GlifiStudioKHSOMPhase? = nil, secondPhase: GlifiStudioKHSOMPhase? = nil,
-        topology: GlifiStudioSOMTopology = .hexagonal, initialCodebooks: [[Double]]? = nil)
+        topology: GlifiStudioSOMTopology = .hexagonal, initialCodebooks: [[Double]]? = nil,
+        codebookClusterCount: Int? = nil)
     case collocationScores(GlifiStudioKHCollocationInput)
     case termScores(
         candidates: [GlifiStudioTermCandidate], preprocessingIdentifier: String,
@@ -42,6 +44,7 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
     case validateClassifierWithAgreement(
         documents: [[String]], labels: [String], folds: Int, seed: UInt64, smoothing: Double = 1)
 
+    /// Stable flat tag shared by the native and CLI dispatchers.
     public var operation: String {
         switch self {
         case .sampleZScores: "matrix-zscore"
@@ -117,7 +120,7 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
         case "som-kh":
             allowed = [
                 "matrix", "width", "height", "firstPhase", "secondPhase", "topology",
-                "initialCodebooks",
+                "initialCodebooks", "codebookClusterCount",
             ]
             let matrix: [[Double]] = try f.khRequired("matrix")
             let width: Int = try f.khRequired("width")
@@ -131,7 +134,8 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
                     "secondPhase",
                     khDefaultPhase(rows: matrix.count, width: width, height: height, first: false)),
                 topology: try f.khDefault("topology", .hexagonal),
-                initialCodebooks: try f.khOptional("initialCodebooks"))
+                initialCodebooks: try f.khOptional("initialCodebooks"),
+                codebookClusterCount: try f.khOptional("codebookClusterCount"))
         case "kh-collocation":
             allowed = ["counts"]
             self = .collocationScores(try f.khRequired("counts"))
@@ -198,7 +202,7 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
                 try budget.matrix(level.contextCounts)
                 try khFinite([level.alpha])
             }
-        case let .somKH(matrix, _, _, first, second, _, initial):
+        case let .somKH(matrix, _, _, first, second, _, initial, _):
             try budget.matrix(matrix)
             if let initial { try budget.matrix(initial) }
             for phase in [first, second].compactMap({ $0 }) {
@@ -262,6 +266,7 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
         }
     }
 
+    /// Writes resolved defaults to the existing text-analysis schema; prefer canonicalData at boundaries.
     public func encode(to encoder: any Encoder) throws {
         var f = encoder.container(keyedBy: TextAnalysisKey.self)
         try f.encode(GlifiStudioTextAnalysisRequest.schema, forKey: TextAnalysisKey("schema"))
@@ -298,7 +303,7 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
             try f.khEncode("matrix", matrix)
             try f.khEncode("width", width)
             try f.khEncode("height", height)
-        case let .somKH(matrix, width, height, first, second, topology, initial):
+        case let .somKH(matrix, width, height, first, second, topology, initial, clusters):
             try f.khEncode("matrix", matrix)
             try f.khEncode("width", width)
             try f.khEncode("height", height)
@@ -314,6 +319,7 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
                     ?? khDefaultPhase(
                         rows: matrix.count, width: width, height: height, first: false))
             if let initial { try f.khEncode("initialCodebooks", initial) }
+            if let clusters { try f.khEncode("codebookClusterCount", clusters) }
         case let .collocationScores(counts): try f.khEncode("counts", counts)
         case let .termScores(candidates, preprocessing, adjacency, work):
             try f.khEncode("candidates", candidates)

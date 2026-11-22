@@ -6,12 +6,12 @@
 | --- | --- |
 | Identificatore | GS-API-002 |
 | Tipo | Contratto del trasporto analitico transitorio |
-| Versione | 1.1.1 |
-| Stato | Trasporto e ponte di progetto verificati automaticamente; limiti in GS-VER-162 e GS-VER-222 |
+| Versione | 1.2.0 |
+| Stato | Trasporto storico verificato; nuovi profili KH implementati, verifica GS-VER-300 in corso |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
-| Approvazione | Prosecuzioni esplicite RF-087 e GUI; ADR-0034 |
-| Riferimenti | GS-API-001; GS-MET-001-23; RF-087; RQ-060; ADR-0032; ADR-0034; ADR-0042; GS-DOR-162; GS-DOR-222; GS-VER-234 |
+| Approvazione | Prosecuzioni esplicite RF-087 e GUI; ADR-0034 e ADR-0043 |
+| Riferimenti | GS-API-001; GS-MET-001-23; RF-087; RQ-060; ADR-0032; ADR-0034; ADR-0042; ADR-0043; GS-DOR-162; GS-DOR-222; GS-DOR-300; GS-VER-234; GS-VER-300 |
 
 ## Contratto
 
@@ -113,9 +113,93 @@ La codifica annotata fallisce quando richiede un valore sconosciuto. Gli offset
 UTF-8 si riferiscono al testo originale; il DTO conserva backend, OS, tagset,
 policy single-best e versione modello non esposta, senza attestare accuratezza.
 
+## Profili KH pubblici
+
+`GlifiStudioKHAnalysisRequest` si compone nel caso Swift
+`.advanced(.kh(request))`; `GlifiStudioKHAnalysis.execute(_:)` usa lo stesso
+percorso. I quattordici nuovi tag sono piatti nel medesimo envelope JSON schema 1
+e nel comando `text-analysis`: non introducono un comando, una chiave `kh` o
+un formato di progetto. Contratti matematici e fonti primarie sono in
+[GS-MET-001-23](../metodi-analitici/23-operatori-kh-coder.md).
+
+| Operazione | Parametri obbligatori | Default risolti |
+| --- | --- | --- |
+| `matrix-zscore` | `matrix, axis` | `constantPolicy=reject` |
+| `matrix-per-thousand` | `matrix, exposures` | `zeroExposurePolicy=reject` |
+| `word-context` | `levels, targetIDs, contextIDs` | `alpha=1` per livello |
+| `correspondence-scaled` | `matrix` | `rowScaling=principal, columnScaling=principal` |
+| `mds-ordinal` | `matrix` | `dimensions=2, ties=primary, seed=0, maximumIterations=300, tolerance=1e-8` |
+| `mds-ordinal-search` | `matrix` | `dimensions=2, ties=primary, starts=10, seed=0, maximumIterations=300, tolerance=1e-8` |
+| `som-pca-initialization` | `matrix, width, height` | nessuno |
+| `som-kh` | `matrix, width, height` | fasi come sotto; `topology=hexagonal`; `initialCodebooks, codebookClusterCount` assenti |
+| `kh-collocation` | `counts` | nessuno |
+| `term-scores` | `candidates, preprocessingIdentifier` | `adjacencyMode=token, maximumWork=100000000` |
+| `term-extraction` | `documents, rule` | `adjacencyMode=token, maximumWork=100000000` |
+| `incremental-classifier` | `documents, labels` | `smoothing=1, predictionDocuments=[]` |
+| `continue-classifier` | `state, documents, labels` | `predictionDocuments=[]` |
+| `validate-classifier-kappa` | `documents, labels, folds, seed` | `smoothing=1` |
+
+`axis` è `rows` o `columns`: ogni vettore usa media e deviazione standard
+campionaria con denominatore n−1, almeno due osservazioni e politica per costanti
+`reject` oppure `zeros`. `exposures` contiene il denominatore completo per riga;
+non è dedotto dalle colonne selezionate. `zeroExposurePolicy=zeros` ammette
+esposizione nulla soltanto se tutta la riga è nulla.
+
+Ogni elemento di `levels` contiene `level`, `targetCounts`, `contextCounts` e
+`alpha` opzionale. I livelli distinti sono `sentence, paragraph, h5, h4, h3, h2, h1`.
+Le righe delle due matrici rappresentano le stesse unità del livello; le colonne
+sono allineate rispettivamente a `targetIDs` e `contextIDs`, vocabolari unici per
+asse, anche sovrapposti. Il risultato conserva ID, livelli, pesi, supporti e medie
+condizionate pesate. Il trasporto non costruisce frasi o gerarchie.
+
+Gli scaling CA sono `principal`, `standard` e `symmetric` biplot, rispettivamente
+con potenze di σ pari a 1, 0 e 0.5, indipendenti per righe/colonne. Il biplot
+`symmetric` qui definito è distinto dalla mappa omonima del pacchetto R ca.
+Per l'ordinale, `ties=primary` ammette disparità diverse nello stesso tie;
+`secondary` le uguaglia. I default delle operazioni precedenti rimangono secondary.
+
+`som-kh` riceve dati già preparati. `firstPhase` e `secondPhase`, se fornite,
+contengono `steps`, `initialLearningRate`, `initialRadius`. Per n righe i default
+sono rispettivamente `(2n, 0.05, min(width,height))` e
+`(10n, 0.02, min(3,width,height))`; sono aggiornamenti online, non epoche batch.
+I codebook proseguono fra le fasi. `initialCodebooks` omesso seleziona PCA lineare
+canonica; un array fornito dichiara invece i prototipi iniziali.
+L'uscita conserva inizializzazione, fasi, prototipi intermedi/finali, assegnazioni,
+diagnostiche e `uMatrix`. `codebookClusterCount`, se presente, aggiunge
+`codebookClustering` Ward, con ammissione cumulativa prima del calcolo.
+`som-pca-initialization` espone separatamente i codebook PCA senza addestramento.
+
+`counts` dichiara `jointCount`, `nodeFrequency`, `collocateFrequency`,
+`corpusTokenCount`, `windowSpan`. Le frequenze sono TF globali di due chiavi
+distinte; lo span conta le posizioni ammesse escludendo il nodo. MI3/Z non usano
+i margini di opportunità 2×2. Il risultato espone i due identificatori,
+`mi3`, `zScore` e `expectedWindowCount`; i valori non definiti sono assenti.
+
+Le `candidates` di `term-scores` contengono `components` ordinati e `frequency`
+indipendente, senza ricontare le occorrenze contenute in candidate più lunghe.
+`adjacencyMode` è `token` o `type`; l'uscita conserva f, LR, FLR e statistiche
+dei componenti. `preprocessingIdentifier` dichiara la formazione delle candidate.
+Per `term-extraction`, ogni documento contiene `id`, `text`, `tokens` e
+`linguisticContract`. I token contengono `surface`, `base`, `startUTF8`, `endUTF8`,
+`partOfSpeech`, con `sentence=0, paragraph=0` se omessi. L'estrazione richiede
+POS presenti; superfici e offset devono coincidere con i byte della fonte.
+`rule` contiene `identifier`, `allowedPartsOfSpeech` e opzionalmente
+`ignoredKeys=[]`, `minimumComponents=2`, `maximumComponents=64`.
+L'uscita conserva regola risolta, ID/contratti linguistici, run indipendenti,
+indici dei token, intervalli UTF-8 e ranking. Questi ingressi operano su
+preannotazioni esplicite, senza selezionare un tokenizer inglese o giapponese.
+
+Lo `state` NB transitorio contiene `classes`, `vocabulary`, `documentCounts`,
+`tokenCounts` e `smoothing=1` se omesso. Continuare il training conserva i
+conteggi precedenti ed espande classi/vocabolario. L'uscita include stato,
+modello ispezionabile e predizioni quando definite. Uno stato a classe unica
+può essere continuato; la predizione richiede almeno due classi.
+`validate-classifier-kappa` restituisce predizioni fuori fold, matrice di
+confusione, accuratezza, κ e accordo osservato/atteso sulle stesse unità.
+
 ## Identità e risultati
 
-`canonicalData()` risolve i default, include schema/versione/operazione/seed e
+`canonicalData()` risolve i default, include schema/versione/operazione e seed dove applicabile e
 codifica con JSONEncoder, chiavi ordinate e slash non escaped. Spaziatura e ordine
 delle chiavi esterni non partecipano all'identità. Le stringhe non sono
 normalizzate dal trasporto; non si dichiara un'implementazione RFC 8785.
@@ -145,6 +229,8 @@ la presentazione nativa; il formato JSON v1 resta quello precedente.
 Lo stato è per identificatore esatto secondo GS-VER-161; gli identificatori
 ausiliari senza manifest dedicato (distanze, aggregazione, CV, reti, HAC) mantengono
 `candidate`. Il trasporto non promuove metodi né completa la revisione esterna V6.
+I nuovi identificatori KH restano `candidate`; la verifica integrata GS-VER-300
+è in corso e non modifica lo stato dei manifest preesistenti.
 
 ## Limiti e failure
 
@@ -162,6 +248,12 @@ testo, regole e path non attraversano le failure. L'apertura distingue
 `authorizationDenied` per permessi negati, `insufficientResources` per risorse
 esaurite, `invalidInput` per path assente/non regolare o link finale e
 `transientIO` per gli altri errori temporanei del filesystem.
+
+Il controllo delle chiavi ignote e dei tipi si applica anche a livelli di contesto,
+fasi SOM, conteggi KH, candidate, documenti/token/regole e stato NB annidati.
+Un campo opzionale assente può risolvere il default dichiarato; un `null`
+esplicito non lo sostituisce, inclusi `initialCodebooks` e `codebookClusterCount`.
+Resta distinta la convenzione di `groups`, dove `null` rappresenta un mancante.
 
 La decodifica dei DTO contenenti intervalli UTF-8 applica gli invarianti del
 costruttore: `0 ≤ start < end` e lunghezza rappresentabile. Range negativi,
@@ -240,21 +332,24 @@ trasporto in GS-VER-162 e registrate in GS-VER-222.
 ## Verifica
 
 [Fixture sintetiche condivise](../../Fixtures/TextAnalysis/v1/cases.json):
-30 casi presenti: i 15 storici e 15 aggiuntivi per comunità, layout, Prim,
-Simpson, ordinale/ricerca MDS, SOM esagonale, selezione LDA e pipeline linguistica.
-La baseline storica a 15 casi resta registrata in GS-VER-162; l’esecuzione del
-lotto ampliato e il nuovo gate sono registrati separatamente in GS-VER-233.
+52 casi presenti: i 30 precedenti e 22 aggiunti per i quattordici nuovi tag KH.
+Le nuove fixture coprono preparazioni/scaling, contesti, tie ordinali, PCA e
+SOM a due fasi, punteggi globali, LR/FLR e preannotazioni, stato incrementale e κ.
+La baseline a 15 casi resta registrata in GS-VER-162 e quella a 30 in
+GS-VER-233/234, ciascuna sulla propria revisione. La verifica integrata delle
+52 fixture è in corso in GS-VER-300: l'inventario non ne anticipa l'esito.
 Test Swift per identità canonica/default/UInt64, cancellazione e input ostili;
 confronto integrale CLI/Kit entro 1e-12 assoluto e relativo, con controlli golden
 indipendenti per i casi minimi, exit status, stdout/stderr e file speciali.
 Evidenza e limiti effettivi in [GS-VER-162](../evidenze/GS-VER-162-parita-operatori-kit-cli.md).
 
-La riverifica ha eseguito le stesse 30 fixture e 95 controlli CLI, inclusi nuovi
-rifiuti di grammatica e risorse, mantenendo lo schema/versione 1 e la parità
-numerica entro 1e-12. I test aggiuntivi verificano anche identità canonica,
-byte sorgenti e offset distinti per NFC/NFD. Esiti, stato del gate e limiti della
-revisione corrente sono in [GS-VER-234](../evidenze/GS-VER-234-riverifica-correttezza-completezza.md):
-la singola prova CLI non chiude il gate complessivo né promuove gli operatori.
+La riverifica storica GS-VER-234 ha eseguito 30 fixture e 95 controlli CLI,
+inclusi rifiuti di grammatica e risorse, mantenendo schema/versione 1 e parità
+numerica entro 1e-12. Quei test verificano anche identità canonica, byte sorgenti
+e offset distinti per NFC/NFD. Esiti e limiti di quella revisione rimangono in
+[GS-VER-234](../evidenze/GS-VER-234-riverifica-correttezza-completezza.md).
+La verifica del nuovo incremento è distinta; una prova CLI non chiude il gate
+complessivo né promuove gli operatori.
 
 ## Facciate dei laboratori espliciti (ADR-0041)
 
@@ -274,7 +369,9 @@ esistenti. La presentazione multivariata aggiunge metadati opzionali di
 silhouette, selezione dei termini e digest del corpus, compatibili con la
 decodifica dei DTO precedenti. Evidenza: [GS-VER-223](../evidenze/GS-VER-223-copertura-core-app.md).
 
-L’ampliamento è headless e transitorio secondo [ADR-0035](../adr/0035-completamento-nativo-kh-coder.md);
-nessuna promozione V6 esterna, nuova lingua, GUI, persistenza o dipendenza runtime
-segue dall’aggiunta delle operazioni. Il gate completo è superato localmente nel perimetro dichiarato
-in [GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md).
+L'ampliamento KH è headless e transitorio secondo
+[ADR-0043](../adr/0043-completezza-funzionale-kh-pubblico.md); l'aggiunta delle
+operazioni non promuove V6, nuove lingue automatiche, GUI o persistenza.
+Il gate locale di [GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md)
+resta riferito al suo perimetro storico. Il gate del nuovo incremento e le sue
+limitazioni saranno registrati in GS-VER-300, attualmente in corso.
