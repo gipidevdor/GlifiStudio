@@ -71,6 +71,38 @@ extension GlifiStudioKHAnalysisRequest {
             case let .wordAssociation(input):
                 let result = try GlifiKHWordAssociationAnalysis.scores(input.core())
                 return (GlifiKHWordAssociationScores.identifier, .wordAssociation(.init(result)))
+            case let .documentScores(counts, exposures, frequencies, corpus, mode):
+                let result = try GlifiKHDocumentScores.score(
+                    counts: counts, exposures: exposures, documentFrequencies: frequencies,
+                    corpusDocumentCount: corpus, mode: mode.core)
+                return (result.methodIdentifier, .documentScores(.init(result)))
+            case let .hierarchicalWardD2(dissimilarities):
+                let result = try GlifiKHLegacyClustering.wardD2(dissimilarities: dissimilarities)
+                return (result.methodIdentifier, .legacyClustering(.init(result)))
+            case let .chiSquare(counts, correction):
+                let result = try GlifiKHChiSquareAnalysis.test(counts, correction: correction.core)
+                return (result.methodIdentifier, .chiSquare(.init(result)))
+            case let .codeCrosstabSignificance(units, rules, groups, correction):
+                guard units.count == groups.count else {
+                    throw textRequestFailure("coding.invalid-groups")
+                }
+                let ruleSet = try GlifiCodingRuleSet(rules)
+                guard !ruleSet.names.isEmpty, units.count <= 5_000_000 / ruleSet.names.count else {
+                    throw textRequestFailure(
+                        "text-analysis.request-limit", category: "insufficientResources")
+                }
+                let documents = try units.map {
+                    try GlifiCodingDocument(id: $0.id, text: $0.text, variables: $0.variables)
+                }
+                // Reserve preparation plus both phases within the fixed 500M workflow budget.
+                let matrix = try ruleSet.evaluate(
+                    documents, limits: GlifiExploratoryLimits(maximumWork: 250_000_000))
+                let result = try GlifiKHCodingCrosstabAnalysis.analyze(
+                    matrix, groups: groups, correction: correction.core,
+                    limits: GlifiExploratoryLimits(maximumWork: 240_000_000))
+                return (
+                    GlifiKHCodingCrosstabResult.identifier, .codeCrosstabSignificance(.init(result))
+                )
             case let .termScores(candidates, preprocessing, adjacency, work):
                 let result = try GlifiTermExtraction.score(
                     candidates.map {
@@ -255,6 +287,26 @@ private extension GlifiStudioMDSOrdinalTies {
         switch self {
         case .primary: .primary
         case .secondary: .secondary
+        }
+    }
+}
+
+private extension GlifiStudioKHDocumentScoreMode {
+    var core: GlifiKHDocumentScoreMode {
+        switch self {
+        case .tf: .tf
+        case .tfIdf: .tfIdf
+        case .tfDividedByIdf: .tfDividedByIdf
+        }
+    }
+}
+
+private extension GlifiStudioKHChiSquareCorrection {
+    var core: GlifiKHChiSquareCorrection {
+        switch self {
+        case .automatic: .automatic
+        case .none: .none
+        case .yates: .yates
         }
     }
 }

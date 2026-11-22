@@ -6,8 +6,8 @@
 | --- | --- |
 | Identificatore | GS-MET-001-23 |
 | Tipo | Specifica dei contratti numerici e della copertura |
-| Versione | 1.5.2 |
-| Stato | Profili pubblici allineati al codice integrato; verifiche correnti distinte in GS-VER-301 |
+| Versione | 1.5.3 |
+| Stato | Profili pubblici implementati; versione unita verificata localmente in GS-VER-300 |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Ambito richiesto dall'iniziatore; promozione scientifica separata secondo ADR-0031 |
@@ -33,32 +33,33 @@ L’ampliamento è autorizzato in [ADR-0035](../adr/0035-completamento-nativo-kh
 | --- | --- |
 | Frequenze TF/DF, distribuzioni e filtri | GlifiCorpusAnalyzer; GlifiNGramFrequencyAnalysis; GlifiTermWeighting |
 | Ricerca di parole/documenti e KWIC | GlifiQueryParser/Evaluator; sessione GlifiKit esistente |
-| Associazione di parole e tabelle di contingenza | GlifiKeynessAnalysis; GlifiContingencyAnalysis; GlifiCollocationAnalysis; sette misure KH su TF globali e associazione condizione-termine su DF |
+| Associazione di parole e tabelle di contingenza | GlifiKeynessAnalysis; GlifiContingencyAnalysis; GlifiCollocationAnalysis; sette misure KH su TF globali, sei indici condizione-termine su DF, Pearson/Yates e residui distinti |
 | Analisi delle corrispondenze | CA-SVD-v1; coordinate principal, standard e biplot symmetric esplicite |
 | MDS classica, metrica, Kruskal, Sammon e SMACOF ordinale | GlifiExploratoryAnalysis; tie primary/secondary e ricerca multi-start con diagnostiche per avvio |
-| Clustering gerarchico | HAC esistente per vettori; Lance-Williams per dissimilarità single/complete/average |
+| Clustering gerarchico | HAC esistente per vettori; Lance-Williams single/complete/average e profilo algebrico KH Ward.D2 per dissimilarità |
 | CLARA sui documenti | CLARA-PAM-Euclidean-v1 |
 | Reti di co-occorrenza | Reti esistenti; Girvan–Newman, CNM, Walktrap, layout FR/KK e foresta Prim nativi |
 | Mappe auto-organizzanti | SOM batch esistente; profilo KH online a due fasi con PCA o codebook espliciti; U-matrix e Ward esistenti |
 | Classificazione supervisionata | Naive Bayes multinomiale; stato incrementale transitorio, modello ispezionabile e validazione stratificata con κ |
 | Topic model | LDA-collapsed-Gibbs-predictive-mean-v2, selezione K con diagnostiche e document completion; LSA e NMF esistenti |
 | Regole automatiche e frequenze dei codici | GlifiCodingRuleSet e matrice multi-label con evidenze UTF-8 |
-| Tabelle incrociate e similarità dei codici | crosstab con denominatori/mancanti espliciti; distanze condivise |
+| Tabelle incrociate e similarità dei codici | crosstab con denominatori/mancanti espliciti; Pearson/Yates presenza-assenza per codice; distanze condivise |
 | CA, MDS, clustering, rete e SOM dei codici | Stessi operatori numerici sulla matrice documento-codice |
 | Matrici documento-parola e documento-codice | Tabella sparsa, trasposizione bounded e matrice binaria dei codici |
 | Preparazione e matrice parola-contesto KH A.6.8 | GlifiKHMatrixPreparation: z-score campionario, esposizioni esterne e medie condizionate per livelli dichiarati |
+| Scoring dei documenti KH A.6.1 | TF con esposizioni complete, TF×IDF e TF/IDF con IDF log10 e divisore nullo sostituito da uno |
 | Rilevanza dei termini composti | GlifiTermExtraction: LR/FLR token/type e candidate da POS preannotati con evidenze UTF-8 |
 
 La riverifica di [GS-VER-234](../evidenze/GS-VER-234-riverifica-correttezza-completezza.md)
 ha accertato le lacune della revisione allora esaminata e resta un'evidenza
 storica. Il nuovo incremento [GS-DOR-300](../pianificazione/dor-completezza-funzionale-kh.md),
 autorizzato da [ADR-0043](../adr/0043-completezza-funzionale-kh-pubblico.md),
-introduce implementazioni dedicate per quei profili. GS-VER-300 conserva la
-fotografia a 14 profili KH e 52 fixture; il codice integrato comprende anche
-`word-association` e tutte le sette misure globali delle collocazioni. La verifica
-della composizione corrente è distinta in GS-VER-301: la presenza del codice
-non attesta il suo esito finale, una validazione esterna V6 o la parità con
-edizioni KH non pubbliche.
+introduce implementazioni dedicate per quei profili. GS-VER-300 registra il
+gate locale pre-merge superato del lotto a 19 profili KH, 63 fixture e 236 righe
+di oracolo. GS-VER-301 conserva la precedente integrazione pubblicata fino a
+`32b06f7`, con 15 profili KH e 54 fixture. La verifica combinata della nuova
+unione è superata in GS-VER-300; non attesta una validazione esterna V6
+o la parità con edizioni KH non pubbliche.
 
 | Profilo pubblico KH | Stato reale del profilo nativo |
 | --- | --- |
@@ -69,6 +70,9 @@ edizioni KH non pubbliche.
 | SOM KH a due fasi e inizializzazione PCA | Aggiornamenti online continui sugli stessi codebook; PCA lineare o inizializzazione esplicita |
 | Sette misure di collocazione KH (A.5.6) | `GlifiKHCollocationAnalysis`: MI, MI³, t, Z, Jaccard, Dice e log likelihood su TF globali e span dichiarati |
 | Associazione condizione-termine (A.5.7) | `GlifiKHWordAssociationAnalysis`: probabilità, differenziale, lift, Jaccard, Ochiai e direzione esatta su DF della stessa popolazione |
+| Scoring dei documenti (A.6.1) | Tre modalità con TF sull'esposizione completa e IDF log10 non smussata |
+| Ward.D2 su dissimilarità | Ricorrenza algebrica e altezze; nessuna falsa interpretazione come varianza euclidea |
+| Significatività delle tabelle dei codici (A.7.2) | Pearson/Yates, residui Pearson e standardizzati distinti; presenza/complemento per gruppo e codice |
 | Scaling CA | Proiezioni principal, standard e symmetric biplot con esponente di σ dichiarato per righe e colonne |
 | Addestramento NB incrementale e κ | Statistiche sufficienti transitorie aggiornabili, ispezione del modello e κ sulle stesse predizioni della CV |
 | TermExtract (A.4.4) | LR/FLR su candidate indipendenti, modalità token/type e regole POS su preannotazioni; nessuna certificazione di tokenizzazione inglese o giapponese |
@@ -102,8 +106,9 @@ dissimilarità simmetrica, non una metrica: può annullarsi per insiemi diversi
 inclusi uno nell’altro e non garantisce la disuguaglianza triangolare.
 I vettori nulli non hanno distanza coseno e producono failure tipizzata.
 Una coppia di colonne entrambe nulle non produce un arco di co-occorrenza.
-Ward richiede vettori euclidei secondo GS-MET-001-14: non si applica a una
-matrice Jaccard facendo finta che sia euclidea.
+Il Ward di varianza richiede vettori euclidei secondo GS-MET-001-14.
+Il profilo algebrico KH Ward.D2 descritto sotto opera invece su dissimilarità
+dichiarate, senza attribuire loro una geometria euclidea o incrementi di varianza.
 
 ### Preparazioni KH e coordinate CA
 
@@ -275,9 +280,11 @@ in ordine ciclico, BMU euclidea e aggiornamento gaussiano online. I riferimenti
 sono il [SOM pubblico di KH](https://github.com/ko-ichi-h/khcoder/blob/master/kh_lib/plotR/som.pm)
 e il [pacchetto R som](https://github.com/cran/som/blob/master/R/som.R).
 
-Per n righe i default sono `L1=2n`, `L2=10n`, learning rate iniziali
+Per U unità della griglia i default KH sono `L1=1000`, `L2=500U`, learning rate iniziali
 `0.05, 0.02`, raggi iniziali `min(width,height)` e `min(3,width,height)`;
-la topologia predefinita è esagonale. Ogni fase di L passi usa
+la topologia predefinita è esagonale. Questi numeri di passi sono quelli
+impostati dal frontend KH, distinti dai default del solo pacchetto R som.
+Ogni fase di L passi usa
 `alpha_t=alpha_0*C/(C+t)`, `C=L/100`, e
 `radius_t=1+(radius_0−1)*(L−t)/L`, per `t=1…L`.
 L'uscita conserva fasi, codebook iniziali/intermedi/finali, assegnazioni,
@@ -446,6 +453,63 @@ massimo 1.000.000.000. Frequenze traboccanti, valori non finiti e cancellazione
 impediscono la restituzione di risultati parziali. Kit e CLI applicano prima
 i propri limiti di trasporto, più restrittivi.
 
+## Scoring dei documenti e Ward.D2 algebrico
+
+Secondo [KH A.6.1](https://khcoder.net/en/manual_en_v3.pdf),
+`TF_it=count_it/exposure_i` usa la lunghezza completa positiva del documento,
+mentre `IDF_t=log10(N/DF_t)` usa il corpus di riferimento dichiarato.
+I tre profili sommano per documento TF, TF×IDF oppure TF/IDF;
+soltanto nell'ultima modalità un divisore IDF nullo è sostituito da uno.
+Non vi sono smoothing o logaritmi naturali impliciti. Un termine ubiquitario
+conserva IDF originale zero nell'uscita. Il risultato conserva esposizioni, DF,
+numerosità del corpus, IDF, contributi per termine e somme; i conteggi restano
+nella richiesta canonica, anche per sottoinsiemi selezionati di righe/colonne. Gli identificatori sono `KH-document-tf-v1`,
+`KH-document-tf-log10-idf-v1` e
+`KH-document-tf-divided-by-log10-idf-zero-one-v1`.
+
+`KH-hclust-WardD2-dissimilarities-v1` ammette dissimilarità simmetriche finite
+non negative, con diagonale nulla. Opera sui quadrati con la ricorrenza
+`d²_(AB),K=((nA+nK)d²_AK+(nB+nK)d²_BK−nK*d²_AB)/(nA+nB+nK)`;
+le altezze sono le radici dei quadrati selezionati, riportate nella scala originale.
+I tie esatti usano l'ordine canonico degli ID dei cluster.
+Il riferimento è [R hclust Ward.D2](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/hclust.html).
+Applicare la ricorrenza a Jaccard o coseno è un contratto algebrico; non attesta
+minimizzazione della varianza entro cluster. `wardIncrement` resta assente,
+distinto dal Ward euclideo di GS-MET-001-14 e dal Ward dei codebook SOM.
+
+## Pearson, Yates e significatività dei codici
+
+`KH-chi-square-Yates-Pearson-residuals-v1` riceve una tabella R×C di conteggi
+interi non negativi. Con totale N, attese `E_ij=row_i*column_j/N` e
+gradi di libertà `(R−1)(C−1)`, Pearson somma `(O−E)²/E`.
+`correction=automatic` usa Yates solo nel 2×2, sommando
+`max(abs(O−E)−0.5,0)²/E`; `none` usa Pearson e `yates` esplicito richiede 2×2.
+Il risultato conserva correzione richiesta e applicata. Totale nullo, margini
+nulli o dimensioni insufficienti hanno stato esplicito e statistica/p-value
+assenti, senza cancellazione silenziosa di righe o colonne.
+
+I residui Pearson sono `(O−E)/sqrt(E)`; quelli standardizzati dividono anche
+per `sqrt((1−row_i/N)(1−column_j/N))`. Le due matrici sono distinte;
+i residui restano riferiti alle attese non corrette anche quando si applica Yates.
+Il [sorgente KH A.7.2](https://github.com/ko-ichi-h/khcoder/blob/7b7fbc1ae3b3b59c524189fbcbb1c616cb6ef006/kh_lib/kh_cod/func.pm#L788-L815)
+usa `chisq.test` con correzione e `chi$residuals`, cioè residui Pearson.
+Le celle non definite restano assenti. Differenze `O*N−row*column` e complementi
+dei margini sono costruiti prima della conversione, evitando falsi zeri con
+conteggi interi estremi. Il p-value è la coda superiore χ²; il percorso locale
+per molti gradi di libertà usa gamma incompleta convergente e prefattore stabile,
+secondo [DLMF 5.11](https://dlmf.nist.gov/5.11),
+[8.7](https://dlmf.nist.gov/8.7) e [8.9](https://dlmf.nist.gov/8.9).
+Mancata convergenza, overflow o budget insufficiente producono failure tipizzata.
+
+`KH-coding-crosstab-chi-square-v1` compone la matrice binaria dei codici con
+gruppi dichiarati: per ogni codice il test usa gruppo×[presenza, assenza], con
+`assenza=numerositàGruppo−presenza`. Due gruppi usano Yates automatico;
+più gruppi usano Pearson. I gruppi mancanti sono esclusi e contati; gruppi e
+codici conservano gli ordini dichiarati dal contratto. Codici sempre presenti
+o assenti danno un risultato degenere senza bloccare gli altri; con meno di
+due gruppi il test è assente con motivo esplicito. I budget sono cumulativi
+prima dei buffer di tutti i codici e la cancellazione non pubblica risultati parziali.
+
 ## Regole di codifica
 
 File bounded a 64 KiB, massimo 256 codici, 1.024 nodi per espressione e profondità
@@ -520,13 +584,14 @@ non ereditano i manifest delle nove varianti storiche per somiglianza del nome.
 e il gate locale del completamento, superato nel suo perimetro storico.
 [GS-VER-234](../evidenze/GS-VER-234-riverifica-correttezza-completezza.md) registra
 la successiva riverifica, le correzioni e i limiti KH aperti sulla revisione
-allora esaminata. GS-VER-300 conserva il proprio checkpoint a 14 profili KH e
-52 fixture; le sue prove non si estendono al successivo `word-association`, ai
-campi ampliati di `kh-collocation` o alla composizione corrente. I 15 tag KH
-attuali riusano schema 1 e il medesimo comando CLI, secondo GS-API-002: con i
-12 iniziali e i nove avanzati formano 36 operazioni distinte, coperte da un
-inventario di 54 fixture. Esiti e limiti della verifica integrata appartengono
-separatamente a GS-VER-301; l'inventario non ne anticipa l'esito.
+allora esaminata. GS-VER-300 registra il gate locale pre-merge superato con
+19 profili KH, 63 fixture e 236 righe di oracolo. GS-VER-301 conserva la
+precedente integrazione pubblicata fino a `32b06f7`, con 15 profili KH e 54
+fixture. Le prove restano riferite ai rispettivi checkpoint. I 19 tag KH attuali
+riusano schema 1 e il medesimo comando CLI, secondo GS-API-002: con i 12 iniziali
+e i nove avanzati formano 40 operazioni distinte. La verifica combinata della
+nuova unione è superata in GS-VER-300: 771 test Core/Kit, 113 test nativi,
+63 fixture/189 controlli CLI e 236 righe di oracoli riprodotte.
 GUI, persistenza, nuove lingue automatiche, V6 esterno e dispositivi non sono
 promossi da questo incremento.
 

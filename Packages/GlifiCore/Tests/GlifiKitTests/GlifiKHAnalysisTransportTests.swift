@@ -31,8 +31,8 @@ func khAnalysisDefaultsAndIdentity() throws {
         .kh(
             .somKH(
                 matrix: [[0], [2], [4]], width: 2, height: 1,
-                firstPhase: .init(steps: 6, initialLearningRate: 0.05, initialRadius: 1),
-                secondPhase: .init(steps: 30, initialLearningRate: 0.02, initialRadius: 1))))
+                firstPhase: .init(steps: 1_000, initialLearningRate: 0.05, initialRadius: 1),
+                secondPhase: .init(steps: 1_000, initialLearningRate: 0.02, initialRadius: 1))))
     #expect(try minimal.canonicalData() == typed.canonicalData())
     #expect(try explicit.canonicalData() == typed.canonicalData())
     #expect(try GlifiStudioTextAnalysisRequest.decode(minimal.canonicalData()) == minimal)

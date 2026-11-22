@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-ADR-0043 |
 | Tipo | Decisione di estensione analitica |
-| Versione | 1.0.0 |
+| Versione | 1.1.0 |
 | Stato | Accettato |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -36,6 +36,19 @@ motivata dalla correttezza numerica, con test discriminante e oracolo R, non da
 un guadagno prestazionale presunto. Il backend condiviso e i risultati delle
 API preesistenti non sono sostituiti; workspace e matrici sono ammessi prima
 delle allocazioni e i segni degli assi seguono una regola deterministica.
+
+Il censimento conclusivo comprende tutte le sette scale di collocazione con
+frequenze globali, l’associazione documentale, TF/TF-IDF/TF diviso IDF log10 e
+χ² con Yates automatico nelle tabelle 2×2. Il crosstab verifica separatamente
+ogni codice come presenza/assenza per gruppo, senza trattare codici sovrapposti
+come categorie esclusive. Residui Pearson e standardizzati sono distinti.
+
+Il nuovo `KH-hclust-WardD2-dissimilarities-v1` applica esplicitamente la
+ricorrenza Ward.D2 a dissimilarità dichiarate, comprese Jaccard e cosine.
+È compatibilità algebrica con il flusso KH pubblico: non stima una varianza
+in uno spazio euclideo e non pubblica un incremento Ward. Il Ward vettoriale
+preesistente conserva integralmente i propri vincoli euclidei. GS-MET-001-14
+è aggiornato nella stessa modifica; non si indebolisce il contratto precedente.
 
 ## Conseguenze e verifica
 

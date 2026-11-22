@@ -22,6 +22,21 @@ public enum GlifiStudioMDSOrdinalTies: String, Codable, Sendable { case primary,
 /// Whether LR counts adjacency occurrences or distinct neighbors.
 public enum GlifiStudioTermAdjacencyMode: String, Codable, Sendable { case token, type }
 
+/// KH document retrieval weights use base-ten IDF and the declared zero-IDF divisor convention.
+public enum GlifiStudioKHDocumentScoreMode: String, Codable, Sendable {
+    case tf, tfIdf, tfDividedByIdf
+}
+
+/// Automatic correction applies Yates only to a 2×2 table; none always requests Pearson.
+public enum GlifiStudioKHChiSquareCorrection: String, Codable, Sendable {
+    case automatic, none, yates
+}
+
+/// Undefined statistics retain their table dimensions instead of dropping rows or fabricating values.
+public enum GlifiStudioKHChiSquareStatus: String, Codable, Sendable {
+    case defined, zeroTotal, zeroMarginal, insufficientDimensions
+}
+
 /// Aligned target/context counts within one declared aggregation level.
 public struct GlifiStudioKHContextCounts: Codable, Equatable, Sendable {
     /// Caller-declared sentence, paragraph or heading aggregation unit.

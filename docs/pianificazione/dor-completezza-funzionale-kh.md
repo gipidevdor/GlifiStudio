@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-300 |
 | Tipo | Scheda di implementazione analitica |
-| Versione | 1.0.0 |
+| Versione | 1.1.0 |
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -17,8 +17,12 @@
 
 Implementare le lacune analitiche del confronto pubblico registrato in GS-VER-234:
 matrice parola-contesto, z-score campionario per asse, esposizione esterna,
-tie primary MDS, SOM a due fasi/PCA, MI3 e Z su TF globale/span, scaling CA,
+tie primary MDS, SOM a due fasi/PCA, sette misure su TF globale/span, scaling CA,
 kappa del classificatore, aggiornamento incrementale NB e ranking TermExtract.
+Il censimento finale del manuale A5/A6/A7, svolto durante il lavoro autorizzato,
+ha aggiunto associazione documentale, punteggi TF/TF-IDF/TF diviso IDF,
+Ward.D2 algebrico e χ²/Yates con significatività dei crosstab per codice.
+Questa revisione registra l’estensione emersa: non retrodata la sua pianificazione.
 Il riferimento è il manuale pubblico KH del 2016 e i sorgenti pubblici ufficiali:
 non si dichiara equivalenza con un’edizione chiusa non disponibile.
 

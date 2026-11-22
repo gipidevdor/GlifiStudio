@@ -89,6 +89,12 @@ struct TextAnalysisBudget {
         try consume(count)
     }
 
+    mutating func integerMatrix(_ values: [[Int]]) throws {
+        guard values.count <= 20_000 else { throw limit() }
+        try consume(values.count)
+        for row in values { try integers(row) }
+    }
+
     mutating func string(_ value: String) throws {
         let count = value.utf8.count
         guard count <= bytes else { throw limit() }

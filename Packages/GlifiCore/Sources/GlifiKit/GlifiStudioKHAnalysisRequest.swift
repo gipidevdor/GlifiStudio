@@ -31,6 +31,18 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
     case collocationScores(GlifiStudioKHCollocationInput)
     /// Computes document-condition association, including differential, lift and Ochiai scores.
     case wordAssociation(GlifiStudioKHWordAssociationInput)
+    /// Scores caller-selected terms using complete document exposures and corpus document frequencies.
+    case documentScores(
+        counts: [[Double]], exposures: [Double], documentFrequencies: [Int],
+        corpusDocumentCount: Int, mode: GlifiStudioKHDocumentScoreMode = .tf)
+    /// Applies the explicit KH/R Ward.D2 recurrence without claiming Euclidean variance semantics.
+    case hierarchicalWardD2(dissimilarities: [[Double]])
+    /// Reports Pearson/Yates significance, expected counts and both residual definitions.
+    case chiSquare(counts: [[Int]], correction: GlifiStudioKHChiSquareCorrection = .automatic)
+    /// Tests each code's group-by-presence table, retaining missing group accounting.
+    case codeCrosstabSignificance(
+        units: [GlifiStudioAutomaticCodingUnit], rules: String, groups: [String?],
+        correction: GlifiStudioKHChiSquareCorrection = .automatic)
     case termScores(
         candidates: [GlifiStudioTermCandidate], preprocessingIdentifier: String,
         adjacencyMode: GlifiStudioTermAdjacencyMode = .token, maximumWork: Int = 100_000_000)
@@ -59,6 +71,10 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
         case .somKH: "som-kh"
         case .collocationScores: "kh-collocation"
         case .wordAssociation: "word-association"
+        case .documentScores: "document-scores"
+        case .hierarchicalWardD2: "kh-hierarchical-ward-d2"
+        case .chiSquare: "kh-chi-square"
+        case .codeCrosstabSignificance: "code-crosstab-significance"
         case .termScores: "term-scores"
         case .termExtraction: "term-extraction"
         case .incrementalClassifier: "incremental-classifier"
@@ -132,10 +148,10 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
                 matrix: matrix, width: width, height: height,
                 firstPhase: try f.khDefault(
                     "firstPhase",
-                    khDefaultPhase(rows: matrix.count, width: width, height: height, first: true)),
+                    khDefaultPhase(width: width, height: height, first: true)),
                 secondPhase: try f.khDefault(
                     "secondPhase",
-                    khDefaultPhase(rows: matrix.count, width: width, height: height, first: false)),
+                    khDefaultPhase(width: width, height: height, first: false)),
                 topology: try f.khDefault("topology", .hexagonal),
                 initialCodebooks: try f.khOptional("initialCodebooks"),
                 codebookClusterCount: try f.khOptional("codebookClusterCount"))
@@ -145,6 +161,28 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
         case "word-association":
             allowed = ["counts"]
             self = .wordAssociation(try f.khRequired("counts"))
+        case "document-scores":
+            allowed = ["counts", "exposures", "documentFrequencies", "corpusDocumentCount", "mode"]
+            self = .documentScores(
+                counts: try f.khRequired("counts"), exposures: try f.khRequired("exposures"),
+                documentFrequencies: try f.khRequired("documentFrequencies"),
+                corpusDocumentCount: try f.khRequired("corpusDocumentCount"),
+                mode: try f.khDefault("mode", .tf))
+        case "kh-hierarchical-ward-d2":
+            allowed = ["dissimilarities"]
+            self = .hierarchicalWardD2(dissimilarities: try f.khRequired("dissimilarities"))
+        case "kh-chi-square":
+            allowed = ["counts", "correction"]
+            self = .chiSquare(
+                counts: try f.khRequired("counts"),
+                correction: try f.khDefault("correction", .automatic))
+        case "code-crosstab-significance":
+            allowed = ["units", "rules", "groups", "correction"]
+            let units = try f.decode([TextAnalysisUnitWire].self, forKey: TextAnalysisKey("units"))
+                .map(\.value)
+            self = .codeCrosstabSignificance(
+                units: units, rules: try f.khRequired("rules"), groups: try f.khRequired("groups"),
+                correction: try f.khDefault("correction", .automatic))
         case "term-scores":
             allowed = ["candidates", "preprocessingIdentifier", "adjacencyMode", "maximumWork"]
             self = .termScores(
@@ -215,6 +253,18 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
                 try khFinite([phase.initialLearningRate, phase.initialRadius])
             }
         case .collocationScores, .wordAssociation: break
+        case let .documentScores(counts, exposures, frequencies, _, _):
+            try budget.matrix(counts)
+            try budget.matrix([exposures])
+            try budget.integers(frequencies)
+        case let .hierarchicalWardD2(dissimilarities):
+            try budget.matrix(dissimilarities)
+        case let .chiSquare(counts, _):
+            try budget.integerMatrix(counts)
+        case let .codeCrosstabSignificance(units, rules, groups, _):
+            try budget.units(units)
+            try budget.string(rules)
+            try budget.optionalStrings(groups)
         case let .termScores(candidates, preprocessing, _, _):
             try budget.string(preprocessing)
             try budget.collectionCount(candidates.count)
@@ -265,7 +315,8 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
             try khFinite([tolerance])
         case .sampleZScores, .perThousand, .wordContext, .correspondenceScaled,
             .somPCAInitialization,
-            .somKH, .collocationScores, .wordAssociation, .termScores, .termExtraction,
+            .somKH, .collocationScores, .wordAssociation, .documentScores, .hierarchicalWardD2,
+            .chiSquare, .codeCrosstabSignificance, .termScores, .termExtraction,
             .incrementalClassifier,
             .continueClassifier,
             .validateClassifierWithAgreement:
@@ -318,17 +369,33 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
             try f.khEncode(
                 "firstPhase",
                 first
-                    ?? khDefaultPhase(rows: matrix.count, width: width, height: height, first: true)
+                    ?? khDefaultPhase(width: width, height: height, first: true)
             )
             try f.khEncode(
                 "secondPhase",
                 second
                     ?? khDefaultPhase(
-                        rows: matrix.count, width: width, height: height, first: false))
+                        width: width, height: height, first: false))
             if let initial { try f.khEncode("initialCodebooks", initial) }
             if let clusters { try f.khEncode("codebookClusterCount", clusters) }
         case let .collocationScores(counts): try f.khEncode("counts", counts)
         case let .wordAssociation(counts): try f.khEncode("counts", counts)
+        case let .documentScores(counts, exposures, frequencies, corpus, mode):
+            try f.khEncode("counts", counts)
+            try f.khEncode("exposures", exposures)
+            try f.khEncode("documentFrequencies", frequencies)
+            try f.khEncode("corpusDocumentCount", corpus)
+            try f.khEncode("mode", mode)
+        case let .hierarchicalWardD2(dissimilarities):
+            try f.khEncode("dissimilarities", dissimilarities)
+        case let .chiSquare(counts, correction):
+            try f.khEncode("counts", counts)
+            try f.khEncode("correction", correction)
+        case let .codeCrosstabSignificance(units, rules, groups, correction):
+            try f.khEncode("units", units)
+            try f.khEncode("rules", rules)
+            try f.khEncode("groups", groups)
+            try f.khEncode("correction", correction)
         case let .termScores(candidates, preprocessing, adjacency, work):
             try f.khEncode("candidates", candidates)
             try f.khEncode("preprocessingIdentifier", preprocessing)
@@ -359,11 +426,15 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
     }
 }
 
-private func khDefaultPhase(rows: Int, width: Int, height: Int, first: Bool)
+private func khDefaultPhase(width: Int, height: Int, first: Bool) throws
     -> GlifiStudioKHSOMPhase
 {
-    GlifiStudioKHSOMPhase(
-        steps: rows * (first ? 2 : 10), initialLearningRate: first ? 0.05 : 0.02,
+    guard width > 0, height > 0, width <= 1_024, height <= 1_024,
+        width <= 1_024 / height
+    else { throw textRequestFailure("som.invalid-grid") }
+    return GlifiStudioKHSOMPhase(
+        steps: first ? 1_000 : 500 * width * height,
+        initialLearningRate: first ? 0.05 : 0.02,
         initialRadius: Double(first ? min(width, height) : min(3, min(width, height))))
 }
 

@@ -16,7 +16,7 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
-- [GS-VER-301 — Integrazione della baseline e sincronizzazione Git](GS-VER-301-integrazione-main.md) — In verifica; lavoro KH successivo preservato separatamente
+- [GS-VER-301 — Integrazione della baseline e sincronizzazione Git](GS-VER-301-integrazione-main.md) — Superato localmente sul proprio snapshot; lavoro KH successivo in GS-VER-300
 
 - [GS-VER-173 — Layout e visite dei kernel analitici](GS-VER-173-layout-e-visite-analitiche.md) — Superato: 18 confronti identici, 544 test e gate completo; costi residui dichiarati
 - [GS-VER-179 — Codifica delle identità canoniche](GS-VER-179-identita-canoniche.md) — Tre produttori, riferimenti completi, misure e gate macOS integrato superati
@@ -285,4 +285,4 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 
 - [GS-VER-280 — Struttura e coesione del codice](GS-VER-280-struttura-e-coesione-del-codice.md) — Confronti API/CLI e prove mirate superati; gate completo nel registro PR #42
 
-- [GS-VER-300 — Completezza dei profili analitici KH pubblici](GS-VER-300-completezza-funzionale-kh.md) — In verifica; 14 tag e profili pubblici implementati
+- [GS-VER-300 — Completezza dei profili analitici KH pubblici](GS-VER-300-completezza-funzionale-kh.md) — Superato localmente nella versione unita; 19 tag KH, 771 test Core/Kit e 63 fixture

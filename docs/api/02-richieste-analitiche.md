@@ -6,8 +6,8 @@
 | --- | --- |
 | Identificatore | GS-API-002 |
 | Tipo | Contratto del trasporto analitico transitorio |
-| Versione | 1.3.3 |
-| Stato | Contratti allineati al codice integrato; verifiche storiche circoscritte ai rispettivi snapshot, integrazione corrente in GS-VER-301 |
+| Versione | 1.3.4 |
+| Stato | Profili pubblici implementati; versione unita verificata localmente in GS-VER-300 |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Prosecuzioni esplicite RF-087 e GUI; ADR-0034 e ADR-0043 |
@@ -59,7 +59,8 @@ congelato; non esporta un modello persistente.
 
 Metodi MDS: `classical, metric, kruskal, sammon, ordinal`. Distanze:
 `jaccard, dice, simpson, cosine, euclidean, manhattan`. Linkage:
-`single, complete, average`; Ward non è ammesso su dissimilarità generiche.
+`single, complete, average`; questo tag non ammette Ward. Il profilo algebrico
+Ward.D2 ha il tag dedicato `kh-hierarchical-ward-d2`, descritto sotto.
 Parametri numerici invalidi conservano le failure dell'operatore; non sono corretti
 silenziosamente. LDA riporta perplexity predittiva in-sample, non held-out.
 
@@ -127,7 +128,7 @@ policy single-best e versione modello non esposta, senza attestare accuratezza.
 
 `GlifiStudioKHAnalysisRequest` si compone nel caso Swift
 `.advanced(.kh(request))`; `GlifiStudioKHAnalysis.execute(_:)` usa lo stesso
-percorso. I quindici tag KH sono piatti nel medesimo envelope JSON schema 1
+percorso. I diciannove nuovi tag sono piatti nel medesimo envelope JSON schema 1
 e nel comando `text-analysis`: non introducono un comando, una chiave `kh` o
 un formato di progetto. Contratti matematici e fonti primarie sono in
 [GS-MET-001-23](../metodi-analitici/23-operatori-kh-coder.md).
@@ -144,6 +145,10 @@ un formato di progetto. Contratti matematici e fonti primarie sono in
 | `som-kh` | `matrix, width, height` | fasi come sotto; `topology=hexagonal`; `initialCodebooks, codebookClusterCount` assenti |
 | `kh-collocation` | `counts` | nessuno |
 | `word-association` | `counts` | nessuno |
+| `document-scores` | `counts, exposures, documentFrequencies, corpusDocumentCount` | `mode=tf` |
+| `kh-hierarchical-ward-d2` | `dissimilarities` | nessuno |
+| `kh-chi-square` | `counts` | `correction=automatic` |
+| `code-crosstab-significance` | `units, rules, groups` | `correction=automatic` |
 | `term-scores` | `candidates, preprocessingIdentifier` | `adjacencyMode=token, maximumWork=100000000` |
 | `term-extraction` | `documents, rule` | `adjacencyMode=token, maximumWork=100000000` |
 | `incremental-classifier` | `documents, labels` | `smoothing=1, predictionDocuments=[]` |
@@ -170,9 +175,9 @@ Per l'ordinale, `ties=primary` ammette disparità diverse nello stesso tie;
 `secondary` le uguaglia. I default delle operazioni precedenti rimangono secondary.
 
 `som-kh` riceve dati già preparati. `firstPhase` e `secondPhase`, se fornite,
-contengono `steps`, `initialLearningRate`, `initialRadius`. Per n righe i default
-sono rispettivamente `(2n, 0.05, min(width,height))` e
-`(10n, 0.02, min(3,width,height))`; sono aggiornamenti online, non epoche batch.
+contengono `steps`, `initialLearningRate`, `initialRadius`. Per U unità della
+griglia (`width*height`) i default sono `(1000, 0.05, min(width,height))` e
+`(500U, 0.02, min(3,width,height))`; sono aggiornamenti online, non epoche batch.
 I codebook proseguono fra le fasi. `initialCodebooks` omesso seleziona PCA lineare
 canonica; un array fornito dichiara invece i prototipi iniziali.
 L'uscita conserva inizializzazione, fasi, prototipi intermedi/finali, assegnazioni,
@@ -213,6 +218,35 @@ misura corrispondente; il segno dell'associazione usa il confronto intero esatto
 `jointCount*totalDocumentCount > conditionDocumentCount*termDocumentCount`,
 anche quando le probabilità arrotondate coincidono. Non viene applicato un
 filtro automatico delle associazioni nulle o negative.
+
+`document-scores` riceve conteggi documento×termine, esposizioni complete positive
+per riga e DF del corpus di riferimento dichiarato. `mode` ammette `tf`, `tfIdf`
+e `tfDividedByIdf`: TF è conteggio/esposizione, IDF è `log10(N/DF)` senza smoothing.
+Soltanto la divisione sostituisce un divisore IDF nullo con uno. Il risultato
+conserva esposizioni, DF, numerosità del corpus, IDF originali, contributi e
+somme; i conteggi restano nella richiesta canonica.
+
+`kh-hierarchical-ward-d2` riceve dissimilarità simmetriche non negative a diagonale
+nulla. Esegue la ricorrenza algebrica Ward.D2 sulle distanze quadrate; l'uscita
+conserva fusioni e altezze nella scala originale, con `wardIncrement` assente.
+È distinto dal Ward euclideo di varianza: una dissimilarità Jaccard non diventa
+una distanza euclidea per effetto della ricorrenza.
+
+`kh-chi-square` riceve una tabella rettangolare di conteggi interi non negativi.
+`correction` ammette `automatic`, `none`, `yates`: il default applica Yates solo
+al 2×2; `none` usa Pearson; Yates esplicito richiede 2×2. Il risultato conserva
+correzione richiesta/applicata, stato, gradi di libertà, attese, statistica,
+p-value, `pearsonResiduals` e `standardizedResiduals` distinti. Totale o margini
+nulli e dimensioni insufficienti producono stato esplicito e valori non definiti,
+senza eliminare righe/colonne. Le celle non definite sono `null`.
+
+`code-crosstab-significance` usa le unità di codifica e il testo delle regole
+già definiti, con un gruppo opzionale per unità. Restituisce gruppi ordinati,
+codici nell'ordine delle regole, conteggi, numerosità ed esclusi; per ogni codice
+esegue il test su gruppo×[presenza, assenza], dove assenza è numerosità−presenza.
+Gruppi `null` sono esclusi; codici sempre presenti/assenti conservano un test
+degenere senza bloccare gli altri. Con meno di due gruppi il test è assente
+con motivo `insufficient-groups`. Il lavoro dei test è ammesso cumulativamente.
 
 Le `candidates` di `term-scores` contengono `components` ordinati e `frequency`
 indipendente, senza ricontare le occorrenze contenute in candidate più lunghe.
@@ -268,9 +302,10 @@ la presentazione nativa; il formato JSON v1 resta quello precedente.
 Lo stato è per identificatore esatto secondo GS-VER-161; gli identificatori
 ausiliari senza manifest dedicato (distanze, aggregazione, CV, reti, HAC) mantengono
 `candidate`. Il trasporto non promuove metodi né completa la revisione esterna V6.
-I nuovi identificatori KH restano `candidate`. GS-VER-300 conserva soltanto il
-proprio checkpoint; la verifica del codice integrato è distinta in GS-VER-301
-e non modifica lo stato dei manifest preesistenti.
+I nuovi identificatori KH restano `candidate`. GS-VER-300 registra il gate
+locale pre-merge superato; GS-VER-301 conserva la precedente integrazione
+pubblicata. La nuova unione ha superato il gate locale GS-VER-300 e non modifica lo stato
+dei manifest preesistenti.
 
 ## Limiti e failure
 
@@ -372,22 +407,24 @@ trasporto in GS-VER-162 e registrate in GS-VER-222.
 ## Verifica
 
 [Fixture sintetiche condivise](../../Fixtures/TextAnalysis/v1/cases.json):
-54 casi presenti e 36 tag distinti: 12 operazioni iniziali, nove avanzate e
-15 profili KH. Rispetto alle 30 fixture precedenti, 22 riguardano i primi
-14 profili KH e due il nuovo `word-association`; `kh-collocation` conserva i
-propri casi e ora espone tutte le sette misure globali. L'inventario comprende
-preparazioni/scaling, contesti, tie ordinali, PCA e SOM a due fasi, punteggi
-globali, associazione su DF, LR/FLR e preannotazioni, stato incrementale e κ.
+63 casi presenti e 40 tag distinti: 12 operazioni iniziali, nove avanzate e
+19 profili KH. Le fixture comprendono preparazioni/scaling, contesti, tie
+ordinali, PCA e SOM a due fasi, sette punteggi globali e associazione su DF,
+scoring TF/IDF, Ward.D2 algebrico, Pearson/Yates e significatività per codice,
+LR/FLR e preannotazioni, stato incrementale e κ.
 La baseline a 15 casi resta registrata in GS-VER-162 e quella a 30 in
-GS-VER-233/234, ciascuna sulla propria revisione. GS-VER-300 descrive il proprio
-checkpoint a 52 fixture e 14 profili KH; quei risultati non attestano le due
-nuove fixture, i campi estesi delle collocazioni o questa integrazione.
-GS-VER-301 registra separatamente le verifiche del codice integrato:
-l'inventario attuale non ne anticipa l'esito.
+GS-VER-233/234, ciascuna sulla propria revisione. GS-VER-300 registra il gate
+locale pre-merge superato del lotto a 19 profili KH, 63 fixture e 236 righe di
+oracolo. GS-VER-301 conserva la precedente integrazione pubblicata fino a
+`32b06f7`, con 54 fixture e 36 tag: non attesta le modifiche successive.
+La verifica combinata è superata in GS-VER-300: 771 test Core/Kit, 113 nativi,
+63 fixture/189 controlli CLI e 2.816 dichiarazioni pubbliche controllate.
+I gate precedenti restano circoscritti ai rispettivi checkpoint.
 Test Swift per identità canonica/default/UInt64, cancellazione e input ostili;
 confronto integrale CLI/Kit entro 1e-12 assoluto e relativo, con controlli golden
 indipendenti per i casi minimi, exit status, stdout/stderr e file speciali.
-Evidenza e limiti effettivi in [GS-VER-162](../evidenze/GS-VER-162-parita-operatori-kit-cli.md).
+Evidenza storica in [GS-VER-162](../evidenze/GS-VER-162-parita-operatori-kit-cli.md);
+nuovi profili e limiti effettivi in [GS-VER-300](../evidenze/GS-VER-300-completezza-funzionale-kh.md).
 
 Il lotto originario dell’ampliamento è headless e transitorio secondo
 [ADR-0035](../adr/0035-completamento-nativo-kh-coder.md);
@@ -438,6 +475,6 @@ L'ampliamento KH è headless e transitorio secondo
 operazioni non promuove V6, nuove lingue automatiche, GUI o persistenza.
 Il gate locale di [GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md)
 resta riferito al suo perimetro storico. Anche GS-VER-234 e GS-VER-300 mantengono
-revisioni, conteggi e limiti dei rispettivi checkpoint. Le verifiche della
-composizione corrente, comprendente `word-association` e le sette misure globali,
-sono distinte in GS-VER-301.
+revisioni, conteggi e limiti dei rispettivi checkpoint. GS-VER-300 attesta il
+lotto pre-merge a 19 profili KH; GS-VER-301 la precedente unione pubblicata fino
+a `32b06f7`. La verifica combinata dopo il nuovo merge è superata nel perimetro GS-VER-300.

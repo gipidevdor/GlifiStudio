@@ -1499,7 +1499,7 @@
       "methodIdentifier": "SOM-KH-online-inverse-two-phase-hexagonal-v1",
       "validationStatus": "candidate",
       "expected": {
-        "completedSteps": 36
+        "completedSteps": 2000
       }
     },
     {
@@ -1931,6 +1931,478 @@
         "lift": 0.9722222222222222,
         "jaccard": 0.7,
         "isPositiveAssociation": false
+      }
+    },
+    {
+      "id": "kh-document-score-tf",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "document-scores",
+        "counts": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            2,
+            4,
+            0
+          ]
+        ],
+        "exposures": [
+          10,
+          20
+        ],
+        "documentFrequencies": [
+          1,
+          5,
+          10
+        ],
+        "corpusDocumentCount": 10,
+        "mode": "tf"
+      },
+      "methodIdentifier": "KH-document-tf-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "inverseDocumentFrequencies": [
+          1.0,
+          0.3010299956639812,
+          0.0
+        ],
+        "termContributions": [
+          [
+            0.1,
+            0.2,
+            0.3
+          ],
+          [
+            0.1,
+            0.2,
+            0.0
+          ]
+        ],
+        "scores": [
+          0.6,
+          0.30000000000000004
+        ]
+      }
+    },
+    {
+      "id": "kh-document-score-tfIdf",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "document-scores",
+        "counts": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            2,
+            4,
+            0
+          ]
+        ],
+        "exposures": [
+          10,
+          20
+        ],
+        "documentFrequencies": [
+          1,
+          5,
+          10
+        ],
+        "corpusDocumentCount": 10,
+        "mode": "tfIdf"
+      },
+      "methodIdentifier": "KH-document-tf-log10-idf-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "inverseDocumentFrequencies": [
+          1.0,
+          0.3010299956639812,
+          0.0
+        ],
+        "termContributions": [
+          [
+            0.1,
+            0.06020599913279624,
+            0.0
+          ],
+          [
+            0.1,
+            0.06020599913279624,
+            0.0
+          ]
+        ],
+        "scores": [
+          0.16020599913279626,
+          0.16020599913279626
+        ]
+      }
+    },
+    {
+      "id": "kh-document-score-tfDividedByIdf",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "document-scores",
+        "counts": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            2,
+            4,
+            0
+          ]
+        ],
+        "exposures": [
+          10,
+          20
+        ],
+        "documentFrequencies": [
+          1,
+          5,
+          10
+        ],
+        "corpusDocumentCount": 10,
+        "mode": "tfDividedByIdf"
+      },
+      "methodIdentifier": "KH-document-tf-divided-by-log10-idf-zero-one-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "inverseDocumentFrequencies": [
+          1.0,
+          0.3010299956639812,
+          0.0
+        ],
+        "termContributions": [
+          [
+            0.1,
+            0.6643856189774725,
+            0.3
+          ],
+          [
+            0.1,
+            0.6643856189774725,
+            0.0
+          ]
+        ],
+        "scores": [
+          1.0643856189774725,
+          0.7643856189774725
+        ]
+      }
+    },
+    {
+      "id": "kh-ward-d2",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "kh-hierarchical-ward-d2",
+        "dissimilarities": [
+          [
+            0,
+            0.5,
+            1
+          ],
+          [
+            0.5,
+            0,
+            0.75
+          ],
+          [
+            1,
+            0.75,
+            0
+          ]
+        ]
+      },
+      "methodIdentifier": "KH-hclust-WardD2-dissimilarities-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "objectCount": 3,
+        "children": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "heights": [
+          0.5,
+          0.9789450103725609
+        ],
+        "sizes": [
+          2,
+          3
+        ],
+        "wardIncrements": [
+          null,
+          null
+        ]
+      }
+    },
+    {
+      "id": "kh-chi-square-yates",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "kh-chi-square",
+        "counts": [
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "methodIdentifier": "KH-chi-square-Yates-Pearson-residuals-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "status": "defined",
+        "statistic": 0.0,
+        "pValue": 1.0,
+        "degreesOfFreedom": 1,
+        "appliedCorrection": "yates",
+        "expected": [
+          [
+            0.5,
+            0.5
+          ],
+          [
+            0.5,
+            0.5
+          ]
+        ]
+      }
+    },
+    {
+      "id": "kh-chi-square-pearson",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "kh-chi-square",
+        "counts": [
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "correction": "none"
+      },
+      "methodIdentifier": "KH-chi-square-Yates-Pearson-residuals-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "status": "defined",
+        "statistic": 2.0,
+        "pValue": 0.15729920705028516,
+        "appliedCorrection": "none"
+      }
+    },
+    {
+      "id": "kh-chi-square-degenerate",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "kh-chi-square",
+        "counts": [
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ]
+      },
+      "methodIdentifier": "KH-chi-square-Yates-Pearson-residuals-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "status": "zeroMarginal",
+        "degreesOfFreedom": 1
+      }
+    },
+    {
+      "id": "kh-code-crosstab-yates",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "code-crosstab-significance",
+        "units": [
+          {
+            "id": "0",
+            "text": "casa"
+          },
+          {
+            "id": "1",
+            "text": "altro"
+          },
+          {
+            "id": "2",
+            "text": "casa"
+          },
+          {
+            "id": "3",
+            "text": "casa"
+          },
+          {
+            "id": "4",
+            "text": "casa"
+          }
+        ],
+        "rules": "*Home\ncasa\n*Always\n1 == 1\n*Never\nassente",
+        "groups": [
+          "A",
+          "A",
+          "B",
+          "B",
+          null
+        ]
+      },
+      "methodIdentifier": "KH-coding-crosstab-chi-square-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "groups": [
+          "A",
+          "B"
+        ],
+        "codes": [
+          "Home",
+          "Always",
+          "Never"
+        ],
+        "counts": [
+          [
+            1,
+            2,
+            0
+          ],
+          [
+            2,
+            2,
+            0
+          ]
+        ],
+        "groupSizes": [
+          2,
+          2
+        ],
+        "excludedDocumentCount": 1,
+        "significance": [
+          {
+            "code": "Home",
+            "test": {
+              "statistic": 0.0,
+              "pValue": 1.0,
+              "appliedCorrection": "yates"
+            }
+          },
+          {
+            "code": "Always",
+            "test": {
+              "status": "zeroMarginal"
+            }
+          },
+          {
+            "code": "Never",
+            "test": {
+              "status": "zeroMarginal"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "kh-code-crosstab-three-groups",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "code-crosstab-significance",
+        "units": [
+          {
+            "id": "0",
+            "text": "altro"
+          },
+          {
+            "id": "1",
+            "text": "altro"
+          },
+          {
+            "id": "2",
+            "text": "casa"
+          },
+          {
+            "id": "3",
+            "text": "altro"
+          },
+          {
+            "id": "4",
+            "text": "casa"
+          },
+          {
+            "id": "5",
+            "text": "casa"
+          }
+        ],
+        "rules": "*Home\ncasa",
+        "groups": [
+          "A",
+          "A",
+          "B",
+          "B",
+          "C",
+          "C"
+        ]
+      },
+      "methodIdentifier": "KH-coding-crosstab-chi-square-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "counts": [
+          [
+            0
+          ],
+          [
+            1
+          ],
+          [
+            2
+          ]
+        ],
+        "groupSizes": [
+          2,
+          2,
+          2
+        ],
+        "significance": [
+          {
+            "code": "Home",
+            "test": {
+              "statistic": 4.0,
+              "pValue": 0.1353352832366127,
+              "degreesOfFreedom": 2,
+              "appliedCorrection": "none"
+            }
+          }
+        ]
       }
     }
   ]

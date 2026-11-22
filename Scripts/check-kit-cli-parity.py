@@ -292,6 +292,8 @@ def check_text_operation_inventory(symbols: dict[str, dict]) -> None:
         "ordinalMDSSearch": "mds-ordinal-search",
         "somPCAInitialization": "som-pca-initialization",
         "collocationScores": "kh-collocation",
+        "hierarchicalWardD2": "kh-hierarchical-ward-d2",
+        "chiSquare": "kh-chi-square",
         "validateClassifierWithAgreement": "validate-classifier-kappa",
     }
     stale_aliases = kh_aliases.keys() - kh

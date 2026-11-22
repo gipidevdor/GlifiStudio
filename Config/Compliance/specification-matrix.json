@@ -2834,7 +2834,10 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiKHCollocationScores.swift",
         "Packages/GlifiCore/Sources/GlifiCore/GlifiKHMatrixPreparation.swift",
         "Packages/GlifiCore/Sources/GlifiCore/GlifiKHSelfOrganizingMap.swift",
-        "Packages/GlifiCore/Sources/GlifiCore/GlifiTermExtraction.swift"
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiTermExtraction.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiKHDocumentScores.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiKHLegacyClustering.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiKHChiSquareAnalysis.swift"
       ],
       "tests": [
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHOperatorTests.swift",
@@ -2863,7 +2866,10 @@
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHMatrixPreparationTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHScientificReviewTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiNaiveBayesVocabularyBudgetTests.swift",
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTermExtractionTests.swift"
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTermExtractionTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHDocumentScoresTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHLegacyClusteringTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHChiSquareTests.swift"
       ],
       "fixtures": [
         "Packages/GlifiCore/Tests/Oracles/R/kh_operators.R",
@@ -2876,7 +2882,8 @@
         "docs/adr/0035-completamento-nativo-kh-coder.md",
         "docs/pianificazione/dor-completamento-kh-coder.md",
         "docs/evidenze/GS-VER-233-completamento-kh-coder.md",
-        "docs/evidenze/GS-VER-234-riverifica-correttezza-completezza.md"
+        "docs/evidenze/GS-VER-234-riverifica-correttezza-completezza.md",
+        "docs/evidenze/GS-VER-300-completezza-funzionale-kh.md"
       ],
       "gate": "G3",
       "status": "implemented",
@@ -2923,7 +2930,8 @@
       "evidence": [
         "docs/evidenze/GS-VER-162-parita-operatori-kit-cli.md",
         "docs/evidenze/GS-VER-233-completamento-kh-coder.md",
-        "docs/evidenze/GS-VER-234-riverifica-correttezza-completezza.md"
+        "docs/evidenze/GS-VER-234-riverifica-correttezza-completezza.md",
+        "docs/evidenze/GS-VER-300-completezza-funzionale-kh.md"
       ],
       "gate": "G3",
       "status": "verified",

@@ -91,8 +91,9 @@ preservando i metodi upstream già pubblicati.
   restituisce il profilo nativo completo in `lastProfile`, aggiungendo conteggi
   di byte/token di superficie e termini ai campi JSON precedenti.
 - Profili KH pubblici completati in Core/Kit/CLI: preparazione e contesti,
-  tie MDS primary, SOM online a due fasi/PCA, scaling CA, MI3/Z, LR/FLR e
-  classificazione incrementale con valutazione kappa. Contratti e limiti in
+  tie MDS primary, SOM online a due fasi/PCA, scaling CA, sette misure di
+  collocazione e associazione documentale, LR/FLR, punteggi TF/IDF, Ward.D2
+  algebrico, χ²/Yates e classificazione incrementale con valutazione kappa. Contratti e limiti in
   GS-VER-300; nessuna promozione scientifica automatica.
 
 

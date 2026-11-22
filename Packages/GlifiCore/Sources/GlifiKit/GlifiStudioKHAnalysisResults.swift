@@ -177,6 +177,147 @@ public struct GlifiStudioKHWordAssociationScores: Encodable, Sendable {
     }
 }
 
+/// Retrieval scores retain complete exposures, corpus frequencies and every term contribution.
+public struct GlifiStudioKHDocumentScoreResult: Encodable, Sendable {
+    /// Formula identity, including base-ten IDF and the zero-IDF division rule.
+    public let methodIdentifier: String
+    /// Resolved retrieval weighting mode.
+    public let mode: GlifiStudioKHDocumentScoreMode
+    /// Full corpus document count used to compute IDF.
+    public let corpusDocumentCount: Int
+    /// Complete exposures aligned with the scored rows.
+    public let exposures: [Double]
+    /// Corpus document frequencies aligned with the selected columns.
+    public let documentFrequencies: [Int]
+    /// Base-ten log(N/df), preserving zero for ubiquitous terms.
+    public let inverseDocumentFrequencies: [Double]
+    /// Weighted selected-term contributions in original row/column order.
+    public let termContributions: [[Double]]
+    /// Compensated sum of each contribution row.
+    public let scores: [Double]
+    init(_ value: GlifiKHDocumentScoreResult) {
+        methodIdentifier = value.methodIdentifier
+        switch value.mode {
+        case .tf: mode = .tf
+        case .tfIdf: mode = .tfIdf
+        case .tfDividedByIdf: mode = .tfDividedByIdf
+        }
+        corpusDocumentCount = value.corpusDocumentCount
+        exposures = value.exposures
+        documentFrequencies = value.documentFrequencies
+        inverseDocumentFrequencies = value.inverseDocumentFrequencies
+        termContributions = value.termContributions
+        scores = value.scores
+    }
+}
+
+/// Algebraic Ward.D2 history over declared dissimilarities, without a Euclidean variance claim.
+public struct GlifiStudioKHLegacyClusteringResult: Encodable, Sendable {
+    /// Versioned compatibility recurrence and native deterministic tie policy.
+    public let methodIdentifier: String
+    /// Input object count, preserving singleton identities 0..<n.
+    public let objectCount: Int
+    /// Child cluster identities; merge s creates identity n+s.
+    public let children: [[Int]]
+    /// Dissimilarity heights restored to the input scale.
+    public let heights: [Double]
+    /// Number of original objects in each merged cluster.
+    public let sizes: [Int]
+    /// Always nil: the compatibility recurrence does not compute within-cluster variance.
+    public let wardIncrements: [Double?]
+    init(_ value: GlifiKHLegacyClusteringResult) {
+        methodIdentifier = value.methodIdentifier
+        objectCount = value.objectCount
+        children = value.merges.map { [$0.first, $0.second] }
+        heights = value.merges.map(\.height)
+        sizes = value.merges.map(\.size)
+        wardIncrements = value.merges.map(\.wardIncrement)
+    }
+}
+
+/// Pearson/Yates inference, preserving undefined cells and both named residual conventions.
+public struct GlifiStudioKHChiSquareResult: Encodable, Sendable {
+    /// Versioned test and correction convention.
+    public let methodIdentifier: String
+    /// Caller-requested correction selection.
+    public let requestedCorrection: GlifiStudioKHChiSquareCorrection
+    /// Actual correction, omitted when the statistic is undefined.
+    public let appliedCorrection: GlifiStudioKHChiSquareCorrection?
+    /// Explicit reason the statistic is defined or unavailable.
+    public let status: GlifiStudioKHChiSquareStatus
+    /// Chi-square statistic, omitted for degenerate tables.
+    public let statistic: Double?
+    /// Asymptotic upper-tail probability; this does not replace Fisher's exact test.
+    public let pValue: Double?
+    /// Structural (rows−1)(columns−1) degrees of freedom.
+    public let degreesOfFreedom: Int
+    /// Expected counts, retaining the original table shape.
+    public let expected: [[Double?]]
+    /// Uncorrected Pearson residuals (O−E)/sqrt(E).
+    public let pearsonResiduals: [[Double?]]
+    /// Uncorrected standardized residuals using both marginal complements.
+    public let standardizedResiduals: [[Double?]]
+    init(_ value: GlifiKHChiSquareResult) {
+        methodIdentifier = value.methodIdentifier
+        requestedCorrection = .init(value.requestedCorrection)
+        appliedCorrection = value.appliedCorrection.map(GlifiStudioKHChiSquareCorrection.init)
+        switch value.status {
+        case .defined: status = .defined
+        case .zeroTotal: status = .zeroTotal
+        case .zeroMarginal: status = .zeroMarginal
+        case .insufficientDimensions: status = .insufficientDimensions
+        }
+        statistic = value.statistic
+        pValue = value.pValue
+        degreesOfFreedom = value.degreesOfFreedom
+        expected = value.expected
+        pearsonResiduals = value.pearsonResiduals
+        standardizedResiduals = value.standardizedResiduals
+    }
+}
+
+/// One code's presence/complement table in the declared group order.
+public struct GlifiStudioKHCodingCodeSignificance: Encodable, Sendable {
+    /// Original code identity from the rule set.
+    public let code: String
+    /// Groups by [present,absent], with exact integer counts.
+    public let counts: [[Int]]
+    /// Pearson/Yates result, omitted when fewer than two groups exist.
+    public let test: GlifiStudioKHChiSquareResult?
+    /// Stable description of a missing test, independent of source contents.
+    public let undefinedReason: String?
+    init(_ value: GlifiKHCodingCodeSignificance) {
+        code = value.code
+        counts = value.counts
+        test = value.test.map(GlifiStudioKHChiSquareResult.init)
+        undefinedReason = value.undefinedReason
+    }
+}
+
+/// Multi-label code crosstab with missing-group accounting and one independent test per code.
+public struct GlifiStudioKHCodingCrosstabResult: Encodable, Sendable {
+    /// Canonically ordered, nonmissing group identities.
+    public let groups: [String]
+    /// Original code order.
+    public let codes: [String]
+    /// Group by code presence counts.
+    public let counts: [[Int]]
+    /// Complete document denominators for each nonmissing group.
+    public let groupSizes: [Int]
+    /// Documents excluded because their group was missing.
+    public let excludedDocumentCount: Int
+    /// Per-code presence/complement significance with both residual definitions.
+    public let significance: [GlifiStudioKHCodingCodeSignificance]
+    init(_ value: GlifiKHCodingCrosstabResult) {
+        groups = value.groups
+        codes = value.codes
+        counts = value.counts
+        groupSizes = value.groupSizes
+        excludedDocumentCount = value.excludedDocumentCount
+        significance = value.significance.map(GlifiStudioKHCodingCodeSignificance.init)
+    }
+}
+
 /// Compound ranking retains component segmentation and the independent frequency convention.
 public struct GlifiStudioTermScore: Encodable, Sendable {
     /// Ordered lexical component keys of the scored candidate.
@@ -352,6 +493,10 @@ public enum GlifiStudioKHAnalysisPayload: Encodable, Sendable {
     case som(GlifiStudioKHSOMResult)
     case collocation(GlifiStudioKHCollocationScores)
     case wordAssociation(GlifiStudioKHWordAssociationScores)
+    case documentScores(GlifiStudioKHDocumentScoreResult)
+    case legacyClustering(GlifiStudioKHLegacyClusteringResult)
+    case chiSquare(GlifiStudioKHChiSquareResult)
+    case codeCrosstabSignificance(GlifiStudioKHCodingCrosstabResult)
     case termScores(GlifiStudioTermExtractionScores)
     case termExtraction(GlifiStudioTermExtractionResult)
     case incrementalClassifier(GlifiStudioIncrementalClassifierResult)
@@ -367,10 +512,24 @@ public enum GlifiStudioKHAnalysisPayload: Encodable, Sendable {
         case let .som(value): try value.encode(to: encoder)
         case let .collocation(value): try value.encode(to: encoder)
         case let .wordAssociation(value): try value.encode(to: encoder)
+        case let .documentScores(value): try value.encode(to: encoder)
+        case let .legacyClustering(value): try value.encode(to: encoder)
+        case let .chiSquare(value): try value.encode(to: encoder)
+        case let .codeCrosstabSignificance(value): try value.encode(to: encoder)
         case let .termScores(value): try value.encode(to: encoder)
         case let .termExtraction(value): try value.encode(to: encoder)
         case let .incrementalClassifier(value): try value.encode(to: encoder)
         case let .classifierAgreement(value): try value.encode(to: encoder)
+        }
+    }
+}
+
+private extension GlifiStudioKHChiSquareCorrection {
+    init(_ value: GlifiKHChiSquareCorrection) {
+        switch value {
+        case .automatic: self = .automatic
+        case .none: self = .none
+        case .yates: self = .yates
         }
     }
 }

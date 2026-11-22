@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-MET-001-14 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.2.0 |
+| Versione | 1.3.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -71,6 +71,27 @@ soglia, comprese le parità; la soglia è finita e non negativa. Entrambi i tagl
 validano l'intero albero, incluse identità attive, dimensioni, altezze finite e
 monotone e incrementi Ward, prima di seguirne i riferimenti. Le etichette sono
 rinumerate per prima apparizione nell'ordine delle unità in ingresso.
+
+## Profilo KH Ward.D2 su dissimilarità
+
+[ADR-0043](../adr/0043-completezza-funzionale-kh-pubblico.md) autorizza il profilo
+separato `KH-hclust-WardD2-dissimilarities-v1`. Riceve una matrice simmetrica,
+finita, non negativa con diagonale zero e applica la ricorrenza sui quadrati:
+
+```text
+d(A∪B,C)² = [(|A|+|C|)d(A,C)² + (|B|+|C|)d(B,C)² − |C|d(A,B)²]
+            / (|A|+|B|+|C|)
+```
+
+Le altezze sono radici delle dissimilarità aggiornate. La scelta della coppia
+minima e i tie seguono le identità correnti canoniche. La scalatura per potenze
+di due evita quadrati intermedi fuori intervallo; un risultato positivo non
+rappresentabile produce failure tipizzata. Il profilo ammette le dissimilarità
+Jaccard/cosine usate dal flusso KH pubblico come compatibilità algebrica;
+**NON DEVE** chiamare le altezze incrementi della varianza. `wardIncrement` è
+sempre assente. Non garantisce gli stessi tie interni di ogni versione R.
+Il Ward vettoriale sopra specificato resta distinto e conserva i divieti esistenti.
+La verifica R indipendente e i limiti cumulativi sono registrati in GS-VER-300.
 
 ## K-means
 
@@ -154,5 +175,6 @@ canonicalizzazione e confronto con implementazione indipendente.
 ## Varianti native candidate
 
 CLARA-PAM e SOM batch completano le famiglie di clustering della libreria secondo
-[GS-MET-001-23](23-operatori-kh-coder.md). Restano candidate; Ward su dissimilarità
-non euclidee continua a essere rifiutato.
+[GS-MET-001-23](23-operatori-kh-coder.md). Restano candidate. Il Ward di varianza su dissimilarità
+non euclidee continua a essere rifiutato; il profilo KH algebrico esplicito
+segue il contratto distinto sopra indicato.

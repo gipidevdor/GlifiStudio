@@ -46,6 +46,7 @@ def main():
     args = parser.parse_args()
     binary = args.binary.resolve()
     cases = json.loads(FIXTURES.read_text())["cases"]
+    assert len(cases) == 63
     assert cases and len({case["id"] for case in cases}) == len(cases)
     checks = 0
     with tempfile.TemporaryDirectory(prefix="GlifiTextAnalysisCLI-") as temporary:
@@ -199,6 +200,18 @@ def main():
         rejects(encoded({"operation": "word-association", "counts": {"jointCount": 1,
                          "conditionDocumentCount": 2, "termDocumentCount": 3,
                          "totalDocumentCount": 10, "secret-canary": 1}}), 3, "invalidInput")
+
+        rejects(encoded({"operation": "document-scores", "counts": [[1]], "exposures": [10],
+                         "documentFrequencies": [0], "corpusDocumentCount": 10}), 3, "invalidInput")
+        rejects(encoded({"operation": "document-scores", "counts": [[1]], "exposures": [10],
+                         "documentFrequencies": [1], "corpusDocumentCount": 10,
+                         "mode": "secret-canary"}), 3, "invalidInput")
+        rejects(encoded({"operation": "kh-hierarchical-ward-d2", "dissimilarities": [[0, 1], [2, 0]]}), 3, "invalidInput")
+        rejects(encoded({"operation": "kh-chi-square", "counts": [[1, 0], [0, -1]]}), 3, "invalidInput")
+        rejects(encoded({"operation": "kh-chi-square", "counts": [[1, 2, 3], [4, 5, 6]],
+                         "correction": "yates"}), 3, "invalidInput")
+        rejects(encoded({"operation": "code-crosstab-significance", "units": [{"id": "1", "text": "casa"}],
+                         "rules": "*Home\ncasa", "groups": []}), 3, "invalidInput")
 
         if os.geteuid() != 0:
             protected = directory / "secret-canary-protected.json"

@@ -214,7 +214,9 @@ func khClosureSOMDegenerateAndExtremeData() throws {
     }
     let singleton = try GlifiExploratoryAnalysis.khSelfOrganizingMap([[1, 2]], width: 1, height: 1)
     #expect(singleton.prototypes == [[1, 2]])
-    #expect(singleton.completedSteps == 12)
+    #expect(singleton.firstPhase.steps == 1_000)
+    #expect(singleton.secondPhase.steps == 500)
+    #expect(singleton.completedSteps == 1_500)
     #expect(singleton.topographicError == 0)
     let line = try GlifiExploratoryAnalysis.khSelfOrganizingMapPCAInitialization(
         [[0.0], [1], [2]], width: 1, height: 3)

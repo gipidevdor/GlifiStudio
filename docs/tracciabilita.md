@@ -618,9 +618,12 @@ Le regressioni GlifiKHMatrixPreparationTests, GlifiKHExploratoryProfilesTests,
 GlifiKHCollocationScoresTests, GlifiTermExtractionTests,
 GlifiIncrementalNaiveBayesTests e GlifiNaiveBayesVocabularyBudgetTests verificano
 formule, casi discriminanti, budget e cancellazione.
-GlifiKHAnalysisTransportTests e le 52 fixture condivise verificano i parametri
+GlifiKHDocumentScoresTests, GlifiKHLegacyClusteringTests e
+GlifiKHChiSquareTests coprono i punteggi dei documenti, Ward.D2 e χ²/Yates.
+GlifiKHAnalysisTransportTests e le 63 fixture condivise verificano i parametri
 e risultati del trasporto; i nuovi profili restano candidate.
 
 [GS-VER-300](evidenze/GS-VER-300-completezza-funzionale-kh.md) registra gli esiti
-e il gate ancora in verifica. ADR-0043 governa l’estensione; le clausole
+e il gate macOS della versione unita superato: 771 test Core/Kit in
+Debug/Release e nei sanitizzatori, 113 test nativi e 189 controlli sulle 63 fixture CLI. ADR-0043 governa l’estensione; le clausole
 CMP-160 e CMP-162 conservano i propri stati, senza promozioni V6 o GUI.

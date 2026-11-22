@@ -81,7 +81,7 @@ extension GlifiExploratoryAnalysis {
 
     /// Fits the two-phase KH/R-som online profile without reinitializing between phases.
     ///
-    /// Omitted schedules use 2*n and 10*n steps, learning rates 0.05/0.02 and initial
+    /// Omitted schedules use 1,000 and 500*width*height steps, learning rates 0.05/0.02 and initial
     /// radii min(width,height)/min(3,width,height). At step t=1...L, alpha is
     /// alpha0*C/(C+t), C=L/100, and radius is 1+(r0-1)*(L-t)/L. Each phase starts
     /// at observation zero and cycles the declared row order; there is no random stream.
@@ -106,10 +106,10 @@ extension GlifiExploratoryAnalysis {
             }
         }
         let first = try khSOMPhase(
-            firstPhase, rows: matrix.count, multiplier: 2, alpha: 0.05,
+            firstPhase, rows: 1_000, multiplier: 1, alpha: 0.05,
             radius: Double(min(width, height)))
         let second = try khSOMPhase(
-            secondPhase, rows: matrix.count, multiplier: 10, alpha: 0.02,
+            secondPhase, rows: units, multiplier: 500, alpha: 0.02,
             radius: Double(min(3, min(width, height))))
         try khSOMAdmission(
             rows: matrix.count, columns: columns, units: units, phases: [first, second],
