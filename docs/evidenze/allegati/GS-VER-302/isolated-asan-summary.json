@@ -1,0 +1,21 @@
+{
+  "command": "swift test --package-path Packages/GlifiCore --scratch-path <isolated-cache>/IsolatedASan --sanitize address --filter '(queryEvaluator|queryLimitsPreserveLegacyInitializerFunctionReference)'",
+  "isolatedWorktree": true,
+  "testedCommit": "98d458554de317524447bcfd9eae3355a71dfce6",
+  "sourceInputFileCount": 540,
+  "sourceInputSHA256": "f0fafbecf4f6d31969bea2d8e9c3bbb2fed35e1dd5c901a6dcc6b8512d76d6cb",
+  "sourceFingerprintFormat": "Sorted relative UTF-8 path, NUL, file contents, NUL; SHA-256",
+  "sourceInputsUnchanged": true,
+  "workingTreeCleanAtCompletion": true,
+  "exitCode": 0,
+  "passedDefinitions": 19,
+  "failures": 0,
+  "skippedDefinitions": 0,
+  "addressSanitizerRuntimeLinked": true,
+  "sanitizerDiagnosticsInLog": false,
+  "legacyElevenArgumentInitializerFunctionReferenceChecked": true,
+  "exhaustiveSimpleProximityComparisons": 256,
+  "nestedIntervalReferenceComparisons": 1176,
+  "logSHA256": "1e59a8cbefdce541dc8edbc007becfcd1d3a9a37de667eaeccd7e1bce649db87",
+  "scope": "Query evaluator and legacy initializer only; no general memory-safety certification"
+}
