@@ -114,9 +114,18 @@ func advancedGraphLimitsNativeParity() async throws {
     let limits = GlifiStudioGraphAlgorithmLimits(
         maximumNodeCount: 8, maximumEdgeCount: 12,
         maximumPairwiseCells: 128, maximumWork: 100_000)
+    let exactLimits = GlifiStudioGraphAlgorithmLimits(
+        maximumNodeCount: 8, maximumEdgeCount: 12,
+        maximumPairwiseCells: 1_024, maximumWork: 100_000)
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
     let examples: [(GlifiStudioAdvancedTextAnalysisRequest, Data)] = [
+        (
+            .communities(graph: graph, method: .edgeBetweenness, limits: exactLimits),
+            try encoder.encode(
+                await GlifiStudioGraphAlgorithms.communities(
+                    graph, method: .edgeBetweenness, limits: exactLimits))
+        ),
         (
             .communities(graph: graph, method: .fastGreedy, limits: limits),
             try encoder.encode(
@@ -155,7 +164,15 @@ func advancedGraphLimitsFailureParity() async throws {
     let edgeLimit = GlifiStudioGraphAlgorithmLimits(maximumEdgeCount: 0)
     let pairwiseLimit = GlifiStudioGraphAlgorithmLimits(maximumPairwiseCells: 0)
     let workLimit = GlifiStudioGraphAlgorithmLimits(maximumWork: 0)
+    let exactAccumulatorLimit = GlifiStudioGraphAlgorithmLimits(maximumPairwiseCells: 128)
     let examples: [(GlifiStudioAdvancedTextAnalysisRequest, @Sendable () async throws -> Void)] = [
+        (
+            .communities(graph: graph, method: .edgeBetweenness, limits: exactAccumulatorLimit),
+            {
+                _ = try await GlifiStudioGraphAlgorithms.communities(
+                    graph, method: .edgeBetweenness, limits: exactAccumulatorLimit)
+            }
+        ),
         (
             .communities(graph: graph, method: .fastGreedy, limits: nodeLimit),
             {

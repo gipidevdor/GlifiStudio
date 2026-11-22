@@ -549,7 +549,7 @@
         "limits": {
           "maximumNodeCount": 8,
           "maximumEdgeCount": 12,
-          "maximumPairwiseCells": 128,
+          "maximumPairwiseCells": 1024,
           "maximumWork": 100000
         }
       },
