@@ -46,7 +46,7 @@ def main():
     args = parser.parse_args()
     binary = args.binary.resolve()
     cases = json.loads(FIXTURES.read_text())["cases"]
-    assert len(cases) == 30 and len({case["id"] for case in cases}) == len(cases)
+    assert len(cases) == 52 and len({case["id"] for case in cases}) == len(cases)
     checks = 0
     with tempfile.TemporaryDirectory(prefix="GlifiTextAnalysisCLI-") as temporary:
         directory = Path(temporary)

@@ -177,6 +177,8 @@ public enum GlifiNaiveBayes {
         try admitClassifierWork([documents.count], remaining: &remainingWork)
         try admitClassifierWork([tokenCount, model.classes.count], remaining: &remainingWork)
         try admitClassifierWork([documents.count, model.classes.count], remaining: &remainingWork)
+        try admitClassifierPredictionPreparation(
+            documents, vocabulary: model.vocabulary, remaining: &remainingWork, limits: limits)
         let table = try GlifiDocumentTermTable(documents: documents, vocabulary: model.vocabulary)
         return try documents.indices.map { index in
             if index.isMultiple(of: 256) { try Task.checkCancellation() }
@@ -293,6 +295,36 @@ private func classifierTokenCount(_ documents: [[String]]) throws -> Int {
         count += document.count
     }
     return count
+}
+
+private func admitClassifierPredictionPreparation(
+    _ documents: [[String]], vocabulary: [String], remaining: inout Int,
+    limits: GlifiExploratoryLimits
+) throws {
+    guard !vocabulary.isEmpty, vocabulary.count <= 100_000 else {
+        throw exploratoryFailure("text-table.invalid-vocabulary")
+    }
+    guard vocabulary.count <= limits.maximumCells else {
+        throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
+    }
+    // The table validates every vocabulary entry, checks uniqueness and builds its lookup.
+    try admitClassifierWork([vocabulary.count, 3], remaining: &remaining)
+    for (index, term) in vocabulary.enumerated() {
+        if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
+        try admitClassifierWork([term.utf8.count, 2], remaining: &remaining)
+    }
+    for (index, document) in documents.enumerated() {
+        if index.isMultiple(of: 256) { try Task.checkCancellation() }
+        let nonzeroUpperBound = min(document.count, vocabulary.count)
+        let sortLevels =
+            nonzeroUpperBound < 2
+            ? 0 : Int.bitWidth - (nonzeroUpperBound - 1).leadingZeroBitCount
+        try admitClassifierWork([nonzeroUpperBound, sortLevels], remaining: &remaining)
+        for (tokenIndex, token) in document.enumerated() {
+            if tokenIndex.isMultiple(of: 4_096) { try Task.checkCancellation() }
+            try admitClassifierWork([token.utf8.count], remaining: &remaining)
+        }
+    }
 }
 
 private func admitClassifierWork(_ factors: [Int], remaining: inout Int) throws {
