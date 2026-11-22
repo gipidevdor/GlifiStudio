@@ -150,9 +150,11 @@ public struct GlifiStudioKHWordAssociationInput: Codable, Equatable, Sendable {
 
     /// Rejects unknown keys and explicit null counts without coercing numeric types.
     public init(from decoder: any Decoder) throws {
-        let f = try khFields(decoder, allowed: [
-            "jointCount", "conditionDocumentCount", "termDocumentCount", "totalDocumentCount",
-        ])
+        let f = try khFields(
+            decoder,
+            allowed: [
+                "jointCount", "conditionDocumentCount", "termDocumentCount", "totalDocumentCount",
+            ])
         self.init(
             jointCount: try f.khRequired("jointCount"),
             conditionDocumentCount: try f.khRequired("conditionDocumentCount"),
@@ -170,7 +172,8 @@ public struct GlifiStudioKHWordAssociationInput: Codable, Equatable, Sendable {
         return try GlifiCooccurrenceCounts(
             jointCount: jointCount, firstOnlyCount: conditionDocumentCount - jointCount,
             secondOnlyCount: termDocumentCount - jointCount,
-            neitherCount: totalDocumentCount - conditionDocumentCount - (termDocumentCount - jointCount))
+            neitherCount: totalDocumentCount - conditionDocumentCount
+                - (termDocumentCount - jointCount))
     }
 }
 

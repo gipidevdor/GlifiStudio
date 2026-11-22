@@ -227,28 +227,39 @@ func khAnalysisCancellation() async throws {
     } catch let failure as GlifiStudioFailure { #expect(failure.category == "cancelled") }
 }
 
-@Test("Document-condition association admits overlapping marginals and preserves near-Int.max counts")
+@Test(
+    "Document-condition association admits overlapping marginals and preserves near-Int.max counts")
 func khAnalysisWordAssociationCounts() async throws {
-    let result = try await GlifiStudioKHAnalysis.execute(.wordAssociation(.init(
-        jointCount: 70, conditionDocumentCount: 80, termDocumentCount: 90, totalDocumentCount: 100)))
+    let result = try await GlifiStudioKHAnalysis.execute(
+        .wordAssociation(
+            .init(
+                jointCount: 70, conditionDocumentCount: 80, termDocumentCount: 90,
+                totalDocumentCount: 100)))
     guard case let .advanced(.kh(.wordAssociation(value))) = result.payload else {
-        Issue.record("Wrong document association payload"); return
+        Issue.record("Wrong document association payload")
+        return
     }
     #expect(abs(try #require(value.differential) + 0.025) < 1e-15)
     #expect(!value.isPositiveAssociation)
-    let identical = try await GlifiStudioKHAnalysis.execute(.wordAssociation(.init(
-        jointCount: Int.max, conditionDocumentCount: Int.max,
-        termDocumentCount: Int.max, totalDocumentCount: Int.max)))
+    let identical = try await GlifiStudioKHAnalysis.execute(
+        .wordAssociation(
+            .init(
+                jointCount: Int.max, conditionDocumentCount: Int.max,
+                termDocumentCount: Int.max, totalDocumentCount: Int.max)))
     guard case let .advanced(.kh(.wordAssociation(equal))) = identical.payload else {
-        Issue.record("Wrong large-count association payload"); return
+        Issue.record("Wrong large-count association payload")
+        return
     }
     #expect(equal.jaccard == 1)
     #expect(equal.ochiai == 1)
     #expect(equal.differential == 0)
     #expect(!equal.isPositiveAssociation)
     do {
-        _ = try await GlifiStudioKHAnalysis.execute(.wordAssociation(.init(
-            jointCount: 0, conditionDocumentCount: 8, termDocumentCount: 8, totalDocumentCount: 10)))
+        _ = try await GlifiStudioKHAnalysis.execute(
+            .wordAssociation(
+                .init(
+                    jointCount: 0, conditionDocumentCount: 8, termDocumentCount: 8,
+                    totalDocumentCount: 10)))
         Issue.record("An impossible document universe was accepted")
     } catch let failure { #expect(failure.category == "invalidInput") }
 }

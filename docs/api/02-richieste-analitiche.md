@@ -6,12 +6,12 @@
 | --- | --- |
 | Identificatore | GS-API-002 |
 | Tipo | Contratto del trasporto analitico transitorio |
-| Versione | 1.3.2 |
-| Stato | Trasporto e ponte di progetto verificati nei rispettivi snapshot; nuovi profili KH implementati, verifica integrata GS-VER-300 in corso |
+| Versione | 1.3.3 |
+| Stato | Contratti allineati al codice integrato; verifiche storiche circoscritte ai rispettivi snapshot, integrazione corrente in GS-VER-301 |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Prosecuzioni esplicite RF-087 e GUI; ADR-0034 e ADR-0043 |
-| Riferimenti | GS-API-001; GS-MET-001-23; RF-087; RQ-060; ADR-0032; ADR-0034; [ADR-0035 headless](../adr/0035-completamento-nativo-kh-coder.md); [ADR-0041 app](../adr/0041-copertura-funzionale-core-nelle-app.md); GS-DOR-162; GS-DOR-222; ADR-0042; ADR-0043; GS-DOR-300; GS-VER-234; GS-VER-300; [GS-DOR-233 headless](../pianificazione/dor-completamento-kh-coder.md) |
+| Riferimenti | GS-API-001; GS-MET-001-23; RF-087; RQ-060; ADR-0032; ADR-0034; [ADR-0035 headless](../adr/0035-completamento-nativo-kh-coder.md); [ADR-0041 app](../adr/0041-copertura-funzionale-core-nelle-app.md); GS-DOR-162; GS-DOR-222; ADR-0042; ADR-0043; GS-DOR-300; GS-VER-234; GS-VER-300; GS-VER-301; [GS-DOR-233 headless](../pianificazione/dor-completamento-kh-coder.md) |
 
 ## Contratto
 
@@ -127,7 +127,7 @@ policy single-best e versione modello non esposta, senza attestare accuratezza.
 
 `GlifiStudioKHAnalysisRequest` si compone nel caso Swift
 `.advanced(.kh(request))`; `GlifiStudioKHAnalysis.execute(_:)` usa lo stesso
-percorso. I quattordici nuovi tag sono piatti nel medesimo envelope JSON schema 1
+percorso. I quindici tag KH sono piatti nel medesimo envelope JSON schema 1
 e nel comando `text-analysis`: non introducono un comando, una chiave `kh` o
 un formato di progetto. Contratti matematici e fonti primarie sono in
 [GS-MET-001-23](../metodi-analitici/23-operatori-kh-coder.md).
@@ -143,6 +143,7 @@ un formato di progetto. Contratti matematici e fonti primarie sono in
 | `som-pca-initialization` | `matrix, width, height` | nessuno |
 | `som-kh` | `matrix, width, height` | fasi come sotto; `topology=hexagonal`; `initialCodebooks, codebookClusterCount` assenti |
 | `kh-collocation` | `counts` | nessuno |
+| `word-association` | `counts` | nessuno |
 | `term-scores` | `candidates, preprocessingIdentifier` | `adjacencyMode=token, maximumWork=100000000` |
 | `term-extraction` | `documents, rule` | `adjacencyMode=token, maximumWork=100000000` |
 | `incremental-classifier` | `documents, labels` | `smoothing=1, predictionDocuments=[]` |
@@ -179,11 +180,39 @@ diagnostiche e `uMatrix`. `codebookClusterCount`, se presente, aggiunge
 `codebookClustering` Ward, con ammissione cumulativa prima del calcolo.
 `som-pca-initialization` espone separatamente i codebook PCA senza addestramento.
 
-`counts` dichiara `jointCount`, `nodeFrequency`, `collocateFrequency`,
-`corpusTokenCount`, `windowSpan`. Le frequenze sono TF globali di due chiavi
-distinte; lo span conta le posizioni ammesse escludendo il nodo. MI3/Z non usano
-i margini di opportunità 2×2. Il risultato espone i due identificatori,
-`mi3`, `zScore` e `expectedWindowCount`; i valori non definiti sono assenti.
+Per `kh-collocation`, `counts` dichiara `jointCount`, `nodeFrequency`,
+`collocateFrequency`, `corpusTokenCount`, `windowSpan`. Le frequenze sono TF
+globali di due chiavi distinte; lo span conta le posizioni ammesse escludendo il
+nodo. I conteggi sono non negativi, lo span è positivo e la somma delle due TF
+non supera il totale dei token. Le coppie osservate rispettano le capacità
+TF×span di entrambi i termini e il prodotto delle due TF. Le finestre sovrapposte
+possono comunque produrre un `jointCount` superiore a una TF.
+
+Il `methodIdentifier` è `KH-collocation-global-token-window-v1`. Il risultato
+`GlifiStudioKHCollocationScores` espone le sette misure `mutualInformation`,
+`mi3`, `tScore`, `zScore`, `jaccard`, `dice`, `logLikelihood`, oltre a
+`expectedWindowCount`, `mi3MethodIdentifier` e `zMethodIdentifier`. MI e MI3 usano
+logaritmi in base due; la log likelihood del manuale è G²/2 con logaritmi
+naturali. Queste convenzioni non sostituiscono le TF globali con i margini delle
+opportunità di finestra. I valori non definiti sono omessi: in particolare MI,
+MI3 e t per zero coppie; Z per background o varianza nulli; Jaccard per unione
+non positiva; Dice per TF entrambe nulle; log likelihood per corpus vuoto o
+coppie superiori a una delle TF. Jaccard e Dice non vengono limitati a uno.
+
+Per `word-association`, `counts` è invece `GlifiStudioKHWordAssociationInput`:
+`jointCount`, `conditionDocumentCount`, `termDocumentCount` e
+`totalDocumentCount`, tutti interi obbligatori. Le marginali sono DF sulla stessa
+popolazione di documenti; la condizione e il termine possono sovrapporsi.
+I conteggi devono produrre quattro celle 2×2 non negative, senza ricavare
+implicitamente i documenti o filtrare quelli fuori condizione. Il metodo
+`KH-word-association-document-v1` restituisce `unconditionalProbability`,
+`conditionalProbability`, `differential`, `lift`, `jaccard`, `ochiai` e
+`isPositiveAssociation`. La probabilità condizionata è anche la misura di
+ordinamento Frequency del profilo KH. I denominatori nulli lasciano assente la
+misura corrispondente; il segno dell'associazione usa il confronto intero esatto
+`jointCount*totalDocumentCount > conditionDocumentCount*termDocumentCount`,
+anche quando le probabilità arrotondate coincidono. Non viene applicato un
+filtro automatico delle associazioni nulle o negative.
 
 Le `candidates` di `term-scores` contengono `components` ordinati e `frequency`
 indipendente, senza ricontare le occorrenze contenute in candidate più lunghe.
@@ -239,8 +268,9 @@ la presentazione nativa; il formato JSON v1 resta quello precedente.
 Lo stato è per identificatore esatto secondo GS-VER-161; gli identificatori
 ausiliari senza manifest dedicato (distanze, aggregazione, CV, reti, HAC) mantengono
 `candidate`. Il trasporto non promuove metodi né completa la revisione esterna V6.
-I nuovi identificatori KH restano `candidate`; la verifica integrata GS-VER-300
-è in corso e non modifica lo stato dei manifest preesistenti.
+I nuovi identificatori KH restano `candidate`. GS-VER-300 conserva soltanto il
+proprio checkpoint; la verifica del codice integrato è distinta in GS-VER-301
+e non modifica lo stato dei manifest preesistenti.
 
 ## Limiti e failure
 
@@ -342,12 +372,18 @@ trasporto in GS-VER-162 e registrate in GS-VER-222.
 ## Verifica
 
 [Fixture sintetiche condivise](../../Fixtures/TextAnalysis/v1/cases.json):
-52 casi presenti: i 30 precedenti e 22 aggiunti per i quattordici nuovi tag KH.
-Le nuove fixture coprono preparazioni/scaling, contesti, tie ordinali, PCA e
-SOM a due fasi, punteggi globali, LR/FLR e preannotazioni, stato incrementale e κ.
+54 casi presenti e 36 tag distinti: 12 operazioni iniziali, nove avanzate e
+15 profili KH. Rispetto alle 30 fixture precedenti, 22 riguardano i primi
+14 profili KH e due il nuovo `word-association`; `kh-collocation` conserva i
+propri casi e ora espone tutte le sette misure globali. L'inventario comprende
+preparazioni/scaling, contesti, tie ordinali, PCA e SOM a due fasi, punteggi
+globali, associazione su DF, LR/FLR e preannotazioni, stato incrementale e κ.
 La baseline a 15 casi resta registrata in GS-VER-162 e quella a 30 in
-GS-VER-233/234, ciascuna sulla propria revisione. La verifica integrata delle
-52 fixture è in corso in GS-VER-300: l'inventario non ne anticipa l'esito.
+GS-VER-233/234, ciascuna sulla propria revisione. GS-VER-300 descrive il proprio
+checkpoint a 52 fixture e 14 profili KH; quei risultati non attestano le due
+nuove fixture, i campi estesi delle collocazioni o questa integrazione.
+GS-VER-301 registra separatamente le verifiche del codice integrato:
+l'inventario attuale non ne anticipa l'esito.
 Test Swift per identità canonica/default/UInt64, cancellazione e input ostili;
 confronto integrale CLI/Kit entro 1e-12 assoluto e relativo, con controlli golden
 indipendenti per i casi minimi, exit status, stdout/stderr e file speciali.
@@ -401,5 +437,7 @@ L'ampliamento KH è headless e transitorio secondo
 [ADR-0043](../adr/0043-completezza-funzionale-kh-pubblico.md); l'aggiunta delle
 operazioni non promuove V6, nuove lingue automatiche, GUI o persistenza.
 Il gate locale di [GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md)
-resta riferito al suo perimetro storico. Il gate del nuovo incremento e le sue
-limitazioni saranno registrati in GS-VER-300, attualmente in corso.
+resta riferito al suo perimetro storico. Anche GS-VER-234 e GS-VER-300 mantengono
+revisioni, conteggi e limiti dei rispettivi checkpoint. Le verifiche della
+composizione corrente, comprendente `word-association` e le sette misure globali,
+sono distinte in GS-VER-301.

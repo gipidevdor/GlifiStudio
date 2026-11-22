@@ -265,7 +265,8 @@ public enum GlifiStudioKHAnalysisRequest: Equatable, Sendable, Encodable {
             try khFinite([tolerance])
         case .sampleZScores, .perThousand, .wordContext, .correspondenceScaled,
             .somPCAInitialization,
-            .somKH, .collocationScores, .wordAssociation, .termScores, .termExtraction, .incrementalClassifier,
+            .somKH, .collocationScores, .wordAssociation, .termScores, .termExtraction,
+            .incrementalClassifier,
             .continueClassifier,
             .validateClassifierWithAgreement:
             break

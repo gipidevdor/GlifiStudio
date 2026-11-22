@@ -151,6 +151,16 @@
       "role": "data"
     },
     {
+      "identifier": "s:8GlifiKit0A33StudioAdvancedTextAnalysisPayloadO2khyAcA0ac10KHAnalysisG0OcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioAdvancedTextAnalysisPayload",
+        "kh(_:)"
+      ],
+      "declaration": "case kh(GlifiStudioKHAnalysisPayload)",
+      "role": "data"
+    },
+    {
       "identifier": "s:8GlifiKit0A33StudioAdvancedTextAnalysisPayloadO12ldaSelectionyAcA0ac8LDAModelI6ResultVcACmF",
       "kind": "swift.enum.case",
       "path": [
@@ -295,6 +305,16 @@
         "graphLayout(graph:method:seed:maximumIterations:tolerance:initialPositions:limits:)"
       ],
       "declaration": "case graphLayout(graph: GlifiStudioGraphInput, method: GlifiStudioGraphLayoutMethod, seed: UInt64 = 0, maximumIterations: Int = 300, tolerance: Double = 1e-6, initialPositions: [GlifiStudioGraphPoint]? = nil, limits: GlifiStudioGraphAlgorithmLimits = .standard)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A33StudioAdvancedTextAnalysisRequestO2khyAcA0ac10KHAnalysisG0OcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioAdvancedTextAnalysisRequest",
+        "kh(_:)"
+      ],
+      "declaration": "case kh(GlifiStudioKHAnalysisRequest)",
       "role": "data"
     },
     {
@@ -3036,6 +3056,75 @@
         "foldAssignments"
       ],
       "declaration": "let foldAssignments: [Int]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A35StudioClassifierAgreementEvaluationV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioClassifierAgreementEvaluation"
+      ],
+      "declaration": "struct GlifiStudioClassifierAgreementEvaluation",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A35StudioClassifierAgreementEvaluationV10evaluationAA0ac14ClassificationF0Vvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioClassifierAgreementEvaluation",
+        "evaluation"
+      ],
+      "declaration": "let evaluation: GlifiStudioClassificationEvaluation",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A35StudioClassifierAgreementEvaluationV08expectedE0Sdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioClassifierAgreementEvaluation",
+        "expectedAgreement"
+      ],
+      "declaration": "let expectedAgreement: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A35StudioClassifierAgreementEvaluationV5kappaSdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioClassifierAgreementEvaluation",
+        "kappa"
+      ],
+      "declaration": "let kappa: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A35StudioClassifierAgreementEvaluationV08observedE0Sdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioClassifierAgreementEvaluation",
+        "observedAgreement"
+      ],
+      "declaration": "let observedAgreement: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A35StudioClassifierAgreementEvaluationV11predictionsSaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioClassifierAgreementEvaluation",
+        "predictions"
+      ],
+      "declaration": "let predictions: [String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A35StudioClassifierAgreementEvaluationV4seeds6UInt64Vvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioClassifierAgreementEvaluation",
+        "seed"
+      ],
+      "declaration": "let seed: UInt64",
       "role": "data"
     },
     {
@@ -14054,6 +14143,45 @@
       "role": "data"
     },
     {
+      "identifier": "s:8GlifiKit0A33StudioIncrementalClassifierResultV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioIncrementalClassifierResult"
+      ],
+      "declaration": "struct GlifiStudioIncrementalClassifierResult",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A33StudioIncrementalClassifierResultV5modelAA0aC15NaiveBayesModelVSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioIncrementalClassifierResult",
+        "model"
+      ],
+      "declaration": "let model: GlifiStudioNaiveBayesModel?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A33StudioIncrementalClassifierResultV11predictionsAA0aC14ClassificationVSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioIncrementalClassifierResult",
+        "predictions"
+      ],
+      "declaration": "let predictions: GlifiStudioClassification?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A33StudioIncrementalClassifierResultV5stateAA0aC23NaiveBayesTrainingStateVvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioIncrementalClassifierResult",
+        "state"
+      ],
+      "declaration": "let state: GlifiStudioNaiveBayesTrainingState",
+      "role": "data"
+    },
+    {
       "identifier": "s:8GlifiKit0A33StudioInsufficientEvidenceOutcomeV",
       "kind": "swift.struct",
       "path": [
@@ -14778,6 +14906,2196 @@
         "selectedFindingIDs"
       ],
       "declaration": "let selectedFindingIDs: [String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioKHAnalysisO",
+      "kind": "swift.enum",
+      "path": [
+        "GlifiStudioKHAnalysis"
+      ],
+      "declaration": "enum GlifiStudioKHAnalysis",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioKHAnalysisO7executeyAA0aC18TextAnalysisResultVAA0acD7RequestOYaAA0aC7FailureVYKFZ",
+      "kind": "swift.type.method",
+      "path": [
+        "GlifiStudioKHAnalysis",
+        "execute(_:)"
+      ],
+      "declaration": "@concurrent static func execute(_ request: GlifiStudioKHAnalysisRequest) async throws(GlifiStudioFailure) -> GlifiStudioTextAnalysisResult",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "request",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "request"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "GlifiStudioKHAnalysisRequest",
+                "preciseIdentifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "GlifiStudioTextAnalysisResult",
+            "preciseIdentifier": "s:8GlifiKit0A24StudioTextAnalysisResultV"
+          }
+        ]
+      },
+      "role": "operation",
+      "commands": [
+        "text-analysis continue-classifier",
+        "text-analysis correspondence-scaled",
+        "text-analysis incremental-classifier",
+        "text-analysis kh-collocation",
+        "text-analysis matrix-per-thousand",
+        "text-analysis matrix-zscore",
+        "text-analysis mds-ordinal",
+        "text-analysis mds-ordinal-search",
+        "text-analysis som-kh",
+        "text-analysis som-pca-initialization",
+        "text-analysis term-extraction",
+        "text-analysis term-scores",
+        "text-analysis validate-classifier-kappa",
+        "text-analysis word-association",
+        "text-analysis word-context"
+      ]
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisPayloadO",
+      "kind": "swift.enum",
+      "path": [
+        "GlifiStudioKHAnalysisPayload"
+      ],
+      "declaration": "enum GlifiStudioKHAnalysisPayload",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisPayloadO19classifierAgreementyAcA0ac10ClassifierG10EvaluationVcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisPayload",
+        "classifierAgreement(_:)"
+      ],
+      "declaration": "case classifierAgreement(GlifiStudioClassifierAgreementEvaluation)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisPayloadO11collocationyAcA0aC19KHCollocationScoresVcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisPayload",
+        "collocation(_:)"
+      ],
+      "declaration": "case collocation(GlifiStudioKHCollocationScores)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisPayloadO14correspondenceyAcA0aC22KHCorrespondenceResultVcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisPayload",
+        "correspondence(_:)"
+      ],
+      "declaration": "case correspondence(GlifiStudioKHCorrespondenceResult)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisPayloadO6encode2toys7Encoder_p_tKF",
+      "kind": "swift.method",
+      "path": [
+        "GlifiStudioKHAnalysisPayload",
+        "encode(to:)"
+      ],
+      "declaration": "func encode(to encoder: any Encoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "to",
+            "internalName": "encoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "encoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "keyword",
+                "spelling": "any"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Encoder",
+                "preciseIdentifier": "s:s7EncoderP"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Codable serialization of GlifiStudioKHAnalysisPayload for the shared text-analysis request/result transport; this does not execute an independent analytical operation."
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisPayloadO21incrementalClassifieryAcA0ac11IncrementalG6ResultVcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisPayload",
+        "incrementalClassifier(_:)"
+      ],
+      "declaration": "case incrementalClassifier(GlifiStudioIncrementalClassifierResult)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisPayloadO6matrixyACSaySaySdGGcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisPayload",
+        "matrix(_:)"
+      ],
+      "declaration": "case matrix([[Double]])",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisPayloadO3mdsyAcA0aC9MDSResultVcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisPayload",
+        "mds(_:)"
+      ],
+      "declaration": "case mds(GlifiStudioMDSResult)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisPayloadO9mdsSearchyAcA0aC15MDSSearchResultVcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisPayload",
+        "mdsSearch(_:)"
+      ],
+      "declaration": "case mdsSearch(GlifiStudioMDSSearchResult)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisPayloadO3somyAcA0aC11KHSOMResultVcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisPayload",
+        "som(_:)"
+      ],
+      "declaration": "case som(GlifiStudioKHSOMResult)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisPayloadO14termExtractionyAcA0ac4TermG6ResultVcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisPayload",
+        "termExtraction(_:)"
+      ],
+      "declaration": "case termExtraction(GlifiStudioTermExtractionResult)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisPayloadO10termScoresyAcA0ac14TermExtractionG0VcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisPayload",
+        "termScores(_:)"
+      ],
+      "declaration": "case termScores(GlifiStudioTermExtractionScores)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisPayloadO15wordAssociationyAcA0ac6KHWordG6ScoresVcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisPayload",
+        "wordAssociation(_:)"
+      ],
+      "declaration": "case wordAssociation(GlifiStudioKHWordAssociationScores)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisPayloadO11wordContextyAcA0ac6KHWordG6ResultVcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisPayload",
+        "wordContext(_:)"
+      ],
+      "declaration": "case wordContext(GlifiStudioKHWordContextResult)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO",
+      "kind": "swift.enum",
+      "path": [
+        "GlifiStudioKHAnalysisRequest"
+      ],
+      "declaration": "enum GlifiStudioKHAnalysisRequest",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO17collocationScoresyAcA0aC18KHCollocationInputVcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "collocationScores(_:)"
+      ],
+      "declaration": "case collocationScores(GlifiStudioKHCollocationInput)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO18continueClassifieryAcA0aC23NaiveBayesTrainingStateV_SaySaySSGGAgHtcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "continueClassifier(state:documents:labels:predictionDocuments:)"
+      ],
+      "declaration": "case continueClassifier(state: GlifiStudioNaiveBayesTrainingState, documents: [[String]], labels: [String], predictionDocuments: [[String]] = [])",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO20correspondenceScaledyACSaySaySdGG_AA0aC23KHCorrespondenceScalingOAHtcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "correspondenceScaled(matrix:rowScaling:columnScaling:)"
+      ],
+      "declaration": "case correspondenceScaled(matrix: [[Double]], rowScaling: GlifiStudioKHCorrespondenceScaling = .principal, columnScaling: GlifiStudioKHCorrespondenceScaling = .principal)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO6encode2toys7Encoder_p_tKF",
+      "kind": "swift.method",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "encode(to:)"
+      ],
+      "declaration": "func encode(to encoder: any Encoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "to",
+            "internalName": "encoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "encoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "keyword",
+                "spelling": "any"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Encoder",
+                "preciseIdentifier": "s:s7EncoderP"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Codable serialization of GlifiStudioKHAnalysisRequest for the shared text-analysis request/result transport; this does not execute an independent analytical operation."
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO21incrementalClassifieryACSaySaySSGG_AESdAFtcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "incrementalClassifier(documents:labels:smoothing:predictionDocuments:)"
+      ],
+      "declaration": "case incrementalClassifier(documents: [[String]], labels: [String], smoothing: Double = 1, predictionDocuments: [[String]] = [])",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO9operationSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "operation"
+      ],
+      "declaration": "var operation: String { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO10ordinalMDSyACSaySaySdGG_SiAA0aC14MDSOrdinalTiesOs6UInt64VSiSdtcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "ordinalMDS(matrix:dimensions:ties:seed:maximumIterations:tolerance:)"
+      ],
+      "declaration": "case ordinalMDS(matrix: [[Double]], dimensions: Int = 2, ties: GlifiStudioMDSOrdinalTies = .primary, seed: UInt64 = 0, maximumIterations: Int = 300, tolerance: Double = 1e-8)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO16ordinalMDSSearchyACSaySaySdGG_SiAA0aC14MDSOrdinalTiesOSis6UInt64VSiSdtcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "ordinalMDSSearch(matrix:dimensions:ties:starts:seed:maximumIterations:tolerance:)"
+      ],
+      "declaration": "case ordinalMDSSearch(matrix: [[Double]], dimensions: Int = 2, ties: GlifiStudioMDSOrdinalTies = .primary, starts: Int = 10, seed: UInt64 = 0, maximumIterations: Int = 300, tolerance: Double = 1e-8)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO11perThousandyACSaySaySdGG_AeA0aC20KHZeroExposurePolicyOtcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "perThousand(matrix:exposures:zeroExposurePolicy:)"
+      ],
+      "declaration": "case perThousand(matrix: [[Double]], exposures: [Double], zeroExposurePolicy: GlifiStudioKHZeroExposurePolicy = .reject)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO13sampleZScoresyACSaySaySdGG_AA0aC12KHMatrixAxisOAA0aC16KHConstantPolicyOtcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "sampleZScores(matrix:axis:constantPolicy:)"
+      ],
+      "declaration": "case sampleZScores(matrix: [[Double]], axis: GlifiStudioKHMatrixAxis, constantPolicy: GlifiStudioKHConstantPolicy = .reject)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO5somKHyACSaySaySdGG_S2iAA0aC10KHSOMPhaseVSgAiA0aC11SOMTopologyOAFSgSiSgtcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "somKH(matrix:width:height:firstPhase:secondPhase:topology:initialCodebooks:codebookClusterCount:)"
+      ],
+      "declaration": "case somKH(matrix: [[Double]], width: Int, height: Int, firstPhase: GlifiStudioKHSOMPhase? = nil, secondPhase: GlifiStudioKHSOMPhase? = nil, topology: GlifiStudioSOMTopology = .hexagonal, initialCodebooks: [[Double]]? = nil, codebookClusterCount: Int? = nil)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO20somPCAInitializationyACSaySaySdGG_S2itcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "somPCAInitialization(matrix:width:height:)"
+      ],
+      "declaration": "case somPCAInitialization(matrix: [[Double]], width: Int, height: Int)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO14termExtractionyACSayAA0aC12TermDocumentVG_AA0achG4RuleVAA0acH13AdjacencyModeOSitcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "termExtraction(documents:rule:adjacencyMode:maximumWork:)"
+      ],
+      "declaration": "case termExtraction(documents: [GlifiStudioTermDocument], rule: GlifiStudioTermExtractionRule, adjacencyMode: GlifiStudioTermAdjacencyMode = .token, maximumWork: Int = 100_000_000)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO10termScoresyACSayAA0aC13TermCandidateVG_SSAA0acH13AdjacencyModeOSitcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "termScores(candidates:preprocessingIdentifier:adjacencyMode:maximumWork:)"
+      ],
+      "declaration": "case termScores(candidates: [GlifiStudioTermCandidate], preprocessingIdentifier: String, adjacencyMode: GlifiStudioTermAdjacencyMode = .token, maximumWork: Int = 100_000_000)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO31validateClassifierWithAgreementyACSaySaySSGG_AESis6UInt64VSdtcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "validateClassifierWithAgreement(documents:labels:folds:seed:smoothing:)"
+      ],
+      "declaration": "case validateClassifierWithAgreement(documents: [[String]], labels: [String], folds: Int, seed: UInt64, smoothing: Double = 1)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO15wordAssociationyAcA0ac6KHWordG5InputVcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "wordAssociation(_:)"
+      ],
+      "declaration": "case wordAssociation(GlifiStudioKHWordAssociationInput)",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioKHAnalysisRequestO11wordContextyACSayAA0aC15KHContextCountsVG_SaySSGAHtcACmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHAnalysisRequest",
+        "wordContext(levels:targetIDs:contextIDs:)"
+      ],
+      "declaration": "case wordContext(levels: [GlifiStudioKHContextCounts], targetIDs: [String], contextIDs: [String])",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioKHCollocationInputV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioKHCollocationInput"
+      ],
+      "declaration": "struct GlifiStudioKHCollocationInput",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioKHCollocationInputV18collocateFrequencySivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCollocationInput",
+        "collocateFrequency"
+      ],
+      "declaration": "let collocateFrequency: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioKHCollocationInputV16corpusTokenCountSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCollocationInput",
+        "corpusTokenCount"
+      ],
+      "declaration": "let corpusTokenCount: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioKHCollocationInputV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioKHCollocationInput",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "keyword",
+                "spelling": "any"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Strict Codable input decoding for the GlifiStudioKHCollocationInput DTO transported by text-analysis kh-collocation; this does not execute an analytical operation."
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioKHCollocationInputV10jointCount13nodeFrequency09collocateI0011corpusTokenG010windowSpanACSi_S4itcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioKHCollocationInput",
+        "init(jointCount:nodeFrequency:collocateFrequency:corpusTokenCount:windowSpan:)"
+      ],
+      "declaration": "init(jointCount: Int, nodeFrequency: Int, collocateFrequency: Int, corpusTokenCount: Int, windowSpan: Int)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "jointCount",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "jointCount"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "nodeFrequency",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "nodeFrequency"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "collocateFrequency",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "collocateFrequency"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "corpusTokenCount",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "corpusTokenCount"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "windowSpan",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "windowSpan"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs the GlifiStudioKHCollocationInput input DTO transported by text-analysis kh-collocation; domain validation and analytical execution remain in the shared KH dispatcher."
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioKHCollocationInputV10jointCountSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCollocationInput",
+        "jointCount"
+      ],
+      "declaration": "let jointCount: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioKHCollocationInputV13nodeFrequencySivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCollocationInput",
+        "nodeFrequency"
+      ],
+      "declaration": "let nodeFrequency: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioKHCollocationInputV10windowSpanSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCollocationInput",
+        "windowSpan"
+      ],
+      "declaration": "let windowSpan: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHCollocationScoresV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioKHCollocationScores"
+      ],
+      "declaration": "struct GlifiStudioKHCollocationScores",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHCollocationScoresV4diceSdSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCollocationScores",
+        "dice"
+      ],
+      "declaration": "let dice: Double?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHCollocationScoresV19expectedWindowCountSdSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCollocationScores",
+        "expectedWindowCount"
+      ],
+      "declaration": "let expectedWindowCount: Double?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHCollocationScoresV7jaccardSdSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCollocationScores",
+        "jaccard"
+      ],
+      "declaration": "let jaccard: Double?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHCollocationScoresV13logLikelihoodSdSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCollocationScores",
+        "logLikelihood"
+      ],
+      "declaration": "let logLikelihood: Double?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHCollocationScoresV3mi3SdSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCollocationScores",
+        "mi3"
+      ],
+      "declaration": "let mi3: Double?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHCollocationScoresV19mi3MethodIdentifierSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCollocationScores",
+        "mi3MethodIdentifier"
+      ],
+      "declaration": "let mi3MethodIdentifier: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHCollocationScoresV17mutualInformationSdSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCollocationScores",
+        "mutualInformation"
+      ],
+      "declaration": "let mutualInformation: Double?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHCollocationScoresV6tScoreSdSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCollocationScores",
+        "tScore"
+      ],
+      "declaration": "let tScore: Double?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHCollocationScoresV17zMethodIdentifierSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCollocationScores",
+        "zMethodIdentifier"
+      ],
+      "declaration": "let zMethodIdentifier: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHCollocationScoresV6zScoreSdSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCollocationScores",
+        "zScore"
+      ],
+      "declaration": "let zScore: Double?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A22StudioKHConstantPolicyO",
+      "kind": "swift.enum",
+      "path": [
+        "GlifiStudioKHConstantPolicy"
+      ],
+      "declaration": "enum GlifiStudioKHConstantPolicy",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A22StudioKHConstantPolicyO8rawValueACSgSS_tcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioKHConstantPolicy",
+        "init(rawValue:)"
+      ],
+      "declaration": "init?(rawValue: String)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "rawValue",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "rawValue"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs a declared KH transport enum from its raw string; analytical execution remains in GlifiStudioKHAnalysis.execute(_:)."
+    },
+    {
+      "identifier": "s:8GlifiKit0A22StudioKHConstantPolicyO6rejectyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHConstantPolicy",
+        "reject"
+      ],
+      "declaration": "case reject",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A22StudioKHConstantPolicyO5zerosyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHConstantPolicy",
+        "zeros"
+      ],
+      "declaration": "case zeros",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A21StudioKHContextCountsV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioKHContextCounts"
+      ],
+      "declaration": "struct GlifiStudioKHContextCounts",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A21StudioKHContextCountsV5alphaSdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHContextCounts",
+        "alpha"
+      ],
+      "declaration": "let alpha: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A21StudioKHContextCountsV07contextE0SaySaySdGGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHContextCounts",
+        "contextCounts"
+      ],
+      "declaration": "let contextCounts: [[Double]]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A21StudioKHContextCountsV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioKHContextCounts",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "keyword",
+                "spelling": "any"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Strict Codable input decoding for the GlifiStudioKHContextCounts DTO transported by text-analysis word-context; this does not execute an analytical operation."
+    },
+    {
+      "identifier": "s:8GlifiKit0A21StudioKHContextCountsV5level5alpha06targetE007contextE0AcA0acD5LevelO_SdSaySaySdGGAKtcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioKHContextCounts",
+        "init(level:alpha:targetCounts:contextCounts:)"
+      ],
+      "declaration": "init(level: GlifiStudioKHContextLevel, alpha: Double = 1, targetCounts: [[Double]], contextCounts: [[Double]])",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "level",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "level"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "GlifiStudioKHContextLevel",
+                "preciseIdentifier": "s:8GlifiKit0A20StudioKHContextLevelO"
+              }
+            ]
+          },
+          {
+            "name": "alpha",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "alpha"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Double",
+                "preciseIdentifier": "s:Sd"
+              }
+            ]
+          },
+          {
+            "name": "targetCounts",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "targetCounts"
+              },
+              {
+                "kind": "text",
+                "spelling": ": [["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Double",
+                "preciseIdentifier": "s:Sd"
+              },
+              {
+                "kind": "text",
+                "spelling": "]]"
+              }
+            ]
+          },
+          {
+            "name": "contextCounts",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "contextCounts"
+              },
+              {
+                "kind": "text",
+                "spelling": ": [["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Double",
+                "preciseIdentifier": "s:Sd"
+              },
+              {
+                "kind": "text",
+                "spelling": "]]"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs the GlifiStudioKHContextCounts input DTO transported by text-analysis word-context; domain validation and analytical execution remain in the shared KH dispatcher."
+    },
+    {
+      "identifier": "s:8GlifiKit0A21StudioKHContextCountsV5levelAA0acD5LevelOvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHContextCounts",
+        "level"
+      ],
+      "declaration": "let level: GlifiStudioKHContextLevel",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A21StudioKHContextCountsV06targetE0SaySaySdGGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHContextCounts",
+        "targetCounts"
+      ],
+      "declaration": "let targetCounts: [[Double]]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioKHContextLevelO",
+      "kind": "swift.enum",
+      "path": [
+        "GlifiStudioKHContextLevel"
+      ],
+      "declaration": "enum GlifiStudioKHContextLevel",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioKHContextLevelO2h1yA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHContextLevel",
+        "h1"
+      ],
+      "declaration": "case h1",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioKHContextLevelO2h2yA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHContextLevel",
+        "h2"
+      ],
+      "declaration": "case h2",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioKHContextLevelO2h3yA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHContextLevel",
+        "h3"
+      ],
+      "declaration": "case h3",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioKHContextLevelO2h4yA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHContextLevel",
+        "h4"
+      ],
+      "declaration": "case h4",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioKHContextLevelO2h5yA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHContextLevel",
+        "h5"
+      ],
+      "declaration": "case h5",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioKHContextLevelO8rawValueACSgSS_tcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioKHContextLevel",
+        "init(rawValue:)"
+      ],
+      "declaration": "init?(rawValue: String)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "rawValue",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "rawValue"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs a declared KH transport enum from its raw string; analytical execution remains in GlifiStudioKHAnalysis.execute(_:)."
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioKHContextLevelO9paragraphyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHContextLevel",
+        "paragraph"
+      ],
+      "declaration": "case paragraph",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioKHContextLevelO8sentenceyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHContextLevel",
+        "sentence"
+      ],
+      "declaration": "case sentence",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHCorrespondenceResultV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioKHCorrespondenceResult"
+      ],
+      "declaration": "struct GlifiStudioKHCorrespondenceResult",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHCorrespondenceResultV17columnCoordinatesSaySaySdGGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCorrespondenceResult",
+        "columnCoordinates"
+      ],
+      "declaration": "var columnCoordinates: [[Double]] { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHCorrespondenceResultV12columnMassesSaySdGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCorrespondenceResult",
+        "columnMasses"
+      ],
+      "declaration": "var columnMasses: [Double] { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHCorrespondenceResultV13columnScalingAA0acdG0Ovp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCorrespondenceResult",
+        "columnScaling"
+      ],
+      "declaration": "var columnScaling: GlifiStudioKHCorrespondenceScaling { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHCorrespondenceResultV6encode2toys7Encoder_p_tKF",
+      "kind": "swift.method",
+      "path": [
+        "GlifiStudioKHCorrespondenceResult",
+        "encode(to:)"
+      ],
+      "declaration": "func encode(to encoder: any Encoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "to",
+            "internalName": "encoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "encoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "keyword",
+                "spelling": "any"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Encoder",
+                "preciseIdentifier": "s:s7EncoderP"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Codable serialization of GlifiStudioKHCorrespondenceResult for the shared text-analysis request/result transport; this does not execute an independent analytical operation."
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHCorrespondenceResultV15includedColumnsSaySiGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCorrespondenceResult",
+        "includedColumns"
+      ],
+      "declaration": "var includedColumns: [Int] { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHCorrespondenceResultV12includedRowsSaySiGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCorrespondenceResult",
+        "includedRows"
+      ],
+      "declaration": "var includedRows: [Int] { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHCorrespondenceResultV14rowCoordinatesSaySaySdGGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCorrespondenceResult",
+        "rowCoordinates"
+      ],
+      "declaration": "var rowCoordinates: [[Double]] { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHCorrespondenceResultV9rowMassesSaySdGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCorrespondenceResult",
+        "rowMasses"
+      ],
+      "declaration": "var rowMasses: [Double] { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHCorrespondenceResultV10rowScalingAA0acdG0Ovp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCorrespondenceResult",
+        "rowScaling"
+      ],
+      "declaration": "var rowScaling: GlifiStudioKHCorrespondenceScaling { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHCorrespondenceResultV14singularValuesSaySdGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCorrespondenceResult",
+        "singularValues"
+      ],
+      "declaration": "var singularValues: [Double] { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHCorrespondenceResultV22sourceMethodIdentifierSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHCorrespondenceResult",
+        "sourceMethodIdentifier"
+      ],
+      "declaration": "var sourceMethodIdentifier: String { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioKHCorrespondenceScalingO",
+      "kind": "swift.enum",
+      "path": [
+        "GlifiStudioKHCorrespondenceScaling"
+      ],
+      "declaration": "enum GlifiStudioKHCorrespondenceScaling",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioKHCorrespondenceScalingO8rawValueACSgSS_tcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioKHCorrespondenceScaling",
+        "init(rawValue:)"
+      ],
+      "declaration": "init?(rawValue: String)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "rawValue",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "rawValue"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs a declared KH transport enum from its raw string; analytical execution remains in GlifiStudioKHAnalysis.execute(_:)."
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioKHCorrespondenceScalingO9principalyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHCorrespondenceScaling",
+        "principal"
+      ],
+      "declaration": "case principal",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioKHCorrespondenceScalingO8standardyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHCorrespondenceScaling",
+        "standard"
+      ],
+      "declaration": "case standard",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioKHCorrespondenceScalingO9symmetricyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHCorrespondenceScaling",
+        "symmetric"
+      ],
+      "declaration": "case symmetric",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioKHMatrixAxisO",
+      "kind": "swift.enum",
+      "path": [
+        "GlifiStudioKHMatrixAxis"
+      ],
+      "declaration": "enum GlifiStudioKHMatrixAxis",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioKHMatrixAxisO7columnsyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHMatrixAxis",
+        "columns"
+      ],
+      "declaration": "case columns",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioKHMatrixAxisO8rawValueACSgSS_tcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioKHMatrixAxis",
+        "init(rawValue:)"
+      ],
+      "declaration": "init?(rawValue: String)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "rawValue",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "rawValue"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs a declared KH transport enum from its raw string; analytical execution remains in GlifiStudioKHAnalysis.execute(_:)."
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioKHMatrixAxisO4rowsyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHMatrixAxis",
+        "rows"
+      ],
+      "declaration": "case rows",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioKHSOMPhaseV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioKHSOMPhase"
+      ],
+      "declaration": "struct GlifiStudioKHSOMPhase",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioKHSOMPhaseV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioKHSOMPhase",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "keyword",
+                "spelling": "any"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Strict Codable input decoding for the GlifiStudioKHSOMPhase DTO transported by text-analysis som-kh; this does not execute an analytical operation."
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioKHSOMPhaseV5steps19initialLearningRate0F6RadiusACSi_S2dtcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioKHSOMPhase",
+        "init(steps:initialLearningRate:initialRadius:)"
+      ],
+      "declaration": "init(steps: Int, initialLearningRate: Double, initialRadius: Double)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "steps",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "steps"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "initialLearningRate",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "initialLearningRate"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Double",
+                "preciseIdentifier": "s:Sd"
+              }
+            ]
+          },
+          {
+            "name": "initialRadius",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "initialRadius"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Double",
+                "preciseIdentifier": "s:Sd"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs the GlifiStudioKHSOMPhase input DTO transported by text-analysis som-kh; domain validation and analytical execution remain in the shared KH dispatcher."
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioKHSOMPhaseV19initialLearningRateSdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMPhase",
+        "initialLearningRate"
+      ],
+      "declaration": "let initialLearningRate: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioKHSOMPhaseV13initialRadiusSdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMPhase",
+        "initialRadius"
+      ],
+      "declaration": "let initialRadius: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioKHSOMPhaseV5stepsSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMPhase",
+        "steps"
+      ],
+      "declaration": "let steps: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioKHSOMResult"
+      ],
+      "declaration": "struct GlifiStudioKHSOMResult",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV11assignmentsSaySiGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "assignments"
+      ],
+      "declaration": "let assignments: [Int]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV18codebookClusteringAA0ac11SOMCodebookF0VSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "codebookClustering"
+      ],
+      "declaration": "let codebookClustering: GlifiStudioSOMCodebookClustering?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV14completedStepsSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "completedSteps"
+      ],
+      "declaration": "let completedSteps: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV10firstPhaseAA0aC10KHSOMPhaseVvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "firstPhase"
+      ],
+      "declaration": "let firstPhase: GlifiStudioKHSOMPhase",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV19firstPhaseCodebooksSaySaySdGGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "firstPhaseCodebooks"
+      ],
+      "declaration": "let firstPhaseCodebooks: [[Double]]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV6heightSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "height"
+      ],
+      "declaration": "let height: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV16initialCodebooksSaySaySdGGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "initialCodebooks"
+      ],
+      "declaration": "let initialCodebooks: [[Double]]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV24initializationIdentifierSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "initializationIdentifier"
+      ],
+      "declaration": "let initializationIdentifier: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV16methodIdentifierSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "methodIdentifier"
+      ],
+      "declaration": "let methodIdentifier: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV22neighborhoodDistortionSdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "neighborhoodDistortion"
+      ],
+      "declaration": "let neighborhoodDistortion: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV10prototypesSaySaySdGGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "prototypes"
+      ],
+      "declaration": "let prototypes: [[Double]]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV17quantizationErrorSdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "quantizationError"
+      ],
+      "declaration": "let quantizationError: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV11secondPhaseAA0aC10KHSOMPhaseVvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "secondPhase"
+      ],
+      "declaration": "let secondPhase: GlifiStudioKHSOMPhase",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV16topographicErrorSdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "topographicError"
+      ],
+      "declaration": "let topographicError: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV8topologyAA0aC11SOMTopologyOvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "topology"
+      ],
+      "declaration": "let topology: GlifiStudioSOMTopology",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV7uMatrixSaySdGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "uMatrix"
+      ],
+      "declaration": "let uMatrix: [Double]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioKHSOMResultV5widthSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHSOMResult",
+        "width"
+      ],
+      "declaration": "let width: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHWordAssociationInputV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioKHWordAssociationInput"
+      ],
+      "declaration": "struct GlifiStudioKHWordAssociationInput",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHWordAssociationInputV22conditionDocumentCountSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordAssociationInput",
+        "conditionDocumentCount"
+      ],
+      "declaration": "let conditionDocumentCount: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHWordAssociationInputV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioKHWordAssociationInput",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "keyword",
+                "spelling": "any"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Strict Codable input decoding for the GlifiStudioKHWordAssociationInput DTO transported by text-analysis word-association; this does not execute an analytical operation."
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHWordAssociationInputV10jointCount017conditionDocumentH004termjH005totaljH0ACSi_S3itcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioKHWordAssociationInput",
+        "init(jointCount:conditionDocumentCount:termDocumentCount:totalDocumentCount:)"
+      ],
+      "declaration": "init(jointCount: Int, conditionDocumentCount: Int, termDocumentCount: Int, totalDocumentCount: Int)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "jointCount",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "jointCount"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "conditionDocumentCount",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "conditionDocumentCount"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "termDocumentCount",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "termDocumentCount"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "totalDocumentCount",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "totalDocumentCount"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs the GlifiStudioKHWordAssociationInput input DTO transported by text-analysis word-association; domain validation and analytical execution remain in the shared KH dispatcher."
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHWordAssociationInputV10jointCountSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordAssociationInput",
+        "jointCount"
+      ],
+      "declaration": "let jointCount: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHWordAssociationInputV17termDocumentCountSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordAssociationInput",
+        "termDocumentCount"
+      ],
+      "declaration": "let termDocumentCount: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A28StudioKHWordAssociationInputV18totalDocumentCountSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordAssociationInput",
+        "totalDocumentCount"
+      ],
+      "declaration": "let totalDocumentCount: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioKHWordAssociationScoresV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioKHWordAssociationScores"
+      ],
+      "declaration": "struct GlifiStudioKHWordAssociationScores",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioKHWordAssociationScoresV22conditionalProbabilitySdSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordAssociationScores",
+        "conditionalProbability"
+      ],
+      "declaration": "let conditionalProbability: Double?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioKHWordAssociationScoresV12differentialSdSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordAssociationScores",
+        "differential"
+      ],
+      "declaration": "let differential: Double?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioKHWordAssociationScoresV010isPositiveE0Sbvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordAssociationScores",
+        "isPositiveAssociation"
+      ],
+      "declaration": "let isPositiveAssociation: Bool",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioKHWordAssociationScoresV7jaccardSdSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordAssociationScores",
+        "jaccard"
+      ],
+      "declaration": "let jaccard: Double?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioKHWordAssociationScoresV4liftSdSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordAssociationScores",
+        "lift"
+      ],
+      "declaration": "let lift: Double?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioKHWordAssociationScoresV6ochiaiSdSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordAssociationScores",
+        "ochiai"
+      ],
+      "declaration": "let ochiai: Double?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioKHWordAssociationScoresV24unconditionalProbabilitySdSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordAssociationScores",
+        "unconditionalProbability"
+      ],
+      "declaration": "let unconditionalProbability: Double?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHWordContextResultV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioKHWordContextResult"
+      ],
+      "declaration": "struct GlifiStudioKHWordContextResult",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHWordContextResultV10contextIDsSaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordContextResult",
+        "contextIDs"
+      ],
+      "declaration": "var contextIDs: [String] { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHWordContextResultV6encode2toys7Encoder_p_tKF",
+      "kind": "swift.method",
+      "path": [
+        "GlifiStudioKHWordContextResult",
+        "encode(to:)"
+      ],
+      "declaration": "func encode(to encoder: any Encoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "to",
+            "internalName": "encoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "encoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "keyword",
+                "spelling": "any"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Encoder",
+                "preciseIdentifier": "s:s7EncoderP"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Codable serialization of GlifiStudioKHWordContextResult for the shared text-analysis request/result transport; this does not execute an independent analytical operation."
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHWordContextResultV6levelsSayAA0aC14KHContextLevelOGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordContextResult",
+        "levels"
+      ],
+      "declaration": "var levels: [GlifiStudioKHContextLevel] { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHWordContextResultV13supportCountsSaySaySiGGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordContextResult",
+        "supportCounts"
+      ],
+      "declaration": "var supportCounts: [[Int]] { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHWordContextResultV9targetIDsSaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordContextResult",
+        "targetIDs"
+      ],
+      "declaration": "var targetIDs: [String] { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHWordContextResultV6valuesSaySaySdGGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordContextResult",
+        "values"
+      ],
+      "declaration": "var values: [[Double]] { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A25StudioKHWordContextResultV7weightsSaySdGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioKHWordContextResult",
+        "weights"
+      ],
+      "declaration": "var weights: [Double] { get }",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioKHZeroExposurePolicyO",
+      "kind": "swift.enum",
+      "path": [
+        "GlifiStudioKHZeroExposurePolicy"
+      ],
+      "declaration": "enum GlifiStudioKHZeroExposurePolicy",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioKHZeroExposurePolicyO8rawValueACSgSS_tcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioKHZeroExposurePolicy",
+        "init(rawValue:)"
+      ],
+      "declaration": "init?(rawValue: String)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "rawValue",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "rawValue"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs a declared KH transport enum from its raw string; analytical execution remains in GlifiStudioKHAnalysis.execute(_:)."
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioKHZeroExposurePolicyO6rejectyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHZeroExposurePolicy",
+        "reject"
+      ],
+      "declaration": "case reject",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioKHZeroExposurePolicyO5zerosyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioKHZeroExposurePolicy",
+        "zeros"
+      ],
+      "declaration": "case zeros",
       "role": "data"
     },
     {
@@ -19979,6 +22297,68 @@
       "role": "data"
     },
     {
+      "identifier": "s:8GlifiKit0A20StudioMDSOrdinalTiesO",
+      "kind": "swift.enum",
+      "path": [
+        "GlifiStudioMDSOrdinalTies"
+      ],
+      "declaration": "enum GlifiStudioMDSOrdinalTies",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioMDSOrdinalTiesO8rawValueACSgSS_tcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioMDSOrdinalTies",
+        "init(rawValue:)"
+      ],
+      "declaration": "init?(rawValue: String)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "rawValue",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "rawValue"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs a declared KH transport enum from its raw string; analytical execution remains in GlifiStudioKHAnalysis.execute(_:)."
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioMDSOrdinalTiesO7primaryyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioMDSOrdinalTies",
+        "primary"
+      ],
+      "declaration": "case primary",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioMDSOrdinalTiesO9secondaryyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioMDSOrdinalTies",
+        "secondary"
+      ],
+      "declaration": "case secondary",
+      "role": "data"
+    },
+    {
       "identifier": "s:8GlifiKit0A15StudioMDSResultV",
       "kind": "swift.struct",
       "path": [
@@ -21996,6 +24376,287 @@
         "n"
       ],
       "declaration": "let n: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A21StudioNaiveBayesModelV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioNaiveBayesModel"
+      ],
+      "declaration": "struct GlifiStudioNaiveBayesModel",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A21StudioNaiveBayesModelV7classesSaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioNaiveBayesModel",
+        "classes"
+      ],
+      "declaration": "let classes: [String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A21StudioNaiveBayesModelV14logLikelihoodsSaySaySdGGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioNaiveBayesModel",
+        "logLikelihoods"
+      ],
+      "declaration": "let logLikelihoods: [[Double]]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A21StudioNaiveBayesModelV9logPriorsSaySdGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioNaiveBayesModel",
+        "logPriors"
+      ],
+      "declaration": "let logPriors: [Double]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A21StudioNaiveBayesModelV9smoothingSdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioNaiveBayesModel",
+        "smoothing"
+      ],
+      "declaration": "let smoothing: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A21StudioNaiveBayesModelV10vocabularySaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioNaiveBayesModel",
+        "vocabulary"
+      ],
+      "declaration": "let vocabulary: [String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioNaiveBayesTrainingStateV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioNaiveBayesTrainingState"
+      ],
+      "declaration": "struct GlifiStudioNaiveBayesTrainingState",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioNaiveBayesTrainingStateV7classesSaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioNaiveBayesTrainingState",
+        "classes"
+      ],
+      "declaration": "let classes: [String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioNaiveBayesTrainingStateV14documentCountsSaySiGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioNaiveBayesTrainingState",
+        "documentCounts"
+      ],
+      "declaration": "let documentCounts: [Int]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioNaiveBayesTrainingStateV7classes10vocabulary14documentCounts05tokenK09smoothingACSaySSG_AISaySiGSayAJGSdtcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioNaiveBayesTrainingState",
+        "init(classes:vocabulary:documentCounts:tokenCounts:smoothing:)"
+      ],
+      "declaration": "init(classes: [String], vocabulary: [String], documentCounts: [Int], tokenCounts: [[Int]], smoothing: Double = 1)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "classes",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "classes"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          },
+          {
+            "name": "vocabulary",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "vocabulary"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          },
+          {
+            "name": "documentCounts",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "documentCounts"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          },
+          {
+            "name": "tokenCounts",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "tokenCounts"
+              },
+              {
+                "kind": "text",
+                "spelling": ": [["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": "]]"
+              }
+            ]
+          },
+          {
+            "name": "smoothing",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "smoothing"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Double",
+                "preciseIdentifier": "s:Sd"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs the GlifiStudioNaiveBayesTrainingState input DTO transported by text-analysis continue-classifier; domain validation and analytical execution remain in the shared KH dispatcher."
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioNaiveBayesTrainingStateV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioNaiveBayesTrainingState",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "keyword",
+                "spelling": "any"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Strict Codable input decoding for the GlifiStudioNaiveBayesTrainingState DTO transported by text-analysis continue-classifier; this does not execute an analytical operation."
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioNaiveBayesTrainingStateV9smoothingSdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioNaiveBayesTrainingState",
+        "smoothing"
+      ],
+      "declaration": "let smoothing: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioNaiveBayesTrainingStateV11tokenCountsSaySaySiGGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioNaiveBayesTrainingState",
+        "tokenCounts"
+      ],
+      "declaration": "let tokenCounts: [[Int]]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioNaiveBayesTrainingStateV10vocabularySaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioNaiveBayesTrainingState",
+        "vocabulary"
+      ],
+      "declaration": "let vocabulary: [String]",
       "role": "data"
     },
     {
@@ -33812,6 +36473,767 @@
       "role": "data"
     },
     {
+      "identifier": "s:8GlifiKit0A23StudioTermAdjacencyModeO",
+      "kind": "swift.enum",
+      "path": [
+        "GlifiStudioTermAdjacencyMode"
+      ],
+      "declaration": "enum GlifiStudioTermAdjacencyMode",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioTermAdjacencyModeO8rawValueACSgSS_tcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioTermAdjacencyMode",
+        "init(rawValue:)"
+      ],
+      "declaration": "init?(rawValue: String)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "rawValue",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "rawValue"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs a declared KH transport enum from its raw string; analytical execution remains in GlifiStudioKHAnalysis.execute(_:)."
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioTermAdjacencyModeO5tokenyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioTermAdjacencyMode",
+        "token"
+      ],
+      "declaration": "case token",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioTermAdjacencyModeO4typeyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioTermAdjacencyMode",
+        "type"
+      ],
+      "declaration": "case type",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A19StudioTermCandidateV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioTermCandidate"
+      ],
+      "declaration": "struct GlifiStudioTermCandidate",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A19StudioTermCandidateV10componentsSaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermCandidate",
+        "components"
+      ],
+      "declaration": "let components: [String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A19StudioTermCandidateV9frequencySivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermCandidate",
+        "frequency"
+      ],
+      "declaration": "let frequency: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A19StudioTermCandidateV10components9frequencyACSaySSG_Sitcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioTermCandidate",
+        "init(components:frequency:)"
+      ],
+      "declaration": "init(components: [String], frequency: Int)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "components",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "components"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          },
+          {
+            "name": "frequency",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "frequency"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs the GlifiStudioTermCandidate input DTO transported by text-analysis term-scores; domain validation and analytical execution remain in the shared KH dispatcher."
+    },
+    {
+      "identifier": "s:8GlifiKit0A19StudioTermCandidateV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioTermCandidate",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "keyword",
+                "spelling": "any"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Strict Codable input decoding for the GlifiStudioTermCandidate DTO transported by text-analysis term-scores; this does not execute an analytical operation."
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioTermComponentStatisticsV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioTermComponentStatistics"
+      ],
+      "declaration": "struct GlifiStudioTermComponentStatistics",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioTermComponentStatisticsV9componentSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermComponentStatistics",
+        "component"
+      ],
+      "declaration": "let component: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioTermComponentStatisticsV13leftFrequencySivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermComponentStatistics",
+        "leftFrequency"
+      ],
+      "declaration": "let leftFrequency: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioTermComponentStatisticsV13leftTypeCountSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermComponentStatistics",
+        "leftTypeCount"
+      ],
+      "declaration": "let leftTypeCount: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioTermComponentStatisticsV14rightFrequencySivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermComponentStatistics",
+        "rightFrequency"
+      ],
+      "declaration": "let rightFrequency: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A29StudioTermComponentStatisticsV14rightTypeCountSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermComponentStatistics",
+        "rightTypeCount"
+      ],
+      "declaration": "let rightTypeCount: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioTermDocumentV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioTermDocument"
+      ],
+      "declaration": "struct GlifiStudioTermDocument",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioTermDocumentV2idSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermDocument",
+        "id"
+      ],
+      "declaration": "let id: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioTermDocumentV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioTermDocument",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "keyword",
+                "spelling": "any"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Strict Codable input decoding for the GlifiStudioTermDocument DTO transported by text-analysis term-extraction; this does not execute an analytical operation."
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioTermDocumentV2id4text6tokens18linguisticContractACSS_SSSayAA0acD5TokenVGSStcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioTermDocument",
+        "init(id:text:tokens:linguisticContract:)"
+      ],
+      "declaration": "init(id: String, text: String, tokens: [GlifiStudioTermToken], linguisticContract: String)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "id",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "id"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "text",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "text"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "tokens",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "tokens"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "GlifiStudioTermToken",
+                "preciseIdentifier": "s:8GlifiKit0A15StudioTermTokenV"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          },
+          {
+            "name": "linguisticContract",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "linguisticContract"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs the GlifiStudioTermDocument input DTO transported by text-analysis term-extraction; domain validation and analytical execution remain in the shared KH dispatcher."
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioTermDocumentV18linguisticContractSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermDocument",
+        "linguisticContract"
+      ],
+      "declaration": "let linguisticContract: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioTermDocumentV4textSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermDocument",
+        "text"
+      ],
+      "declaration": "let text: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioTermDocumentV6tokensSayAA0acD5TokenVGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermDocument",
+        "tokens"
+      ],
+      "declaration": "let tokens: [GlifiStudioTermToken]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioTermExtractionResultV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioTermExtractionResult"
+      ],
+      "declaration": "struct GlifiStudioTermExtractionResult",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioTermExtractionResultV11documentIDsSaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermExtractionResult",
+        "documentIDs"
+      ],
+      "declaration": "let documentIDs: [String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioTermExtractionResultV19linguisticContractsSaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermExtractionResult",
+        "linguisticContracts"
+      ],
+      "declaration": "let linguisticContracts: [String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioTermExtractionResultV11occurrencesSayAA0acD10OccurrenceVGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermExtractionResult",
+        "occurrences"
+      ],
+      "declaration": "let occurrences: [GlifiStudioTermOccurrence]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioTermExtractionResultV4ruleAA0acdE4RuleVvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermExtractionResult",
+        "rule"
+      ],
+      "declaration": "let rule: GlifiStudioTermExtractionRule",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioTermExtractionResultV6scoresAA0acdE6ScoresVvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermExtractionResult",
+        "scores"
+      ],
+      "declaration": "let scores: GlifiStudioTermExtractionScores",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioTermExtractionRuleV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioTermExtractionRule"
+      ],
+      "declaration": "struct GlifiStudioTermExtractionRule",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioTermExtractionRuleV20allowedPartsOfSpeechSaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermExtractionRule",
+        "allowedPartsOfSpeech"
+      ],
+      "declaration": "let allowedPartsOfSpeech: [String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioTermExtractionRuleV10identifierSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermExtractionRule",
+        "identifier"
+      ],
+      "declaration": "let identifier: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioTermExtractionRuleV11ignoredKeysSaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermExtractionRule",
+        "ignoredKeys"
+      ],
+      "declaration": "let ignoredKeys: [String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioTermExtractionRuleV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioTermExtractionRule",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "keyword",
+                "spelling": "any"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Strict Codable input decoding for the GlifiStudioTermExtractionRule DTO transported by text-analysis term-extraction; this does not execute an analytical operation."
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioTermExtractionRuleV10identifier20allowedPartsOfSpeech11ignoredKeys17minimumComponents07maximumO0ACSS_SaySSGAIS2itcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioTermExtractionRule",
+        "init(identifier:allowedPartsOfSpeech:ignoredKeys:minimumComponents:maximumComponents:)"
+      ],
+      "declaration": "init(identifier: String, allowedPartsOfSpeech: [String], ignoredKeys: [String] = [], minimumComponents: Int = 2, maximumComponents: Int = 64)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "identifier",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "identifier"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "allowedPartsOfSpeech",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "allowedPartsOfSpeech"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          },
+          {
+            "name": "ignoredKeys",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "ignoredKeys"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          },
+          {
+            "name": "minimumComponents",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "minimumComponents"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "maximumComponents",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "maximumComponents"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs the GlifiStudioTermExtractionRule input DTO transported by text-analysis term-extraction; domain validation and analytical execution remain in the shared KH dispatcher."
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioTermExtractionRuleV17maximumComponentsSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermExtractionRule",
+        "maximumComponents"
+      ],
+      "declaration": "let maximumComponents: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A24StudioTermExtractionRuleV17minimumComponentsSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermExtractionRule",
+        "minimumComponents"
+      ],
+      "declaration": "let minimumComponents: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioTermExtractionScoresV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioTermExtractionScores"
+      ],
+      "declaration": "struct GlifiStudioTermExtractionScores",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioTermExtractionScoresV13adjacencyModeAA0acd9AdjacencyH0Ovp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermExtractionScores",
+        "adjacencyMode"
+      ],
+      "declaration": "let adjacencyMode: GlifiStudioTermAdjacencyMode",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioTermExtractionScoresV10componentsSayAA0acD19ComponentStatisticsVGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermExtractionScores",
+        "components"
+      ],
+      "declaration": "let components: [GlifiStudioTermComponentStatistics]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioTermExtractionScoresV26independentOccurrenceCountSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermExtractionScores",
+        "independentOccurrenceCount"
+      ],
+      "declaration": "let independentOccurrenceCount: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioTermExtractionScoresV23preprocessingIdentifierSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermExtractionScores",
+        "preprocessingIdentifier"
+      ],
+      "declaration": "let preprocessingIdentifier: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioTermExtractionScoresV5termsSayAA0acD5ScoreVGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermExtractionScores",
+        "terms"
+      ],
+      "declaration": "let terms: [GlifiStudioTermScore]",
+      "role": "data"
+    },
+    {
       "identifier": "s:8GlifiKit0A16StudioTermFilterV",
       "kind": "swift.struct",
       "path": [
@@ -34204,6 +37626,390 @@
         "term"
       ],
       "declaration": "let term: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioTermOccurrenceV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioTermOccurrence"
+      ],
+      "declaration": "struct GlifiStudioTermOccurrence",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioTermOccurrenceV10componentsSaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermOccurrence",
+        "components"
+      ],
+      "declaration": "let components: [String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioTermOccurrenceV10documentIDSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermOccurrence",
+        "documentID"
+      ],
+      "declaration": "let documentID: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioTermOccurrenceV7endUTF8Sivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermOccurrence",
+        "endUTF8"
+      ],
+      "declaration": "let endUTF8: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioTermOccurrenceV9startUTF8Sivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermOccurrence",
+        "startUTF8"
+      ],
+      "declaration": "let startUTF8: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioTermOccurrenceV8tokenEndSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermOccurrence",
+        "tokenEnd"
+      ],
+      "declaration": "let tokenEnd: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioTermOccurrenceV10tokenStartSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermOccurrence",
+        "tokenStart"
+      ],
+      "declaration": "let tokenStart: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioTermScoreV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioTermScore"
+      ],
+      "declaration": "struct GlifiStudioTermScore",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioTermScoreV10componentsSaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermScore",
+        "components"
+      ],
+      "declaration": "let components: [String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioTermScoreV3flrSdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermScore",
+        "flr"
+      ],
+      "declaration": "let flr: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioTermScoreV9frequencySivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermScore",
+        "frequency"
+      ],
+      "declaration": "let frequency: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioTermScoreV2lrSdvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermScore",
+        "lr"
+      ],
+      "declaration": "let lr: Double",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioTermTokenV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioTermToken"
+      ],
+      "declaration": "struct GlifiStudioTermToken",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioTermTokenV4baseSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermToken",
+        "base"
+      ],
+      "declaration": "let base: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioTermTokenV7endUTF8Sivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermToken",
+        "endUTF8"
+      ],
+      "declaration": "let endUTF8: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioTermTokenV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioTermToken",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "keyword",
+                "spelling": "any"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Strict Codable input decoding for the GlifiStudioTermToken DTO transported by text-analysis term-extraction; this does not execute an analytical operation."
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioTermTokenV7surface4base12partOfSpeech9startUTF803endL08sentence9paragraphACSS_S2SSgS4itcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioTermToken",
+        "init(surface:base:partOfSpeech:startUTF8:endUTF8:sentence:paragraph:)"
+      ],
+      "declaration": "init(surface: String, base: String, partOfSpeech: String? = nil, startUTF8: Int, endUTF8: Int, sentence: Int = 0, paragraph: Int = 0)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "surface",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "surface"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "base",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "base"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "partOfSpeech",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "partOfSpeech"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              },
+              {
+                "kind": "text",
+                "spelling": "?"
+              }
+            ]
+          },
+          {
+            "name": "startUTF8",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "startUTF8"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "endUTF8",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "endUTF8"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "sentence",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "sentence"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "paragraph",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "paragraph"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Constructs the GlifiStudioTermToken input DTO transported by text-analysis term-extraction; domain validation and analytical execution remain in the shared KH dispatcher."
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioTermTokenV9paragraphSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermToken",
+        "paragraph"
+      ],
+      "declaration": "let paragraph: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioTermTokenV12partOfSpeechSSSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermToken",
+        "partOfSpeech"
+      ],
+      "declaration": "let partOfSpeech: String?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioTermTokenV8sentenceSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermToken",
+        "sentence"
+      ],
+      "declaration": "let sentence: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioTermTokenV9startUTF8Sivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermToken",
+        "startUTF8"
+      ],
+      "declaration": "let startUTF8: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioTermTokenV7surfaceSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioTermToken",
+        "surface"
+      ],
+      "declaration": "let surface: String",
       "role": "data"
     },
     {

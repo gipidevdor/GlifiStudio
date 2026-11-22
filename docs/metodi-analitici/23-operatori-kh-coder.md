@@ -6,13 +6,13 @@
 | --- | --- |
 | Identificatore | GS-MET-001-23 |
 | Tipo | Specifica dei contratti numerici e della copertura |
-| Versione | 1.5.1 |
-| Stato | Profili pubblici implementati; verifica integrata GS-VER-300 in corso |
+| Versione | 1.5.2 |
+| Stato | Profili pubblici allineati al codice integrato; verifiche correnti distinte in GS-VER-301 |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Ambito richiesto dall'iniziatore; promozione scientifica separata secondo ADR-0031 |
 | Documento padre | [GS-MET-001](README.md) |
-| Riferimenti | RF-087; ADR-0032; ADR-0035; ADR-0043; GS-DOR-300; GS-VER-160; GS-VER-233; GS-VER-234; GS-VER-300 |
+| Riferimenti | RF-087; ADR-0032; ADR-0035; ADR-0043; GS-DOR-300; GS-VER-160; GS-VER-233; GS-VER-234; GS-VER-300; GS-VER-301 |
 
 ## Scopo e copertura
 
@@ -33,7 +33,7 @@ L’ampliamento è autorizzato in [ADR-0035](../adr/0035-completamento-nativo-kh
 | --- | --- |
 | Frequenze TF/DF, distribuzioni e filtri | GlifiCorpusAnalyzer; GlifiNGramFrequencyAnalysis; GlifiTermWeighting |
 | Ricerca di parole/documenti e KWIC | GlifiQueryParser/Evaluator; sessione GlifiKit esistente |
-| Associazione di parole e tabelle di contingenza | GlifiKeynessAnalysis; GlifiContingencyAnalysis; GlifiCollocationAnalysis; MI3/Z KH con TF globali |
+| Associazione di parole e tabelle di contingenza | GlifiKeynessAnalysis; GlifiContingencyAnalysis; GlifiCollocationAnalysis; sette misure KH su TF globali e associazione condizione-termine su DF |
 | Analisi delle corrispondenze | CA-SVD-v1; coordinate principal, standard e biplot symmetric esplicite |
 | MDS classica, metrica, Kruskal, Sammon e SMACOF ordinale | GlifiExploratoryAnalysis; tie primary/secondary e ricerca multi-start con diagnostiche per avvio |
 | Clustering gerarchico | HAC esistente per vettori; Lance-Williams per dissimilarità single/complete/average |
@@ -53,9 +53,12 @@ La riverifica di [GS-VER-234](../evidenze/GS-VER-234-riverifica-correttezza-comp
 ha accertato le lacune della revisione allora esaminata e resta un'evidenza
 storica. Il nuovo incremento [GS-DOR-300](../pianificazione/dor-completezza-funzionale-kh.md),
 autorizzato da [ADR-0043](../adr/0043-completezza-funzionale-kh-pubblico.md),
-introduce implementazioni dedicate per quei profili. La verifica integrata
-GS-VER-300 è in corso: la presenza del codice non attesta il suo esito finale,
-una validazione esterna V6 o la parità con edizioni KH non pubbliche.
+introduce implementazioni dedicate per quei profili. GS-VER-300 conserva la
+fotografia a 14 profili KH e 52 fixture; il codice integrato comprende anche
+`word-association` e tutte le sette misure globali delle collocazioni. La verifica
+della composizione corrente è distinta in GS-VER-301: la presenza del codice
+non attesta il suo esito finale, una validazione esterna V6 o la parità con
+edizioni KH non pubbliche.
 
 | Profilo pubblico KH | Stato reale del profilo nativo |
 | --- | --- |
@@ -64,7 +67,8 @@ una validazione esterna V6 o la parità con edizioni KH non pubbliche.
 | Parola-contesto per livelli e pesi (A.6.8) | `wordContext`: conteggi per unità dichiarate, medie condizionate e somma pesata |
 | MDS ordinale e gestione dei tie | Nuovi ingressi con primary predefinito o secondary esplicito; i default delle API precedenti restano secondary |
 | SOM KH a due fasi e inizializzazione PCA | Aggiornamenti online continui sugli stessi codebook; PCA lineare o inizializzazione esplicita |
-| MI³ e Z con TF globali e span (A.5.6) | `GlifiKHCollocationAnalysis`: corpus e finestra dichiarati, senza margini di opportunità 2×2 |
+| Sette misure di collocazione KH (A.5.6) | `GlifiKHCollocationAnalysis`: MI, MI³, t, Z, Jaccard, Dice e log likelihood su TF globali e span dichiarati |
+| Associazione condizione-termine (A.5.7) | `GlifiKHWordAssociationAnalysis`: probabilità, differenziale, lift, Jaccard, Ochiai e direzione esatta su DF della stessa popolazione |
 | Scaling CA | Proiezioni principal, standard e symmetric biplot con esponente di σ dichiarato per righe e colonne |
 | Addestramento NB incrementale e κ | Statistiche sufficienti transitorie aggiornabili, ispezione del modello e κ sulle stesse predizioni della CV |
 | TermExtract (A.4.4) | LR/FLR su candidate indipendenti, modalità token/type e regole POS su preannotazioni; nessuna certificazione di tokenizzazione inglese o giapponese |
@@ -366,16 +370,50 @@ saltare estrazioni casuali: theta continua a includere tutti i documenti.
 
 ## Collocazioni KH e rilevanza dei composti
 
-`GlifiKHCollocationAnalysis` applica [KH A.5.6, pagina 40](https://khcoder.net/en/manual_en_v3.pdf):
-`MI3=log2(a³N/(F1F2))`, `p=F2/(N−F1)`, `E=pF1S`,
-`Z=(a−E)/sqrt(E(1−p))`. F1 e F2 sono TF globali di due chiavi distinte,
-N è l'esposizione completa in token e S il numero di posizioni della finestra,
-esclusa quella del nodo. Le finestre sovrapposte possono produrre a maggiore
-di F1 o F2. I conteggi devono essere coerenti con corpus, posizioni e massimo
-numero di coppie; non sono margini di una tabella 2×2 di opportunità.
-MI3 è assente per a nullo; Z è assente senza background o con varianza nulla.
-L'uscita espone entrambi gli identificatori e l'aspettativa della finestra.
+`GlifiKHCollocationAnalysis` applica le sette misure di
+[KH A.5.6, pagina 40](https://khcoder.net/en/manual_en_v3.pdf), con identificatore
+combinato `KH-collocation-global-token-window-v1`. Siano a le coppie osservate,
+F1 e F2 le TF globali di due chiavi distinte, N l'esposizione completa in token e
+S il numero di posizioni della finestra, esclusa quella del nodo.
+I conteggi sono non negativi, S è positivo, F1+F2≤N e a non supera F1S, F2S o
+F1F2. Le finestre sovrapposte possono tuttavia produrre a maggiore di F1 o F2:
+questi dati non sono margini di una tabella di opportunità di finestra.
+
+| Misura restituita | Formula e dominio |
+| --- | --- |
+| `mutualInformation` | `log2(aN/(F1F2))`; assente per a=0 |
+| `mi3` | `log2(a³N/(F1F2))`; assente per a=0 |
+| `tScore` | `(a−F1F2/N)/sqrt(a)`; assente per a=0 |
+| `zScore` | `(a−E)/sqrt(E(1−p))`, `p=F2/(N−F1)`, `E=pF1S`; assente senza background o con varianza nulla |
+| `jaccard` | `a/(F1+F2−a)`; assente per denominatore non positivo |
+| `dice` | `2a/(F1+F2)`; assente se entrambe le TF sono nulle |
+| `logLikelihood` | `Σ_ij n_ij ln(n_ij/e_ij)`, pari a G²/2 non corretto; assente per N=0 oppure a>min(F1,F2) |
+
+Per la log likelihood, le celle sono `a, F1−a, F2−a, N−F1−F2+a` e gli attesi
+usano le marginali globali F1/F2 e N. Celle e marginali nulle seguono il limite
+`0*ln(0)=0`. MI e MI³ usano base due; la log likelihood usa il logaritmo naturale
+senza fattore due. Jaccard e Dice restano valori della formula globale, senza
+clamp a uno: con finestre sovrapposte non sono necessariamente metriche di insiemi.
+I residui vicino all'indipendenza preservano la differenza intera prima della
+conversione floating point. L'uscita conserva inoltre `expectedWindowCount`
+quando il background è positivo e i due identificatori MI³/Z preesistenti.
 Non viene applicato smoothing implicito.
+
+`GlifiKHWordAssociationAnalysis` espone `KH-word-association-document-v1` per
+KH A.5.7. I suoi ingressi sono DF: a documenti soddisfano la condizione e
+contengono il termine, C soddisfano la condizione, T contengono il termine
+nell'intera popolazione di D documenti. Il contratto richiede le quattro celle
+non negative `a, C−a, T−a, D−C−T+a`; le due marginali possono sovrapporsi e
+la loro somma può superare D quando l'intersezione lo consente.
+
+Si restituiscono `unconditionalProbability=T/D`, `conditionalProbability=a/C`
+(anche misura Frequency del profilo KH), `differential=a/C−T/D`,
+`lift=aD/(CT)`, `jaccard=a/(C+T−a)` e `ochiai=a/sqrt(CT)`.
+Un denominatore nullo rende assente soltanto la relativa misura.
+`isPositiveAssociation` confronta esattamente `aD>CT`, anche se le probabilità
+arrotondate coincidono; il differenziale conserva il residuo intero esatto.
+L'operatore non esclude automaticamente associazioni nulle o negative e non
+converte conteggi di finestre o TF in frequenze documentali.
 
 `TermExtract-LR-FLR-independent-average1-v1` riceve componenti presegmentati e
 frequenza indipendente f di ogni candidata. Le adiacenze sono soltanto interne
@@ -482,9 +520,13 @@ non ereditano i manifest delle nove varianti storiche per somiglianza del nome.
 e il gate locale del completamento, superato nel suo perimetro storico.
 [GS-VER-234](../evidenze/GS-VER-234-riverifica-correttezza-completezza.md) registra
 la successiva riverifica, le correzioni e i limiti KH aperti sulla revisione
-allora esaminata. I nuovi profili di ADR-0043 hanno implementazioni dedicate;
-la loro verifica integrata è in corso in GS-VER-300. I quattordici nuovi tag
-riusano schema 1 e il medesimo comando CLI, secondo GS-API-002.
+allora esaminata. GS-VER-300 conserva il proprio checkpoint a 14 profili KH e
+52 fixture; le sue prove non si estendono al successivo `word-association`, ai
+campi ampliati di `kh-collocation` o alla composizione corrente. I 15 tag KH
+attuali riusano schema 1 e il medesimo comando CLI, secondo GS-API-002: con i
+12 iniziali e i nove avanzati formano 36 operazioni distinte, coperte da un
+inventario di 54 fixture. Esiti e limiti della verifica integrata appartengono
+separatamente a GS-VER-301; l'inventario non ne anticipa l'esito.
 GUI, persistenza, nuove lingue automatiche, V6 esterno e dispositivi non sono
 promossi da questo incremento.
 

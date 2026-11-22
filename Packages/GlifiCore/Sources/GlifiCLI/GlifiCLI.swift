@@ -112,7 +112,8 @@ enum GlifiCLI {
                     lastResult = try await session.importText(
                         at: sourceURL,
                         format: inputFormat
-                            ?? (sourceURL.pathExtension.lowercased() == "txt" ? .plainText : .markdown)
+                            ?? (sourceURL.pathExtension.lowercased() == "txt"
+                                ? .plainText : .markdown)
                     )
                 }
                 return lastResult
