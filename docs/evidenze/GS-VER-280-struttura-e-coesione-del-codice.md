@@ -82,9 +82,11 @@ Il gate completo `make verify-app-store` comprende `verify.sh` e il packaging.
 Il suo esito non è dedotto dalle prove mirate. I risultati tardivi del gate
 locale e della CI sono registrati nella [PR #42](https://github.com/gipidevdor/GlifiStudio/pull/42),
 sulla revisione finale, senza anticiparli in questo snapshot.
-I cinque sorgenti produttivi e gli allegati API/CLI/metriche sono congelati in
-`d5d45e5`; le revisioni successive collegano il registro del gate e allineano i
-riscontri della baseline alla correzione pubblicata `aec1a00`.
+I cinque sorgenti del refactoring e le metriche strutturali sono congelati in
+`d5d45e5`. Dopo l’integrazione di `aec1a00` i confronti API e i 98 casi CLI sono
+stati rieseguiti con esito identico; sei test mirati di intervalli, SpanMap e
+annotazioni sono superati. Le revisioni successive conservano separatamente
+prova della baseline, correzione pubblicata e gate finale della composizione.
 
 Per il confronto CLI compilare `GlifiCLI` della baseline e del candidato con la
 stessa toolchain, congelare i due eseguibili e invocare:

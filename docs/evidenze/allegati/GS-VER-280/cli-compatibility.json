@@ -1,7 +1,7 @@
 {
   "schemaIdentifier": "studio.glifi.verification.cli-compatibility.v1",
   "referenceBinarySHA256": "b7202c8dc96d83f9e2be23496980bff52a3c156bf79b6c25beeef0a12c5b9e67",
-  "candidateBinarySHA256": "74c8b74a6ca1167173aaa3aae163adce853a02b1422f72913cccaeb275516c12",
+  "candidateBinarySHA256": "68f8165ef27f929c3073413e0d80eacfaf436e675b0b6795f102e3a19903f450",
   "caseCount": 98,
   "allBytesEqual": true,
   "comparison": "Complete stdout, stderr and exit code; no fields removed or normalized",
@@ -936,12 +936,12 @@
       "equal": true,
       "reference": {
         "exitCode": 0,
-        "stdoutSHA256": "ae0e2d36b9f15bacd6761c79b596bb93bf5a3786ac1f3af92a5a598cc0ade66d",
+        "stdoutSHA256": "7841628069bde7ef7d98738914682dd2c1e8ad829793d52e9805cf9b2c754156",
         "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       "candidate": {
         "exitCode": 0,
-        "stdoutSHA256": "ae0e2d36b9f15bacd6761c79b596bb93bf5a3786ac1f3af92a5a598cc0ade66d",
+        "stdoutSHA256": "7841628069bde7ef7d98738914682dd2c1e8ad829793d52e9805cf9b2c754156",
         "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       }
     },
@@ -964,12 +964,12 @@
       "equal": true,
       "reference": {
         "exitCode": 0,
-        "stdoutSHA256": "c11f1b9a1d2c52b715a5b185cab0409d88cc124e8d518e9611f051f96fbe6d8f",
+        "stdoutSHA256": "e4e419bd72adb81e2127c7aa3f09640594a56a062392463655e02f8cd0cb5342",
         "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       "candidate": {
         "exitCode": 0,
-        "stdoutSHA256": "c11f1b9a1d2c52b715a5b185cab0409d88cc124e8d518e9611f051f96fbe6d8f",
+        "stdoutSHA256": "e4e419bd72adb81e2127c7aa3f09640594a56a062392463655e02f8cd0cb5342",
         "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       }
     },
@@ -992,12 +992,12 @@
       "equal": true,
       "reference": {
         "exitCode": 0,
-        "stdoutSHA256": "4b7ed20608b0c0027dee91ec56e7db758ab1d56fc744c796a03574f5181861f4",
+        "stdoutSHA256": "a64d0b2b01d41e198dbfad26daa7744269986d74cafbe1a3aa4afbfd6140b859",
         "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       "candidate": {
         "exitCode": 0,
-        "stdoutSHA256": "4b7ed20608b0c0027dee91ec56e7db758ab1d56fc744c796a03574f5181861f4",
+        "stdoutSHA256": "a64d0b2b01d41e198dbfad26daa7744269986d74cafbe1a3aa4afbfd6140b859",
         "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       }
     },
@@ -1020,12 +1020,12 @@
       "equal": true,
       "reference": {
         "exitCode": 0,
-        "stdoutSHA256": "b13d5fa214bcb773a74fc3322096b852c26f7204c57e07fb08520813f7b41c56",
+        "stdoutSHA256": "aebe8c5ab765288ab27d9498b68e3f6fb75b583d5524169e8159e0eda8a564e5",
         "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       "candidate": {
         "exitCode": 0,
-        "stdoutSHA256": "b13d5fa214bcb773a74fc3322096b852c26f7204c57e07fb08520813f7b41c56",
+        "stdoutSHA256": "aebe8c5ab765288ab27d9498b68e3f6fb75b583d5524169e8159e0eda8a564e5",
         "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       }
     },
