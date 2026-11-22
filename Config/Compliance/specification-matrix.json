@@ -3471,6 +3471,37 @@
       "blockingReason": null
     },
     {
+      "id": "CMP-177",
+      "clause": "GS-STD-001-17 § Confronto misurato; GS-MET-001-15/16/21 § Riduzioni e PRNG deterministici",
+      "specification": "docs/standard/17-benchmark-e-regressioni-prestazionali.md",
+      "requirements": [
+        "RQ-008",
+        "RQ-009",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiMultivariateMethods.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiNetworkAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiResamplingStatistics.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiFactorizationRefinementTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiHarmonicTraversalOptimizationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiMovingBlockBootstrapOptimizationTests.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiFactorizationStorageBenchmarks.swift",
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiTraversalOptimizationBenchmarks.swift",
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiResamplingOptimizationBenchmarks.swift"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-173-layout-e-visite-analitiche.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
       "id": "CMP-261",
       "clause": "GS-APL-005 § Lettura bounded delle fonti",
       "specification": "docs/apple/05-documenti-e-accesso-ai-file.md",

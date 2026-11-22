@@ -14,6 +14,8 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
+- [GS-VER-173 — Layout e visite dei kernel analitici](GS-VER-173-layout-e-visite-analitiche.md) — Superato: 18 confronti identici, 544 test e gate completo; costi residui dichiarati
+
 Le evidenze GS-VER-168/169/170 si riferiscono ai rispettivi snapshot storici del
 working tree sorgente. La nuova integrazione sulla base `fe6f654` ha verifica
 separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.

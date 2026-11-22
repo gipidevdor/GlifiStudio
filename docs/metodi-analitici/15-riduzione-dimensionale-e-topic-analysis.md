@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-15 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.1.1 |
+| Versione | 1.1.2 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -55,6 +55,26 @@ la storia contiene già il valore finale. La contiguità richiede memoria per
 la trasposta di `X` e gli specchi dei fattori: celle aggiuntive dell'ordine di
 `N×V + (N+V)×rank`, oltre ai buffer dei prodotti. I limiti di celle/lavoro non
 costituiscono da soli una soglia RSS; le misure dichiarano le forme effettive.
+
+Il raffinamento candidato GS-DOR-173 conserva le trasposte di `X` e `H` in
+due buffer flat column-major, senza un array separato per ciascuna colonna.
+Gli offset sono rispettivamente `colonna×N+riga` e `colonna×rank+fattore`;
+la trasposta di `W`, i fattori pubblici e i buffer dei prodotti conservano il
+layout precedente. Cambia soltanto l'indirizzamento delle celle: moltiplicazioni,
+riduzioni e aggiornamenti mantengono la sequenza binary64 originale. I budget
+esistenti limitano anche i prodotti interi usati per gli offset; non vengono
+introdotti nuovi rifiuti dell'input valido. I prodotti e l'obiettivo leggono viste
+contigue delle colonne, confinate alla durata del prestito del buffer immutabile.
+Prima delle letture, dimensioni uniformi e verifica esatta tramite quoziente e
+resto provano che ogni vista rientri nel buffer senza moltiplicazioni soggette a
+overflow; nessun puntatore o vista sopravvive al prestito.
+La cancellazione viene controllata
+anche durante la costruzione delle trasposte flat. La verifica e le misure
+sulle forme ordinaria, larga e alta sono registrate in
+[GS-VER-173](../evidenze/GS-VER-173-layout-e-visite-analitiche.md).
+Il caso alto misurato presenta una lieve penalità di tempo, riportata separatamente
+dal risparmio di memoria; il layout non garantisce un miglioramento di tempo o RSS
+per ogni forma.
 
 Queste ottimizzazioni non cambiano inizializzazione e seed, aggiornamento di
 `H` prima di `W`, incremento `1e-12` dei denominatori, stopping, storia,

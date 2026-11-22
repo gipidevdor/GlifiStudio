@@ -29,6 +29,8 @@ preservando i confini del lavoro già in corso nell'altra chat.
 
 ## Indice
 
+- [GS-DOR-173 — Layout e visite dei kernel analitici](dor-layout-e-visite-analitiche.md) — Ready
+
 - [GS-DOR-172 — Query sparse e qualità del clustering](dor-query-sparse-e-silhouette.md) — Ready
 
 - [GS-DOR-171 — Integrazione e pubblicazione degli algoritmi](dor-integrazione-algoritmi.md) — Ready
