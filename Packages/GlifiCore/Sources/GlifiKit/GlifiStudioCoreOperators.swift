@@ -909,12 +909,7 @@ public enum GlifiStudioCoreOperators {
     }
 
     private static func number(_ text: String) throws -> Double {
-        guard
-            text.range(
-                of: #"^[+-]?(?:[0-9]+(?:[.,][0-9]*)?|[.,][0-9]+)(?:[eE][+-]?[0-9]+)?$"#,
-                options: .regularExpression) != nil,
-            !(text.contains(",") && text.contains(".")),
-            let value = Double(text.replacingOccurrences(of: ",", with: ".")), value.isFinite
+        guard let value = GlifiStudioEditorDecimal.parse(text)
         else { throw invalid() }
         return value
     }

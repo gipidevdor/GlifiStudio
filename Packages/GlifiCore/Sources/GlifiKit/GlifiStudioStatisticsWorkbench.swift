@@ -379,12 +379,7 @@ public enum GlifiStudioStatisticsWorkbench {
     }
 
     private static func decimal(_ token: String) throws -> Double {
-        guard
-            token.range(
-                of: #"^[+-]?(?:[0-9]+(?:[.,][0-9]*)?|[.,][0-9]+)(?:[eE][+-]?[0-9]+)?$"#,
-                options: .regularExpression) != nil,
-            !(token.contains(".") && token.contains(",")),
-            let value = Double(token.replacingOccurrences(of: ",", with: ".")), value.isFinite
+        guard let value = GlifiStudioEditorDecimal.parse(token)
         else { throw statisticsWorkbenchFailure("invalid-number") }
         return value
     }

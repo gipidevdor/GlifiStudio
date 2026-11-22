@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.12 |
+| Versione | 0.92.13 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -627,3 +627,11 @@ e risultati del trasporto; i nuovi profili restano candidate.
 e il gate macOS della versione unita superato: 771 test Core/Kit in
 Debug/Release e nei sanitizzatori, 113 test nativi e 189 controlli sulle 63 fixture CLI. ADR-0043 governa l’estensione; le clausole
 CMP-160 e CMP-162 conservano i propri stati, senza promozioni V6 o GUI.
+
+## Regia del piano e grammatica numerica (GS-DOR-284)
+
+CMP-284 collega RQ-005/011/023/063 alla separazione privata fra regia ed
+esecuzione del passo. CMP-285 collega RQ-007/060/063 alla grammatica decimale
+comune dei due editor Kit, con errori distinti e contratti di trasporto conservati.
+[GS-VER-284](evidenze/GS-VER-284-regia-del-piano-e-input-numerico.md) registra
+compatibilità, verifiche macOS e limiti, senza promozione della maturità scientifica.

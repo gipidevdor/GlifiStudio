@@ -1,0 +1,114 @@
+{
+  "schemaIdentifier": "studio.glifi.verification.code-cohesion.v1",
+  "baselineCommit": "d368285010dca17f5ef72819da25b6890d0de32a",
+  "affectedSourcesSHA256": "44fb6b573e445cb7c98080521dea3d14088197e9931e8832e6ba56068ec1cca3",
+  "affectedSourcesDigestMethod": "Sorted relative path, NUL, complete file bytes, NUL; four production files and new contract test",
+  "productionStructure": {
+    "baseline": "d368285",
+    "productionFiles": {
+      "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift": {
+        "beforeLines": 1981,
+        "afterLines": 1966
+      },
+      "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioCoreOperators.swift": {
+        "beforeLines": 972,
+        "afterLines": 967
+      },
+      "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioStatisticsWorkbench.swift": {
+        "beforeLines": 1040,
+        "afterLines": 1035
+      },
+      "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioEditorDecimal.swift": {
+        "beforeLines": 0,
+        "afterLines": 17
+      }
+    },
+    "execution": {
+      "methodLinesBefore": 341,
+      "methodLinesAfter": 277,
+      "resultConstructionsBefore": 3,
+      "resultConstructionsAfter": 1,
+      "missingArtifactChecksBefore": 2,
+      "missingArtifactChecksAfter": 1
+    },
+    "performanceClaim": false
+  },
+  "publicAPI": {
+    "baseline": "d368285",
+    "method": "swift-api-digester; only top-level declaration order canonicalized",
+    "modules": {
+      "GlifiCore": {
+        "equal": true,
+        "sha256": "3cb0e57758a24313139eb2a7bd20a372fc0778cafb6b142641c8a27ce15af683"
+      },
+      "GlifiKit": {
+        "equal": true,
+        "sha256": "dee06b4afad028b36f26892432091b4fd3db7671e46d69dc86c200ab3f66a698"
+      }
+    }
+  },
+  "cliCompatibility": {
+    "schemaIdentifier": "studio.glifi.verification.cli-compatibility.v1",
+    "referenceBinarySHA256": "22362803a0cfdec86a11056906c9122346257b5bd518cd0a981195f9f198d52f",
+    "candidateBinarySHA256": "7611a679fad096eed7832a61ddc5a12dc1dca821936964042a440d42032c98fa",
+    "caseCount": 164,
+    "allBytesEqual": true,
+    "comparison": "Complete stdout, stderr and exit code; no fields removed or normalized",
+    "scope": "Synthetic deterministic requests and read-only/failing project operations; owned execution streams and successful writes are covered by the full gate"
+  },
+  "completeCLIReportSHA256": "f899779e4af3a66d05809ebaf60ee503b6af12628c711f4b88f58af54f15de78",
+  "targetedTests": {
+    "exitCode": 0,
+    "coreTestDefinitions": 5,
+    "kitTestDefinitions": 15,
+    "kitSuites": 3,
+    "newDecimalExamples": 20,
+    "decimalExampleScope": "Public parsing/transport; includes signed zero and least subnormal, excludes arithmetic and JSON serialization guarantees"
+  },
+  "independentReview": {
+    "engine": "No actionable finding; same actor isolation and external await sequence",
+    "kit": "No actionable finding; same grammar and full family failure values"
+  },
+  "makeVerify": {
+    "command": "make verify",
+    "profile": "macOS",
+    "exitCode": 0,
+    "coreTestDefinitions": 631,
+    "kitTestDefinitions": 142,
+    "nativeTests": {
+      "result": "Passed",
+      "title": "Test - GlifiStudio-macOS",
+      "totalTestCount": 113,
+      "passedTests": 113,
+      "failedTests": 0,
+      "skippedTests": 0,
+      "expectedFailures": 0,
+      "statistics": [
+        {
+          "subtitle": "248 test runs",
+          "title": "16 tests ran with dynamic parameters"
+        }
+      ]
+    },
+    "nativeExecutions": 345,
+    "textAnalysisFixtures": 63,
+    "textAnalysisCLIChecks": 189,
+    "compilerEnumeratedTextAnalysisCases": 40,
+    "compilerEnumeratedKitCLIOperations": 130,
+    "completeKitCLIParityChecks": 260,
+    "kitCLIRejectionChecks": 51,
+    "processKillCheckpoints": 22,
+    "pdfa2uFiles": 2,
+    "macOSBuildConfigurations": [
+      "Debug",
+      "Release"
+    ]
+  },
+  "limits": {
+    "iPadOSDeferred": true,
+    "performanceClaim": false,
+    "scientificMaturityPromotion": false,
+    "rootCheckoutWrites": false,
+    "knownToolchainWarnings": "Xcode emits existing CoreSimulator version/device diagnostics while using macOS destinations; macOS native tests and both builds passed."
+  }
+}

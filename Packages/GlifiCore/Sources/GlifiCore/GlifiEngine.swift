@@ -826,84 +826,20 @@ public actor GlifiEngine {
                         operation: .executePlan
                     )
                 }
-                let artifact: GlifiAnalysisExecutionArtifact
-                switch step.operation {
-                case .analyzeCorpus:
-                    let records = try selectedRecords(
-                        step.sourceRevisionIDs,
-                        recordsByID: recordsByID
-                    )
-                    try validateCorpusSelection(
-                        documentByteCounts: records.map(\.byteCount),
-                        options: .standard
-                    )
-                    let output = try await corpusAnalysisArtifact(
-                        records,
-                        options: .standard,
-                        in: project
-                    )
-                    artifact = GlifiAnalysisExecutionArtifact(
-                        planStepIdentifier: step.identifier,
-                        operation: step.operation,
-                        role: step.role,
-                        artifactID: output.record.artifactID,
-                        analysisNodeID: output.record.node.id,
-                        outputSchemaIdentifier: output.record.node.descriptor.outputSchemaIdentifier
-                    )
-                case .compareKeyness:
-                    let output = try await compareKeyness(
-                        in: project,
-                        targetSourceRevisionIDs: planned.plan.targetSourceRevisionIDs,
-                        referenceSourceRevisionIDs: planned.plan.referenceSourceRevisionIDs
-                    )
-                    let currentSnapshot = await project.snapshot()
-                    guard
-                        let record = currentSnapshot.artifacts.first(where: {
-                            $0.artifactID == output.artifactID
-                                && $0.node.id == output.analysisNodeID
-                        })
-                    else {
-                        throw analysisArtifactFailure(
-                            "runtime.plan-output-missing",
-                            operation: .executePlan
-                        )
-                    }
-                    artifact = GlifiAnalysisExecutionArtifact(
-                        planStepIdentifier: step.identifier,
-                        operation: step.operation,
-                        role: step.role,
-                        artifactID: output.artifactID,
-                        analysisNodeID: output.analysisNodeID,
-                        outputSchemaIdentifier: record.node.descriptor.outputSchemaIdentifier
-                    )
-                case .analyzeAssociation, .analyzeWindowCollocations, .analyzeWindowNetwork,
-                    .analyzeCorrespondence, .clusterDocuments, .compareSimilarity,
-                    .compareGroupMetric:
-                    let output = try await executeExtendedStep(
-                        step,
-                        plan: planned.plan,
-                        in: project
-                    )
-                    let currentSnapshot = await project.snapshot()
-                    guard
-                        let record = currentSnapshot.artifacts.first(where: {
-                            $0.artifactID == output.artifactID && $0.node.id == output.nodeID
-                        })
-                    else {
-                        throw analysisArtifactFailure(
-                            "runtime.plan-output-missing",
-                            operation: .executePlan
-                        )
-                    }
-                    artifact = GlifiAnalysisExecutionArtifact(
-                        planStepIdentifier: step.identifier,
-                        operation: step.operation,
-                        role: step.role,
-                        artifactID: output.artifactID,
-                        analysisNodeID: output.nodeID,
-                        outputSchemaIdentifier: record.node.descriptor.outputSchemaIdentifier
-                    )
-                }
+                let record = try await executePlannedStep(
+                    step,
+                    plan: planned.plan,
+                    recordsByID: recordsByID,
+                    in: project
+                )
+                let artifact = GlifiAnalysisExecutionArtifact(
+                    planStepIdentifier: step.identifier,
+                    operation: step.operation,
+                    role: step.role,
+                    artifactID: record.artifactID,
+                    analysisNodeID: record.node.id,
+                    outputSchemaIdentifier: record.node.descriptor.outputSchemaIdentifier
+                )
                 guard artifact.outputSchemaIdentifier == step.outputSchemaIdentifier else {
                     throw analysisArtifactFailure(
                         "runtime.plan-output-schema-mismatch",
@@ -1595,6 +1531,55 @@ public actor GlifiEngine {
     ) throws -> GlifiImportedText {
         let data = try GlifiSourceFileReader.read(at: url, limits: limits)
         return try textImporter.importText(from: data, format: format, limits: limits)
+    }
+
+    private func executePlannedStep(
+        _ step: GlifiAnalysisPlanStep,
+        plan: GlifiAnalysisPlan,
+        recordsByID: [SourceRevisionID: GlifiProjectSourceRecord],
+        in project: GlifiProjectPackage
+    ) async throws -> GlifiProjectArtifactRecord {
+        let output: (artifactID: ArtifactID, nodeID: AnalysisNodeID)
+        switch step.operation {
+        case .analyzeCorpus:
+            let records = try selectedRecords(
+                step.sourceRevisionIDs,
+                recordsByID: recordsByID
+            )
+            try validateCorpusSelection(
+                documentByteCounts: records.map(\.byteCount),
+                options: .standard
+            )
+            let result = try await corpusAnalysisArtifact(
+                records,
+                options: .standard,
+                in: project
+            )
+            return result.record
+        case .compareKeyness:
+            let result = try await compareKeyness(
+                in: project,
+                targetSourceRevisionIDs: plan.targetSourceRevisionIDs,
+                referenceSourceRevisionIDs: plan.referenceSourceRevisionIDs
+            )
+            output = (result.artifactID, result.analysisNodeID)
+        case .analyzeAssociation, .analyzeWindowCollocations, .analyzeWindowNetwork,
+            .analyzeCorrespondence, .clusterDocuments, .compareSimilarity,
+            .compareGroupMetric:
+            output = try await executeExtendedStep(step, plan: plan, in: project)
+        }
+        let currentSnapshot = await project.snapshot()
+        guard
+            let record = currentSnapshot.artifacts.first(where: {
+                $0.artifactID == output.artifactID && $0.node.id == output.nodeID
+            })
+        else {
+            throw analysisArtifactFailure(
+                "runtime.plan-output-missing",
+                operation: .executePlan
+            )
+        }
+        return record
     }
 
     func selectedRecords(

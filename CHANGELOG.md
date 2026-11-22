@@ -12,6 +12,14 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Regia del piano e grammatica numerica
+
+- Separata l’esecuzione del singolo passo dalla regia del piano: costruzione del
+  risultato e risoluzione del record persistito condivise, con controlli,
+  progressi e finalizzazione espliciti (GS-DOR-284).
+- Unificata la grammatica decimale degli editor statistico e degli operatori;
+  ciascuna famiglia conserva errori, limiti e semantica delle righe propri.
+
 ### Codifica delle identità canoniche
 
 - Query e tabelle di accordo riusano il codificatore SHA-256 interno,
