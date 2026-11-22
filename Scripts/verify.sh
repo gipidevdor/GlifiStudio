@@ -53,6 +53,8 @@ Scripts/format.sh --check
 pdfa_output_directory="$temporary_build_directory/PDFA"
 mkdir -p "$pdfa_output_directory"
 text_analysis_parity_directory="$temporary_build_directory/TextAnalysisParity"
+kit_cli_parity_directory="$temporary_build_directory/KitCLIParity"
+GLIFI_KIT_CLI_PARITY_DIRECTORY="$kit_cli_parity_directory" \
 GLIFI_TEXT_ANALYSIS_PARITY_DIRECTORY="$text_analysis_parity_directory" \
 GLIFI_ORACLE_PDF_DIRECTORY="$pdfa_output_directory" swift test \
     --package-path Packages/GlifiCore \
@@ -66,6 +68,22 @@ text_analysis_binary_directory="$(swift build \
 python3 Scripts/check-text-analysis-cli.py \
     --binary "$text_analysis_binary_directory/GlifiCLI" \
     --parity-directory "$text_analysis_parity_directory"
+symbol_graph_log="$temporary_build_directory/symbol-graph.log"
+if ! swift package --package-path Packages/GlifiCore \
+    --scratch-path "$build_cache_directory/SwiftPM" dump-symbol-graph \
+    --minimum-access-level public --skip-synthesized-members >"$symbol_graph_log" 2>&1; then
+    cat "$symbol_graph_log"
+    exit 1
+fi
+symbol_graph_directory="$(sed -n 's/^Files written to //p' "$symbol_graph_log")"
+if [[ ! -d "$symbol_graph_directory" ]]; then
+    print -u2 "Inventario API GlifiKit non disponibile"
+    exit 1
+fi
+python3 Scripts/check-kit-cli-parity.py \
+    --binary "$text_analysis_binary_directory/GlifiCLI" \
+    --parity-directory "$kit_cli_parity_directory" \
+    --symbol-graph "$symbol_graph_directory"
 
 Scripts/check-recovery-kill.sh "$build_cache_directory/SwiftPM"
 

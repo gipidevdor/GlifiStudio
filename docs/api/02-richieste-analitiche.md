@@ -6,12 +6,12 @@
 | --- | --- |
 | Identificatore | GS-API-002 |
 | Tipo | Contratto del trasporto analitico transitorio |
-| Versione | 1.1.0 |
-| Stato | Verificato localmente: baseline GS-VER-162 e ampliamento GS-VER-233 |
+| Versione | 1.3.0 |
+| Stato | Verificato nei rispettivi snapshot: trasporto ampliato e ponte di progetto; integrazione congiunta in verifica |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
-| Approvazione | Prosecuzione esplicita RF-087 |
-| Riferimenti | GS-API-001; GS-MET-001-23; RF-087; RQ-060; ADR-0032; ADR-0035; GS-DOR-162; GS-DOR-233 |
+| Approvazione | Prosecuzioni esplicite RF-087 e GUI; ADR-0034 |
+| Riferimenti | GS-API-001; GS-MET-001-23; RF-087; RQ-060; ADR-0032; ADR-0034; [ADR-0035 headless](../adr/0035-completamento-nativo-kh-coder.md); [ADR-0041 app](../adr/0041-copertura-funzionale-core-nelle-app.md); GS-DOR-162; GS-DOR-222; [GS-DOR-233 headless](../pianificazione/dor-completamento-kh-coder.md) |
 
 ## Contratto
 
@@ -74,9 +74,9 @@ variante `ordinal`, `dissimilarities` aggiunge `simpson`.
 | Operazione | Parametri obbligatori | Default risolti |
 | --- | --- | --- |
 | `lda-selection` | `documents, candidateTopicCounts, seed` | `options={criterion:heldOutPerplexity, folds:5, alpha:0.1, beta:0.01, burnIn:100, sampleCount:20, thinning:5}` |
-| `communities` | `graph, method` | `resolution=1, walkLength=4` |
-| `graph-layout` | `graph, method` | `seed=0, maximumIterations=300, tolerance=1e-6`; `initialPositions` assente |
-| `minimum-spanning-forest` | `graph` | nessuno |
+| `communities` | `graph, method` | `resolution=1, walkLength=4, limits=standard` |
+| `graph-layout` | `graph, method` | `seed=0, maximumIterations=300, tolerance=1e-6, limits=standard`; `initialPositions` assente |
+| `minimum-spanning-forest` | `graph` | `limits=standard` |
 | `mds-search` | `matrix, seed` | `dimensions=2, method=ordinal, starts=10, maximumIterations=300, tolerance=1e-8` |
 | `som-advanced` | `matrix, width, height, seed` | `epochs=100, topology=rectangular, initialRadius=2, finalRadius=0.5, tolerance=1e-8`; `codebookClusterCount` assente |
 | `linguistic` | `text` | `options={languageTag:it, base:normalized-surface, includePartOfSpeech:false}` |
@@ -90,6 +90,16 @@ variante `ordinal`, `dissimilarities` aggiunge `simpson`.
 allineato di oggetti `x,y` finiti nel quadrato `[-1,1]²`. Le politiche di peso,
 loop, paralleli e componenti sono distinte per operatore in GS-MET-001-23.
 Prim interpreta `weight` come costo, senza convertirlo implicitamente da intensità.
+
+Le tre operazioni grafiche trasportano il parametro nativo `limits`, opzionale.
+I quattro campi interi sono `maximumNodeCount=2000`, `maximumEdgeCount=100000`,
+`maximumPairwiseCells=1000000` e `maximumWork=200000000`; i campi omessi usano
+gli stessi default di `GlifiStudioGraphAlgorithmLimits.standard`. Le chiavi
+ignote e i `null` espliciti vengono rifiutati. I budget vengono applicati alla
+stessa operazione nativa, prima di allocazione o lavoro non ammessi, con le
+stesse failure tipizzate. La codifica canonica omette `limits` quando tutti i
+valori sono standard: l'identità delle richieste preesistenti rimane invariata.
+Un budget personalizzato viene invece codificato con tutti e quattro i valori.
 
 `mds-search` ammette soltanto metodi iterativi e conserva tutti i risultati,
 seed, obiettivi e convergenze con `chosenRun`; l’ordinale restituisce coordinate
@@ -128,6 +138,11 @@ Il risultato ha `schema = studio.glifi.text-analysis-result`,
 Ordini, diagnostiche, seed e coordinate UTF-8 sono quelli della facciata.
 Il digest della request da solo non identifica la revisione dell'algoritmo:
 per confrontare risultati si **DEVONO** conservare anche metodo e versione.
+
+Il client nativo può ispezionare lo stesso risultato mediante il payload
+tipizzato `GlifiStudioTextAnalysisPayload`, senza decodificare o reinterpretare
+il JSON. `GlifiStudioCodeCrosstab.codes` conserva le identità delle colonne per
+la presentazione nativa; il formato JSON v1 resta quello precedente.
 
 Lo stato è per identificatore esatto secondo GS-VER-161; gli identificatori
 ausiliari senza manifest dedicato (distanze, aggregazione, CV, reti, HAC) mantengono
@@ -171,6 +186,42 @@ producono solo l'envelope su stderr e l'exit status della categoria. La modalit�
 testuale premette una riga italiana e stampa lo stesso risultato strutturato.
 Non c'è commit in progetto, progress stream o nuovo stato persistente.
 
+## Ponte delle revisioni del progetto per il laboratorio
+
+`GlifiStudioTextAnalytics.prepareProjectInput(session:sourceRevisionIDs:maximumTermCount:)`
+legge revisioni immutabili del progetto e prepara gli input del nuovo client GUI
+fuori dall'actor chiamante. Le fonti richieste devono essere uniche, non vuote e
+presenti nello snapshot verificato. Si usano importer TXT/Markdown e
+tokenizzazione italiana del prodotto, senza backend linguistico alternativo.
+
+Il DTO `GlifiStudioProjectTextAnalysisInput` conserva ProjectID, generazione,
+revisioni, digest di contenuto, documenti tokenizzati, unità per regole,
+vocabolario selezionato, matrice e conteggio dei token. L'ordine delle fonti è
+quello canonico di `sourceRevisionID`; righe, documenti e unità di codifica
+seguono lo stesso ordine. Nessun nome di file è usato come etichetta di classe.
+
+I limiti espliciti del ponte sono: **200 fonti**, **8 MiB** di byte originali
+complessivi, **100 000 token lessicali** e **1 000 termini** per la matrice. Il
+default di `maximumTermCount` è **200**. Si selezionano i termini per frequenza
+globale decrescente, con spareggio lessicografico; il vocabolario selezionato è
+quindi ordinato lessicograficamente. La matrice contiene conteggi grezzi.
+Documenti tokenizzati e unità di codifica conservano invece il contenuto completo:
+la selezione del vocabolario non tronca silenziosamente LDA, classificazione o
+testi delle regole. I limiti della request canonica e del singolo operatore
+restano applicabili dopo quelli del ponte.
+
+L'esecuzione produce il risultato di sessione di GS-API-002. La GUI può esportare
+separatamente **richiesta canonica JSON** e **risultato JSON**, nei formati già
+definiti; non introduce un envelope di laboratorio. Progetto, generazione,
+revisioni e digest restano ispezionabili nel contesto GUI, ma non sono aggiunti
+automaticamente al file JSON del risultato: quel file da solo non è un export
+completo della provenienza del progetto né un Artifact `.glifi`.
+
+Il ponte non persiste nuovi oggetti, non cambia planner, formule o manifest
+scientifici e non completa l'annotazione lemma/POS. Il suo contratto applicativo
+segue ADR-0034 e GS-UX-001-17; le verifiche sono distinte da quelle storiche del
+trasporto in GS-VER-162 e registrate in GS-VER-222.
+
 ## Verifica
 
 [Fixture sintetiche condivise](../../Fixtures/TextAnalysis/v1/cases.json):
@@ -187,3 +238,33 @@ L’ampliamento è headless e transitorio secondo [ADR-0035](../adr/0035-complet
 nessuna promozione V6 esterna, nuova lingua, GUI, persistenza o dipendenza runtime
 segue dall’aggiunta delle operazioni. Il gate completo è superato localmente nel perimetro dichiarato
 in [GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md).
+
+## Facciate dei laboratori espliciti (ADR-0041)
+
+`GlifiStudioStatisticsWorkbench`, `GlifiStudioCoreOperators` e
+`GlifiStudioEvaluationWorkbench` espongono gli operatori esistenti tramite DTO
+Sendable e failure GlifiKit. Le richieste mantengono i parametri effettivi.
+I comandi `statistics --request`, `operator --request`, `evaluation --request`
+e `project-call --request` condividono il dispatch GlifiKit e ne mantengono
+la parità continua secondo [GS-API-003](03-parita-continua-cli.md) e ADR-0036.
+Conservano l'envelope CLI v1, il formato `.glifi` e il trasporto canonico
+delle richieste `text-analysis` già definite.
+Gli input tabellari usano spazi/TAB fra numeri, virgola oppure punto decimale
+e nessun separatore delle migliaia; forma e domini sono validati prima del
+calcolo. Gli evaluator ricevono annotazioni dichiarate. Il ponte di progetto
+può conservare fonti senza token lessicali nel solo percorso temporale esplicito,
+senza allentare le precondizioni delle analisi testuali.
+
+Le analisi dirette del corpus riusano le API della sessione e i tipi persistiti
+esistenti. La presentazione multivariata aggiunge metadati opzionali di
+silhouette, selezione dei termini e digest del corpus, compatibili con la
+decodifica dei DTO precedenti. Evidenza: [GS-VER-223](../evidenze/GS-VER-223-copertura-core-app.md).
+
+Le app macOS espongono anche i nove tag di
+`GlifiStudioAdvancedTextAnalysisRequest`: selezione LDA, comunità, layout,
+foresta minima, ricerca MDS, SOM avanzata e i tre percorsi linguistici. Le viste
+riusano il trasporto canonico e le facciate esistenti; disponibilità e provenienza
+appartengono alla pipeline, distinta dal confronto con annotazioni gold. Simpson
+e MDS ordinale sono scelte esplicite. Il laboratorio operatori acquisisce solo
+campi/parametri applicabili: i controlli inattivi non influenzano l'ammissione
+o l'identità del risultato.

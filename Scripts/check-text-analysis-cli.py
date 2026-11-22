@@ -46,7 +46,7 @@ def main():
     args = parser.parse_args()
     binary = args.binary.resolve()
     cases = json.loads(FIXTURES.read_text())["cases"]
-    assert len(cases) == 30 and len({case["id"] for case in cases}) == len(cases)
+    assert cases and len(cases) == 30 and len({case["id"] for case in cases}) == len(cases)
     checks = 0
     with tempfile.TemporaryDirectory(prefix="GlifiTextAnalysisCLI-") as temporary:
         directory = Path(temporary)
@@ -124,6 +124,20 @@ def main():
                          "method": "fastGreedy"}), 3, "invalidInput")
         rejects(encoded({"operation": "graph-layout", "graph": graph, "method": "kamadaKawai",
                          "initialPositions": [{"x": 0, "y": 0, "secret-canary": 1}, {"x": 1, "y": 1}]}), 3, "invalidInput")
+        rejects(encoded({"operation": "communities", "graph": graph, "method": "walktrap",
+                         "limits": {"secret-canary": 1}}), 3, "invalidInput")
+        rejects(encoded({"operation": "graph-layout", "graph": graph, "method": "kamadaKawai",
+                         "limits": None}), 3, "invalidInput")
+        rejects(encoded({"operation": "minimum-spanning-forest", "graph": graph,
+                         "limits": {"maximumEdgeCount": None}}), 3, "invalidInput")
+        rejects(encoded({"operation": "communities", "graph": graph, "method": "fastGreedy",
+                         "limits": {"maximumNodeCount": 1}}), 7, "insufficientResources")
+        rejects(encoded({"operation": "minimum-spanning-forest", "graph": graph,
+                         "limits": {"maximumEdgeCount": 0}}), 7, "insufficientResources")
+        rejects(encoded({"operation": "graph-layout", "graph": graph, "method": "kamadaKawai",
+                         "limits": {"maximumPairwiseCells": 0}}), 7, "insufficientResources")
+        rejects(encoded({"operation": "communities", "graph": graph, "method": "walktrap",
+                         "limits": {"maximumWork": 0}}), 7, "insufficientResources")
         rejects(encoded({"operation": "linguistic", "text": "secret-canary",
                          "options": {"base": None}}), 3, "invalidInput")
         rejects(encoded({"operation": "linguistic", "text": "secret-canary",

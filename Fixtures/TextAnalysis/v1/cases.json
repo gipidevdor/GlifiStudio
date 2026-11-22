@@ -545,7 +545,13 @@
             }
           ]
         },
-        "method": "edgeBetweenness"
+        "method": "edgeBetweenness",
+        "limits": {
+          "maximumNodeCount": 8,
+          "maximumEdgeCount": 12,
+          "maximumPairwiseCells": 128,
+          "maximumWork": 100000
+        }
       },
       "methodIdentifier": "GirvanNewman-inverse-strength-v1",
       "validationStatus": "candidate"
@@ -580,7 +586,13 @@
             }
           ]
         },
-        "method": "fastGreedy"
+        "method": "fastGreedy",
+        "limits": {
+          "maximumNodeCount": 8,
+          "maximumEdgeCount": 12,
+          "maximumPairwiseCells": 128,
+          "maximumWork": 100000
+        }
       },
       "methodIdentifier": "ClausetNewmanMoore-weighted-v1",
       "validationStatus": "candidate"
@@ -615,7 +627,13 @@
             }
           ]
         },
-        "method": "walktrap"
+        "method": "walktrap",
+        "limits": {
+          "maximumNodeCount": 8,
+          "maximumEdgeCount": 12,
+          "maximumPairwiseCells": 128,
+          "maximumWork": 100000
+        }
       },
       "methodIdentifier": "Walktrap-weighted-mean-loops-v1",
       "validationStatus": "candidate"
@@ -652,7 +670,13 @@
         },
         "method": "fruchtermanReingold",
         "seed": 7,
-        "maximumIterations": 30
+        "maximumIterations": 30,
+        "limits": {
+          "maximumNodeCount": 8,
+          "maximumEdgeCount": 12,
+          "maximumPairwiseCells": 128,
+          "maximumWork": 100000
+        }
       },
       "methodIdentifier": "FruchtermanReingold-unweighted-square-v1",
       "validationStatus": "candidate"
@@ -689,7 +713,13 @@
         },
         "method": "kamadaKawai",
         "seed": 7,
-        "maximumIterations": 30
+        "maximumIterations": 30,
+        "limits": {
+          "maximumNodeCount": 8,
+          "maximumEdgeCount": 12,
+          "maximumPairwiseCells": 128,
+          "maximumWork": 100000
+        }
       },
       "methodIdentifier": "KamadaKawai-hop-component-extension-v1",
       "validationStatus": "candidate"
@@ -723,6 +753,12 @@
               "weight": 4
             }
           ]
+        },
+        "limits": {
+          "maximumNodeCount": 8,
+          "maximumEdgeCount": 12,
+          "maximumPairwiseCells": 128,
+          "maximumWork": 100000
         }
       },
       "methodIdentifier": "Prim-minimum-spanning-forest-v1",

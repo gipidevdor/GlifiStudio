@@ -6,12 +6,12 @@
 | --- | --- |
 | Identificatore | GS-UI-001 |
 | Tipo | Specifica di design dell'interfaccia |
-| Versione | 1.2.0 |
+| Versione | 1.3.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-01 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Baseline proposta; prototipi e studi richiesti |
-| Riferimenti | GS-UX-001; GS-DOM-001; GS-ANA-001; Apple HIG; ADR-0006; ADR-0016 |
+| Riferimenti | GS-UX-001; GS-DOM-001; GS-ANA-001; Apple HIG; ADR-0006; ADR-0016; ADR-0034 |
 
 ## Scopo
 
@@ -143,6 +143,47 @@ Queste regole applicano GS-UX-001 e GS-STD-001-29 senza cambiare metodi, lineage
 formato persistente o capacità analitiche. L'evidenza di implementazione e i
 limiti della verifica sono registrati in
 [GS-VER-150](../evidenze/GS-VER-150-interfaccia-essenziale.md).
+
+## Riprogettazione per compiti e laboratorio avanzato
+
+La nuova richiesta applicativa di ADR-0034 amplia gli accessi alle capacità già
+realizzate. La sidebar **DEVE** distinguere i compiti del progetto e della ricerca
+dagli strumenti specialistici e dalle azioni di condivisione. Gli strumenti del
+laboratorio sono raggiungibili direttamente, con etichette comprensibili e nomi
+scientifici disponibili nel contesto. La ricerca delle destinazioni filtra gli
+accessi; non esegue query sul corpus e non cambia la selezione effettiva dei dati.
+
+Progetto corrente, disponibilità delle fonti e stato del lavoro **DEVONO** restare
+riconoscibili. La panoramica orienta verso una prossima azione reale e offre
+accessi al lavoro già disponibile senza richiedere di completare in ordine una
+procedura che non rappresenta il compito della persona. Un controllo disabilitato
+indica la precondizione mancante e non simula un risultato.
+
+La selezione dello strumento **DEVE** essere distinta dall'ambito delle fonti.
+Cambiare strumento non può dichiarare ricalcolato un risultato precedente;
+richiesta effettiva e draft restano separati. Parametri avanzati e dettagli
+metodologici si espandono nel contesto, mentre limiti che cambiano
+l'interpretazione restano leggibili accanto al risultato. Le liste estese hanno
+totali, pagine o selezioni bounded; una preview non è chiamata risultato completo.
+
+Il laboratorio avanzato macOS usa le API GlifiKit in memoria. La sua UI **DEVE**
+dichiarare quando un risultato è disponibile soltanto nella sessione e non è
+stato salvato come Artifact o incluso nel rapporto dell'indagine. Riapertura,
+export persistente e presenza nella cronologia non possono essere suggeriti da
+azioni o badge che il dominio non sostiene. Le identità e i metodi dei risultati
+già persistiti continuano a usare i contratti esistenti.
+
+Ricerca/KWIC e conclusioni **DEVONO** conservare selezione, ambito e possibilità
+di risalire alla fonte durante il drill-down. Con spazio ridotto il dettaglio è
+sequenziale; finestre larghe possono affiancare elenco e dettaglio. Nessuna nuova
+gerarchia di algoritmi sostituisce domanda, osservazioni ed evidenze.
+
+Le azioni frequenti hanno accesso da tastiera, focus riconoscibile e label
+localizzate; la sidebar non è l'unico mezzo per raggiungerle. L'ordine semantico
+funziona con testo grande e layout da destra a sinistra. La disponibilità di
+questi controlli nel codice non dimostra la loro efficacia con tecnologie
+assistive: esiti e limiti del nuovo lotto sono in
+[GS-VER-222](../evidenze/GS-VER-222-riprogettazione-gui.md).
 
 ## Pattern di stato
 

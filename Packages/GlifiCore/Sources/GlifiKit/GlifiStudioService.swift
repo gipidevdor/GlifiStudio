@@ -16,7 +16,7 @@ public enum GlifiStudioTextFormat: String, Codable, Equatable, Sendable {
 }
 
 /// A bounded term-frequency row ready for presentation or machine clients.
-public struct GlifiStudioTermFrequency: Equatable, Identifiable, Sendable {
+public struct GlifiStudioTermFrequency: Encodable, Equatable, Identifiable, Sendable {
     /// Stable row identity derived from the normalized term.
     public var id: String { term }
     /// Normalized term.
@@ -32,7 +32,7 @@ public struct GlifiStudioTermFrequency: Equatable, Identifiable, Sendable {
 }
 
 /// Presentation-independent summary of a text profile.
-public struct GlifiStudioTextProfile: Equatable, Sendable {
+public struct GlifiStudioTextProfile: Encodable, Equatable, Sendable {
     /// Digest of the exact source bytes.
     public let contentDigest: String
     /// Number of decoded UTF-8 bytes.

@@ -25,11 +25,39 @@ preservando i metodi upstream già pubblicati.
 
 ### Aggiunto
 
+- Copertura applicativa delle famiglie analitiche del core: laboratori corpus,
+  statistica, valutazione e operatori, ricerca per metodo, risultati con input
+  effettivi e stato di convergenza; revisioni qualitative complete e mapping.
+  Export delle viste con preparazione asincrona ed errori espliciti (ADR-0041,
+  GS-VER-223; audit applicativi distinti).
+
 - Varianti native del laboratorio analitico: comunità Girvan–Newman/CNM/Walktrap,
   layout FR/KK, foresta Prim, Simpson, MDS ordinale e multi-start, SOM esagonale
   con diagnostiche, selezione K LDA e pipeline italiana opzionale. Nove operazioni
   aggiuntive nello stesso contratto GlifiKit/CLI; GUI e approvazione scientifica
   delle nuove varianti restano separate (ADR-0035, GS-VER-233).
+
+- Parità continua fra GlifiKit e CLI: ingressi condivisi `statistics`, `operator`,
+  `evaluation`, `project-call` e `profile`, con parametri di corpus e keyness
+  completi, valutazione linguistica/temporale ed export delle viste. Inventario
+  pubblico derivato dal compilatore e confronto integrale delle fixture CLI/Kit
+  nel gate; gli stati scientifici rimangono invariati (ADR-0036, GS-API-003;
+  verifiche osservate e limiti in GS-VER-275).
+  L'importazione accetta il formato esplicito indipendente dall'estensione e
+  restituisce il profilo nativo completo in `lastProfile`, aggiungendo conteggi
+  di byte/token di superficie e termini ai campi JSON precedenti.
+
+- Grafici audio di VoiceOver per le mappe fattoriali, con sintesi specifica per
+  CA, PCA e LSA. Le righe delle fusioni del dendrogramma aprono le fonti anche
+  da tastiera. Su iPad con tastiera hardware, la navigazione, la ricerca e
+  l'importazione operano sulla finestra del progetto attivo (GS-VER-270).
+
+- Riprogettazione applicativa per compiti e accesso diretto agli strumenti già
+  realizzati, con ricerca delle destinazioni, contesto del progetto e parametri
+  progressivi. Il laboratorio avanzato macOS usa GlifiKit con risultati di
+  sessione distinti dagli Artifact persistiti; ADR-0034 e GS-DOR-222 governano
+  l'integrazione, con verifiche autonome in GS-VER-222.
+
 - Completamento delle primitive analitiche specificate: distribuzioni lessicali,
   fitting diagnostico Zipf/Heaps, statistiche descrittive Q7, Welch ANOVA,
   aggregazioni temporali con esposizione e metriche di valutazione linguistica.
@@ -63,6 +91,18 @@ preservando i metodi upstream già pubblicati.
   CLI, 194 righe di oracoli, 195 esecuzioni macOS, recovery/PDF e build
   macOS/iPadOS Debug/Release superati localmente. Nuove varianti scientifiche
   candidate; GUI separata (GS-VER-233).
+
+- Lotto macOS KWIC, contesto visuale e lookup fonti verificato sul checkpoint
+  ffbfb431 di 924 file: 486 test Core/Kit, 224 esecuzioni native, gate e
+  preflight senza firma superati (GS-VER-230/231/232). WIP 223 e layout GUI
+  successivi esclusi; generazione 4d6969dd conservata separatamente.
+
+- Riprogettazione della GUI: `make verify` completo macOS/iPadOS superato sullo
+  snapshot isolato `c77d0e37…0129f`, con 423 test package, 224 esecuzioni native,
+  194 righe di oracoli, due PDF/A-2u e build Debug/Release di entrambe le app.
+  Osservazione GUI parziale; verifica visiva dell'ultima correzione header,
+  audit assistivi e valutazione ergonomica ancora aperti (GS-VER-222).
+
 - Audit di conservazione dei contenuti prima dell’integrazione: sette branch
   storici hanno alberi identici ai commit squash già in `main`; nuova integrazione
   delle PR #37/#38 e gate locale `make verify` superato (GS-VER-221).
@@ -110,6 +150,12 @@ preservando i metodi upstream già pubblicati.
   necessari e delega equivalente per blocchi unitari. Formule, PRNG e riduzioni
   conservati; 18 confronti identici e gate completo con 544 test in GS-VER-173.
   Benefici e piccoli costi residui misurati senza promozione scientifica.
+
+- Lookup delle etichette fonte macOS con indice effimero first-wins,
+  ammortamento conservativo e predicato Sendable. Batch sintetico lungo da
+  49,061791 a 2,069916 ms; regressioni piccole/first-only e dispersione dichiarate,
+  nessun claim di rendering o energia. Tre candidati respinti, output completi
+  identici e nuovo gate del sorgente finale superato (GS-VER-231).
 
 - Posting BM25 adattivi bounded e membri silhouette preindicizzati, con
   conservazione delle somme ordinarie e recupero numerico
@@ -664,6 +710,13 @@ preservando i metodi upstream già pubblicati.
   che rimane valido.
 
 ### Corretto
+
+- La selezione KWIC macOS e i mark visuali pubblicano il nuovo contesto fonte
+  soltanto dopo il caricamento riuscito; busy/failure conservano lo stato
+  precedente. Un mark senza fonti ammesso azzera il contesto Evidence estraneo.
+  Cinque regressioni riprodotte e superate, gate/preflight macOS superati sullo
+  checkpoint 4d6969dd e rivalidati su ffbfb431; layout GUI e WIP successivi
+  hanno evidenze separate (GS-VER-230/232).
 
 - Costi del riassunto estrattivo: l'API Core rifiuta conteggi di caratteri non positivi con
   `summary.invalid-character-count`; selezione per rank e MMR confrontano il costo con il

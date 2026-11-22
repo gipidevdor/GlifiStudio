@@ -52,6 +52,36 @@ enum GlifiCLI {
             case .json:
                 try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
             }
+        case let .statistics(url):
+            let result = try await GlifiStudioStatisticsWorkbench.evaluate(
+                json: CLITextAnalysisInput.read(at: url))
+            try writeCommandResult(result, request: request)
+        case let .coreOperator(url):
+            let result = try await GlifiStudioCoreOperators.execute(
+                json: CLITextAnalysisInput.read(at: url))
+            try writeCommandResult(result, request: request)
+        case let .evaluation(url):
+            let result = try await GlifiStudioEvaluationCommand.execute(
+                json: CLITextAnalysisInput.read(at: url))
+            try writeCommandResult(result, request: request)
+        case let .projectCall(projectURL, requestURL):
+            let json = try CLITextAnalysisInput.read(at: requestURL)
+            let session = try await service.openProject(at: projectURL)
+            do {
+                let result = try await GlifiStudioProjectCommand.execute(
+                    json: json, session: session)
+                await session.close()
+                try writeCommandResult(result, request: request)
+            } catch {
+                await session.close()
+                throw error
+            }
+        case let .profile(sourceURL, format):
+            let result = try await service.profileText(at: sourceURL, format: format)
+            try writeCommandResult(result, request: request)
+        case let .profileRequest(url):
+            let result = try await service.profileText(json: CLITextAnalysisInput.read(at: url))
+            try writeCommandResult(result, request: request)
         case let .projectCreate(projectURL):
             let session = try await service.createProject(at: projectURL)
             let snapshot = try await session.snapshot()
@@ -77,14 +107,15 @@ enum GlifiCLI {
                     )
                 )
             }
-        case let .importSources(projectURL, sourceURLs):
+        case let .importSources(projectURL, sourceURLs, inputFormat):
             let session = try await service.openProject(at: projectURL)
             var lastResult: GlifiStudioProjectImportResult?
             for sourceURL in sourceURLs {
                 try Task.checkCancellation()
                 lastResult = try await session.importText(
                     at: sourceURL,
-                    format: sourceURL.pathExtension.lowercased() == "txt" ? .plainText : .markdown
+                    format: inputFormat
+                        ?? (sourceURL.pathExtension.lowercased() == "txt" ? .plainText : .markdown)
                 )
             }
             await session.close()
@@ -1131,6 +1162,17 @@ enum GlifiCLI {
         }
     }
 
+    private static func writeCommandResult(_ result: some Encodable, request: CLIRequest) throws {
+        switch request.format {
+        case .text:
+            let header = "Operazione completata · " + request.command.name + "\n"
+            try FileHandle.standardOutput.write(contentsOf: Data(header.utf8))
+            try writeJSON(result)
+        case .json:
+            try writeJSON(SuccessEnvelope(command: request.command.name, result: result))
+        }
+    }
+
     private static func writeJSON(_ value: some Encodable) throws {
         FileHandle.standardOutput.write(try encodedJSON(value))
     }
@@ -1178,8 +1220,15 @@ private struct CLIRequest {
           glifi [--format text|json] [--no-progress] project create <progetto.glifi>
           glifi [--format text|json] [--no-progress] project info <progetto.glifi>
           glifi [--format text|json] [--no-progress] text-analysis --request <richiesta.json>
+          glifi [--format text|json] [--no-progress] statistics --request <richiesta.json>
+          glifi [--format text|json] [--no-progress] operator --request <richiesta.json>
+          glifi [--format text|json] [--no-progress] evaluation --request <richiesta.json>
+          glifi [--format text|json] [--no-progress] project-call <progetto.glifi> --request <richiesta.json>
+          glifi [--format text|json] [--no-progress] profile <fonte> --input-format plainText|markdown
+          glifi [--format text|json] [--no-progress] profile --request <richiesta.json>
           glifi [--format text|json] [--no-progress] project validate <progetto.glifi>
           glifi [--format text|json] [--no-progress] import <progetto.glifi> <fonte.txt>...
+          glifi [--format text|json] [--no-progress] import <progetto.glifi> --input-format plainText|markdown <fonte>...
           glifi [--format text|json] [--no-progress] query <progetto.glifi> (--text <query> | --ast <query.json>)
           glifi [--format text|json] [--no-progress] plan <progetto.glifi> --request <richiesta.json>
           glifi [--format text|json] [--no-progress] execute <progetto.glifi> --request <richiesta.json>
@@ -1258,6 +1307,28 @@ private struct CLIRequest {
 
         if remaining == ["status"] {
             command = .status
+        } else if remaining.count == 3, remaining[1] == "--request",
+            ["statistics", "operator", "evaluation", "profile"].contains(remaining[0])
+        {
+            let url = URL(fileURLWithPath: remaining[2]).standardizedFileURL
+            switch remaining[0] {
+            case "statistics": command = .statistics(url)
+            case "operator": command = .coreOperator(url)
+            case "evaluation": command = .evaluation(url)
+            case "profile": command = .profileRequest(url)
+            default: throw CLIUsageError.invalidArguments
+            }
+        } else if remaining.count == 4, remaining[0] == "project-call",
+            remaining[2] == "--request"
+        {
+            command = .projectCall(
+                URL(fileURLWithPath: remaining[1]).standardizedFileURL,
+                URL(fileURLWithPath: remaining[3]).standardizedFileURL)
+        } else if remaining.count == 4, remaining[0] == "profile",
+            remaining[2] == "--input-format",
+            let format = GlifiStudioTextFormat(rawValue: remaining[3])
+        {
+            command = .profile(URL(fileURLWithPath: remaining[1]).standardizedFileURL, format)
         } else if remaining.count == 3, remaining[0] == "text-analysis", remaining[1] == "--request"
         {
             command = .textAnalysis(URL(fileURLWithPath: remaining[2]).standardizedFileURL)
@@ -1272,17 +1343,30 @@ private struct CLIRequest {
             command = .projectValidate(URL(fileURLWithPath: remaining[2]).standardizedFileURL)
         } else if remaining.count >= 3, remaining.first == "import" {
             let projectURL = URL(fileURLWithPath: remaining[1]).standardizedFileURL
-            let sourceURLs = remaining.dropFirst(2).map {
+            let sourceArguments: ArraySlice<String>
+            let inputFormat: GlifiStudioTextFormat?
+            if remaining[2] == "--input-format" {
+                guard remaining.count >= 5,
+                    let format = GlifiStudioTextFormat(rawValue: remaining[3])
+                else { throw CLIUsageError.invalidArguments }
+                inputFormat = format
+                sourceArguments = remaining.dropFirst(4)
+            } else {
+                inputFormat = nil
+                sourceArguments = remaining.dropFirst(2)
+            }
+            let sourceURLs = sourceArguments.map {
                 URL(fileURLWithPath: $0).standardizedFileURL
             }
             guard
-                sourceURLs.allSatisfy({
-                    ["txt", "md", "markdown"].contains($0.pathExtension.lowercased())
-                })
+                inputFormat != nil
+                    || sourceURLs.allSatisfy({
+                        ["txt", "md", "markdown"].contains($0.pathExtension.lowercased())
+                    })
             else {
                 throw CLIUsageError.invalidArguments
             }
-            command = .importSources(projectURL, sourceURLs)
+            command = .importSources(projectURL, sourceURLs, inputFormat)
         } else if remaining.count == 4,
             remaining[0] == "query",
             ["--text", "--ast"].contains(remaining[2])
@@ -1905,10 +1989,16 @@ private enum CLIQueryInput {
 private enum CLICommand {
     case status
     case textAnalysis(URL)
+    case statistics(URL)
+    case coreOperator(URL)
+    case evaluation(URL)
+    case projectCall(URL, URL)
+    case profile(URL, GlifiStudioTextFormat)
+    case profileRequest(URL)
     case projectCreate(URL)
     case projectInfo(URL)
     case projectValidate(URL)
-    case importSources(URL, [URL])
+    case importSources(URL, [URL], GlifiStudioTextFormat?)
     case query(URL, CLIQueryInput)
     case plan(URL, URL)
     case executePlan(URL, URL)
@@ -1951,6 +2041,12 @@ private enum CLICommand {
         switch self {
         case .status: "status"
         case .textAnalysis: "text-analysis"
+        case .statistics: "statistics"
+        case .coreOperator: "operator"
+        case .evaluation: "evaluation"
+        case .projectCall: "project-call"
+        case .profile: "profile"
+        case .profileRequest: "profile"
         case .projectCreate: "project.create"
         case .projectInfo: "project.info"
         case .projectValidate: "project.validate"
@@ -2106,7 +2202,7 @@ private struct ProjectSourceResult: Encodable {
 private struct ImportResult: Encodable {
     let project: ProjectSnapshotResult
     let importedSourceCount: Int
-    let lastProfile: TextProfileResult
+    let lastProfile: GlifiStudioTextProfile
 
     init(
         project: GlifiStudioProjectSnapshot,
@@ -2115,23 +2211,7 @@ private struct ImportResult: Encodable {
     ) {
         self.project = ProjectSnapshotResult(project)
         self.importedSourceCount = importedSourceCount
-        self.lastProfile = TextProfileResult(lastProfile)
-    }
-}
-
-private struct TextProfileResult: Encodable {
-    let contentDigest: String
-    let characterCount: Int
-    let sentenceCount: Int
-    let lexicalTokenCount: Int
-    let typeCount: Int
-
-    init(_ profile: GlifiStudioTextProfile) {
-        contentDigest = profile.contentDigest
-        characterCount = profile.characterCount
-        sentenceCount = profile.sentenceCount
-        lexicalTokenCount = profile.lexicalTokenCount
-        typeCount = profile.typeCount
+        self.lastProfile = lastProfile
     }
 }
 

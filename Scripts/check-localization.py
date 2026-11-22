@@ -175,8 +175,20 @@ def main() -> int:
     if "\n\t\t\t\ten,\n" not in project:
         errors.append("Il progetto Xcode deve dichiarare en tra le regioni supportate.")
 
-    if project.count("Localizable.xcstrings in Resources") != 4:
-        errors.append("Il catalogo deve essere incluso nelle due build phase Resources.")
+    resource_phases = re.findall(
+        r"([A-F0-9]{24}) /\* Resources \*/ = \{\s*isa = PBXResourcesBuildPhase;[^}]*?files = \((.*?)\);",
+        project, re.S,
+    )
+    catalog_phases = {key for key, files in resource_phases
+                      if files.count("Localizable.xcstrings in Resources") == 1}
+    target_phases = dict(re.findall(
+        r"[A-F0-9]{24} /\* ([^*]+) \*/ = \{\s*isa = PBXNativeTarget;[^}]*?buildPhases = \((.*?)\);",
+        project, re.S,
+    ))
+    for target in ("GlifiStudio-macOS", "GlifiStudio-iPadOS", "GlifiStudioMacTests"):
+        phases = set(re.findall(r"[A-F0-9]{24}", target_phases.get(target, "")))
+        if len(phases & catalog_phases) != 1:
+            errors.append(f"{target}: il catalogo deve appartenere a una fase Resources del target.")
 
     required_settings = (
         "DEVELOPMENT_LANGUAGE = it",

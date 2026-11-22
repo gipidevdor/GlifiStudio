@@ -387,6 +387,7 @@ public struct GlifiStudioCodeCrosstab: Encodable, Equatable, Sendable {
     /// Documents with no group value.
     public let missingCount: Int
 
+    // Preserve the existing JSON v1 shape; native clients also retain column identities.
     private enum CodingKeys: String, CodingKey {
         case groups, counts, sizes, missingCount
     }

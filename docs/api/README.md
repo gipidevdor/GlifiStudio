@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-API-001 |
 | Tipo | Specifica normativa delle interfacce applicative e headless |
-| Versione | 1.31.1 |
+| Versione | 1.32.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -42,6 +42,10 @@ GlifiCLI ───────────────────► GlifiKit �
   duplicano validazione, planner o semantica analitica.
 - GUI e CLI devono ottenere stesso piano, ordine, failure e artefatti a parità di
   request, capability e policy.
+- Ogni operazione utente pubblica di GlifiKit deve restare accessibile dalla CLI
+  con tutti i parametri del contratto nativo. Inventario pubblico, trasporto
+  condiviso e gate di parità sono governati da [GS-API-003](03-parita-continua-cli.md)
+  e ADR-0036.
 
 ## 3. Convenzioni Swift
 
@@ -285,9 +289,11 @@ operazioni persistite, come candidati scientifici con limiti espliciti:
 sintesi descrittive; `GlifiStudioTextAnalytics.temporalFrequencies` per bucket
 calendariali con mancanti/esclusioni; `GlifiStudioLinguisticEvaluation` per
 classificazione, lemmi, confini, entità e morfologia;
-`GlifiStudioTextAnalytics.welchOneWayANOVA` per ANOVA eteroschedastica. Queste API sono asincrone `@concurrent`, non richiedono UI,
-restituiscono failure tipizzate e non promettono Artifact o comandi CLI dedicati
-finché non esiste la relativa integrazione (GS-VER-171).
+`GlifiStudioTextAnalytics.welchOneWayANOVA` per ANOVA eteroschedastica. Queste API
+sono asincrone `@concurrent`, non richiedono UI e restituiscono failure tipizzate.
+Il comando condiviso `evaluation --request` ne espone input e risultati secondo
+[GS-API-003](03-parita-continua-cli.md), conservando il carattere transitorio;
+non crea Artifact né modifica lo stato scientifico delle famiglie.
 
 Il risultato risolto di `analyzeExtractiveSummary` distingue il testo estratto
 (`sentence.startUTF8/endUTF8`, `selected.text`) dai byte originali
@@ -310,8 +316,9 @@ scientifici delle rispettive famiglie:
 | `GlifiStudioLinguisticEvaluation` | `classification`, `lemmas`, `boundaries`, `namedEntities`, `morphology` | GS-MET-001-18: annotazioni allineate, matching esatto, policy dei denominatori nulli |
 
 Le facciate convertono errori e cancellazione nella tassonomia pubblica e
-mantengono i calcoli fuori dall'actor chiamante. Non implicano integrazione nel
-planner, un backend linguistico o una nuova request persistente/CLI.
+mantengono i calcoli fuori dall'actor chiamante. Il trasporto CLI condiviso in
+[GS-API-003](03-parita-continua-cli.md) conserva i parametri completi, senza
+introdurre un backend linguistico, integrazione nel planner o nuova persistenza.
 
 `visualizations(for:)` riceve un `GlifiStudioAnalysisExecutionResult` e restituisce una
 `GlifiStudioVisualization` per ogni output che ha una vista dedicata (GS-MET-001-22, GS-VIZ-001):
@@ -356,6 +363,13 @@ glifi [--format text|json] [--locale <tag>] [--no-progress] <command>
 glifi status
 glifi project create|info|validate <project>
 glifi import <project> <source>...
+glifi import <project> --input-format plainText|markdown <source>...
+glifi statistics --request <json-file>
+glifi operator --request <json-file>
+glifi evaluation --request <json-file>
+glifi project-call <project> --request <json-file>
+glifi profile --request <json-file>
+glifi profile <source> --input-format plainText|markdown
 glifi plan <project> --request <json-file>
 glifi execute <project> --request <json-file>
 glifi visualize <project> --request <json-file>
@@ -522,6 +536,8 @@ abilita rete, entitlement o bypass del sandbox della build applicativa.
 - compatibilità fra versione corrente e precedente dichiarata;
 - fuzz di decoder request e limiti su ogni collection/stringa;
 - matrice di conformità aggiornata senza promuovere operazioni non implementate.
+- inventario del compilatore e fixture di parità per tutte le famiglie operative,
+  senza aggiornamento automatico della baseline API nel gate (GS-API-003).
 
 ## 15. Riferimenti tecnici
 
@@ -539,3 +555,12 @@ L’ampliamento del 2026-11-22 aggiunge nove operazioni avanzate nel medesimo JS
 piatto di schema/versione 1, oltre a ordinal MDS e Simpson. Le facciate dedicate
 restano transitorie e non estendono GUI, persistenza o approvazione scientifica;
 il nuovo gate è registrato in [GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md).
+
+## 17. Parità continua delle operazioni pubbliche
+
+[GS-API-003](03-parita-continua-cli.md) governa i comandi condivisi `statistics`,
+`operator`, `evaluation`, `project-call` e `profile`, i parametri completi delle
+analisi di sessione e il controllo continuo dell'inventario pubblico. I comandi
+precedenti conservano la propria sintassi. Le eccezioni infrastrutturali sono
+censite e motivate; una nuova operazione utente richiede trasporto e test CLI
+nello stesso cambiamento.

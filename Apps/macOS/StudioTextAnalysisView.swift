@@ -9,90 +9,233 @@ struct StudioTextAnalysisView: View {
     @Bindable var model: StudioHomeModel
     let onImportSources: () -> Void
     let onOpenProject: () -> Void
-    @State private var tool: StudioTextTool = .summary
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Binding private var tool: StudioTextTool
+    @State private var workspace: StudioTextWorkspace = .configuration
+    @State private var weightingDetail: StudioWeightingDetail = .vocabulary
+
+    init(
+        model: StudioHomeModel,
+        onImportSources: @escaping () -> Void,
+        onOpenProject: @escaping () -> Void,
+        tool: Binding<StudioTextTool>
+    ) {
+        self.model = model
+        self.onImportSources = onImportSources
+        self.onOpenProject = onOpenProject
+        _tool = tool
+    }
 
     var body: some View {
-        Form {
-            Section {
-                Picker("text-analysis.tool", selection: $tool) {
-                    ForEach(StudioTextTool.allCases) { option in
-                        Text(LocalizedStringKey(option.titleKey)).tag(option)
-                    }
-                }
-                Text(LocalizedStringKey(tool.introductionKey))
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            } header: {
-                Text("sidebar.text-analysis")
-            }
+        let sourceLookup = StudioSourceLookup(sources: model.snapshot?.sources ?? [])
+        return VStack(spacing: 0) {
+            toolHeader
+            Divider()
             if let snapshot = model.snapshot {
                 if snapshot.sources.isEmpty {
-                    Section {
-                        ContentUnavailableView {
-                            Label("text-analysis.empty-sources.title", systemImage: "doc.text")
-                        } description: {
-                            Text("text-analysis.empty-sources.description")
-                        } actions: {
-                            Button("action.import", action: onImportSources)
-                                .disabled(model.isBusy)
-                        }
+                    ContentUnavailableView {
+                        Label("text-analysis.empty-sources.title", systemImage: "doc.text")
+                    } description: {
+                        Text("text-analysis.empty-sources.description")
+                    } actions: {
+                        Button("action.import", action: onImportSources)
+                            .disabled(model.isBusy)
                     }
                 } else {
-                    scopeSection(snapshot.sources)
-                    switch tool {
-                    case .summary:
-                        parametersSection
-                        if let summary = model.lastExtractiveSummary {
-                            resultSection(summary)
-                            methodSection(summary)
+                    GeometryReader { geometry in
+                        if geometry.size.width >= 900 && !dynamicTypeSize.isAccessibilitySize {
+                            HSplitView {
+                                configurationPane(snapshot.sources)
+                                    .frame(minWidth: 290, idealWidth: 340, maxWidth: 420)
+                                resultsPane(sourceLookup: sourceLookup)
+                                    .frame(minWidth: 380)
+                            }
+                        } else {
+                            compactWorkspace(snapshot.sources, sourceLookup: sourceLookup)
                         }
-                        if let source = model.summarySourceText {
-                            sourceSection(source)
+                    }
+                }
+            } else {
+                ContentUnavailableView {
+                    Label("sources.needs-project.title", systemImage: "folder.badge.questionmark")
+                } description: {
+                    Text("summary.needs-project")
+                } actions: {
+                    Button("action.open-project", action: onOpenProject)
+                        .disabled(model.isBusy)
+                }
+            }
+        }
+        .navigationTitle(LocalizedStringKey(tool.titleKey))
+        .onChange(of: tool) { _, _ in
+            workspace = hasResult ? .results : .configuration
+        }
+        .onChange(of: resultIdentity) { _, identity in
+            if identity != nil { workspace = .results }
+        }
+    }
+
+    private var toolHeader: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .firstTextBaseline) {
+                    Label(LocalizedStringKey(tool.titleKey), systemImage: tool.systemImage)
+                        .font(.title2.bold())
+                        .accessibilityAddTraits(.isHeader)
+                    Spacer()
+                    toolPicker
+                }
+                VStack(alignment: .leading, spacing: 8) {
+                    Label(LocalizedStringKey(tool.titleKey), systemImage: tool.systemImage)
+                        .font(.title2.bold())
+                        .accessibilityAddTraits(.isHeader)
+                    toolPicker
+                }
+            }
+            Text(LocalizedStringKey(tool.introductionKey))
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var toolPicker: some View {
+        Picker("text-analysis.tool", selection: $tool) {
+            ForEach(StudioTextTool.allCases) { option in
+                Label(LocalizedStringKey(option.titleKey), systemImage: option.systemImage)
+                    .tag(option)
+            }
+        }
+        .pickerStyle(.menu)
+        .fixedSize(horizontal: true, vertical: false)
+        .disabled(model.isBusy)
+    }
+
+    private func compactWorkspace(
+        _ sources: [GlifiStudioProjectSource], sourceLookup: StudioSourceLookup
+    ) -> some View {
+        VStack(spacing: 0) {
+            Picker("text-analysis.workspace", selection: $workspace) {
+                Text("text-analysis.workspace.configuration").tag(StudioTextWorkspace.configuration)
+                Text("text-analysis.workspace.results").tag(StudioTextWorkspace.results)
+            }
+            .pickerStyle(.segmented)
+            .padding()
+            switch workspace {
+            case .configuration: configurationPane(sources)
+            case .results: resultsPane(sourceLookup: sourceLookup)
+            }
+        }
+    }
+
+    private func configurationPane(_ sources: [GlifiStudioProjectSource]) -> some View {
+        Form {
+            scopeSection(sources)
+            switch tool {
+            case .summary: parametersSection
+            case .documents: bm25ParametersSection
+            case .lexicon:
+                frequencyParametersSection
+                mtldParametersSection
+            case .termWeights: termWeightingParametersSection
+            case .lexicalLaws:
+                StudioLexicalLawsConfiguration(model: model, draft: $model.lexicalLawsDraft) {
+                    if model.lastLexicalLaws != nil { workspace = .results }
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .accessibilityIdentifier("text-analysis.configuration")
+    }
+
+    private func resultsPane(sourceLookup: StudioSourceLookup) -> some View {
+        Form {
+            if hasResult {
+                switch tool {
+                case .summary:
+                    if let summary = model.lastExtractiveSummary {
+                        resultSection(summary, sourceLookup: sourceLookup)
+                        methodSection(summary)
+                    }
+                    if let source = model.summarySourceText {
+                        sourceSection(source, sourceLookup: sourceLookup)
+                    }
+                case .documents:
+                    if let ranking = model.lastBM25Ranking {
+                        bm25ResultSection(ranking, sourceLookup: sourceLookup)
+                    }
+                    if let source = model.bm25SourceText {
+                        bm25SourceSection(source, sourceLookup: sourceLookup)
+                    }
+                case .lexicon:
+                    if let frequencies = model.lastNGramFrequencies {
+                        frequencyResultSection(frequencies)
+                    }
+                    if let diversity = model.lastLexicalDiversity {
+                        mtldResultSection(diversity, sourceLookup: sourceLookup)
+                    }
+                case .termWeights:
+                    if let weighting = model.lastTermWeighting {
+                        termWeightingResultSection(weighting)
+                        Section {
+                            Picker("text-analysis.weighting.detail", selection: $weightingDetail) {
+                                ForEach(StudioWeightingDetail.allCases) { detail in
+                                    Text(LocalizedStringKey(detail.titleKey)).tag(detail)
+                                }
+                            }
                         }
-                    case .documents:
-                        bm25ParametersSection
-                        if let ranking = model.lastBM25Ranking {
-                            bm25ResultSection(ranking)
+                        switch weightingDetail {
+                        case .sources:
+                            termWeightingSourcesSection(weighting, sourceLookup: sourceLookup)
+                        case .vocabulary: termWeightingVocabularySection(weighting)
+                        case .cells:
+                            termWeightingCellsSection(weighting, sourceLookup: sourceLookup)
                         }
-                        if let source = model.bm25SourceText {
-                            bm25SourceSection(source)
-                        }
-                    case .lexicon:
-                        frequencyParametersSection
-                        if let frequencies = model.lastNGramFrequencies {
-                            frequencyResultSection(frequencies)
-                        }
-                        mtldParametersSection
-                        if let diversity = model.lastLexicalDiversity {
-                            mtldResultSection(diversity)
-                        }
-                    case .termWeights:
-                        termWeightingParametersSection
-                        if let weighting = model.lastTermWeighting {
-                            termWeightingResultSection(weighting)
-                            termWeightingSourcesSection(weighting)
-                            termWeightingVocabularySection(weighting)
-                            termWeightingCellsSection(weighting)
-                            termWeightingMethodSection(weighting)
-                        }
+                        termWeightingMethodSection(weighting)
+                    }
+                case .lexicalLaws:
+                    if let result = model.lastLexicalLaws {
+                        StudioLexicalLawsResults(result: result)
                     }
                 }
             } else {
                 Section {
                     ContentUnavailableView {
-                        Label(
-                            "sources.needs-project.title", systemImage: "folder.badge.questionmark")
+                        Label("text-analysis.results.empty.title", systemImage: tool.systemImage)
                     } description: {
-                        Text("summary.needs-project")
+                        Text("text-analysis.results.empty.description")
                     } actions: {
-                        Button("action.open-project", action: onOpenProject)
-                            .disabled(model.isBusy)
+                        Button("text-analysis.workspace.configuration") {
+                            workspace = .configuration
+                        }
                     }
                 }
             }
         }
         .formStyle(.grouped)
-        .navigationTitle("sidebar.text-analysis")
+        .accessibilityIdentifier("text-analysis.results")
+    }
+
+    private var resultIdentity: String? {
+        switch tool {
+        case .summary: model.lastExtractiveSummary?.lineage.artifactID
+        case .documents: model.lastBM25Ranking?.lineage.artifactID
+        case .lexicon:
+            model.lastNGramFrequencies?.lineage.artifactID
+                ?? model.lastLexicalDiversity?.lineage.artifactID
+        case .termWeights: model.lastTermWeighting?.lineage.artifactID
+        case .lexicalLaws: model.lastLexicalLaws?.lineage.artifactID
+        }
+    }
+
+    private var hasResult: Bool { resultIdentity != nil }
+
+    private var hasScope: Bool {
+        switch model.textAnalysisScope {
+        case .allSources: !(model.snapshot?.sources.isEmpty ?? true)
+        case .selectedSources: !model.selectedTextAnalysisSourceRevisionIDs.isEmpty
+        }
     }
 
     private func scopeSection(_ sources: [GlifiStudioProjectSource]) -> some View {
@@ -103,38 +246,20 @@ struct StudioTextAnalysisView: View {
                 }
             }
             if model.textAnalysisScope == .selectedSources {
-                ForEach(Array(sources.enumerated()), id: \.element.sourceRevisionID) {
-                    index, source in
-                    Toggle(
-                        isOn: Binding(
-                            get: {
-                                model.selectedTextAnalysisSourceRevisionIDs.contains(
-                                    source.sourceRevisionID)
-                            },
-                            set: { isSelected in
-                                if isSelected
-                                    != model.selectedTextAnalysisSourceRevisionIDs.contains(
-                                        source.sourceRevisionID)
-                                {
-                                    model.toggleTextAnalysisSource(source.sourceRevisionID)
-                                }
+                LabeledContent("text-analysis.scope.selected-count") {
+                    Text(model.selectedTextAnalysisSourceRevisionIDs.count, format: .number)
+                }
+                DisclosureGroup("text-analysis.scope.choose-sources") {
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: 12) {
+                            ForEach(Array(sources.enumerated()), id: \.element.sourceRevisionID) {
+                                index, source in
+                                sourceToggle(source, index: index)
                             }
-                        )
-                    ) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            sourceName(index: index)
-                            Text(shortID(source.sourceRevisionID))
-                                .font(.caption.monospaced())
-                            HStack {
-                                Text(
-                                    source.format == .markdown
-                                        ? "format.markdown" : "format.plain-text")
-                                Text(Int64(source.byteCount), format: .byteCount(style: .file))
-                            }
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
                         }
+                        .padding(.vertical, 4)
                     }
+                    .frame(maxHeight: 260)
                 }
                 if model.selectedTextAnalysisSourceRevisionIDs.isEmpty {
                     Label("summary.scope.empty", systemImage: "info.circle")
@@ -149,6 +274,38 @@ struct StudioTextAnalysisView: View {
         .disabled(model.isBusy)
     }
 
+    private func sourceToggle(_ source: GlifiStudioProjectSource, index: Int) -> some View {
+        Toggle(
+            isOn: Binding(
+                get: {
+                    model.selectedTextAnalysisSourceRevisionIDs.contains(source.sourceRevisionID)
+                },
+                set: { isSelected in
+                    if isSelected
+                        != model.selectedTextAnalysisSourceRevisionIDs.contains(
+                            source.sourceRevisionID)
+                    {
+                        model.toggleTextAnalysisSource(source.sourceRevisionID)
+                    }
+                }
+            )
+        ) {
+            VStack(alignment: .leading, spacing: 4) {
+                sourceName(index: index)
+                HStack {
+                    Text(source.format == .markdown ? "format.markdown" : "format.plain-text")
+                    Text(Int64(source.byteCount), format: .byteCount(style: .file))
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                Text(shortID(source.sourceRevisionID))
+                    .font(.caption.monospaced())
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .toggleStyle(.checkbox)
+    }
+
     private var parametersSection: some View {
         Section("summary.parameters") {
             Picker("summary.budget.unit", selection: $model.summaryBudgetUnit) {
@@ -161,13 +318,33 @@ struct StudioTextAnalysisView: View {
                     .multilineTextAlignment(.trailing)
                     .frame(maxWidth: 160)
             }
-            Text("summary.budget.help")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            Text(
+                model.summaryBudgetUnit == .characters
+                    ? "summary.budget.characters.help" : "summary.budget.help"
+            )
+            .font(.caption)
+            .foregroundStyle(.secondary)
             DisclosureGroup("summary.parameters.details") {
                 Picker("summary.method", selection: $model.summaryMethod) {
                     ForEach(StudioSummaryMethod.allCases) { method in
                         Text(LocalizedStringKey(method.titleKey)).tag(method)
+                    }
+                }
+                if model.summaryMethod.supportsGraphConfiguration {
+                    DisclosureGroup("summary.graph.configuration") {
+                        decimalField("summary.graph.damping", value: $model.summaryGraphDamping)
+                        decimalField("summary.graph.tolerance", value: $model.summaryGraphTolerance)
+                        integerField(
+                            "summary.graph.maximum-iterations",
+                            value: $model.summaryGraphMaximumIterations)
+                        if model.summaryMethod == .lexRankThreshold {
+                            decimalField(
+                                "summary.graph.threshold",
+                                value: $model.summaryGraphSimilarityThreshold)
+                        }
+                        Text("summary.graph.configuration.help")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 Picker("summary.redundancy", selection: $model.summaryRedundancy) {
@@ -190,18 +367,29 @@ struct StudioTextAnalysisView: View {
                 }
             }
             Button("summary.action.run", systemImage: "text.quote") {
-                Task { await model.summarizeSources() }
+                Task {
+                    await model.summarizeSources()
+                    if model.lastExtractiveSummary != nil { workspace = .results }
+                }
             }
+            .buttonStyle(.borderedProminent)
+            .disabled(!hasScope)
             .keyboardShortcut(.return, modifiers: [.command])
         }
         .disabled(model.isBusy)
     }
 
-    private func resultSection(_ summary: GlifiStudioExtractiveSummaryResult) -> some View {
+    private func resultSection(
+        _ summary: GlifiStudioExtractiveSummaryResult, sourceLookup: StudioSourceLookup
+    ) -> some View {
         Section("summary.result.title") {
             Text("summary.result.context")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            if let diagnostics = summary.graphDiagnostics, !diagnostics.converged {
+                Label("summary.graph.not-converged", systemImage: "exclamationmark.triangle")
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             LabeledContent("summary.result.sources") {
                 Text(summary.sourceRevisionIDs.count, format: .number)
             }
@@ -219,16 +407,20 @@ struct StudioTextAnalysisView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 ForEach(summary.selected.map(SelectedSummarySentence.init)) { item in
-                    sentenceRow(item)
+                    sentenceRow(item, sourceLookup: sourceLookup)
                 }
             }
         }
     }
 
-    private func sentenceRow(_ item: SelectedSummarySentence) -> some View {
+    private func sentenceRow(_ item: SelectedSummarySentence, sourceLookup: StudioSourceLookup)
+        -> some View
+    {
         VStack(alignment: .leading, spacing: 10) {
-            sourceName(revisionID: item.selected.sentence.sourceRevisionID)
-                .font(.headline)
+            sourceName(
+                revisionID: item.selected.sentence.sourceRevisionID, sourceLookup: sourceLookup
+            )
+            .font(.headline)
             Text(item.selected.text)
                 .textSelection(.enabled)
                 .fixedSize(horizontal: false, vertical: true)
@@ -297,6 +489,37 @@ struct StudioTextAnalysisView: View {
                 identifierRow("summary.method.eligibility", summary.eligibilityPolicy)
                 identifierRow("summary.method.tie-break", summary.tieBreakIdentifier)
                 identifierRow("summary.method.output-order", summary.outputOrderIdentifier)
+                if let graph = summary.graphDiagnostics {
+                    LabeledContent("summary.graph.converged") {
+                        Text(graph.converged ? "common.yes" : "common.no")
+                    }
+                    LabeledContent("summary.graph.nodes") { Text(graph.nodeCount, format: .number) }
+                    LabeledContent("summary.graph.edges") { Text(graph.edgeCount, format: .number) }
+                    LabeledContent("summary.graph.iterations") {
+                        Text(graph.iterations, format: .number)
+                    }
+                    LabeledContent("summary.graph.damping") {
+                        Text(
+                            graph.configuration.damping,
+                            format: .number.precision(.significantDigits(1...17)))
+                    }
+                    LabeledContent("summary.graph.tolerance") {
+                        Text(
+                            graph.configuration.tolerance,
+                            format: .number.precision(.significantDigits(1...17)))
+                    }
+                    LabeledContent("summary.graph.maximum-iterations") {
+                        Text(graph.configuration.maximumIterations, format: .number)
+                    }
+                    LabeledContent("summary.graph.threshold") {
+                        Text(
+                            graph.configuration.similarityThreshold,
+                            format: .number.precision(.significantDigits(1...17)))
+                    }
+                    identifierRow("summary.graph.similarity", graph.similarityIdentifier)
+                    identifierRow("summary.graph.centrality", graph.centralityIdentifier)
+                    identifierRow("summary.graph.dangling-policy", graph.danglingPolicyIdentifier)
+                }
                 identifierRow("summary.lineage.project", summary.lineage.projectID)
                 LabeledContent("summary.lineage.source-generation") {
                     Text(summary.lineage.sourceGeneration, format: .number)
@@ -313,9 +536,11 @@ struct StudioTextAnalysisView: View {
         }
     }
 
-    private func sourceSection(_ source: GlifiStudioSourceText) -> some View {
+    private func sourceSection(_ source: GlifiStudioSourceText, sourceLookup: StudioSourceLookup)
+        -> some View
+    {
         Section("summary.source.title") {
-            sourceName(revisionID: source.sourceRevisionID)
+            sourceName(revisionID: source.sourceRevisionID, sourceLookup: sourceLookup)
                 .font(.headline)
             if model.summarySourceRanges.isEmpty {
                 Label("summary.source.unmapped", systemImage: "info.circle")
@@ -335,12 +560,10 @@ struct StudioTextAnalysisView: View {
         }
     }
 
-    private func sourceName(revisionID: String) -> some View {
+    private func sourceName(revisionID: String, sourceLookup: StudioSourceLookup) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Group {
-                if let index = model.snapshot?.sources.firstIndex(where: {
-                    $0.sourceRevisionID == revisionID
-                }) {
+                if let index = sourceLookup.index(of: revisionID) {
                     sourceName(index: index)
                 } else {
                     Text("summary.source.label")
@@ -365,14 +588,24 @@ struct StudioTextAnalysisView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Button("bm25.action.run", systemImage: "doc.text.magnifyingglass") {
-                Task { await model.rankSourcesBM25() }
+                Task {
+                    await model.rankSourcesBM25()
+                    if model.lastBM25Ranking != nil { workspace = .results }
+                }
             }
+            .buttonStyle(.borderedProminent)
+            .disabled(
+                !hasScope
+                    || model.bm25QueryDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            )
             .keyboardShortcut(.return, modifiers: [.command])
         }
         .disabled(model.isBusy)
     }
 
-    private func bm25ResultSection(_ ranking: GlifiStudioBM25Result) -> some View {
+    private func bm25ResultSection(
+        _ ranking: GlifiStudioBM25Result, sourceLookup: StudioSourceLookup
+    ) -> some View {
         Section("bm25.result.title") {
             Text("bm25.result.help")
                 .font(.callout)
@@ -386,7 +619,8 @@ struct StudioTextAnalysisView: View {
             }
             ForEach(ranking.ranking, id: \.sourceRevisionID) { document in
                 VStack(alignment: .leading, spacing: 8) {
-                    sourceName(revisionID: document.sourceRevisionID).font(.headline)
+                    sourceName(revisionID: document.sourceRevisionID, sourceLookup: sourceLookup)
+                        .font(.headline)
                     LabeledContent("bm25.score") {
                         Text(document.score, format: .number.precision(.significantDigits(1...17)))
                             .textSelection(.enabled)
@@ -438,9 +672,12 @@ struct StudioTextAnalysisView: View {
         }
     }
 
-    private func bm25SourceSection(_ source: GlifiStudioSourceText) -> some View {
+    private func bm25SourceSection(
+        _ source: GlifiStudioSourceText, sourceLookup: StudioSourceLookup
+    ) -> some View {
         Section("bm25.source.title") {
-            sourceName(revisionID: source.sourceRevisionID).font(.headline)
+            sourceName(revisionID: source.sourceRevisionID, sourceLookup: sourceLookup).font(
+                .headline)
             Text("bm25.source.help").font(.caption).foregroundStyle(.secondary)
             Text(source.text).font(.body.monospaced()).textSelection(.enabled)
             Button("summary.action.close-source", role: .cancel) {
@@ -485,8 +722,13 @@ struct StudioTextAnalysisView: View {
                 Text("frequency.filters.help").font(.caption).foregroundStyle(.secondary)
             }
             Button("frequency.action.run", systemImage: "list.number") {
-                Task { await model.analyzeFrequencies() }
+                Task {
+                    await model.analyzeFrequencies()
+                    if model.lastNGramFrequencies != nil { workspace = .results }
+                }
             }
+            .buttonStyle(.borderedProminent)
+            .disabled(!hasScope)
             .keyboardShortcut(.return, modifiers: [.command])
         }
         .disabled(model.isBusy)
@@ -628,13 +870,19 @@ struct StudioTextAnalysisView: View {
             decimalField("mtld.threshold", value: $model.mtldThreshold)
             Text("mtld.threshold.help").font(.caption).foregroundStyle(.secondary)
             Button("mtld.action.run", systemImage: "textformat.abc") {
-                Task { await model.analyzeMTLD() }
+                Task {
+                    await model.analyzeMTLD()
+                    if model.lastLexicalDiversity != nil { workspace = .results }
+                }
             }
+            .disabled(!hasScope)
         }
         .disabled(model.isBusy)
     }
 
-    private func mtldResultSection(_ diversity: GlifiStudioLexicalDiversityResult) -> some View {
+    private func mtldResultSection(
+        _ diversity: GlifiStudioLexicalDiversityResult, sourceLookup: StudioSourceLookup
+    ) -> some View {
         Section("mtld.result.title") {
             Text("mtld.result.help").font(.callout)
             LabeledContent("summary.result.sources") {
@@ -646,7 +894,8 @@ struct StudioTextAnalysisView: View {
             }
             ForEach(diversity.documents, id: \.sourceRevisionID) { document in
                 VStack(alignment: .leading, spacing: 8) {
-                    sourceName(revisionID: document.sourceRevisionID).font(.headline)
+                    sourceName(revisionID: document.sourceRevisionID, sourceLookup: sourceLookup)
+                        .font(.headline)
                     mtldValue(document.mtld)
                 }
                 .accessibilityElement(children: .contain)
@@ -711,8 +960,13 @@ struct StudioTextAnalysisView: View {
                 Text("weighting.limits.help")
             }
             Button("weighting.action.run", systemImage: "tablecells") {
-                Task { await model.analyzeTermWeights() }
+                Task {
+                    await model.analyzeTermWeights()
+                    if model.lastTermWeighting != nil { workspace = .results }
+                }
             }
+            .buttonStyle(.borderedProminent)
+            .disabled(!hasScope)
             .keyboardShortcut(.return, modifiers: [.command])
         }
         .disabled(model.isBusy)
@@ -741,7 +995,9 @@ struct StudioTextAnalysisView: View {
         }
     }
 
-    private func termWeightingSourcesSection(_ weighting: GlifiStudioTermWeightingResult)
+    private func termWeightingSourcesSection(
+        _ weighting: GlifiStudioTermWeightingResult, sourceLookup: StudioSourceLookup
+    )
         -> some View
     {
         Section("weighting.sources.title") {
@@ -754,7 +1010,7 @@ struct StudioTextAnalysisView: View {
                 }
             ) {
                 TableColumn("summary.source.label") { row in
-                    sourceName(revisionID: row.sourceRevisionID)
+                    sourceName(revisionID: row.sourceRevisionID, sourceLookup: sourceLookup)
                 }
                 TableColumn("weighting.observed-cells") { row in
                     Text(row.observedCellCount, format: .number)
@@ -797,8 +1053,9 @@ struct StudioTextAnalysisView: View {
     }
 
     @ViewBuilder
-    private func termWeightingCellsSection(_ weighting: GlifiStudioTermWeightingResult) -> some View
-    {
+    private func termWeightingCellsSection(
+        _ weighting: GlifiStudioTermWeightingResult, sourceLookup: StudioSourceLookup
+    ) -> some View {
         if !weighting.cells.isEmpty {
             Section("weighting.cells.title") {
                 Text("weighting.cells.help").font(.caption).foregroundStyle(.secondary)
@@ -810,7 +1067,7 @@ struct StudioTextAnalysisView: View {
                     }
                 ) {
                     TableColumn("summary.source.label") { row in
-                        sourceName(revisionID: row.sourceRevisionID)
+                        sourceName(revisionID: row.sourceRevisionID, sourceLookup: sourceLookup)
                     }
                     TableColumn("weighting.term") { row in
                         Text(row.term).textSelection(.enabled)
@@ -1026,11 +1283,12 @@ private struct TermWeightingPagination: View {
     }
 }
 
-private enum StudioTextTool: CaseIterable, Identifiable {
+enum StudioTextTool: CaseIterable, Identifiable, Sendable {
     case summary
     case documents
     case lexicon
     case termWeights
+    case lexicalLaws
 
     var id: Self { self }
 
@@ -1040,6 +1298,7 @@ private enum StudioTextTool: CaseIterable, Identifiable {
         case .documents: "text-analysis.tool.documents"
         case .lexicon: "text-analysis.tool.lexicon"
         case .termWeights: "text-analysis.tool.term-weights"
+        case .lexicalLaws: "text-analysis.tool.lexical-laws"
         }
     }
 
@@ -1049,10 +1308,43 @@ private enum StudioTextTool: CaseIterable, Identifiable {
         case .documents: "bm25.introduction"
         case .lexicon: "frequency.introduction"
         case .termWeights: "weighting.introduction"
+        case .lexicalLaws: "text-analysis.tool.lexical-laws.description"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .summary: "text.quote"
+        case .documents: "doc.text.magnifyingglass"
+        case .lexicon: "list.number"
+        case .termWeights: "tablecells"
+        case .lexicalLaws: "chart.xyaxis.line"
+        }
+    }
+}
+
+private enum StudioTextWorkspace {
+    case configuration
+    case results
+}
+
+private enum StudioWeightingDetail: CaseIterable, Identifiable {
+    case sources
+    case vocabulary
+    case cells
+
+    var id: Self { self }
+
+    var titleKey: String {
+        switch self {
+        case .sources: "weighting.sources.title"
+        case .vocabulary: "weighting.vocabulary.title"
+        case .cells: "weighting.cells.title"
         }
     }
 }
 
 #Preview {
-    StudioTextAnalysisView(model: StudioHomeModel(), onImportSources: {}, onOpenProject: {})
+    StudioTextAnalysisView(
+        model: StudioHomeModel(), onImportSources: {}, onOpenProject: {}, tool: .constant(.summary))
 }

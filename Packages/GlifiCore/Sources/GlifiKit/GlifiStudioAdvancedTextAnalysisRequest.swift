@@ -11,14 +11,17 @@ public enum GlifiStudioAdvancedTextAnalysisRequest: Equatable, Sendable, Encodab
     /// Partitions a declared graph using a versioned community method.
     case communities(
         graph: GlifiStudioGraphInput, method: GlifiStudioGraphCommunityMethod,
-        resolution: Double = 1, walkLength: Int = 4)
+        resolution: Double = 1, walkLength: Int = 4,
+        limits: GlifiStudioGraphAlgorithmLimits = .standard)
     /// Computes reproducible two-dimensional graph coordinates.
     case graphLayout(
         graph: GlifiStudioGraphInput, method: GlifiStudioGraphLayoutMethod,
         seed: UInt64 = 0, maximumIterations: Int = 300, tolerance: Double = 1e-6,
-        initialPositions: [GlifiStudioGraphPoint]? = nil)
+        initialPositions: [GlifiStudioGraphPoint]? = nil,
+        limits: GlifiStudioGraphAlgorithmLimits = .standard)
     /// Computes a minimum-cost forest; edge weights are costs, not affinities.
-    case minimumSpanningForest(graph: GlifiStudioGraphInput)
+    case minimumSpanningForest(
+        graph: GlifiStudioGraphInput, limits: GlifiStudioGraphAlgorithmLimits = .standard)
     /// Compares seeded iterative MDS starts and retains every run diagnostic.
     case mdsSearch(
         matrix: [[Double]], dimensions: Int = 2,
@@ -67,15 +70,17 @@ public enum GlifiStudioAdvancedTextAnalysisRequest: Equatable, Sendable, Encodab
                 seed: try f.advancedRequired("seed"),
                 options: try f.advancedDefault("options", .init()))
         case "communities":
-            fields = ["graph", "method", "resolution", "walkLength"]
+            fields = ["graph", "method", "resolution", "walkLength", "limits"]
             self = .communities(
                 graph: try f.advancedRequired("graph"),
                 method: try f.advancedRequired("method"),
                 resolution: try f.advancedDefault("resolution", 1),
-                walkLength: try f.advancedDefault("walkLength", 4))
+                walkLength: try f.advancedDefault("walkLength", 4),
+                limits: try f.advancedGraphLimits())
         case "graph-layout":
             fields = [
                 "graph", "method", "seed", "maximumIterations", "tolerance", "initialPositions",
+                "limits",
             ]
             self = .graphLayout(
                 graph: try f.advancedRequired("graph"), method: try f.advancedRequired("method"),
@@ -85,10 +90,12 @@ public enum GlifiStudioAdvancedTextAnalysisRequest: Equatable, Sendable, Encodab
                 initialPositions: f.contains(TextAnalysisKey("initialPositions"))
                     ? try f.decode(
                         [AdvancedPointWire].self, forKey: TextAnalysisKey("initialPositions")
-                    ).map(\.value) : nil)
+                    ).map(\.value) : nil,
+                limits: try f.advancedGraphLimits())
         case "minimum-spanning-forest":
-            fields = ["graph"]
-            self = .minimumSpanningForest(graph: try f.advancedRequired("graph"))
+            fields = ["graph", "limits"]
+            self = .minimumSpanningForest(
+                graph: try f.advancedRequired("graph"), limits: try f.advancedGraphLimits())
         case "mds-search":
             fields = [
                 "matrix", "dimensions", "method", "starts", "seed", "maximumIterations",
@@ -150,14 +157,14 @@ public enum GlifiStudioAdvancedTextAnalysisRequest: Equatable, Sendable, Encodab
                     "text-analysis.collection-limit", category: "insufficientResources")
             }
             try finite([options.alpha, options.beta])
-        case let .communities(graph, _, resolution, _):
+        case let .communities(graph, _, resolution, _, _):
             try budget.graph(graph)
             try finite([resolution])
-        case let .graphLayout(graph, _, _, _, tolerance, positions):
+        case let .graphLayout(graph, _, _, _, tolerance, positions, _):
             try budget.graph(graph)
             try finite([tolerance])
             if let positions { try budget.points(positions) }
-        case let .minimumSpanningForest(graph): try budget.graph(graph)
+        case let .minimumSpanningForest(graph, _): try budget.graph(graph)
         case let .mdsSearch(matrix, _, _, _, _, _, tolerance):
             try budget.matrix(matrix)
             try finite([tolerance])
@@ -187,19 +194,23 @@ public enum GlifiStudioAdvancedTextAnalysisRequest: Equatable, Sendable, Encodab
             try f.advancedEncode("candidateTopicCounts", candidates)
             try f.advancedEncode("seed", seed)
             try f.advancedEncode("options", options)
-        case let .communities(graph, method, resolution, walkLength):
+        case let .communities(graph, method, resolution, walkLength, limits):
             try f.advancedEncode("graph", graph)
             try f.advancedEncode("method", method)
             try f.advancedEncode("resolution", resolution)
             try f.advancedEncode("walkLength", walkLength)
-        case let .graphLayout(graph, method, seed, iterations, tolerance, positions):
+            if limits != .standard { try f.advancedEncode("limits", limits) }
+        case let .graphLayout(graph, method, seed, iterations, tolerance, positions, limits):
             try f.advancedEncode("graph", graph)
             try f.advancedEncode("method", method)
             try f.advancedEncode("seed", seed)
             try f.advancedEncode("maximumIterations", iterations)
             try f.advancedEncode("tolerance", tolerance)
             if let positions { try f.advancedEncode("initialPositions", positions) }
-        case let .minimumSpanningForest(graph): try f.advancedEncode("graph", graph)
+            if limits != .standard { try f.advancedEncode("limits", limits) }
+        case let .minimumSpanningForest(graph, limits):
+            try f.advancedEncode("graph", graph)
+            if limits != .standard { try f.advancedEncode("limits", limits) }
         case let .mdsSearch(matrix, dimensions, method, starts, seed, iterations, tolerance):
             try f.advancedEncode("matrix", matrix)
             try f.advancedEncode("dimensions", dimensions)
@@ -240,18 +251,20 @@ public enum GlifiStudioAdvancedTextAnalysisRequest: Equatable, Sendable, Encodab
                 documents: documents, candidateTopicCounts: candidates, seed: seed, options: options
             )
             return (result.methodIdentifier, .ldaSelection(result))
-        case let .communities(graph, method, resolution, walkLength):
+        case let .communities(graph, method, resolution, walkLength, limits):
             let result = try await GlifiStudioGraphAlgorithms.communities(
-                graph, method: method, resolution: resolution, walkLength: walkLength)
+                graph, method: method, resolution: resolution, walkLength: walkLength,
+                limits: limits)
             return (result.methodIdentifier, .communities(result))
-        case let .graphLayout(graph, method, seed, iterations, tolerance, positions):
+        case let .graphLayout(graph, method, seed, iterations, tolerance, positions, limits):
             let result = try await GlifiStudioGraphAlgorithms.layout(
                 graph, method: method,
                 seed: seed, maximumIterations: iterations, tolerance: tolerance,
-                initialPositions: positions)
+                initialPositions: positions, limits: limits)
             return (result.methodIdentifier, .graphLayout(result))
-        case let .minimumSpanningForest(graph):
-            let result = try await GlifiStudioGraphAlgorithms.minimumSpanningForest(graph)
+        case let .minimumSpanningForest(graph, limits):
+            let result = try await GlifiStudioGraphAlgorithms.minimumSpanningForest(
+                graph, limits: limits)
             return (result.methodIdentifier, .minimumSpanningForest(result))
         case let .mdsSearch(matrix, dimensions, method, starts, seed, iterations, tolerance):
             let result = try await GlifiStudioExploratoryCompletion.multidimensionalScalingSearch(
@@ -328,6 +341,27 @@ private struct AdvancedPointWire: Decodable {
     }
 }
 
+private struct AdvancedGraphLimitsWire: Decodable {
+    let value: GlifiStudioGraphAlgorithmLimits
+
+    init(from decoder: any Decoder) throws {
+        let f = try decoder.container(keyedBy: TextAnalysisKey.self)
+        let allowed: Set<String> = [
+            "maximumNodeCount", "maximumEdgeCount", "maximumPairwiseCells", "maximumWork",
+        ]
+        guard f.allKeys.allSatisfy({ allowed.contains($0.stringValue) }) else {
+            throw textRequestFailure("text-analysis.unknown-field")
+        }
+        let defaults = GlifiStudioGraphAlgorithmLimits.standard
+        value = GlifiStudioGraphAlgorithmLimits(
+            maximumNodeCount: try f.advancedDefault("maximumNodeCount", defaults.maximumNodeCount),
+            maximumEdgeCount: try f.advancedDefault("maximumEdgeCount", defaults.maximumEdgeCount),
+            maximumPairwiseCells: try f.advancedDefault(
+                "maximumPairwiseCells", defaults.maximumPairwiseCells),
+            maximumWork: try f.advancedDefault("maximumWork", defaults.maximumWork))
+    }
+}
+
 private func finite(_ values: [Double]) throws {
     guard values.allSatisfy(\.isFinite) else {
         throw textRequestFailure("text-analysis.non-finite")
@@ -340,6 +374,11 @@ private extension KeyedDecodingContainer where Key == TextAnalysisKey {
     }
     func advancedDefault<Value: Decodable>(_ name: String, _ fallback: Value) throws -> Value {
         try decode(Value.self, forKey: TextAnalysisKey(name), fallback: fallback)
+    }
+    func advancedGraphLimits() throws -> GlifiStudioGraphAlgorithmLimits {
+        let key = TextAnalysisKey("limits")
+        return contains(key)
+            ? try decode(AdvancedGraphLimitsWire.self, forKey: key).value : .standard
     }
 }
 

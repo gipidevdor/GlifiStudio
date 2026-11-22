@@ -1724,6 +1724,12 @@ public struct GlifiStudioMultivariateResult: Codable, Equatable, Sendable {
     public let methodIdentifier: String
     /// Row representation.
     public let representationIdentifier: String
+    /// Corpus digest, absent only in older presentation JSON.
+    public let corpusDigest: String?
+    /// Term-selection rule, absent only in older presentation JSON.
+    public let termSelectionIdentifier: String?
+    /// Average silhouette of the computed partition, when defined.
+    public let averageSilhouette: Double?
     /// Documents (rows).
     public let sourceRevisionIDs: [String]
     /// Terms (columns).
@@ -1769,6 +1775,9 @@ public struct GlifiStudioMultivariateResult: Codable, Equatable, Sendable {
         analysisIdentifier = value.analysisIdentifier
         methodIdentifier = value.method.identifier
         representationIdentifier = value.representationIdentifier
+        corpusDigest = value.corpusDigest
+        termSelectionIdentifier = value.termSelectionIdentifier
+        averageSilhouette = value.averageSilhouette
         sourceRevisionIDs = value.sourceRevisionIDs
         terms = value.terms
         clusterAssignments = value.clusterAssignments

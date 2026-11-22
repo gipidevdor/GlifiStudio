@@ -25,6 +25,16 @@ func advancedTextAnalysisDefaults() throws {
         ]))
     #expect(try typed.canonicalData() == decoded.canonicalData())
     #expect(try GlifiStudioTextAnalysisRequest.decode(typed.canonicalData()) == typed)
+    let explicitLimits = try GlifiStudioTextAnalysisRequest.decode(
+        advancedData([
+            "operation": "graph-layout",
+            "graph": ["nodes": ["a", "b"], "edges": [["source": "a", "target": "b"]]],
+            "method": "fruchtermanReingold", "seed": UInt64.max, "limits": [:],
+        ]))
+    #expect(try explicitLimits.canonicalData() == typed.canonicalData())
+    let canonical = try #require(
+        JSONSerialization.jsonObject(with: typed.canonicalData()) as? [String: Any])
+    #expect(canonical["limits"] == nil)
     let stem = GlifiStudioTextAnalysisRequest.advanced(.linguistic(text: "ragazze"))
     let minimal = try GlifiStudioTextAnalysisRequest.decode(
         advancedData([
@@ -50,6 +60,18 @@ func advancedTextAnalysisStrictNestedRequests() throws {
         [
             "operation": "graph-layout", "graph": graph, "method": "kamadaKawai",
             "initialPositions": [["x": 0, "y": 0, "secret-canary": 1], ["x": 1, "y": 1]],
+        ],
+        [
+            "operation": "communities", "graph": graph, "method": "walktrap",
+            "limits": ["secret-canary": 1],
+        ],
+        [
+            "operation": "graph-layout", "graph": graph, "method": "kamadaKawai",
+            "limits": NSNull(),
+        ],
+        [
+            "operation": "minimum-spanning-forest", "graph": graph,
+            "limits": ["maximumNodeCount": NSNull()],
         ],
         ["operation": "linguistic", "text": "secret-canary", "options": ["base": NSNull()]],
         ["operation": "linguistic", "text": "secret-canary", "options": ["secret-canary": true]],
@@ -81,6 +103,106 @@ func advancedTextAnalysisStrictNestedRequests() throws {
             .utf8)
     #expect(throws: GlifiStudioFailure.self) {
         try GlifiStudioTextAnalysisRequest.decode(duplicate)
+    }
+}
+
+@Test("I budget grafici espliciti conservano parametri e risultati completi delle API native")
+func advancedGraphLimitsNativeParity() async throws {
+    let graph = GlifiStudioGraphInput(
+        nodes: ["a", "b", "c"],
+        edges: [.init(source: "a", target: "b", weight: 2), .init(source: "b", target: "c")])
+    let limits = GlifiStudioGraphAlgorithmLimits(
+        maximumNodeCount: 8, maximumEdgeCount: 12,
+        maximumPairwiseCells: 128, maximumWork: 100_000)
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+    let examples: [(GlifiStudioAdvancedTextAnalysisRequest, Data)] = [
+        (
+            .communities(graph: graph, method: .fastGreedy, limits: limits),
+            try encoder.encode(
+                await GlifiStudioGraphAlgorithms.communities(
+                    graph, method: .fastGreedy, limits: limits))
+        ),
+        (
+            .graphLayout(
+                graph: graph, method: .kamadaKawai, seed: 7, maximumIterations: 30,
+                limits: limits),
+            try encoder.encode(
+                await GlifiStudioGraphAlgorithms.layout(
+                    graph, method: .kamadaKawai, seed: 7, maximumIterations: 30,
+                    limits: limits))
+        ),
+        (
+            .minimumSpanningForest(graph: graph, limits: limits),
+            try encoder.encode(
+                await GlifiStudioGraphAlgorithms.minimumSpanningForest(graph, limits: limits))
+        ),
+    ]
+    for (operation, expected) in examples {
+        let request = GlifiStudioTextAnalysisRequest.advanced(operation)
+        let canonical = try request.canonicalData()
+        #expect(try GlifiStudioTextAnalysisRequest.decode(canonical) == request)
+        let result = try await GlifiStudioTextAnalytics.executeTextAnalysis(json: canonical)
+        #expect(try encoder.encode(result.payload) == expected)
+    }
+}
+
+@Test("Ogni budget grafico limita il trasporto con la stessa failure nativa")
+func advancedGraphLimitsFailureParity() async throws {
+    let graph = GlifiStudioGraphInput(
+        nodes: ["a", "b"], edges: [.init(source: "a", target: "b")])
+    let nodeLimit = GlifiStudioGraphAlgorithmLimits(maximumNodeCount: 1)
+    let edgeLimit = GlifiStudioGraphAlgorithmLimits(maximumEdgeCount: 0)
+    let pairwiseLimit = GlifiStudioGraphAlgorithmLimits(maximumPairwiseCells: 0)
+    let workLimit = GlifiStudioGraphAlgorithmLimits(maximumWork: 0)
+    let examples: [(GlifiStudioAdvancedTextAnalysisRequest, @Sendable () async throws -> Void)] = [
+        (
+            .communities(graph: graph, method: .fastGreedy, limits: nodeLimit),
+            {
+                _ = try await GlifiStudioGraphAlgorithms.communities(
+                    graph, method: .fastGreedy, limits: nodeLimit)
+            }
+        ),
+        (
+            .minimumSpanningForest(graph: graph, limits: edgeLimit),
+            {
+                _ = try await GlifiStudioGraphAlgorithms.minimumSpanningForest(
+                    graph, limits: edgeLimit)
+            }
+        ),
+        (
+            .graphLayout(graph: graph, method: .kamadaKawai, limits: pairwiseLimit),
+            {
+                _ = try await GlifiStudioGraphAlgorithms.layout(
+                    graph, method: .kamadaKawai, limits: pairwiseLimit)
+            }
+        ),
+        (
+            .communities(graph: graph, method: .walktrap, limits: workLimit),
+            {
+                _ = try await GlifiStudioGraphAlgorithms.communities(
+                    graph, method: .walktrap, limits: workLimit)
+            }
+        ),
+    ]
+    for (operation, native) in examples {
+        do {
+            try await native()
+            Issue.record("Native graph operation ignored an explicit resource limit")
+        } catch let expected as GlifiStudioFailure {
+            #expect(expected.category == "insufficientResources")
+            do {
+                _ = try await GlifiStudioTextAnalytics.executeTextAnalysis(
+                    json: GlifiStudioTextAnalysisRequest.advanced(operation).canonicalData())
+                Issue.record("Transport ignored an explicit graph resource limit")
+            } catch let actual {
+                #expect(actual.code == expected.code)
+                #expect(actual.category == expected.category)
+                #expect(actual.retryDisposition == expected.retryDisposition)
+                #expect(actual.retainedState == expected.retainedState)
+                #expect(actual.arguments == expected.arguments)
+            }
+        }
     }
 }
 

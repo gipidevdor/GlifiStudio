@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-STD-001-28 |
 | Tipo | Capitolo normativo |
-| Versione | 1.13.10 |
+| Versione | 1.13.11 |
 | Stato | Attivo |
 | Responsabile | Amministratore del repository, provvisorio |
 | Ultima modifica | 2026-11-22 |
@@ -23,10 +23,10 @@
 | Tracciabilità | Matrice machine-readable; DoR operativa (GS-DOR-001, CMP-014) | Aggiungere scheda DoR a ogni nuova vertical slice |
 | Controllo versione | Primo commit pubblicato su `main` nel remote privato canonico | Applicare protezioni server-side quando disponibili |
 | Codice e test | Baseline eseguibile macOS/iPadOS, package condiviso, facciata diagnostica e policy runtime coperte da test | Evolvere per vertical slice guidate dai requisiti |
-| Ciclo documentale macOS | Gate storici riferiti agli snapshot GS-VER-188 e GS-VER-196/197; completamento keyness diretto e livello configurabile verificati sullo snapshot 0ed9b459: target con 55 definizioni/195 esecuzioni, zero fallite/saltate, gate e preflight macOS superati (GS-VER-198/199) | Mantenere identità e limiti dello snapshot provato; GUI, file coordination e autorizzazioni sandbox reali restano da validare, G4 aperto |
+| Ciclo documentale macOS | GS-VER-230/231/232 superate per automatici sul checkpoint ffbfb431: 486 test Core/Kit, 67 definizioni/224 esecuzioni native, gate e preflight macOS; lookup misurato con compromessi espliciti. Generazione 4d6969dd conservata separatamente | Verificare separatamente WIP 223 e layout successivi; GUI, file coordination e autorizzazioni sandbox reali restano da validare, G4 aperto |
 | Toolchain Swift | Apple Swift 6.4, Swift 6 language mode, SwiftPM tools 6.4 e strict concurrency verificati | Rivalutare solo con una toolchain Xcode 27 compatibile o nuova ADR |
 | Sicurezza e privacy | GS-SEC-001 completo per asset, trust boundary e THR-001–THR-020; zero telemetria e logging tipizzato | Assegnare responsabile ed eseguire corpus avversario, fuzz, kill test e audit build |
-| API e CLI | Lifecycle, failure, progressi, cancellazione e operazioni di progetto/analisi/indagine/export implementati; contratti Core/Kit/CLI verificati nelle rispettive evidenze, inclusa GS-VER-162 | Mantenere i contract test; completare copertura delle altre operazioni lunghe, diff API e verifica GUI senza promettere ABI prematura |
+| API e CLI | Lifecycle, failure, progressi, cancellazione e operazioni di progetto/analisi/indagine/export implementati; trasporti condivisi e controllo della superficie pubblica per la parità continua verificati su 126 operazioni (GS-API-003, GS-VER-275), oltre ai contratti delle rispettive evidenze | Mantenere il gate di parità; completare copertura delle altre operazioni lunghe e verifica GUI senza promettere ABI prematura |
 | Eccellenza ingegneristica Apple | GS-STD-001-29 e ADR-0024 definiscono criteri EA-* e soglie iniziali; presupposti ereditati verificati o configurati, nessun nuovo gate | Introdurre per fase test plan con sanitizer, test UI con `performAccessibilityAudit`, metriche XCTest, DocC, diff API e classi hardware di riferimento (EA-T-01…07, EA-M-01/02) |
 | Sostenibilità macOS | Policy pura e adattatore event-driven con snapshot atomici, admission delle sessioni e controllo fra nodi; test Core/Kit e monitor nel workspace superati (GS-VER-182) | Acquisire idle reale, energia, App Nap, Instruments e calibrazione hardware; il microbenchmark dello snapshot non sostituisce la verifica applicativa |
 | GitHub | Remote privato, impostazioni, 20 etichette, Dependabot e audit attivi | Abilitare piano per ruleset, Secret Scanning e push protection |
@@ -86,3 +86,8 @@ standard sono configurati nella scena macOS e compilati; prove manuali di
 VoiceOver, App Nap, energia, provider e dispositivi/G4 restano aperte. Nessun
 criterio Da introdurre viene convertito in un gate soltanto perché la sua API è
 disponibile.
+
+L'incremento ADR-0041 espone le capacità analitiche utente del core nei laboratori
+macOS e completa l'editor qualitativo condiviso. La verifica è registrata in
+[GS-VER-223](../evidenze/GS-VER-223-copertura-core-app.md); CMP-223 resta implemented.
+Questo stato non promuove i criteri assistivi o prestazionali di GS-STD-001-29.

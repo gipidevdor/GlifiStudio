@@ -4,7 +4,7 @@ import Foundation
 import GlifiCore
 
 /// Application-facing Gregorian civil date, without an implicit time zone.
-public struct GlifiStudioCivilDate: Encodable, Equatable, Sendable {
+public struct GlifiStudioCivilDate: Codable, Equatable, Sendable {
     /// Gregorian year in `1...9999`.
     public let year: Int
     /// Gregorian month in `1...12`.
@@ -19,6 +19,15 @@ public struct GlifiStudioCivilDate: Encodable, Equatable, Sendable {
         }
     }
 
+    /// Decodes through the same Gregorian validation used by native callers.
+    public init(from decoder: any Decoder) throws {
+        let fields = try decoder.container(keyedBy: CodingKeys.self)
+        try self.init(
+            year: fields.decode(Int.self, forKey: .year),
+            month: fields.decode(Int.self, forKey: .month),
+            day: fields.decode(Int.self, forKey: .day))
+    }
+
     fileprivate init(_ value: GlifiCivilDate) {
         year = value.year
         month = value.month
@@ -31,7 +40,7 @@ public struct GlifiStudioCivilDate: Encodable, Equatable, Sendable {
 }
 
 /// Observed precision and type are preserved across the facade.
-public enum GlifiStudioTemporalValue: Equatable, Sendable {
+public enum GlifiStudioTemporalValue: Codable, Equatable, Sendable {
     case instant(Date)
     case civilDate(GlifiStudioCivilDate)
     case civilMonth(year: Int, month: Int)
@@ -57,7 +66,7 @@ public enum GlifiStudioTemporalValue: Equatable, Sendable {
 }
 
 /// Calendar basis for civil metadata or instants in an explicit time zone.
-public enum GlifiStudioTemporalBasis: Equatable, Sendable {
+public enum GlifiStudioTemporalBasis: Codable, Equatable, Sendable {
     case civilDates
     case instants(timeZoneIdentifier: String)
 
@@ -70,7 +79,7 @@ public enum GlifiStudioTemporalBasis: Equatable, Sendable {
 }
 
 /// Calendar units, rather than elapsed seconds.
-public enum GlifiStudioTemporalGranularity: String, Equatable, Sendable {
+public enum GlifiStudioTemporalGranularity: String, Codable, Equatable, Sendable {
     case day
     case month
     case year
@@ -85,7 +94,7 @@ public enum GlifiStudioTemporalGranularity: String, Equatable, Sendable {
 }
 
 /// Explicit handling of missing metadata.
-public enum GlifiStudioTemporalMissingPolicy: String, Equatable, Sendable {
+public enum GlifiStudioTemporalMissingPolicy: String, Codable, Equatable, Sendable {
     case exclude
     case separate
     case reject
@@ -100,7 +109,7 @@ public enum GlifiStudioTemporalMissingPolicy: String, Equatable, Sendable {
 }
 
 /// Explicit handling of values outside the chosen domain.
-public enum GlifiStudioTemporalOutsidePolicy: String, Equatable, Sendable {
+public enum GlifiStudioTemporalOutsidePolicy: String, Codable, Equatable, Sendable {
     case exclude
     case reject
 
@@ -113,7 +122,7 @@ public enum GlifiStudioTemporalOutsidePolicy: String, Equatable, Sendable {
 }
 
 /// A fully specified, immutable calendar partition.
-public struct GlifiStudioTemporalConfiguration: Equatable, Sendable {
+public struct GlifiStudioTemporalConfiguration: Codable, Equatable, Sendable {
     /// Civil dates or instants in an explicit time zone.
     public let basis: GlifiStudioTemporalBasis
     /// Calendar unit used to advance bucket boundaries.
@@ -156,7 +165,7 @@ public struct GlifiStudioTemporalConfiguration: Equatable, Sendable {
 }
 
 /// Observed document counts and metadata provenance, without project mutations.
-public struct GlifiStudioTemporalDocument: Equatable, Sendable {
+public struct GlifiStudioTemporalDocument: Codable, Equatable, Sendable {
     /// Exact immutable source revision identity.
     public let sourceRevisionID: String
     /// Caller-supplied provenance of the observed temporal metadata.
@@ -267,7 +276,7 @@ public struct GlifiStudioTemporalExclusion: Encodable, Equatable, Sendable {
 }
 
 /// Chronologically ordered, descriptive temporal series.
-public struct GlifiStudioTemporalResult: Equatable, Sendable {
+public struct GlifiStudioTemporalResult: Encodable, Equatable, Sendable {
     /// Candidate headless contract; no service-quality or external scientific approval is implied.
     public static let validationStatus = "candidate"
     /// Versioned headless calendar aggregation identity.
