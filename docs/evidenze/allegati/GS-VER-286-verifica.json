@@ -342,5 +342,13 @@
       "verificationRecord": "https://github.com/gipidevdor/GlifiStudio/pull/46",
       "scope": "Local gate on deterministic cancellation source hashes recorded above; remote OCR diagnosis remains independent and unresolved"
     }
+  },
+  "finalCompositionReference": {
+    "evidenceIdentifier": "GS-VER-311",
+    "evidencePath": "docs/evidenze/GS-VER-311-disponibilita-ocr.md",
+    "integratedSourceCheckpoint": "6d47336af7a2a0ed35ce33416ea41bdd811cbbee",
+    "previousArtifactSHA256": "1275360e9d7a252fee01be15ca612e78f35695c9b83162137a1f59a667aee7d8",
+    "historicalCheckpointsUnchanged": true,
+    "status": "In verifica separata; non rietichetta i gate remoti precedenti"
   }
 }

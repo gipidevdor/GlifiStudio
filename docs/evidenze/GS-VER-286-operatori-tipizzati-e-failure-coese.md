@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-VER-286 |
 | Tipo | Evidenza di refactoring interno |
-| Versione | 1.3.0 |
+| Versione | 1.3.1 |
 | Stato | Prove indicate superate; gate finale corrente aperto |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -192,3 +192,11 @@ I 189 controlli riportati per il checkpoint A7 restano una prova storica
 distinta. Log, digest e risultato locale sono nell’allegato; la CI e il
 preflight del relativo head restano aperti nella PR #46. Questo risultato
 locale non risolve né riclassifica l’errore OCR del runner remoto.
+
+## Rinvio alla composizione OCR
+
+Il checkpoint remoto 6d47336 supera la cancellazione MDS/SOM; nei due gate
+restano i soli failure OCR registrati in GS-VER-311. La composizione che
+incorpora CMP-286/287/288 e il profilo OCR ADR-0045 è verificata separatamente
+in [GS-VER-311](GS-VER-311-disponibilita-ocr.md). I checkpoint A7/C61/4205/6d
+e i relativi hash dei nove sorgenti restano evidenze storiche distinte.
