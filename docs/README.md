@@ -9,7 +9,7 @@ Scegli il percorso che serve al tuo lavoro.
 | Sviluppare e contribuire | [Ambiente di sviluppo](ambiente-di-sviluppo.md) · [Loop di sviluppo e qualità](loop-di-sviluppo-e-qualita.md) · [Contratto GlifiKit e GlifiCLI](api/README.md) |
 | Definire il prodotto | [Requisiti](requisiti.md) · [Esperienza utente](esperienza-utente/README.md) · [Specifiche di design](specifiche-di-design/README.md) |
 | Applicare un metodo analitico | [Contratti dei metodi](metodi-analitici/README.md) · [Architettura](architettura.md) · [Glossario](glossario.md) |
-| Verificare il lavoro | [Tracciabilità](tracciabilita.md) · [Evidenze](evidenze/README.md) · [Roadmap](roadmap.md) |
+| Verificare il lavoro | [Scenari di analisi](pianificazione/scenari-di-analisi.md) · [Tracciabilità](tracciabilita.md) · [Evidenze](evidenze/README.md) · [Roadmap](roadmap.md) |
 | Decidere e preparare il rilascio | [Decisioni architetturali](adr/README.md) · [Governo del repository](repository/README.md) · [Preparazione App Store](app-store/README.md) |
 
 ## Quali documenti seguire
@@ -67,6 +67,7 @@ completo.
 | GS-PLAN-001 | [Roadmap](roadmap.md) | Sequenza di validazione e sviluppo | ISO/IEC/IEEE 15289:2019 | Proposta |
 | GS-ISS-001 | [Decisioni aperte](decisioni-aperte.md) | Questioni irrisolte e chiusura mediante ADR | ISO/IEC/IEEE 15289:2019 | Attivo |
 | GS-ADR-* | [Registro ADR](adr/README.md) | Decisioni architetturali e rationale | Supporta ISO/IEC/IEEE 42010:2022 | Attivo |
+| GS-TST-001 | [Scenari di analisi](pianificazione/scenari-di-analisi.md) | Inventario operativo, workflow e riferimenti ai test condivisi/macOS | GS-STD-001-16; GS-API-003 | Implementato |
 | GS-VER-* | [Registro delle evidenze](evidenze/README.md) | Risultati riproducibili dei controlli di qualità | [Modello di evidenza](standard/appendice-c-modello-di-evidenza.md) | Attivo |
 | GS-DOR-* | [Registro Definition of Ready](pianificazione/README.md) | Contratti e stato di ingresso delle unità di lavoro | GS-STD-001-07 | Attivo |
 | GS-WVR-* | [Registro delle deroghe](deroghe/README.md) | Eccezioni temporanee, mitigazioni, scadenze e piano di rientro | [Disciplina delle deroghe](standard/24-deroghe-e-non-conformita.md) | Attivo |

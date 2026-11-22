@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-STD-001-16 |
 | Tipo | Capitolo normativo |
-| Versione | 0.5.0 |
+| Versione | 0.6.0 |
 | Stato | Proposto |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Non ancora approvato |
 | Documento padre | [GS-STD-001](../standard-di-progetto.md) |
 
@@ -74,3 +74,22 @@ Devono essere coperti almeno:
 
 Le app **DEVONO** applicare anche il profilo Apple per [test e diagnostica](../apple/07-test-e-diagnostica.md).
 Il protocollo scientifico trasversale è [GS-VAL-001](../specifiche-di-design/09-validazione-scientifica.md).
+
+
+## 16.4 Scenari di analisi e inventario operativo
+
+Le varianti pubbliche delle operazioni analitiche **DEVONO** avere una mappatura
+verso test e riferimenti scientifici nella matrice di
+[GS-TST-001](../pianificazione/scenari-di-analisi.md). La verifica dell'inventario
+usa la baseline API revisionata nel loop statico e il symbol graph corrente
+nel gate completo; non ricava il contratto pubblico analizzando testo Swift.
+
+Gli scenari **DEVONO** distinguere esecuzione nominale, failure, cancellazione,
+input catturato, persistenza/riuso, revisioni e percorsi soltanto headless.
+Quando una dimensione non è applicabile o resta aperta, la documentazione deve
+dichiararlo. Un riferimento al test non equivale al suo superamento e la parità
+fra interfacce non sostituisce un oracolo indipendente.
+
+La baseline corrente applica questa verifica ai percorsi condivisi e ai modelli
+macOS. iPadOS e gli audit manuali restano separati; nessun criterio non ancora
+attuato diventa conforme per la sola esistenza della matrice.

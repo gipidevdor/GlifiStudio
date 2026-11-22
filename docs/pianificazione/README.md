@@ -149,8 +149,6 @@ preservando i confini del lavoro già in corso nell'altra chat.
 
 - [GS-DOR-300 — Chiusura delle lacune funzionali KH Coder](dor-completezza-funzionale-kh.md) — Ready; Core/Kit/CLI e verifica delle varianti pubbliche
 
-- [GS-DOR-305 — Riverifica e rifinitura dei profili KH](dor-rifinitura-kh.md) — Ready
-
-- [GS-DOR-284 — Regia del piano e input numerico](dor-regia-del-piano-e-input-numerico.md) — Ready; dispatch del passo e grammatica editor condivisi
+- [GS-DOR-303 — Test degli scenari di analisi](dor-scenari-di-analisi.md) — Ready; [piano GS-TST-001](scenari-di-analisi.md) e matrice eseguibile
 
 - [GS-DOR-304 — Componenti e campi nativi nei laboratori macOS](dor-hig-laboratori-macos.md) — Ready; implementazione, gate e preflight macOS superati sul checkpoint 9c9e0098; audit interattivi aperti

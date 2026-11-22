@@ -250,7 +250,6 @@ enum GlifiAnalysisArtifactDescriptorFactory {
         return try GlifiAnalysisDescriptor(
             artifactTypeIdentifier: "studio.glifi.artifact.analysis-plan",
             algorithmIdentifier: GlifiAnalysisPlanner.plannerIdentifier,
-            // Keep budget-correct plans distinct from historical producer-one DAGs.
             algorithmVersion: "2",
             corpusIdentifier: projectID.canonicalValue,
             corpusVersionDigest: sourceRootDigest,

@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DEV-002 |
 | Tipo | Guida controllata del loop di sviluppo |
-| Versione | 1.6.0 |
+| Versione | 1.7.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -26,6 +26,7 @@ sostituire il gate completo `make verify`.
 | `make format` | Prima di commitare sorgenti Swift | Riscrive `Apps` e `Packages` secondo `.swift-format` |
 | `make lint` / `make format-check` | Dopo `format` o in revisione | Controlla lo stile senza modificare i file |
 | `make test-macos` | Iterazione sul ciclo documentale dell'app macOS | Compila app e modello reale dal workspace ed esegue i test Swift Testing senza app host |
+| `make check-analysis-scenarios` | Modifiche a scenari, test o operazioni pubbliche | Controlla matrice, riferimenti e omissioni; quattordici controlli negativi |
 | `make check-swift-dialect` | Sempre nel loop e nel gate | Verifica language mode, concurrency, regole e CI |
 | `make quality-static` | Iterazione senza toolchain Swift | Docs, compliance, segreti, tassonomia e messaggi delle failure, dialetto e baseline statiche |
 | `make quality` | Iterazione locale rapida | `quality-static` + formattazione, senza build Xcode |
@@ -155,3 +156,5 @@ controllo per ottenere verde è non conformità.
 - [Integrazione continua e quality gate](standard/20-integrazione-continua-e-quality-gate.md)
 - [CI e runner Xcode 27](repository/05-ci-e-runner-xcode.md)
 - [ADR-0020](adr/0020-loop-di-qualita-e-dialetto-swift.md)
+
+La copertura degli scenari analitici è definita in [GS-TST-001](pianificazione/scenari-di-analisi.md). `make verify` ne confronta l’inventario anche con il compilatore; esiti e limiti sono in [GS-VER-303](evidenze/GS-VER-303-scenari-di-analisi.md).

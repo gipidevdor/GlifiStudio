@@ -639,28 +639,6 @@ e il gate macOS della versione unita superato: 771 test Core/Kit in
 Debug/Release e nei sanitizzatori, 113 test nativi e 189 controlli sulle 63 fixture CLI. ADR-0043 governa l’estensione; le clausole
 CMP-160 e CMP-162 conservano i propri stati, senza promozioni V6 o GUI.
 
-
-## Rifinitura analitica e ammissione cumulativa (GS-DOR-305)
-
-RF-087, RQ-025, RQ-058, RQ-060 e RQ-063 collegano le regressioni numeriche,
-Unicode e dei budget ai percorsi Core/Kit/CLI. GlifiKHNumericRefinementTests,
-GlifiNaiveBayesNumericalRefinementTests, GlifiTermUnicodeRefinementTests,
-GlifiExploratoryBudgetRefinementTests, GlifiSOMGaussianRefinementTests e
-GlifiSOMWorkflowRefinementTests distinguono i difetti prima delle correzioni.
-GlifiAnalysisPlannerTests e GlifiPlannerProducerRefinementTests verificano il
-residuo globale e l'identità distinta dai vecchi piani. Le prove CLI aggiungono
-confronti esatti per subnormali, byte Unicode e classificazione.
-[GS-VER-305](evidenze/GS-VER-305-rifinitura-kh.md) registra l'audit e i gate locali
-superati; GS-VER-300 resta il precedente snapshot. Nessuna promozione scientifica.
-
-## Regia del piano e grammatica numerica (GS-DOR-284)
-
-CMP-284 collega RQ-005/011/023/063 alla separazione privata fra regia ed
-esecuzione del passo. CMP-285 collega RQ-007/060/063 alla grammatica decimale
-comune dei due editor Kit, con errori distinti e contratti di trasporto conservati.
-[GS-VER-284](evidenze/GS-VER-284-regia-del-piano-e-input-numerico.md) registra
-compatibilità, verifiche macOS e limiti, senza promozione della maturità scientifica.
-
 ## Robustezza trasversale della baseline (GS-DOR-302)
 
 | Requisiti | Correzione e verifica | Evidenza |
@@ -672,3 +650,14 @@ compatibilità, verifiche macOS e limiti, senza promozione della maturità scien
 
 Questa revisione verifica le correzioni esercitate; non promuove criteri
 assistivi, scientifici, energetici o di rilascio ancora aperti.
+
+## Scenari di analisi verificabili
+
+[GS-DOR-303](pianificazione/dor-scenari-di-analisi.md),
+[GS-TST-001](pianificazione/scenari-di-analisi.md) e
+[GS-VER-303](evidenze/GS-VER-303-scenari-di-analisi.md) attuano
+GS-STD-001-16 § 16.4: 170 varianti operative inventariate, scenari di progetto,
+riapertura e revisioni, 11 intenti del planner, barriere dei modelli e casi
+scientifici indipendenti. CMP-303 riguarda questa verifica software, senza
+promozione di manifest scientifici o audit manuali. Le estensioni KH prive di
+adattatore GUI restano dichiarate headless.

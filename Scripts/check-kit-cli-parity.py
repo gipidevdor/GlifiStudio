@@ -270,7 +270,8 @@ def check_fixtures(binary: Path, directory: Path, families: list[dict], symbols:
     print(f"Kit/CLI: {len(fixtures)} compiler-enumerated operations, {checks} complete-result parity checks")
 
 
-def check_text_operation_inventory(symbols: dict[str, dict]) -> None:
+def text_operation_inventory(symbols: dict[str, dict]) -> dict[str, set[str]]:
+    """Resolve the flat wire tags from the compiler, including nested requests."""
     def enum_cases(name: str) -> set[str]:
         return {
             symbol["path"][-1].split("(", 1)[0]
@@ -300,14 +301,26 @@ def check_text_operation_inventory(symbols: dict[str, dict]) -> None:
     if stale_aliases:
         raise ValueError(f"KH transport aliases have no compiler case: {sorted(stale_aliases)}")
     tags = []
-    for cases, aliases in ((outer - {"advanced"}, {}), (advanced - {"kh"}, {}), (kh, kh_aliases)):
-        tags.extend(
+    families = {}
+    for name, cases, aliases in (
+        ("ordinary", outer - {"advanced"}, {}),
+        ("advanced", advanced - {"kh"}, {}),
+        ("kh", kh, kh_aliases),
+    ):
+        resolved = [
             aliases.get(case, re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "-", case).lower())
             for case in cases
-        )
+        ]
+        families[name] = set(resolved)
+        tags.extend(resolved)
     expected = set(tags)
     if len(expected) != len(tags):
         raise ValueError("Duplicate flat operation tags in ordinary, advanced or KH text requests")
+    return {**families, "all": expected}
+
+
+def check_text_operation_inventory(symbols: dict[str, dict]) -> None:
+    expected = text_operation_inventory(symbols)["all"]
     fixture = read_json(ROOT / "Fixtures/TextAnalysis/v1/cases.json")
     observed = {case["request"]["operation"] for case in fixture["cases"]}
     if not expected or expected != observed:
