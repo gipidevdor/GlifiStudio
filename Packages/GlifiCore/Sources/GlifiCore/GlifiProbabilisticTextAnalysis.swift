@@ -264,6 +264,8 @@ public struct GlifiLDAResult: Equatable, Sendable {
     public let beta: Double
     /// In-sample posterior-predictive perplexity; never a held-out quality estimate.
     public let trainingPerplexity: Double
+    /// Retained collapsed word log likelihoods, only when explicitly requested.
+    public let sampleLogWordLikelihoods: [Double]
 }
 
 /// Sparse-token LDA with flat count buffers and an explicit operation budget.
@@ -273,16 +275,25 @@ public enum GlifiLatentDirichletAllocation {
         documents: [[String]], topicCount: Int, seed: UInt64,
         alpha: Double = 0.1, beta: Double = 0.01,
         burnIn: Int = 100, sampleCount: Int = 20, thinning: Int = 5,
+        retainLogLikelihoods: Bool = false,
         limits: GlifiExploratoryLimits = .standard
     ) throws -> GlifiLDAResult {
-        let table = try GlifiDocumentTermTable(documents: documents)
-        let vocabularyCount = table.terms.count
-        let tokenCount = table.totals.reduce(0, +)
+        try Task.checkCancellation()
         guard (1...1_024).contains(topicCount), alpha.isFinite, beta.isFinite,
             alpha > 0, beta > 0, (0...10_000).contains(burnIn),
             (1...10_000).contains(sampleCount), (1...1_000).contains(thinning),
-            (Double(topicCount) * alpha).isFinite, (Double(vocabularyCount) * beta).isFinite
+            (Double(topicCount) * alpha).isFinite
         else { throw exploratoryFailure("lda.invalid-parameters") }
+        // Reject impossible dense document-topic storage before building the sparse table.
+        guard documents.count <= limits.maximumCells / topicCount else {
+            throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
+        }
+        let table = try GlifiDocumentTermTable(documents: documents)
+        let vocabularyCount = table.terms.count
+        let tokenCount = table.totals.reduce(0, +)
+        guard (Double(vocabularyCount) * beta).isFinite else {
+            throw exploratoryFailure("lda.invalid-parameters")
+        }
         guard tokenCount > 0 else {
             throw exploratoryFailure("lda.empty-corpus", .insufficientData)
         }
@@ -290,7 +301,14 @@ public enum GlifiLatentDirichletAllocation {
             throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
         }
         let sweeps = burnIn + sampleCount * thinning
-        try requireWork([tokenCount, topicCount, sweeps], limits)
+        var remainingWork = limits.maximumWork
+        try ldaAdmitWork([tokenCount, topicCount, sweeps], remaining: &remainingWork)
+        try ldaAdmitWork([documents.count, topicCount, sampleCount], remaining: &remainingWork)
+        try ldaAdmitWork([vocabularyCount, topicCount, sampleCount], remaining: &remainingWork)
+        try ldaAdmitWork([tokenCount, topicCount, sampleCount], remaining: &remainingWork)
+        if retainLogLikelihoods {
+            try ldaAdmitWork([vocabularyCount, topicCount, sampleCount], remaining: &remainingWork)
+        }
         let positions = Dictionary(
             uniqueKeysWithValues: table.terms.enumerated().map { ($0.element, $0.offset) })
         let words = documents.map { $0.compactMap { positions[$0] } }
@@ -317,6 +335,8 @@ public enum GlifiLatentDirichletAllocation {
         let observed = table.rows.map { $0.sorted { $0.key < $1.key } }
         var predictions = observed.map { [Double](repeating: 0, count: $0.count) }
         var probabilities = [Double](repeating: 0, count: topicCount)
+        var logWordLikelihoods: [Double] = []
+        if retainLogLikelihoods { logWordLikelihoods.reserveCapacity(sampleCount) }
         for sweep in 0..<sweeps {
             try Task.checkCancellation()
             for document in words.indices {
@@ -352,6 +372,22 @@ public enum GlifiLatentDirichletAllocation {
                 }
             }
             if sweep >= burnIn, (sweep - burnIn + 1).isMultiple(of: thinning) {
+                if retainLogLikelihoods {
+                    var likelihood = 0.0
+                    let logBeta: Double = lgamma(beta)
+                    let logMass: Double = lgamma(priorMass)
+                    for topic in 0..<topicCount {
+                        likelihood += logMass - lgamma(Double(totals[topic]) + priorMass)
+                        for word in 0..<vocabularyCount {
+                            let count = termCounts[word * topicCount + topic]
+                            if count > 0 { likelihood += lgamma(Double(count) + beta) - logBeta }
+                        }
+                    }
+                    guard likelihood.isFinite else {
+                        throw exploratoryFailure("exploratory.numeric-overflow")
+                    }
+                    logWordLikelihoods.append(likelihood)
+                }
                 for document in words.indices {
                     let denominator = Double(words[document].count) + Double(topicCount) * alpha
                     for topic in 0..<topicCount {
@@ -399,7 +435,8 @@ public enum GlifiLatentDirichletAllocation {
             vocabulary: table.terms, documentTopics: theta, topicTerms: phi,
             assignments: assignments,
             seed: seed, burnIn: burnIn, sampleCount: sampleCount, thinning: thinning,
-            alpha: alpha, beta: beta, trainingPerplexity: perplexity
+            alpha: alpha, beta: beta, trainingPerplexity: perplexity,
+            sampleLogWordLikelihoods: logWordLikelihoods
         )
     }
 }

@@ -46,7 +46,7 @@ def main():
     args = parser.parse_args()
     binary = args.binary.resolve()
     cases = json.loads(FIXTURES.read_text())["cases"]
-    assert len(cases) == 15 and len({case["id"] for case in cases}) == len(cases)
+    assert len(cases) == 30 and len({case["id"] for case in cases}) == len(cases)
     checks = 0
     with tempfile.TemporaryDirectory(prefix="GlifiTextAnalysisCLI-") as temporary:
         directory = Path(temporary)
@@ -116,6 +116,26 @@ def main():
         rejects(encoded({"operation": "coding", "units": [{"id": "secret-canary", "text": "secret-canary"}],
                          "rules": "*A\n<>missing-->secret-canary"}), 5, "insufficientData")
         rejects(encoded({"operation": "som", "matrix": [[0], [1]], "width": 0, "height": 1, "seed": 0}), 3, "invalidInput")
+        graph = {"nodes": ["a", "b"], "edges": [{"source": "a", "target": "b"}]}
+        rejects(encoded({"operation": "communities", "graph": {**graph, "secret-canary": 1},
+                         "method": "walktrap"}), 3, "invalidInput")
+        rejects(encoded({"operation": "communities", "graph": {
+            "nodes": ["a", "b"], "edges": [{"source": "a", "target": "b", "weight": None}]},
+                         "method": "fastGreedy"}), 3, "invalidInput")
+        rejects(encoded({"operation": "graph-layout", "graph": graph, "method": "kamadaKawai",
+                         "initialPositions": [{"x": 0, "y": 0, "secret-canary": 1}, {"x": 1, "y": 1}]}), 3, "invalidInput")
+        rejects(encoded({"operation": "linguistic", "text": "secret-canary",
+                         "options": {"base": None}}), 3, "invalidInput")
+        rejects(encoded({"operation": "linguistic", "text": "secret-canary",
+                         "options": {"secret-canary": 1}}), 3, "invalidInput")
+        rejects(encoded({"operation": "lda-selection", "documents": [["a"], ["a"]],
+                         "candidateTopicCounts": [1], "seed": 0, "options": {"folds": None}}), 3, "invalidInput")
+        rejects(encoded({"operation": "lda-selection", "documents": [["secret-canary"], ["a"]],
+                         "candidateTopicCounts": [1], "seed": 0, "options": {"folds": 1}}), 3, "invalidInput")
+        rejects(encoded({"operation": "lda-selection", "documents": [["a"], ["a"]],
+                         "candidateTopicCounts": list(range(1, 34)), "seed": 0}), 7, "insufficientResources")
+        rejects(encoded({"operation": "linguistic-coding", "units": [{"id": "1", "text": "secret-canary", "extra": 1}],
+                         "rules": "*A\\na"}), 3, "invalidInput")
 
         if os.geteuid() != 0:
             protected = directory / "secret-canary-protected.json"

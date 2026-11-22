@@ -35,7 +35,7 @@ completo.
 | --- | --- |
 | Identificatore | GS-IDX-001 |
 | Tipo | Indice degli information item |
-| Versione | 0.20.1 |
+| Versione | 0.20.2 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -68,6 +68,7 @@ completo.
 | GS-ISS-001 | [Decisioni aperte](decisioni-aperte.md) | Questioni irrisolte e chiusura mediante ADR | ISO/IEC/IEEE 15289:2019 | Attivo |
 | GS-ADR-* | [Registro ADR](adr/README.md) | Decisioni architetturali e rationale | Supporta ISO/IEC/IEEE 42010:2022 | Attivo |
 | GS-VER-* | [Registro delle evidenze](evidenze/README.md) | Risultati riproducibili dei controlli di qualità | [Modello di evidenza](standard/appendice-c-modello-di-evidenza.md) | Attivo |
+| GS-DOR-* | [Registro Definition of Ready](pianificazione/README.md) | Contratti e stato di ingresso delle unità di lavoro | GS-STD-001-07 | Attivo |
 | GS-WVR-* | [Registro delle deroghe](deroghe/README.md) | Eccezioni temporanee, mitigazioni, scadenze e piano di rientro | [Disciplina delle deroghe](standard/24-deroghe-e-non-conformita.md) | Attivo |
 
 </details>

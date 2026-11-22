@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001 |
 | Tipo | Specifica normativa ingegneristico-scientifica |
-| Versione | 1.2.1 |
+| Versione | 1.2.2 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-01 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Perimetro scientifico richiesto dall'iniziatore del progetto; baseline da revisionare |
 | Riferimenti | GS-VIS-001; GS-SRS-001; ADR-0013 |
 
@@ -103,4 +103,4 @@ il risultato a parità di descrittore. Alias commerciali o nomi di libreria non
 costituiscono versioni scientifiche. Un metodo sperimentale **PUÒ** essere esposto
 soltanto se marcato come tale e sottoposto agli stessi obblighi di provenienza.
 
-- [GS-MET-001-23 — Operatori delle famiglie KH Coder](23-operatori-kh-coder.md)
+- [GS-MET-001-23 — Operatori delle famiglie KH Coder](23-operatori-kh-coder.md) — Contratti nativi e ampliamento headless; verifica distinta per variante

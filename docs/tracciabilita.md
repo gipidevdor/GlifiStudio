@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.91.1 |
+| Versione | 0.92.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -407,11 +407,11 @@ nessuna promozione a requisito verificato.
 
 | Verifica | Requisiti | Codice e prova | Evidenza |
 | --- | --- | --- | --- |
-| TV-087 | RF-087; RF-033; RF-037; RF-038; RF-043; RQ-025; RQ-048; RQ-058; RQ-063 | GlifiExploratoryAnalysis, GlifiProbabilisticTextAnalysis, GlifiCodingRules, GlifiTextMatrixOperators, GlifiStudioTextAnalytics; test KHOperator e oracolo R; benchmark Release | [GS-VER-160](evidenze/GS-VER-160-operatori-analitici-nativi.md), GS-MET-001-23, ADR-0032, GS-DOR-160; nuove API candidate |
+| TV-087 | RF-087; RF-033; RF-037; RF-038; RF-043; RQ-025; RQ-048; RQ-058; RQ-063 | GlifiExploratoryAnalysis, GlifiProbabilisticTextAnalysis, GlifiCodingRules, GlifiTextMatrixOperators, GlifiStudioTextAnalytics; completamento comunità/layout/Prim/Simpson, MDS/SOM, selezione K e pipeline italiana; facciate dedicate e test mirati; test KHOperator e oracolo R; benchmark Release | [GS-VER-160](evidenze/GS-VER-160-operatori-analitici-nativi.md), GS-MET-001-23, ADR-0032, GS-DOR-160; baseline storica conservata; ampliamento ADR-0035 e [GS-VER-233](evidenze/GS-VER-233-completamento-kh-coder.md), nuovi identificatori candidate e gate in verifica |
 
 | [GS-VER-161](evidenze/GS-VER-161-revisione-scientifica-operatori.md) | RF-087; TV-087; ADR-0031 | Correzioni Stress-1/LDA/codifica, oracoli R/Python e sette ValidationManifest per nove varianti; review tecnica automatica, V6 esterno aperto |
 
-| TV-088 | RF-087; RQ-058; RQ-060; RQ-063 | Request analitica tipizzata e dispatcher GlifiKit, CLI text-analysis, fixture condivise e test di input ostili | [GS-VER-162](evidenze/GS-VER-162-parita-operatori-kit-cli.md), GS-API-002, GS-DOR-162; parità e gate completo verificati localmente |
+| TV-088 | RF-087; RQ-058; RQ-060; RQ-063 | Request analitica tipizzata e dispatcher GlifiKit, CLI text-analysis, fixture condivise e test di input ostili; nove operazioni avanzate piatte più ordinal/simpson, 30 fixture presenti nello schema/versione 1 | [GS-VER-162](evidenze/GS-VER-162-parita-operatori-kit-cli.md), GS-API-002, GS-DOR-162; parità e gate storico a 15 fixture verificati localmente; nuovo ambito GS-DOR-233 e [GS-VER-233](evidenze/GS-VER-233-completamento-kh-coder.md) in verifica |
 
 ## Lotto complementare macOS GS-PLAN-180
 

@@ -110,3 +110,5 @@ preservando i confini del lavoro già in corso nell'altra chat.
 - [GS-DOR-207 — Validazione e codifica esadecimale dei digest](dor-ottimizzazione-codifica-digest.md) — Ready
 
 - [GS-DOR-208 — Supporto condiviso dei benchmark dei test](dor-ottimizzazione-supporto-benchmark-test.md) — Ready
+
+- [GS-DOR-233 — Completamento delle varianti native KH Coder](dor-completamento-kh-coder.md) — Ready per prosecuzione e verifica; registrazione successiva all’avvio autorizzato

@@ -14,6 +14,11 @@ preservando i metodi upstream già pubblicati.
 
 ### Aggiunto
 
+- Varianti native del laboratorio analitico: comunità Girvan–Newman/CNM/Walktrap,
+  layout FR/KK, foresta Prim, Simpson, MDS ordinale e multi-start, SOM esagonale
+  con diagnostiche, selezione K LDA e pipeline italiana opzionale. Nove operazioni
+  aggiuntive nello stesso contratto GlifiKit/CLI; GUI e approvazione scientifica
+  delle nuove varianti restano separate (ADR-0035, GS-VER-233).
 - Completamento delle primitive analitiche specificate: distribuzioni lessicali,
   fitting diagnostico Zipf/Heaps, statistiche descrittive Q7, Welch ANOVA,
   aggregazioni temporali con esposizione e metriche di valutazione linguistica.
@@ -43,6 +48,10 @@ preservando i metodi upstream già pubblicati.
 
 ### Verificato
 
+- Completamento headless KH: 561 test Core/Kit in Debug e Release, 90 controlli
+  CLI, 194 righe di oracoli, 195 esecuzioni macOS, recovery/PDF e build
+  macOS/iPadOS Debug/Release superati localmente. Nuove varianti scientifiche
+  candidate; GUI separata (GS-VER-233).
 - Audit di conservazione dei contenuti prima dell’integrazione: sette branch
   storici hanno alberi identici ai commit squash già in `main`; nuova integrazione
   delle PR #37/#38 e gate locale `make verify` superato (GS-VER-221).

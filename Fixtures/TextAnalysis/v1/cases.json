@@ -514,6 +514,449 @@
       },
       "methodIdentifier": "Column-Jaccard-network-v1",
       "validationStatus": "candidate"
+    },
+    {
+      "id": "community-edgeBetweenness",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "communities",
+        "graph": {
+          "nodes": [
+            "A",
+            "B",
+            "C"
+          ],
+          "edges": [
+            {
+              "source": "A",
+              "target": "B",
+              "weight": 2
+            },
+            {
+              "source": "B",
+              "target": "C",
+              "weight": 1
+            },
+            {
+              "source": "A",
+              "target": "C",
+              "weight": 4
+            }
+          ]
+        },
+        "method": "edgeBetweenness"
+      },
+      "methodIdentifier": "GirvanNewman-inverse-strength-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "community-fastGreedy",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "communities",
+        "graph": {
+          "nodes": [
+            "A",
+            "B",
+            "C"
+          ],
+          "edges": [
+            {
+              "source": "A",
+              "target": "B",
+              "weight": 2
+            },
+            {
+              "source": "B",
+              "target": "C",
+              "weight": 1
+            },
+            {
+              "source": "A",
+              "target": "C",
+              "weight": 4
+            }
+          ]
+        },
+        "method": "fastGreedy"
+      },
+      "methodIdentifier": "ClausetNewmanMoore-weighted-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "community-walktrap",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "communities",
+        "graph": {
+          "nodes": [
+            "A",
+            "B",
+            "C"
+          ],
+          "edges": [
+            {
+              "source": "A",
+              "target": "B",
+              "weight": 2
+            },
+            {
+              "source": "B",
+              "target": "C",
+              "weight": 1
+            },
+            {
+              "source": "A",
+              "target": "C",
+              "weight": 4
+            }
+          ]
+        },
+        "method": "walktrap"
+      },
+      "methodIdentifier": "Walktrap-weighted-mean-loops-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "layout-fruchtermanReingold",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "graph-layout",
+        "graph": {
+          "nodes": [
+            "A",
+            "B",
+            "C"
+          ],
+          "edges": [
+            {
+              "source": "A",
+              "target": "B",
+              "weight": 2
+            },
+            {
+              "source": "B",
+              "target": "C",
+              "weight": 1
+            },
+            {
+              "source": "A",
+              "target": "C",
+              "weight": 4
+            }
+          ]
+        },
+        "method": "fruchtermanReingold",
+        "seed": 7,
+        "maximumIterations": 30
+      },
+      "methodIdentifier": "FruchtermanReingold-unweighted-square-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "layout-kamadaKawai",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "graph-layout",
+        "graph": {
+          "nodes": [
+            "A",
+            "B",
+            "C"
+          ],
+          "edges": [
+            {
+              "source": "A",
+              "target": "B",
+              "weight": 2
+            },
+            {
+              "source": "B",
+              "target": "C",
+              "weight": 1
+            },
+            {
+              "source": "A",
+              "target": "C",
+              "weight": 4
+            }
+          ]
+        },
+        "method": "kamadaKawai",
+        "seed": 7,
+        "maximumIterations": 30
+      },
+      "methodIdentifier": "KamadaKawai-hop-component-extension-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "prim-forest",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "minimum-spanning-forest",
+        "graph": {
+          "nodes": [
+            "A",
+            "B",
+            "C"
+          ],
+          "edges": [
+            {
+              "source": "A",
+              "target": "B",
+              "weight": 2
+            },
+            {
+              "source": "B",
+              "target": "C",
+              "weight": 1
+            },
+            {
+              "source": "A",
+              "target": "C",
+              "weight": 4
+            }
+          ]
+        }
+      },
+      "methodIdentifier": "Prim-minimum-spanning-forest-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "totalWeight": 3,
+        "componentCount": 1
+      }
+    },
+    {
+      "id": "distance-simpson",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "dissimilarities",
+        "matrix": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        "metric": "simpson"
+      },
+      "methodIdentifier": "Text-distance-simpson-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "mds-ordinal",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "mds",
+        "matrix": [
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            0
+          ]
+        ],
+        "dimensions": 1,
+        "method": "ordinal",
+        "seed": 7,
+        "maximumIterations": 50
+      },
+      "methodIdentifier": "MDS-ordinal-SMACOF-secondary-ties-normalized-raw-stress-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "mds-search",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "mds-search",
+        "matrix": [
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            0
+          ]
+        ],
+        "dimensions": 1,
+        "seed": 7,
+        "starts": 3,
+        "maximumIterations": 50
+      },
+      "methodIdentifier": "MDS-multistart-SplitMix64-minimum-objective-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "som-hexagonal",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "som-advanced",
+        "matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "width": 2,
+        "height": 2,
+        "seed": 7,
+        "epochs": 3,
+        "topology": "hexagonal",
+        "codebookClusterCount": 2
+      },
+      "methodIdentifier": "SOM-batch-gaussian-hexagonal-odd-row-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "lda-selection",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "lda-selection",
+        "documents": [
+          [
+            "a",
+            "b",
+            "a"
+          ],
+          [
+            "b",
+            "a",
+            "b"
+          ],
+          [
+            "a",
+            "b",
+            "a"
+          ],
+          [
+            "b",
+            "b",
+            "a"
+          ]
+        ],
+        "candidateTopicCounts": [
+          1,
+          2
+        ],
+        "seed": 7,
+        "options": {
+          "folds": 2,
+          "burnIn": 2,
+          "sampleCount": 3,
+          "thinning": 1
+        }
+      },
+      "methodIdentifier": "LDA-model-selection-training-vocabulary-CV-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "linguistic-normalized",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "linguistic",
+        "text": "Le ragazze cantavano."
+      },
+      "methodIdentifier": "Linguistic-Italian-normalized-surface-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "linguistic-stemming",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "linguistic",
+        "text": "Le ragazze cantavano.",
+        "options": {
+          "base": "italian-snowball-3.1.0"
+        }
+      },
+      "methodIdentifier": "Linguistic-Italian-italian-snowball-3.1.0-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "linguistic-availability",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "linguistic-availability"
+      },
+      "methodIdentifier": "Linguistic-Italian-availability-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "linguistic-coding",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "linguistic-coding",
+        "units": [
+          {
+            "id": "1",
+            "text": "Le ragazze cantavano."
+          }
+        ],
+        "rules": "*Presenza\nragazz",
+        "options": {
+          "base": "italian-snowball-3.1.0"
+        }
+      },
+      "methodIdentifier": "KH-coding-compatible-v2+Linguistic-Italian-italian-snowball-3.1.0-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "matrix": {
+          "values": [
+            [
+              1
+            ]
+          ]
+        }
+      }
     }
   ]
 }

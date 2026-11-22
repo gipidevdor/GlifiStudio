@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-MET-001-16 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.0.2 |
+| Versione | 1.1.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -94,3 +94,25 @@ sono registrate nell'evidenza, senza cambiare lo stato scientifico del metodo.
 Fixture canoniche comprendono grafo vuoto, singleton, percorso, ciclo, stella,
 componenti disconnesse e grafo diretto con dangling node. Si verificano invariance
 alla rinomina, somme/normalizzazioni, risultati noti, tie-break e lineage degli archi.
+
+## Primitive native aggiuntive in memoria
+
+[GS-MET-001-23](23-operatori-kh-coder.md) e
+[ADR-0035](../adr/0035-completamento-nativo-kh-coder.md) fissano le nuove
+varianti candidate Girvan–Newman a costo inverso dell’intensità, CNM pesata e
+Walktrap con self-loop medio e fusioni Ward. Conservano proiezione dichiarata,
+risoluzione, tie deterministici, modularità del grafo originale e gerarchia.
+La rimozione per edge betweenness è distinta dalla centralità dei nodi esistente.
+
+Fruchterman–Reingold e Kamada–Kawai producono coordinate adimensionali separate
+dai grafi; KK dichiara esplicitamente le distanze virtuali fra componenti e la
+storia energetica. La foresta Prim interpreta i pesi come costi, conserva costi
+nulli e componenti; i pesi non vengono reinterpretati implicitamente come
+intensità. Queste API non cambiano la disposizione della UI applicativa.
+
+Budget prima dei buffer quadratici e del lavoro iterativo: 2.000 nodi,
+100.000 archi, 1.000.000 celle pairwise e 200.000.000 unità stimate standard,
+con limiti effettivi più restrittivi secondo metodo e numero di buffer.
+La copertura Core/Kit/CLI è in verifica in
+[GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md); questi metodi
+non ereditano lo stato scientifico di Louvain o delle centralità precedenti.

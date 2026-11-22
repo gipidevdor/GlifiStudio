@@ -134,6 +134,31 @@ struct TextAnalysisBudget {
         }
     }
 
+    mutating func graph(_ value: GlifiStudioGraphInput) throws {
+        try strings(value.nodes)
+        try consume(value.edges.count)
+        for edge in value.edges {
+            try string(edge.source)
+            try string(edge.target)
+            guard edge.weight.isFinite else { throw textRequestFailure("text-analysis.non-finite") }
+        }
+    }
+
+    mutating func integers(_ values: [Int]) throws {
+        try consume(values.count)
+    }
+
+    mutating func points(_ values: [GlifiStudioGraphPoint]) throws {
+        guard values.count <= 20_000 else { throw limit() }
+        try consume(values.count)
+        for point in values {
+            try consume(2)
+            guard point.x.isFinite, point.y.isFinite else {
+                throw textRequestFailure("text-analysis.non-finite")
+            }
+        }
+    }
+
     private mutating func consume(_ count: Int) throws {
         guard count <= elements else { throw limit() }
         elements -= count

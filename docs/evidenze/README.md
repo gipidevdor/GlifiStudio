@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.18.1 |
+| Versione | 1.19.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -245,3 +245,5 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 - [GS-VER-162 — Parità degli operatori GlifiKit/CLI](GS-VER-162-parita-operatori-kit-cli.md) — Gate completo superato, 15 fixture e 51 controlli CLI
 
 - [GS-VER-163 — Integrità dei documenti macOS](GS-VER-163-integrita-documenti-macos.md) — Superato: suite del modello macOS in locale e gate CI `xcode-27` su `main` `a86a53b`; CMP-107 verified
+
+- [GS-VER-233 — Completamento nativo delle varianti KH Coder](GS-VER-233-completamento-kh-coder.md) — Superato: 561 test Core/Kit, 90 controlli CLI e gate macOS/iPadOS completo; varianti scientifiche candidate

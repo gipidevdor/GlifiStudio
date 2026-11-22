@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-ADR-IDX-001 |
 | Tipo | Registro delle decisioni architetturali |
-| Versione | 0.30.0 |
+| Versione | 0.31.0 |
 | Stato | Attivo |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Non applicabile; registro operativo |
 
 Gli ADR documentano le scelte architetturali importanti, il contesto in cui sono state prese e le conseguenze accettate.
@@ -60,3 +60,5 @@ Ogni ADR deve contenere titolo, stato, contesto, decisione, conseguenze e, quand
 - [ADR-0032 — Operatori analitici nativi](0032-operatori-analitici-nativi.md) — Ambito accettato; capacità candidate
 
 - [ADR-0033 — Completamento del laboratorio di analisi testuale macOS](0033-laboratorio-analisi-testuale-macos.md) — Programma e confini accettati; verifiche per incremento
+
+- [ADR-0035 — Completamento nativo delle varianti KH Coder](0035-completamento-nativo-kh-coder.md) — Ambito e architettura accettati; gate in verifica e varianti nuove candidate

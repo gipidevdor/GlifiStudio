@@ -2251,20 +2251,49 @@
         "Packages/GlifiCore/Sources/GlifiCore/GlifiProbabilisticTextAnalysis.swift",
         "Packages/GlifiCore/Sources/GlifiCore/GlifiCodingRules.swift",
         "Packages/GlifiCore/Sources/GlifiCore/GlifiTextMatrixOperators.swift",
-        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalytics.swift"
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalytics.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiCommunityAlgorithms.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiGraphAlgorithmSupport.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiGraphLayouts.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiGraphSpanningTree.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiSimpsonSimilarity.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiExploratoryCompletion.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiLDAModelSelection.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiItalianStemmer.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiLinguisticPipeline.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioExploratoryCompletion.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioGraphAlgorithms.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioLDAModelSelection.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioLinguisticPipeline.swift"
       ],
       "tests": [
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHOperatorTests.swift",
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiKHOperatorFacadeTests.swift",
-        "Scripts/check-oracles.py"
+        "Scripts/check-oracles.py",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiGraphCompletionTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiGraphCompletionBenchmarkTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExploratoryCompletionTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExploratoryCompletionBenchmarks.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLDAModelSelectionTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLinguisticPipelineTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLinguisticPipelineBenchmarkTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioExploratoryCompletionTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioGraphAlgorithmsTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioLinguisticPipelineTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLDAModelSelectionBenchmarkTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiAdvancedTextAnalysisTransportTests.swift"
       ],
       "fixtures": [
-        "Packages/GlifiCore/Tests/Oracles/R/kh_operators.R"
+        "Packages/GlifiCore/Tests/Oracles/R/kh_operators.R",
+        "Fixtures/TextAnalysis/v1/cases.json"
       ],
       "evidence": [
         "docs/evidenze/GS-VER-160-operatori-analitici-nativi.md",
         "docs/evidenze/GS-VER-161-revisione-scientifica-operatori.md",
-        "docs/pianificazione/dor-operatori-analitici.md"
+        "docs/pianificazione/dor-operatori-analitici.md",
+        "docs/adr/0035-completamento-nativo-kh-coder.md",
+        "docs/pianificazione/dor-completamento-kh-coder.md",
+        "docs/evidenze/GS-VER-233-completamento-kh-coder.md"
       ],
       "gate": "G3",
       "status": "implemented",
@@ -2284,17 +2313,27 @@
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalysisRequest.swift",
         "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalysisJSON.swift",
         "Packages/GlifiCore/Sources/GlifiCLI/CLITextAnalysisInput.swift",
-        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioAdvancedTextAnalysisRequest.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioExploratoryCompletion.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioGraphAlgorithms.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioLDAModelSelection.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioLinguisticPipeline.swift"
       ],
       "tests": [
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiTextAnalysisTransportTests.swift",
-        "Scripts/check-text-analysis-cli.py"
+        "Scripts/check-text-analysis-cli.py",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioExploratoryCompletionTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioGraphAlgorithmsTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioLinguisticPipelineTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiAdvancedTextAnalysisTransportTests.swift"
       ],
       "fixtures": [
         "Fixtures/TextAnalysis/v1/cases.json"
       ],
       "evidence": [
-        "docs/evidenze/GS-VER-162-parita-operatori-kit-cli.md"
+        "docs/evidenze/GS-VER-162-parita-operatori-kit-cli.md",
+        "docs/evidenze/GS-VER-233-completamento-kh-coder.md"
       ],
       "gate": "G3",
       "status": "verified",
