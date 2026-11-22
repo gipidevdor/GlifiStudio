@@ -79,7 +79,7 @@ public enum GlifiStudioExploratoryCompletion {
         method: GlifiStudioMDSMethod = .ordinal, starts: Int = 10, seed: UInt64,
         maximumIterations: Int = 300, tolerance: Double = 1e-8
     ) async throws(GlifiStudioFailure) -> GlifiStudioMDSSearchResult {
-        try mapExploratoryCompletionFailure {
+        try mapTextAnalysisFailure {
             try GlifiStudioMDSSearchResult(
                 GlifiExploratoryAnalysis.multidimensionalScalingSearch(
                     dissimilarities, dimensions: dimensions, method: method.core, starts: starts,
@@ -94,7 +94,7 @@ public enum GlifiStudioExploratoryCompletion {
         initialRadius: Double = 2, finalRadius: Double = 0.5, tolerance: Double = 1e-8,
         codebookClusterCount: Int? = nil
     ) async throws(GlifiStudioFailure) -> GlifiStudioAdvancedSOMResult {
-        try mapExploratoryCompletionFailure {
+        try mapTextAnalysisFailure {
             guard width > 0, height > 0, width <= 1_024, height <= 1_024,
                 width <= 1_024 / height
             else { throw exploratoryFailure("exploratory.invalid-parameters") }
@@ -118,23 +118,5 @@ public enum GlifiStudioExploratoryCompletion {
                 map: GlifiStudioSOMResult(map), topology: topology, uMatrix: uMatrix,
                 codebookClustering: clustering)
         }
-    }
-}
-
-private func mapExploratoryCompletionFailure<Value>(
-    _ body: () throws -> Value
-) throws(GlifiStudioFailure) -> Value {
-    do { return try body() } catch let failure as GlifiFailure {
-        throw GlifiStudioFailure(failure)
-    } catch is CancellationError {
-        throw GlifiStudioFailure(
-            code: "operation.cancelled", category: "cancelled", operation: "analyze",
-            retryDisposition: "newRequest", retainedState: "unchanged",
-            messageKey: "failure.category.cancelled")
-    } catch {
-        throw GlifiStudioFailure(
-            code: "analysis.failed", category: "insufficientData", operation: "analyze",
-            retryDisposition: "afterCorrection", retainedState: "unchanged",
-            messageKey: "failure.category.insufficientData")
     }
 }

@@ -1,0 +1,346 @@
+{
+  "schemaIdentifier": "studio.glifi.verification.typed-coding-and-analysis-failures.v1",
+  "baselineCommit": "b401c084aae5a9f02e73a3af1598c1498d9a0edc",
+  "affectedSourcesSHA256": "e2c8a2e815f0430f5a95c532f841d2ce00503dd7eeee219c92832e0b64949307",
+  "affectedSourcesDigestMethod": "Sorted relative path, NUL, complete bytes, NUL; four production files and two new contract tests",
+  "structure": {
+    "baseline": "b401c084aae5a9f02e73a3af1598c1498d9a0edc",
+    "binaryOperators": 12,
+    "rawStringASTPayloadsBefore": 1,
+    "rawStringASTPayloadsAfter": 0,
+    "stringPrecedenceCatalogsBefore": 1,
+    "stringPrecedenceCatalogsAfter": 0,
+    "exhaustiveEnumSwitchesAfter": 2,
+    "sharedFailureTablesBefore": 2,
+    "sharedFailureTablesAfter": 1,
+    "failureCallSites": 15,
+    "lexerBytesEqual": true,
+    "finiteEvidenceBudgetBlockEqualExceptTypedComparison": true,
+    "sharedMapperBodyBytesEqual": true,
+    "productionFiles": {
+      "Packages/GlifiCore/Sources/GlifiCore/GlifiCodingRules.swift": {
+        "beforeLines": 927,
+        "afterLines": 943
+      },
+      "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalytics.swift": {
+        "beforeLines": 558,
+        "afterLines": 538
+      },
+      "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioExploratoryCompletion.swift": {
+        "beforeLines": 140,
+        "afterLines": 122
+      },
+      "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalysisFailure.swift": {
+        "beforeLines": 0,
+        "afterLines": 24
+      }
+    },
+    "performanceClaim": false
+  },
+  "publicAPI": {
+    "baseline": "b401c084aae5a9f02e73a3af1598c1498d9a0edc",
+    "method": "swift-api-digester; only top-level declaration order canonicalized",
+    "modules": {
+      "GlifiCore": {
+        "equal": true,
+        "sha256": "b339a67e6d97c92d9c26352579484cf8c6ee4cb6e8cecbeb7a3c95f8196ab3a6"
+      },
+      "GlifiKit": {
+        "equal": true,
+        "sha256": "e19b814f51c27e195e231b5cd22684be62b343c026169d55c043d735f8a1590a"
+      }
+    }
+  },
+  "cliCompatibility": {
+    "schemaIdentifier": "studio.glifi.verification.cli-compatibility.v1",
+    "referenceBinarySHA256": "17a9fcdbfaa8930d751d70e2ea5dd1ecc9a72fd47ef5f34603320203419f710a",
+    "candidateBinarySHA256": "d58faf6d5d1283405c51cc4f515c58f1259f34a60005c6b1a3567070ba9d0a9e",
+    "caseCount": 164,
+    "allBytesEqual": true,
+    "comparison": "Complete stdout, stderr and exit code; no fields removed or normalized",
+    "scope": "Synthetic deterministic requests and read-only/failing project operations; owned execution streams and successful writes are covered by the full gate",
+    "baselineCommit": "b401c084aae5a9f02e73a3af1598c1498d9a0edc"
+  },
+  "codingCLICompatibility": {
+    "schemaIdentifier": "studio.glifi.verification.coding-cli-compatibility.v1",
+    "caseCount": 69,
+    "explicitBaselineExpectations": 45,
+    "allBytesEqual": true,
+    "scope": "Native-token CLI requests; external-token quote/evidence contracts remain covered by public Core tests",
+    "baselineCommit": "b401c084aae5a9f02e73a3af1598c1498d9a0edc"
+  },
+  "targetedTests": {
+    "exitCode": 0,
+    "coreTestDefinitions": 23,
+    "kitTestDefinitions": 13,
+    "newCoreTestDefinitions": 7,
+    "newCoreParameterRows": 69,
+    "newCoreBoundaryTest": 1,
+    "newKitTestDefinitions": 6,
+    "verifiedCommit": "a7f1ccc665e71c23d5578802d7fc6d0e73626582"
+  },
+  "fixtureCorrection": {
+    "originalExpression": "!1 + 1 == 1",
+    "frozenBaselineExitCode": 3,
+    "frozenBaselineFailure": "coding.unspaced-operator",
+    "correctedExpression": "! 1 + 1 == 1",
+    "frozenBaselineCorrectedExitCode": 0,
+    "unspacedNegationRejectionAdded": true,
+    "productionChangesToAcceptBadFixture": false
+  },
+  "independentReview": {
+    "core": "No actionable finding; lexer and finite/evidence/resource block preserved",
+    "kit": "No actionable finding; exact synchronous generic body, typed failure and evaluation semantics preserved",
+    "documents": "Clauses, requirements, references and one Versione/Identificatore row per document checked"
+  },
+  "makeVerify": {
+    "command": "make verify",
+    "profile": "macOS",
+    "exitCode": 0,
+    "coreTestDefinitions": 671,
+    "kitTestDefinitions": 151,
+    "nativeTests": {
+      "result": "Passed",
+      "title": "Test - GlifiStudio-macOS",
+      "totalTestCount": 117,
+      "passedTests": 117,
+      "failedTests": 0,
+      "skippedTests": 0,
+      "expectedFailures": 0,
+      "statistics": [
+        {
+          "subtitle": "248 test runs",
+          "title": "16 tests ran with dynamic parameters"
+        }
+      ]
+    },
+    "nativeExecutions": 349,
+    "macOSBuildConfigurations": [
+      "Debug",
+      "Release"
+    ],
+    "textAnalysisFixtures": 63,
+    "textAnalysisCLIChecks": 189,
+    "compilerEnumeratedTextAnalysisCases": 40,
+    "compilerEnumeratedKitCLIOperations": 130,
+    "completeKitCLIParityChecks": 260,
+    "kitCLIRejectionChecks": 51,
+    "boundedProjectCLIRejectionChecks": 64,
+    "processKillCheckpoints": 22,
+    "pdfa2uFiles": 2,
+    "verifiedCommit": "a7f1ccc665e71c23d5578802d7fc6d0e73626582",
+    "scope": "Original standalone refactor; final combined gate outcomes recorded separately in PR46"
+  },
+  "limits": {
+    "iPadOSDeferred": true,
+    "performanceClaim": false,
+    "stableABICertification": false,
+    "scientificMaturityPromotion": false,
+    "rootCheckoutWrites": false,
+    "knownToolchainWarnings": "Existing CoreSimulator/device diagnostics during macOS destinations; native tests and both macOS builds passed"
+  },
+  "initialBaselineCommit": "76e5871e002eb4274aef16eec4d5982cd32a3b59",
+  "finalIntegration": {
+    "upstreamCommit": "b401c084aae5a9f02e73a3af1598c1498d9a0edc",
+    "ownSourceFilesUnchanged": 6,
+    "otherUpstreamFilesAndModesUnchanged": 1251,
+    "codeConfigTestFilesUnchanged": 484,
+    "upstreamMatrixRecordsPreserved": 170,
+    "addedMatrixRecords": [
+      "CMP-286",
+      "CMP-287",
+      "CMP-288"
+    ],
+    "currentComparisonStatus": "passed",
+    "currentCombinedGateStatus": "post-correction gate in progress; final outcome recorded in linked PR46",
+    "verificationRecord": "https://github.com/gipidevdor/GlifiStudio/pull/46",
+    "postIntegrationCorrection": "CMP-288 deterministic cancellation checkpoints; original six-file refactor unchanged",
+    "preservationVerifiedCommit": "4205eee8a1e59247e7812b40020a45a1ae45e242",
+    "preservationCountersScope": "Verified before CMP-288 on 4205eee; the subsequent three-file correction is recorded separately and is not included in these preservation counts"
+  },
+  "priorIntegratedComparison": {
+    "publicAPI": {
+      "baseline": "d6b482894e163b89205ff11245b938080ea39953",
+      "method": "swift-api-digester; only top-level declaration order canonicalized",
+      "modules": {
+        "GlifiCore": {
+          "equal": true,
+          "sha256": "2f178cd5f2b97e4ab09789059cc4d57754cf94defdeae9ee3c36821118543dd1"
+        },
+        "GlifiKit": {
+          "equal": true,
+          "sha256": "dee06b4afad028b36f26892432091b4fd3db7671e46d69dc86c200ab3f66a698"
+        }
+      }
+    },
+    "cliCompatibility": {
+      "schemaIdentifier": "studio.glifi.verification.cli-compatibility.v1",
+      "referenceBinarySHA256": "ce613c545670a963df303019c527f3109a2fd219826046c720e8e5e92a8fa616",
+      "candidateBinarySHA256": "6379016e3af7ffb2dc8eba7cd6df64a5fb420b02fe6aaaad0e3cbfc19a08332a",
+      "caseCount": 164,
+      "allBytesEqual": true,
+      "comparison": "Complete stdout, stderr and exit code; no fields removed or normalized",
+      "scope": "Synthetic deterministic requests and read-only/failing project operations; owned execution streams and successful writes are covered by the full gate"
+    },
+    "codingCLICompatibility": {
+      "schemaIdentifier": "studio.glifi.verification.coding-cli-compatibility.v1",
+      "caseCount": 69,
+      "explicitBaselineExpectations": 45,
+      "allBytesEqual": true,
+      "scope": "Native-token CLI requests; external-token quote/evidence contracts remain covered by public Core tests"
+    },
+    "completeCLIReportSHA256": "1c9f96c05fc8dddb3442cb1f8cc1e459c53297acea02295fbed47f651d731ca3",
+    "completeCodingCLIReportSHA256": "c14ba0299a91c14c2d5f04d417d86c3dd855629b12e3d96b3f9acc0ead92b1ed",
+    "referenceGlifiModulesEmbeddedInExecutable": true,
+    "baselineCommit": "d6b482894e163b89205ff11245b938080ea39953",
+    "verifiedCommit": "c61c80e526f1f139d26b35af6d0b8a0d627a39d9",
+    "scope": "Completed comparisons before PDF/EPUB integration; not comparisons against the current b401 baseline"
+  },
+  "priorCombinedMakeVerify": {
+    "verifiedCommit": "c61c80e526f1f139d26b35af6d0b8a0d627a39d9",
+    "baselineCommit": "d6b482894e163b89205ff11245b938080ea39953",
+    "command": "make verify",
+    "profile": "macOS",
+    "exitCode": 0,
+    "coreAndKitTestDefinitions": 832,
+    "nativeTestDefinitions": 125,
+    "nativeExecutions": 409,
+    "scope": "Completed local gate before PDF/EPUB integration; not the current b401 composition"
+  },
+  "completeCLIReportSHA256": "1363c018b0f6ce1c4b47c2d9ecde69147d02860ed28f9f22df80c1e60ff4c9a5",
+  "completeCodingCLIReportSHA256": "c14ba0299a91c14c2d5f04d417d86c3dd855629b12e3d96b3f9acc0ead92b1ed",
+  "preDeterministicCancellationComparison": {
+    "publicAPI": {
+      "baseline": "b401c084aae5a9f02e73a3af1598c1498d9a0edc",
+      "method": "swift-api-digester; only top-level declaration order canonicalized",
+      "modules": {
+        "GlifiCore": {
+          "equal": true,
+          "sha256": "b339a67e6d97c92d9c26352579484cf8c6ee4cb6e8cecbeb7a3c95f8196ab3a6"
+        },
+        "GlifiKit": {
+          "equal": true,
+          "sha256": "e19b814f51c27e195e231b5cd22684be62b343c026169d55c043d735f8a1590a"
+        }
+      }
+    },
+    "cliCompatibility": {
+      "schemaIdentifier": "studio.glifi.verification.cli-compatibility.v1",
+      "referenceBinarySHA256": "17a9fcdbfaa8930d751d70e2ea5dd1ecc9a72fd47ef5f34603320203419f710a",
+      "candidateBinarySHA256": "344b45574ff36a2e2a286c262299b07d2cd95bafc407674ece405250112fa068",
+      "caseCount": 164,
+      "allBytesEqual": true,
+      "comparison": "Complete stdout, stderr and exit code; no fields removed or normalized",
+      "scope": "Synthetic deterministic requests and read-only/failing project operations; owned execution streams and successful writes are covered by the full gate",
+      "baselineCommit": "b401c084aae5a9f02e73a3af1598c1498d9a0edc"
+    },
+    "codingCLICompatibility": {
+      "schemaIdentifier": "studio.glifi.verification.coding-cli-compatibility.v1",
+      "caseCount": 69,
+      "explicitBaselineExpectations": 45,
+      "allBytesEqual": true,
+      "scope": "Native-token CLI requests; external-token quote/evidence contracts remain covered by public Core tests",
+      "baselineCommit": "b401c084aae5a9f02e73a3af1598c1498d9a0edc"
+    },
+    "completeCLIReportSHA256": "cdebf687492381af9a80592098a018caf3b354c5bbb1075de6f0d99eaed45b83",
+    "completeCodingCLIReportSHA256": "c14ba0299a91c14c2d5f04d417d86c3dd855629b12e3d96b3f9acc0ead92b1ed",
+    "verifiedCommit": "4205eee8a1e59247e7812b40020a45a1ae45e242"
+  },
+  "preDeterministicCancellationIntegratedGate": {
+    "verifiedCommit": "4205eee8a1e59247e7812b40020a45a1ae45e242",
+    "command": "make verify",
+    "profile": "macOS",
+    "localExitCode": 0,
+    "coreTestDefinitions": 713,
+    "kitTestDefinitions": 161,
+    "nativeTestDefinitions": 126,
+    "nativeExecutions": 411,
+    "scope": "Completed local gate before the deterministic cancellation correction; not the post-correction final gate",
+    "remoteOutcome": "failed",
+    "remoteFailureObservations": [
+      "Existing timing-based MDS/SOM cancellation test could cancel only after calculation completed",
+      "OCR failure remains under diagnosis by the PDF/EPUB owner"
+    ],
+    "ocrCauseResolvedByThisCorrection": false
+  },
+  "affectedSourcesScope": "Original six-file refactor only; the independent three-file deterministic cancellation correction is recorded below",
+  "deterministicCancellation": {
+    "complianceRecord": "CMP-288",
+    "status": "implemented",
+    "parentCommit": "4205eee8a1e59247e7812b40020a45a1ae45e242",
+    "publicAPIUnchanged": true,
+    "scope": {
+      "productionFiles": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiExploratoryAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiExploratoryCompletion.swift"
+      ],
+      "testFile": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExploratoryCompletionTests.swift",
+      "internalSynchronousNonEscapingCheckpoints": 2,
+      "defaultCheckpoint": "Task.checkCancellation",
+      "checkpointIndicesObserved": [
+        0,
+        1
+      ],
+      "cancellationCheckpoint": 1,
+      "completedNumericalStepsBeforeCancellation": 1,
+      "publicResultEqualsNeutralCheckpointResult": true,
+      "kernelBodiesEqualExceptExistingCheckpointReplacement": true,
+      "deeperCancellationChecksAndResourceGuardsPreserved": true,
+      "globalHooksOrNewTasksInProduction": false,
+      "publicSignaturesOrDefaultsChanged": false,
+      "importerOrVisionCodeChanged": false,
+      "originalSixRefactorFilesStillEqualA7": true,
+      "preCorrectionThreeFilesEqualB401": true
+    },
+    "sourceSHA256": {
+      "Packages/GlifiCore/Sources/GlifiCore/GlifiExploratoryAnalysis.swift": "b801a6f5422e3cbd3749fd05c0d79b6c97d1a95cbf70718799d454e949beae50",
+      "Packages/GlifiCore/Sources/GlifiCore/GlifiExploratoryCompletion.swift": "6a228876e5544330a96926a431a6e0d0d849837ad91fdfbc8ce5e6ebc7bc92e1",
+      "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExploratoryCompletionTests.swift": "ea4d53d7dddc64d5d366da731ed47e4c9fb7186ebd36789e4b399b8ee83979f4"
+    },
+    "targetedTests": {
+      "exitCode": 0,
+      "coreTestDefinitions": 42,
+      "kitTestDefinitions": 9,
+      "log": "cancellation-targeted-tests.log",
+      "logSHA256": "090d575484b7db360dc935e723081208713248c72241e045502896287c1c1fb3",
+      "scope": "Deterministic completed-step cancellation, neutral checkpoint equivalence, public pre-cancellation and selected existing Core/Kit regression contracts; not a full gate"
+    },
+    "comparisonProof": {
+      "apiReport": "cancellation-api-comparison.json",
+      "apiReportSHA256": "7eb00712fbd9ac341b647554fc418ef4ad9abd34333af869080e86e2714e0f9d",
+      "cliCaseCount": 164,
+      "codingCLICaseCount": 69,
+      "explicitCodingBaselineExpectations": 45,
+      "completeBytesAndExitEqual": true
+    },
+    "independentReview": "No actionable regression reported; public delegations and validation/calculation/resource ordering preserved",
+    "currentFullGate": {
+      "statusAtReport": "passed_locally_remote_pending",
+      "command": "make verify",
+      "profile": "macOS",
+      "localExitCode": 0,
+      "coreTestDefinitions": 713,
+      "kitTestDefinitions": 161,
+      "nativeTestDefinitions": 126,
+      "nativeExecutions": 411,
+      "nativeFailedTests": 0,
+      "nativeSkippedTests": 0,
+      "buildConfigurations": [
+        "Debug",
+        "Release"
+      ],
+      "textAnalysisFixtures": 63,
+      "textAnalysisCLIChecks": 196,
+      "kitCLIOperations": 132,
+      "completeKitCLIParityChecks": 264,
+      "kitCLIRejectionChecks": 51,
+      "boundedProjectCLIRejectionChecks": 64,
+      "processKillCheckpoints": 22,
+      "pdfa2uFiles": 2,
+      "log": "cancellation-make-verify-macos.log",
+      "logSHA256": "9b9b6176d8d448c0c1245a06629d8178df7e97955242d56f4d5780c917c5a21b",
+      "verificationRecord": "https://github.com/gipidevdor/GlifiStudio/pull/46",
+      "scope": "Local gate on deterministic cancellation source hashes recorded above; remote OCR diagnosis remains independent and unresolved"
+    }
+  }
+}

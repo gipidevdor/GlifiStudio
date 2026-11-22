@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.18 |
+| Versione | 0.92.20 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -695,3 +695,18 @@ GS-DOR-311, ADR-0045 e GS-VER-311 collegano RF-004/005/006 alla tassonomia
 corretta degli errori Vision, alla selezione bounded del profilo e alla
 conservazione degli snapshot V1/V2. I test OCR restano rigorosi; CMP-311 non
 qualifica accuratezza reale, energia o G4/G5.
+
+## Operatori tipizzati e failure coese (GS-DOR-286)
+
+CMP-286 collega RQ-007/011/060/063 all’AST privato degli operatori, conservando
+grammatica, evidenze, budget e cancellazione. CMP-287 collega RQ-007/058/060/063
+alla policy di failure condivisa dalle due facciate della famiglia testuale.
+[GS-VER-286](evidenze/GS-VER-286-operatori-tipizzati-e-failure-coese.md) registra
+compatibilità e verifiche macOS, senza promozioni della maturità scientifica.
+
+CMP-288 collega RQ-007/011/060/063 ai checkpoint interni deterministici
+all’ingresso di iterazioni MDS ed epoche SOM. La prova neutra conserva il
+risultato pubblico; l’auto-cancellazione al checkpoint 1 richiede un passo
+completato e `CancellationError`, senza dipendenza da attese temporali.
+GS-VER-286 distingue i mirati superati dal gate corrente della composizione,
+ancora aperto: la diagnosi OCR resta nel lotto documentale proprietario.

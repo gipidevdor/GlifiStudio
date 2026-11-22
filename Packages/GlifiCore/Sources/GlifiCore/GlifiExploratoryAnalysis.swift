@@ -284,6 +284,19 @@ public enum GlifiExploratoryAnalysis {
         tolerance: Double = 1e-8, limits: GlifiExploratoryLimits = .standard,
         topology: GlifiSOMTopology = .rectangular
     ) throws -> GlifiSOMResult {
+        try selfOrganizingMap(
+            matrix, width: width, height: height, seed: seed, epochs: epochs,
+            initialRadius: initialRadius, finalRadius: finalRadius, tolerance: tolerance,
+            limits: limits, topology: topology,
+            checkpoint: { _ in try Task.checkCancellation() })
+    }
+
+    static func selfOrganizingMap(
+        _ matrix: [[Double]], width: Int, height: Int, seed: UInt64,
+        epochs: Int, initialRadius: Double, finalRadius: Double,
+        tolerance: Double, limits: GlifiExploratoryLimits, topology: GlifiSOMTopology,
+        checkpoint: (Int) throws -> Void
+    ) throws -> GlifiSOMResult {
         let columns = try validateExploratoryMatrix(matrix, limits: limits)
         guard width > 0, height > 0, width <= 1_024, height <= 1_024,
             width <= 1_024 / height, (1...10_000).contains(epochs),
@@ -304,7 +317,7 @@ public enum GlifiExploratoryAnalysis {
         var completed = 0
         var converged = false
         for epoch in 0..<epochs {
-            try Task.checkCancellation()
+            try checkpoint(epoch)
             let fraction = epochs == 1 ? 1 : Double(epoch) / Double(epochs - 1)
             let radius = geometricSOMRadius(
                 initial: initialRadius, final: finalRadius, fraction: fraction)

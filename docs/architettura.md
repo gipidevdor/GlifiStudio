@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-AD-001 |
 | Tipo | Architecture description |
-| Versione | 0.15.2 |
+| Versione | 0.15.3 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -170,6 +170,8 @@ livello le responsabilità hanno un proprietario esplicito:
 | Owner privato della CLI | Apertura, esecuzione e chiusura asincrona su risultato/failure/cancellazione, prima della presentazione; raccolta dello stream condivisa da execute e visualize |
 | Helper privato `executePlannedStep` del motore | Esecuzione del singolo passo e risoluzione del record persistito; la regia conserva admission, dipendenze, schema, progressi e finalizzazione |
 | `GlifiStudioEditorDecimal` interno a Kit | Grammatica decimale comune agli editor statistico e degli operatori; validazione delle righe ed errori pubblici rimangono nei chiamanti |
+| `CodingBinaryOperator` privato | Catalogo riconosciuto dal parser, precedenze e applicazione esaustiva; lexer e valutazione delle evidenze restano responsabilità distinte |
+| `mapTextAnalysisFailure` interno a Kit | Unica tabella della policy già identica in TextAnalytics ed ExploratoryCompletion; le altre famiglie conservano i propri mapping |
 
 Wrapper con la medesima policy condividono il confine di admission e traduzione
 errori. Le policy diverse di bootstrap, letture, identificatori e analisi derivate
@@ -180,6 +182,8 @@ La compatibilità e le verifiche sono registrate in
 La prosecuzione delimitata è descritta in
 [GS-DOR-284](pianificazione/dor-regia-del-piano-e-input-numerico.md): nessun
 nuovo confine di modulo, contratto pubblico o formato persistente.
+Il perfezionamento delle invarianti private e della policy di famiglia è
+descritto in [GS-DOR-286](pianificazione/dor-operatori-tipizzati-e-failure-coese.md).
 
 ## 6. VA-03 — View dei dati e del lineage
 

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import Foundation
+import Synchronization
 import Testing
 
 @testable import GlifiCore
@@ -305,30 +306,58 @@ func completionExploratoryCancellation() async throws {
     }
 }
 
-@Test("Ordinal MDS and hexagonal SOM stop when cancellation arrives during a run")
+@Test("Ordinal MDS and hexagonal SOM stop after a completed step when cancellation arrives")
 func completionExploratoryMidrunCancellation() async throws {
+    let distances: [[Double]] = [[0, 1, 2, 4], [1, 0, 3, 5], [2, 3, 0, 6], [4, 5, 6, 0]]
+    let matrix: [[Double]] = [[0, 1], [2, 3], [4, 0], [10, 11], [11, 10], [12, 12]]
+
+    var ordinalCheckpoints: [Int] = []
+    let publicOrdinal = try GlifiExploratoryAnalysis.ordinalMultidimensionalScaling(
+        distances, seed: 11, maximumIterations: 2, tolerance: 1e-12, initialization: .random)
+    let observedOrdinal = try GlifiExploratoryAnalysis.ordinalMultidimensionalScaling(
+        distances, dimensions: 2, seed: 11, maximumIterations: 2, tolerance: 1e-12,
+        limits: .standard, initialization: .random, ties: .secondary,
+        checkpoint: { ordinalCheckpoints.append($0) })
+    #expect(observedOrdinal == publicOrdinal)
+    #expect(ordinalCheckpoints == [0, 1])
+
+    var somCheckpoints: [Int] = []
+    let publicSOM = try GlifiExploratoryAnalysis.selfOrganizingMap(
+        matrix, width: 3, height: 2, seed: 27, epochs: 2, topology: .hexagonal)
+    let observedSOM = try GlifiExploratoryAnalysis.selfOrganizingMap(
+        matrix, width: 3, height: 2, seed: 27, epochs: 2,
+        initialRadius: 2, finalRadius: 0.5, tolerance: 1e-8, limits: .standard,
+        topology: .hexagonal, checkpoint: { somCheckpoints.append($0) })
+    #expect(observedSOM == publicSOM)
+    #expect(somCheckpoints == [0, 1])
+
     for operation in 0..<2 {
-        let task = Task.detached {
+        let checkpoints = Mutex<[Int]>([])
+        let task = Task {
+            let checkpoint: (Int) throws -> Void = { completed in
+                checkpoints.withLock { $0.append(completed) }
+                if completed == 1 {
+                    withUnsafeCurrentTask { $0?.cancel() }
+                }
+                try Task.checkCancellation()
+            }
             if operation == 0 {
-                let distances = (0..<150).map { row in
-                    (0..<150).map { column in Double(abs(row - column)) }
-                }
                 _ = try GlifiExploratoryAnalysis.ordinalMultidimensionalScaling(
-                    distances, seed: 12, maximumIterations: 1_000, initialization: .random)
+                    distances, dimensions: 2, seed: 11, maximumIterations: 2, tolerance: 1e-12,
+                    limits: .standard, initialization: .random, ties: .secondary,
+                    checkpoint: checkpoint)
             } else {
-                let matrix = (0..<10_000).map { row in
-                    (0..<4).map { column in sin(Double(row + column) * 0.01) }
-                }
                 _ = try GlifiExploratoryAnalysis.selfOrganizingMap(
-                    matrix, width: 4, height: 4, seed: 12, epochs: 100, topology: .hexagonal)
+                    matrix, width: 3, height: 2, seed: 27, epochs: 2,
+                    initialRadius: 2, finalRadius: 0.5, tolerance: 1e-8, limits: .standard,
+                    topology: .hexagonal, checkpoint: checkpoint)
             }
         }
-        try await Task.sleep(for: .milliseconds(2))
-        task.cancel()
         do {
             try await task.value
             Issue.record("Mid-run cancellation was ignored")
         } catch is CancellationError {}
+        #expect(checkpoints.withLock { $0 } == [0, 1])
     }
 }
 

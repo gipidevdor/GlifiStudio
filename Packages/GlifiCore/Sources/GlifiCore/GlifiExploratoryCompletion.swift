@@ -101,6 +101,19 @@ extension GlifiExploratoryAnalysis {
         initialization: GlifiMDSInitialization = .classical,
         ties: GlifiMDSOrdinalTies = .secondary
     ) throws -> GlifiMDSResult {
+        try ordinalMultidimensionalScaling(
+            dissimilarities, dimensions: dimensions, seed: seed,
+            maximumIterations: maximumIterations, tolerance: tolerance, limits: limits,
+            initialization: initialization, ties: ties,
+            checkpoint: { _ in try Task.checkCancellation() })
+    }
+
+    static func ordinalMultidimensionalScaling(
+        _ dissimilarities: [[Double]], dimensions: Int, seed: UInt64,
+        maximumIterations: Int, tolerance: Double, limits: GlifiExploratoryLimits,
+        initialization: GlifiMDSInitialization, ties: GlifiMDSOrdinalTies,
+        checkpoint: (Int) throws -> Void
+    ) throws -> GlifiMDSResult {
         let count = dissimilarities.count
         _ = try validateExploratoryMatrix(dissimilarities, limits: limits)
         guard count >= 2, dimensions > 0, dimensions < count,
@@ -155,8 +168,8 @@ extension GlifiExploratoryAnalysis {
         var targets = try ordinalDisparities(pairs, fitted: fitted, count: count, ties: ties)
         var history = [try ordinalStress(fitted, targets)]
         var converged = false
-        for _ in 0..<maximumIterations {
-            try Task.checkCancellation()
+        for iteration in 0..<maximumIterations {
+            try checkpoint(iteration)
             var next = Array(repeating: [Double](repeating: 0, count: dimensions), count: count)
             // V+ = J/n for a complete unit-weight graph. A coincident pair has B_ij=0,
             // the standard zero-distance extension of the Guttman transform.

@@ -12,6 +12,17 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Invarianti interne delle regole e degli errori
+
+- Tipizzati gli operatori binari dell’AST privato delle regole, con precedenza
+  e applicazione esaustive; lexer, valutazione eager, evidenze e budget conservati
+  (GS-DOR-286).
+- Condivisa la tabella di traduzione failure già identica fra TextAnalytics ed
+  ExploratoryCompletion; le policy delle altre famiglie restano esplicite.
+- Resa deterministica la prova di cancellazione MDS/SOM dopo un passo completo,
+  con checkpoint interni e contratti pubblici invariati; eliminata la dipendenza
+  dal tempo di ripresa del test (CMP-288).
+
 ### Progetto Xcode completo — GS-DOR-306
 
 - Navigator esteso ai file del repository con cartelle native senza membership
