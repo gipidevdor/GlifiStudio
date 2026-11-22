@@ -6,6 +6,17 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Integrazioni native Apple coordinate
+
+- Letture esterne Foundation coordinate e bounded prima della decodifica, con
+  verifica del descriptor e cancellazione fra chunk.
+- Attività macOS finita per il piano richiesto dall’utente, con rilascio su ogni
+  uscita e idle sleep consentito; comandi nativi sidebar e toolbar nella scena.
+- Valutazione del sort Accelerate con confronto completo bitwise: candidato
+  scartato per assenza di beneficio robusto; produzione Swift invariata (GS-VER-260).
+- Valutazione del portafoglio Apple GS-APL-016, rispettando le aree in lavorazione
+  nelle altre chat e i contratti di precisione, privacy e persistenza esistenti.
+
 Le voci GS-VER-168/169/170 conservano gli esiti dei rispettivi snapshot del
 working tree sorgente; la verifica della nuova integrazione su `fe6f654`
 è registrata separatamente in GS-VER-171 e pubblicata con `2386787`. La variante parametrizzabile

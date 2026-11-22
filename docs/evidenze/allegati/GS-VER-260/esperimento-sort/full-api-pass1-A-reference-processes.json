@@ -1,0 +1,463 @@
+[
+  {
+    "observedAtUTC": "2026-11-22T08:58:06.662695+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 0.1
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40898,
+        "CPU": 81.4
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40995,
+        "CPU": 80.4
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40998,
+        "CPU": 80.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40999,
+        "CPU": 80.4
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41001,
+        "CPU": 77.9
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41002,
+        "CPU": 82.7
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41062,
+        "CPU": 81.6
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41116,
+        "CPU": 80.4
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41117,
+        "CPU": 79.8
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41118,
+        "CPU": 79.6
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:06.742390+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 0.1
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40898,
+        "CPU": 81.4
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40995,
+        "CPU": 80.4
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40998,
+        "CPU": 80.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40999,
+        "CPU": 80.4
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41001,
+        "CPU": 77.9
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41002,
+        "CPU": 82.7
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41062,
+        "CPU": 81.6
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41116,
+        "CPU": 80.4
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41117,
+        "CPU": 79.8
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41118,
+        "CPU": 79.6
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:07.317561+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 7.9
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40898,
+        "CPU": 78.9
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40995,
+        "CPU": 77.5
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40998,
+        "CPU": 78.7
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41062,
+        "CPU": 77.3
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41118,
+        "CPU": 81.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41131,
+        "CPU": 71.3
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41132,
+        "CPU": 62.4
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41135,
+        "CPU": 9.4
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41136,
+        "CPU": 0.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:07.891686+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 3.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40898,
+        "CPU": 92.4
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40995,
+        "CPU": 93.1
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40998,
+        "CPU": 92.8
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41118,
+        "CPU": 93.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41131,
+        "CPU": 91.2
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41132,
+        "CPU": 96.2
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41135,
+        "CPU": 88.9
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41136,
+        "CPU": 88.9
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:08.452722+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 3.9
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40898,
+        "CPU": 96.1
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40995,
+        "CPU": 94.6
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41118,
+        "CPU": 97.5
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41132,
+        "CPU": 96.6
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41135,
+        "CPU": 96.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41136,
+        "CPU": 94.8
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:09.021946+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 0.3
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40898,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40995,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41118,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41132,
+        "CPU": 99.7
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41135,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41136,
+        "CPU": 100.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:09.585505+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 0.7
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40898,
+        "CPU": 99.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40995,
+        "CPU": 97.8
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41118,
+        "CPU": 97.8
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41135,
+        "CPU": 97.3
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41136,
+        "CPU": 100.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:10.136985+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40898,
+        "CPU": 99.6
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 40995,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41118,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41135,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41136,
+        "CPU": 99.4
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:10.690627+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 6.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41118,
+        "CPU": 98.6
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41135,
+        "CPU": 98.4
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41136,
+        "CPU": 99.1
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:11.234303+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 1.9
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41118,
+        "CPU": 99.3
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41135,
+        "CPU": 99.6
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41136,
+        "CPU": 100.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:11.788474+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41118,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41135,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 41136,
+        "CPU": 98.8
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  }
+]

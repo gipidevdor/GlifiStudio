@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-STD-001-28 |
 | Tipo | Capitolo normativo |
-| Versione | 1.13.9 |
+| Versione | 1.13.10 |
 | Stato | Attivo |
 | Responsabile | Amministratore del repository, provvisorio |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Registro operativo; baseline normativa ancora proposta |
 | Documento padre | [GS-STD-001](../standard-di-progetto.md) |
 
@@ -75,3 +75,14 @@ Un elemento `Configurato` non è `Verificato` finché non esiste un'esecuzione o
   su tre fasi Release con output completi identici; costi piccoli e RSS espliciti.
   Supporto dei benchmark condiviso dai soli test, senza prodotto runtime;
   guard Debug e gate integrato superati, nessuna soglia G4 nuova.
+
+## Lotto nativo Apple GS-DOR-260
+
+L’inventario GS-APL-016 distingue API già adottate, lavori delle altre chat,
+integrazioni del lotto e tecnologie condizionali. Reader bounded, ownership delle
+attività sono sottoposti a test e misure GS-VER-260; il sort vDSP valutato è
+scartato e mantiene la produzione Swift. Finché
+manca il relativo esito non sono dichiarati verificati. I comandi standard sono
+configurati nella scena macOS; prove manuali di VoiceOver, App Nap, energia,
+provider e dispositivi/G4 restano aperte. Nessun criterio Da introdurre viene
+convertito in un gate soltanto perché la sua API è disponibile.

@@ -1,0 +1,173 @@
+{
+  "protocol": "A1-reference,B1-native,B2-native,A2-reference; separate binaries, same public Core API; each run15cases,1warmup+7samples checked percase",
+  "allFourRunsQuiescent": false,
+  "allResultsMatchReferenceBitwise": true,
+  "allInputAndOutputDigestsMatchAcrossBinaries": true,
+  "comparisons": [
+    {
+      "identifier": "continuous-4096",
+      "referenceMedianSecondsPass1": 0.000413166,
+      "nativeMedianSecondsPass1": 0.000345166,
+      "referenceMedianSecondsPass2": 0.000361958,
+      "nativeMedianSecondsPass2": 0.000346208,
+      "referenceOverNativePass1": 1.1970066576661664,
+      "referenceOverNativePass2": 1.04549288289121,
+      "inputSHA256": "5a1ad5aed5d2dd6be3d0e4b5ec4d7c205fe54d0a3f45344df72b1e442242fdd5",
+      "outputSHA256": "7bc87af59e689d2ef97aef48caa9171022b2c0226fb1eb720fe80a198a92087e"
+    },
+    {
+      "identifier": "continuous-16384",
+      "referenceMedianSecondsPass1": 0.002164959,
+      "nativeMedianSecondsPass1": 0.002057584,
+      "referenceMedianSecondsPass2": 0.001827666,
+      "nativeMedianSecondsPass2": 0.001819459,
+      "referenceOverNativePass1": 1.052184989774415,
+      "referenceOverNativePass2": 1.0045106814718001,
+      "inputSHA256": "1517c41a6f8ada924fba0ef86628584c171bbc1c1b04126758f8f654e44c317f",
+      "outputSHA256": "fa5f9bebd7e63127893cc729e49eab0e098285d64781d07a3c5bcf732a7c8985"
+    },
+    {
+      "identifier": "continuous-32768",
+      "referenceMedianSecondsPass1": 0.004220583,
+      "nativeMedianSecondsPass1": 0.004432833,
+      "referenceMedianSecondsPass2": 0.004041333,
+      "nativeMedianSecondsPass2": 0.004345375,
+      "referenceOverNativePass1": 0.9521186563987409,
+      "referenceOverNativePass2": 0.9300308949170094,
+      "inputSHA256": "9a75039cada27eb17981d5b6a34dbfc6c5e37e71ac17d8fc6a4320b17f2093cc",
+      "outputSHA256": "83fb49205f9302037e203ec3e9ce0b63e79f6a9009c7a226d4553730e19868b4"
+    },
+    {
+      "identifier": "continuous-65536",
+      "referenceMedianSecondsPass1": 0.008937042,
+      "nativeMedianSecondsPass1": 0.009190708,
+      "referenceMedianSecondsPass2": 0.008849042,
+      "nativeMedianSecondsPass2": 0.009284333,
+      "referenceOverNativePass1": 0.9723997324254017,
+      "referenceOverNativePass2": 0.953115533447583,
+      "inputSHA256": "db98155f52201154566082306e8e3a57b16909ba68d24c41ad28a56d12e9ec60",
+      "outputSHA256": "27e71082aba57e44c4d1aa43dc68a1ade56677c83f6a06cef349e4225f970211"
+    },
+    {
+      "identifier": "continuous-131072",
+      "referenceMedianSecondsPass1": 0.020597583,
+      "nativeMedianSecondsPass1": 0.019713417,
+      "referenceMedianSecondsPass2": 0.018959292,
+      "nativeMedianSecondsPass2": 0.019762208,
+      "referenceOverNativePass1": 1.0448509763680238,
+      "referenceOverNativePass2": 0.9593711390953885,
+      "inputSHA256": "427f1a66cb05d13547d7294a2642d161d968adee59a127cd4622ef406e572372",
+      "outputSHA256": "059f702e8d589eea8a973d6d03e0adbc8a2480b82ac2b4270feefc0e214e9f5f"
+    },
+    {
+      "identifier": "continuous-500000",
+      "referenceMedianSecondsPass1": 0.088920083,
+      "nativeMedianSecondsPass1": 0.082909416,
+      "referenceMedianSecondsPass2": 0.083286417,
+      "nativeMedianSecondsPass2": 0.0829835,
+      "referenceOverNativePass1": 1.0724967957801077,
+      "referenceOverNativePass2": 1.0036503280772684,
+      "inputSHA256": "0191a4252bd0f2c6529b4d8a52598b92c447a2f759057895309122dd9fcb85cd",
+      "outputSHA256": "963fe4f0d355b7dea85dc927efa0009f38adcd40385b9c797f8b4dbb4305edc0"
+    },
+    {
+      "identifier": "continuous-1000000",
+      "referenceMedianSecondsPass1": 0.175154584,
+      "nativeMedianSecondsPass1": 0.1747285,
+      "referenceMedianSecondsPass2": 0.174775916,
+      "nativeMedianSecondsPass2": 0.17500625,
+      "referenceOverNativePass1": 1.0024385489487977,
+      "referenceOverNativePass2": 0.9986838527195457,
+      "inputSHA256": "749e41d90977bbc3e00fe4e66cda79ac93a84bfb1f3e226687a4d429c9bf5d18",
+      "outputSHA256": "8582b70f79afef47d4d90894548fe67f26727adc91364f10cb29e4fd100f2d80"
+    },
+    {
+      "identifier": "continuous-missing-500000",
+      "referenceMedianSecondsPass1": 0.074813833,
+      "nativeMedianSecondsPass1": 0.077534583,
+      "referenceMedianSecondsPass2": 0.077632375,
+      "nativeMedianSecondsPass2": 0.077377042,
+      "referenceOverNativePass1": 0.9649092070308806,
+      "referenceOverNativePass2": 1.003299854755368,
+      "inputSHA256": "e5c3d514cc4bdc7544735b001f5ca5db89c882081e3eaf883594ace769fbfd7f",
+      "outputSHA256": "37d82cbb179dba4db097b71803e1f88d13e2aa5bf223c08826d5058428c98471"
+    },
+    {
+      "identifier": "repeated-500000",
+      "referenceMedianSecondsPass1": 0.015089917,
+      "nativeMedianSecondsPass1": 0.01617525,
+      "referenceMedianSecondsPass2": 0.014899667,
+      "nativeMedianSecondsPass2": 0.015770292,
+      "referenceOverNativePass1": 0.9329016243952953,
+      "referenceOverNativePass2": 0.9447933494192751,
+      "inputSHA256": "8cb3aad2ba949e68298fae428365ff28722c40f1703d1f7a63baaca1f6b00b87",
+      "outputSHA256": "c400fca45c8a64a8d8a292c9d8fa5f74418e8ff23d43dba037bca3ebd4e7eb24"
+    },
+    {
+      "identifier": "nearly-sorted-500000",
+      "referenceMedianSecondsPass1": 0.008395542,
+      "nativeMedianSecondsPass1": 0.008392917,
+      "referenceMedianSecondsPass2": 0.00838675,
+      "nativeMedianSecondsPass2": 0.008368042,
+      "referenceOverNativePass1": 1.0003127637268425,
+      "referenceOverNativePass2": 1.0022356484348431,
+      "inputSHA256": "a4d4df5516195faeb678c5cb172a8a8d4dc33f2ae8fb0eb7ce119aea6bbbb47b",
+      "outputSHA256": "f4de203c4bd5ced37439f1edf7e2e12752cf6d55424746ad47bc806eb53e20b7"
+    },
+    {
+      "identifier": "late-cardinality-500000",
+      "referenceMedianSecondsPass1": 0.009053458,
+      "nativeMedianSecondsPass1": 0.009047959,
+      "referenceMedianSecondsPass2": 0.009053333,
+      "nativeMedianSecondsPass2": 0.009037167,
+      "referenceOverNativePass1": 1.0006077613746924,
+      "referenceOverNativePass2": 1.0017888349302386,
+      "inputSHA256": "09727cdd61b4140dc30bcfa01a8253576bd0fe0b1a1f0afd4e7b91090019b088",
+      "outputSHA256": "74ff775438b58b21c95ab535c0df5c27fdd4d39660299a04ce81a181e94c230e"
+    },
+    {
+      "identifier": "signed-zero-tail-500000",
+      "referenceMedianSecondsPass1": 0.010023083,
+      "nativeMedianSecondsPass1": 0.010648791,
+      "referenceMedianSecondsPass2": 0.010021667,
+      "nativeMedianSecondsPass2": 0.010637625,
+      "referenceOverNativePass1": 0.9412414047754342,
+      "referenceOverNativePass2": 0.9420962855900636,
+      "inputSHA256": "b471f035229c4cdafecd97d8857927e399329390b7e21ad3ec63573d60be7f3f",
+      "outputSHA256": "90ae1edf6247ec821331244d5941c17c56c7979afb9205c5d94f3b04fac6a615"
+    },
+    {
+      "identifier": "subnormal-tail-500000",
+      "referenceMedianSecondsPass1": 0.008574375,
+      "nativeMedianSecondsPass1": 0.009209584,
+      "referenceMedianSecondsPass2": 0.008587834,
+      "nativeMedianSecondsPass2": 0.009188041,
+      "referenceOverNativePass1": 0.9310273949398801,
+      "referenceOverNativePass2": 0.9346751935477869,
+      "inputSHA256": "c24b7f012e655a662d5d68c15bd73f86bf9fc91320c5ca08916c60e7837cbbd4",
+      "outputSHA256": "a551b55a00bdf636e8206f579296559a5896cde0d4d083df347704ddc9c62d6e"
+    },
+    {
+      "identifier": "sparse-missing-500000",
+      "referenceMedianSecondsPass1": 0.000511584,
+      "nativeMedianSecondsPass1": 0.000512417,
+      "referenceMedianSecondsPass2": 0.000511625,
+      "nativeMedianSecondsPass2": 0.000510417,
+      "referenceOverNativePass1": 0.9983743708737219,
+      "referenceOverNativePass2": 1.002366692331956,
+      "inputSHA256": "d81455003b347d1c1ced11f3849d43193fad0394a41d92dd72204bebb653d290",
+      "outputSHA256": "224a0197e2851cdc8efa19d42463b5849367d91a51d1ffbfb0c11bd7c4d94b4a"
+    },
+    {
+      "identifier": "all-missing-500000",
+      "referenceMedianSecondsPass1": 0.000493,
+      "nativeMedianSecondsPass1": 0.00049425,
+      "referenceMedianSecondsPass2": 0.000493166,
+      "nativeMedianSecondsPass2": 0.000492833,
+      "referenceOverNativePass1": 0.9974709155285786,
+      "referenceOverNativePass2": 1.0006756852726988,
+      "inputSHA256": "dcd721758d5e72b4d674be08002f2466a9ed4db1336b4ec85e9af84214488c05",
+      "outputSHA256": "258a1cc324e8e3e132a64102a42d2aade1efd6b2e6b4ebcf29174566d5c52d3a"
+    }
+  ]
+}

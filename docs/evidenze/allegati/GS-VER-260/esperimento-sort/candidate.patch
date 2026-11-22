@@ -1,0 +1,938 @@
+# SPDX-License-Identifier: BSD-3-Clause
+
+diff --git a/Packages/GlifiCore/Sources/GlifiBenchmark/main.swift b/Packages/GlifiCore/Sources/GlifiBenchmark/main.swift
+index 7186d69..7720673 100644
+--- a/Packages/GlifiCore/Sources/GlifiBenchmark/main.swift
++++ b/Packages/GlifiCore/Sources/GlifiBenchmark/main.swift
+@@ -69,6 +69,14 @@ func uniform(_ generator: inout GlifiSplitMix64) -> Double {
+     Double(generator.next() >> 11) / Double(1 << 53)
+ }
+ 
++if CommandLine.arguments.contains("--apple-descriptive-sort") {
++    let encoder = JSONEncoder()
++    encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
++    FileHandle.standardOutput.write(
++        try encoder.encode(appleDescriptiveSortingBenchmarkReport()) + Data("\n".utf8))
++    exit(0)
++}
++
+ if CommandLine.arguments.contains("--validated-reads-query") {
+     let encoder = JSONEncoder()
+     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+diff --git a/Packages/GlifiCore/Sources/GlifiCore/GlifiDescriptiveStatistics.swift b/Packages/GlifiCore/Sources/GlifiCore/GlifiDescriptiveStatistics.swift
+index b918b35..df319fa 100644
+--- a/Packages/GlifiCore/Sources/GlifiCore/GlifiDescriptiveStatistics.swift
++++ b/Packages/GlifiCore/Sources/GlifiCore/GlifiDescriptiveStatistics.swift
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: BSD-3-Clause
+ 
++import Accelerate
+ import Foundation
+ 
+ /// The variance denominator is a declared analytical choice.
+@@ -53,6 +54,9 @@ public enum GlifiDescriptiveStatistics {
+     /// Maximum admitted observations, including missing values.
+     public static let maximumObservationCount = 1_000_000
+ 
++    // This candidate cutoff is finalized only after the GS-DOR-260 Release comparison.
++    package static let minimumAcceleratedSortCount = 32_768
++
+     /// Nil observations are counted and excluded; non-finite numbers are invalid.
+     ///
+     /// Empty statistics and sample variance with n < 2 are explicitly undefined.
+@@ -152,8 +156,9 @@ public enum GlifiDescriptiveStatistics {
+     /// Orders already validated finite values exactly as the native comparison sort.
+     ///
+     /// An early inversion admits a bounded counted-sort candidate for at most 256
+-    /// distinct bit patterns. Zero values and higher cardinality retain the native
+-    /// sort, including its ordering of signed-zero ties. Counts occupy O(256) space;
++    /// distinct bit patterns. Large, high-cardinality buffers of normal values may
++    /// use Accelerate; zeros and subnormals retain the Swift comparison sort.
++    /// Counts occupy O(256) space;
+     /// the original buffer is rewritten only after the candidate has fully succeeded.
+     static func sortFiniteValues(_ values: inout [Double]) throws {
+         try Task.checkCancellation()
+@@ -180,7 +185,7 @@ public enum GlifiDescriptiveStatistics {
+             }
+             counts[value.bitPattern, default: 0] += 1
+             guard counts.count <= 256 else {
+-                values.sort()
++                try sortHighCardinalityValues(&values)
+                 return
+             }
+         }
+@@ -197,6 +202,29 @@ public enum GlifiDescriptiveStatistics {
+         }
+     }
+ 
++    private static func sortHighCardinalityValues(_ values: inout [Double]) throws {
++        guard values.count >= minimumAcceleratedSortCount else {
++            values.sort()
++            return
++        }
++        // Inspect the entire buffer: zero or subnormal values can follow the
++        // 257th distinct value that ended the counted-sort attempt. Their tie
++        // and comparison behavior remains owned by the Swift reference.
++        for index in values.indices {
++            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
++            guard values[index].isNormal else {
++                values.sort()
++                return
++            }
++        }
++        try Task.checkCancellation()
++        values.withUnsafeMutableBufferPointer { buffer in
++            guard let address = buffer.baseAddress else { return }
++            vDSP_vsortD(address, vDSP_Length(buffer.count), 1)
++        }
++        try Task.checkCancellation()
++    }
++
+     private static func failure(
+         _ code: String, category: GlifiFailureCategory = .invalidInput
+     ) -> GlifiFailure {
+diff --git a/Packages/GlifiCore/Sources/GlifiBenchmark/GlifiAppleDescriptiveSortingBenchmarks.swift b/Packages/GlifiCore/Sources/GlifiBenchmark/GlifiAppleDescriptiveSortingBenchmarks.swift
+new file mode 100644
+index 0000000..33699a9
+--- /dev/null
++++ b/Packages/GlifiCore/Sources/GlifiBenchmark/GlifiAppleDescriptiveSortingBenchmarks.swift
+@@ -0,0 +1,612 @@
++// SPDX-License-Identifier: BSD-3-Clause
++
++import CryptoKit
++import Darwin
++import Foundation
++import GlifiCore
++
++struct AppleDescriptiveSortingBenchmarkReport: Encodable {
++    let schema = "studio.glifi.benchmark.apple-descriptive-sort.v1"
++    let generatedAt: String
++    let device: String
++    let operatingSystem: String
++    let toolchain: String
++    let physicalMemoryBytes: UInt64
++    let activeProcessorCount: Int
++    let thermalStateAtStart: String
++    let thermalStateAtEnd: String
++    let lowPowerModeAtStart: Bool
++    let lowPowerModeAtEnd: Bool
++    let processPeakRSSBytesAtStart: UInt64
++    let processPeakRSSBytesAtEnd: UInt64
++    let rssScope: String
++    let configuration: String
++    let reference: String
++    let candidateMinimumCount: Int
++    let timingScope: String
++    let warmUpRunsPerImplementation: Int
++    let samplesPerImplementation: Int
++    let sourceHashes: [String: String]
++    let measurements: [AppleDescriptiveSortingMeasurement]
++}
++
++struct AppleDescriptiveSortingMeasurement: Encodable {
++    let identifier: String
++    let recipe: String
++    let inputSHA256: String
++    let outputSHA256: String
++    let observationCount: Int
++    let validCount: Int
++    let thermalStateAtStart: String
++    let thermalStateAtEnd: String
++    let processPeakRSSBytesBefore: UInt64
++    let processPeakRSSBytesAfter: UInt64
++    let sampleOrder: [String]
++    let reference: AppleDescriptiveSortingTiming?
++    let candidate: AppleDescriptiveSortingTiming?
++    let allResultsMatchReferenceBitwise: Bool
++}
++
++struct AppleDescriptiveSortingTiming: Encodable {
++    let rawSeconds: [Double]
++    let medianSeconds: Double
++    let minimumSeconds: Double
++    let maximumSeconds: Double
++}
++
++private enum AppleDescriptiveSortingMode: String {
++    case paired, reference, candidate
++}
++
++private enum AppleDescriptiveSortingFixture {
++    case continuous, continuousMissing, repeated, nearlySorted, lateCardinality
++    case signedZeroTail, subnormalTail, sparseMissing, allMissing
++}
++
++private struct AppleDescriptiveSortingCase {
++    let identifier: String
++    let count: Int
++    let kind: AppleDescriptiveSortingFixture
++    let recipe: String
++}
++
++/// Paired measurements use alternating order and check every warm-up and timed result.
++///
++/// Reference-only and candidate-only modes also allow separate process-RSS observations.
++func appleDescriptiveSortingBenchmarkReport() throws -> AppleDescriptiveSortingBenchmarkReport {
++    #if DEBUG
++        throw AppleDescriptiveSortingBenchmarkFailure.releaseRequired
++    #else
++        var mode = AppleDescriptiveSortingMode.paired
++        var caseFilter: String?
++        for argument in CommandLine.arguments.dropFirst() {
++            switch argument {
++            case "--apple-descriptive-sort": break
++            case "--reference-only": mode = .reference
++            case "--candidate-only": mode = .candidate
++            default:
++                guard argument.hasPrefix("--case=") else {
++                    throw AppleDescriptiveSortingBenchmarkFailure.unknownArgument(argument)
++                }
++                caseFilter = String(argument.dropFirst("--case=".count))
++            }
++        }
++        let sourceHashes = try appleDescriptiveSortingSourceHashes()
++        let initialThermal = String(describing: ProcessInfo.processInfo.thermalState)
++        let initialLowPower = ProcessInfo.processInfo.isLowPowerModeEnabled
++        let initialRSS = appleDescriptiveSortingPeakRSS()
++        let selected = appleDescriptiveSortingCases().filter { specification in
++            caseFilter == nil || specification.identifier == caseFilter
++        }
++        guard !selected.isEmpty else {
++            throw AppleDescriptiveSortingBenchmarkFailure.unknownCase(caseFilter ?? "")
++        }
++        var measurements: [AppleDescriptiveSortingMeasurement] = []
++        for specification in selected {
++            measurements.append(try appleDescriptiveSortingMeasurement(specification, mode: mode))
++        }
++        guard try appleDescriptiveSortingSourceHashes() == sourceHashes else {
++            throw AppleDescriptiveSortingBenchmarkFailure.sourcesChanged
++        }
++        return AppleDescriptiveSortingBenchmarkReport(
++            generatedAt: ISO8601DateFormatter().string(from: Date()), device: hardwareModel(),
++            operatingSystem: ProcessInfo.processInfo.operatingSystemVersionString,
++            toolchain: appleDescriptiveSortingToolchain(),
++            physicalMemoryBytes: ProcessInfo.processInfo.physicalMemory,
++            activeProcessorCount: ProcessInfo.processInfo.activeProcessorCount,
++            thermalStateAtStart: initialThermal,
++            thermalStateAtEnd: String(describing: ProcessInfo.processInfo.thermalState),
++            lowPowerModeAtStart: initialLowPower,
++            lowPowerModeAtEnd: ProcessInfo.processInfo.isLowPowerModeEnabled,
++            processPeakRSSBytesAtStart: initialRSS,
++            processPeakRSSBytesAtEnd: appleDescriptiveSortingPeakRSS(),
++            rssScope:
++                "Darwin getrusage process high-water RSS in bytes; includes fixture generation, "
++                + "both implementations, untimed checks and digest buffers; not isolated kernel memory",
++            configuration: "Release; --apple-descriptive-sort; mode=\(mode.rawValue)",
++            reference:
++                "Complete pre-Accelerate Swift summary, including bounded counted sort and fallback",
++            candidateMinimumCount: GlifiDescriptiveStatistics.minimumAcceleratedSortCount,
++            timingScope:
++                "Complete summarize call: validation, compaction/copies, eligibility, sort, "
++                + "Q7 and all numeric reductions; fixture setup and complete bitwise checks are untimed",
++            warmUpRunsPerImplementation: 1, samplesPerImplementation: 7,
++            sourceHashes: sourceHashes, measurements: measurements)
++    #endif
++}
++
++private func appleDescriptiveSortingCases() -> [AppleDescriptiveSortingCase] {
++    var result = [4_096, 16_384, 32_768, 65_536, 131_072, 500_000, 1_000_000].map { count in
++        AppleDescriptiveSortingCase(
++            identifier: "continuous-\(count)", count: count, kind: .continuous,
++            recipe: "SplitMix64 seed260; alternating signs; magnitude1+uniform*1e6; all normal")
++    }
++    result += [
++        .init(
++            identifier: "continuous-missing-500000", count: 500_000, kind: .continuousMissing,
++            recipe: "SplitMix64 seed260; origin1e12; integer spread1000003/8; every17th missing"),
++        .init(
++            identifier: "repeated-500000", count: 500_000, kind: .repeated,
++            recipe: "31 cyclic normal values1+(index%31)/8; counted-sort control"),
++        .init(
++            identifier: "nearly-sorted-500000", count: 500_000, kind: .nearlySorted,
++            recipe: "ascending values1+index/8; final adjacent pair inverted; no early inversion"),
++        .init(
++            identifier: "late-cardinality-500000", count: 500_000, kind: .lateCardinality,
++            recipe: "256 ascending nonzero blocks, one midpoint inversion, then256 new types"),
++        .init(
++            identifier: "signed-zero-tail-500000", count: 500_000, kind: .signedZeroTail,
++            recipe: "descending normal values1+(count-index)/8; append +0,-0,+0,-0"),
++        .init(
++            identifier: "subnormal-tail-500000", count: 500_000, kind: .subnormalTail,
++            recipe: "descending normal values1+(count-index)/8; append +/-leastNonzeroMagnitude"),
++        .init(
++            identifier: "sparse-missing-500000", count: 500_000, kind: .sparseMissing,
++            recipe: "every1024th observation finite1+(index%31)/8; other observations missing"),
++        .init(
++            identifier: "all-missing-500000", count: 500_000, kind: .allMissing,
++            recipe: "500000 missing observations; no sorting work"),
++    ]
++    return result
++}
++
++private func appleDescriptiveSortingFixture(_ specification: AppleDescriptiveSortingCase)
++    -> [Double?]
++{
++    let count = specification.count
++    switch specification.kind {
++    case .continuous:
++        var generator = GlifiSplitMix64(seed: 260)
++        return (0..<count).map { index in
++            let magnitude = 1 + Double(generator.next() >> 11) / Double(1 << 53) * 1e6
++            return index.isMultiple(of: 2) ? magnitude : -magnitude
++        }
++    case .continuousMissing:
++        var generator = GlifiSplitMix64(seed: 260)
++        return (0..<count).map { index in
++            index.isMultiple(of: 17)
++                ? nil : 1e12 + Double(generator.next() % 1_000_003) / 8
++        }
++    case .repeated: return (0..<count).map { 1 + Double($0 % 31) / 8 }
++    case .nearlySorted:
++        var values: [Double?] = (0..<count).map { 1 + Double($0) / 8 }
++        values.swapAt(count - 2, count - 1)
++        return values
++    case .lateCardinality:
++        let prefixCount = count - 256
++        var values: [Double?] = (0..<count).map { index in
++            index < prefixCount
++                ? 1 + Double(index * 256 / prefixCount) / 8
++                : 33 + Double(index - prefixCount) / 8
++        }
++        values.swapAt(prefixCount / 2 - 1, prefixCount / 2)
++        return values
++    case .signedZeroTail:
++        return (0..<count).map { Double?.some(1 + Double(count - $0) / 8) }
++            + [0.0, -0.0, 0.0, -0.0]
++    case .subnormalTail:
++        return (0..<count).map { Double?.some(1 + Double(count - $0) / 8) }
++            + [Double.leastNonzeroMagnitude, -Double.leastNonzeroMagnitude]
++    case .sparseMissing:
++        return (0..<count).map { $0.isMultiple(of: 1_024) ? 1 + Double($0 % 31) / 8 : nil }
++    case .allMissing: return [Double?](repeating: nil, count: count)
++    }
++}
++
++private func appleDescriptiveSortingMeasurement(
++    _ specification: AppleDescriptiveSortingCase, mode: AppleDescriptiveSortingMode
++) throws -> AppleDescriptiveSortingMeasurement {
++    let observations = appleDescriptiveSortingFixture(specification)
++    let probabilities = [1.0, 0, 0.01, 0.25, 0.5, 0.75, 0.99]
++    let inputDigest = try appleDescriptiveSortingInputDigest(
++        observations, recipe: specification.recipe, probabilities: probabilities)
++    let expected = try appleBenchmarkSwiftReferenceSummary(
++        observations, unitIdentifier: "synthetic-observation-v1", variance: .sample,
++        probabilities: probabilities)
++    let expectedBits = appleDescriptiveSortingBits(expected)
++    let outputDigest = try appleDescriptiveSortingDigest(expectedBits)
++    let initialThermal = String(describing: ProcessInfo.processInfo.thermalState)
++    let initialRSS = appleDescriptiveSortingPeakRSS()
++    var referenceTimes: [Double] = []
++    var candidateTimes: [Double] = []
++    var order: [String] = []
++    func runReference() throws -> Double {
++        let start = DispatchTime.now().uptimeNanoseconds
++        let value = try appleBenchmarkSwiftReferenceSummary(
++            observations, unitIdentifier: "synthetic-observation-v1", variance: .sample,
++            probabilities: probabilities)
++        let elapsed = Double(DispatchTime.now().uptimeNanoseconds - start) / 1e9
++        guard appleDescriptiveSortingBits(value) == expectedBits else {
++            throw AppleDescriptiveSortingBenchmarkFailure.inconsistentResult(
++                specification.identifier)
++        }
++        return elapsed
++    }
++    func runCandidate() throws -> Double {
++        let start = DispatchTime.now().uptimeNanoseconds
++        let value = try GlifiDescriptiveStatistics.summarize(
++            observations, unitIdentifier: "synthetic-observation-v1", variance: .sample,
++            probabilities: probabilities)
++        let elapsed = Double(DispatchTime.now().uptimeNanoseconds - start) / 1e9
++        guard appleDescriptiveSortingBits(value) == expectedBits else {
++            throw AppleDescriptiveSortingBenchmarkFailure.inconsistentResult(
++                specification.identifier)
++        }
++        return elapsed
++    }
++    switch mode {
++    case .paired:
++        _ = try runReference()
++        _ = try runCandidate()
++    case .reference: _ = try runReference()
++    case .candidate: _ = try runCandidate()
++    }
++    for sample in 0..<7 {
++        switch mode {
++        case .paired:
++            if sample.isMultiple(of: 2) {
++                order.append("reference,candidate")
++                referenceTimes.append(try runReference())
++                candidateTimes.append(try runCandidate())
++            } else {
++                order.append("candidate,reference")
++                candidateTimes.append(try runCandidate())
++                referenceTimes.append(try runReference())
++            }
++        case .reference:
++            order.append("reference")
++            referenceTimes.append(try runReference())
++        case .candidate:
++            order.append("candidate")
++            candidateTimes.append(try runCandidate())
++        }
++    }
++    return AppleDescriptiveSortingMeasurement(
++        identifier: specification.identifier, recipe: specification.recipe,
++        inputSHA256: inputDigest, outputSHA256: outputDigest,
++        observationCount: observations.count, validCount: expected.validCount,
++        thermalStateAtStart: initialThermal,
++        thermalStateAtEnd: String(describing: ProcessInfo.processInfo.thermalState),
++        processPeakRSSBytesBefore: initialRSS,
++        processPeakRSSBytesAfter: appleDescriptiveSortingPeakRSS(), sampleOrder: order,
++        reference: appleDescriptiveSortingTiming(referenceTimes),
++        candidate: appleDescriptiveSortingTiming(candidateTimes),
++        allResultsMatchReferenceBitwise: true)
++}
++
++private func appleDescriptiveSortingTiming(_ times: [Double]) -> AppleDescriptiveSortingTiming? {
++    guard !times.isEmpty else { return nil }
++    let ordered = times.sorted()
++    return AppleDescriptiveSortingTiming(
++        rawSeconds: times, medianSeconds: ordered[ordered.count / 2],
++        minimumSeconds: ordered.first ?? 0, maximumSeconds: ordered.last ?? 0)
++}
++
++private struct AppleDescriptiveSortingBits: Encodable, Equatable {
++    let method: String
++    let unit: String
++    let missingPolicy: String
++    let varianceConvention: String
++    let validCount: Int
++    let missingCount: Int
++    let scalars: [UInt64?]
++    let quantileProbabilities: [UInt64]
++    let quantileValues: [UInt64?]
++}
++
++private func appleDescriptiveSortingBits(_ value: GlifiDescriptiveSummary)
++    -> AppleDescriptiveSortingBits
++{
++    AppleDescriptiveSortingBits(
++        method: value.methodIdentifier, unit: value.unitIdentifier,
++        missingPolicy: value.missingPolicyIdentifier,
++        varianceConvention: value.varianceConvention.rawValue,
++        validCount: value.validCount, missingCount: value.missingCount,
++        scalars: [
++            value.minimum, value.maximum, value.mean, value.median, value.variance,
++            value.standardDeviation,
++        ].map { $0?.bitPattern },
++        quantileProbabilities: value.quantiles.map { $0.probability.bitPattern },
++        quantileValues: value.quantiles.map { $0.value?.bitPattern })
++}
++
++private func appleDescriptiveSortingBits(_ value: AppleDescriptiveReferenceSummary)
++    -> AppleDescriptiveSortingBits
++{
++    AppleDescriptiveSortingBits(
++        method: value.methodIdentifier, unit: value.unitIdentifier,
++        missingPolicy: value.missingPolicyIdentifier,
++        varianceConvention: value.varianceConvention.rawValue,
++        validCount: value.validCount, missingCount: value.missingCount,
++        scalars: [
++            value.minimum, value.maximum, value.mean, value.median, value.variance,
++            value.standardDeviation,
++        ].map { $0?.bitPattern },
++        quantileProbabilities: value.quantiles.map { $0.probability.bitPattern },
++        quantileValues: value.quantiles.map { $0.value?.bitPattern })
++}
++
++private func appleDescriptiveSortingInputDigest(
++    _ observations: [Double?], recipe: String, probabilities: [Double]
++) throws -> String {
++    let configuration = AppleDescriptiveSortingInputDescription(
++        recipe: recipe, unit: "synthetic-observation-v1", variance: "sample",
++        probabilities: probabilities.map(\.bitPattern), observationCount: observations.count)
++    let encoder = JSONEncoder()
++    encoder.outputFormatting = [.sortedKeys]
++    var hasher = SHA256()
++    hasher.update(data: try encoder.encode(configuration))
++    var buffer = Data()
++    buffer.reserveCapacity(65_536)
++    for value in observations {
++        if let value {
++            buffer.append(1)
++            var bits = value.bitPattern.littleEndian
++            withUnsafeBytes(of: &bits) { buffer.append(contentsOf: $0) }
++        } else {
++            buffer.append(0)
++        }
++        if buffer.count >= 65_536 {
++            hasher.update(data: buffer)
++            buffer.removeAll(keepingCapacity: true)
++        }
++    }
++    hasher.update(data: buffer)
++    return hasher.finalize().map { String(format: "%02x", $0) }.joined()
++}
++
++private struct AppleDescriptiveSortingInputDescription: Encodable {
++    let recipe: String
++    let unit: String
++    let variance: String
++    let probabilities: [UInt64]
++    let observationCount: Int
++}
++
++private func appleDescriptiveSortingDigest(_ value: some Encodable) throws -> String {
++    let encoder = JSONEncoder()
++    encoder.outputFormatting = [.sortedKeys]
++    return SHA256.hash(data: try encoder.encode(value)).map { String(format: "%02x", $0) }.joined()
++}
++
++private func appleDescriptiveSortingSourceHashes() throws -> [String: String] {
++    let sources = URL(filePath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
++    let paths = [
++        "GlifiCore/GlifiDescriptiveStatistics.swift",
++        "GlifiBenchmark/GlifiAppleDescriptiveSortingBenchmarks.swift", "GlifiBenchmark/main.swift",
++    ]
++    return try Dictionary(
++        uniqueKeysWithValues: paths.map { path in
++            let bytes = try Data(contentsOf: sources.appending(path: path))
++            return (path, SHA256.hash(data: bytes).map { String(format: "%02x", $0) }.joined())
++        })
++}
++
++private func appleDescriptiveSortingPeakRSS() -> UInt64 {
++    var usage = rusage()
++    guard getrusage(RUSAGE_SELF, &usage) == 0 else { return 0 }
++    return UInt64(max(0, usage.ru_maxrss))
++}
++
++private func appleDescriptiveSortingToolchain() -> String {
++    #if os(macOS)
++        let process = Process()
++        process.executableURL = URL(filePath: "/usr/bin/xcrun")
++        process.arguments = ["swift", "--version"]
++        let output = Pipe()
++        process.standardOutput = output
++        process.standardError = output
++        do {
++            try process.run()
++            process.waitUntilExit()
++            return String(
++                decoding: output.fileHandleForReading.readDataToEndOfFile(), as: UTF8.self
++            )
++            .trimmingCharacters(in: .whitespacesAndNewlines)
++        } catch {
++            return "unavailable; capture swift --version externally"
++        }
++    #else
++        return "capture the build toolchain externally"
++    #endif
++}
++
++private enum AppleDescriptiveSortingBenchmarkFailure: Error {
++    case releaseRequired
++    case unknownArgument(String)
++    case unknownCase(String)
++    case sourcesChanged
++    case inconsistentResult(String)
++}
++
++private struct AppleDescriptiveReferenceQuantile {
++    let probability: Double
++    let value: Double?
++}
++
++private struct AppleDescriptiveReferenceSummary {
++    let methodIdentifier: String
++    let unitIdentifier: String
++    let missingPolicyIdentifier: String
++    let varianceConvention: GlifiVarianceConvention
++    let validCount: Int
++    let missingCount: Int
++    let minimum: Double?
++    let maximum: Double?
++    let mean: Double?
++    let median: Double?
++    let variance: Double?
++    let standardDeviation: Double?
++    let quantiles: [AppleDescriptiveReferenceQuantile]
++}
++
++// Frozen pre-Accelerate Swift summary and bounded sorting implementation.
++// This independent copy includes all setup and arithmetic in the timed call.
++private func appleBenchmarkSwiftReferenceSummary(
++    _ observations: [Double?], unitIdentifier: String,
++    variance: GlifiVarianceConvention, probabilities: [Double] = [0.25, 0.5, 0.75]
++) throws -> AppleDescriptiveReferenceSummary {
++    try Task.checkCancellation()
++    guard observations.count <= GlifiDescriptiveStatistics.maximumObservationCount,
++        probabilities.count <= 1_024
++    else {
++        throw appleBenchmarkReferenceFailure(
++            "descriptive.input-limit", category: .insufficientResources)
++    }
++    guard !unitIdentifier.isEmpty,
++        probabilities.allSatisfy({ $0.isFinite && (0...1).contains($0) })
++    else { throw appleBenchmarkReferenceFailure("descriptive.invalid-parameters") }
++    var values: [Double] = []
++    for (index, value) in observations.enumerated() {
++        if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
++        if let value {
++            guard value.isFinite else {
++                throw appleBenchmarkReferenceFailure("descriptive.non-finite-input")
++            }
++            values.append(value)
++        }
++    }
++    try appleBenchmarkReferenceSort(&values)
++    let count = values.count
++    func quantile(_ probability: Double) -> Double? {
++        guard count > 0 else { return nil }
++        let h = Double(count - 1) * probability
++        let lower = Int(h.rounded(.down))
++        let upper = min(lower + 1, count - 1)
++        let fraction = h - Double(lower)
++        return (1 - fraction) * values[lower] + fraction * values[upper]
++    }
++    // Preserve order statistics before reusing the same buffer for normalization.
++    // Adding the origin back to a rounded shift does not always recover its input.
++    let minimum = values.first
++    let maximum = values.last
++    let median = quantile(0.5)
++    let quantiles = probabilities.map {
++        AppleDescriptiveReferenceQuantile(probability: $0, value: quantile($0))
++    }
++    var mean: Double?
++    var varianceValue: Double?
++    var standardDeviation: Double?
++    if count > 0 {
++        // Subtract an observed origin before scaling, preserving a small spread
++        // around a large offset. Scaling raw values first loses significant bits.
++        let origin = values[0]
++        let scale = (maximum ?? origin) - origin
++        // Sorted finite values have non-negative shifts bounded by the last shift.
++        // Checking that bound avoids materializing a second array of all differences.
++        guard scale.isFinite else {
++            throw appleBenchmarkReferenceFailure("descriptive.numeric-overflow")
++        }
++        for index in values.indices {
++            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
++            values[index] = scale > 0 ? (values[index] - origin) / scale : 0
++        }
++        var scaledMean = 0.0
++        for (index, value) in values.enumerated() {
++            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
++            scaledMean += (value - scaledMean) / Double(index + 1)
++        }
++        mean = origin + scaledMean * scale
++        let denominator: Int
++        switch variance {
++        case .population: denominator = count
++        case .sample: denominator = count - 1
++        }
++        if denominator > 0 {
++            var sum = 0.0
++            for (index, value) in values.enumerated() {
++                if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
++                let difference = value - scaledMean
++                sum += difference * difference
++            }
++            let deviation = sqrt(sum / Double(denominator)) * scale
++            let computedVariance = deviation * deviation
++            guard deviation.isFinite, computedVariance.isFinite else {
++                throw appleBenchmarkReferenceFailure("descriptive.numeric-overflow")
++            }
++            guard sum == 0 || (deviation > 0 && computedVariance > 0) else {
++                throw appleBenchmarkReferenceFailure("descriptive.numeric-underflow")
++            }
++            standardDeviation = deviation
++            varianceValue = computedVariance
++        }
++    }
++    return AppleDescriptiveReferenceSummary(
++        methodIdentifier: "Descriptive-Q7-v1", unitIdentifier: unitIdentifier,
++        missingPolicyIdentifier: "exclude-and-count-v1", varianceConvention: variance,
++        validCount: count, missingCount: observations.count - count,
++        minimum: minimum, maximum: maximum, mean: mean, median: median,
++        variance: varianceValue, standardDeviation: standardDeviation,
++        quantiles: quantiles)
++}
++
++private func appleBenchmarkReferenceSort(_ values: inout [Double]) throws {
++    try Task.checkCancellation()
++    let probeCount = min(1_024, values.count)
++    var hasEarlyInversion = false
++    if probeCount > 1 {
++        for index in 1..<probeCount where values[index - 1] > values[index] {
++            hasEarlyInversion = true
++            break
++        }
++    }
++    guard hasEarlyInversion else {
++        values.sort()
++        return
++    }
++    var counts: [UInt64: Int] = [:]
++    counts.reserveCapacity(256)
++    for index in values.indices {
++        if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
++        let value = values[index]
++        guard value != 0 else {
++            values.sort()
++            return
++        }
++        counts[value.bitPattern, default: 0] += 1
++        guard counts.count <= 256 else {
++            values.sort()
++            return
++        }
++    }
++    let ordered = counts.keys.sorted { Double(bitPattern: $0) < Double(bitPattern: $1) }
++    var position = 0
++    for key in ordered {
++        let value = Double(bitPattern: key)
++        let repetitions = counts[key] ?? 0
++        for _ in 0..<repetitions {
++            if position.isMultiple(of: 1_024) { try Task.checkCancellation() }
++            values[position] = value
++            position += 1
++        }
++    }
++}
++
++private func appleBenchmarkReferenceFailure(
++    _ code: String, category: GlifiFailureCategory = .invalidInput
++) -> GlifiFailure {
++    GlifiFailure(
++        code: code, category: category, operation: .analyze,
++        retryDisposition: GlifiFailureTaxonomy.defaultRetry(category),
++        retainedState: .unchanged, messageKey: "failure.\(code)")
++}
+diff --git a/Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAppleDescriptiveSortingTests.swift b/Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAppleDescriptiveSortingTests.swift
+new file mode 100644
+index 0000000..98999e8
+--- /dev/null
++++ b/Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAppleDescriptiveSortingTests.swift
+@@ -0,0 +1,221 @@
++// SPDX-License-Identifier: BSD-3-Clause
++
++import Foundation
++import Testing
++
++@testable import GlifiCore
++
++@Test("Il sort Apple descrittivo conserva tutti i bit sopra e sotto la soglia candidata")
++func appleDescriptiveSortMatchesSwiftBitwise() throws {
++    let threshold = GlifiDescriptiveStatistics.minimumAcceleratedSortCount
++    for count in [threshold - 1, threshold, threshold + 1, 131_072] {
++        for seed: UInt64 in [260, 261] {
++            var generator = GlifiSplitMix64(seed: seed)
++            let input = (0..<count).map { _ in
++                (Double(generator.next() >> 11) / Double(1 << 53) - 0.5) * 1e6 + 0.125
++            }
++            var observed = input
++            try GlifiDescriptiveStatistics.sortFiniteValues(&observed)
++            #expect(observed.map(\.bitPattern) == input.sorted().map(\.bitPattern))
++        }
++    }
++}
++
++@Test("Zeri e subnormali tardivi mantengono il riferimento Swift del sort descrittivo")
++func appleDescriptiveSortRetainsExceptionalFallbacks() throws {
++    let count = max(65_536, GlifiDescriptiveStatistics.minimumAcceleratedSortCount + 1)
++    let input = (0..<count).map { Double(count - $0) / 8 + 1 }
++    for tail in [
++        [0.0, -0.0, 0.0, -0.0],
++        [Double.leastNonzeroMagnitude, -Double.leastNonzeroMagnitude],
++        [Double.leastNormalMagnitude.nextDown, -Double.leastNormalMagnitude.nextDown],
++    ] {
++        for position in [0, count / 2, count] {
++            var fixture = input
++            fixture.insert(contentsOf: tail, at: position)
++            var observed = fixture
++            try GlifiDescriptiveStatistics.sortFiniteValues(&observed)
++            #expect(observed.map(\.bitPattern) == fixture.sorted().map(\.bitPattern))
++        }
++    }
++}
++
++@Test("Il risultato descrittivo Apple completo coincide bitwise con il riferimento Swift")
++func appleDescriptiveSummaryMatchesCompleteSwiftReference() throws {
++    let count = max(65_536, GlifiDescriptiveStatistics.minimumAcceleratedSortCount + 1)
++    var generator = GlifiSplitMix64(seed: 260)
++    let continuous: [Double?] = (0..<count).map { index in
++        index.isMultiple(of: 17)
++            ? nil : 1e12 + Double(generator.next() % 1_000_003) / 8
++    }
++    let repeated: [Double?] = (0..<count).map { Double($0 % 31 + 1) / 8 }
++    let highCardinality: [Double?] = (0..<count).map { Double(count - $0) / 8 + 1 }
++    var nearlySorted: [Double?] = (0..<count).map { Double($0 + 1) / 8 }
++    nearlySorted.swapAt(count - 2, count - 1)
++    let fixtures = [
++        continuous, repeated, nearlySorted,
++        highCardinality + [0.0, -0.0, nil, Double.leastNonzeroMagnitude],
++        [nil, nil], [Double?.some(1)], [],
++    ]
++    let probabilities = [1.0, 0, 0.01, 0.75, 0.5, 0.25, 0.99]
++    for variance in [GlifiVarianceConvention.population, .sample] {
++        for fixture in fixtures {
++            let expected = try appleSwiftReferenceSummary(
++                fixture, unitIdentifier: "synthetic-observation-v1", variance: variance,
++                probabilities: probabilities)
++            let observed = try GlifiDescriptiveStatistics.summarize(
++                fixture, unitIdentifier: "synthetic-observation-v1", variance: variance,
++                probabilities: probabilities)
++            #expect(appleDescriptiveSummaryBits(observed) == appleDescriptiveSummaryBits(expected))
++        }
++    }
++}
++
++@Test("Il percorso Apple conserva le failure di dominio e la cancellazione prima del sort")
++func appleDescriptiveSortPreservesFailureAndCancellation() async {
++    #expect(throws: GlifiFailure.self) {
++        try GlifiDescriptiveStatistics.summarize(
++            [1, .nan], unitIdentifier: "synthetic-observation-v1", variance: .sample)
++    }
++    let task = Task {
++        withUnsafeCurrentTask { $0?.cancel() }
++        var values = (1...65_536).reversed().map(Double.init)
++        try GlifiDescriptiveStatistics.sortFiniteValues(&values)
++    }
++    await #expect(throws: CancellationError.self) { try await task.value }
++}
++
++private struct AppleDescriptiveSummaryBits: Equatable {
++    let method: String
++    let unit: String
++    let missingPolicy: String
++    let varianceConvention: GlifiVarianceConvention
++    let validCount: Int
++    let missingCount: Int
++    let scalars: [UInt64?]
++    let quantileProbabilities: [UInt64]
++    let quantileValues: [UInt64?]
++}
++
++private func appleDescriptiveSummaryBits(_ value: GlifiDescriptiveSummary)
++    -> AppleDescriptiveSummaryBits
++{
++    AppleDescriptiveSummaryBits(
++        method: value.methodIdentifier, unit: value.unitIdentifier,
++        missingPolicy: value.missingPolicyIdentifier, varianceConvention: value.varianceConvention,
++        validCount: value.validCount, missingCount: value.missingCount,
++        scalars: [
++            value.minimum, value.maximum, value.mean, value.median, value.variance,
++            value.standardDeviation,
++        ].map { $0?.bitPattern },
++        quantileProbabilities: value.quantiles.map { $0.probability.bitPattern },
++        quantileValues: value.quantiles.map { $0.value?.bitPattern })
++}
++
++// Independent ordering reference: this snapshot keeps the complete Swift
++// arithmetic, validation and output construction, with the standard Swift sort.
++private func appleSwiftReferenceSummary(
++    _ observations: [Double?], unitIdentifier: String,
++    variance: GlifiVarianceConvention, probabilities: [Double] = [0.25, 0.5, 0.75]
++) throws -> GlifiDescriptiveSummary {
++    try Task.checkCancellation()
++    guard observations.count <= GlifiDescriptiveStatistics.maximumObservationCount,
++        probabilities.count <= 1_024
++    else {
++        throw appleReferenceFailure("descriptive.input-limit", category: .insufficientResources)
++    }
++    guard !unitIdentifier.isEmpty,
++        probabilities.allSatisfy({ $0.isFinite && (0...1).contains($0) })
++    else { throw appleReferenceFailure("descriptive.invalid-parameters") }
++    var values: [Double] = []
++    for (index, value) in observations.enumerated() {
++        if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
++        if let value {
++            guard value.isFinite else {
++                throw appleReferenceFailure("descriptive.non-finite-input")
++            }
++            values.append(value)
++        }
++    }
++    values.sort()
++    let count = values.count
++    func quantile(_ probability: Double) -> Double? {
++        guard count > 0 else { return nil }
++        let h = Double(count - 1) * probability
++        let lower = Int(h.rounded(.down))
++        let upper = min(lower + 1, count - 1)
++        let fraction = h - Double(lower)
++        return (1 - fraction) * values[lower] + fraction * values[upper]
++    }
++    // Preserve order statistics before reusing the same buffer for normalization.
++    // Adding the origin back to a rounded shift does not always recover its input.
++    let minimum = values.first
++    let maximum = values.last
++    let median = quantile(0.5)
++    let quantiles = probabilities.map {
++        GlifiDescriptiveQuantile(probability: $0, value: quantile($0))
++    }
++    var mean: Double?
++    var varianceValue: Double?
++    var standardDeviation: Double?
++    if count > 0 {
++        // Subtract an observed origin before scaling, preserving a small spread
++        // around a large offset. Scaling raw values first loses significant bits.
++        let origin = values[0]
++        let scale = (maximum ?? origin) - origin
++        // Sorted finite values have non-negative shifts bounded by the last shift.
++        // Checking that bound avoids materializing a second array of all differences.
++        guard scale.isFinite else {
++            throw appleReferenceFailure("descriptive.numeric-overflow")
++        }
++        for index in values.indices {
++            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
++            values[index] = scale > 0 ? (values[index] - origin) / scale : 0
++        }
++        var scaledMean = 0.0
++        for (index, value) in values.enumerated() {
++            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
++            scaledMean += (value - scaledMean) / Double(index + 1)
++        }
++        mean = origin + scaledMean * scale
++        let denominator: Int
++        switch variance {
++        case .population: denominator = count
++        case .sample: denominator = count - 1
++        }
++        if denominator > 0 {
++            var sum = 0.0
++            for (index, value) in values.enumerated() {
++                if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
++                let difference = value - scaledMean
++                sum += difference * difference
++            }
++            let deviation = sqrt(sum / Double(denominator)) * scale
++            let computedVariance = deviation * deviation
++            guard deviation.isFinite, computedVariance.isFinite else {
++                throw appleReferenceFailure("descriptive.numeric-overflow")
++            }
++            guard sum == 0 || (deviation > 0 && computedVariance > 0) else {
++                throw appleReferenceFailure("descriptive.numeric-underflow")
++            }
++            standardDeviation = deviation
++            varianceValue = computedVariance
++        }
++    }
++    return GlifiDescriptiveSummary(
++        methodIdentifier: "Descriptive-Q7-v1", unitIdentifier: unitIdentifier,
++        missingPolicyIdentifier: "exclude-and-count-v1", varianceConvention: variance,
++        validCount: count, missingCount: observations.count - count,
++        minimum: minimum, maximum: maximum, mean: mean, median: median,
++        variance: varianceValue, standardDeviation: standardDeviation,
++        quantiles: quantiles)
++}
++
++private func appleReferenceFailure(
++    _ code: String, category: GlifiFailureCategory = .invalidInput
++) -> GlifiFailure {
++    GlifiFailure(
++        code: code, category: category, operation: .analyze,
++        retryDisposition: GlifiFailureTaxonomy.defaultRetry(category),
++        retainedState: .unchanged, messageKey: "failure.\(code)")
++}

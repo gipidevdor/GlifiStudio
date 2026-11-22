@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-APL-005 |
 | Tipo | Standard applicativo Apple |
-| Versione | 0.5.1 |
+| Versione | 0.5.2 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Ciclo DocumentGroup `.glifi` introdotto; conflict/file provider da validare su dispositivo |
 
 ## Regole
@@ -44,3 +44,14 @@ Riferimenti: [DocumentGroup](https://developer.apple.com/documentation/swiftui/d
 [FileDocument](https://developer.apple.com/documentation/swiftui/filedocument),
 [Creating a document-based app](https://developer.apple.com/documentation/swiftui/creating-a-document-based-app)
 e [Accessing files from the macOS App Sandbox](https://developer.apple.com/documentation/security/accessing-files-from-the-macos-app-sandbox).
+
+## Lettura bounded delle fonti
+
+Il confine GlifiEngine usa `GlifiSourceFileReader`: il coordinatore Foundation
+fornisce l’URL da leggere; un tipo non regolare esistente è rifiutato prima del
+coordinamento. Il file viene aperto senza seguire link e verificato
+sul descriptor, prima di leggere chunk fino al budget e a un eventuale byte
+sentinella. La successiva decodifica conserva byte e SpanMap. La cancellazione è
+osservata prima/dopo il coordinamento e fra i chunk; non interrompe una chiamata
+sincrona già bloccata. Scrittori non cooperanti non sono resi atomici dal solo
+NSFileCoordinator. Prove e limiti: [GS-VER-260](../evidenze/GS-VER-260-integrazioni-native-apple.md).

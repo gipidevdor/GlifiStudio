@@ -1,0 +1,132 @@
+[
+  {
+    "observedAtUTC": "2026-11-22T08:58:17.040828+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 3.7
+      },
+      {
+        "processName": "clang",
+        "PID": 41262,
+        "CPU": 5.4
+      },
+      {
+        "processName": "ld",
+        "PID": 41274,
+        "CPU": 73.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:17.086668+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 3.7
+      },
+      {
+        "processName": "clang",
+        "PID": 41262,
+        "CPU": 5.4
+      },
+      {
+        "processName": "ld",
+        "PID": 41274,
+        "CPU": 73.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:17.640257+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 22.6
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:18.192551+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 3.2
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:18.741581+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 1.1
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:19.294472+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 0.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:19.847632+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 0.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:20.400705+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 0.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:20.953919+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 0.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:58:21.509750+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "swift-test",
+        "PID": 40498,
+        "CPU": 0.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  }
+]

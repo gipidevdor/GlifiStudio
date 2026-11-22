@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.14 |
+| Versione | 1.6.15 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Non applicabile; registro operativo |
 
 Le schede DoR sono gate di ingresso al coding (GS-STD-001-07). Ogni unità di
@@ -108,3 +108,5 @@ preservando i confini del lavoro già in corso nell'altra chat.
 - [GS-DOR-207 — Validazione e codifica esadecimale dei digest](dor-ottimizzazione-codifica-digest.md) — Ready
 
 - [GS-DOR-208 — Supporto condiviso dei benchmark dei test](dor-ottimizzazione-supporto-benchmark-test.md) — Ready
+
+- [GS-DOR-260 — Integrazioni native Apple coordinate](dor-integrazioni-native-apple.md) — Ready; letture bounded, attività macOS, comandi nativi e candidato Accelerate misurato
