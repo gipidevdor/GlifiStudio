@@ -6,13 +6,13 @@
 | --- | --- |
 | Identificatore | GS-MET-001-23 |
 | Tipo | Specifica dei contratti numerici e della copertura |
-| Versione | 1.2.0 |
+| Versione | 1.3.0 |
 | Stato | Contratti revisionati; supporto numerico per variante |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-01 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Ambito richiesto dall'iniziatore; promozione scientifica separata secondo ADR-0031 |
 | Documento padre | [GS-MET-001](README.md) |
-| Riferimenti | RF-087; ADR-0032; GS-VER-160 |
+| Riferimenti | RF-087; ADR-0032; ADR-0035; GS-VER-160; GS-VER-233 |
 
 ## Scopo e copertura
 
@@ -24,6 +24,10 @@ sezioni A.2.5, A.5, A.6 e A.7; il topic model è documentato anche nel
 Compatibilità funzionale di famiglia e parità numerica con una particolare
 versione di KH Coder sono proprietà distinte: tokenizzazione, inizializzazione e
 varianti native sono dichiarate, senza sostituire silenziosamente quelle del programma.
+Il confronto aggiuntivo del 2026-11-22 riguarda il manuale pubblico del 2016 e il
+[sorgente pubblico ufficiale](https://github.com/ko-ichi-h/khcoder), dichiarato non
+aggiornato all’edizione corrente; non attesta parità con un’edizione chiusa o futura.
+L’ampliamento è autorizzato in [ADR-0035](../adr/0035-completamento-nativo-kh-coder.md).
 
 | Famiglia | Implementazione nella libreria |
 | --- | --- |
@@ -31,13 +35,13 @@ varianti native sono dichiarate, senza sostituire silenziosamente quelle del pro
 | Ricerca di parole/documenti e KWIC | GlifiQueryParser/Evaluator; sessione GlifiKit esistente |
 | Associazione di parole e tabelle di contingenza | GlifiKeynessAnalysis; GlifiContingencyAnalysis; GlifiCollocationAnalysis |
 | Analisi delle corrispondenze | CA-SVD-v1 esistente; facciata anche su tabelle di parole e codici |
-| MDS classica, Kruskal e Sammon | GlifiExploratoryAnalysis.multidimensionalScaling |
+| MDS classica, metrica, Kruskal, Sammon e SMACOF ordinale | GlifiExploratoryAnalysis; ricerca multi-start con diagnostiche per avvio |
 | Clustering gerarchico | HAC esistente per vettori; Lance-Williams per dissimilarità single/complete/average |
 | CLARA sui documenti | CLARA-PAM-Euclidean-v1 |
-| Reti di co-occorrenza | Reti lessicali esistenti; rete Jaccard anche dalle colonne di una matrice di codici |
-| Mappe auto-organizzanti | SOM-batch-gaussian-rectangular-v1 |
+| Reti di co-occorrenza | Reti esistenti; Girvan–Newman, CNM, Walktrap, layout FR/KK e foresta Prim nativi |
+| Mappe auto-organizzanti | SOM batch rettangolare ed esagonale, U-matrix e composizione Ward dei codebook |
 | Classificazione supervisionata | MultinomialNaiveBayes-Laplace-v1 con validazione stratificata |
-| Topic model | LDA-collapsed-Gibbs-symmetric-v1; LSA e NMF esistenti |
+| Topic model | LDA-collapsed-Gibbs-predictive-mean-v2, selezione K con diagnostiche e document completion; LSA e NMF esistenti |
 | Regole automatiche e frequenze dei codici | GlifiCodingRuleSet e matrice multi-label con evidenze UTF-8 |
 | Tabelle incrociate e similarità dei codici | crosstab con denominatori/mancanti espliciti; distanze condivise |
 | CA, MDS, clustering, rete e SOM dei codici | Stessi operatori numerici sulla matrice documento-codice |
@@ -57,7 +61,11 @@ di classificazione è congelato sul training; i token fuori vocabolario sono
 ignorati e contati esplicitamente.
 
 Counts, presenza binaria, frequenze per mille e TF-IDF smussata sono trasformazioni
-esplicite. Distanze ammesse: Jaccard, Dice, coseno, euclidea e Manhattan.
+esplicite. Distanze ammesse: Jaccard, Dice, Simpson, coseno, euclidea e Manhattan.
+Simpson usa le presenze: `s(A,B)=|A∩B|/min(|A|,|B|)`, `d=1-s`.
+Entrambi vuoti danno similarità uno, un solo insieme vuoto zero. È una
+dissimilarità simmetrica, non una metrica: può annullarsi per insiemi diversi
+inclusi uno nell’altro e non garantisce la disuguaglianza triangolare.
 I vettori nulli non hanno distanza coseno e producono failure tipizzata.
 Una coppia di colonne entrambe nulle non produce un arco di co-occorrenza.
 Ward richiede vettori euclidei secondo GS-MET-001-14: non si applica a una
@@ -70,13 +78,15 @@ La classica diagonalizza con LAPACK Apple
 `X_k = U_k sqrt(max(lambda_k, 0))`. Gli assi mancanti sono nulli;
 non si trasforma un autovalore negativo nel suo valore assoluto.
 
-Le dissimilarità sono scalate prima del calcolo per limitare overflow; le coordinate
-sono riportate nella scala originale. Tutte le varianti richiedono che il quadrato
+Per le quattro varianti storiche le dissimilarità sono scalate prima del calcolo
+per limitare overflow; le coordinate
+sono riportate nella scala originale. Le quattro varianti storiche richiedono che il quadrato
 della scala sia finito e strettamente positivo, coerentemente con il kernel nativo
-delle distanze; configurazioni collassate non definiscono Stress-1.
+delle distanze; configurazioni collassate non definiscono Stress-1. La nuova
+variante ordinale usa soltanto l’ordine delle dissimilarità e coordinate adimensionali.
 La variante metrica minimizza lo stress grezzo
 `sum(i<j)(distance(X_i,X_j)-D_ij)²` tramite SMACOF unit-weight.
-La variante non metrica usa regressione isotona PAVA con disparità uguali per
+La variante Kruskal non metrica usa regressione isotona PAVA con disparità uguali per
 dissimilarità uguali, proiezione ai minimi quadrati senza riscalare le disparità e Stress-1.
 Le parità sono secondary (disparità uguali); il passo usa il gradiente dell'obiettivo
 normalizzato e mantiene il backtracking sul medesimo Stress-1.
@@ -86,13 +96,67 @@ positive fuori diagonale. Il gradiente usa backtracking e accetta soltanto passi
 non crescenti rispetto al proprio obiettivo.
 
 Per tutti i metodi iterativi: inizializzazione classica con piccola perturbazione
-SplitMix64 registrata, massimo passi e tolleranza espliciti, storia dell'obiettivo,
+SplitMix64 registrata come default compatibile, oppure configurazione uniforme
+centrata casuale con seed esplicito; massimo passi e tolleranza espliciti, storia dell'obiettivo,
 numero di passi accettati e convergenza separata dal raggiungimento del limite.
 Non si dichiara raggiunto l'ottimo globale di un obiettivo non convesso.
 
+### SMACOF ordinale e ricerca multipla
+
+`MDS-ordinal-SMACOF-secondary-ties-normalized-raw-stress-v1` è distinta dal
+metrico e dal Kruskal Stress-1. PAVA aggrega i tie con il loro peso, proietta
+le distanze correnti sul cono monotono e riscalare le disparità serve a imporre
+`Σ(i<j) δ_ij² = m`, `m=n(n−1)/2`. L’obiettivo è
+`Σ(i<j)(d_ij(X)−δ_ij)²/m`. La norma fissa impedisce il collasso banale.
+Il passo Guttman per pesi completi unitari è `X_next=B(X)X/n`; le coppie
+coincidenti hanno contributo zero. Dopo il passo si ristimano le disparità;
+si accettano soltanto obiettivi non crescenti. La variante ammette
+scalarità finite anche estreme perché non deve preservare una scala metrica.
+
+`multidimensionalScalingSearch` esegue da 1 a 1.000 configurazioni casuali
+reali per un solo metodo iterativo; il metodo classico non è una ricerca.
+L’avvio `r` usa `seed &+ UInt64(r)`. Restituisce tutti i risultati, cronologie,
+seed e convergenze, più l’indice del minimo; a parità conserva il primo.
+Nessuna selezione fra obiettivi di metodi diversi o promessa di ottimo globale.
+L’ammissione controlla sia lavoro cumulativo sia celle conservate per tutti gli avvii.
+
+## Reti, comunità e layout
+
+La proiezione delle comunità è non diretta: somma direzioni e archi paralleli,
+omette self-loop e pesi nulli, normalizza uniformemente le intensità positive.
+Gli isolati restano singleton. Le tre varianti massimizzano, lungo la propria
+sequenza, la modularità del grafo originale
+`Q=Σ_c[w_in(c)/W − γ(strength(c)/(2W))²]`, con `0<γ≤1000`.
+Tie e comunità conservano l’ordine dichiarato dei nodi e il primo massimo.
+
+- `GirvanNewman-inverse-strength-v1`: ricalcola la edge betweenness dopo
+  ogni rimozione, con costo del cammino uguale all’inverso dell’intensità.
+- `ClausetNewmanMoore-weighted-v1`: agglomerazione sparsa con guadagni di
+  modularità e heap di candidati; conserva gerarchia e storia dell’obiettivo.
+- `Walktrap-weighted-mean-loops-v1`: cammini pesati di lunghezza 1–64,
+  self-loop con intensità media incidente e fusioni Ward fra comunità adiacenti.
+
+I layout sono risultati distinti dal grafo e dalle comunità. FR usa repulsione
+esatta, attrazione degli archi, `k=sqrt(4/n)` e raffreddamento lineare nel quadrato
+`[-1,1]²`. KK usa molle su distanze in hop, passi Newton con backtracking monotono
+e distanza virtuale `2*max(1,diametro)` fra componenti: questa estensione non
+trasforma distanze irraggiungibili in cammini osservati. I pesi non partecipano ai
+layout; direzioni e multiarchi coalescono, loop e archi nulli sono omessi.
+Coordinate, seed, iterazioni, arresto e storia energetica KK sono espliciti.
+
+`Prim-minimum-spanning-forest-v1` usa invece i pesi come costi non negativi:
+omette loop, prende il minimo costo fra paralleli e conserva costi nulli.
+Restituisce la foresta per componenti, archi originali e costo totale; la variante
+albero rifiuta grafi vuoti o disconnessi. Nessuna conversione implicita intensità→costo.
+
 ## SOM e CLARA
 
-SOM usa una griglia rettangolare non toroidale, matching euclideo e vicinato gaussiano.
+SOM usa una griglia non toroidale, matching euclideo e vicinato gaussiano.
+Il default rettangolare conserva `SOM-batch-gaussian-rectangular-v1`. La variante
+`SOM-batch-gaussian-hexagonal-odd-row-v1` sposta le righe dispari di mezza cella:
+`(x,y)=(colonna+(riga mod 2)/2, riga*sqrt(3)/2)`. La distanza di questa
+geometria governa il vicinato e l’errore topografico; i vicini immediati sono
+a distanza uno, al massimo quattro nel rettangolo e sei nell’esagono.
 Per ogni epoca:
 `m_u = sum_i h(u,bmu_i) x_i / sum_i h(u,bmu_i)`.
 Il raggio decade geometricamente da initialRadius a finalRadius. L'aggregazione di
@@ -100,6 +164,11 @@ somme e popolazioni per unità vincente è algebricamente equivalente alla formu
 diretta e viene confrontata con essa entro 1e-12. Si restituiscono prototipi,
 assegnazioni, errore di quantizzazione e topografico, epoche e seed.
 La mappa non è una proiezione che garantisce distanze globali.
+La U-matrix restituisce per ogni unità la mediana delle distanze euclidee dai
+codebook immediatamente vicini; ai bordi usa i soli vicini presenti, per una
+singola unità restituisce zero. `SOM-codebooks-Ward-v1` compone l’HAC Ward
+euclidea già esistente sui prototipi, conservando identità, albero e assegnazioni;
+non implementa un diverso aggiornamento SOM o una nuova formula Ward.
 
 CLARA estrae campioni senza rimpiazzo, include i migliori medoidi già trovati,
 esegue swap PAM miglioranti nel campione e sceglie il minor costo euclideo
@@ -123,9 +192,39 @@ I reciproci dei denominatori sono aggiornati soltanto per i topic modificati.
 Burn-in, numero di campioni e thinning sono espliciti; theta e phi sono medie
 dei campioni trattenuti. La probabilità predittiva usa la media dei prodotti theta*phi sui campioni;
 il prodotto delle medie non è equivalente. La perplexity restituita è sul training,
-non una valutazione held-out. Il numero di topic non viene scelto sul test.
+non una valutazione held-out. La selezione del numero di topic è un’operazione
+distinta, con diagnostiche esplicite e split di cross-validation dichiarati.
 L'integrazione esatta degli stati di un corpus minimo verifica il campionatore
 entro 0,02 assoluto; il caso a un topic ha oracolo esatto entro 1e-12.
+
+### Selezione del numero di topic
+
+`LDA-model-selection-training-vocabulary-CV-v1` ammette al massimo 32 K distinti,
+ciascuno in 1–1.024, ordina i candidati e conserva score, copertura di ogni fold,
+seed e modello scelto. Il default minimizza la perplexity held-out aggregata
+come `exp(-Σ logLikelihood / Σ tokenValutati)`, non la media delle perplexity.
+Ogni fold ricostruisce il proprio vocabolario di training e congela phi.
+Il fold-in dimezza i token noti mantenendo l’ordine originale: prima metà
+osservata, seconda valutata; gli OOV sono esclusi e contati. I target non
+aggiornano i conteggi. Senza contesto la media Dirichlet simmetrica è analitica;
+documenti senza token noti non eseguono sweep. Un test tutto OOV fallisce.
+Questi fold servono alla selezione: non sono un test finale indipendente.
+
+Le diagnostiche nominate conservano `nil` e motivo quando non definite:
+
+| Criterio | Definizione e direzione |
+| --- | --- |
+| CaoJuan2009 | Media dei coseni fra topic, da minimizzare |
+| Arun2010 | `Σ(σ_k−q_k)(log σ_k−log q_k)`, con valori singolari di phi e `q_k=Σ_d length_d*theta_dk/max_d length_d`; non sostituisce una JS né normalizza implicitamente i vettori; da minimizzare |
+| Deveaud2014 | Somma sulle coppie del half-Jeffreys `0.5*Σ_v(p_v−q_v)(log p_v−log q_v)`, divisa per `K(K−1)` secondo il contratto di riferimento; da massimizzare |
+| Griffiths2004 | Log harmonic mean delle likelihood collassate `p(words|assignments)`, valutato in log-domain sui campioni trattenuti; da massimizzare |
+
+Le likelihood sono opt-in e non cambiano la catena o il default del fit.
+`folds=0` è ammesso per sole diagnostiche, non per il criterio held-out.
+L’ammissione è cumulativa prima di tutti i fit: conteggia Gibbs, accumulo theta
+anche per documenti vuoti, phi, predizioni, likelihood richieste, diagnostiche e
+fold-in. Celle documento×topic vengono controllate prima della tabella sparsa;
+fit e inferenza restano cancellabili, senza risultati parziali pubblicati.
 
 ## Regole di codifica
 
@@ -143,6 +242,13 @@ Operatori aritmetici e booleani richiedono separazione lessicale.
 Il profilo predefinito italiano usa forme di superficie normalizzate; non inventa
 lemmi o POS. Annotazioni esplicite possono essere fornite al motore con il loro
 contratto linguistico; annotazioni assenti richieste da una regola falliscono.
+La pipeline italiana opzionale offre lemmi e POS single-best di Apple Natural
+Language installato e stemming Snowball italiano 3.1.0 originale Swift. Stem e
+lemma restano distinti; POS usa i tag grezzi Apple, senza inventare feature
+morfologiche. Predizioni sconosciute restano `nil` con stato esplicito e fanno
+fallire la codifica quando richieste. Fonte, offset UTF-8 e provenienza OS sono
+conservati; la versione del modello Apple non esposta resta assente. Disponibilità
+non equivale ad accuratezza linguistica; italiano è la sola baseline di questo lotto.
 Variabili mancanti, divisione per zero, riferimenti ignoti/ciclici, overflow,
 profondità e limiti delle evidenze falliscono senza produrre una matrice parziale.
 Anche le evidenze aggregate hanno un budget; i riferimenti non ne provocano
@@ -164,6 +270,28 @@ contratto headless secondo ADR-0031; la facciata espone lo stato per identificat
 con default conservativo `candidate`. [GS-VER-161](../evidenze/GS-VER-161-revisione-scientifica-operatori.md)
 registra la revisione tecnica automatica, senza simulare una firma umana.
 La review scientifica esterna V6 e le prove su dispositivo restano aperte.
+
+### Limiti dell’ampliamento 2026-11-22
+
+Budget esplorativi standard: 5.000.000 celle per rappresentazione densa,
+2.000 oggetti pairwise e 500.000.000 unità stimate di lavoro. Le ricerche
+multi-start includono spazio per coordinate e cronologie di tutti gli avvii.
+SOM ammette anche il lavoro del vicinato; Ward sui codebook ha ammissione
+separata e anticipata nella facciata avanzata. La selezione LDA e il fold-in
+ammettono al massimo 20.000 documenti; il fit controlla le celle documento×topic.
+Restano i bound della tabella: 2.000.000 token e 100.000 termini.
+
+I grafi hanno bound standard di 2.000 nodi, 100.000 archi, 1.000.000 celle
+pairwise e 200.000.000 unità di lavoro; i metodi quadratici hanno ammissione
+più restrittiva sui buffer effettivi. La pipeline linguistica standard ammette
+1 MiB di testo, 100.000 token, 4.096 byte per token e 16 MiB di campi UTF-8
+in output; la codifica aggregata ammette 10.000 unità entro lo stesso MiB.
+
+Gli operatori aggiunti restano `candidate`, anche quando i test locali passano:
+non ereditano i manifest delle nove varianti storiche per somiglianza del nome.
+[GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md) registra i mirati
+osservati e il gate globale ancora in verifica. GUI, persistenza, nuove lingue,
+V6 esterno e dispositivi non sono promossi da questo incremento.
 
 ## Riferimenti
 

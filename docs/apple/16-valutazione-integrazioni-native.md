@@ -31,6 +31,11 @@ copiati in questo incremento. I benchmark richiedono una finestra senza misure o
 compilazioni concorrenti: la lettura degli altri lavori non equivale ad averli
 verificati o integrati.
 
+Aggiornamento d’integrazione: `c6fd88e` ha pubblicato il completamento KH
+GS-VER-233 ed è incorporato nel candidato finale. Il suo stato scientifico
+candidato rimane distinto dai gate software; le ulteriori ottimizzazioni e il
+lavoro GUI non committato restano nelle rispettive chat.
+
 ## Calcolo e hardware
 
 | Tecnologia o kernel | Valutazione concreta | Adozione e prova necessaria |
@@ -123,7 +128,7 @@ chat GUI; non viene attestata una sua correzione da questo lotto.
 
 | Tecnologia | Stato e scelta |
 | --- | --- |
-| Natural Language | Tagging italiano e provenienza sono in lavorazione nella chat KH. Non duplicare né sostituire automaticamente it-token-v1; capability detection non attesta accuratezza e non autorizza download impliciti |
+| Natural Language | Implementazione italiana e provenienza pubblicate con GS-VER-233; ulteriori ottimizzazioni restano nella chat KH. Non duplicare né sostituire automaticamente it-token-v1; capability detection non attesta accuratezza e non autorizza download impliciti |
 | PDFKit / Vision / VisionKit | Scelte per importazione/OCR nelle fasi previste: fixture, pagina/regione, lineage, qualità italiana e bounds prima di aggiungere importer |
 | Image I/O / Core Image / vImage | Condizionali alla pipeline immagini/OCR; non necessari per i testi già decodificati |
 | Core ML / Create ML / Core ML Tools | Modelli specializzati e strumenti offline, con provenienza e valutazione. Nessun pacchetto o runtime aggiuntivo obbligatorio |

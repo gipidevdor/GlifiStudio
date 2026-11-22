@@ -31,6 +31,8 @@ public enum GlifiMDSMethod: String, Codable, Sendable {
     case metric
     case kruskal
     case sammon
+    /// Nonmetric SMACOF with equal disparities for tied dissimilarities.
+    case ordinal
 }
 
 /// Coordinates and diagnostics of a bounded MDS run.
@@ -53,10 +55,14 @@ public struct GlifiMDSResult: Equatable, Sendable {
     public let seed: UInt64
 }
 
-/// A rectangular, non-toroidal batch self-organizing map.
+/// A non-toroidal batch self-organizing map with an explicit grid topology.
 public struct GlifiSOMResult: Equatable, Sendable {
     /// Versioned algorithm with Gaussian neighborhoods and Euclidean matching.
     public static let identifier = "SOM-batch-gaussian-rectangular-v1"
+    /// Grid geometry used for neighborhoods and topographic diagnostics.
+    public let topology: GlifiSOMTopology
+    /// Versioned geometry and update contract of this result.
+    public var methodIdentifier: String { topology.methodIdentifier }
     /// Grid width.
     public let width: Int
     /// Grid height.
@@ -105,8 +111,15 @@ public enum GlifiExploratoryAnalysis {
         seed: UInt64 = 0,
         maximumIterations: Int = 300,
         tolerance: Double = 1e-8,
-        limits: GlifiExploratoryLimits = .standard
+        limits: GlifiExploratoryLimits = .standard,
+        initialization: GlifiMDSInitialization = .classical
     ) throws -> GlifiMDSResult {
+        if method == .ordinal {
+            return try ordinalMultidimensionalScaling(
+                dissimilarities, dimensions: dimensions, seed: seed,
+                maximumIterations: maximumIterations, tolerance: tolerance, limits: limits,
+                initialization: initialization)
+        }
         try validateDissimilarities(dissimilarities, limits: limits)
         let count = dissimilarities.count
         guard dimensions > 0, dimensions < count, (1...10_000).contains(maximumIterations),
@@ -122,8 +135,16 @@ public enum GlifiExploratoryAnalysis {
             throw exploratoryFailure("exploratory.numeric-range")
         }
         let distances = dissimilarities.map { row in row.map { $0 / scale } }
-        try requireWork([count, count, count], limits)
-        let initial = try classicalMDS(distances, dimensions: dimensions)
+        if method == .classical || initialization == .classical {
+            try requireWork([count, count, count], limits)
+        }
+        let initial =
+            try method == .classical || initialization == .classical
+            ? classicalMDS(distances, dimensions: dimensions)
+            : (
+                coordinates: randomMDSCoordinates(count: count, dimensions: dimensions, seed: seed),
+                values: [Double]()
+            )
         if method == .classical {
             let coordinates = initial.coordinates.map { $0.map { $0 * scale } }
             let stress = rawStress(distances, coordinates: initial.coordinates) * scale * scale
@@ -254,7 +275,8 @@ public enum GlifiExploratoryAnalysis {
     public static func selfOrganizingMap(
         _ matrix: [[Double]], width: Int, height: Int, seed: UInt64,
         epochs: Int = 100, initialRadius: Double = 2, finalRadius: Double = 0.5,
-        tolerance: Double = 1e-8, limits: GlifiExploratoryLimits = .standard
+        tolerance: Double = 1e-8, limits: GlifiExploratoryLimits = .standard,
+        topology: GlifiSOMTopology = .rectangular
     ) throws -> GlifiSOMResult {
         let columns = try validateExploratoryMatrix(matrix, limits: limits)
         guard width > 0, height > 0, width <= 1_024, height <= 1_024,
@@ -267,6 +289,7 @@ public enum GlifiExploratoryAnalysis {
         else { throw exploratoryFailure("exploratory.invalid-parameters") }
         let units = width * height
         try requireWork([matrix.count, units, columns, epochs], limits)
+        try requireWork([units, units, columns, epochs], limits)
         guard units <= limits.maximumCells / columns else {
             throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
         }
@@ -293,10 +316,11 @@ public enum GlifiExploratoryAnalysis {
             var sums = Array(repeating: Array(repeating: 0.0, count: columns), count: units)
             var weights = Array(repeating: 0.0, count: units)
             for unit in 0..<units {
+                if unit.isMultiple(of: 32) { try Task.checkCancellation() }
                 for winner in occupied {
-                    let dx = Double(unit % width - winner % width)
-                    let dy = Double(unit / width - winner / width)
-                    let weight = exp(-(dx * dx + dy * dy) / (2 * radius * radius))
+                    let squaredGridDistance = topology.squaredDistance(
+                        unit, winner, width: width)
+                    let weight = exp(-squaredGridDistance / (2 * radius * radius))
                     guard weight > 1e-15 else { continue }
                     weights[unit] += weight * Double(populations[winner])
                     nativeAccumulate(groupSums[winner], scale: weight, into: &sums[unit])
@@ -318,7 +342,8 @@ public enum GlifiExploratoryAnalysis {
         var error = 0.0
         var topographic = 0
         var assignments: [Int] = []
-        for row in matrix {
+        for (rowIndex, row) in matrix.enumerated() {
+            if rowIndex.isMultiple(of: 256) { try Task.checkCancellation() }
             var winner = 0
             var second = 0
             var firstDistance = Double.infinity
@@ -338,15 +363,15 @@ public enum GlifiExploratoryAnalysis {
             assignments.append(winner)
             error += vDSP.distanceSquared(row, prototypes[winner]).squareRoot()
             if prototypes.count > 1 {
-                if abs(winner % width - second % width) + abs(winner / width - second / width) != 1
-                {
+                if !topology.areNeighbors(winner, second, width: width) {
                     topographic += 1
                 }
             }
         }
         guard error.isFinite else { throw exploratoryFailure("exploratory.numeric-overflow") }
         return GlifiSOMResult(
-            width: width, height: height, prototypes: prototypes, assignments: assignments,
+            topology: topology, width: width, height: height, prototypes: prototypes,
+            assignments: assignments,
             quantizationError: error / Double(matrix.count),
             topographicError: Double(topographic) / Double(matrix.count), epochs: completed,
             converged: converged, seed: seed
@@ -543,6 +568,8 @@ package func mdsObjective(
     let result: Double
     switch method {
     case .classical, .metric: result = numerator
+    case .ordinal:
+        throw exploratoryFailure("mds.ordinal-objective-requires-disparities")
     case .kruskal:
         guard denominator > 0 else {
             throw exploratoryFailure("mds.collapsed-configuration", .insufficientData)

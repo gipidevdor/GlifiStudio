@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-18 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.2.1 |
+| Versione | 1.3.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Italiano come baseline; soglie da approvare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -149,3 +149,29 @@ abbreviazioni, numeri e date italiane, punteggiatura, virgolette, Unicode compos
 nomi propri e code-switching. Le fixture sintetiche verificano contratti e offset;
 non sostituiscono un corpus gold rappresentativo: `it-gold-v0` misura oggi l'assenza di
 regressioni, non la qualità su lingua reale.
+
+## Pipeline italiana opzionale del completamento headless
+
+`GlifiLinguisticPipeline` e `GlifiStudioLinguisticPipeline` conservano il default
+italiano di superficie normalizzata e aggiungono, su richiesta esplicita,
+lemmi/POS di Apple Natural Language installato e stemming Snowball italiano
+3.1.0 originale Swift. Lo stem non viene presentato come lemma. I tag POS
+restano nel vocabolario grezzo Apple, senza conversioni UPOS o feature inventate.
+La pipeline non promuove altri servizi o lingue.
+
+Ogni chiamata possiede il proprio NLTagger; non viene richiesto il download di
+asset. La disponibilità delle scheme e un risultato non nullo non sono misure
+di accuracy. Unknown e notRequested sono distinti; lemma/POS sconosciuti
+richiesti dalla codifica fanno fallire la richiesta senza matrice parziale.
+La versione del modello Apple non esposta rimane assente con motivazione;
+OS/build, backend, adapter, segmentazione, configurazione, tagset e policy
+single-best non calibrata restano nel DTO. La fonte non è riscritta: gli
+intervalli half-open UTF-8 sono ordinati e verificati sulla stessa stringa.
+
+Limiti standard: 1 MiB di testo prima della preparazione, 100.000 token,
+4.096 byte per token/annotazione e 16 MiB aggregati nei campi UTF-8 in output.
+La codifica aggregata limita anche unità (10.000) e input complessivo (1 MiB).
+I test di regole Snowball, offset e failure verificano l’implementazione; non
+sostituiscono il corpus gold e le soglie di qualità sopra definite. Stato,
+prove locali e verifiche ancora aperte sono separati in
+[GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md).

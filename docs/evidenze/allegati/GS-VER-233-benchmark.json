@@ -1,0 +1,1305 @@
+{
+  "$comment": "SPDX-License-Identifier: BSD-3-Clause",
+  "date": "2026-11-22",
+  "scope": "Release complete-output verification outside measurement; descriptive local observations, no energy/device/release threshold claim",
+  "reports": [
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:64e0514d548881c0fc80c4fe64d0b099c512211f666b81cbf780d42eeb3fdad1",
+      "generator": "SplitMix64 seed231, 2000 vectors by64, full scalar dot products",
+      "identifier": "kh-completion-lda-dot-scalar-2000x64",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 8.675e-05,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 8.25e-05,
+      "minimumSeconds": 8.1958e-05,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:3329b6c5db41a8ec034a32ad4f5b6a7fffa9db993579776e289d016214e5afaf",
+      "samplesSeconds": [
+        8.675e-05,
+        8.2209e-05,
+        8.1958e-05,
+        8.2583e-05,
+        8.2375e-05,
+        8.25e-05,
+        8.2583e-05
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:64e0514d548881c0fc80c4fe64d0b099c512211f666b81cbf780d42eeb3fdad1",
+      "generator": "Same vectors and order; Apple vDSP dot products, full output",
+      "identifier": "kh-completion-lda-dot-vDSP-2000x64",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 3.1666e-05,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 3.0834e-05,
+      "minimumSeconds": 3.0333e-05,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:22da25290de426a7b02b9280c9039e6030a154ea9c9fdd466bbe16fa2a04dae6",
+      "samplesSeconds": [
+        3.0333e-05,
+        3.1333e-05,
+        3.0458e-05,
+        3.0834e-05,
+        3.1666e-05,
+        3.1334e-05,
+        3.0542e-05
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:b6dcb45b7156138f8590ca97a34c5b5d2663c8bb86cff1e27776643cf9c17917",
+      "generator": "32 synthetic documents,32 tokens,16 terms,K2/3,2folds,seed231,sweeps12",
+      "identifier": "kh-completion-lda-selection-32x32-k2-3-folds2",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.002958583,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.002694417,
+      "minimumSeconds": 0.0025935,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:7e5bae3154db6bddb798c3de5a4bc8c83204a2ac48f0f3f64b34a7ea721925a7",
+      "samplesSeconds": [
+        0.002707375,
+        0.002958583,
+        0.002694417,
+        0.002653458,
+        0.002602458,
+        0.002723333,
+        0.0025935
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release; 21 sequential pairs; alternating scalar/SIMD2 execution order",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:734f497a3fbe039987e1731bc6e09fabc28272749485b6461e2c4b06addec8e8",
+      "generator": "128 nodes; ring and stride-seven edges; fixed golden-angle positions; 30 FR iterations; exact complete scalar reference",
+      "identifier": "kh-fr-paired-128",
+      "loadAverageAtEnd": [
+        4.91943359375,
+        5.185546875,
+        13.55615234375
+      ],
+      "loadAverageAtStart": [
+        4.91943359375,
+        5.185546875,
+        13.55615234375
+      ],
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumPairedSpeedup": 1.04931777587476,
+      "measurementScope": "Complete layout including graph projection and array conversions; fixture, scalar expected output, full equality, SHA-256 and report encoding outside timer. Warm process; no cache flush. Sequential pairs are descriptive, not independent statistical trials or a release threshold.",
+      "medianPairedSpeedup": 1.041109130461749,
+      "minimumPairedSpeedup": 1.0302371625332036,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "pairs": [
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 1,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1831417,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474313072416
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1750834,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474315161666
+          },
+          "speedup": 1.0460254941359375
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 2,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1811083,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474319165500
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1740292,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474317170291
+          },
+          "speedup": 1.040677656393295
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 3,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1817583,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474321232833
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1739541,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474323306000
+          },
+          "speedup": 1.0448635588353479
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 4,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1814209,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474327307916
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1747542,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474325300041
+          },
+          "speedup": 1.0381490115831264
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 5,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1812292,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474329379583
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1738500,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474331451125
+          },
+          "speedup": 1.0424457865976418
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 6,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1807916,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474335432250
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1734125,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474333445250
+          },
+          "speedup": 1.0425522958264255
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 7,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1812875,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474337492708
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1741292,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474339555958
+          },
+          "speedup": 1.041109130461749
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 8,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1804792,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474343539583
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1738209,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474341550541
+          },
+          "speedup": 1.0383055202222518
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 9,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1816792,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474345600166
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1738417,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474347666916
+          },
+          "speedup": 1.0450841196329765
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 10,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1803875,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474351644291
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1738917,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474349656041
+          },
+          "speedup": 1.0373554344456923
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 11,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1799833,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474353698625
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1739459,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474355757541
+          },
+          "speedup": 1.034708492698017
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 12,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1804500,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474359715250
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1719708,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474357745875
+          },
+          "speedup": 1.0493060449797291
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 13,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1797292,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474361770416
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1744542,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474363818583
+          },
+          "speedup": 1.0302371625332036
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 14,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1805875,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474367798250
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1732125,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474365814166
+          },
+          "speedup": 1.0425777585335931
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 15,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1796791,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474369854375
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1741792,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474371901166
+          },
+          "speedup": 1.031576100935129
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 16,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1808125,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474375886750
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1744542,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474373892791
+          },
+          "speedup": 1.0364468152672737
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 17,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1815583,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474377945208
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1738250,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474380014041
+          },
+          "speedup": 1.0444889975550122
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 18,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1814708,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474383981625
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1729417,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474382002708
+          },
+          "speedup": 1.04931777587476
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 19,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1798292,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474386047708
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1728167,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474388097666
+          },
+          "speedup": 1.0405776756528737
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 20,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1805625,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474392062833
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1733500,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474390078833
+          },
+          "speedup": 1.0416065762907414
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 21,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 1802209,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474394119041
+          },
+          "simd2": {
+            "elapsedNanoseconds": 1738291,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474396172375
+          },
+          "speedup": 1.0367705982485096
+        }
+      ],
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 44,
+      "resultDigest": "sha256:8b3fc3cbf4ecb8f56a6c7a1d9d9990c471b64c2ad4c0490051c9b7a7a3384758",
+      "scalarSymmetricFasterPairs": 0,
+      "scalarSymmetricMedianSeconds": 0.001807916,
+      "simd2FasterPairs": 21,
+      "simd2MedianSeconds": 0.0017385,
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "tiedPairs": 0,
+      "warmups": [
+        {
+          "elapsedNanoseconds": 1850375,
+          "implementation": "scalarSymmetric",
+          "startUptimeNanoseconds": 495474308923875
+        },
+        {
+          "elapsedNanoseconds": 1755958,
+          "implementation": "simd2",
+          "startUptimeNanoseconds": 495474311053250
+        }
+      ]
+    },
+    {
+      "configuration": "SwiftPM Release; 21 sequential pairs; alternating scalar/SIMD2 execution order",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:89fb615d75faf30bb4be1946c4c52d494e58517a13d4c8201715bd23ef640f38",
+      "generator": "64 nodes; ring and stride-seven edges; fixed golden-angle positions; 20 FR iterations; exact complete scalar reference",
+      "identifier": "kh-fr-paired-64",
+      "loadAverageAtEnd": [
+        4.91943359375,
+        5.185546875,
+        13.55615234375
+      ],
+      "loadAverageAtStart": [
+        4.91943359375,
+        5.185546875,
+        13.55615234375
+      ],
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumPairedSpeedup": 1.2598037917544387,
+      "measurementScope": "Complete layout including graph projection and array conversions; fixture, scalar expected output, full equality, SHA-256 and report encoding outside timer. Warm process; no cache flush. Sequential pairs are descriptive, not independent statistical trials or a release threshold.",
+      "medianPairedSpeedup": 1.0460684398044577,
+      "minimumPairedSpeedup": 0.9677157988727577,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "pairs": [
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 1,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 410125,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474276120250
+          },
+          "simd2": {
+            "elapsedNanoseconds": 392958,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474276686083
+          },
+          "speedup": 1.0436866026394678
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 2,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 407125,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474277785958
+          },
+          "simd2": {
+            "elapsedNanoseconds": 390375,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474277240375
+          },
+          "speedup": 1.0429074607748958
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 3,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 408875,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474278345833
+          },
+          "simd2": {
+            "elapsedNanoseconds": 387500,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474278906416
+          },
+          "speedup": 1.0551612903225807
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 4,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 407125,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474279995666
+          },
+          "simd2": {
+            "elapsedNanoseconds": 391791,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474279448125
+          },
+          "speedup": 1.0391382139967482
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 5,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 406042,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474280560916
+          },
+          "simd2": {
+            "elapsedNanoseconds": 390416,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474281121875
+          },
+          "speedup": 1.0400239744272777
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 6,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 405458,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474282203375
+          },
+          "simd2": {
+            "elapsedNanoseconds": 385833,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474281665833
+          },
+          "speedup": 1.050863974828488
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 7,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 406333,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474282758708
+          },
+          "simd2": {
+            "elapsedNanoseconds": 387708,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474283314000
+          },
+          "speedup": 1.0480387301783816
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 8,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 411500,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474284389250
+          },
+          "simd2": {
+            "elapsedNanoseconds": 387334,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474283851416
+          },
+          "speedup": 1.0623905982950115
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 9,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 523291,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474284959500
+          },
+          "simd2": {
+            "elapsedNanoseconds": 415375,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474285690000
+          },
+          "speedup": 1.2598037917544387
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 10,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 473750,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474286911875
+          },
+          "simd2": {
+            "elapsedNanoseconds": 432083,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474286313083
+          },
+          "speedup": 1.0964328612789673
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 11,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 433542,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474287585083
+          },
+          "simd2": {
+            "elapsedNanoseconds": 404000,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474288182708
+          },
+          "speedup": 1.0731237623762375
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 12,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 409667,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474289389291
+          },
+          "simd2": {
+            "elapsedNanoseconds": 423334,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474288791416
+          },
+          "speedup": 0.9677157988727577
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 13,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 407708,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474289957500
+          },
+          "simd2": {
+            "elapsedNanoseconds": 388458,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474290519875
+          },
+          "speedup": 1.049554906836775
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 14,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 403416,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474291600875
+          },
+          "simd2": {
+            "elapsedNanoseconds": 386333,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474291061625
+          },
+          "speedup": 1.0442183297828558
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 15,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 402042,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474292156166
+          },
+          "simd2": {
+            "elapsedNanoseconds": 389875,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474292711000
+          },
+          "speedup": 1.0312074382815004
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 16,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 404334,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474293791791
+          },
+          "simd2": {
+            "elapsedNanoseconds": 385834,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474293253791
+          },
+          "speedup": 1.0479480812992117
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 17,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 399500,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474294350750
+          },
+          "simd2": {
+            "elapsedNanoseconds": 399333,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474294900875
+          },
+          "speedup": 1.0004181973440713
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 18,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 402917,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474295996541
+          },
+          "simd2": {
+            "elapsedNanoseconds": 388000,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474295457625
+          },
+          "speedup": 1.0384458762886597
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 19,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 404000,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474296553250
+          },
+          "simd2": {
+            "elapsedNanoseconds": 386208,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474297107125
+          },
+          "speedup": 1.0460684398044577
+        },
+        {
+          "firstImplementation": "simd2",
+          "index": 20,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 404500,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474298179041
+          },
+          "simd2": {
+            "elapsedNanoseconds": 385500,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474297643666
+          },
+          "speedup": 1.0492866407263295
+        },
+        {
+          "firstImplementation": "scalarSymmetric",
+          "index": 21,
+          "scalarSymmetric": {
+            "elapsedNanoseconds": 400792,
+            "implementation": "scalarSymmetric",
+            "startUptimeNanoseconds": 495474298735958
+          },
+          "simd2": {
+            "elapsedNanoseconds": 385708,
+            "implementation": "simd2",
+            "startUptimeNanoseconds": 495474299287125
+          },
+          "speedup": 1.0391073039708796
+        }
+      ],
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 44,
+      "resultDigest": "sha256:fb55500fda25d6df1e26c5d4fbc4edce9c9e2d30b990190e035094f9870ce3a2",
+      "scalarSymmetricFasterPairs": 1,
+      "scalarSymmetricMedianSeconds": 0.000406333,
+      "simd2FasterPairs": 20,
+      "simd2MedianSeconds": 0.000388458,
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "tiedPairs": 0,
+      "warmups": [
+        {
+          "elapsedNanoseconds": 431959,
+          "implementation": "scalarSymmetric",
+          "startUptimeNanoseconds": 495474274950291
+        },
+        {
+          "elapsedNanoseconds": 417500,
+          "implementation": "simd2",
+          "startUptimeNanoseconds": 495474275545083
+        }
+      ]
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:734f497a3fbe039987e1731bc6e09fabc28272749485b6461e2c4b06addec8e8",
+      "generator": "128 nodes; ring and stride-seven edges; fixed golden-angle positions; 30 FR iterations; exact complete scalar reference",
+      "identifier": "kh-fr-product-simd2-128",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.002093709,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.00203675,
+      "minimumSeconds": 0.001771958,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:8b3fc3cbf4ecb8f56a6c7a1d9d9990c471b64c2ad4c0490051c9b7a7a3384758",
+      "samplesSeconds": [
+        0.002093709,
+        0.002082459,
+        0.00204875,
+        0.00203675,
+        0.002022,
+        0.001951875,
+        0.001771958
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:89fb615d75faf30bb4be1946c4c52d494e58517a13d4c8201715bd23ef640f38",
+      "generator": "64 nodes; ring and stride-seven edges; fixed golden-angle positions; 20 FR iterations; exact complete scalar reference",
+      "identifier": "kh-fr-product-simd2-64",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.000386042,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.000379875,
+      "minimumSeconds": 0.000377417,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:fb55500fda25d6df1e26c5d4fbc4edce9c9e2d30b990190e035094f9870ce3a2",
+      "samplesSeconds": [
+        0.000386042,
+        0.000381833,
+        0.000380083,
+        0.000379875,
+        0.000377417,
+        0.000379166,
+        0.000379334
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:734f497a3fbe039987e1731bc6e09fabc28272749485b6461e2c4b06addec8e8",
+      "generator": "128 nodes; ring and stride-seven edges; fixed golden-angle positions; 30 FR iterations; exact complete scalar reference",
+      "identifier": "kh-fr-scalar-128",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.004128834,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.004069625,
+      "minimumSeconds": 0.002327542,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:8b3fc3cbf4ecb8f56a6c7a1d9d9990c471b64c2ad4c0490051c9b7a7a3384758",
+      "samplesSeconds": [
+        0.002327542,
+        0.004128834,
+        0.004074333,
+        0.004107083,
+        0.004069625,
+        0.003471625,
+        0.002386917
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:89fb615d75faf30bb4be1946c4c52d494e58517a13d4c8201715bd23ef640f38",
+      "generator": "64 nodes; ring and stride-seven edges; fixed golden-angle positions; 20 FR iterations; exact complete scalar reference",
+      "identifier": "kh-fr-scalar-64",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.000521458,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.000502041,
+      "minimumSeconds": 0.000498416,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:fb55500fda25d6df1e26c5d4fbc4edce9c9e2d30b990190e035094f9870ce3a2",
+      "samplesSeconds": [
+        0.000521458,
+        0.000503083,
+        0.000501375,
+        0.000499917,
+        0.000502041,
+        0.000502167,
+        0.000498416
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:734f497a3fbe039987e1731bc6e09fabc28272749485b6461e2c4b06addec8e8",
+      "generator": "128 nodes; ring and stride-seven edges; fixed golden-angle positions; 30 FR iterations; exact complete scalar reference",
+      "identifier": "kh-fr-simd2-128",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.001953084,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.001745042,
+      "minimumSeconds": 0.001733709,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:8b3fc3cbf4ecb8f56a6c7a1d9d9990c471b64c2ad4c0490051c9b7a7a3384758",
+      "samplesSeconds": [
+        0.001757458,
+        0.001745042,
+        0.001739125,
+        0.00174325,
+        0.001733709,
+        0.001800625,
+        0.001953084
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:89fb615d75faf30bb4be1946c4c52d494e58517a13d4c8201715bd23ef640f38",
+      "generator": "64 nodes; ring and stride-seven edges; fixed golden-angle positions; 20 FR iterations; exact complete scalar reference",
+      "identifier": "kh-fr-simd2-64",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.000570458,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.000447333,
+      "minimumSeconds": 0.000441792,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:fb55500fda25d6df1e26c5d4fbc4edce9c9e2d30b990190e035094f9870ce3a2",
+      "samplesSeconds": [
+        0.000453208,
+        0.000445208,
+        0.000447333,
+        0.0004625,
+        0.000570458,
+        0.000445833,
+        0.000441792
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:734f497a3fbe039987e1731bc6e09fabc28272749485b6461e2c4b06addec8e8",
+      "generator": "128 nodes; ring and stride-seven edges; fixed golden-angle positions; 30 FR iterations; exact complete scalar reference",
+      "identifier": "kh-fr-symmetric-128",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.002699417,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.002221791,
+      "minimumSeconds": 0.002111167,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:8b3fc3cbf4ecb8f56a6c7a1d9d9990c471b64c2ad4c0490051c9b7a7a3384758",
+      "samplesSeconds": [
+        0.00255975,
+        0.002699417,
+        0.002537083,
+        0.002221791,
+        0.002157666,
+        0.002111167,
+        0.002115042
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:89fb615d75faf30bb4be1946c4c52d494e58517a13d4c8201715bd23ef640f38",
+      "generator": "64 nodes; ring and stride-seven edges; fixed golden-angle positions; 20 FR iterations; exact complete scalar reference",
+      "identifier": "kh-fr-symmetric-64",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.000412292,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.000399875,
+      "minimumSeconds": 0.000396875,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:fb55500fda25d6df1e26c5d4fbc4edce9c9e2d30b990190e035094f9870ce3a2",
+      "samplesSeconds": [
+        0.000412292,
+        0.000401958,
+        0.000399167,
+        0.000400584,
+        0.000396875,
+        0.0003985,
+        0.000399875
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:a2d070a915cabfbecbf2d1a686dead982e876eb99f6587f4f820c7339e003af5",
+      "generator": "2,048 repetitions of fixed synthetic Italian text; 8,192 lexical tokens; full pipeline including segmentation, lexical views and metadata",
+      "identifier": "linguistic-italian-apple-lemma-pos-8192",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.329562291,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.29222725,
+      "minimumSeconds": 0.243766458,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:53e200475f071fd5ba7d03a0f4c68dc11a582a24800c7e99c85adaa4ad1d0bf0",
+      "samplesSeconds": [
+        0.29222725,
+        0.329562291,
+        0.297617458,
+        0.276230709,
+        0.27892525,
+        0.325953958,
+        0.243766458
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:a2d070a915cabfbecbf2d1a686dead982e876eb99f6587f4f820c7339e003af5",
+      "generator": "2,048 repetitions of fixed synthetic Italian text; 8,192 lexical tokens; full pipeline including segmentation, lexical views and metadata",
+      "identifier": "linguistic-italian-snowball-8192",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.049624166,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.047081708,
+      "minimumSeconds": 0.0400245,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:c5b4527a6293dead0e3f0ce9ccf0dbc5b84709f09e55b373f94336f949d4e3bd",
+      "samplesSeconds": [
+        0.043878083,
+        0.048033041,
+        0.045947042,
+        0.048932416,
+        0.047081708,
+        0.049624166,
+        0.0400245
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:417b02265ecb3e73d7cdc981bfaf8a71f7e7aadb9a6f3c8424c70ce1af154403",
+      "generator": "32,768 synthetic words cycling eight independently checked Snowball 3.1.0 cases",
+      "identifier": "linguistic-italian-stemming-32768",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.043781584,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.04036225,
+      "minimumSeconds": 0.040026792,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:c47fea83780047b857a08fef9c3ce967be3558d7fc033c50002a6d3bbd16366f",
+      "samplesSeconds": [
+        0.040026792,
+        0.04036225,
+        0.040324375,
+        0.043314792,
+        0.043781584,
+        0.040334959,
+        0.042776958
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:a2d070a915cabfbecbf2d1a686dead982e876eb99f6587f4f820c7339e003af5",
+      "generator": "2,048 repetitions of fixed synthetic Italian text; 8,192 lexical tokens; full pipeline including segmentation, lexical views and metadata",
+      "identifier": "linguistic-italian-surface-8192",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.040708625,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.032938416,
+      "minimumSeconds": 0.02878325,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:839565d9d2038575f675d1b38908c2c8ecddb2a63e82da7f9dee3c0d1e4ffaa5",
+      "samplesSeconds": [
+        0.034258667,
+        0.040708625,
+        0.030543084,
+        0.032938416,
+        0.031513209,
+        0.02878325,
+        0.0358145
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:8121f9b928acc85ff1860628a4da23bd06993e1a06a51d22a0dbaa9de98b5def",
+      "generator": "synthetic sin(row*(column+1)*0.037), rows=1000, columns=8, grid=8x8, epochs=20, seed=27",
+      "identifier": "kh-completion-hexagonal-som-1000x8-8x8",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.0070105,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.006646334,
+      "minimumSeconds": 0.00662625,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:b0c3a70661c64a06aab1b9169d1a490571e2b2e4e0bf4ccc377e42fca5c50dbf",
+      "samplesSeconds": [
+        0.006781292,
+        0.006636375,
+        0.00662625,
+        0.006646334,
+        0.0070105,
+        0.006913792,
+        0.006635917
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:79eee17e40f8b6ba66c75b843e209163618097fe5d0946549c738376a7a1607c",
+      "generator": "synthetic circular chord ranks, n=32, dimensions=2, maxIterations=100, random seed=200",
+      "identifier": "kh-completion-ordinal-32",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.003347125,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.002886625,
+      "minimumSeconds": 0.002870916,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:16215f0f32f5f9f1499f856153701609feed0d050bcebf3a27cbc255b03c6eba",
+      "samplesSeconds": [
+        0.003347125,
+        0.002905791,
+        0.003009333,
+        0.002870916,
+        0.002886625,
+        0.002883583,
+        0.00288375
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:9277eeb05fed88d8f28c2d0a01a5b0db20767ad21a257dd128435d38c4977b25",
+      "generator": "synthetic circular chord ranks, n=64, dimensions=2, maxIterations=100, random seed=200",
+      "identifier": "kh-completion-ordinal-64",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.0094935,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.009348583,
+      "minimumSeconds": 0.009178709,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:2c6a40f98c17a82547359bd0aca87b95bc805e85b7ba8b4f6b0c57c81b0b08ef",
+      "samplesSeconds": [
+        0.009410542,
+        0.009301708,
+        0.009178709,
+        0.0094935,
+        0.009399333,
+        0.009343375,
+        0.009348583
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    },
+    {
+      "configuration": "SwiftPM Release test executable; one workload per measurement",
+      "device": "Mac16,3",
+      "fixtureDigest": "sha256:50d8e7cff7944811660f2e4399f6a4dc5763600ebea2e497e26a38f573c77abf",
+      "generator": "synthetic circular chord ranks, n=24, dimensions=2, starts=4, maxIterations=100, first seed=700",
+      "identifier": "kh-completion-ordinal-search-24x4",
+      "logicalProcessorCount": 10,
+      "lowPowerModeAtEnd": true,
+      "lowPowerModeAtStart": true,
+      "maximumSeconds": 0.006752375,
+      "measurementScope": "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim",
+      "medianSeconds": 0.006607542,
+      "minimumSeconds": 0.006486459,
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "physicalMemoryBytes": 17179869184,
+      "resultChecks": 8,
+      "resultDigest": "sha256:5ddb51d715b0b0c3cf0008b80174ce573a83dbe24badbc0f908533547d9b4557",
+      "samplesSeconds": [
+        0.00658825,
+        0.006607542,
+        0.006752375,
+        0.00652475,
+        0.006486459,
+        0.00667775,
+        0.006727875
+      ],
+      "thermalStateAtEnd": "nominal",
+      "thermalStateAtStart": "nominal",
+      "warmupRuns": 1
+    }
+  ]
+}
