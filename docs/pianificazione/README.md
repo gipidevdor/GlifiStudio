@@ -29,6 +29,8 @@ preservando i confini del lavoro già in corso nell'altra chat.
 
 ## Indice
 
+- [GS-DOR-302 — Robustezza trasversale della baseline](dor-robustezza-trasversale.md) — Ready; query, ingressi CLI, chiusura macOS e proprietà delle cache
+
 - [GS-DOR-173 — Layout e visite dei kernel analitici](dor-layout-e-visite-analitiche.md) — Ready
 
 - [GS-DOR-275 — Parità continua fra GlifiKit e CLI](dor-parita-continua-kit-cli.md) — Ready; trasporto condiviso, parametri completi e inventario pubblico derivato dal compilatore
@@ -150,3 +152,5 @@ preservando i confini del lavoro già in corso nell'altra chat.
 - [GS-DOR-305 — Riverifica e rifinitura dei profili KH](dor-rifinitura-kh.md) — Ready
 
 - [GS-DOR-284 — Regia del piano e input numerico](dor-regia-del-piano-e-input-numerico.md) — Ready; dispatch del passo e grammatica editor condivisi
+
+- [GS-DOR-304 — Componenti e campi nativi nei laboratori macOS](dor-hig-laboratori-macos.md) — Ready; implementazione, gate e preflight macOS superati sul checkpoint 9c9e0098; audit interattivi aperti

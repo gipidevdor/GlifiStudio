@@ -14,6 +14,17 @@
 
 La matrice collega le fonti iniziali alle necessità degli stakeholder, ai requisiti software, alle parti dell'architettura e alle evidenze di verifica pianificate. Gli identificatori fanno riferimento a [Requisiti](requisiti.md) e [Architettura](architettura.md).
 
+## Componenti e campi nativi dei laboratori macOS
+
+| Requisiti e clausola | Contratto circoscritto | Verifica nel perimetro dichiarato |
+| --- | --- | --- |
+| RQ-012, RQ-047, RQ-063; GS-APL-002/003; CMP-304 | Tab native nei sette rami compatti; editor Valutazione con etichette permanenti, disposizione verticale e contesto delle azioni ripetute; binding, identità, dati e API invariati | [GS-DOR-304](pianificazione/dor-hig-laboratori-macos.md) Ready; [GS-VER-304](evidenze/GS-VER-304-hig-laboratori-macos.md): gate e preflight macOS superati sul checkpoint 9c9e0098, 771 Core/Kit e 113 definizioni/345 esecuzioni native; TV-017/048/058/076 soltanto per la frazione strutturale |
+
+CMP-304 resta `implemented`. Review differenziale, localizzazione,
+controlli statici, suite native esistenti e profilo macOS non chiudono RQ-012
+o RQ-030: prove visuali, tecnologie assistive, Full Keyboard Access e G4 restano
+aperte. Nessuna dichiarazione di conformità HIG globale deriva dal lotto.
+
 ## Parità continua fra GlifiKit e CLI
 
 RQ-060 e RQ-063 sono attuati da [ADR-0036](adr/0036-parita-continua-kit-cli.md),
@@ -649,3 +660,15 @@ esecuzione del passo. CMP-285 collega RQ-007/060/063 alla grammatica decimale
 comune dei due editor Kit, con errori distinti e contratti di trasporto conservati.
 [GS-VER-284](evidenze/GS-VER-284-regia-del-piano-e-input-numerico.md) registra
 compatibilità, verifiche macOS e limiti, senza promozione della maturità scientifica.
+
+## Robustezza trasversale della baseline (GS-DOR-302)
+
+| Requisiti | Correzione e verifica | Evidenza |
+| --- | --- | --- |
+| RF-015, RF-016, RF-018, RQ-060 | Overflow KWIC/slop, completezza degli operandi, ordine canonico e budget della singola valutazione Core; enumerazione indipendente e misure Release | GS-VER-302; CMP-302 |
+| RQ-058, RQ-063 | Ammissione delle richieste CLI su descrittore, categorie/retry e parità; regressioni di processo e gate compilato | GS-VER-302; CMP-275; CMP-302 |
+| RF-001, RQ-063 | Cancellazione, attesa e chiusura della sessione macOS; regressioni lifecycle e Thread Sanitizer | GS-VER-302; CMP-302 |
+| RQ-063 | Lock e proprietà delle cache, conservazione di directory sconosciute o attività interrotte; regressioni isolate degli strumenti | GS-VER-302; CMP-302 |
+
+Questa revisione verifica le correzioni esercitate; non promuove criteri
+assistivi, scientifici, energetici o di rilascio ancora aperti.

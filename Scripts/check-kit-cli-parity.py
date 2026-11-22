@@ -445,6 +445,78 @@ def check_explicit_imports(binary: Path, directory: Path) -> None:
     print(f"Import: {len(profiles)} explicit formats on .data sources preserve the complete native profile")
 
 
+def check_legacy_request_file_admission(binary: Path) -> None:
+    """Every project request reader must reject special files before opening the project."""
+    checks = 0
+    with tempfile.TemporaryDirectory(prefix="GlifiLegacyCLIAdmission-") as temporary:
+        root = Path(temporary)
+        project = root / "secret-canary-project.glifi"
+        destination = root / "secret-canary-export"
+        target = root / "secret-canary-request.json"
+        target.write_bytes(b"{}")
+        link = root / "secret-canary-link.json"
+        link.symlink_to(target)
+        fifo = root / "secret-canary-pipe.json"
+        os.mkfifo(fifo)
+        routes = [
+            (["plan", str(project)], [], "plan", "plan", True),
+            (["execute", str(project)], [], "execute", "executePlan", True),
+            (["visualize", str(project)], [], "visualize", "executePlan", True),
+            (["investigation", "create", str(project)], [], "investigation.create", "investigate", False),
+            (["investigation", "select", str(project)], [], "investigation.select", "investigate", False),
+            (["export", str(project)], ["--output", str(destination)], "export", "export", False),
+            (["qualitative", "append", str(project)], [], "qualitative.append", "investigate", False),
+            (["agreement", str(project)], [], "agreement", "analyze", False),
+        ]
+        for arguments, suffix, command, operation, planner in routes:
+            def rejects(path: Path, code: str, category: str, status: int) -> None:
+                nonlocal checks
+                completed = subprocess.run(
+                    [str(binary), "--format", "json", *arguments, "--request", str(path), *suffix],
+                    capture_output=True, text=True, timeout=10, check=False,
+                )
+                if completed.returncode != status or completed.stdout:
+                    raise ValueError(f"Wrong request-file streams/status for {command}: {completed.returncode}")
+                envelope = json.loads(completed.stderr)
+                failure = envelope["failure"]
+                retry = {
+                    "invalidInput": "afterCorrection", "insufficientResources": "afterConditionsChange",
+                    "authorizationDenied": "afterUserAction",
+                }[category]
+                if (envelope["cliProtocolVersion"] != 1 or envelope["command"] != command
+                        or envelope["outcome"] != "failed" or failure["code"] != code
+                        or failure["category"] != category or failure["operation"] != operation
+                        or failure["retryDisposition"] != retry
+                        or failure["arguments"] != [] or failure["retainedState"] != "lastCommittedGeneration"):
+                    raise ValueError(f"Wrong request-file failure for {command}: {failure['code']}")
+                if "secret-canary" in completed.stderr or str(root) in completed.stderr:
+                    raise ValueError(f"Private request path leaked from {command}")
+                if project.exists() or destination.exists():
+                    raise ValueError(f"Rejected request created a project/export destination in {command}")
+                checks += 1
+
+            invalid = "planner.request-invalid" if planner else "request.invalid"
+            not_regular = "planner.request-not-regular-file" if planner else "request.invalid-file"
+            oversized = "planner.request-too-large" if planner else "request.too-large"
+            unreadable = "planner.request-unreadable" if planner else "request.invalid"
+            target.write_bytes(b"{}")
+            rejects(target, invalid, "invalidInput", 3)
+            for special in (link, fifo, root):
+                rejects(special, not_regular, "invalidInput", 3)
+            rejects(root / "missing.json", unreadable, "invalidInput", 3)
+            target.write_bytes(b" " * (1_048_576 - 2) + b"{}")
+            rejects(target, invalid, "invalidInput", 3)
+            target.write_bytes(b" " * (1_048_576 - 1) + b"{}")
+            rejects(target, oversized, "insufficientResources", 7)
+            if os.geteuid() != 0:
+                target.chmod(0)
+                try:
+                    rejects(target, unreadable, "authorizationDenied", 6)
+                finally:
+                    target.chmod(0o600)
+    print(f"Project CLI: {checks} bounded request-file, permission, privacy and pre-mutation rejection checks")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary", type=Path)
@@ -465,6 +537,7 @@ def main() -> int:
         check_fixtures(args.binary.resolve(), args.parity_directory, families, symbols)
         check_rejections(args.binary.resolve(), args.parity_directory)
         check_explicit_imports(args.binary.resolve(), args.parity_directory)
+        check_legacy_request_file_admission(args.binary.resolve())
     except (OSError, ValueError, KeyError, TypeError, subprocess.TimeoutExpired) as error:
         print(f"Kit/CLI parity failed: {error}", file=sys.stderr)
         return 1

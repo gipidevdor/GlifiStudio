@@ -1,0 +1,21 @@
+{
+  "python310GrammarChecks": [
+    "Scripts/check-build-cache.py",
+    "Scripts/check-kit-cli-parity.py",
+    "Scripts/check-query-ast.py"
+  ],
+  "zshSyntaxChecks": [
+    "Scripts/build-cache.sh",
+    "Scripts/clean-build-cache.sh",
+    "Scripts/check-app-store-packaging.sh",
+    "Scripts/check-recovery-kill.sh",
+    "Scripts/test.sh",
+    "Scripts/verify.sh"
+  ],
+  "packagingWithoutTMPDIR": {
+    "expectedStubExit": 77,
+    "observedExit": 77,
+    "ownedCacheRemoved": true
+  },
+  "passed": true
+}

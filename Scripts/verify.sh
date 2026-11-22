@@ -29,13 +29,13 @@ trap cleanup EXIT
 
 cd "$project_directory"
 
-glifi_sweep_stale_temporaries "$temporary_root"
-glifi_require_free_space "$temporary_root"
-glifi_prepare_build_cache "$build_cache_directory"
+glifi_require_free_space "$temporary_root" || exit 1
+glifi_prepare_build_cache "$build_cache_directory" || exit 1
 
 Scripts/check-repository.py
 Scripts/check-secrets.py
 Scripts/check-toolchain.sh
+python3 Scripts/check-build-cache.py
 Scripts/check-github-config.py
 Scripts/check-naming.py
 Scripts/check-docs.py

@@ -115,18 +115,20 @@ struct StudioTextAnalysisView: View {
     private func compactWorkspace(
         _ sources: [GlifiStudioProjectSource], sourceLookup: StudioSourceLookup
     ) -> some View {
-        VStack(spacing: 0) {
-            Picker("text-analysis.workspace", selection: $workspace) {
-                Text("text-analysis.workspace.configuration").tag(StudioTextWorkspace.configuration)
-                Text("text-analysis.workspace.results").tag(StudioTextWorkspace.results)
+        TabView(selection: $workspace) {
+            Tab(value: StudioTextWorkspace.configuration) {
+                configurationPane(sources)
+            } label: {
+                Text("text-analysis.workspace.configuration")
             }
-            .pickerStyle(.segmented)
-            .padding()
-            switch workspace {
-            case .configuration: configurationPane(sources)
-            case .results: resultsPane(sourceLookup: sourceLookup)
+            Tab(value: StudioTextWorkspace.results) {
+                resultsPane(sourceLookup: sourceLookup)
+            } label: {
+                Text("text-analysis.workspace.results")
             }
         }
+        .tabViewStyle(.grouped)
+        .padding()
     }
 
     private func configurationPane(_ sources: [GlifiStudioProjectSource]) -> some View {

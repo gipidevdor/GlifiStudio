@@ -16,6 +16,7 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
+- [GS-VER-302 — Robustezza trasversale della baseline](GS-VER-302-robustezza-trasversale.md) — Superato macOS: query esatte e bounded, 19 prove ASan, 117 TSan e preflight senza firma
 - [GS-VER-301 — Integrazione della baseline e sincronizzazione Git](GS-VER-301-integrazione-main.md) — Superato localmente sul proprio snapshot; lavoro KH successivo in GS-VER-300
 
 - [GS-VER-173 — Layout e visite dei kernel analitici](GS-VER-173-layout-e-visite-analitiche.md) — Superato: 18 confronti identici, 544 test e gate completo; costi residui dichiarati
@@ -290,3 +291,5 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 - [GS-VER-305 — Riverifica e rifinitura dei profili KH](GS-VER-305-rifinitura-kh.md) — Superato localmente
 
 - [GS-VER-284 — Regia del piano e input numerico](GS-VER-284-regia-del-piano-e-input-numerico.md) — Compatibilità e verifiche macOS del refactoring interno
+
+- [GS-VER-304 — Componenti e campi nativi nei laboratori macOS](GS-VER-304-hig-laboratori-macos.md) — Gate e preflight macOS superati sul checkpoint 9c9e0098: 771 test Core/Kit e 113 definizioni/345 esecuzioni native; audit GUI e assistivi aperti

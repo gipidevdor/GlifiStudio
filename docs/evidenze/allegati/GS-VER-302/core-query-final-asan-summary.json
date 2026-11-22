@@ -1,0 +1,24 @@
+{
+  "command": "swift test --package-path Packages/GlifiCore --sanitize address --filter '(queryEvaluator|queryLimitsPreserveLegacyInitializerFunctionReference)'",
+  "exitCode": 0,
+  "passedDefinitions": 19,
+  "failures": 0,
+  "addressSanitizerRuntimeLinked": true,
+  "sanitizerDiagnosticsInLog": false,
+  "sourceInputSHA256": {
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryEvaluator.swift": "2bc3f3c5139563ded87f2dbc61155fa1179e0c3c1e81fd49507173dd8853109e",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryModel.swift": "e42bc70732a1f85ff9ef68ff898eb537c4fe4e37e132fc59caa966ebfe689bec",
+    "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiQueryEvaluatorTests.swift": "d702ca00f72d3bf908887715774e8517799cfde191053f4a9d2091bfc3a7e78e"
+  },
+  "sourceInputsUnchanged": true,
+  "coreModuleContext": {
+    "baseCommit": "d368285010dca17f5ef72819da25b6890d0de32a",
+    "coreModuleSourceFileCount": 96,
+    "coreModuleSourceSHA256": "4bd91b3d8627f520705f82041442cfa35f601775c8358f2a759b2122f5dc816f"
+  },
+  "coreModuleSourcesUnchanged": true,
+  "legacyElevenArgumentInitializerFunctionReferenceChecked": true,
+  "exhaustiveSimpleProximityComparisons": 256,
+  "nestedIntervalReferenceComparisons": 1176,
+  "logSHA256": "e243907047c0def4a9341da0d6d219c95098028823b6c95a009bdd4215eff42b"
+}

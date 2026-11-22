@@ -1,0 +1,212 @@
+{
+  "baselineCommit": "8901f4ad3f17a27f02fc7628221641d66346b38c",
+  "integratedCandidateBaseCommit": "d368285010dca17f5ef72819da25b6890d0de32a",
+  "order": [
+    "baseline",
+    "final",
+    "final",
+    "baseline"
+  ],
+  "configuration": "Release; identical versioned --query-evaluation harness overlay on archived baseline",
+  "device": "Mac16,3",
+  "operatingSystem": "Version 27.2.1 (Build 26B131)",
+  "context": {
+    "baseline": [
+      {
+        "thermalStateAtStart": "nominal",
+        "thermalStateAtEnd": "nominal",
+        "lowPowerModeAtStart": true,
+        "lowPowerModeAtEnd": true
+      },
+      {
+        "thermalStateAtStart": "nominal",
+        "thermalStateAtEnd": "nominal",
+        "lowPowerModeAtStart": true,
+        "lowPowerModeAtEnd": true
+      }
+    ],
+    "final": [
+      {
+        "thermalStateAtStart": "nominal",
+        "thermalStateAtEnd": "nominal",
+        "lowPowerModeAtStart": true,
+        "lowPowerModeAtEnd": true
+      },
+      {
+        "thermalStateAtStart": "nominal",
+        "thermalStateAtEnd": "nominal",
+        "lowPowerModeAtStart": true,
+        "lowPowerModeAtEnd": true
+      }
+    ]
+  },
+  "activeExternalCompilerProcessesBeforeMeasurement": 2,
+  "activeExternalCompilerProcessesAfterMeasurement": 2,
+  "loadAverageBefore": [
+    15.62939453125,
+    12.083984375,
+    9.77587890625
+  ],
+  "loadAverageAfter": [
+    15.62939453125,
+    12.083984375,
+    9.77587890625
+  ],
+  "fixtureChecksEqualAcrossVersions": true,
+  "completeResultsStableWithinEachVersion": true,
+  "sourceHashes": {
+    "baseline": {
+      "GlifiBenchmark/GlifiQueryEvaluationBenchmarks.swift": "sha256:7242c0a6967d7aa8d3163e0eb6668164bd9da10274ea90579fc23822d7192e09",
+      "GlifiBenchmark/main.swift": "sha256:248ffb8bd8932a85084ab6a3f2b68c9a737209d4609aa1c6e285fd7a013cc412",
+      "GlifiCore/GlifiQueryEvaluator.swift": "sha256:7c51f0cbce4b4dc3d8d9cd9a411ab9e74bd8e97748ead65e384967941bb06cbb",
+      "GlifiCore/GlifiQueryModel.swift": "sha256:374a49d8fcc5f42d9b18e2533e1a6ad4f04184443bd08111cecb66648954a20f"
+    },
+    "final": {
+      "GlifiBenchmark/GlifiQueryEvaluationBenchmarks.swift": "sha256:7242c0a6967d7aa8d3163e0eb6668164bd9da10274ea90579fc23822d7192e09",
+      "GlifiBenchmark/main.swift": "sha256:248ffb8bd8932a85084ab6a3f2b68c9a737209d4609aa1c6e285fd7a013cc412",
+      "GlifiCore/GlifiQueryEvaluator.swift": "sha256:2bc3f3c5139563ded87f2dbc61155fa1179e0c3c1e81fd49507173dd8853109e",
+      "GlifiCore/GlifiQueryModel.swift": "sha256:e42bc70732a1f85ff9ef68ff898eb537c4fe4e37e132fc59caa966ebfe689bec"
+    }
+  },
+  "candidateSourceManifestSHA256": {
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryEvaluator.swift": "2bc3f3c5139563ded87f2dbc61155fa1179e0c3c1e81fd49507173dd8853109e",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryModel.swift": "e42bc70732a1f85ff9ef68ff898eb537c4fe4e37e132fc59caa966ebfe689bec",
+    "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiQueryEvaluatorTests.swift": "d702ca00f72d3bf908887715774e8517799cfde191053f4a9d2091bfc3a7e78e",
+    "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiQueryEvaluationBenchmarks.swift": "7242c0a6967d7aa8d3163e0eb6668164bd9da10274ea90579fc23822d7192e09",
+    "Packages/GlifiCore/Sources/GlifiBenchmark/main.swift": "248ffb8bd8932a85084ab6a3f2b68c9a737209d4609aa1c6e285fd7a013cc412"
+  },
+  "binarySHA256": {
+    "baseline": "3c93e781f5f56844604fa5c9a4cd09dc6cfb9516baccf0b6729c7d627d785453",
+    "final": "e3fcdd831655e44c9c41cd762584b276e594b4a02d665a58ee7995ca5b603cfa"
+  },
+  "workloads": {
+    "boolean-union-1000-tokens": {
+      "baselineMedianSeconds": 0.0004963125,
+      "finalMedianSeconds": 0.000266291,
+      "finalToBaselineRatio": 0.5365389749401839,
+      "sampleCountEach": 14,
+      "rawSamplesSeconds": {
+        "baseline": [
+          0.0005065,
+          0.000503625,
+          0.000495708,
+          0.000496375,
+          0.000489292,
+          0.000489875,
+          0.000481125,
+          0.000506375,
+          0.000502375,
+          0.000494333,
+          0.000497417,
+          0.00049525,
+          0.000496583,
+          0.00049625
+        ],
+        "final": [
+          0.000278833,
+          0.000272792,
+          0.000262542,
+          0.000267041,
+          0.000263833,
+          0.00026225,
+          0.000260084,
+          0.000273917,
+          0.000271541,
+          0.000264542,
+          0.000262708,
+          0.000268375,
+          0.000268375,
+          0.000265541
+        ]
+      }
+    },
+    "ordered-proximity-100x100": {
+      "baselineMedianSeconds": 0.00010324999999999999,
+      "finalMedianSeconds": 0.000121521,
+      "finalToBaselineRatio": 1.1769588377723972,
+      "sampleCountEach": 14,
+      "rawSamplesSeconds": {
+        "baseline": [
+          0.000118042,
+          0.000112875,
+          9.9792e-05,
+          0.000103291,
+          0.000100041,
+          0.000101708,
+          9.8541e-05,
+          0.000122083,
+          0.000117583,
+          0.000103,
+          0.0001055,
+          0.000103209,
+          0.000104625,
+          0.000100125
+        ],
+        "final": [
+          0.000137166,
+          0.00013175,
+          0.0001225,
+          0.000118834,
+          0.0001175,
+          0.000120041,
+          0.000117916,
+          0.000137334,
+          0.000132292,
+          0.000124209,
+          0.000121125,
+          0.000119083,
+          0.000118916,
+          0.000121917
+        ]
+      }
+    },
+    "symmetric-proximity-100x100": {
+      "baselineMedianSeconds": 0.00010322949999999999,
+      "finalMedianSeconds": 0.000123125,
+      "finalToBaselineRatio": 1.1927307601024901,
+      "sampleCountEach": 14,
+      "rawSamplesSeconds": {
+        "baseline": [
+          0.000104584,
+          0.000102041,
+          0.000101833,
+          0.000105209,
+          0.000102666,
+          0.000101292,
+          0.000102958,
+          0.000107917,
+          0.000104917,
+          0.000102584,
+          0.000104958,
+          0.0001035,
+          0.000102959,
+          0.000104958
+        ],
+        "final": [
+          0.000123041,
+          0.000123333,
+          0.000120792,
+          0.000124875,
+          0.000122875,
+          0.000122708,
+          0.000119791,
+          0.000128167,
+          0.000123209,
+          0.000122792,
+          0.000131708,
+          0.000124666,
+          0.000125125,
+          0.000122167
+        ]
+      }
+    }
+  },
+  "intermediateGuardedExperiment": "core-query-benchmark-summary.json",
+  "observationalOnly": true,
+  "limitations": [
+    "Concurrent external compilation was active; this is not a quiescent machine or G4 measurement.",
+    "Low Power Mode remained enabled; no settings changed.",
+    "Small synthetic workloads; no release threshold or universal performance claim.",
+    "Fixture checks compare source/query identity, independently expected exact ranges, row counts and completeness across versions; full DTO equality is checked between repetitions within each version."
+  ]
+}

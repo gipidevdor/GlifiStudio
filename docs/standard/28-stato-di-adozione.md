@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-STD-001-28 |
 | Tipo | Capitolo normativo |
-| Versione | 1.13.13 |
+| Versione | 1.13.15 |
 | Stato | Attivo |
 | Responsabile | Amministratore del repository, provvisorio |
 | Ultima modifica | 2026-11-22 |
@@ -99,3 +99,24 @@ e le factory private del package. Il confronto API Core/Kit e la parità di byte
 CLI sono prove circoscritte al lotto: non attuano un gate globale di rilascio o
 una promessa ABI. Gli stati scientifici e i criteri Da introdurre restano
 invariati. Non sono fissate soglie di righe, velocità o consumo energetico.
+
+## Robustezza trasversale GS-DOR-302
+
+La revisione distingue correttezza dei risultati, budget intermedi delle query,
+ammissione CLI, chiusura della sessione macOS e proprietà delle cache.
+GS-VER-302 registra regressioni prima/dopo, misure Release e l'effettivo esito
+dei sanitizer e del gate. Nessun criterio Da introdurre diventa conforme per
+la sola presenza della configurazione; audit assistivi, dispositivi, energia e
+copertura universale restano esclusi.
+
+## Correzione strutturale HIG dei laboratori macOS
+
+[GS-DOR-304](../pianificazione/dor-hig-laboratori-macos.md) è Ready per tab native
+nei sette rami compatti e campi/azioni contestuali del laboratorio Valutazione.
+CMP-304 resta `implemented`; [GS-VER-304](../evidenze/GS-VER-304-hig-laboratori-macos.md)
+registra gate e preflight macOS superati sul checkpoint 9c9e0098, base d368285,
+1172 file invariati, 771 test Core/Kit e 113 definizioni/345 esecuzioni native.
+Le tab e i campi sono implementati; questa attuazione di GS-APL-002/003 non promuove gli
+audit di RQ-012, la validazione RQ-030 o i criteri EA «Da introdurre». Le prove
+visuali, assistive, di Full Keyboard Access e pseudolocalizzazione restano
+aperte; iPadOS non appartiene al lotto. Nessun nuovo gate è introdotto.

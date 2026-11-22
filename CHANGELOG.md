@@ -20,6 +20,29 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 - Unificata la grammatica decimale degli editor statistico e degli operatori;
   ciascuna famiglia conserva errori, limiti e semantica delle righe propri.
 
+### Componenti e campi nativi macOS — GS-DOR-304
+
+- Tab native nei rami compatti dei sette laboratori, mantenendo i pannelli
+  ridimensionabili con spazio ampio e le selezioni esistenti.
+- Editor Valutazione con etichette permanenti, campi verticali e contesto
+  accessibile delle azioni ripetute. Nessuna modifica ad analisi o dati;
+  gate e preflight macOS superati sul checkpoint 9c9e0098 (GS-VER-304),
+  audit interattivi aperti. Gli editor annidati conservano ForEach Binding
+  nativi e identità UUID, con ordinali preparati una volta per collezione.
+
+### Robustezza di query, ingressi e chiusura
+
+- Eliminati overflow con limiti KWIC/slop estremi e troncamenti intermedi che
+  alteravano prossimità e ordine dei risultati; budget Core separati e failure
+  esplicite per ancore e passi, con default condivisi da Kit e CLI.
+  Il costruttore Core originale resta utilizzabile anche come valore funzione.
+- Lettore CLI bounded su un solo descrittore anche per le richieste legacy;
+  errori di file assente, permessi e dimensione seguono la tassonomia comune.
+- Chiusura della finestra con cancellazione e attesa delle attività possedute
+  prima del rilascio della sessione e degli accessi autorizzati.
+- Cache di verifica con proprietà riconosciuta ed esclusione reciproca;
+  pulizia senza scansione globale dei temporanei di altre esecuzioni.
+
 ### Codifica delle identità canoniche
 
 - Query e tabelle di accordo riusano il codificatore SHA-256 interno,

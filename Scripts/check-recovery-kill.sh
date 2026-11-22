@@ -14,28 +14,33 @@ fi
 
 source "$script_directory/build-cache.sh"
 owns_build_cache=false
+build_cache_directory="$(glifi_build_cache_directory)"
+case_directory=""
+
+cleanup() {
+    if [[ -n "$case_directory" ]]; then
+        rm -rf "$case_directory"
+    fi
+    if [[ "$owns_build_cache" == true ]]; then
+        glifi_release_build_cache "$build_cache_directory"
+    fi
+}
+
+trap cleanup EXIT
 
 if (( $# == 1 )); then
     scratch_directory="$1"
 else
     # Senza argomento si riusa la cache condivisa: una nuova a ogni esecuzione ricompilerebbe
     # tutto e riscriverebbe gigabyte inutilmente.
-    glifi_require_free_space "$temporary_root"
-    glifi_prepare_build_cache "$(glifi_build_cache_directory)"
-    scratch_directory="$(glifi_build_cache_directory)/SwiftPM"
+    glifi_require_free_space "$temporary_root" || exit 1
+    # Preparation can acquire ownership before a later filesystem check fails.
     owns_build_cache=true
+    glifi_prepare_build_cache "$build_cache_directory" || exit 1
+    scratch_directory="$build_cache_directory/SwiftPM"
 fi
 
 case_directory="$(mktemp -d "${temporary_root%/}/GlifiRecoveryCases.XXXXXX")"
-
-cleanup() {
-    rm -rf "$case_directory"
-    if [[ "$owns_build_cache" == true ]]; then
-        glifi_release_build_cache "$(glifi_build_cache_directory)"
-    fi
-}
-
-trap cleanup EXIT
 
 cd "$project_directory"
 

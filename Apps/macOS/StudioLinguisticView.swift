@@ -38,15 +38,20 @@ struct StudioLinguisticView: View {
                         results.frame(minWidth: 380)
                     }
                 } else {
-                    VStack(spacing: 0) {
-                        Picker("linguistic.pane", selection: $showsResults) {
-                            Text("linguistic.settings").tag(false)
-                            Text("linguistic.results").tag(true)
+                    TabView(selection: $showsResults) {
+                        Tab(value: false) {
+                            configuration
+                        } label: {
+                            Text("linguistic.settings")
                         }
-                        .pickerStyle(.segmented)
-                        .padding()
-                        if showsResults { results } else { configuration }
+                        Tab(value: true) {
+                            results
+                        } label: {
+                            Text("linguistic.results")
+                        }
                     }
+                    .tabViewStyle(.grouped)
+                    .padding()
                 }
             }
         }

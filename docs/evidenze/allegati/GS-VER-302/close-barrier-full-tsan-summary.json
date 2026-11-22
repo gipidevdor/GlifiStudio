@@ -1,0 +1,13 @@
+{
+  "result": "Passed",
+  "totalTestCount": 117,
+  "passedTests": 117,
+  "failedTests": 0,
+  "skippedTests": 0,
+  "runtimeWarningCount": 0,
+  "failures": [],
+  "sanitizerDiagnosticLines": [],
+  "logSHA256": "07ed4823be903458d838365bf48f75101fc3f11765714965478438bb16999ee7",
+  "homeModelSHA256": "261258793075a2ba5bed3eeff20863f6139214244add185a6b05ad56e708b409",
+  "lifecycleTestsSHA256": "28119776a80772c97f0c847716bb25573e7391efc32e5abdbd43dd9cee7ec7a8"
+}

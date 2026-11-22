@@ -1034,34 +1034,8 @@ enum GlifiCLI {
         at url: URL,
         operation: String = "plan"
     ) throws -> GlifiStudioAnalysisPlanRequest {
-        let maximumByteCount = 1_048_576
         do {
-            let values = try url.resourceValues(forKeys: [.fileSizeKey, .isRegularFileKey])
-            guard values.isRegularFile == true else {
-                throw planRequestFailure(
-                    code: "planner.request-not-regular-file",
-                    category: "invalidInput",
-                    retryDisposition: "afterCorrection",
-                    operation: operation
-                )
-            }
-            guard let fileSize = values.fileSize, fileSize <= maximumByteCount else {
-                throw planRequestFailure(
-                    code: "planner.request-too-large",
-                    category: "insufficientResources",
-                    retryDisposition: "afterCorrection",
-                    operation: operation
-                )
-            }
-            let data = try Data(contentsOf: url, options: .mappedIfSafe)
-            guard data.count <= maximumByteCount else {
-                throw planRequestFailure(
-                    code: "planner.request-too-large",
-                    category: "insufficientResources",
-                    retryDisposition: "afterCorrection",
-                    operation: operation
-                )
-            }
+            let data = try CLIRequestInput.read(at: url)
             do {
                 return try JSONDecoder().decode(GlifiStudioAnalysisPlanRequest.self, from: data)
             } catch {
@@ -1072,15 +1046,8 @@ enum GlifiCLI {
                     operation: operation
                 )
             }
-        } catch let failure as GlifiStudioFailure {
-            throw failure
-        } catch {
-            throw planRequestFailure(
-                code: "planner.request-unreadable",
-                category: "transientIO",
-                retryDisposition: "transientBackoff",
-                operation: operation
-            )
+        } catch let failure as CLIRequestInput.Failure {
+            throw requestFileFailure(failure, operation: operation, planner: true)
         }
     }
 
@@ -1088,32 +1055,10 @@ enum GlifiCLI {
         at url: URL,
         operation: String
     ) throws -> Value {
-        let maximumByteCount = 1_048_576
         do {
-            let values = try url.resourceValues(forKeys: [.fileSizeKey, .isRegularFileKey])
-            guard values.isRegularFile == true,
-                let fileSize = values.fileSize,
-                fileSize <= maximumByteCount
-            else {
-                throw planRequestFailure(
-                    code: "request.invalid-file",
-                    category: "invalidInput",
-                    retryDisposition: "afterCorrection",
-                    operation: operation
-                )
-            }
-            let data = try Data(contentsOf: url, options: .mappedIfSafe)
-            guard data.count <= maximumByteCount else {
-                throw planRequestFailure(
-                    code: "request.too-large",
-                    category: "insufficientResources",
-                    retryDisposition: "afterCorrection",
-                    operation: operation
-                )
-            }
-            return try JSONDecoder().decode(Value.self, from: data)
-        } catch let failure as GlifiStudioFailure {
-            throw failure
+            return try JSONDecoder().decode(Value.self, from: CLIRequestInput.read(at: url))
+        } catch let failure as CLIRequestInput.Failure {
+            throw requestFileFailure(failure, operation: operation, planner: false)
         } catch {
             throw planRequestFailure(
                 code: "request.invalid",
@@ -1122,6 +1067,25 @@ enum GlifiCLI {
                 operation: operation
             )
         }
+    }
+
+    private static func requestFileFailure(
+        _ failure: CLIRequestInput.Failure, operation: String, planner: Bool
+    ) -> GlifiStudioFailure {
+        let code: String
+        switch failure {
+        case .notRegular:
+            code = planner ? "planner.request-not-regular-file" : "request.invalid-file"
+        case .tooLarge:
+            code = planner ? "planner.request-too-large" : "request.too-large"
+        case .unreadable:
+            code = planner ? "planner.request-unreadable" : "request.invalid"
+        case .cancelled:
+            code = "operation.cancelled"
+        }
+        return planRequestFailure(
+            code: code, category: failure.category,
+            retryDisposition: failure.retryDisposition, operation: operation)
     }
 
     private static func planRequestFailure(

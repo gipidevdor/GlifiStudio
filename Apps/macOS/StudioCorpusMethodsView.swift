@@ -44,15 +44,20 @@ struct StudioCorpusMethodsView: View {
                                 results.frame(minWidth: 380)
                             }
                         } else {
-                            VStack(spacing: 0) {
-                                Picker("cm.pane", selection: $showsResults) {
-                                    Text("cm.settings").tag(false)
-                                    Text("cm.results").tag(true)
+                            TabView(selection: $showsResults) {
+                                Tab(value: false) {
+                                    configuration(snapshot)
+                                } label: {
+                                    Text("cm.settings")
                                 }
-                                .pickerStyle(.segmented)
-                                .padding()
-                                if showsResults { results } else { configuration(snapshot) }
+                                Tab(value: true) {
+                                    results
+                                } label: {
+                                    Text("cm.results")
+                                }
                             }
+                            .tabViewStyle(.grouped)
+                            .padding()
                         }
                     }
                 }

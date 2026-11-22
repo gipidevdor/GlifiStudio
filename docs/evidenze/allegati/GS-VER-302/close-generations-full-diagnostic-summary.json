@@ -1,0 +1,10 @@
+{
+  "result": "Failed",
+  "totalTestCount": 117,
+  "passedTests": 116,
+  "failedTests": 1,
+  "skippedTests": 0,
+  "failures": [
+    "Expectation failed: await watchdog.value == false: Attachment blocked teardown admission: [\"initial-closing-start\", \"attachment-start\", \"repeated-closing-start\", \"drain-gate-released\", \"watchdog-fired\", \"next-closing-start\", \"attachment-finished\", \"initial-closing-finished\", \"next-closing-finished\"]"
+  ]
+}

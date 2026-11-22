@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DEV-002 |
 | Tipo | Guida controllata del loop di sviluppo |
-| Versione | 1.5.1 |
+| Versione | 1.6.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -94,8 +94,21 @@ dopo. Gli script di qualità rispettano due obblighi distinti:
 
 1. **durante**: il picco su disco resta limitato, perché la compilation cache di Xcode è
    disattivata e le cache di build hanno un tetto dichiarato;
-2. **dopo**: al termine tutto viene rimosso — artefatti della corsa e cache di build — anche
-   quando l'esecuzione fallisce, perché la pulizia sta nel `trap EXIT`.
+2. **dopo**: il `trap EXIT` rimuove gli artefatti della corsa e la cache posseduta,
+   anche quando la verifica fallisce. Una terminazione non intercettabile può
+   lasciare residui: non si eliminano directory altrui basandosi sul nome o sull'età.
+
+Ogni cache ha un marcatore di proprietà e un lock esclusivo gestito dal kernel.
+Un'altra esecuzione sulla stessa cache fallisce prima di modificarla; il suo
+trap non può rimuovere la cache occupata. Il piccolo file di lock adiacente
+resta stabile: eliminarlo permetterebbe lock distinti sullo stesso percorso.
+La pulizia, compreso `make clean-cache`, usa la stessa esclusione reciproca.
+Una directory non vuota senza marcatore o un symlink finale è rifiutato,
+conservando i file. Una corsa interrotta lascia un marcatore di attività:
+non si adotta la cache neppure quando il lock è libero, perché un compilatore
+figlio può essere ancora vivo. In questi casi scegliere un percorso vuoto
+con `GLIFI_VERIFY_CACHE`. `Scripts/check-build-cache.py` verifica questi
+comportamenti in directory sintetiche isolate, senza compilare Swift.
 
 Chi itera molte volte di seguito può conservare la cache con `GLIFI_VERIFY_KEEP_CACHE=1`,
 assumendosi il costo in spazio: con la cache conservata la seconda esecuzione dura meno della metà
@@ -104,11 +117,11 @@ della prima.
 | Comando o variabile | Effetto |
 | --- | --- |
 | `make cache-size` | Dimensione della cache, se conservata |
-| `make clean-cache` | Rimuove la cache conservata |
+| `make clean-cache` | Rimuove la cache riconosciuta e inattiva, con lock esclusivo |
 | `GLIFI_VERIFY_KEEP_CACHE` | `1` conserva la cache al termine; default: rimossa |
 | `GLIFI_VERIFY_CACHE` | Percorso della cache (default `~/Library/Caches/GlifiStudio/verify`) |
-| `GLIFI_VERIFY_MIN_FREE_GB` | Spazio libero minimo richiesto prima di iniziare (default 15) |
-| `GLIFI_VERIFY_MAX_CACHE_GB` | Tetto oltre il quale la cache viene svuotata (default 12) |
+| `GLIFI_VERIFY_MIN_FREE_GB` | Intero non negativo, massimo sei cifre; spazio libero minimo prima di iniziare (default 15) |
+| `GLIFI_VERIFY_MAX_CACHE_GB` | Intero non negativo, massimo sei cifre; tetto senza arrotondamento al GiB, controllato all'avvio (default 12) |
 
 Il gate si ferma subito, con un messaggio esplicito, quando lo spazio libero è sotto il minimo:
 morire a metà build con «No space left on device» lascia il disco pieno e non dice che cosa fare.

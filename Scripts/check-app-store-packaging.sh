@@ -12,7 +12,8 @@ if [[ "$verification_scope" == "macos" ]]; then
 else
     print "Packaging profile: macOS and iPadOS"
 fi
-temporary_directory="$(mktemp -d "${TMPDIR%/}/GlifiStudioAppStore.XXXXXX")"
+temporary_root="${TMPDIR:-/tmp}"
+temporary_directory="$(mktemp -d "${temporary_root%/}/GlifiStudioAppStore.XXXXXX")"
 build_cache_directory="$(glifi_build_cache_directory)"
 
 cleanup() {
@@ -23,9 +24,8 @@ trap cleanup EXIT
 
 cd "$project_directory"
 
-glifi_sweep_stale_temporaries "${TMPDIR:-/tmp}"
-glifi_require_free_space "${TMPDIR:-/tmp}"
-glifi_prepare_build_cache "$build_cache_directory"
+glifi_require_free_space "$temporary_root" || exit 1
+glifi_prepare_build_cache "$build_cache_directory" || exit 1
 
 xcodebuild analyze -quiet \
     -workspace GlifiStudio.xcworkspace \

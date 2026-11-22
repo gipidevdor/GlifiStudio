@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-UX-001-17 |
 | Tipo | Specifica normativa dell'esperienza utente |
-| Versione | 1.3.4 |
+| Versione | 1.3.6 |
 | Stato | Baseline implementativa per incrementi separati |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -35,7 +35,7 @@ progetto pulisce invece il contesto della raccolta precedente.
 
 Configurazione e risultati hanno superfici distinte: con spazio sufficiente e
 testo ordinario sono affiancati in pannelli ridimensionabili; con finestra stretta
-o dimensioni di accessibilità il percorso è sequenziale mediante il controllo
+o dimensioni di accessibilità il percorso è sequenziale mediante tab native
 Impostazioni/Risultati. Il risultato appena ottenuto diventa raggiungibile senza
 scorrere oltre tutti i parametri. La selezione delle fonti usa una disclosure e
 un elenco bounded; il conteggio dell'ambito resta visibile quando è richiusa.
@@ -316,6 +316,27 @@ conservazione e pulizia. Per A includono Markdown, BOM e Unicode multibyte;
 Core/Kit verificano mapping e compatibilità dei DTO precedenti. Il profilo macOS
 e il preflight senza firma non dimostrano GUI reale, VoiceOver o G4. Lo sviluppo
 dedicato iPadOS rimane rimandato.
+
+### Componenti e campi del lotto GS-DOR-304
+
+Il ramo compatto dei sette laboratori macOS usa `TabView` nativa per alternare
+impostazioni e risultati nell'area principale; il ramo largo mantiene i pannelli
+ridimensionabili. Binding, identità e transizioni di selezione esistenti sono
+conservati. Il cambio di tab non esegue analisi né azzera la bozza.
+
+Nel laboratorio Valutazione le etichette dei campi restano visibili con dati
+compilati, i campi multipli sono disposti verticalmente e i gruppi distinguono
+osservazione o documento, riferimento o predizione e indice degli elementi.
+Le azioni ripetute espongono tale contesto senza nascondere i controlli figli
+alla navigazione assistiva. Stringhe e formati contestuali sono localizzati
+in italiano e inglese; l'ordine nativo dei controlli resta significativo.
+
+[GS-DOR-304](../pianificazione/dor-hig-laboratori-macos.md) delimita questa
+correzione strutturale implementata; [GS-VER-304](../evidenze/GS-VER-304-hig-laboratori-macos.md)
+registra gate e preflight macOS superati sul checkpoint 9c9e0098, con 113
+definizioni e 345 esecuzioni native. Gli editor annidati mantengono i ForEach
+Binding nativi, UUID stabili e una mappa ordinale O(n). Il contratto non dichiara audit GUI,
+VoiceOver, Voice Control, Full Keyboard Access, pseudo-lingua o G4 superati.
 
 ## Accesso alle altre capacità del core (ADR-0041)
 

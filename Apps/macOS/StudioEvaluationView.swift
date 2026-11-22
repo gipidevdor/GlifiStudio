@@ -40,15 +40,20 @@ struct StudioEvaluationView: View {
                         results.frame(minWidth: 380)
                     }
                 } else {
-                    VStack(spacing: 0) {
-                        Picker("evaluation.pane", selection: $showsResults) {
-                            Text("evaluation.settings").tag(false)
-                            Text("evaluation.results").tag(true)
+                    TabView(selection: $showsResults) {
+                        Tab(value: false) {
+                            configuration
+                        } label: {
+                            Text("evaluation.settings")
                         }
-                        .pickerStyle(.segmented)
-                        .padding()
-                        if showsResults { results } else { configuration }
+                        Tab(value: true) {
+                            results
+                        } label: {
+                            Text("evaluation.results")
+                        }
                     }
+                    .tabViewStyle(.grouped)
+                    .padding()
                 }
             }
         }
@@ -328,52 +333,104 @@ struct StudioEvaluationView: View {
     {
         GroupBox {
             VStack(alignment: .leading, spacing: 10) {
-                HStack {
-                    Text("evaluation.observation.number \(number)").font(.headline)
-                    Spacer()
-                    Button("evaluation.remove", systemImage: "minus.circle", role: .destructive) {
-                        analysis.observations.removeAll { $0.id == observation.wrappedValue.id }
-                        editorPage = min(
-                            editorPage, max(0, (analysis.observations.count - 1) / editorPageSize))
-                    }
-                }
                 if analysis.tool == .morphology {
-                    featureEditor(observation.goldFeatures, title: "evaluation.gold")
-                    featureEditor(observation.predictedFeatures, title: "evaluation.predicted")
+                    featureEditor(
+                        observation.goldFeatures, titleKey: "evaluation.gold",
+                        observationNumber: number)
+                    featureEditor(
+                        observation.predictedFeatures, titleKey: "evaluation.predicted",
+                        observationNumber: number)
                 } else {
-                    TextField("evaluation.gold", text: observation.gold)
-                    TextField("evaluation.predicted", text: observation.predicted)
+                    editorTextField(
+                        "evaluation.gold",
+                        context: observationFieldLabel("evaluation.gold", number: number),
+                        text: observation.gold)
+                    editorTextField(
+                        "evaluation.predicted",
+                        context: observationFieldLabel("evaluation.predicted", number: number),
+                        text: observation.predicted)
                     if analysis.tool == .lemmas && analysis.includesForms {
-                        TextField("evaluation.form", text: observation.form)
+                        editorTextField(
+                            "evaluation.form",
+                            context: observationFieldLabel("evaluation.form", number: number),
+                            text: observation.form)
                     }
                     if analysis.tool == .lemmas && analysis.includesPartsOfSpeech {
-                        TextField("evaluation.pos", text: observation.partOfSpeech)
+                        editorTextField(
+                            "evaluation.pos",
+                            context: observationFieldLabel("evaluation.pos", number: number),
+                            text: observation.partOfSpeech)
                     }
                 }
+                let removeLabel = Text("evaluation.observation.remove \(number)")
+                Button("evaluation.remove", systemImage: "minus.circle", role: .destructive) {
+                    let identity = observation.wrappedValue.id
+                    analysis.observations.removeAll { $0.id == identity }
+                    editorPage = min(
+                        editorPage, max(0, (analysis.observations.count - 1) / editorPageSize))
+                }
+                .accessibilityLabel(removeLabel)
+                .accessibilityInputLabels([removeLabel, Text("evaluation.remove")])
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+        } label: {
+            Text("evaluation.observation.number \(number)")
+                .accessibilityAddTraits(.isHeader)
         }
+        .accessibilityElement(children: .contain)
     }
 
     private func featureEditor(
-        _ features: Binding<[StudioEvaluationFeature]>, title: LocalizedStringKey
+        _ features: Binding<[StudioEvaluationFeature]>, titleKey: String,
+        observationNumber: Int
     ) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title).font(.subheadline.bold())
-            ForEach(features) { feature in
-                HStack {
-                    TextField("evaluation.attribute", text: feature.attribute)
-                    TextField("evaluation.attribute-value", text: feature.value)
-                    Button("evaluation.remove", systemImage: "minus.circle", role: .destructive) {
-                        features.wrappedValue.removeAll { $0.id == feature.wrappedValue.id }
+        let side = localized(titleKey)
+        let ordinals = Dictionary(
+            features.wrappedValue.enumerated().map { ($0.element.id, $0.offset + 1) },
+            uniquingKeysWith: { first, _ in first })
+        return GroupBox {
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(features) { feature in
+                    let identity = feature.wrappedValue.id
+                    let number = ordinals[identity] ?? 1
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("evaluation.feature.number \(number)").font(.subheadline.bold())
+                            .accessibilityAddTraits(.isHeader)
+                        editorTextField(
+                            "evaluation.attribute",
+                            context: nestedFieldLabel(
+                                "evaluation.attribute", parent: observationNumber, side: side,
+                                number: number, isEntity: false),
+                            text: feature.attribute)
+                        editorTextField(
+                            "evaluation.attribute-value",
+                            context: nestedFieldLabel(
+                                "evaluation.attribute-value", parent: observationNumber,
+                                side: side, number: number, isEntity: false),
+                            text: feature.value)
+                        let removeLabel = Text(
+                            "evaluation.feature.remove \(observationNumber) \(side) \(number)")
+                        Button("evaluation.remove", systemImage: "minus.circle", role: .destructive)
+                        {
+                            features.wrappedValue.removeAll { $0.id == identity }
+                        }
+                        .accessibilityLabel(removeLabel)
+                        .accessibilityInputLabels([removeLabel, Text("evaluation.remove")])
                     }
+                    .accessibilityElement(children: .contain)
                 }
+                let addLabel = Text("evaluation.feature.add \(observationNumber) \(side)")
+                Button("evaluation.add-feature", systemImage: "plus") {
+                    features.wrappedValue.append(.init())
+                }
+                .accessibilityLabel(addLabel)
+                .accessibilityInputLabels([addLabel, Text("evaluation.add-feature")])
+                .disabled(features.wrappedValue.count >= 256)
             }
-            Button("evaluation.add-feature", systemImage: "plus") {
-                features.wrappedValue.append(.init())
-            }
-            .disabled(features.wrappedValue.count >= 256)
+        } label: {
+            Text(LocalizedStringKey(titleKey)).accessibilityAddTraits(.isHeader)
         }
+        .accessibilityElement(children: .contain)
     }
 
     private func documentEditor(_ document: Binding<StudioEvaluationDocument>, number: Int)
@@ -381,50 +438,156 @@ struct StudioEvaluationView: View {
     {
         GroupBox {
             VStack(alignment: .leading, spacing: 10) {
-                HStack {
-                    Text("evaluation.document.number \(number)").font(.headline)
-                    Spacer()
-                    Button("evaluation.remove", systemImage: "minus.circle", role: .destructive) {
-                        analysis.documents.removeAll { $0.id == document.wrappedValue.id }
-                        editorPage = min(
-                            editorPage, max(0, (analysis.documents.count - 1) / editorPageSize))
-                    }
+                editorTextField(
+                    "evaluation.document-name",
+                    context: documentFieldLabel("evaluation.document-name", number: number),
+                    text: document.name)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("evaluation.source-text").font(.subheadline)
+                        .fixedSize(horizontal: false, vertical: true)
+                    let label = documentFieldLabel("evaluation.source-text", number: number)
+                    TextEditor(text: document.text)
+                        .frame(minHeight: 90)
+                        .accessibilityLabel(label)
+                        .accessibilityInputLabels([label, Text("evaluation.source-text")])
                 }
-                TextField("evaluation.document-name", text: document.name)
-                Text("evaluation.source-text").font(.subheadline.bold())
-                TextEditor(text: document.text)
-                    .frame(minHeight: 90).accessibilityLabel("evaluation.source-text")
                 if analysis.tool == .boundaries {
-                    TextField("evaluation.gold-boundaries", text: document.goldBoundaries)
-                    TextField("evaluation.predicted-boundaries", text: document.predictedBoundaries)
+                    editorTextField(
+                        "evaluation.gold-boundaries",
+                        context: documentFieldLabel("evaluation.gold-boundaries", number: number),
+                        text: document.goldBoundaries)
+                    editorTextField(
+                        "evaluation.predicted-boundaries",
+                        context: documentFieldLabel(
+                            "evaluation.predicted-boundaries", number: number),
+                        text: document.predictedBoundaries)
                     Text("evaluation.boundaries.help").font(.caption).foregroundStyle(.secondary)
                 } else {
-                    entityEditor(document.goldEntities, title: "evaluation.gold")
-                    entityEditor(document.predictedEntities, title: "evaluation.predicted")
+                    entityEditor(
+                        document.goldEntities, titleKey: "evaluation.gold", documentNumber: number)
+                    entityEditor(
+                        document.predictedEntities, titleKey: "evaluation.predicted",
+                        documentNumber: number)
                 }
+                let removeLabel = Text("evaluation.document.remove \(number)")
+                Button("evaluation.remove", systemImage: "minus.circle", role: .destructive) {
+                    let identity = document.wrappedValue.id
+                    analysis.documents.removeAll { $0.id == identity }
+                    editorPage = min(
+                        editorPage, max(0, (analysis.documents.count - 1) / editorPageSize))
+                }
+                .accessibilityLabel(removeLabel)
+                .accessibilityInputLabels([removeLabel, Text("evaluation.remove")])
             }
+        } label: {
+            Text("evaluation.document.number \(number)").accessibilityAddTraits(.isHeader)
         }
+        .accessibilityElement(children: .contain)
     }
 
     private func entityEditor(
-        _ entities: Binding<[StudioEvaluationEntityDraft]>, title: LocalizedStringKey
+        _ entities: Binding<[StudioEvaluationEntityDraft]>, titleKey: String,
+        documentNumber: Int
     ) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title).font(.subheadline.bold())
-            ForEach(entities) { entity in
-                VStack(alignment: .leading, spacing: 6) {
-                    integerField("evaluation.span.start", value: entity.start)
-                    integerField("evaluation.span.end", value: entity.end)
-                    TextField("evaluation.entity-type", text: entity.type)
-                    Button("evaluation.remove", systemImage: "minus.circle", role: .destructive) {
-                        entities.wrappedValue.removeAll { $0.id == entity.wrappedValue.id }
+        let side = localized(titleKey)
+        let ordinals = Dictionary(
+            entities.wrappedValue.enumerated().map { ($0.element.id, $0.offset + 1) },
+            uniquingKeysWith: { first, _ in first })
+        return GroupBox {
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(entities) { entity in
+                    let identity = entity.wrappedValue.id
+                    let number = ordinals[identity] ?? 1
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("evaluation.entity.number \(number)").font(.subheadline.bold())
+                            .accessibilityAddTraits(.isHeader)
+                        editorIntegerField(
+                            "evaluation.span.start",
+                            context: nestedFieldLabel(
+                                "evaluation.span.start", parent: documentNumber, side: side,
+                                number: number, isEntity: true),
+                            value: entity.start)
+                        editorIntegerField(
+                            "evaluation.span.end",
+                            context: nestedFieldLabel(
+                                "evaluation.span.end", parent: documentNumber, side: side,
+                                number: number, isEntity: true),
+                            value: entity.end)
+                        editorTextField(
+                            "evaluation.entity-type",
+                            context: nestedFieldLabel(
+                                "evaluation.entity-type", parent: documentNumber, side: side,
+                                number: number, isEntity: true),
+                            text: entity.type)
+                        let removeLabel = Text(
+                            "evaluation.entity.remove \(documentNumber) \(side) \(number)")
+                        Button("evaluation.remove", systemImage: "minus.circle", role: .destructive)
+                        {
+                            entities.wrappedValue.removeAll { $0.id == identity }
+                        }
+                        .accessibilityLabel(removeLabel)
+                        .accessibilityInputLabels([removeLabel, Text("evaluation.remove")])
                     }
+                    .accessibilityElement(children: .contain)
                 }
+                let addLabel = Text("evaluation.entity.add \(documentNumber) \(side)")
+                Button("evaluation.add-entity", systemImage: "plus") {
+                    entities.wrappedValue.append(.init())
+                }
+                .accessibilityLabel(addLabel)
+                .accessibilityInputLabels([addLabel, Text("evaluation.add-entity")])
+                .disabled(entities.wrappedValue.count >= StudioEvaluationModel.maximumObservations)
             }
-            Button("evaluation.add-entity", systemImage: "plus") {
-                entities.wrappedValue.append(.init())
-            }
-            .disabled(entities.wrappedValue.count >= StudioEvaluationModel.maximumObservations)
+        } label: {
+            Text(LocalizedStringKey(titleKey)).accessibilityAddTraits(.isHeader)
+        }
+        .accessibilityElement(children: .contain)
+    }
+
+    private func localized(_ key: String) -> String {
+        String(localized: String.LocalizationValue(key), locale: locale)
+    }
+
+    private func observationFieldLabel(_ key: String, number: Int) -> Text {
+        let field = localized(key)
+        return Text("evaluation.observation.field \(field) \(number)")
+    }
+
+    private func documentFieldLabel(_ key: String, number: Int) -> Text {
+        let field = localized(key)
+        return Text("evaluation.document.field \(field) \(number)")
+    }
+
+    private func nestedFieldLabel(
+        _ key: String, parent: Int, side: String, number: Int, isEntity: Bool
+    ) -> Text {
+        let field = localized(key)
+        if isEntity {
+            return Text("evaluation.entity.field \(field) \(parent) \(side) \(number)")
+        }
+        return Text("evaluation.feature.field \(field) \(parent) \(side) \(number)")
+    }
+
+    private func editorTextField(_ key: String, context: Text, text: Binding<String>) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(LocalizedStringKey(key)).font(.subheadline)
+                .fixedSize(horizontal: false, vertical: true)
+            TextField("", text: text)
+                .textFieldStyle(.roundedBorder)
+                .accessibilityLabel(context)
+                .accessibilityInputLabels([context, Text(LocalizedStringKey(key))])
+        }
+    }
+
+    private func editorIntegerField(_ key: String, context: Text, value: Binding<Int>) -> some View
+    {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(LocalizedStringKey(key)).font(.subheadline)
+                .fixedSize(horizontal: false, vertical: true)
+            TextField("", value: value, format: .number)
+                .textFieldStyle(.roundedBorder)
+                .accessibilityLabel(context)
+                .accessibilityInputLabels([context, Text(LocalizedStringKey(key))])
         }
     }
 

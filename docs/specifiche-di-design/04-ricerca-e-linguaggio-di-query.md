@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-QRY-001 |
 | Tipo | Specifica di design della ricerca |
-| Versione | 1.3.0 |
+| Versione | 1.4.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-10-06 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Baseline proposta; parser e usability test richiesti |
 | Riferimenti | GS-DOM-001; GS-DAT-001; GS-LNG-001; GS-UX-001-11; ADR-0016 |
 
@@ -141,6 +141,33 @@ configurabili: 64 KiB di query, profondità 32, 1.024 nodi AST, phrase 256 token
 prossimità 10.000 token, pattern regex 256 byte, token regex 4 KiB, 1.000 fonti,
 256 MiB letti e 1.000 righe materializzate. Superare un limite produce errore
 prima dell'esecuzione o della successiva unità bounded.
+
+Il limite delle righe governa la materializzazione finale e non deve alterare
+la soddisfazione del predicato o il prefisso canonico dei risultati. I sottoalberi
+usati come operandi posizionali conservano tutte le ancore entro il budget;
+le unioni finali possono conservare un prefisso di massimo più una riga quando
+questo basta a provare l'ordine e la troncatura. Ogni valutazione di una singola
+SourceRevision dispone di budget distinti e configurabili: **100.000 ancore
+intermedie aggregate** e **1.000.000 passi di valutazione** nella baseline.
+Il loro esaurimento produce rispettivamente
+`query.intermediate-anchor-limit-exceeded` o
+`query.evaluation-step-limit-exceeded`, categoria `insufficientResources`,
+prima della successiva unità di lavoro. Non si pubblica uno zero risultati
+derivato da operandi incompleti. Kit e CLI usano gli stessi default Core;
+i campi opzionali del costruttore Core non modificano l'identità del QueryAST.
+Il costruttore originale a undici argomenti resta disponibile anche come
+valore funzione e delega ai budget standard; il nuovo overload permette di
+configurare uno o entrambi i budget.
+Il conteggio delle ancore riguarda emissioni logiche cumulative; gli indici
+ordinati e le strutture temporanee restano limitati a un fattore costante di
+esse, senza rappresentare una misura della memoria residente. Ricerca delle
+finestre, confronti di ordinamento, candidati, frasi e NFA consumano passi;
+la cancellazione viene controllata durante il lavoro, anche nell'ordinamento.
+Per una phrase costruita direttamente come AST Core, i byte UTF-8 raw dei
+valori sono sommati e ammessi entro `maximumQueryByteCount` prima della
+normalizzazione; il superamento usa `query.byte-limit-exceeded`. Il controllo
+è aggregato sulla singola phrase e non introduce un limite totale nuovo sugli
+AST programmatici.
 
 Il motore regex deve garantire tempo lineare per il sottoinsieme accettato oppure
 eseguire con deadline, cancellation e budget di passi. Backreference, lookbehind

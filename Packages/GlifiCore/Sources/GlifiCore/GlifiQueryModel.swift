@@ -468,8 +468,12 @@ public struct GlifiQueryLimits: Equatable, Sendable {
     public let maximumResultCount: Int
     /// Number of surface tokens retained on each KWIC side.
     public let contextTokenCount: Int
+    /// Maximum aggregate anchor emissions across all AST nodes in one source evaluation.
+    public let maximumIntermediateAnchorCount: Int
+    /// Maximum AST visits, candidate/order comparisons and regex state transitions per source evaluation.
+    public let maximumEvaluationStepCount: Int
 
-    /// Creates non-negative bounded query limits.
+    /// Preserves the original initializer and its function-reference signature.
     public init(
         maximumQueryByteCount: Int,
         maximumDepth: Int,
@@ -483,6 +487,38 @@ public struct GlifiQueryLimits: Equatable, Sendable {
         maximumResultCount: Int,
         contextTokenCount: Int
     ) {
+        self.init(
+            maximumQueryByteCount: maximumQueryByteCount,
+            maximumDepth: maximumDepth,
+            maximumNodeCount: maximumNodeCount,
+            maximumPhraseTokenCount: maximumPhraseTokenCount,
+            maximumProximityDistance: maximumProximityDistance,
+            maximumRegexByteCount: maximumRegexByteCount,
+            maximumRegexInputByteCount: maximumRegexInputByteCount,
+            maximumSourceCount: maximumSourceCount,
+            maximumScannedByteCount: maximumScannedByteCount,
+            maximumResultCount: maximumResultCount,
+            contextTokenCount: contextTokenCount,
+            maximumIntermediateAnchorCount: 100_000,
+            maximumEvaluationStepCount: 1_000_000)
+    }
+
+    /// Creates non-negative bounded query limits with configurable evaluation budgets.
+    public init(
+        maximumQueryByteCount: Int,
+        maximumDepth: Int,
+        maximumNodeCount: Int,
+        maximumPhraseTokenCount: Int,
+        maximumProximityDistance: Int,
+        maximumRegexByteCount: Int,
+        maximumRegexInputByteCount: Int,
+        maximumSourceCount: Int,
+        maximumScannedByteCount: Int,
+        maximumResultCount: Int,
+        contextTokenCount: Int,
+        maximumIntermediateAnchorCount: Int = 100_000,
+        maximumEvaluationStepCount: Int = 1_000_000
+    ) {
         self.maximumQueryByteCount = max(0, maximumQueryByteCount)
         self.maximumDepth = max(0, maximumDepth)
         self.maximumNodeCount = max(0, maximumNodeCount)
@@ -494,5 +530,7 @@ public struct GlifiQueryLimits: Equatable, Sendable {
         self.maximumScannedByteCount = max(0, maximumScannedByteCount)
         self.maximumResultCount = max(0, maximumResultCount)
         self.contextTokenCount = max(0, contextTokenCount)
+        self.maximumIntermediateAnchorCount = max(0, maximumIntermediateAnchorCount)
+        self.maximumEvaluationStepCount = max(0, maximumEvaluationStepCount)
     }
 }

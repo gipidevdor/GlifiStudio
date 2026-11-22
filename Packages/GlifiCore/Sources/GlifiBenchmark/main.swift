@@ -69,6 +69,19 @@ func uniform(_ generator: inout GlifiSplitMix64) -> Double {
     Double(generator.next() >> 11) / Double(1 << 53)
 }
 
+if CommandLine.arguments.contains("--query-evaluation") {
+    #if DEBUG
+        FileHandle.standardError.write(Data("This benchmark requires a Release build.\n".utf8))
+        exit(64)
+    #else
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        FileHandle.standardOutput.write(
+            try encoder.encode(queryEvaluationBenchmarkReport()) + Data("\n".utf8))
+        exit(0)
+    #endif
+}
+
 if CommandLine.arguments.contains("--validated-reads-query") {
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
