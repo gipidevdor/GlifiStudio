@@ -1337,7 +1337,7 @@ private func escapeMarkdown(_ value: String) -> String {
 }
 
 private func digest(_ data: Data) -> String {
-    "sha256:" + SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+    canonicalSHA256Digest(SHA256.hash(data: data))
 }
 
 private func isExportDigest(_ value: String) -> Bool {

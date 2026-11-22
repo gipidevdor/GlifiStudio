@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.7 |
+| Versione | 0.92.8 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -103,6 +103,7 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 | Evidenza | Verifiche coperte | Esito | Limite |
 | --- | --- | --- | --- |
 | [GS-VER-177](evidenze/GS-VER-177-betweenness-indicizzata.md) | TV-008, TV-009, TV-033; RF-039, RQ-008, RQ-009, RQ-063 | Undici regressioni Release, confronti bitwise e gate completo con 764 test superati | Misure locali con contesa; nessuna soglia o promozione scientifica |
+| [GS-VER-179](evidenze/GS-VER-179-identita-canoniche.md) | RQ-009, RQ-023, RQ-028, RQ-042, RQ-063; CMP-187 | Riferimenti canonici, manomissioni e baseline Release verificati; candidato e gate in corso | Encoder/SHA del produttore inclusi; solo SHA di verifica esclusi; tre produttori Core |
 | [GS-VER-178](evidenze/GS-VER-178-digest-export-viste.md) | TV-058; RF-084, RQ-028, RQ-044, RQ-063 | Vettori, bundle completo, nove regressioni Release e gate completo con 764 test superati | Verifica grande invariata; API e profilo v1 invariati |
 | [GS-VER-176](evidenze/GS-VER-176-cancellazione-resampling.md) | TV-012, TV-056, TV-057; RQ-011, RQ-041, RQ-063 | Superato: checkpoint intra-replica, parità e gate congiunto | Limite in osservazioni ricampionate, non deadline; sort non preemptive |
 | [GS-VER-175](evidenze/GS-VER-175-integrita-export-viste.md) | TV-058; RF-084, RQ-028, RQ-044 | Superato: RED/verde, quattro famiglie e gate congiunto | Integrità interna del bundle; autenticazione e progetto esterno fuori contratto |

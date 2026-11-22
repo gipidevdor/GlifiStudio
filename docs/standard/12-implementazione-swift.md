@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-STD-001-12 |
 | Tipo | Capitolo normativo |
-| Versione | 0.5.0 |
+| Versione | 0.5.1 |
 | Stato | Proposto |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Non ancora approvato |
 | Documento padre | [GS-STD-001](../standard-di-progetto.md) |
 
@@ -76,6 +76,13 @@ Le regole `.swift-format` obbligatorie, incluso il rifiuto di force unwrap/`try!
 - Interoperabilità con buffer Accelerate, Metal o Core ML **DEVE** rendere esplicite ownership, durata, stride, alignment, precisione e copie.
 - Availability check e feature detection **DEVONO** precedere l'uso di API o capacità non universali nella matrice supportata.
 - Conditional compilation **DEVE** confinare differenze reali di piattaforma e non duplicare regole di dominio.
+
+Il riuso del codificatore SHA-256 interno nei produttori di identità conserva
+la preimmagine completa, le opzioni JSON e i byte del digest. GS-VER-179
+registra il confronto di query, tabelle di accordo e revisioni di report:
+encoder e hash del produttore sono inclusi nel timer, mentre uguaglianza e
+checksum di verifica sono esclusi. È una scelta interna, senza nuova API,
+cache dei digest o modifica dei formati.
 
 ## 12.8 Implementazioni scientifiche
 

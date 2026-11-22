@@ -96,7 +96,7 @@ public func measurePipelineOptimization<Result: Equatable>(
             maximumSeconds: sorted[6],
             resultChecks: 8,
             measurementScope:
-                "Fixture and reference preparation, full equality, SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim"
+                "Fixture and reference preparation, full equality, verification SHA-256 and report encoding excluded; warm process, no cache flush; no UI, energy or release threshold claim"
         )
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
