@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.20.7 |
+| Versione | 1.20.8 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -290,3 +290,5 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 - [GS-VER-305 — Riverifica e rifinitura dei profili KH](GS-VER-305-rifinitura-kh.md) — Superato localmente
 
 - [GS-VER-284 — Regia del piano e input numerico](GS-VER-284-regia-del-piano-e-input-numerico.md) — Compatibilità e verifiche macOS del refactoring interno
+
+- [GS-VER-310 — Importazione nativa PDF ed EPUB](GS-VER-310-importazione-pdf-epub.md) — In verifica

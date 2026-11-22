@@ -3,10 +3,12 @@
 import CryptoKit
 import Foundation
 
-/// Text formats admitted by the first ingestion boundary.
+/// Source formats admitted by the bounded ingestion boundary.
 public enum GlifiTextFormat: String, Codable, Hashable, Sendable {
     case plainText
     case markdown
+    case pdf
+    case epub
 }
 
 /// Bounded limits applied before decoding source bytes.
@@ -17,9 +19,43 @@ public struct GlifiTextImportLimits: Equatable, Sendable {
     /// Maximum number of source bytes accepted before decoding.
     public let maximumByteCount: Int
 
-    /// Creates a non-negative byte limit.
-    public init(maximumByteCount: Int) {
+    /// Maximum canonical UTF-8 text captured by document importers.
+    public let maximumExtractedByteCount: Int
+    /// Maximum pages or spine documents admitted before extraction.
+    public let maximumDocumentUnitCount: Int
+    /// Maximum located text regions retained with the captured representation.
+    public let maximumDocumentLocationCount: Int
+    /// Maximum PDF pages that may require OCR in one import.
+    public let maximumOCRPageCount: Int
+    /// Maximum pixels allocated for one OCR page.
+    public let maximumOCRPixelCount: Int
+    /// Maximum entries admitted from an EPUB ZIP directory.
+    public let maximumArchiveEntryCount: Int
+    /// Maximum declared expanded archive bytes, cumulatively.
+    public let maximumExpandedArchiveByteCount: Int
+    /// Maximum expanded bytes for a single ZIP member.
+    public let maximumArchiveEntryByteCount: Int
+
+    /// Creates non-negative limits; rich-document ceilings cannot exceed the standard envelope.
+    public init(
+        maximumByteCount: Int, maximumExtractedByteCount: Int = 16 * 1_024 * 1_024,
+        maximumDocumentUnitCount: Int = 2_048, maximumDocumentLocationCount: Int = 100_000,
+        maximumOCRPageCount: Int = 128, maximumOCRPixelCount: Int = 4_194_304,
+        maximumArchiveEntryCount: Int = 10_000,
+        maximumExpandedArchiveByteCount: Int = 128 * 1_024 * 1_024,
+        maximumArchiveEntryByteCount: Int = 16 * 1_024 * 1_024
+    ) {
         self.maximumByteCount = max(0, maximumByteCount)
+        self.maximumExtractedByteCount = min(max(0, maximumExtractedByteCount), 16 * 1_024 * 1_024)
+        self.maximumDocumentUnitCount = min(max(0, maximumDocumentUnitCount), 2_048)
+        self.maximumDocumentLocationCount = min(max(0, maximumDocumentLocationCount), 100_000)
+        self.maximumOCRPageCount = min(max(0, maximumOCRPageCount), 128)
+        self.maximumOCRPixelCount = min(max(0, maximumOCRPixelCount), 4_194_304)
+        self.maximumArchiveEntryCount = min(max(0, maximumArchiveEntryCount), 10_000)
+        self.maximumExpandedArchiveByteCount = min(
+            max(0, maximumExpandedArchiveByteCount), 128 * 1_024 * 1_024)
+        self.maximumArchiveEntryByteCount = min(
+            max(0, maximumArchiveEntryByteCount), 16 * 1_024 * 1_024)
     }
 }
 
@@ -35,10 +71,25 @@ public struct GlifiImportedText: Equatable, Sendable {
     public let text: String
     /// Versioned extraction contract used to produce `text`.
     public let extractionContractIdentifier: String
-    /// Total mapping from extracted UTF-8 positions back to immutable source bytes.
+    /// Total mapping to UTF-8 source text; binary documents use their captured text representation.
     public let spanMap: GlifiSpanMap
     /// SHA-256 digest of the original bytes.
     public let contentDigest: String
+    /// Captured document representation, persisted atomically with binary originals.
+    package let documentExtraction: GlifiDocumentExtraction?
+    /// Text whose UTF-8 offsets are addressed by the source side of the span map.
+    package var sourceRepresentationText: String {
+        get throws {
+            if let documentExtraction { return documentExtraction.text }
+            guard let original = String(validating: bytes, as: UTF8.self) else {
+                throw documentImportFailure(
+                    "document.invalid-source-representation", category: .corruption)
+            }
+            return original
+        }
+    }
+    /// Admission charges both original input and the larger captured text representation.
+    package var analysisByteCount: Int { max(bytes.count, text.utf8.count) }
     /// Whether the original bytes began with the UTF-8 byte-order mark.
     public let hadByteOrderMark: Bool
 
@@ -50,7 +101,8 @@ public struct GlifiImportedText: Equatable, Sendable {
         extractionContractIdentifier: String,
         spanMap: GlifiSpanMap,
         contentDigest: String,
-        hadByteOrderMark: Bool
+        hadByteOrderMark: Bool,
+        documentExtraction: GlifiDocumentExtraction? = nil
     ) {
         self.sourceRevisionID = sourceRevisionID
         self.format = format
@@ -60,6 +112,7 @@ public struct GlifiImportedText: Equatable, Sendable {
         self.spanMap = spanMap
         self.contentDigest = contentDigest
         self.hadByteOrderMark = hadByteOrderMark
+        self.documentExtraction = documentExtraction
     }
 }
 
@@ -85,6 +138,21 @@ public struct GlifiTextImporter: Sendable {
                 messageKey: "failure.text.byte-limit-exceeded",
                 arguments: ["maximumByteCount": String(limits.maximumByteCount)]
             )
+        }
+
+        switch format {
+        case .pdf:
+            return try restoreDocument(
+                from: data, format: format,
+                extraction: GlifiPDFExtractor.extract(data, limits: limits),
+                limits: limits, sourceRevisionID: sourceRevisionID)
+        case .epub:
+            return try restoreDocument(
+                from: data, format: format,
+                extraction: GlifiEPUBExtractor.extract(data, limits: limits),
+                limits: limits, sourceRevisionID: sourceRevisionID)
+        case .plainText, .markdown:
+            break
         }
 
         let byteOrderMark = Data([0xEF, 0xBB, 0xBF])
@@ -142,6 +210,9 @@ public struct GlifiTextImporter: Sendable {
                 sourceByteOffset: sourceByteOffset,
                 sourceByteCount: data.count
             )
+        case .pdf, .epub:
+            throw documentImportFailure(
+                "document.invalid-text-dispatch", category: .invariantViolation)
         }
         return GlifiImportedText(
             sourceRevisionID: sourceRevisionID,
@@ -153,6 +224,55 @@ public struct GlifiTextImporter: Sendable {
             contentDigest: "sha256:\(digest)",
             hadByteOrderMark: hadByteOrderMark
         )
+    }
+
+    /// Rehydrates the committed representation without invoking PDFKit, Vision or XML parsing.
+    package func restoreDocument(
+        from data: Data, format: GlifiTextFormat, extraction: GlifiDocumentExtraction,
+        limits: GlifiTextImportLimits = .standard,
+        sourceRevisionID: SourceRevisionID
+    ) throws -> GlifiImportedText {
+        try Task.checkCancellation()
+        guard data.count <= limits.maximumByteCount,
+            extraction.text.utf8.count <= limits.maximumExtractedByteCount,
+            extraction.locations.count <= limits.maximumDocumentLocationCount,
+            let unitCount = extraction.metadata["documentUnitCount"].flatMap(Int.init),
+            unitCount <= limits.maximumDocumentUnitCount
+        else {
+            throw documentImportFailure("document.resource-limit", category: .insufficientResources)
+        }
+        let validLocations: Bool
+        switch format {
+        case .pdf:
+            validLocations = extraction.locations.allSatisfy {
+                $0.pageNumber != nil && ($0.method == "pdf-text" || $0.method == "pdf-ocr")
+            }
+        case .epub:
+            validLocations = extraction.locations.allSatisfy {
+                $0.resourcePath != nil && $0.method == "epub-xhtml"
+            }
+        case .plainText, .markdown:
+            validLocations = false
+        }
+        guard validLocations else { throw documentImportFailure("document.format-mismatch") }
+        let count = extraction.text.utf8.count
+        let segments: [GlifiSpanMapSegment]
+        if count == 0 {
+            segments = []
+        } else {
+            let range = try GlifiUTF8Range(start: 0, end: count)
+            segments = [GlifiSpanMapSegment(outputRange: range, inputRanges: [range], kind: .exact)]
+        }
+        let map = try GlifiSpanMap(
+            contractIdentifier: extraction.contractIdentifier, sourceRevisionID: sourceRevisionID,
+            inputByteCount: count, outputByteCount: count, segments: segments)
+        return GlifiImportedText(
+            sourceRevisionID: sourceRevisionID, format: format, bytes: data,
+            text: extraction.text, extractionContractIdentifier: extraction.contractIdentifier,
+            spanMap: map,
+            contentDigest: "sha256:"
+                + SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined(),
+            hadByteOrderMark: false, documentExtraction: extraction)
     }
 }
 

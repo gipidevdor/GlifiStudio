@@ -13,6 +13,8 @@ public enum GlifiStudioStatus: String, Sendable, Equatable {
 public enum GlifiStudioTextFormat: String, Codable, Equatable, Sendable {
     case plainText
     case markdown
+    case pdf
+    case epub
 }
 
 /// A bounded term-frequency row ready for presentation or machine clients.
@@ -248,15 +250,21 @@ public struct GlifiStudioProjectQueryResult: Equatable, Sendable {
 public struct GlifiStudioSourceText: Equatable, Sendable {
     /// Opaque source revision identity.
     public let sourceRevisionID: String
-    /// Exact decoded UTF-8 text of the incorporated original bytes.
+    /// UTF-8 source representation used by source ranges, captured at binary-document import.
     public let text: String
-    /// Exact original byte count.
+    /// Exact UTF-8 byte count of this source representation.
     public let byteCount: Int
+    /// Captured document provenance; absent for the historical TXT and Markdown contract.
+    public let document: GlifiStudioDocumentProvenance?
 
-    init(sourceRevisionID: String, text: String, byteCount: Int) {
+    init(
+        sourceRevisionID: String, text: String, byteCount: Int,
+        document: GlifiStudioDocumentProvenance? = nil
+    ) {
         self.sourceRevisionID = sourceRevisionID
         self.text = text
         self.byteCount = byteCount
+        self.document = document
     }
 }
 
@@ -267,6 +275,10 @@ extension GlifiStudioTextFormat {
             self = .plainText
         case .markdown:
             self = .markdown
+        case .pdf:
+            self = .pdf
+        case .epub:
+            self = .epub
         }
     }
 
@@ -276,6 +288,10 @@ extension GlifiStudioTextFormat {
             .plainText
         case .markdown:
             .markdown
+        case .pdf:
+            .pdf
+        case .epub:
+            .epub
         }
     }
 }

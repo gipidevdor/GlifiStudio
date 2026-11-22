@@ -112,8 +112,10 @@ enum GlifiCLI {
                     lastResult = try await session.importText(
                         at: sourceURL,
                         format: inputFormat
-                            ?? (sourceURL.pathExtension.lowercased() == "txt"
-                                ? .plainText : .markdown)
+                            ?? (GlifiStudioTextFormat(
+                                rawValue: sourceURL.pathExtension.lowercased())
+                                ?? (sourceURL.pathExtension.lowercased() == "txt"
+                                    ? .plainText : .markdown))
                     )
                 }
                 return lastResult
@@ -1225,11 +1227,11 @@ private struct CLIRequest {
           glifi [--format text|json] [--no-progress] operator --request <richiesta.json>
           glifi [--format text|json] [--no-progress] evaluation --request <richiesta.json>
           glifi [--format text|json] [--no-progress] project-call <progetto.glifi> --request <richiesta.json>
-          glifi [--format text|json] [--no-progress] profile <fonte> --input-format plainText|markdown
+          glifi [--format text|json] [--no-progress] profile <fonte> --input-format plainText|markdown|pdf|epub
           glifi [--format text|json] [--no-progress] profile --request <richiesta.json>
           glifi [--format text|json] [--no-progress] project validate <progetto.glifi>
           glifi [--format text|json] [--no-progress] import <progetto.glifi> <fonte.txt>...
-          glifi [--format text|json] [--no-progress] import <progetto.glifi> --input-format plainText|markdown <fonte>...
+          glifi [--format text|json] [--no-progress] import <progetto.glifi> --input-format plainText|markdown|pdf|epub <fonte>...
           glifi [--format text|json] [--no-progress] query <progetto.glifi> (--text <query> | --ast <query.json>)
           glifi [--format text|json] [--no-progress] plan <progetto.glifi> --request <richiesta.json>
           glifi [--format text|json] [--no-progress] execute <progetto.glifi> --request <richiesta.json>

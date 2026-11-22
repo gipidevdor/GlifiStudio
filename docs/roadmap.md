@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-PLAN-001 |
 | Tipo | Piano di validazione e sviluppo |
-| Versione | 1.2.0 |
+| Versione | 1.2.1 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -97,7 +97,10 @@ Uscita: gate **G3** feature-complete 0.1 sul percorso Must.
 ## 4. Fase 3 — Documenti e corpus ricchi
 
 Obiettivo: estendere acquisizione e analisi preservando la stessa pipeline.
-**Fuori dal focus 0.1** fino a G3 stabile: PDF, OCR, formati office, metodi Should.
+**Fuori dalla baseline 0.1**: PDF, OCR, formati office, metodi Should.
+La richiesta esplicita del 2026-11-22 autorizza l'incremento PDF/EPUB di
+ADR-0044 e GS-DOR-310: PDFKit, Vision e importatore EPUB bounded. La sua
+verifica è distinta da G3 formale/G4/G5; formati office restano aperti.
 
 ## 5. Fase 4 — Analisi avanzata
 

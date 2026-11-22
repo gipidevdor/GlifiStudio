@@ -90,6 +90,14 @@ preservando i metodi upstream già pubblicati.
 
 ### Aggiunto
 
+- Importazione PDF ed EPUB in app, GlifiKit e CLI: PDFKit per il testo digitale,
+  Vision per pagine scansionate e lettore EPUB statico con componenti di sistema.
+  Originale e testo acquisito restano nello stesso commit, con pagine/capitoli,
+  metadati e provenienza OCR; la riapertura non riesegue l'estrazione.
+  Nuovi casi `pdf`/`epub` e provenienza opzionale nel risultato `source-text`.
+  Il primo import ricco aggiorna lo store a SQL5 e richiede reader 2;
+  TXT/Markdown conservano il percorso precedente. Limiti in GS-VER-310.
+
 - Varianti native del laboratorio analitico: comunità Girvan–Newman/CNM/Walktrap,
   layout FR/KK, foresta Prim, Simpson, MDS ordinale e multi-start, SOM esagonale
   con diagnostiche, selezione K LDA e pipeline italiana opzionale. Nove operazioni

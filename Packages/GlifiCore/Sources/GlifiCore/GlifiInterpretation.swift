@@ -559,8 +559,15 @@ public struct GlifiInterpretationEngine: Sendable {
     /// Fixed product policy for G-test/BH keyness findings.
     public static let keynessSupportPolicyIdentifier = "support-policy.keyness-gtest-bh-v1"
 
-    /// Creates one stateless interpreter.
-    public init() {}
+    private let capturedSourceByteCounts: [SourceRevisionID: Int]
+
+    /// Creates an interpreter for the historical UTF-8 source contract.
+    public init() { capturedSourceByteCounts = [:] }
+
+    /// Binary document references address their committed representation, not container bytes.
+    package init(capturedSourceByteCounts: [SourceRevisionID: Int]) {
+        self.capturedSourceByteCounts = capturedSourceByteCounts
+    }
 
     /// Produces deterministic Evidence/Finding/Caveat structures from verified artifacts.
     public func interpret(
@@ -1166,16 +1173,32 @@ private extension GlifiInterpretationEngine {
         sourcesByID: [SourceRevisionID: GlifiProjectSourceRecord]
     ) throws -> [GlifiSourceReference] {
         try ids.sorted { $0.canonicalValue < $1.canonicalValue }.map { identifier in
-            guard let source = sourcesByID[identifier], source.byteCount > 0 else {
+            guard let source = sourcesByID[identifier] else {
+                throw interpretationFailure("interpretation.source-reference-unresolved")
+            }
+            let count: Int
+            let representation: String
+            let region: String
+            switch source.format {
+            case .plainText, .markdown:
+                count = source.byteCount
+                representation = "source-bytes.v1"
+                region = "whole-source-revision.v1"
+            case .pdf, .epub:
+                guard let capturedCount = capturedSourceByteCounts[identifier] else {
+                    throw interpretationFailure("interpretation.source-reference-unresolved")
+                }
+                count = capturedCount
+                representation = "document-extracted-utf8.v1"
+                region = "whole-captured-document-text.v1"
+            }
+            guard count > 0 else {
                 throw interpretationFailure("interpretation.source-reference-unresolved")
             }
             return GlifiSourceReference(
-                sourceRevisionID: identifier,
-                roleIdentifier: roleIdentifier,
-                representationIdentifier: "source-bytes.v1",
-                regionIdentifier: "whole-source-revision.v1",
-                ranges: [try GlifiUTF8Range(start: 0, end: source.byteCount)]
-            )
+                sourceRevisionID: identifier, roleIdentifier: roleIdentifier,
+                representationIdentifier: representation, regionIdentifier: region,
+                ranges: [try GlifiUTF8Range(start: 0, end: count)])
         }
     }
 

@@ -749,8 +749,9 @@ final class StudioHomeModel {
                     }
                 }
                 let format: GlifiStudioTextFormat =
-                    ["md", "markdown"].contains(url.pathExtension.lowercased())
-                    ? .markdown : .plainText
+                    GlifiStudioTextFormat(rawValue: url.pathExtension.lowercased())
+                    ?? (["md", "markdown"].contains(url.pathExtension.lowercased())
+                        ? .markdown : .plainText)
                 let result = try await active.importText(at: url, format: format)
                 snapshot = result.project
                 lastProfile = result.profile

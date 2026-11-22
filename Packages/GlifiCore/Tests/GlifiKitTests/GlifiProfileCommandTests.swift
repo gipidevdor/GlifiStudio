@@ -5,7 +5,7 @@ import GlifiKit
 import Testing
 
 struct GlifiProfileCommandTests {
-    @Test(arguments: [GlifiStudioTextFormat.plainText, .markdown])
+    @Test(arguments: [GlifiStudioTextFormat.plainText, .markdown, .pdf, .epub])
     func jsonProfilePreservesEveryNativeField(format: GlifiStudioTextFormat) async throws {
         let parityRoot = ProcessInfo.processInfo.environment["GLIFI_KIT_CLI_PARITY_DIRECTORY"]
         let directory =
@@ -14,14 +14,37 @@ struct GlifiProfileCommandTests {
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         defer { if parityRoot == nil { try? FileManager.default.removeItem(at: directory) } }
         let source = directory.appendingPathComponent("\(format.rawValue).data")
-        try Data("# Un corpus\n\nLa casa e il mare. La casa è vicina.\n".utf8).write(to: source)
+        let bytes: Data
+        switch format {
+        case .plainText, .markdown:
+            bytes = Data("# Un corpus\n\nLa casa e il mare. La casa è vicina.\n".utf8)
+        case .pdf, .epub:
+            let fixtureRoot = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+                .appendingPathComponent("../../../../Fixtures/DocumentImport/v1")
+                .standardizedFileURL
+            bytes = try Data(
+                contentsOf: fixtureRoot.appendingPathComponent(
+                    format == .pdf ? "digital.pdf" : "book.epub"))
+        }
+        try bytes.write(to: source)
         let request = GlifiStudioProfileRequest(sourcePath: source.path, format: format)
         let service = GlifiStudioService()
         let expected = try await service.profileText(at: source, format: format)
         let result = try await service.profileText(json: JSONEncoder().encode(request))
         #expect(result == expected)
-        #expect(result.utf8ByteCount > result.characterCount)
+        #expect(result.utf8ByteCount >= result.characterCount)
+        if format != .pdf { #expect(result.utf8ByteCount > result.characterCount) }
         #expect(!result.topTerms.isEmpty)
+        let referenceURL = directory.appendingPathComponent("\(format.rawValue)-reference.glifi")
+        let reference = try await service.createProject(at: referenceURL)
+        let imported = try await reference.importText(at: source, format: format)
+        let revision = try #require(imported.project.sources.first?.sourceRevisionID)
+        let captured = try await reference.sourceText(sourceRevisionID: revision)
+        let sourceEncoder = JSONEncoder()
+        sourceEncoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+        try sourceEncoder.encode(captured).write(
+            to: directory.appendingPathComponent("\(format.rawValue)-source.json"))
+        await reference.close()
         try exportKitCLIParityFixture(
             command: "profile", operation: format.rawValue, request: request, result: result)
     }

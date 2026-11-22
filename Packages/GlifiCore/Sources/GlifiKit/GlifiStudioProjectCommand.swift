@@ -516,7 +516,7 @@ extension GlifiStudioMultivariateMethod: Codable {
 }
 
 extension GlifiStudioSourceText: Encodable {
-    private enum CodingKeys: String, CodingKey { case sourceRevisionID, text, byteCount }
+    private enum CodingKeys: String, CodingKey { case sourceRevisionID, text, byteCount, document }
 
     /// Encodes the original immutable source text and its exact UTF-8 byte count.
     public func encode(to encoder: any Encoder) throws {
@@ -524,6 +524,7 @@ extension GlifiStudioSourceText: Encodable {
         try container.encode(sourceRevisionID, forKey: .sourceRevisionID)
         try container.encode(text, forKey: .text)
         try container.encode(byteCount, forKey: .byteCount)
+        try container.encodeIfPresent(document, forKey: .document)
     }
 }
 

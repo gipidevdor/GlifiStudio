@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-API-001 |
 | Tipo | Specifica normativa delle interfacce applicative e headless |
-| Versione | 1.32.1 |
+| Versione | 1.32.2 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-22 |
@@ -208,7 +208,7 @@ chiave (GS-VER-135).
 | --- | --- | --- | --- |
 | stato motore | nessuna | stato capability-neutral | Implementata |
 | crea/apri/chiudi progetto | URL autorizzato, modalità | sessione o failure | Implementata e verificata per package locale `.glifi` v1 |
-| importa | sessione, sorgenti, policy | SourceRevision e rapporto | TXT/Markdown bounded implementati e verificati; streaming e document model completo aperti |
+| importa | sessione, sorgenti, policy | SourceRevision e rapporto | TXT/Markdown bounded verificati; PDF/EPUB e snapshot di estrazione nel lotto GS-VER-310; streaming generale distinto |
 | profila raccolta | revisioni TXT/Markdown della generazione e limiti | conteggi, distribuzioni e matrice sparsa con digest | Slice `corpus-profile-it-v1` implementata e verificata; metadati, duplicazioni e problemi di qualità del CollectionProfile completo restano aperti |
 | pianifica | intent, scope/gruppi espliciti e budget bounded | AnalysisPlan, rationale e Artifact persistito | `planner-v2` (ADR-0025): profilo corpus e keyness più sette capability estese con decisioni e costi dichiarati (GS-VER-106) |
 | esegui piano | stessa request pianificabile e condizioni runtime osservate | Artifact ordinati, interpretazione Evidence/Finding/Caveat, stato terminale, profilo operativo e progresso | Profilo corpus, keyness e capability estese con findings secondo le policy ADR-0026 (GS-VER-111); progresso intra-nodo, checkpoint ed ExecutionRecord aperti |
@@ -363,13 +363,13 @@ glifi [--format text|json] [--locale <tag>] [--no-progress] <command>
 glifi status
 glifi project create|info|validate <project>
 glifi import <project> <source>...
-glifi import <project> --input-format plainText|markdown <source>...
+glifi import <project> --input-format plainText|markdown|pdf|epub <source>...
 glifi statistics --request <json-file>
 glifi operator --request <json-file>
 glifi evaluation --request <json-file>
 glifi project-call <project> --request <json-file>
 glifi profile --request <json-file>
-glifi profile <source> --input-format plainText|markdown
+glifi profile <source> --input-format plainText|markdown|pdf|epub
 glifi plan <project> --request <json-file>
 glifi execute <project> --request <json-file>
 glifi visualize <project> --request <json-file>
@@ -386,7 +386,7 @@ glifi qualitative passage <project> --source <source-revision-id> --sentences <p
 ```
 
 Sono disponibili `status`, `project create`, `project info`, `project validate`,
-`import` per TXT/Markdown, `query --text|--ast`, `plan --request`, `execute --request`,
+`import` per TXT/Markdown/PDF/EPUB, `query --text|--ast`, `plan --request`, `execute --request`,
 `investigation create|select|list`, `analyze`, `keyness` ed `export`. Accettano
 `--format text|json`;
 l'envelope JSON ha `cliProtocolVersion = 1`. La query JSON include generazione,
@@ -566,3 +566,38 @@ analisi di sessione e il controllo continuo dell'inventario pubblico. I comandi
 precedenti conservano la propria sintassi. Le eccezioni infrastrutturali sono
 censite e motivate; una nuova operazione utente richiede trasporto e test CLI
 nello stesso cambiamento.
+
+
+## Importazione PDF ed EPUB (ADR-0044)
+
+GlifiStudioTextFormat ammette plainText, markdown, pdf ed epub. Il selettore
+nativo e la CLI riconoscono le estensioni PDF/EPUB; --input-format mantiene la
+selezione esplicita anche su file con altra estensione. Le richieste profile e
+import usano lo stesso importatore e gli stessi limiti. I formati TXT/Markdown
+conservano valori, rappresentazione e risultati precedenti.
+
+Per PDF/EPUB, source-text restituisce la rappresentazione UTF-8 acquisita al
+momento dell'importazione, il suo byteCount e document opzionale: formato,
+byte/digest dell'originale, contratto/backend, metadati e locatori pagina/risorsa.
+L'originale binario resta incorporato e immutabile; i range non sono offset del
+contenitore. Gli output storici TXT/Markdown omettono document e restano invariati.
+Il caricamento usa lo snapshot persistito; non riavvia OCR o parser documentali.
+
+Limiti standard: 64 MiB originali, 16 MiB testo, 2.048 pagine/risorse,
+100.000 locatori; OCR massimo 128 pagine e 4.194.304 pixel per pagina. EPUB:
+10.000 membri ZIP, 128 MiB espansi cumulativi, 16 MiB per membro. Gli input
+cifrati, non supportati, incoerenti o oltre budget falliscono senza commit della
+fonte. I budget analitici considerano anche la rappresentazione estratta.
+Prove e limiti specifici sono registrati in GS-VER-310.
+
+Per EPUB sono acquisiti i campi DC title, creator, language e identifier;
+valori multipli mantengono l'ordine e sono separati da LF, con massimo 4.096
+byte per campo senza troncatura. Sono ammessi font locali offuscati con gli
+algoritmi IDPF/Adobe dichiarati: non vengono letti né deoffuscati e lo snapshot
+ne registra conteggio e policy. Testo cifrato, DRM, diritti protetti, ZIP64,
+archivi multidisco e spine non XHTML restano esplicitamente non supportati.
+Per PDF il profilo richiede la firma a byte zero; l'OCR riguarda le pagine prive
+di testo incorporato, non fonde automaticamente immagini e testo della stessa
+pagina. Layout complessi e qualità OCR richiedono confronto con l'originale.
+PDFKit può emettere una diagnostica generica su PDF firmati ma corrotti; il
+trasporto mantiene la failure di dominio e non intercetta globalmente stderr.

@@ -4853,6 +4853,60 @@
       "gate": "G2",
       "status": "implemented",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-310",
+      "clause": "ADR-0044 § importazione nativa PDF ed EPUB e snapshot atomico",
+      "specification": "docs/adr/0044-importazione-nativa-pdf-epub.md",
+      "requirements": [
+        "RF-004",
+        "RF-005",
+        "RF-006",
+        "RF-088",
+        "RQ-044",
+        "RQ-058",
+        "RQ-060"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiTextModel.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiDocumentExtraction.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiPDFExtractor.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEPUBExtractor.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiZIPReader.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiDocumentExtractionPersistence.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiProjectPackage.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioDocumentProvenance.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift",
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/StudioHomeView.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiSQLiteProjectStore.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiInterpretation.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPDFImporterTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiEPUBImporterTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDocumentExtractionPersistenceTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiDocumentImportWorkflowTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiProfileCommandTests.swift",
+        "Scripts/check-kit-cli-parity.py",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiRichDocumentAdmissionTests.swift",
+        "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiRichProjectMigrationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiRichDocumentRuntimeTests.swift"
+      ],
+      "fixtures": [
+        "Fixtures/DocumentImport/v1/digital.pdf",
+        "Fixtures/DocumentImport/v1/book.epub",
+        "Scripts/build-rich-document-fixtures.py"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-310-importazione-pdf-epub.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }

@@ -7570,13 +7570,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "UTF-8 plain text and Markdown are supported. Processing stays on this device."
+            "value" : "Import TXT, Markdown, PDF and EPUB. Processing stays on this device."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sono supportati testo semplice UTF-8 e Markdown. L’elaborazione resta sul dispositivo."
+            "value" : "Importa TXT, Markdown, PDF ed EPUB. L’elaborazione resta sul dispositivo."
           }
         }
       }
@@ -10896,6 +10896,20 @@
         }
       }
     },
+    "format.epub" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "EPUB" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "EPUB" } }
+      }
+    },
+    "format.pdf" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "PDF" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "PDF" } }
+      }
+    },
     "format.plain-text" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -12307,6 +12321,91 @@
         }
       }
     },
+  "source.document.captured": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Text captured during import."
+        }
+      },
+      "it": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Testo acquisito durante l’importazione."
+        }
+      }
+    }
+  },
+  "source.document.format": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Original document"
+        }
+      },
+      "it": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Documento di origine"
+        }
+      }
+    }
+  },
+  "source.document.ocr": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Text recognized with OCR"
+        }
+      },
+      "it": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Testo riconosciuto con OCR"
+        }
+      }
+    }
+  },
+  "source.document.pages": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Pages"
+        }
+      },
+      "it": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Pagine"
+        }
+      }
+    }
+  },
+  "source.document.sections": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Reading sections"
+        }
+      },
+      "it": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Sezioni di lettura"
+        }
+      }
+    }
+  },
     "source.bytes" : {
       "extractionState" : "manual",
       "localizations" : {

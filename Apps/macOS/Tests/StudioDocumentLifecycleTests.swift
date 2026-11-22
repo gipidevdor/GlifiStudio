@@ -8,6 +8,36 @@ import Testing
 
 @MainActor
 struct StudioDocumentLifecycleTests {
+    @Test(arguments: ["digital.pdf", "book.epub"])
+    func richDocumentExtensionsImportAndRestoreCapturedSources(file: String) async throws {
+        let root = try makeRoot()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let projectURL = root.appending(path: "Rich.glifi")
+        let fixtureRoot = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+            .appendingPathComponent("../../../Fixtures/DocumentImport/v1").standardizedFileURL
+        let model = StudioHomeModel()
+        await model.attachDocument(at: projectURL, needsPackageInitialization: true)
+        await model.importSource(at: fixtureRoot.appendingPathComponent(file))
+        #expect(model.lastFailure == nil)
+        let record = try #require(model.snapshot?.sources.first)
+        let expectedFormat: GlifiStudioTextFormat = file.hasSuffix(".pdf") ? .pdf : .epub
+        #expect(record.format == expectedFormat)
+        #expect(model.snapshot?.sourceCount == 1)
+        #expect(model.snapshot?.artifactCount == 1)
+        await model.browseSource(record.sourceRevisionID)
+        let captured = try #require(model.browsedSourceText)
+        #expect(captured.document?.format == expectedFormat)
+        model.queryDraft = "normalized:casa"
+        await model.runQuery()
+        #expect(model.lastFailure == nil)
+        #expect(model.queryResult?.matches.isEmpty == false)
+        let reopened = StudioHomeModel()
+        await reopened.attachDocument(at: projectURL, needsPackageInitialization: false)
+        #expect(reopened.lastFailure == nil)
+        await reopened.browseSource(record.sourceRevisionID)
+        #expect(reopened.browsedSourceText == captured)
+    }
+
     @Test func initializesAnEmptyDocumentPlaceholder() async throws {
         let root = try makeRoot()
         defer { try? FileManager.default.removeItem(at: root) }

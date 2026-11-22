@@ -614,7 +614,9 @@ public actor GlifiEngine {
                 try GlifiPlanningSource(
                     sourceRevisionID: $0.sourceRevisionID,
                     format: $0.format,
-                    byteCount: $0.byteCount
+                    byteCount: $0.byteCount,
+                    admittedByteCount: GlifiDocumentExtractionPersistence.admissionByteCount(
+                        for: $0, artifacts: snapshot.artifacts)
                 )
             }
             let plan = try GlifiAnalysisPlanner().plan(
@@ -983,7 +985,10 @@ public actor GlifiEngine {
             try Task.checkCancellation()
             let snapshot = await project.snapshot()
             try validateCorpusSelection(
-                documentByteCounts: snapshot.sources.map(\.byteCount),
+                documentByteCounts: try snapshot.sources.map {
+                    try GlifiDocumentExtractionPersistence.admissionByteCount(
+                        for: $0, artifacts: snapshot.artifacts)
+                },
                 options: options
             )
             let descriptor = try GlifiAnalysisArtifactDescriptorFactory.corpusProfile(
@@ -1017,17 +1022,12 @@ public actor GlifiEngine {
             sources.reserveCapacity(snapshot.sources.count)
             for source in snapshot.sources {
                 try Task.checkCancellation()
-                let data = try await project.sourceData(for: source.sourceRevisionID)
                 sources.append(
-                    try textImporter.importText(
-                        from: data,
-                        format: source.format,
+                    try await project.importedText(
+                        for: source.sourceRevisionID,
                         limits: GlifiTextImportLimits(
-                            maximumByteCount: options.maximumSourceByteCount
-                        ),
-                        sourceRevisionID: source.sourceRevisionID
-                    )
-                )
+                            maximumByteCount: options.maximumSourceByteCount,
+                            maximumExtractedByteCount: options.maximumSourceByteCount)))
             }
             let analysis = try GlifiDiagnostics.measure(.analyzeCorpus) {
                 try corpusAnalyzer.analyze(sources, options: options)
@@ -1114,11 +1114,17 @@ public actor GlifiEngine {
                 recordsByID: recordsByID
             )
             try validateCorpusSelection(
-                documentByteCounts: targetRecords.map(\.byteCount),
+                documentByteCounts: try targetRecords.map {
+                    try GlifiDocumentExtractionPersistence.admissionByteCount(
+                        for: $0, artifacts: snapshot.artifacts)
+                },
                 options: corpusOptions
             )
             try validateCorpusSelection(
-                documentByteCounts: referenceRecords.map(\.byteCount),
+                documentByteCounts: try referenceRecords.map {
+                    try GlifiDocumentExtractionPersistence.admissionByteCount(
+                        for: $0, artifacts: snapshot.artifacts)
+                },
                 options: corpusOptions
             )
 
@@ -1273,11 +1279,17 @@ public actor GlifiEngine {
                 recordsByID: recordsByID
             )
             try validateCorpusSelection(
-                documentByteCounts: targetRecords.map(\.byteCount),
+                documentByteCounts: try targetRecords.map {
+                    try GlifiDocumentExtractionPersistence.admissionByteCount(
+                        for: $0, artifacts: snapshot.artifacts)
+                },
                 options: corpusOptions
             )
             try validateCorpusSelection(
-                documentByteCounts: referenceRecords.map(\.byteCount),
+                documentByteCounts: try referenceRecords.map {
+                    try GlifiDocumentExtractionPersistence.admissionByteCount(
+                        for: $0, artifacts: snapshot.artifacts)
+                },
                 options: corpusOptions
             )
 
@@ -1447,13 +1459,25 @@ public actor GlifiEngine {
                         ]
                     )
                 }
+                let remainingByteCount = limits.maximumScannedByteCount - scannedByteCount
                 scannedByteCount += source.byteCount
-                let data = try await project.sourceData(for: source.sourceRevisionID)
-                let importedText = try textImporter.importText(
-                    from: data,
-                    format: source.format,
-                    sourceRevisionID: source.sourceRevisionID
-                )
+                let importedText = try await project.importedText(
+                    for: source.sourceRevisionID,
+                    limits: GlifiTextImportLimits(
+                        maximumByteCount: remainingByteCount,
+                        maximumExtractedByteCount: remainingByteCount))
+                let extraBytes = importedText.analysisByteCount - source.byteCount
+                guard extraBytes <= limits.maximumScannedByteCount - scannedByteCount else {
+                    throw GlifiFailure(
+                        code: "query.scan-byte-limit-exceeded", category: .insufficientResources,
+                        operation: .query, retryDisposition: .afterConditionsChange,
+                        retainedState: .lastCommittedGeneration,
+                        messageKey: "failure.query.scan-byte-limit-exceeded",
+                        arguments: [
+                            "maximumScannedByteCount": String(limits.maximumScannedByteCount)
+                        ])
+                }
+                scannedByteCount += extraBytes
                 let tokenization = try textTokenizer.tokenize(importedText.text)
                 let result = try GlifiQueryEvaluator().evaluate(
                     query,
@@ -1547,7 +1571,7 @@ public actor GlifiEngine {
                 recordsByID: recordsByID
             )
             try validateCorpusSelection(
-                documentByteCounts: records.map(\.byteCount),
+                documentByteCounts: try await representationAdmissionCounts(records, in: project),
                 options: .standard
             )
             let result = try await corpusAnalysisArtifact(
@@ -1605,6 +1629,11 @@ public actor GlifiEngine {
         // corrente è rifiutata dal calcolo del digest, mentre l'arrivo di altre fonti non lo
         // invalida più (ADR-0028).
         let currentSnapshot = await project.snapshot()
+        try validateCorpusSelection(
+            documentByteCounts: try records.map {
+                try GlifiDocumentExtractionPersistence.admissionByteCount(
+                    for: $0, artifacts: currentSnapshot.artifacts)
+            }, options: options)
         let descriptor = try GlifiAnalysisArtifactDescriptorFactory.corpusProfile(
             snapshot: currentSnapshot,
             sourceRevisionIDs: records.map(\.sourceRevisionID),
@@ -1737,7 +1766,20 @@ public actor GlifiEngine {
             )
             outputRecords.append(record)
         }
-        let interpretation = try GlifiInterpretationEngine().interpret(
+        var capturedSourceByteCounts: [SourceRevisionID: Int] = [:]
+        for source in sourceSnapshot.sources {
+            switch source.format {
+            case .plainText, .markdown: break
+            case .pdf, .epub:
+                let extraction = try GlifiDocumentExtractionPersistence.artifact(
+                    for: source, artifacts: sourceSnapshot.artifacts)
+                capturedSourceByteCounts[source.sourceRevisionID] =
+                    try GlifiDocumentExtractionPersistence.canonicalByteCount(extraction)
+            }
+        }
+        let interpretation = try GlifiInterpretationEngine(
+            capturedSourceByteCounts: capturedSourceByteCounts
+        ).interpret(
             planArtifactID: planned.artifactID,
             planAnalysisNodeID: planned.analysisNodeID,
             plan: planned.plan,
@@ -1844,24 +1886,41 @@ public actor GlifiEngine {
         }
     }
 
+    private func representationAdmissionCounts(
+        _ records: [GlifiProjectSourceRecord], in project: GlifiProjectPackage
+    ) async throws -> [Int] {
+        let snapshot = await project.snapshot()
+        return try records.map {
+            try GlifiDocumentExtractionPersistence.admissionByteCount(
+                for: $0, artifacts: snapshot.artifacts)
+        }
+    }
+
     func importedSources(
         _ records: [GlifiProjectSourceRecord],
         from project: GlifiProjectPackage,
         maximumSourceByteCount: Int
     ) async throws -> [GlifiImportedText] {
+        let snapshot = await project.snapshot()
+        var admittedByteCount = 0
+        for record in records {
+            let count = try GlifiDocumentExtractionPersistence.admissionByteCount(
+                for: record, artifacts: snapshot.artifacts)
+            guard count <= maximumSourceByteCount - admittedByteCount else {
+                throw analysisFailure("analysis.byte-limit-exceeded")
+            }
+            admittedByteCount += count
+        }
         var sources: [GlifiImportedText] = []
         sources.reserveCapacity(records.count)
         for record in records {
             try Task.checkCancellation()
-            let data = try await project.sourceData(for: record.sourceRevisionID)
             sources.append(
-                try textImporter.importText(
-                    from: data,
-                    format: record.format,
-                    limits: GlifiTextImportLimits(maximumByteCount: maximumSourceByteCount),
-                    sourceRevisionID: record.sourceRevisionID
-                )
-            )
+                try await project.importedText(
+                    for: record.sourceRevisionID,
+                    limits: GlifiTextImportLimits(
+                        maximumByteCount: maximumSourceByteCount,
+                        maximumExtractedByteCount: maximumSourceByteCount)))
         }
         return sources
     }

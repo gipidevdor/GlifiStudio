@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.14 |
+| Versione | 0.92.15 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -649,3 +649,10 @@ esecuzione del passo. CMP-285 collega RQ-007/060/063 alla grammatica decimale
 comune dei due editor Kit, con errori distinti e contratti di trasporto conservati.
 [GS-VER-284](evidenze/GS-VER-284-regia-del-piano-e-input-numerico.md) registra
 compatibilità, verifiche macOS e limiti, senza promozione della maturità scientifica.
+
+## Importazione PDF ed EPUB (GS-DOR-310)
+
+RF-004/005/006 e RF-088 collegano originale, testo acquisito e locatori nei
+percorsi Core/Kit/CLI e nel selettore nativo. ADR-0044 governa snapshot atomico
+e riapertura senza riestrazione; CMP-310 resta implemented durante la verifica.
+GS-VER-310 registra fixture sintetiche, prove ostili, limiti e gate del lotto.

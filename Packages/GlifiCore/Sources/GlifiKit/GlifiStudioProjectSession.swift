@@ -64,24 +64,26 @@ public actor GlifiStudioProjectSession {
     public func sourceText(sourceRevisionID: String) async throws -> GlifiStudioSourceText {
         try await performOperation(.query) {
             let revision = try SourceRevisionID(canonicalValue: sourceRevisionID)
-            let data = try await project.sourceData(for: revision)
-            // Decodifica stretta: un BOM iniziale resta nel testo, allineato ai byte della fonte.
-            guard let text = String(validating: data, as: UTF8.self) else {
-                throw GlifiFailure(
-                    code: "project.source-not-utf8",
-                    category: .corruption,
-                    operation: .query,
-                    retryDisposition: .never,
-                    retainedState: .lastCommittedGeneration,
-                    messageKey: "failure.project.source-not-utf8"
-                )
-            }
+            let imported = try await project.importedText(for: revision)
+            let text = try imported.sourceRepresentationText
             return GlifiStudioSourceText(
-                sourceRevisionID: sourceRevisionID,
-                text: text,
-                byteCount: data.count
-            )
+                sourceRevisionID: sourceRevisionID, text: text, byteCount: text.utf8.count,
+                document: imported.documentExtraction.map {
+                    GlifiStudioDocumentProvenance(imported: imported, extraction: $0)
+                })
         }
+    }
+
+    /// Shares the validated captured representation with package-owned analytical clients.
+    package func importedTextForLaboratory(
+        sourceRevisionID: String, maximumByteCount: Int
+    ) async throws -> GlifiImportedText {
+        try ensureOpen(operation: .analyze)
+        return try await project.importedText(
+            for: SourceRevisionID(canonicalValue: sourceRevisionID),
+            limits: GlifiTextImportLimits(
+                maximumByteCount: maximumByteCount,
+                maximumExtractedByteCount: maximumByteCount))
     }
 
     /// Produces and persists one deterministic, explainable plan revision.
