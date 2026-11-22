@@ -1,0 +1,140 @@
+{
+  "schemaIdentifier": "studio.glifi.verification.typed-coding-and-analysis-failures.v1",
+  "baselineCommit": "76e5871e002eb4274aef16eec4d5982cd32a3b59",
+  "affectedSourcesSHA256": "e2c8a2e815f0430f5a95c532f841d2ce00503dd7eeee219c92832e0b64949307",
+  "affectedSourcesDigestMethod": "Sorted relative path, NUL, complete bytes, NUL; four production files and two new contract tests",
+  "structure": {
+    "baseline": "76e5871e002eb4274aef16eec4d5982cd32a3b59",
+    "binaryOperators": 12,
+    "rawStringASTPayloadsBefore": 1,
+    "rawStringASTPayloadsAfter": 0,
+    "stringPrecedenceCatalogsBefore": 1,
+    "stringPrecedenceCatalogsAfter": 0,
+    "exhaustiveEnumSwitchesAfter": 2,
+    "sharedFailureTablesBefore": 2,
+    "sharedFailureTablesAfter": 1,
+    "failureCallSites": 15,
+    "lexerBytesEqual": true,
+    "finiteEvidenceBudgetBlockEqualExceptTypedComparison": true,
+    "sharedMapperBodyBytesEqual": true,
+    "productionFiles": {
+      "Packages/GlifiCore/Sources/GlifiCore/GlifiCodingRules.swift": {
+        "beforeLines": 927,
+        "afterLines": 943
+      },
+      "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalytics.swift": {
+        "beforeLines": 558,
+        "afterLines": 538
+      },
+      "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioExploratoryCompletion.swift": {
+        "beforeLines": 140,
+        "afterLines": 122
+      },
+      "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalysisFailure.swift": {
+        "beforeLines": 0,
+        "afterLines": 24
+      }
+    },
+    "performanceClaim": false
+  },
+  "publicAPI": {
+    "baseline": "76e5871e002eb4274aef16eec4d5982cd32a3b59",
+    "method": "swift-api-digester; only top-level declaration order canonicalized",
+    "modules": {
+      "GlifiCore": {
+        "equal": true,
+        "sha256": "2f178cd5f2b97e4ab09789059cc4d57754cf94defdeae9ee3c36821118543dd1"
+      },
+      "GlifiKit": {
+        "equal": true,
+        "sha256": "dee06b4afad028b36f26892432091b4fd3db7671e46d69dc86c200ab3f66a698"
+      }
+    }
+  },
+  "cliCompatibility": {
+    "schemaIdentifier": "studio.glifi.verification.cli-compatibility.v1",
+    "referenceBinarySHA256": "189955c701b30ce2c232dfb1eaf72a5de1cfd2ef51f654c5982658728480c207",
+    "candidateBinarySHA256": "5567ce9ec6c33cd8f2c3c067d9ae86755aa350ccdc1ce7023cae7b35a181ae13",
+    "caseCount": 164,
+    "allBytesEqual": true,
+    "comparison": "Complete stdout, stderr and exit code; no fields removed or normalized",
+    "scope": "Synthetic deterministic requests and read-only/failing project operations; owned execution streams and successful writes are covered by the full gate"
+  },
+  "codingCLICompatibility": {
+    "schemaIdentifier": "studio.glifi.verification.coding-cli-compatibility.v1",
+    "caseCount": 69,
+    "explicitBaselineExpectations": 45,
+    "allBytesEqual": true,
+    "scope": "Native-token CLI requests; external-token quote/evidence contracts remain covered by public Core tests"
+  },
+  "completeCLIReportSHA256": "32c672befb82bde61a088dd15bd3fce15f1cdf6e34a0d9d0f6cdbf734c88b0cd",
+  "completeCodingCLIReportSHA256": "c14ba0299a91c14c2d5f04d417d86c3dd855629b12e3d96b3f9acc0ead92b1ed",
+  "referenceGlifiModulesEmbeddedInExecutable": true,
+  "targetedTests": {
+    "exitCode": 0,
+    "coreTestDefinitions": 23,
+    "kitTestDefinitions": 13,
+    "newCoreTestDefinitions": 7,
+    "newCoreParameterRows": 69,
+    "newCoreBoundaryTest": 1,
+    "newKitTestDefinitions": 6
+  },
+  "fixtureCorrection": {
+    "originalExpression": "!1 + 1 == 1",
+    "frozenBaselineExitCode": 3,
+    "frozenBaselineFailure": "coding.unspaced-operator",
+    "correctedExpression": "! 1 + 1 == 1",
+    "frozenBaselineCorrectedExitCode": 0,
+    "unspacedNegationRejectionAdded": true,
+    "productionChangesToAcceptBadFixture": false
+  },
+  "independentReview": {
+    "core": "No actionable finding; lexer and finite/evidence/resource block preserved",
+    "kit": "No actionable finding; exact synchronous generic body, typed failure and evaluation semantics preserved",
+    "documents": "Clauses, requirements, references and one Versione/Identificatore row per document checked"
+  },
+  "makeVerify": {
+    "command": "make verify",
+    "profile": "macOS",
+    "exitCode": 0,
+    "coreTestDefinitions": 671,
+    "kitTestDefinitions": 151,
+    "nativeTests": {
+      "result": "Passed",
+      "title": "Test - GlifiStudio-macOS",
+      "totalTestCount": 117,
+      "passedTests": 117,
+      "failedTests": 0,
+      "skippedTests": 0,
+      "expectedFailures": 0,
+      "statistics": [
+        {
+          "subtitle": "248 test runs",
+          "title": "16 tests ran with dynamic parameters"
+        }
+      ]
+    },
+    "nativeExecutions": 349,
+    "macOSBuildConfigurations": [
+      "Debug",
+      "Release"
+    ],
+    "textAnalysisFixtures": 63,
+    "textAnalysisCLIChecks": 189,
+    "compilerEnumeratedTextAnalysisCases": 40,
+    "compilerEnumeratedKitCLIOperations": 130,
+    "completeKitCLIParityChecks": 260,
+    "kitCLIRejectionChecks": 51,
+    "boundedProjectCLIRejectionChecks": 64,
+    "processKillCheckpoints": 22,
+    "pdfa2uFiles": 2
+  },
+  "limits": {
+    "iPadOSDeferred": true,
+    "performanceClaim": false,
+    "stableABICertification": false,
+    "scientificMaturityPromotion": false,
+    "rootCheckoutWrites": false,
+    "knownToolchainWarnings": "Existing CoreSimulator/device diagnostics during macOS destinations; native tests and both macOS builds passed"
+  }
+}

@@ -12,6 +12,14 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Invarianti interne delle regole e degli errori
+
+- Tipizzati gli operatori binari dell’AST privato delle regole, con precedenza
+  e applicazione esaustive; lexer, valutazione eager, evidenze e budget conservati
+  (GS-DOR-286).
+- Condivisa la tabella di traduzione failure già identica fra TextAnalytics ed
+  ExploratoryCompletion; le policy delle altre famiglie restano esplicite.
+
 ### Regia del piano e grammatica numerica
 
 - Separata l’esecuzione del singolo passo dalla regia del piano: costruzione del

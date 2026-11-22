@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.27 |
+| Versione | 1.6.28 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -154,3 +154,5 @@ preservando i confini del lavoro già in corso nell'altra chat.
 - [GS-DOR-284 — Regia del piano e input numerico](dor-regia-del-piano-e-input-numerico.md) — Ready; dispatch del passo e grammatica editor condivisi
 
 - [GS-DOR-304 — Componenti e campi nativi nei laboratori macOS](dor-hig-laboratori-macos.md) — Ready; implementazione, gate e preflight macOS superati sul checkpoint 9c9e0098; audit interattivi aperti
+
+- [GS-DOR-286 — Operatori tipizzati e failure coese](dor-operatori-tipizzati-e-failure-coese.md) — Ready; invarianti del parser e policy Kit condivisa

@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.14 |
+| Versione | 0.92.15 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -672,3 +672,11 @@ compatibilità, verifiche macOS e limiti, senza promozione della maturità scien
 
 Questa revisione verifica le correzioni esercitate; non promuove criteri
 assistivi, scientifici, energetici o di rilascio ancora aperti.
+
+## Operatori tipizzati e failure coese (GS-DOR-286)
+
+CMP-286 collega RQ-007/011/060/063 all’AST privato degli operatori, conservando
+grammatica, evidenze, budget e cancellazione. CMP-287 collega RQ-007/058/060/063
+alla policy di failure condivisa dalle due facciate della famiglia testuale.
+[GS-VER-286](evidenze/GS-VER-286-operatori-tipizzati-e-failure-coese.md) registra
+compatibilità e verifiche macOS, senza promozioni della maturità scientifica.

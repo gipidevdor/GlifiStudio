@@ -4920,6 +4920,58 @@
       "gate": "G3",
       "status": "implemented",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-286",
+      "clause": "GS-STD-001-12 § 12.4/12.5; GS-DOR-286 operatori AST tipizzati",
+      "specification": "docs/pianificazione/dor-operatori-tipizzati-e-failure-coese.md",
+      "requirements": [
+        "RQ-007",
+        "RQ-011",
+        "RQ-060",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiCodingRules.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCodingOperatorContractTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCodingRuleReauditTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-286-operatori-tipizzati-e-failure-coese.md"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-287",
+      "clause": "GS-STD-001-12 § 12.5; GS-DOR-286 traduzione failure della famiglia testuale",
+      "specification": "docs/pianificazione/dor-operatori-tipizzati-e-failure-coese.md",
+      "requirements": [
+        "RQ-007",
+        "RQ-058",
+        "RQ-060",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalysisFailure.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalytics.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioExploratoryCompletion.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiTextAnalysisFailureContractTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioExploratoryCompletionTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-286-operatori-tipizzati-e-failure-coese.md"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }

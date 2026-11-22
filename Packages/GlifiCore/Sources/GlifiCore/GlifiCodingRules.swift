@@ -302,12 +302,56 @@ public struct GlifiCodingRuleSet: Sendable {
     }
 }
 
+private enum CodingBinaryOperator: String, Sendable {
+    case addition = "+"
+    case subtraction = "-"
+    case multiplication = "*"
+    case division = "/"
+    case greaterThan = ">"
+    case lessThan = "<"
+    case greaterThanOrEqual = ">="
+    case lessThanOrEqual = "<="
+    case equal = "=="
+    case notEqual = "!="
+    case conjunction = "&"
+    case disjunction = "|"
+
+    var precedence: Int {
+        switch self {
+        case .disjunction: 1
+        case .conjunction: 2
+        case .greaterThan, .lessThan, .greaterThanOrEqual, .lessThanOrEqual, .equal, .notEqual: 3
+        case .addition, .subtraction: 4
+        case .multiplication, .division: 5
+        }
+    }
+
+    func apply(to left: Double, and right: Double) throws -> Double {
+        switch self {
+        case .addition: return left + right
+        case .subtraction: return left - right
+        case .multiplication: return left * right
+        case .division:
+            guard right != 0 else { throw exploratoryFailure("coding.division-by-zero") }
+            return left / right
+        case .greaterThan: return left > right ? 1 : 0
+        case .lessThan: return left < right ? 1 : 0
+        case .greaterThanOrEqual: return left >= right ? 1 : 0
+        case .lessThanOrEqual: return left <= right ? 1 : 0
+        case .equal: return left == right ? 1 : 0
+        case .notEqual: return left != right ? 1 : 0
+        case .conjunction: return left != 0 && right != 0 ? 1 : 0
+        case .disjunction: return left != 0 || right != 0 ? 1 : 0
+        }
+    }
+}
+
 private indirect enum CodingExpression: Sendable {
     case atom(String, literal: Bool)
     case word(String)
     case number(Double)
     case unary(CodingExpression)
-    case binary(String, CodingExpression, CodingExpression)
+    case binary(CodingBinaryOperator, CodingExpression, CodingExpression)
     case reference(String)
     case proximity([String], ordered: Bool, distance: Int, boundary: String)
 
@@ -536,27 +580,10 @@ private struct CodingContext {
         case let .binary(operation, left, right):
             let a = try evaluate(left, reference: reference)
             let b = try evaluate(right, reference: reference)
-            let value: Double
-            switch operation {
-            case "+": value = a.number + b.number
-            case "-": value = a.number - b.number
-            case "*": value = a.number * b.number
-            case "/":
-                guard b.number != 0 else { throw exploratoryFailure("coding.division-by-zero") }
-                value = a.number / b.number
-            case ">": value = a.number > b.number ? 1 : 0
-            case "<": value = a.number < b.number ? 1 : 0
-            case ">=": value = a.number >= b.number ? 1 : 0
-            case "<=": value = a.number <= b.number ? 1 : 0
-            case "==": value = a.number == b.number ? 1 : 0
-            case "!=": value = a.number != b.number ? 1 : 0
-            case "&": value = a.number != 0 && b.number != 0 ? 1 : 0
-            case "|": value = a.number != 0 || b.number != 0 ? 1 : 0
-            default: throw exploratoryFailure("coding.invalid-operator")
-            }
+            let value = try operation.apply(to: a.number, and: b.number)
             guard value.isFinite else { throw exploratoryFailure("exploratory.numeric-overflow") }
             let ranges: [GlifiUTF8Range]
-            if operation == "|" {
+            if operation == .disjunction {
                 ranges = (a.number != 0 ? a.ranges : []) + (b.number != 0 ? b.ranges : [])
             } else {
                 ranges = value != 0 ? a.ranges + b.ranges : []
@@ -884,17 +911,17 @@ private struct CodingParser {
             guard number.isFinite else { throw exploratoryFailure("exploratory.numeric-overflow") }
             left = .number(number)
         } else {
-            guard token.value != ")", precedence(token.value) == nil else {
+            guard token.value != ")", CodingBinaryOperator(rawValue: token.value) == nil else {
                 throw exploratoryFailure("coding.unexpected-token")
             }
             left = .atom(token.value, literal: false)
         }
         while index < tokens.count, tokens[index].quoted == nil,
-            let precedence = precedence(tokens[index].value), precedence >= minimum
+            let operation = CodingBinaryOperator(rawValue: tokens[index].value),
+            operation.precedence >= minimum
         {
-            let operation = tokens[index].value
             index += 1
-            let right = try parseExpression(minimum: precedence + 1, depth: depth + 1)
+            let right = try parseExpression(minimum: operation.precedence + 1, depth: depth + 1)
             left = .binary(operation, left, right)
             nodes += 1
             guard nodes <= 1_024 else {
@@ -909,17 +936,6 @@ private func sourcePrefix(_ characters: [Character], _ start: Int, _ prefix: Str
     let expected = Array(prefix)
     guard start + expected.count <= characters.count else { return false }
     return Array(characters[start..<(start + expected.count)]) == expected
-}
-
-private func precedence(_ operation: String) -> Int? {
-    switch operation {
-    case "|": 1
-    case "&": 2
-    case ">", "<", ">=", "<=", "==", "!=": 3
-    case "+", "-": 4
-    case "*", "/": 5
-    default: nil
-    }
 }
 
 private func codingNormalized(_ string: String) -> String {

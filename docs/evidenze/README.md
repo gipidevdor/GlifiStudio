@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.20.7 |
+| Versione | 1.20.8 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -293,3 +293,5 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 - [GS-VER-284 — Regia del piano e input numerico](GS-VER-284-regia-del-piano-e-input-numerico.md) — Compatibilità e verifiche macOS del refactoring interno
 
 - [GS-VER-304 — Componenti e campi nativi nei laboratori macOS](GS-VER-304-hig-laboratori-macos.md) — Gate e preflight macOS superati sul checkpoint 9c9e0098: 771 test Core/Kit e 113 definizioni/345 esecuzioni native; audit GUI e assistivi aperti
+
+- [GS-VER-286 — Operatori tipizzati e failure coese](GS-VER-286-operatori-tipizzati-e-failure-coese.md) — Compatibilità e gate macOS superati; operatori privati e policy di famiglia
