@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-SRS-001 |
 | Tipo | Software requirements specification |
-| Versione | 0.50.3 |
+| Versione | 0.50.4 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Non ancora approvato |
 | Riferimento | ISO/IEC/IEEE 29148:2018; ISO/IEC 25010:2023, profilo tailored |
 
@@ -153,7 +153,7 @@ Le caratteristiche sono classificate secondo il modello ISO/IEC 25010:2023. Le s
 | RQ-006 | Efficienza prestazionale | Le occorrenze massive **NON DEVONO** richiedere un oggetto heap o una copia della stringa per ogni token. | Profilo allocazioni conforme alla rappresentazione approvata | TV-010 | Incompleto |
 | RQ-007 | Affidabilità | Errori di input, I/O, formato, consistenza e invarianti **DEVONO** essere distinguibili programmaticamente. | Test negativi ricevono la categoria attesa | TV-012 | Baseline candidata |
 | RQ-008 | Adeguatezza funzionale | Gli algoritmi statistici **DEVONO** rispettare le tolleranze numeriche approvate sui dataset di riferimento. | Tutti i casi di riferimento entro tolleranza | TV-008 | Incompleto |
-| RQ-009 | Efficienza prestazionale | Throughput, latenza, memoria e I/O **DEVONO** essere misurati su corpus e hardware versionati. | Report benchmark riproducibile associato alla build | TV-009 | Incompleto: misure Release di latenza/RSS su generatori sintetici in GS-VER-169/170/172; I/O, energia e hardware di riferimento aperti |
+| RQ-009 | Efficienza prestazionale | Throughput, latenza, memoria e I/O **DEVONO** essere misurati su corpus e hardware versionati. | Report benchmark riproducibile associato alla build | TV-009 | Incompleto: misure Release di latenza/RSS su generatori sintetici in GS-VER-169/170/172/173; I/O, energia e hardware di riferimento aperti |
 | RQ-010 | Affidabilità | Ogni formato persistente proprietario **DEVE** essere versionato, validabile e resistente a input corrotti. | Round-trip, compatibilità e casi corrotti superati | TV-012 | Baseline candidata |
 | RQ-011 | Affidabilità | Ogni operazione lunga **DEVE** supportare cancellazione controllata e propagazione strutturata degli errori. | Cancellazione senza progetto parzialmente valido o task orfani | TV-012 | Baseline candidata; ownership del piano e delle sei analisi dirette macOS verificata nel modello (GS-VER-186, GS-VER-195); altre operazioni e audit dispositivo distinti |
 | RQ-012 | Capacità di interazione | Ogni flusso `Must` **DEVE** superare l'audit automatico di accessibilità e una verifica manuale VoiceOver e tastiera. | Nessun problema bloccante; problemi residui classificati | TV-017 | Incompleto: flussi Must implementati; audit automatico end-to-end e verifiche manuali VoiceOver/tastiera su dispositivo ancora aperti (GS-VER-057, GS-VER-150) |

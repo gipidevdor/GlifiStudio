@@ -6,7 +6,10 @@ import Testing
 
 @Test("NMF contigua conserva bit per bit la definizione scalare per forme, seed e stopping")
 func factorizationRefinementMatchesScalarDefinition() throws {
-    for (rows, columns, rank) in [(4, 7, 1), (7, 5, 3), (9, 11, 4)] {
+    for (rows, columns, rank) in [
+        (4, 7, 1), (7, 5, 3), (9, 11, 4),
+        (4, 129, 1), (4, 129, 4), (129, 4, 1), (129, 4, 4),
+    ] {
         for seed in 1...4 {
             var generator = GlifiSplitMix64(seed: UInt64(seed))
             let matrix = (0..<rows).map { row in
@@ -39,8 +42,27 @@ func factorizationRefinementMatchesScalarDefinition() throws {
 @Test("NMF conserva inizializzazione e selezione dei restart contro la definizione scalare")
 func factorizationRefinementPreservesSeededRestarts() throws {
     let matrix: [[Double]] = [[1, 2, 0, 3], [0, 1, 4, 1], [2, 0, 1, 0], [1, 3, 2, 1]]
-    let rank = 2
-    let seed: UInt64 = 17
+    try expectSeededFactorizationReference(matrix, rank: 2, seed: 17)
+}
+
+@Test("NMF flat conserva i restart su matrici larghe e alte di rango uno e quattro")
+func factorizationStoragePreservesRectangularSeededRestarts() throws {
+    for (rows, columns, rank) in [(4, 257, 1), (4, 257, 4), (257, 4, 1), (257, 4, 4)] {
+        let seed = UInt64(173 + rows + rank)
+        var generator = GlifiSplitMix64(seed: seed)
+        let matrix = (0..<rows).map { row in
+            (0..<columns).map { column in
+                row == rows - 1 || column == columns - 1
+                    ? 0 : Double(generator.index(below: 9))
+            }
+        }
+        try expectSeededFactorizationReference(matrix, rank: rank, seed: seed)
+    }
+}
+
+private func expectSeededFactorizationReference(
+    _ matrix: [[Double]], rank: Int, seed: UInt64
+) throws {
     let restartCount = 3
     let maximumIterations = 12
     let tolerance = 1e-8

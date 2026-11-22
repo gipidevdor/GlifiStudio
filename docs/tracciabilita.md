@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.90.3 |
+| Versione | 0.90.4 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -85,6 +85,7 @@ Ready; l'assenza di una riga per codice nuovo è una non conformità.
 
 | Evidenza | Verifiche coperte | Esito | Limite |
 | --- | --- | --- | --- |
+| [GS-VER-173](evidenze/GS-VER-173-layout-e-visite-analitiche.md) | TV-008, TV-009, TV-032, TV-033, TV-036; RQ-008, RQ-009, RQ-063 | Superato: 18 confronti identici, 544 test e gate completo | CMP-177 `implemented`; NMF alto +0,7% tempo, bootstrap +96 KiB RSS; nessuna promozione scientifica |
 | [GS-VER-172](evidenze/GS-VER-172-query-sparse-e-silhouette.md) | TV-008, TV-009, TV-029, TV-032; RF-030, RF-037; RQ-008, RQ-009, RQ-063 | Superato: venti confronti finali, 440 test e 185 righe di oracoli; gate completo | CMP-176 `implemented`; nessuna promozione dei metodi o soglia prestazionale |
 | [GS-VER-171](evidenze/GS-VER-171-integrazione-algoritmi.md) | TV-008, TV-009, TV-029, TV-032, TV-033, TV-036; RQ-008, RQ-063 | Superato: integrazione isolata, correzione Welch, 425 test e 177 righe di oracoli sulla base upstream `fe6f654` | Evidenze storiche GS-VER-168/169/170 conservate; nuovo gate completo eseguito sulla proiezione integrata |
 | [GS-VER-170](evidenze/GS-VER-170-raffinamento-algoritmi.md) | TV-008, TV-009, TV-029, TV-032, TV-033, TV-036; RQ-008, RQ-009, RQ-063 | Superato nello snapshot storico sorgente: 14 confronti Release, 480 test e gate completo; riferimenti diretti e oracolo degli estremi BM25 | Nessuna promozione scientifica o soglia; costi dei fallback e memoria dichiarati |
