@@ -280,13 +280,32 @@ def check_text_operation_inventory(symbols: dict[str, dict]) -> None:
 
     outer = enum_cases("GlifiStudioTextAnalysisRequest")
     advanced = enum_cases("GlifiStudioAdvancedTextAnalysisRequest")
-    if "advanced" not in outer or not advanced:
-        raise ValueError("Missing compiler declarations for the nested advanced text requests")
-    ordinary = outer - {"advanced"}
-    if ordinary & advanced:
-        raise ValueError("Duplicate flat operation names in ordinary and advanced text requests")
-    cases = ordinary | advanced
-    expected = {re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "-", case).lower() for case in cases}
+    kh = enum_cases("GlifiStudioKHAnalysisRequest")
+    if "advanced" not in outer or "kh" not in advanced or not kh:
+        raise ValueError("Missing compiler declarations for the nested advanced or KH text requests")
+    # These stable transport aliases differ from the Swift case names; all other
+    # cases are still discovered from the compiler, including future additions.
+    kh_aliases = {
+        "sampleZScores": "matrix-zscore",
+        "perThousand": "matrix-per-thousand",
+        "ordinalMDS": "mds-ordinal",
+        "ordinalMDSSearch": "mds-ordinal-search",
+        "somPCAInitialization": "som-pca-initialization",
+        "collocationScores": "kh-collocation",
+        "validateClassifierWithAgreement": "validate-classifier-kappa",
+    }
+    stale_aliases = kh_aliases.keys() - kh
+    if stale_aliases:
+        raise ValueError(f"KH transport aliases have no compiler case: {sorted(stale_aliases)}")
+    tags = []
+    for cases, aliases in ((outer - {"advanced"}, {}), (advanced - {"kh"}, {}), (kh, kh_aliases)):
+        tags.extend(
+            aliases.get(case, re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "-", case).lower())
+            for case in cases
+        )
+    expected = set(tags)
+    if len(expected) != len(tags):
+        raise ValueError("Duplicate flat operation tags in ordinary, advanced or KH text requests")
     fixture = read_json(ROOT / "Fixtures/TextAnalysis/v1/cases.json")
     observed = {case["request"]["operation"] for case in fixture["cases"]}
     if not expected or expected != observed:

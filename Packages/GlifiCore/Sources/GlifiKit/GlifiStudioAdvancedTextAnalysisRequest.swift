@@ -4,6 +4,8 @@ import Foundation
 
 /// Completion operators sharing the existing bounded canonical request envelope.
 public enum GlifiStudioAdvancedTextAnalysisRequest: Equatable, Sendable, Encodable {
+    /// Public KH preparations and variants, sharing the same bounded flat envelope.
+    case kh(GlifiStudioKHAnalysisRequest)
     /// Selects topic count with explicit native diagnostics and held-out folds.
     case ldaSelection(
         documents: [[String]], candidateTopicCounts: [Int], seed: UInt64,
@@ -45,6 +47,7 @@ public enum GlifiStudioAdvancedTextAnalysisRequest: Equatable, Sendable, Encodab
     /// Stable flat operation tag shared by Swift and JSON clients.
     public var operation: String {
         switch self {
+        case let .kh(value): value.operation
         case .ldaSelection: "lda-selection"
         case .communities: "communities"
         case .graphLayout: "graph-layout"
@@ -139,7 +142,9 @@ public enum GlifiStudioAdvancedTextAnalysisRequest: Equatable, Sendable, Encodab
             self = .linguisticCoding(
                 units: units, rules: try f.advancedRequired("rules"),
                 options: try f.advancedDefault("options", .init()))
-        default: throw textRequestFailure("text-analysis.unknown-operation")
+        default:
+            self = .kh(try GlifiStudioKHAnalysisRequest(from: decoder))
+            return
         }
         let allowed = fields.union(["schema", "schemaVersion", "operation"])
         guard f.allKeys.allSatisfy({ allowed.contains($0.stringValue) }) else {
@@ -149,6 +154,7 @@ public enum GlifiStudioAdvancedTextAnalysisRequest: Equatable, Sendable, Encodab
 
     func validate(budget: inout TextAnalysisBudget) throws {
         switch self {
+        case let .kh(value): try value.validate(budget: &budget)
         case let .ldaSelection(documents, candidates, _, options):
             try budget.documents(documents)
             try budget.integers(candidates)
@@ -184,11 +190,16 @@ public enum GlifiStudioAdvancedTextAnalysisRequest: Equatable, Sendable, Encodab
 
     /// Writes the existing versioned envelope with explicit resolved defaults.
     public func encode(to encoder: any Encoder) throws {
+        if case let .kh(value) = self {
+            try value.encode(to: encoder)
+            return
+        }
         var f = encoder.container(keyedBy: TextAnalysisKey.self)
         try f.advancedEncode("schema", GlifiStudioTextAnalysisRequest.schema)
         try f.advancedEncode("schemaVersion", GlifiStudioTextAnalysisRequest.schemaVersion)
         try f.advancedEncode("operation", operation)
         switch self {
+        case let .kh(value): try value.encode(to: encoder)
         case let .ldaSelection(documents, candidates, seed, options):
             try f.advancedEncode("documents", documents)
             try f.advancedEncode("candidateTopicCounts", candidates)
@@ -246,6 +257,9 @@ public enum GlifiStudioAdvancedTextAnalysisRequest: Equatable, Sendable, Encodab
         String, GlifiStudioAdvancedTextAnalysisPayload
     ) {
         switch self {
+        case let .kh(value):
+            let (identifier, result) = try await value.execute()
+            return (identifier, .kh(result))
         case let .ldaSelection(documents, candidates, seed, options):
             let result = try await GlifiStudioLDAModelSelection.select(
                 documents: documents, candidateTopicCounts: candidates, seed: seed, options: options
@@ -295,6 +309,7 @@ public enum GlifiStudioAdvancedTextAnalysisRequest: Equatable, Sendable, Encodab
 
 /// Typed completion results for native clients and the canonical JSON envelope.
 public enum GlifiStudioAdvancedTextAnalysisPayload: Encodable, Sendable {
+    case kh(GlifiStudioKHAnalysisPayload)
     /// Selects topic count with explicit native diagnostics and held-out folds.
     case ldaSelection(GlifiStudioLDAModelSelectionResult)
     /// Partitions a declared graph using a versioned community method.
@@ -316,6 +331,7 @@ public enum GlifiStudioAdvancedTextAnalysisPayload: Encodable, Sendable {
     /// Encodes exactly the selected numerical or linguistic result.
     public func encode(to encoder: any Encoder) throws {
         switch self {
+        case let .kh(value): try value.encode(to: encoder)
         case let .ldaSelection(result): try result.encode(to: encoder)
         case let .communities(result): try result.encode(to: encoder)
         case let .graphLayout(result): try result.encode(to: encoder)

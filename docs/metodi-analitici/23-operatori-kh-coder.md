@@ -6,13 +6,13 @@
 | --- | --- |
 | Identificatore | GS-MET-001-23 |
 | Tipo | Specifica dei contratti numerici e della copertura |
-| Versione | 1.4.2 |
-| Stato | Contratti revisionati; supporto numerico per variante |
+| Versione | 1.5.1 |
+| Stato | Profili pubblici implementati; verifica integrata GS-VER-300 in corso |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Ambito richiesto dall'iniziatore; promozione scientifica separata secondo ADR-0031 |
 | Documento padre | [GS-MET-001](README.md) |
-| Riferimenti | RF-087; ADR-0032; ADR-0035; GS-VER-160; GS-VER-233; GS-VER-234 |
+| Riferimenti | RF-087; ADR-0032; ADR-0035; ADR-0043; GS-DOR-300; GS-VER-160; GS-VER-233; GS-VER-234; GS-VER-300 |
 
 ## Scopo e copertura
 
@@ -33,43 +33,46 @@ L’ampliamento è autorizzato in [ADR-0035](../adr/0035-completamento-nativo-kh
 | --- | --- |
 | Frequenze TF/DF, distribuzioni e filtri | GlifiCorpusAnalyzer; GlifiNGramFrequencyAnalysis; GlifiTermWeighting |
 | Ricerca di parole/documenti e KWIC | GlifiQueryParser/Evaluator; sessione GlifiKit esistente |
-| Associazione di parole e tabelle di contingenza | GlifiKeynessAnalysis; GlifiContingencyAnalysis; GlifiCollocationAnalysis |
-| Analisi delle corrispondenze | CA-SVD-v1 esistente; facciata anche su tabelle di parole e codici |
-| MDS classica, metrica, Kruskal, Sammon e SMACOF ordinale | GlifiExploratoryAnalysis; ricerca multi-start con diagnostiche per avvio |
+| Associazione di parole e tabelle di contingenza | GlifiKeynessAnalysis; GlifiContingencyAnalysis; GlifiCollocationAnalysis; MI3/Z KH con TF globali |
+| Analisi delle corrispondenze | CA-SVD-v1; coordinate principal, standard e biplot symmetric esplicite |
+| MDS classica, metrica, Kruskal, Sammon e SMACOF ordinale | GlifiExploratoryAnalysis; tie primary/secondary e ricerca multi-start con diagnostiche per avvio |
 | Clustering gerarchico | HAC esistente per vettori; Lance-Williams per dissimilarità single/complete/average |
 | CLARA sui documenti | CLARA-PAM-Euclidean-v1 |
 | Reti di co-occorrenza | Reti esistenti; Girvan–Newman, CNM, Walktrap, layout FR/KK e foresta Prim nativi |
-| Mappe auto-organizzanti | SOM batch rettangolare ed esagonale, U-matrix e composizione Ward dei codebook |
-| Classificazione supervisionata | MultinomialNaiveBayes-Laplace-v1 con validazione stratificata |
+| Mappe auto-organizzanti | SOM batch esistente; profilo KH online a due fasi con PCA o codebook espliciti; U-matrix e Ward esistenti |
+| Classificazione supervisionata | Naive Bayes multinomiale; stato incrementale transitorio, modello ispezionabile e validazione stratificata con κ |
 | Topic model | LDA-collapsed-Gibbs-predictive-mean-v2, selezione K con diagnostiche e document completion; LSA e NMF esistenti |
 | Regole automatiche e frequenze dei codici | GlifiCodingRuleSet e matrice multi-label con evidenze UTF-8 |
 | Tabelle incrociate e similarità dei codici | crosstab con denominatori/mancanti espliciti; distanze condivise |
 | CA, MDS, clustering, rete e SOM dei codici | Stessi operatori numerici sulla matrice documento-codice |
 | Matrici documento-parola e documento-codice | Tabella sparsa, trasposizione bounded e matrice binaria dei codici |
-| Matrice parola-contesto KH A.6.8 | Non implementata: la trasposizione documento-parola non calcola medie condizionate sui contesti |
+| Preparazione e matrice parola-contesto KH A.6.8 | GlifiKHMatrixPreparation: z-score campionario, esposizioni esterne e medie condizionate per livelli dichiarati |
+| Rilevanza dei termini composti | GlifiTermExtraction: LR/FLR token/type e candidate da POS preannotati con evidenze UTF-8 |
 
 La riverifica di [GS-VER-234](../evidenze/GS-VER-234-riverifica-correttezza-completezza.md)
-corregge la precedente attribuzione della matrice parola-contesto. La copertura
-per famiglie e la possibilità di fornire una matrice già preparata non provano
-la disponibilità di ogni variante o preparazione KH. Restano non implementati
-z-score campionario per righe/colonne, generazione dei vettori parola-contesto
-condizionati e SOM con le due fasi/inizializzazione PCA del profilo KH. Il SOM
-nativo sottostante ha un proprio contratto batch gaussiano a singolo schedule.
+ha accertato le lacune della revisione allora esaminata e resta un'evidenza
+storica. Il nuovo incremento [GS-DOR-300](../pianificazione/dor-completezza-funzionale-kh.md),
+autorizzato da [ADR-0043](../adr/0043-completezza-funzionale-kh-pubblico.md),
+introduce implementazioni dedicate per quei profili. La verifica integrata
+GS-VER-300 è in corso: la presenza del codice non attesta il suo esito finale,
+una validazione esterna V6 o la parità con edizioni KH non pubbliche.
 
 | Profilo pubblico KH | Stato reale del profilo nativo |
 | --- | --- |
-| Z-score per parola/documento (A.5.9, A.6.2) | Nessun operatore generale; la standardizzazione interna PCA non restituisce questa matrice |
-| Frequenze con lunghezza completa del documento | `perThousand` usa la somma delle colonne fornite: applicarlo prima di filtrare i termini, altrimenti il denominatore KH non è disponibile |
-| Parola-contesto per livelli e pesi (A.6.8) | Generatore assente; non è una matrice di Jaccard o una trasposizione |
-| MDS ordinale e gestione dei tie | Il profilo nativo impone tie secondary/strong; non implementa la variante primary di smacof |
-| SOM KH a due fasi e inizializzazione PCA | Variante diversa dal batch gaussiano nativo; non si compone con due fit che reinizializzano i prototipi |
-| MI³ e Z con TF globali e span (A.5.6) | Nessun operatore dedicato; PMI naturale e misure su opportunità di coppia hanno universo distinto |
-| Scaling CA e κ del classificatore | Componibili dagli operatori esistenti, senza promettere un workflow Kit/CLI integrato |
-| Addestramento NB incrementale (A.6.3) | Statistiche sufficienti non conservate nel modello pubblico; rifit richiede il training originale |
-| TermExtract (A.4.4) | Non implementato; il riferimento lo limita a lingue fuori dalla baseline italiana |
+| Z-score per parola/documento (A.5.9, A.6.2) | `sampleZScores`: asse e politica per vettori costanti espliciti; deviazione standard campionaria |
+| Frequenze con lunghezza completa del documento | `GlifiKHMatrixPreparation.perThousand`: denominatori esterni; la trasformazione precedente basata sulla somma delle colonne resta distinta |
+| Parola-contesto per livelli e pesi (A.6.8) | `wordContext`: conteggi per unità dichiarate, medie condizionate e somma pesata |
+| MDS ordinale e gestione dei tie | Nuovi ingressi con primary predefinito o secondary esplicito; i default delle API precedenti restano secondary |
+| SOM KH a due fasi e inizializzazione PCA | Aggiornamenti online continui sugli stessi codebook; PCA lineare o inizializzazione esplicita |
+| MI³ e Z con TF globali e span (A.5.6) | `GlifiKHCollocationAnalysis`: corpus e finestra dichiarati, senza margini di opportunità 2×2 |
+| Scaling CA | Proiezioni principal, standard e symmetric biplot con esponente di σ dichiarato per righe e colonne |
+| Addestramento NB incrementale e κ | Statistiche sufficienti transitorie aggiornabili, ispezione del modello e κ sulle stesse predizioni della CV |
+| TermExtract (A.4.4) | LR/FLR su candidate indipendenti, modalità token/type e regole POS su preannotazioni; nessuna certificazione di tokenizzazione inglese o giapponese |
 
-Queste differenze restano requisiti/varianti aperti: questa specifica non attesta
-parità numerica o completa equivalenza funzionale con KH Coder.
+I nuovi profili sono esposti in Core, Kit e nel comando CLI `text-analysis`,
+con identificatori propri e stato `candidate`. La copertura riguarda i contratti
+pubblici descritti qui, senza attestare identità bitwise con RNG, backend e
+versioni R non fissate o completa equivalenza con ogni opzione di KH Coder.
 
 Le nuove primitive sono API di libreria in memoria. Nel lotto originario di
 ADR-0032 il planner persistente e l'interfaccia applicativa conservavano le
@@ -97,6 +100,41 @@ I vettori nulli non hanno distanza coseno e producono failure tipizzata.
 Una coppia di colonne entrambe nulle non produce un arco di co-occorrenza.
 Ward richiede vettori euclidei secondo GS-MET-001-14: non si applica a una
 matrice Jaccard facendo finta che sia euclidea.
+
+### Preparazioni KH e coordinate CA
+
+`KH-sample-z-score-v1` standardizza ciascuna riga oppure colonna:
+`z=(x−media)/s`, `s²=Σ(x−media)²/(n−1)`, con almeno due valori per vettore.
+`constantPolicy=reject` rifiuta varianza nulla; `zeros` restituisce il vettore
+nullo. Il denominatore resta campionario. I riferimenti sono i sorgenti KH di
+[MDS delle parole](https://github.com/ko-ichi-h/khcoder/blob/master/kh_lib/gui_window/word_mds.pm)
+e [clustering dei documenti](https://github.com/ko-ichi-h/khcoder/blob/master/kh_lib/gui_window/doc_cls.pm).
+
+`KH-per-thousand-external-exposure-v1` calcola `1000*x_ij/exposure_i` su conteggi
+finiti non negativi. Il chiamante fornisce l'esposizione completa; le colonne
+filtrate non la ricostruiscono. Un'esposizione nulla è rifiutata;
+`zeroExposurePolicy=zeros` la ammette soltanto per una riga interamente nulla.
+
+`KH-word-context-conditional-mean-v1` riceve vocabolari separati, anche sovrapposti, `targetIDs`
+e `contextIDs`, e conteggi allineati per unità ai livelli `sentence`, `paragraph`,
+`h5`…`h1`. Ogni coppia di righe rappresenta la stessa unità del livello dichiarato.
+Per livello l e target i, ogni unità con target positivo contribuisce una volta:
+`M_ij=Σ_l alpha_l * mean(context_j | target_i>0, livello_l)`.
+Senza unità di supporto il contributo è zero. I coefficienti sono finiti,
+anche nulli o negativi se dichiarati; la loro somma non viene rinormalizzata.
+Ordine degli ID, livelli, pesi e numerosità del supporto sono restituiti.
+Il chiamante prepara unità e gerarchia secondo
+[KH A.6.8](https://khcoder.net/en/manual_en_v3.pdf); il motore non deduce frasi
+o heading da una matrice.
+
+`CA-coordinate-scaling-v1` proietta gli assi della CA esistente conservando
+masse, valori singolari e indici delle righe/colonne incluse. Per gli assi con σ
+positivo, `principal=D_mass^(−1/2) U σ`, `standard=D_mass^(−1/2) U` e
+`symmetric=D_mass^(−1/2) U σ^0.5`; sul lato colonne si usa V.
+La scelta è indipendente per righe e colonne. Qui `symmetric` significa biplot
+simmetrico: nella [documentazione di R ca](https://cran.r-project.org/web/packages/ca/refman/ca.html)
+la mappa `symmetric` usa coordinate principali su entrambi i lati, mentre
+`symbiplot` distribuisce σ a metà. Le convenzioni sono distinte.
 
 ## MDS
 
@@ -139,6 +177,16 @@ Il passo Guttman per pesi completi unitari è `X_next=B(X)X/n`; le coppie
 coincidenti hanno contributo zero. Dopo il passo si ristimano le disparità;
 si accettano soltanto obiettivi non crescenti. La variante ammette
 scalarità finite anche estreme perché non deve preservare una scala metrica.
+
+Il nuovo ingresso `ordinalMultidimensionalScaling(..., ties:)` offre anche
+`MDS-ordinal-SMACOF-primary-ties-normalized-raw-stress-v1`. Primary ammette
+disparità distinte nello stesso blocco osservato e ordina le sue coppie per
+distanza corrente e identità canonica prima della proiezione isotona. Secondary
+conserva invece una disparità comune per blocco. Entrambe mantengono la norma
+e l'obiettivo sopra dichiarati. I nuovi tag `mds-ordinal` e `mds-ordinal-search`
+risolvono primary; le API precedenti conservano secondary. La terminologia segue
+la [documentazione primaria smacof](https://cran.r-project.org/web/packages/smacof/refman/smacof.html),
+senza presumere quale versione R sia installata in una distribuzione KH.
 
 `multidimensionalScalingSearch` esegue da 1 a 1.000 configurazioni casuali
 reali per un solo metodo iterativo; il metodo classico non è una ricerca.
@@ -213,6 +261,37 @@ singola unità restituisce zero. `SOM-codebooks-Ward-v1` compone l’HAC Ward
 euclidea già esistente sui prototipi, conservando identità, albero e assegnazioni;
 non implementa un diverso aggiornamento SOM o una nuova formula Ward.
 
+### Profilo KH online a due fasi
+
+`SOM-KH-online-inverse-two-phase-hexagonal-v1` e
+`SOM-KH-online-inverse-two-phase-rectangular-v1`
+ricevono dati già preparati. Z-score ed esposizione sono operazioni precedenti
+esplicite. Le due fasi continuano gli stessi codebook: una osservazione per passo
+in ordine ciclico, BMU euclidea e aggiornamento gaussiano online. I riferimenti
+sono il [SOM pubblico di KH](https://github.com/ko-ichi-h/khcoder/blob/master/kh_lib/plotR/som.pm)
+e il [pacchetto R som](https://github.com/cran/som/blob/master/R/som.R).
+
+Per n righe i default sono `L1=2n`, `L2=10n`, learning rate iniziali
+`0.05, 0.02`, raggi iniziali `min(width,height)` e `min(3,width,height)`;
+la topologia predefinita è esagonale. Ogni fase di L passi usa
+`alpha_t=alpha_0*C/(C+t)`, `C=L/100`, e
+`radius_t=1+(radius_0−1)*(L−t)/L`, per `t=1…L`.
+L'uscita conserva fasi, codebook iniziali/intermedi/finali, assegnazioni,
+diagnostiche e U-matrix con la mediana dei vicini immediati. Il parametro
+opzionale `codebookClusterCount` aggiunge l'HAC Ward dei codebook con ammissione
+cumulativa di lavoro/celle; non cambia l'aggiornamento online o l'identità SOM.
+
+`SOM-PCA-linear-unscaled-canonical-v1` costruisce la griglia da media, primi due
+assi PCA e deviazioni standard campionarie, su tick `−2…2`; assegna il primo asse
+alla dimensione maggiore. Segni canonici rendono deterministica la scelta;
+basi degeneri non hanno un'unica orientazione matematica. Solo questa PCA usa
+LAPACK `dgesvd` di Accelerate per preservare anche un secondo asse rappresentabile
+su dati con scale molto diverse. È una correzione numerica secondo ADR-0043,
+senza attestazione di velocità; workspace e output sono ammessi prima dei buffer.
+Codebook forniti dal chiamante usano `SOM-explicit-codebooks-v1` e non avviano PCA.
+
+### CLARA
+
 CLARA estrae campioni senza rimpiazzo, include i migliori medoidi già trovati,
 esegue swap PAM miglioranti nel campione e sceglie il minor costo euclideo
 sull'intero dataset. Nessuna matrice delle distanze dell'intero dataset è richiesta.
@@ -227,6 +306,20 @@ Scoring sparso nel dominio logaritmico, normalizzazione log-sum-exp e tie-break
 nell'ordine canonico delle classi. I posteriori del modello non sono confidenze calibrate.
 La validazione k-fold ricostruisce modello e vocabolario su ciascun training fold,
 separa i documenti di test e restituisce matrice di confusione e accuratezza.
+
+`MultinomialNaiveBayes-incremental-counts-v1` conserva in memoria classi,
+vocabolario canonico, conteggi di documenti e token per classe e smoothing.
+L'aggiornamento unisce nuove classi e termini riallineando i conteggi precedenti;
+non richiede il training già accumulato. Lo stato transitorio è distinto dal
+modello derivato ispezionabile, che espone prior e likelihood logaritmici.
+Uno stato a classe unica può essere continuato; la predizione richiede almeno
+due classi. Questi DTO non introducono un file `.knb` o un formato di progetto.
+
+`MultinomialNaiveBayes-stratified-CV-CohenKappa-v1` restituisce le predizioni fuori
+fold e `κ=(p_o−p_e)/(1−p_e)` sulle stesse etichette, con accordo osservato/atteso
+e seed. Training, modello e predizione hanno ammissione cumulativa. Il riferimento
+funzionale è [KH A.6.3–A.6.6](https://khcoder.net/en/manual_en_v3.pdf);
+le probabilità non diventano confidenze calibrate.
 
 LDA usa priors simmetrici alpha e beta positivi e la condizionale collassata
 `P(z_i=k|rest) proportional (n_dk+alpha)(n_kw+beta)/(n_k+V*beta)`.
@@ -270,6 +363,50 @@ fold-in. Celle documento×topic vengono controllate prima della tabella sparsa;
 fit e inferenza restano cancellabili, senza risultati parziali pubblicati.
 I Gibbs sweep e le predizioni saltano gli indici dei documenti vuoti senza
 saltare estrazioni casuali: theta continua a includere tutti i documenti.
+
+## Collocazioni KH e rilevanza dei composti
+
+`GlifiKHCollocationAnalysis` applica [KH A.5.6, pagina 40](https://khcoder.net/en/manual_en_v3.pdf):
+`MI3=log2(a³N/(F1F2))`, `p=F2/(N−F1)`, `E=pF1S`,
+`Z=(a−E)/sqrt(E(1−p))`. F1 e F2 sono TF globali di due chiavi distinte,
+N è l'esposizione completa in token e S il numero di posizioni della finestra,
+esclusa quella del nodo. Le finestre sovrapposte possono produrre a maggiore
+di F1 o F2. I conteggi devono essere coerenti con corpus, posizioni e massimo
+numero di coppie; non sono margini di una tabella 2×2 di opportunità.
+MI3 è assente per a nullo; Z è assente senza background o con varianza nulla.
+L'uscita espone entrambi gli identificatori e l'aspettativa della finestra.
+Non viene applicato smoothing implicito.
+
+`TermExtract-LR-FLR-independent-average1-v1` riceve componenti presegmentati e
+frequenza indipendente f di ogni candidata. Le adiacenze sono soltanto interne
+alle candidate multiword: token somma le occorrenze pesate da f, type conta i
+vicini distinti per lato. Con L componenti,
+`LR=(Π_i(left_i+1)(right_i+1))^(1/(2L))` e `FLR=f*LR`.
+Le entrate duplicate si aggregano; ogni posizione di un componente ripetuto
+contribuisce. f non include un'occorrenza contenuta in una candidata più lunga.
+La convenzione segue le formule 3–4 di
+[Yumoto, Mori e Nakagawa](https://forest.ynu.ac.jp/Forest/TermExtraction/NL.pdf);
+la distinzione type/token e f/TF è discussa da
+[Yoshida e Nakagawa](https://aclanthology.org/I05-1024.pdf).
+
+L'estrazione opzionale riceve `GlifiCodingDocument` già annotati e una regola
+POS esplicita: run massime, chiavi escluse e minimo/massimo di componenti.
+Frasi, paragrafi e gap di fonte non bianchi separano le run. POS assenti
+falliscono; run troppo lunghe falliscono senza troncamento. Identità, contratti
+linguistici, indici dei token e intervalli UTF-8 esatti sono conservati.
+Le chiavi seguono l'uguaglianza canonica Unicode di Swift, senza case folding
+o analisi linguistica implicita; le superfici coincidono invece byte per byte
+con la fonte. Preannotazioni inglesi, giapponesi o italiane rendono eseguibile
+il calcolo: non certificano un tokenizer inglese/giapponese, MeCab o ChaSen.
+Il ranking matematico e la qualità dell'estrazione linguistica restano distinti,
+coerentemente con il ruolo di TermExtract in [KH A.4.4](https://khcoder.net/en/manual_en_v3.pdf).
+
+Il motore ammette 100.000 candidate/occorrenze, 1.000.000 componenti o token,
+64 componenti per candidata e 64 MiB testuali aggregati. Lo stesso budget di
+lavoro copre estrazione, conteggi, scoring e ordinamento: default 100.000.000,
+massimo 1.000.000.000. Frequenze traboccanti, valori non finiti e cancellazione
+impediscono la restituzione di risultati parziali. Kit e CLI applicano prima
+i propri limiti di trasporto, più restrittivi.
 
 ## Regole di codifica
 
@@ -344,9 +481,12 @@ non ereditano i manifest delle nove varianti storiche per somiglianza del nome.
 [GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md) conserva i mirati
 e il gate locale del completamento, superato nel suo perimetro storico.
 [GS-VER-234](../evidenze/GS-VER-234-riverifica-correttezza-completezza.md) registra
-la successiva riverifica, le correzioni e i limiti KH ancora aperti. GUI,
-persistenza, nuove lingue, V6 esterno e dispositivi non sono promossi da questo
-incremento.
+la successiva riverifica, le correzioni e i limiti KH aperti sulla revisione
+allora esaminata. I nuovi profili di ADR-0043 hanno implementazioni dedicate;
+la loro verifica integrata è in corso in GS-VER-300. I quattordici nuovi tag
+riusano schema 1 e il medesimo comando CLI, secondo GS-API-002.
+GUI, persistenza, nuove lingue automatiche, V6 esterno e dispositivi non sono
+promossi da questo incremento.
 
 ## Riferimenti
 

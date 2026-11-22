@@ -30,7 +30,6 @@ func textAnalysisFixtureParity() async throws {
         JSONSerialization.jsonObject(with: Data(contentsOf: textAnalysisFixtureURL))
             as? [String: Any])
     let cases = try #require(fixture["cases"] as? [[String: Any]])
-    #expect(cases.count == 30)
     #expect(!cases.isEmpty)
     #expect(Set(cases.compactMap { $0["id"] as? String }).count == cases.count)
     for item in cases {

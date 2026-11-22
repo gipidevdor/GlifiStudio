@@ -177,6 +177,8 @@ public enum GlifiNaiveBayes {
         try admitClassifierWork([documents.count], remaining: &remainingWork)
         try admitClassifierWork([tokenCount, model.classes.count], remaining: &remainingWork)
         try admitClassifierWork([documents.count, model.classes.count], remaining: &remainingWork)
+        try admitClassifierPredictionPreparation(
+            documents, vocabulary: model.vocabulary, remaining: &remainingWork, limits: limits)
         let table = try GlifiDocumentTermTable(documents: documents, vocabulary: model.vocabulary)
         return try documents.indices.map { index in
             if index.isMultiple(of: 256) { try Task.checkCancellation() }
@@ -209,6 +211,16 @@ public enum GlifiNaiveBayes {
             throw exploratoryFailure("naive-bayes.invalid-folds")
         }
         try Task.checkCancellation()
+        guard documents.count <= limits.maximumCells else {
+            throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
+        }
+        var remainingWork = limits.maximumWork
+        // Admit raw string scans and hashing before building either identity set.
+        let labelBytes = try admitClassifierStringBytes(
+            labels, passes: 2, remaining: &remainingWork)
+        let tokenCount = try classifierTokenCount(documents)
+        let tokenBytes = try admitClassifierStringBytes(
+            documents.joined(), passes: 2, remaining: &remainingWork)
         let classes = Array(Set(labels)).sorted()
         guard classes.count >= 2 else {
             throw exploratoryFailure("naive-bayes.insufficient-classes", .insufficientData)
@@ -219,16 +231,17 @@ public enum GlifiNaiveBayes {
         guard classes.count <= limits.maximumCells / classes.count,
             documents.count <= limits.maximumCells
         else { throw exploratoryFailure("exploratory.resource-limit", .insufficientResources) }
-        let tokenCount = try classifierTokenCount(documents)
         try requireWork([tokenCount], limits)
         try requireWork([documents.count, classes.count], limits)
         // This vocabulary is used only for conservative resource admission. Every fold
         // still learns its own vocabulary exclusively from its training documents.
-        let vocabularyCount = Set(documents.joined()).count
+        let globalVocabulary = Set(documents.joined())
+        let vocabularyCount = globalVocabulary.count
         guard vocabularyCount <= 100_000 else {
             throw exploratoryFailure("text-table.invalid-vocabulary")
         }
-        var remainingWork = limits.maximumWork
+        let vocabularyBytes = try admitClassifierStringBytes(
+            globalVocabulary, passes: 1, remaining: &remainingWork)
         try admitClassifierWork([documents.count, classes.count], remaining: &remainingWork)
         try admitClassifierWork([documents.count, folds, 2], remaining: &remainingWork)
         try admitClassifierWork([tokenCount, folds], remaining: &remainingWork)
@@ -236,6 +249,29 @@ public enum GlifiNaiveBayes {
         try admitClassifierWork([tokenCount, classes.count], remaining: &remainingWork)
         try admitClassifierWork([documents.count, classes.count], remaining: &remainingWork)
         try admitClassifierWork([classes.count, classes.count], remaining: &remainingWork)
+        // Every training vocabulary is a subset of this admission-only upper bound.
+        // Reserve table validation/lookups in both phases, repeated training-token hashing,
+        // canonical training-vocabulary sorting, and each held-out document's sparse sorting.
+        let vocabularySortLevels =
+            vocabularyCount < 2
+            ? 0 : Int.bitWidth - (vocabularyCount - 1).leadingZeroBitCount
+        try admitClassifierWork([folds, 6, vocabularyCount], remaining: &remainingWork)
+        try admitClassifierWork([folds, 4, vocabularyBytes], remaining: &remainingWork)
+        try admitClassifierWork([folds, 2, tokenBytes], remaining: &remainingWork)
+        try admitClassifierWork([folds, 2, labelBytes], remaining: &remainingWork)
+        try admitClassifierWork(
+            [folds, vocabularyCount, vocabularySortLevels], remaining: &remainingWork)
+        try admitClassifierWork(
+            [folds, vocabularyBytes, vocabularySortLevels], remaining: &remainingWork)
+        try admitClassifierWork([tokenBytes], remaining: &remainingWork)
+        for (index, document) in documents.enumerated() {
+            if index.isMultiple(of: 256) { try Task.checkCancellation() }
+            let nonzeroUpperBound = min(document.count, vocabularyCount)
+            let levels =
+                nonzeroUpperBound < 2
+                ? 0 : Int.bitWidth - (nonzeroUpperBound - 1).leadingZeroBitCount
+            try admitClassifierWork([nonzeroUpperBound, levels], remaining: &remainingWork)
+        }
         var generator = GlifiSplitMix64(seed: seed)
         var assignments = [Int](repeating: 0, count: documents.count)
         for label in classes {
@@ -293,6 +329,53 @@ private func classifierTokenCount(_ documents: [[String]]) throws -> Int {
         count += document.count
     }
     return count
+}
+
+private func admitClassifierStringBytes<S: Sequence>(
+    _ strings: S, passes: Int, remaining: inout Int
+) throws -> Int where S.Element == String {
+    var total = 0
+    for (index, value) in strings.enumerated() {
+        if index.isMultiple(of: 4_096) { try Task.checkCancellation() }
+        let count = value.utf8.count
+        try admitClassifierWork([count, passes], remaining: &remaining)
+        let (updated, overflow) = total.addingReportingOverflow(count)
+        guard !overflow else {
+            throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
+        }
+        total = updated
+    }
+    return total
+}
+
+private func admitClassifierPredictionPreparation(
+    _ documents: [[String]], vocabulary: [String], remaining: inout Int,
+    limits: GlifiExploratoryLimits
+) throws {
+    guard !vocabulary.isEmpty, vocabulary.count <= 100_000 else {
+        throw exploratoryFailure("text-table.invalid-vocabulary")
+    }
+    guard vocabulary.count <= limits.maximumCells else {
+        throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
+    }
+    // The table validates every vocabulary entry, checks uniqueness and builds its lookup.
+    try admitClassifierWork([vocabulary.count, 3], remaining: &remaining)
+    for (index, term) in vocabulary.enumerated() {
+        if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
+        try admitClassifierWork([term.utf8.count, 2], remaining: &remaining)
+    }
+    for (index, document) in documents.enumerated() {
+        if index.isMultiple(of: 256) { try Task.checkCancellation() }
+        let nonzeroUpperBound = min(document.count, vocabulary.count)
+        let sortLevels =
+            nonzeroUpperBound < 2
+            ? 0 : Int.bitWidth - (nonzeroUpperBound - 1).leadingZeroBitCount
+        try admitClassifierWork([nonzeroUpperBound, sortLevels], remaining: &remaining)
+        for (tokenIndex, token) in document.enumerated() {
+            if tokenIndex.isMultiple(of: 4_096) { try Task.checkCancellation() }
+            try admitClassifierWork([token.utf8.count], remaining: &remaining)
+        }
+    }
 }
 
 private func admitClassifierWork(_ factors: [Int], remaining: inout Int) throws {

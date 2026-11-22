@@ -85,6 +85,10 @@ struct TextAnalysisBudget {
     private var bytes = GlifiStudioTextAnalysisRequest.maximumRequestBytes
     private var elements = 250_000
 
+    mutating func collectionCount(_ count: Int) throws {
+        try consume(count)
+    }
+
     mutating func string(_ value: String) throws {
         let count = value.utf8.count
         guard count <= bytes else { throw limit() }

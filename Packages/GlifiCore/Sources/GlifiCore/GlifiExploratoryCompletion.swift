@@ -10,6 +10,22 @@ public enum GlifiMDSInitialization: String, Codable, Sendable {
     case random
 }
 
+/// Ordinal disparity constraints for equal input dissimilarities.
+public enum GlifiMDSOrdinalTies: String, Codable, Sendable {
+    /// Equal input dissimilarities may receive different disparities, ordered by fitted distance.
+    case primary
+    /// Equal input dissimilarities receive the same disparity; the compatible default.
+    case secondary
+
+    /// Versioned normalized-raw-stress SMACOF contract.
+    public var methodIdentifier: String {
+        switch self {
+        case .primary: "MDS-ordinal-SMACOF-primary-ties-normalized-raw-stress-v1"
+        case .secondary: "MDS-ordinal-SMACOF-secondary-ties-normalized-raw-stress-v1"
+        }
+    }
+}
+
 /// A deterministic search retaining the diagnostics of every completed MDS run.
 public struct GlifiMDSSearchResult: Equatable, Sendable {
     /// Versioned search and selection contract.
@@ -71,9 +87,9 @@ public struct GlifiSOMCodebookClustering: Equatable, Sendable {
 }
 
 extension GlifiExploratoryAnalysis {
-    /// Fits ordinal, complete unit-weight SMACOF with strong (secondary) ties.
+    /// Fits ordinal, complete unit-weight SMACOF with explicit primary or secondary ties.
     ///
-    /// Equal dissimilarities share a disparity. PAVA solves the isotonic least-squares
+    /// Secondary ties share a disparity; primary ties may split. PAVA solves the least-squares
     /// projection; disparities are normalized to squared norm `n*(n-1)/2` to prevent
     /// collapse. The reported objective is normalized raw stress, not Kruskal Stress-1.
     /// Each Guttman transform and re-fitted disparity step must decrease that objective.
@@ -82,7 +98,8 @@ extension GlifiExploratoryAnalysis {
         _ dissimilarities: [[Double]], dimensions: Int = 2, seed: UInt64 = 0,
         maximumIterations: Int = 300, tolerance: Double = 1e-8,
         limits: GlifiExploratoryLimits = .standard,
-        initialization: GlifiMDSInitialization = .classical
+        initialization: GlifiMDSInitialization = .classical,
+        ties: GlifiMDSOrdinalTies = .secondary
     ) throws -> GlifiMDSResult {
         let count = dissimilarities.count
         _ = try validateExploratoryMatrix(dissimilarities, limits: limits)
@@ -94,6 +111,11 @@ extension GlifiExploratoryAnalysis {
             throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
         }
         try requireWork([count, count, dimensions, maximumIterations], limits)
+        if ties == .primary {
+            try admitOrdinalPrimary(
+                count: count, dimensions: dimensions, iterations: maximumIterations,
+                starts: 1, classicalInitialization: initialization == .classical, limits: limits)
+        }
         for row in 0..<count {
             try Task.checkCancellation()
             guard dissimilarities[row][row] == 0 else {
@@ -132,7 +154,7 @@ extension GlifiExploratoryAnalysis {
         }
         coordinates = try normalizeOrdinalCoordinates(coordinates)
         var fitted = try ordinalDistances(coordinates)
-        var targets = try ordinalDisparities(pairs, fitted: fitted, count: count)
+        var targets = try ordinalDisparities(pairs, fitted: fitted, count: count, ties: ties)
         var history = [try ordinalStress(fitted, targets)]
         var converged = false
         for _ in 0..<maximumIterations {
@@ -153,7 +175,8 @@ extension GlifiExploratoryAnalysis {
             }
             next = centerOrdinalCoordinates(next)
             let nextFitted = try ordinalDistances(next)
-            let nextTargets = try ordinalDisparities(pairs, fitted: nextFitted, count: count)
+            let nextTargets = try ordinalDisparities(
+                pairs, fitted: nextFitted, count: count, ties: ties)
             let objective = try ordinalStress(nextFitted, nextTargets)
             let previous = history[history.count - 1]
             // A tiny floating-point increase terminates at the last valid configuration;
@@ -169,7 +192,7 @@ extension GlifiExploratoryAnalysis {
             }
         }
         return GlifiMDSResult(
-            methodIdentifier: "MDS-ordinal-SMACOF-secondary-ties-normalized-raw-stress-v1",
+            methodIdentifier: ties.methodIdentifier,
             coordinates: coordinates, eigenvalues: [], stress: history.last ?? 0,
             objectiveHistory: history, iterations: history.count - 1,
             converged: converged, seed: seed)
@@ -183,13 +206,20 @@ extension GlifiExploratoryAnalysis {
         _ dissimilarities: [[Double]], dimensions: Int = 2,
         method: GlifiMDSMethod = .ordinal, starts: Int = 10, seed: UInt64 = 0,
         maximumIterations: Int = 300, tolerance: Double = 1e-8,
-        limits: GlifiExploratoryLimits = .standard
+        limits: GlifiExploratoryLimits = .standard,
+        ordinalTies: GlifiMDSOrdinalTies = .secondary
     ) throws -> GlifiMDSSearchResult {
         guard method != .classical, (1...1_000).contains(starts), dimensions > 0,
-            (1...10_000).contains(maximumIterations)
+            (1...10_000).contains(maximumIterations),
+            method == .ordinal || ordinalTies == .secondary
         else { throw exploratoryFailure("exploratory.invalid-parameters") }
         let count = dissimilarities.count
         try requireWork([count, count, dimensions, maximumIterations, starts], limits)
+        if ordinalTies == .primary {
+            try admitOrdinalPrimary(
+                count: count, dimensions: dimensions, iterations: maximumIterations,
+                starts: starts, limits: limits)
+        }
         let coordinateCells = count.multipliedReportingOverflow(by: dimensions)
         let storedCells = coordinateCells.partialValue.addingReportingOverflow(
             maximumIterations + 1)
@@ -201,10 +231,18 @@ extension GlifiExploratoryAnalysis {
         var chosen = 0
         for run in 0..<starts {
             try Task.checkCancellation()
-            let result = try multidimensionalScaling(
-                dissimilarities, dimensions: dimensions, method: method,
-                seed: seed &+ UInt64(run), maximumIterations: maximumIterations,
-                tolerance: tolerance, limits: limits, initialization: .random)
+            let result: GlifiMDSResult
+            if method == .ordinal {
+                result = try ordinalMultidimensionalScaling(
+                    dissimilarities, dimensions: dimensions, seed: seed &+ UInt64(run),
+                    maximumIterations: maximumIterations, tolerance: tolerance, limits: limits,
+                    initialization: .random, ties: ordinalTies)
+            } else {
+                result = try multidimensionalScaling(
+                    dissimilarities, dimensions: dimensions, method: method,
+                    seed: seed &+ UInt64(run), maximumIterations: maximumIterations,
+                    tolerance: tolerance, limits: limits, initialization: .random)
+            }
             if !runs.isEmpty, result.stress < runs[chosen].stress {
                 chosen = run
             }
@@ -309,7 +347,8 @@ private func ordinalPairs(_ dissimilarities: [[Double]]) throws -> [GlifiOrdinal
 
 /// The isotonic projection with exact tie groups and fixed squared norm.
 package func ordinalDisparities(
-    _ pairs: [GlifiOrdinalPair], fitted: [[Double]], count: Int
+    _ pairs: [GlifiOrdinalPair], fitted: [[Double]], count: Int,
+    ties: GlifiMDSOrdinalTies = .secondary
 ) throws -> [[Double]] {
     struct Block {
         let start: Int
@@ -318,11 +357,25 @@ package func ordinalDisparities(
         var weight: Int
         var mean: Double { sum / Double(weight) }
     }
+    let ordered: [GlifiOrdinalPair]
+    switch ties {
+    case .secondary: ordered = pairs
+    case .primary:
+        try Task.checkCancellation()
+        ordered = pairs.sorted {
+            if $0.dissimilarity != $1.dissimilarity { return $0.dissimilarity < $1.dissimilarity }
+            let left = fitted[$0.row][$0.column]
+            let right = fitted[$1.row][$1.column]
+            if left != right { return left < right }
+            return $0.row == $1.row ? $0.column < $1.column : $0.row < $1.row
+        }
+        try Task.checkCancellation()
+    }
     var groups: [Block] = []
-    for (index, pair) in pairs.enumerated() {
+    for (index, pair) in ordered.enumerated() {
         if index.isMultiple(of: 4_096) { try Task.checkCancellation() }
         let value = fitted[pair.row][pair.column]
-        if index > 0, pair.dissimilarity == pairs[index - 1].dissimilarity,
+        if ties == .secondary, index > 0, pair.dissimilarity == ordered[index - 1].dissimilarity,
             let last = groups.last
         {
             groups[groups.count - 1] = Block(
@@ -355,12 +408,47 @@ package func ordinalDisparities(
         let value = block.mean * scale
         guard value.isFinite else { throw exploratoryFailure("exploratory.numeric-overflow") }
         for index in block.start..<block.end {
-            let pair = pairs[index]
+            let pair = ordered[index]
             result[pair.row][pair.column] = value
             result[pair.column][pair.row] = value
         }
     }
     return result
+}
+
+private func admitOrdinalPrimary(
+    count: Int, dimensions: Int, iterations: Int, starts: Int,
+    classicalInitialization: Bool = false,
+    limits: GlifiExploratoryLimits
+) throws {
+    guard count >= 2, count <= limits.maximumPairwiseObjects,
+        count <= limits.maximumCells / count
+    else { throw exploratoryFailure("exploratory.resource-limit", .insufficientResources) }
+    let pairCount = count * (count - 1) / 2
+    let comparisons = max(1, Int.bitWidth - pairCount.leadingZeroBitCount)
+    var work = limits.maximumWork
+    try consumeOrdinalBudget([count, count, dimensions, iterations, starts], remaining: &work)
+    try consumeOrdinalBudget([pairCount, comparisons, iterations + 1, starts], remaining: &work)
+    if classicalInitialization {
+        try consumeOrdinalBudget([count, count, count], remaining: &work)
+    }
+    var cells = limits.maximumCells
+    // Input/working distances, pair records, both PAVA stacks and retained run diagnostics.
+    try consumeOrdinalBudget([12, count, count], remaining: &cells)
+    try consumeOrdinalBudget([3, count, dimensions], remaining: &cells)
+    try consumeOrdinalBudget([starts, count, dimensions], remaining: &cells)
+    try consumeOrdinalBudget([starts, iterations + 1], remaining: &cells)
+}
+
+private func consumeOrdinalBudget(_ factors: [Int], remaining: inout Int) throws {
+    var product = 1
+    for factor in factors {
+        guard factor >= 0, product == 0 || factor <= remaining / product else {
+            throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
+        }
+        product *= factor
+    }
+    remaining -= product
 }
 
 private func ordinalDistances(_ coordinates: [[Double]]) throws -> [[Double]] {

@@ -90,6 +90,11 @@ preservando i metodi upstream già pubblicati.
   L'importazione accetta il formato esplicito indipendente dall'estensione e
   restituisce il profilo nativo completo in `lastProfile`, aggiungendo conteggi
   di byte/token di superficie e termini ai campi JSON precedenti.
+- Profili KH pubblici completati in Core/Kit/CLI: preparazione e contesti,
+  tie MDS primary, SOM online a due fasi/PCA, scaling CA, MI3/Z, LR/FLR e
+  classificazione incrementale con valutazione kappa. Contratti e limiti in
+  GS-VER-300; nessuna promozione scientifica automatica.
+
 
 - Grafici audio di VoiceOver per le mappe fattoriali, con sintesi specifica per
   CA, PCA e LSA. Le righe delle fusioni del dendrogramma aprono le fonti anche

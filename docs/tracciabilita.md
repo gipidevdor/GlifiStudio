@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.11 |
+| Versione | 0.92.12 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -465,8 +465,10 @@ trasporto Unicode. I collegamenti riguardano TV-003/TV-008/TV-009/TV-032/TV-051/
 TV-060/TV-087/TV-088 e le clausole CMP-031/051/066/080/160/162/202 esistenti,
 senza promuoverne gli stati. Il gate locale della riverifica è superato:
 660 test Core/Kit, 99 test app macOS e 95 controlli CLI su 30 fixture.
-I limiti di completezza KH restano aperti; non si attestano promozione scientifica,
-audit GUI, V6 esterno, qualità NLP rappresentativa o prove su dispositivo.
+I limiti di completezza KH così registrati riguardano la revisione della
+riverifica; i nuovi profili pubblici e il loro gate sono distinti in GS-VER-300.
+Non si attestano promozione scientifica, audit GUI, V6 esterno, qualità NLP
+rappresentativa o prove su dispositivo.
 
 ## Lotto complementare macOS GS-PLAN-180
 
@@ -606,3 +608,19 @@ predefiniti sul profilo macOS, ingressi `*-all` per entrambe le piattaforme solo
 su richiesta. AGENTS e GS-DEV-002 conservano la priorità; il checker del loop
 verifica i comandi canonici con prove negative. Nessun controllo condiviso o
 macOS viene rimosso, né è attestata verifica iPadOS dal profilo predefinito.
+
+## Chiusura dei profili KH pubblici (GS-DOR-300)
+
+RF-087, RQ-025, RQ-058, RQ-060 e RQ-063 collegano le preparazioni di matrice,
+le varianti ordinali e SOM, il ranking LR/FLR, le misure globali di collocazione
+e la continuazione/valutazione NB a Core, GlifiKit e allo stesso trasporto CLI.
+Le regressioni GlifiKHMatrixPreparationTests, GlifiKHExploratoryProfilesTests,
+GlifiKHCollocationScoresTests, GlifiTermExtractionTests,
+GlifiIncrementalNaiveBayesTests e GlifiNaiveBayesVocabularyBudgetTests verificano
+formule, casi discriminanti, budget e cancellazione.
+GlifiKHAnalysisTransportTests e le 52 fixture condivise verificano i parametri
+e risultati del trasporto; i nuovi profili restano candidate.
+
+[GS-VER-300](evidenze/GS-VER-300-completezza-funzionale-kh.md) registra gli esiti
+e il gate ancora in verifica. ADR-0043 governa l’estensione; le clausole
+CMP-160 e CMP-162 conservano i propri stati, senza promozioni V6 o GUI.

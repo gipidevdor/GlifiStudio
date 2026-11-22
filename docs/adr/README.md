@@ -72,3 +72,5 @@ Ogni ADR deve contenere titolo, stato, contesto, decisione, conseguenze e, quand
 
 - [ADR-0036 — Parità continua fra GlifiKit e CLI](0036-parita-continua-kit-cli.md) — Ambito e architettura accettati; inventario pubblico e verifiche di parità permanenti
 - [ADR-0042 — Invarianti degli intervalli UTF-8 decodificati](0042-invarianti-intervalli-utf8-decodificati.md) — Accettato; rifiuto anticipato dei range malformati, geometria legacy valida preservata
+
+- [ADR-0043 — Chiusura funzionale dei profili KH pubblici](0043-completezza-funzionale-kh-pubblico.md) — Accettato; varianti candidate e verifica separata
