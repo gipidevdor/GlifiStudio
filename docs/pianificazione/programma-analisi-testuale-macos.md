@@ -6,16 +6,17 @@
 | --- | --- |
 | Identificatore | GS-PLAN-002 |
 | Tipo | Programma operativo con inventario e backlog |
-| Versione | 1.2.0 |
+| Versione | 1.3.8 |
 | Stato | Attivo; completezza per capacità ed evidenza |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-21 |
-| Approvazione | Richiesta esplicita di completare le caratteristiche di analisi testuale; ADR-0033 |
+| Ultima modifica | 2026-11-22 |
+| Approvazione | Richieste esplicite di completare l'analisi testuale e riprogettare la GUI; ADR-0033; ADR-0034 |
 
 ## Scopo e criterio di completezza
 
-Completare prima macOS e usare soltanto test automatici nel turno corrente.
-iPadOS è rimandato; la baseline storica 0.1 non viene riscritta. Una capacità
+Completare prima macOS. I lotti di ADR-0033 usavano soltanto test automatici;
+la riprogettazione successiva di ADR-0034 prevede anche osservazione della GUI
+quando il Mac è accessibile. iPadOS è rimandato; la baseline storica 0.1 non viene riscritta. Una capacità
 disponibile in Core, una API Kit, un comando CLI, una capability planner e un
 flusso UI sono livelli distinti: nessuno implica automaticamente gli altri.
 
@@ -23,6 +24,30 @@ Per ogni incremento servono richiesta effettiva ispezionabile, precondizioni,
 risultato bounded e leggibile, lineage, failure, test ed evidenza. Disponibilità
 di libreria e superamento della build non equivalgono a completamento del prodotto,
 validazione UX, revisione scientifica esterna o G4.
+
+## Nuovo turno — Riprogettazione della GUI
+
+La richiesta esplicita del 2026-11-22 autorizza GS-DOR-222 e ADR-0034:
+navigazione per compiti, accessi diretti agli strumenti, contesto del progetto,
+parametri progressivi e risultati leggibili. Le capacità già realizzate sono il
+perimetro d'integrazione; non vengono introdotti metodi per ampliare il catalogo.
+
+Il nuovo laboratorio avanzato macOS può eseguire gli operatori di ADR-0032 su
+dati del progetto tramite GlifiKit. Questo supera la precedente esclusione della
+UI per il solo client in memoria: persistenza, planner e rapporto dell'indagine
+non sono estesi implicitamente. I risultati di sessione devono essere
+riconoscibili e conservare scope effettivo, parametri e limiti.
+
+Le implementazioni e le verifiche del nuovo lotto sono registrate in
+[GS-VER-222](../evidenze/GS-VER-222-riprogettazione-gui.md): gate completo isolato
+superato con 423 test package e 224 esecuzioni native macOS, build Debug/Release
+di entrambe le app, oracoli, PDF/A-2u, CLI e recovery. La GUI è stata osservata
+parzialmente; il Mac ribloccato impedisce di attestare gli strumenti con dati e
+l'ultima correzione delle barre nel dettaglio. CMP-222 resta `implemented` per
+gli audit ergonomici e assistivi aperti. L'inventario di ingresso
+seguente resta storico e non descrive automaticamente la GUI riprogettata.
+Lemma/POS/NER, metadati, indice scalabile, studi ergonomici e gate G4/G5 restano
+unità distinte; il loro completamento non è inferito dall'esposizione di controlli.
 
 ## Inventario di ingresso, prima degli incrementi A–C
 
@@ -59,6 +84,14 @@ Gli identificatori **190–199** di DoR, evidenze e clausole CMP sono riservati 
 programma applicativo macOS. Il completamento algoritmico concorrente usa
 GS-DOR-168; il programma complementare GS-PLAN-180 usa i propri identificatori.
 Le loro modifiche restano indipendenti e vengono preservate.
+
+Il nuovo turno del 2026-11-22 riserva al programma applicativo macOS gli
+identificatori **230–239** di DoR, evidenze e clausole CMP. Il lotto parte dal
+commit `f6bba3e` in repository isolato, preservando l'integrazione concomitante
+nel checkout originale; non apre nuove funzionalità. GS-DOR-230 corregge la
+coppia KWIC/fonte, GS-DOR-231 misura il lookup delle etichette, GS-DOR-232
+corregge selezione visuale/contesto. Gli altri ID richiedono un contratto prima
+del codice; 171/172 e 205–208 restano assegnati agli altri programmi.
 
 ## Sequenza autorizzata
 
@@ -190,3 +223,59 @@ di GS-VER-198. Nessuna build iPadOS, GUI reale o chiusura G4 è attribuita al lo
 i sorgenti successivi al freeze richiedono nuove prove.
 A–D e i lotti lifecycle precedenti rimangono chiusi sul rispettivo contenuto
 provato; iPadOS è rimandato e l'intervallo 190–199 è ora assegnato.
+
+## Lotto del 2026-11-22 — Correttezza e lookup misurato
+
+Il lavoro isolato sulla base `f6bba3e` applica la riserva 230–239 senza
+introdurre nuove funzioni analitiche. GS-DOR-230 e GS-DOR-232 correggono
+rispettivamente coppia KWIC/fonte e selezione visuale/contesto, comprese le
+condizioni busy, failure e assenza di fonte. Una prima corsa RED aveva due
+aspettative di test errate sul retained state; dopo la sola correzione delle
+aspettative, cinque RED pertinenti precedono la patch. Il GREEN completo
+supera 60 definizioni/200 esecuzioni, zero fallite/saltate. Dopo integrazione con
+GUI 222, il gate e preflight dello snapshot 4d6969dd sono superati, con 67
+definizioni/224 esecuzioni native e 486 test Core/Kit. CMP-230/232 sono
+`verified` nel perimetro automatico dello snapshot; il layout HomeView successivo
+del lavoro GUI resta escluso e ha evidenza separata.
+
+GS-DOR-231 misura il helper reale per le etichette nelle viste macOS. Le sonde
+SHA/alias rimangono diagnostiche; il protocollo finale usa UUID, storage distinto
+e lifetime esplicito. Baseline e quattro candidati hanno output completi
+identici: tre varianti sono respinte per regressioni, il predicato Sendable
+di Ready 1.5 mantiene lo stato MainActor e migliora il batch lungo da
+49,061791 a 2,069916 ms. I piccoli costi aggiuntivi e la dispersione restano
+espliciti; il beneficio non è universale e non viene attribuito a SwiftUI.body,
+GUI o energia. Il helper finale è integrato; gate e preflight ffbfb431 sono
+superati, con 486 test Core/Kit e 67 definizioni/224 esecuzioni native.
+CMP-230/231/232 sono `verified` nel perimetro automatico di tale checkpoint,
+derivato da 4d6969dd più il helper finale e i documenti del lotto. Il WIP 223 e
+il layout HomeView successivo sono esclusi e preservati nella copia condivisa.
+Le evidenze 230–232 mantengono le generazioni distinte; iPadOS e G4 restano aperti.
+
+## Sottoincremento 235 — Barriera di reset dei laboratori macOS
+
+GS-DOR-235 attua il lifecycle richiesto da GS-DOR-223. La Ready precede codice
+e test con l'identificatore iniziale 233, poi rinumerato per la collisione con
+il completamento KH Coder upstream, senza inventare nuove corse. Il fix
+Advanced legacy e i guard preesistenti di Evaluation/Corpus mantengono le
+rispettive attribuzioni. Il candidato latest137 preserva executionRevision
+peer, più forte perché protegge anche dalle esecuzioni superate.
+CMP-235 è verified per automatici sul checkpoint ea48ba88: 592 test Core/Kit,
+104 definizioni/327 esecuzioni native, 90 controlli CLI/30 fixture condivise,
+oracoli, PDF/A, recovery e gate/preflight macOS superati. L'originale legacy02
+conserva la GUI diversa; non viene certificato l'intero checkout corrente.
+Nessuna nuova formula, API pubblica, migrazione o backend appartiene al lotto.
+
+## Sottoincremento 234 — Presentazione corpus coerente su macOS
+
+GS-DOR-234 è Ready prima della correzione di invalidazione sincrona e
+separazione dei task di filtro/proiezione. L'ultima scelta di asse, tabella e
+ricerca è conservata; pending espone progresso localizzato, nasconde conteggio
+e vuoto transitori e disabilita le pagine senza bloccare le scelte. La suite
+StudioCorpusPresentationTests distingue l'errore iniziale di fixture dal RED
+pertinente, senza trap volontari o hook di produzione. GREEN legacy e allineato
+restano distinti; CMP-234 è verified per automatici sul checkpoint ea48ba88,
+con gate e packaging macOS superati, senza cambiamenti numerici Core/Kit.
+Il lotto resta limitato a 234/235; budget e ulteriori problemi di chiarezza
+statistica sono nel backlog. Nessuna nuova feature o promozione scientifica;
+iPadOS, GUI manuale e G4 restano fuori perimetro.

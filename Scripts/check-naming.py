@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -17,10 +18,6 @@ LEGACY_STEM_LOWERCASE = LEGACY_STEM.lower()
 
 REQUIRED_FRAGMENTS = {
     Path("README.md"): ("GlifiStudio.xcworkspace",),
-    Path("Apps/Shared/Resources/Localizable.xcstrings"): (
-        '"value" : "Glifi Studio"',
-        '"value" : "GlifiCore pronto"',
-    ),
     Path("GlifiStudio.xcodeproj/project.pbxproj"): (
         "GlifiStudio-macOS",
         "GlifiStudio-iPadOS",
@@ -41,6 +38,19 @@ CANONICAL_README_HEADINGS = (
     "# Glifi Studio",
     '<h1 align="center">Glifi Studio</h1>',
 )
+
+
+def catalog_naming_errors(catalog: object) -> list[str]:
+    """Check canonical values at their semantic keys, independently from JSON whitespace."""
+    errors = []
+    for key, expected in {"app.name": "Glifi Studio", "engine.status.ready": "GlifiCore pronto"}.items():
+        try:
+            actual = catalog["strings"][key]["localizations"]["it"]["stringUnit"]["value"]
+        except (KeyError, TypeError):
+            actual = None
+        if actual != expected:
+            errors.append(f"Nome canonico mancante nel catalogo, chiave italiana {key}: {expected}")
+    return errors
 
 
 def main() -> int:
@@ -73,6 +83,12 @@ def main() -> int:
         for fragment in fragments:
             if fragment not in body:
                 errors.append(f"Nome canonico mancante in {relative_path}: {fragment}")
+
+    catalog_path = PROJECT_DIRECTORY / "Apps/Shared/Resources/Localizable.xcstrings"
+    try:
+        errors.extend(catalog_naming_errors(json.loads(catalog_path.read_text(encoding="utf-8"))))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        errors.append("Catalogo canonico mancante o JSON non valido")
 
     readme_body = (PROJECT_DIRECTORY / "README.md").read_text(encoding="utf-8")
     if not any(heading in readme_body for heading in CANONICAL_README_HEADINGS):

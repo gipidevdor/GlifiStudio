@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-UX-001-16 |
 | Tipo | Specifica normativa dell'esperienza utente |
-| Versione | 1.1.0 |
+| Versione | 1.2.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-20 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | ADR-0029; validazione con utenti non ancora eseguita |
 | Documento padre | [GS-UX-001](README.md) |
 
@@ -50,7 +50,7 @@ registrato.
 3. **Rivedere**: l'elenco delle codifiche mostra passaggio, categoria, codificatore e stato
    (attiva o ritirata); il testo di ogni passaggio è risolto dagli intervalli registrati, anche
    quando non coincide con una frase. Ritirare chiede un motivo da un elenco chiuso.
-4. **Annotare**: aggiungere una nota a una codifica.
+4. **Annotare**: aggiungere una nota a una codifica, una fonte o una categoria.
 5. **Misurare l'accordo**: scegliere revisione e codificatori; il risultato mostra le misure, il
    numero di unità e il numero di unità escluse perché ambigue, con la spiegazione dell'esclusione.
 
@@ -74,3 +74,18 @@ codifica registrata o rifiutata.
 Test del modello di presentazione (flussi, errori, ricarica dopo storia cambiata), build macOS e
 iPadOS, stringhe in italiano e inglese nel catalogo; audit VoiceOver, tastiera e Dynamic Type su
 dispositivo nel gate G4 (GS-UX-001-15).
+
+## Editor completo del codebook (ADR-0041)
+
+L'editor condiviso permette di scegliere fra codebook, caricare la revisione
+attiva in una bozza completa, conservare identità stabili, gerarchia e istruzioni
+e registrare una nuova revisione. Rimuovere una categoria dalla bozza non
+riscrive la storia. Un mapping esplicito collega categorie di due revisioni
+già registrate come rinomina, unione o suddivisione. Le note di fonte e
+categoria indicano la destinazione prima della registrazione.
+
+L'accordo consente di scegliere anche una revisione storica. Il risultato
+mostra il codebook, la revisione e i codificatori effettivamente usati e segnala
+una selezione successiva diversa. Una nuova selezione di codebook invalida il
+risultato visualizzato; una failure conserva l'ultimo esito valido identificato.
+Verifica e limiti: [GS-VER-223](../evidenze/GS-VER-223-copertura-core-app.md).

@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-UX-001-09 |
 | Tipo | Specifica normativa dell'esperienza utente |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Principio approvato; implementazione da progettare |
 | Documento padre | [GS-UX-001](README.md) |
 
@@ -53,6 +53,15 @@ Finding ↔ Evidence ↔ elemento analitico ↔ unità ↔ segmento ↔ SourceRe
 Dalla fonte, la persona può vedere findings ed evidenze validi che citano la
 selezione corrente. L'evidenziazione mantiene versione del corpus e sistema di
 coordinate; se la fonte esterna è cambiata o manca, l'errore non viene mascherato.
+
+Selezione KWIC e testo presentato devono appartenere alla stessa revisione:
+nessun nuovo identificatore con il testo della fonte precedente durante busy
+o dopo failure. Gli intervalli originali si applicano soltanto alla revisione
+corrispondente. Analogamente, mark visuale e contesto Evidence vengono
+pubblicati insieme dopo caricamento riuscito; un mark senza fonti ammesso
+azzera il contesto precedente senza inventare un collegamento. Busy o failure
+conservano l'ultimo stato coerente. GS-DOR-230/232 realizzano le correzioni nel
+client macOS, senza attribuire un nuovo comportamento iPadOS o un audit GUI.
 
 ## Interazioni coordinate
 

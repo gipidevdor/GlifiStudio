@@ -3,7 +3,7 @@
 import GlifiCore
 
 /// One caller-ordered document of explicit lexical keys.
-public struct GlifiStudioLexicalSequence: Equatable, Sendable {
+public struct GlifiStudioLexicalSequence: Codable, Equatable, Sendable {
     /// Stable document or source revision identity.
     public let id: String
     /// Keys after the caller's declared preprocessing.
@@ -81,7 +81,7 @@ public struct GlifiStudioLogPowerFit: Encodable, Equatable, Sendable {
 }
 
 /// Application-facing choice of variance denominator.
-public enum GlifiStudioVarianceConvention: String, Sendable {
+public enum GlifiStudioVarianceConvention: String, Codable, Sendable {
     /// Denominator n.
     case population
     /// Denominator n-1, undefined for n < 2.

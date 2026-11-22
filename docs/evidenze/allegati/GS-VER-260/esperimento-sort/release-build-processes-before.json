@@ -1,0 +1,91 @@
+{
+  "observedAtUTC": "2026-11-22T08:44:20.465361+00:00",
+  "processes": [
+    {
+      "processName": "GlifiStudio",
+      "PID": 20251,
+      "CPU": 0.0
+    },
+    {
+      "processName": "xcodebuild",
+      "PID": 21984,
+      "CPU": 0.2
+    },
+    {
+      "processName": "swift-test",
+      "PID": 27705,
+      "CPU": 0.0
+    },
+    {
+      "processName": "xcodebuild",
+      "PID": 28857,
+      "CPU": 0.0
+    },
+    {
+      "processName": "swift-frontend",
+      "PID": 29193,
+      "CPU": 262.8
+    },
+    {
+      "processName": "swift-frontend",
+      "PID": 29194,
+      "CPU": 257.0
+    },
+    {
+      "processName": "swift-frontend",
+      "PID": 31507,
+      "CPU": 25.6
+    },
+    {
+      "processName": "swift-plugin-server",
+      "PID": 31513,
+      "CPU": 0.0
+    },
+    {
+      "processName": "swift-frontend",
+      "PID": 32082,
+      "CPU": 25.5
+    },
+    {
+      "processName": "swift-frontend",
+      "PID": 32083,
+      "CPU": 24.4
+    },
+    {
+      "processName": "swift-plugin-server",
+      "PID": 32088,
+      "CPU": 0.0
+    },
+    {
+      "processName": "swift-frontend",
+      "PID": 32104,
+      "CPU": 26.9
+    },
+    {
+      "processName": "xcodebuild",
+      "PID": 32136,
+      "CPU": 0.1
+    },
+    {
+      "processName": "swift-frontend",
+      "PID": 32315,
+      "CPU": 26.6
+    },
+    {
+      "processName": "swift-frontend",
+      "PID": 32316,
+      "CPU": 26.1
+    },
+    {
+      "processName": "swift-run",
+      "PID": 32317,
+      "CPU": 14.0
+    },
+    {
+      "processName": "swift-driver",
+      "PID": 32327,
+      "CPU": 0.0
+    }
+  ],
+  "sanitization": "Derived build inventory: only processName/PID/CPU retained; command paths and elapsed details removed."
+}

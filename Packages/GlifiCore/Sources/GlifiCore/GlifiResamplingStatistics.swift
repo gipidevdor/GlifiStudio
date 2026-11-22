@@ -178,6 +178,12 @@ extension GlifiStatisticalFoundation {
                 category: .invalidInput
             )
         }
+        if blockLength == 1 {
+            // Keep MBB validation precedence, then reuse the identical draw stream and checkpoints.
+            return try bootstrapMeanInterval(
+                sequence, confidenceLevel: confidenceLevel,
+                resampleCount: resampleCount, seed: seed)
+        }
         var generator = GlifiSplitMix64(seed: seed)
         let count = sequence.count
         var means: [Double] = []
@@ -188,10 +194,11 @@ extension GlifiStatisticalFoundation {
             var drawn = 0
             while drawn < count {
                 let start = generator.index(below: count - blockLength + 1)
-                for offset in 0..<blockLength where drawn < count {
+                let take = min(blockLength, count - drawn)
+                for offset in 0..<take {
                     total += sequence[start + offset]
-                    drawn += 1
                 }
+                drawn += take
             }
             means.append(total / Double(count))
         }

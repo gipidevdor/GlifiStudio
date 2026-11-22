@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-APL-IDX-001 |
 | Tipo | Indice delle pratiche Apple |
-| Versione | 1.6.0 |
+| Versione | 1.6.1 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Decisione esplicita dell'iniziatore del progetto |
 
 Questo indice applica le indicazioni Apple pertinenti alle app Glifi Studio per macOS 27 e iPadOS 27. Il progetto sfrutta i componenti hardware e i servizi di sistema che producono un beneficio verificabile, senza aggiungere preventivamente capability, permessi o dipendenze.
@@ -89,3 +89,10 @@ Le decisioni sono registrate in [ADR-0006](../adr/0006-baseline-applicativa-appl
 [ADR-0016](../adr/0016-specifiche-di-design-e-baseline-prodotto.md),
 [ADR-0017](../adr/0017-osservabilita-locale-senza-telemetria.md) e
 [ADR-0018](../adr/0018-runtime-cooperativo-sostenibile-macos.md).
+
+## Valutazione coordinata del 2026-11-22
+
+[GS-APL-016 — Valutazione delle integrazioni native](16-valutazione-integrazioni-native.md)
+confronta portafoglio, codice, requisiti e lavori delle altre chat. Le adozioni del
+lotto GS-DOR-260 e i loro limiti sono registrati in GS-VER-260; tecnologie
+condizionali e framework fuori dominio non diventano dipendenze implicite.

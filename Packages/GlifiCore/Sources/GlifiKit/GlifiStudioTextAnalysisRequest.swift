@@ -47,6 +47,8 @@ public enum GlifiStudioTextAnalysisRequest: Equatable, Sendable, Encodable {
     case network(
         matrix: [[Double]], labels: [String], minimumJaccard: Double = 0.1,
         maximumEdges: Int = 10_000)
+    /// Native completion operators; the JSON operation remains flat and versioned.
+    case advanced(GlifiStudioAdvancedTextAnalysisRequest)
 
     /// Stable operation tag.
     public var operation: String {
@@ -63,6 +65,7 @@ public enum GlifiStudioTextAnalysisRequest: Equatable, Sendable, Encodable {
         case .correspondence: "correspondence"
         case .hierarchical: "hierarchical"
         case .network: "network"
+        case let .advanced(request): request.operation
         }
     }
 
@@ -83,6 +86,8 @@ public enum GlifiStudioTextAnalysisRequest: Equatable, Sendable, Encodable {
         do {
             var budget = TextAnalysisBudget()
             switch self {
+            case let .advanced(request):
+                try request.validate(budget: &budget)
             case let .mds(matrix, _, _, _, _):
                 try budget.matrix(matrix)
             case let .som(matrix, _, _, _, _):
@@ -289,7 +294,8 @@ public enum GlifiStudioTextAnalysisRequest: Equatable, Sendable, Encodable {
                     Int.self, forKey: TextAnalysisKey("maximumEdges"), fallback: 10_000)
             )
         default:
-            throw textRequestFailure("text-analysis.unknown-operation")
+            self = .advanced(try GlifiStudioAdvancedTextAnalysisRequest(from: decoder))
+            return
         }
         guard fields.allKeys.allSatisfy({ allowed.contains($0.stringValue) }) else {
             throw textRequestFailure("text-analysis.unknown-field")
@@ -300,11 +306,17 @@ public enum GlifiStudioTextAnalysisRequest: Equatable, Sendable, Encodable {
     ///
     /// Prefer `canonicalData()` at external boundaries.
     public func encode(to encoder: any Encoder) throws {
+        if case let .advanced(request) = self {
+            try request.encode(to: encoder)
+            return
+        }
         var fields = encoder.container(keyedBy: TextAnalysisKey.self)
         try fields.encode(Self.schema, forKey: TextAnalysisKey("schema"))
         try fields.encode(Self.schemaVersion, forKey: TextAnalysisKey("schemaVersion"))
         try fields.encode(operation, forKey: TextAnalysisKey("operation"))
         switch self {
+        case let .advanced(request):
+            try request.encode(to: encoder)
         case let .mds(matrix, dimensions, method, seed, maximumIterations):
             try fields.encode(matrix, forKey: TextAnalysisKey("matrix"))
             try fields.encode(dimensions, forKey: TextAnalysisKey("dimensions"))
@@ -379,11 +391,12 @@ public struct GlifiStudioTextAnalysisResult: Encodable, Sendable {
     public let methodIdentifier: String
     /// Conservative, method-scoped validation status.
     public let validationStatus: String
-    private let payload: TextAnalysisPayload
+    /// Typed numerical payload for native presentation, identical to the encoded result.
+    public let payload: GlifiStudioTextAnalysisPayload
 
     fileprivate init(
         request: GlifiStudioTextAnalysisRequest, canonical: Data,
-        methodIdentifier: String, payload: TextAnalysisPayload
+        methodIdentifier: String, payload: GlifiStudioTextAnalysisPayload
     ) {
         operation = request.operation
         requestDigest = SHA256.hash(data: canonical).map { String(format: "%02x", $0) }.joined()
@@ -405,7 +418,9 @@ public struct GlifiStudioTextAnalysisResult: Encodable, Sendable {
     }
 }
 
-private enum TextAnalysisPayload: Encodable, Sendable {
+/// Exhaustive result family shared by native clients and the JSON transport.
+public enum GlifiStudioTextAnalysisPayload: Encodable, Sendable {
+    case advanced(GlifiStudioAdvancedTextAnalysisPayload)
     case mds(GlifiStudioMDSResult)
     case som(GlifiStudioSOMResult)
     case clara(GlifiStudioCLARAResult)
@@ -419,8 +434,10 @@ private enum TextAnalysisPayload: Encodable, Sendable {
     case hierarchical(GlifiStudioMatrixClustering)
     case network(GlifiStudioMatrixNetwork)
 
-    func encode(to encoder: any Encoder) throws {
+    /// Encodes the numerical result using the existing JSON payload shape.
+    public func encode(to encoder: any Encoder) throws {
         switch self {
+        case let .advanced(value): try value.encode(to: encoder)
         case let .mds(value): try value.encode(to: encoder)
         case let .som(value): try value.encode(to: encoder)
         case let .clara(value): try value.encode(to: encoder)
@@ -455,6 +472,11 @@ extension GlifiStudioTextAnalytics {
         let canonical = try request.canonicalData()
         let result: GlifiStudioTextAnalysisResult
         switch request {
+        case let .advanced(value):
+            let (identifier, payload) = try await value.execute()
+            result = GlifiStudioTextAnalysisResult(
+                request: request, canonical: canonical,
+                methodIdentifier: identifier, payload: .advanced(payload))
         case let .mds(matrix, dimensions, method, seed, maximumIterations):
             let value = try await multidimensionalScaling(
                 matrix, dimensions: dimensions, method: method, seed: seed,
@@ -543,7 +565,7 @@ private struct TextAnalysisWire: Decodable {
     }
 }
 
-private struct TextAnalysisUnitWire: Decodable {
+struct TextAnalysisUnitWire: Decodable {
     let value: GlifiStudioAutomaticCodingUnit
     init(from decoder: any Decoder) throws {
         let fields = try decoder.container(keyedBy: TextAnalysisKey.self)

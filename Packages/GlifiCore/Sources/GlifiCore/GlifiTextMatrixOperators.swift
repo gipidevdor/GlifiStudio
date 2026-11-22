@@ -7,6 +7,7 @@ import Foundation
 public enum GlifiTextDistance: String, Codable, Sendable {
     case jaccard
     case dice
+    case simpson
     case cosine
     case euclidean
     case manhattan
@@ -66,7 +67,7 @@ public enum GlifiTextMatrixOperators {
         try requireWork([matrix.count, matrix.count, width], limits)
         // Construct presence sets once, outside the all-pairs loop.
         let presence =
-            metric == .jaccard || metric == .dice
+            metric == .jaccard || metric == .dice || metric == .simpson
             ? matrix.map { row in Set(row.indices.filter { row[$0] > 0 }) } : []
         let norms = metric == .cosine ? matrix.map { vDSP.sumOfSquares($0).squareRoot() } : []
         if metric == .cosine, !norms.allSatisfy({ $0.isFinite && $0 > 0 }) {
@@ -81,6 +82,8 @@ public enum GlifiTextMatrixOperators {
                 switch metric {
                 case .jaccard: distance = 1 - GlifiSetSimilarity.jaccard(presence[i], presence[j])
                 case .dice: distance = 1 - GlifiSetSimilarity.dice(presence[i], presence[j])
+                case .simpson:
+                    distance = GlifiSetSimilarity.simpsonDistance(presence[i], presence[j])
                 case .cosine:
                     let cosine = vDSP.dot(matrix[i], matrix[j]) / norms[i] / norms[j]
                     guard cosine.isFinite else {

@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-PLAN-001 |
 | Tipo | Piano di validazione e sviluppo |
-| Versione | 1.1.0 |
+| Versione | 1.2.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Allineata a GS-PROD-001 e allo stato G1/G2 del percorso produttivo 0.1 |
 | Riferimento | ISO/IEC/IEEE 15289:2019, profilo tailored |
 
@@ -67,8 +67,12 @@ Stato registrato al 2026-09-17: **candidato funzionale G3** (GS-VER-035…071,
 GS-VER-074…083). GS-VER-057 mantiene aperto G3 formale; audit dispositivo, studi
 UX e gate G4/G5 restano aperti anche dopo gli incrementi successivi.
 
-Il focus corrente è completare prima macOS con soli test automatici; lo sviluppo
-dedicato iPadOS è rimandato secondo ADR-0033. Le evidenze storiche di build
+Il focus corrente è completare prima macOS; lo sviluppo dedicato iPadOS è
+rimandato secondo ADR-0033. I lotti applicativi precedenti usavano soli test
+automatici. La successiva [ADR-0034](adr/0034-riprogettazione-gui-e-laboratorio-avanzato.md)
+autorizza la riprogettazione della GUI e l'accesso agli operatori già realizzati,
+con risultati avanzati di sessione e osservazione delle finestre quando possibile
+([GS-VER-222](evidenze/GS-VER-222-riprogettazione-gui.md)). Le evidenze storiche di build
 macOS/iPadOS restano valide per le revisioni dichiarate, senza sostituire audit
 GUI, VoiceOver o prove su dispositivo. L'interfaccia essenziale dispone di
 verifiche automatiche locali in
@@ -122,7 +126,9 @@ riaperte come nuovi task:
   [GS-VER-161](evidenze/GS-VER-161-revisione-scientifica-operatori.md),
   [GS-VER-162](evidenze/GS-VER-162-parita-operatori-kit-cli.md)). Le varianti e i
   rispettivi manifest conservano il proprio stato scientifico; ADR-0032 non
-  estende automaticamente progetto persistente, planner o UI.
+  estende automaticamente progetto persistente, planner o UI. L'accesso UI
+  successivo è autorizzato separatamente da ADR-0034 e mantiene i risultati in
+  memoria distinti dagli Artifact persistiti.
 
 Il completamento algoritmico di GS-DOR-168 e il laboratorio macOS di
 [GS-PLAN-002](pianificazione/programma-analisi-testuale-macos.md) dispongono di

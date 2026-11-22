@@ -399,7 +399,7 @@ public enum GlifiMultivariateMethods {
         guard matrix.contains(where: { $0.contains { $0 > 0 } }) else {
             throw multivariateFailure("nmf.zero-matrix")
         }
-        let transposedMatrix = GlifiLinearAlgebra.transpose(matrix)
+        let transposedMatrix = try flatTranspose(matrix)
         var best: GlifiNonNegativeFactorization?
         for restart in 0..<restarts {
             try Task.checkCancellation()
@@ -421,7 +421,7 @@ public enum GlifiMultivariateMethods {
                 finalObjective = last
             } else {
                 finalObjective = try objective(
-                    matrix, initialW, transposedH: GlifiLinearAlgebra.transpose(initialH))
+                    matrix, initialW, transposedH: flatTranspose(initialH))
             }
             let candidate = GlifiNonNegativeFactorization(
                 rank: rank,
@@ -452,17 +452,17 @@ public enum GlifiMultivariateMethods {
         initialH: [[Double]],
         maximumIterations: Int,
         tolerance: Double,
-        transposedMatrix: [[Double]]? = nil
+        transposedMatrix: [Double]? = nil
     ) throws -> (w: [[Double]], h: [[Double]], history: [Double], converged: Bool) {
         var w = initialW
         var h = initialH
         let rank = h.count
         let width = matrix.first?.count ?? 0
-        let matrixColumns = transposedMatrix ?? GlifiLinearAlgebra.transpose(matrix)
+        let matrixColumns = try transposedMatrix ?? flatTranspose(matrix)
         // Mirrors are updated with the same binary64 value as each factor entry.
         // All products can then read contiguous rows without changing reduction order.
         var wt = GlifiLinearAlgebra.transpose(w)
-        var ht = GlifiLinearAlgebra.transpose(h)
+        var ht = try flatTranspose(h)
         var numeratorH = [[Double]](repeating: [Double](repeating: 0, count: width), count: rank)
         var denominatorH = numeratorH
         var gramW = [[Double]](repeating: [Double](repeating: 0, count: rank), count: rank)
@@ -478,16 +478,16 @@ public enum GlifiMultivariateMethods {
         }
         for _ in 0..<maximumIterations {
             try Task.checkCancellation()
-            try multiply(wt, transposedRight: matrixColumns, into: &numeratorH)
+            try multiply(wt, flatTransposedRight: matrixColumns, columns: width, into: &numeratorH)
             try multiply(wt, transposedRight: wt, into: &gramW)
-            try multiply(gramW, transposedRight: ht, into: &denominatorH)
+            try multiply(gramW, flatTransposedRight: ht, columns: width, into: &denominatorH)
             for factor in 0..<rank {
                 for column in 0..<width {
                     let value =
                         h[factor][column]
                         * (numeratorH[factor][column] / (denominatorH[factor][column] + 1e-12))
                     h[factor][column] = value
-                    ht[column][factor] = value
+                    ht[column * rank + factor] = value
                 }
             }
             try multiply(matrix, transposedRight: h, into: &numeratorW)
@@ -899,6 +899,54 @@ public enum GlifiMultivariateMethods {
         zip(left, right).reduce(0) { $0 + ($1.0 - $1.1) * ($1.0 - $1.1) }
     }
 
+    /// Flat rows of the transpose, preserving every entry's binary64 representation.
+    private static func flatTranspose(_ matrix: [[Double]]) throws -> [Double] {
+        try Task.checkCancellation()
+        let rows = matrix.count
+        let columns = matrix.first?.count ?? 0
+        var result = [Double](repeating: 0, count: rows * columns)
+        for column in 0..<columns {
+            if column.isMultiple(of: 64) { try Task.checkCancellation() }
+            let offset = column * rows
+            for row in matrix.indices {
+                if row.isMultiple(of: 1024) { try Task.checkCancellation() }
+                result[offset + row] = matrix[row][column]
+            }
+        }
+        return result
+    }
+
+    private static func multiply(
+        _ left: [[Double]], flatTransposedRight: [Double], columns: Int,
+        into result: inout [[Double]]
+    ) throws {
+        guard let innerCount = left.first?.count, innerCount > 0, columns > 0,
+            flatTransposedRight.count / innerCount == columns,
+            flatTransposedRight.count % innerCount == 0,
+            left.allSatisfy({ $0.count == innerCount })
+        else {
+            throw multivariateFailure("nmf.invalid-storage", category: .invariantViolation)
+        }
+        // Exact dimensions prove every column view is inside the borrowed buffer.
+        // Neither the pointer nor any view escapes this read-only borrow.
+        try flatTransposedRight.withUnsafeBufferPointer { buffer in
+            guard let base = buffer.baseAddress else {
+                throw multivariateFailure("nmf.invalid-storage", category: .invariantViolation)
+            }
+            for row in left.indices {
+                if row.isMultiple(of: 64) { try Task.checkCancellation() }
+                let leftRow = left[row]
+                for column in 0..<columns {
+                    let rightColumn = UnsafeBufferPointer(
+                        start: base.advanced(by: column * innerCount), count: innerCount)
+                    var total = 0.0
+                    for index in leftRow.indices { total += leftRow[index] * rightColumn[index] }
+                    result[row][column] = total
+                }
+            }
+        }
+    }
+
     private static func multiply(
         _ left: [[Double]], transposedRight: [[Double]], into result: inout [[Double]]
     ) throws {
@@ -915,24 +963,40 @@ public enum GlifiMultivariateMethods {
     }
 
     private static func objective(
-        _ matrix: [[Double]], _ w: [[Double]], transposedH: [[Double]]
+        _ matrix: [[Double]], _ w: [[Double]], transposedH: [Double]
     ) throws -> Double {
-        var total = 0.0
-        for row in matrix.indices {
-            if row.isMultiple(of: 64) { try Task.checkCancellation() }
-            let observed = matrix[row]
-            let factors = w[row]
-            var rowTotal = 0.0
-            for column in observed.indices {
-                let rightColumn = transposedH[column]
-                var product = 0.0
-                for factor in factors.indices { product += factors[factor] * rightColumn[factor] }
-                let residual = observed[column] - product
-                rowTotal += residual * residual
-            }
-            total += rowTotal
+        guard let columns = matrix.first?.count, columns > 0,
+            let rank = w.first?.count, rank > 0, w.count == matrix.count,
+            transposedH.count / rank == columns, transposedH.count % rank == 0,
+            matrix.allSatisfy({ $0.count == columns }), w.allSatisfy({ $0.count == rank })
+        else {
+            throw multivariateFailure("nmf.invalid-storage", category: .invariantViolation)
         }
-        return total
+        // Preflight bounds every column; all views remain within this borrowed H mirror.
+        return try transposedH.withUnsafeBufferPointer { buffer in
+            guard let base = buffer.baseAddress else {
+                throw multivariateFailure("nmf.invalid-storage", category: .invariantViolation)
+            }
+            var total = 0.0
+            for row in matrix.indices {
+                if row.isMultiple(of: 64) { try Task.checkCancellation() }
+                let observed = matrix[row]
+                let factors = w[row]
+                var rowTotal = 0.0
+                for column in observed.indices {
+                    let rightColumn = UnsafeBufferPointer(
+                        start: base.advanced(by: column * rank), count: rank)
+                    var product = 0.0
+                    for factor in factors.indices {
+                        product += factors[factor] * rightColumn[factor]
+                    }
+                    let residual = observed[column] - product
+                    rowTotal += residual * residual
+                }
+                total += rowTotal
+            }
+            return total
+        }
     }
 }
 

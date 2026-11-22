@@ -12,5 +12,6 @@ struct GlifiStudioPadApp: App {
                 needsPackageInitialization: file.document.needsPackageInitialization
             )
         }
+        .commands { StudioWorkspaceCommands() }
     }
 }

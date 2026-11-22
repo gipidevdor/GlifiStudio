@@ -25,6 +25,7 @@ I documenti in `docs/standard/` sono il distillato normativo, le ADR in `docs/ad
 - Codice sorgente, identificatori, commenti e messaggi di commit in inglese, secondo le convenzioni Apple/Swift.
 - Usare `GlifiStudio.xcworkspace`, non aprire il solo progetto per il lavoro ordinario.
 - Conservare la separazione fra app, `GlifiKit`, motore `GlifiCore` e strumenti headless.
+- Mantenere sempre allineate CLI e `GlifiKit`: ogni operazione utente pubblica, parametro, risultato e failure deve avere il trasporto CLI corrispondente; aggiornare insieme mapping, documentazione e test di parità secondo `docs/api/03-parita-continua-cli.md`.
 - Preferire API Apple native dopo verifica di disponibilità e adottare accelerazioni soltanto su evidenza di profiling o benchmark.
 - Non introdurre dipendenze, entitlement, rete, telemetria, sincronizzazione, formati persistenti o backend alternativi senza requisiti e decisioni applicabili.
 

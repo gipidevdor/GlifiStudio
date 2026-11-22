@@ -1,0 +1,614 @@
+[
+  {
+    "observedAtUTC": "2026-11-22T08:47:22.431970+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 88.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:22.480586+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 88.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:23.034781+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 84.1
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:23.591675+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 99.7
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 96.6
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:24.146834+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 99.7
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 99.3
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:24.693849+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 98.5
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 99.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 99.8
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:25.246343+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 100.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:25.803571+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 99.5
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 99.2
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 94.8
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:26.360226+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 98.4
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 99.7
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 95.2
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:26.909243+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 88.5
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:27.464984+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 98.2
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:28.020148+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 97.9
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 98.4
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 99.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:28.565491+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 100.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:29.120973+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 100.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:29.674882+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 98.5
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 100.0
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:30.231611+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 100.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 98.5
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T08:47:30.784982+00:00",
+    "externalRelevantProcesses": [
+      {
+        "processName": "xcodebuild",
+        "PID": 32136,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 32956,
+        "CPU": 0.0
+      },
+      {
+        "processName": "xcodebuild",
+        "PID": 33852,
+        "CPU": 0.0
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 33985,
+        "CPU": 99.3
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34336,
+        "CPU": 98.5
+      },
+      {
+        "processName": "swift-frontend",
+        "PID": 34419,
+        "CPU": 98.8
+      }
+    ],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  }
+]

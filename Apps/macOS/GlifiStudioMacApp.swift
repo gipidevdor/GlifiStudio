@@ -22,6 +22,11 @@ struct GlifiStudioMacApp: App {
                 service: GlifiStudioService(runtimeEnvironment: runtimeMonitor.environment)
             )
         }
-        .defaultSize(width: 1100, height: 740)
+        .defaultSize(width: 1280, height: 800)
+        .commands {
+            SidebarCommands()
+            ToolbarCommands()
+            StudioWorkspaceCommands()
+        }
     }
 }

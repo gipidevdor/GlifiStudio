@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-APL-013 |
 | Tipo | Standard applicativo Apple |
-| Versione | 1.2.0 |
+| Versione | 1.2.1 |
 | Stato | Approvato |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | ADR-0008 |
 
 ## Esperienze di sistema
@@ -63,3 +63,12 @@ Su macOS, il lavoro controllato resta legato a task con ownership, progresso e c
 - [Swift Charts](https://developer.apple.com/documentation/charts)
 - [Performing long-running tasks on iOS and iPadOS](https://developer.apple.com/documentation/backgroundtasks/performing-long-running-tasks-on-ios-and-ipados)
 - [PencilKit](https://developer.apple.com/documentation/pencilkit)
+
+## Comandi nativi macOS
+
+La scena documentale aggiunge `SidebarCommands` e `ToolbarCommands` per la
+navigazione e la toolbar già presenti. `DocumentGroup` conserva i propri comandi
+documentali. Non si aggiungono InspectorCommands senza un inspector, etichette
+personalizzate, capability o azioni fittizie. L’adozione è distinta dall’audit
+manuale di tastiera e tecnologie assistive; [GS-VER-260](../evidenze/GS-VER-260-integrazioni-native-apple.md)
+registra ciò che è stato realmente verificato.

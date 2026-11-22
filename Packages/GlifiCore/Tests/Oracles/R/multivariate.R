@@ -20,14 +20,13 @@ for (m in c("single", "complete", "average", "ward.D2")) emit(paste0("HC_", toup
 km <- kmeans(X, centers = X[c(1, 3), ], algorithm = "Lloyd", iter.max = 100)
 emit("KMEANS", c(km$cluster, km$tot.withinss, km$iter)); emit("KMEANS_C1", km$centers[1, ])
 emit("KMEANS_C2", km$centers[2, ])
-suppressMessages(library(NMF))
 Y <- matrix(c(1, 2, 0, 0, 1, 3, 1, 3, 3, 2, 1, 1), 4, byrow = TRUE)
 W0 <- matrix(c(0.5, 0.2, 0.3, 0.9, 0.7, 0.4, 0.1, 0.6), 4, byrow = TRUE)
 H0 <- matrix(c(0.2, 0.8, 0.5, 0.6, 0.1, 0.9), 2, byrow = TRUE)
-fit <- nmf(Y, 2, method = "lee", seed = nmfModel(W = W0, H = H0), rescale = FALSE, eps = 1e-12,
+fit <- NMF::nmf(Y, 2, method = "lee", seed = NMF::nmfModel(W = W0, H = H0), rescale = FALSE, eps = 1e-12,
            .stop = function(object, i, y, x, ...) i >= 100)
-emit("NMF_W", as.vector(t(basis(fit)))); emit("NMF_H", as.vector(t(coef(fit))))
-emit("NMF_OBJECTIVE", sum((Y - basis(fit) %*% coef(fit))^2))
+emit("NMF_W", as.vector(t(NMF::basis(fit)))); emit("NMF_H", as.vector(t(NMF::coef(fit))))
+emit("NMF_OBJECTIVE", sum((Y - NMF::basis(fit) %*% NMF::coef(fit))^2))
 # Matrice sparsa 150×200 (seed 7, 5 % di celle non nulle): dati di massa per la SVD troncata.
 set.seed(7)
 M <- matrix(0, 150, 200); cells <- sample(length(M), 1500); M[cells] <- rpois(1500, 3) + 1

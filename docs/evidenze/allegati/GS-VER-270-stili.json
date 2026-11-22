@@ -1,0 +1,67 @@
+{
+  "scope": "Style assignment per draw pass; excludes Canvas rendering and decoding",
+  "configuration": "swiftc -O, Apple Swift 6.4.2, macOS 27.2.1 arm64",
+  "order": "Seven paired passes with alternating first implementation after warmup",
+  "sourceSHA256": {
+    "Apps/Shared/StudioPlotSeries.swift": "a5116928832e196e2ad9edda8882084f7c8d3fec5419293536883294745c2d7b",
+    "Benchmarks/macOS/StudioPlotSeriesBenchmark.swift": "74ddb81ceec783793271328196acd9fcbae6ca54b6e7b95ca04024fae5d5a800"
+  },
+  "cases": [
+    {
+      "marks": 60,
+      "points": 52,
+      "previous": {
+        "samplesMilliseconds": [
+          0.061292,
+          0.059375,
+          0.059125,
+          0.059042,
+          0.058417,
+          0.058625,
+          0.058416
+        ],
+        "medianMilliseconds": 0.059042
+      },
+      "indexed": {
+        "samplesMilliseconds": [
+          0.014208,
+          0.012958,
+          0.012792,
+          0.012667,
+          0.017333,
+          0.013417,
+          0.014375
+        ],
+        "medianMilliseconds": 0.013417
+      }
+    },
+    {
+      "marks": 1200,
+      "points": 1050,
+      "previous": {
+        "samplesMilliseconds": [
+          19.755875,
+          23.119959,
+          20.467833,
+          20.24025,
+          20.952167,
+          21.780458,
+          20.459042
+        ],
+        "medianMilliseconds": 20.467833
+      },
+      "indexed": {
+        "samplesMilliseconds": [
+          0.152167,
+          0.138667,
+          0.216916,
+          0.170708,
+          0.147833,
+          0.134416,
+          0.149125
+        ],
+        "medianMilliseconds": 0.149125
+      }
+    }
+  ]
+}

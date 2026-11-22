@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-16 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.0.1 |
+| Versione | 1.1.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -69,8 +69,50 @@ grafi con identità in collisione hash, archi ripetuti, self-loop, pesi estremi,
 dangling node e cancellazione. Le misure di prestazione sono evidenze del
 backend e non una nuova variante scientifica.
 
+Il backend CPU di `HarmonicCloseness-v1` risolve le identità una sola volta e
+conserva i vicini deduplicati in righe CSR. I self-loop sono esclusi, gli
+archi paralleli contano una sola connessione e l'ordine dei vicini resta
+quello della prima apparizione negli archi. I valori dei pesi non intervengono
+nella distanza hop: anche un arco di peso zero resta una connessione.
+
+Ogni BFS riusa coda e distanze intere, ripristinando soltanto le celle visitate;
+una sorgente priva di vicini diversi da sé ha punteggio zero. La riduzione
+`Σ 1/d` **DEVE** seguire l'ordine dichiarato dei nodi, non l'ordine di visita
+BFS, per preservare la sequenza aritmetica. Non viene conservata una matrice
+quadratica delle distanze. La complessità peggiore resta `O(V(V+E))` e la
+memoria di lavoro `O(V+E)`; non sono introdotte approssimazioni o nuove API.
+
+Le prove di GS-VER-173 confrontano tutti i bit dei punteggi con la precedente
+visita generica e le distanze con Floyd–Warshall indipendente su tutti i 4096
+digrafi semplici di quattro nodi. Fixture aggiuntive coprono ordine dei nodi
+diverso dalla BFS, identità in collisione hash, zeri, archi paralleli,
+self-loop, sink e componenti separate. Le misure dei tre generatori sintetici
+sono registrate nell'evidenza, senza cambiare lo stato scientifico del metodo.
+
 ## Verifica
 
 Fixture canoniche comprendono grafo vuoto, singleton, percorso, ciclo, stella,
 componenti disconnesse e grafo diretto con dangling node. Si verificano invariance
 alla rinomina, somme/normalizzazioni, risultati noti, tie-break e lineage degli archi.
+
+## Primitive native aggiuntive in memoria
+
+[GS-MET-001-23](23-operatori-kh-coder.md) e
+[ADR-0035](../adr/0035-completamento-nativo-kh-coder.md) fissano le nuove
+varianti candidate Girvan–Newman a costo inverso dell’intensità, CNM pesata e
+Walktrap con self-loop medio e fusioni Ward. Conservano proiezione dichiarata,
+risoluzione, tie deterministici, modularità del grafo originale e gerarchia.
+La rimozione per edge betweenness è distinta dalla centralità dei nodi esistente.
+
+Fruchterman–Reingold e Kamada–Kawai producono coordinate adimensionali separate
+dai grafi; KK dichiara esplicitamente le distanze virtuali fra componenti e la
+storia energetica. La foresta Prim interpreta i pesi come costi, conserva costi
+nulli e componenti; i pesi non vengono reinterpretati implicitamente come
+intensità. Queste API non cambiano la disposizione della UI applicativa.
+
+Budget prima dei buffer quadratici e del lavoro iterativo: 2.000 nodi,
+100.000 archi, 1.000.000 celle pairwise e 200.000.000 unità stimate standard,
+con limiti effettivi più restrittivi secondo metodo e numero di buffer.
+La copertura Core/Kit/CLI è in verifica in
+[GS-VER-233](../evidenze/GS-VER-233-completamento-kh-coder.md); questi metodi
+non ereditano lo stato scientifico di Louvain o delle centralità precedenti.

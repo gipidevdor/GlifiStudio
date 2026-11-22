@@ -19,6 +19,9 @@ struct StudioVisualizationView: View {
     var generation: Int?
     let onSelect: (GlifiStudioVisualMark) -> Void
 
+    @Environment(\.locale) private var locale
+    private var labels: StudioVisualizationLabels { StudioVisualizationLabels(locale: locale) }
+
     private static let palette: [Color] = [
         .blue, .orange, .teal, .purple, .pink, .brown, .indigo, .mint, .red, .cyan,
     ]
@@ -26,16 +29,21 @@ struct StudioVisualizationView: View {
 
     @State private var exportDocument: StudioTextExportDocument?
     @State private var folderDocument: StudioFolderExportDocument?
+    @State private var isPreparingExport = false
+    @State private var exportFailed = false
+    @State private var preparationTask: Task<Void, Never>?
+    @State private var preparationID = UUID()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(summaryText)
+            Text(labels.summary(visualization))
                 .font(.callout)
                 .accessibilityAddTraits(.isSummaryElement)
             if !visualization.marks.isEmpty {
-                chart
+                let series = StudioPlotSeries(visualization.marks)
+                chart(series)
                     .frame(minHeight: 240, idealHeight: 320, maxHeight: 420)
-                legend
+                legend(series)
             }
             metadata
             if !visualization.caveatKeys.isEmpty {
@@ -49,24 +57,19 @@ struct StudioVisualizationView: View {
             table
             Menu("action.export-view", systemImage: "square.and.arrow.up") {
                 Button("action.export-view-csv", systemImage: "tablecells") {
-                    exportDocument = StudioTextExportDocument(
-                        text: GlifiStudioVisualizationBuilder.csv(visualization),
-                        contentType: .commaSeparatedText
-                    )
+                    prepareExport(.csv)
                 }
                 Button("action.export-view-json", systemImage: "curlybraces") {
-                    exportDocument = specificationDocument
+                    prepareExport(.json)
                 }
                 if let projectID, let generation {
                     Button("action.export-view-provenance", systemImage: "folder.badge.gearshape") {
-                        folderDocument =
-                            (try? GlifiStudioVisualExport.bundle(
-                                visualization, projectID: projectID, generation: generation,
-                                createdAt: Date()
-                            )).map(StudioFolderExportDocument.init(files:))
+                        prepareExport(.provenance(projectID: projectID, generation: generation))
                     }
                 }
             }
+            .disabled(isPreparingExport)
+            if isPreparingExport { ProgressView("visual.export.preparing") }
         }
         .fileExporter(
             isPresented: Binding(
@@ -76,7 +79,8 @@ struct StudioVisualizationView: View {
             document: exportDocument,
             contentType: exportDocument?.contentType ?? .commaSeparatedText,
             defaultFilename: exportFileName
-        ) { _ in
+        ) { result in
+            reportExportFailure(result)
             exportDocument = nil
         }
         .fileExporter(
@@ -87,8 +91,18 @@ struct StudioVisualizationView: View {
             document: folderDocument,
             contentType: .folder,
             defaultFilename: exportFileName
-        ) { _ in
+        ) { result in
+            reportExportFailure(result)
             folderDocument = nil
+        }
+        .alert("visual.export.failed", isPresented: $exportFailed) {
+            Button("common.ok", role: .cancel) {}
+        }
+        .onDisappear {
+            preparationID = UUID()
+            preparationTask?.cancel()
+            preparationTask = nil
+            isPreparingExport = false
         }
     }
 
@@ -96,41 +110,56 @@ struct StudioVisualizationView: View {
         visualization.specificationIdentifier.replacingOccurrences(of: ".", with: "-")
     }
 
-    private var specificationDocument: StudioTextExportDocument? {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
-        guard let data = try? encoder.encode(visualization) else {
-            return nil
+    private func reportExportFailure(_ result: Result<URL, any Error>) {
+        if case let .failure(error) = result, (error as? CocoaError)?.code != .userCancelled {
+            exportFailed = true
         }
-        return StudioTextExportDocument(
-            text: String(decoding: data, as: UTF8.self) + "\n", contentType: .json)
+    }
+
+    private func prepareExport(_ kind: StudioVisualExportKind) {
+        guard !isPreparingExport else { return }
+        isPreparingExport = true
+        let identifier = UUID()
+        preparationID = identifier
+        preparationTask = Task {
+            defer {
+                if preparationID == identifier {
+                    isPreparingExport = false
+                    preparationTask = nil
+                }
+            }
+            do {
+                let value = try await StudioVisualExportPreparation.prepare(
+                    visualization, kind: kind)
+                guard !Task.isCancelled, preparationID == identifier else { return }
+                switch value {
+                case let .text(text, isJSON):
+                    exportDocument = StudioTextExportDocument(
+                        text: text, contentType: isJSON ? .json : .commaSeparatedText)
+                case let .files(files):
+                    folderDocument = StudioFolderExportDocument(files: files)
+                }
+            } catch is CancellationError {
+                return
+            } catch {
+                if preparationID == identifier { exportFailed = true }
+            }
+        }
     }
 
     // MARK: - Chart
 
-    private var pointMarks: [GlifiStudioVisualMark] {
-        visualization.marks.filter { $0.kind == .point }
-    }
-
-    private var series: [String] {
-        var seen: [String] = []
-        for mark in visualization.marks where !seen.contains(mark.series) {
-            seen.append(mark.series)
-        }
-        return seen
-    }
-
-    private var chart: some View {
+    private func chart(_ series: StudioPlotSeries) -> some View {
         GeometryReader { geometry in
             let frame = PlotFrame(visualization: visualization, size: geometry.size)
-            Canvas { context, _ in
-                draw(in: &context, frame: frame)
+            let plot = Canvas { context, _ in
+                draw(in: &context, frame: frame, series: series)
             }
             .accessibilityElement(children: .contain)
             .accessibilityLabel(LocalizedStringKey(visualization.titleKey))
-            .accessibilityValue(summaryText)
+            .accessibilityValue(labels.summary(visualization))
             .accessibilityChildren {
-                ForEach(pointMarks) { mark in
+                ForEach(series.points) { mark in
                     Rectangle()
                         .accessibilityLabel(markDescription(mark))
                         .accessibilityAddTraits(
@@ -141,14 +170,20 @@ struct StudioVisualizationView: View {
             }
             .contentShape(Rectangle())
             .onTapGesture { location in
-                if let mark = frame.nearestPoint(to: location, among: pointMarks) {
+                if let mark = frame.nearestPoint(to: location, among: series.points) {
                     onSelect(mark)
                 }
+            }
+            if let audioGraph = StudioFactorAudioGraph(visualization, labels: labels) {
+                plot.accessibilityChartDescriptor(audioGraph)
+            } else {
+                plot
             }
         }
     }
 
-    private func draw(in context: inout GraphicsContext, frame: PlotFrame) {
+    private func draw(in context: inout GraphicsContext, frame: PlotFrame, series: StudioPlotSeries)
+    {
         if visualization.family == .factorPlot, visualization.axes.count == 2 {
             var origin = Path()
             origin.move(to: frame.point(x: 0, y: frame.yDomain.lowerBound))
@@ -172,9 +207,12 @@ struct StudioVisualizationView: View {
                     with: .color(mark.kind == .rule ? .red : .secondary.opacity(0.7)),
                     style: style
                 )
+                if mark.id == selectedMarkID {
+                    context.stroke(path, with: .color(.primary), lineWidth: 2.5)
+                }
             case .point:
                 let center = frame.point(x: mark.x, y: mark.y)
-                let seriesIndex = series.firstIndex(of: mark.series) ?? 0
+                let seriesIndex = series.styleIndex(for: mark.series) ?? 0
                 let color = Self.palette[seriesIndex % Self.palette.count]
                 let symbol = Self.shape(seriesIndex, center: center, radius: 4.5)
                 context.fill(symbol, with: .color(color))
@@ -221,20 +259,21 @@ struct StudioVisualizationView: View {
         }
     }
 
-    private var legend: some View {
-        let pointSeries = series.filter { name in pointMarks.contains { $0.series == name } }
+    private func legend(_ series: StudioPlotSeries) -> some View {
         return ViewThatFits(in: .horizontal) {
-            HStack(spacing: 12) { legendItems(pointSeries) }
-            VStack(alignment: .leading, spacing: 4) { legendItems(pointSeries) }
+            HStack(spacing: 12) { legendItems(series) }
+            VStack(alignment: .leading, spacing: 4) { legendItems(series) }
         }
         .font(.caption)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("visual.legend")
+        .accessibilityValue(
+            series.pointSeries.map(labels.seriesName).formatted(.list(type: .and).locale(locale)))
     }
 
-    private func legendItems(_ names: [String]) -> some View {
-        ForEach(names, id: \.self) { name in
-            let index = series.firstIndex(of: name) ?? 0
+    private func legendItems(_ series: StudioPlotSeries) -> some View {
+        ForEach(series.pointSeries, id: \.self) { name in
+            let index = series.styleIndex(for: name) ?? 0
             HStack(spacing: 4) {
                 Canvas { context, size in
                     context.fill(
@@ -246,7 +285,7 @@ struct StudioVisualizationView: View {
                 }
                 .frame(width: 12, height: 12)
                 .accessibilityHidden(true)
-                Text(seriesName(name))
+                Text(labels.seriesName(name))
             }
         }
     }
@@ -258,11 +297,11 @@ struct StudioVisualizationView: View {
             ForEach(Array(visualization.axes.enumerated()), id: \.offset) { _, axis in
                 LabeledContent {
                     Text(
-                        "\(format(axis.lowerBound)) – \(format(axis.upperBound))"
+                        "\(labels.format(axis.lowerBound)) – \(labels.format(axis.upperBound))"
                     )
                     .font(.caption.monospacedDigit())
                 } label: {
-                    Text(axisTitle(axis))
+                    Text(labels.axisTitle(axis))
                 }
             }
             LabeledContent("visual.observations") {
@@ -305,8 +344,7 @@ struct StudioVisualizationView: View {
 
     private var table: some View {
         let columns = visualization.table.columns
-        let marksByID = Dictionary(
-            visualization.marks.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let selections = visualization.tableSelectionMarks
         return ScrollView([.horizontal, .vertical]) {
             Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 4) {
                 GridRow {
@@ -318,37 +356,7 @@ struct StudioVisualizationView: View {
                 }
                 Divider()
                 ForEach(visualization.table.rows) { row in
-                    GridRow {
-                        ForEach(Array(row.cells.enumerated()), id: \.offset) { _, cell in
-                            cellText(cell)
-                                .frame(minHeight: 44, alignment: .leading)
-                        }
-                    }
-                    .font(.caption)
-                    .fontWeight(row.id == selectedMarkID ? .semibold : .regular)
-                    .padding(.vertical, 1)
-                    .background(row.id == selectedMarkID ? Color.accentColor.opacity(0.15) : .clear)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        if let mark = marksByID[row.id] { onSelect(mark) }
-                    }
-                    .focusable(marksByID[row.id] != nil)
-                    .onKeyPress(.return) {
-                        guard let mark = marksByID[row.id] else { return .ignored }
-                        onSelect(mark)
-                        return .handled
-                    }
-                    .onKeyPress(.space) {
-                        guard let mark = marksByID[row.id] else { return .ignored }
-                        onSelect(mark)
-                        return .handled
-                    }
-                    .accessibilityElement(children: .combine)
-                    .accessibilityAddTraits(marksByID[row.id] != nil ? .isButton : [])
-                    .accessibilityAddTraits(row.id == selectedMarkID ? .isSelected : [])
-                    .accessibilityAction(named: "action.open-mark-source") {
-                        if let mark = marksByID[row.id] { onSelect(mark) }
-                    }
+                    tableRow(row, columns: columns, mark: selections[row.id])
                 }
             }
             .padding(.vertical, 4)
@@ -357,15 +365,57 @@ struct StudioVisualizationView: View {
         .accessibilityLabel("visual.table")
     }
 
+    @ViewBuilder private func tableRow(
+        _ row: GlifiStudioVisualRow, columns: [GlifiStudioVisualColumn],
+        mark: GlifiStudioVisualMark?
+    ) -> some View {
+        let selected = mark != nil && mark?.id == selectedMarkID
+        let content = GridRow {
+            ForEach(Array(row.cells.enumerated()), id: \.offset) { index, cell in
+                cellText(
+                    cell,
+                    columnID: columns.indices.contains(index)
+                        ? columns[index].identifier : nil
+                )
+                .frame(minHeight: 44, alignment: .leading)
+            }
+        }
+        .font(.caption)
+        .fontWeight(selected ? .semibold : .regular)
+        .padding(.vertical, 1)
+        .background(selected ? Color.accentColor.opacity(0.15) : .clear)
+        .accessibilityElement(children: .combine)
+        if let mark {
+            content
+                .contentShape(Rectangle())
+                .onTapGesture { onSelect(mark) }
+                .focusable()
+                .onKeyPress(.return) {
+                    onSelect(mark)
+                    return .handled
+                }
+                .onKeyPress(.space) {
+                    onSelect(mark)
+                    return .handled
+                }
+                .accessibilityAddTraits(.isButton)
+                .accessibilityAddTraits(selected ? .isSelected : [])
+                .accessibilityAction { onSelect(mark) }
+                .accessibilityAction(named: "action.open-mark-source") { onSelect(mark) }
+        } else {
+            content
+        }
+    }
+
     @ViewBuilder
-    private func cellText(_ cell: GlifiStudioVisualCell) -> some View {
+    private func cellText(_ cell: GlifiStudioVisualCell, columnID: String?) -> some View {
         switch cell {
         case let .text(value):
-            Text(value).textSelection(.enabled)
+            Text(columnID == "series" ? labels.seriesName(value) : value).textSelection(.enabled)
         case let .integer(value):
             Text(value, format: .number).monospacedDigit()
         case let .decimal(value):
-            Text(format(value)).monospacedDigit()
+            Text(labels.format(value)).monospacedDigit()
         case .missing:
             Text("visual.cell.missing").foregroundStyle(.secondary)
         }
@@ -373,59 +423,14 @@ struct StudioVisualizationView: View {
 
     // MARK: - Text
 
-    private func format(_ value: Double) -> String {
-        value.formatted(.number.precision(.significantDigits(1...4)))
-    }
-
-    private func formatted(_ cell: GlifiStudioVisualCell) -> String {
-        switch cell {
-        case let .text(value): value
-        case let .integer(value): value.formatted()
-        case let .decimal(value): format(value)
-        case .missing: String(localized: "visual.cell.missing")
-        }
-    }
-
-    private var summaryText: String {
-        var text = Self.localized(visualization.summaryKey)
-        for argument in visualization.summaryArguments {
-            let value: String
-            if argument.name == "share", case let .decimal(share) = argument.value {
-                value = share.formatted(.percent.precision(.fractionLength(1)))
-            } else {
-                value = formatted(argument.value)
-            }
-            text = text.replacingOccurrences(of: "{\(argument.name)}", with: value)
-        }
-        return text
-    }
-
-    private func axisTitle(_ axis: GlifiStudioVisualAxis) -> String {
-        var text = Self.localized(axis.labelKey)
-        text = text.replacingOccurrences(of: "{axis}", with: (axis.ordinal ?? 0).formatted())
-        let share = axis.share.map { $0.formatted(.percent.precision(.fractionLength(1))) }
-        return text.replacingOccurrences(of: "{share}", with: share ?? "—")
-    }
-
-    private func seriesName(_ name: String) -> String {
-        let parts = name.split(separator: ".", maxSplits: 1).map(String.init)
-        if parts.count == 2, let number = Int(parts[1]) {
-            return Self.localized("visual.series.\(parts[0])")
-                .replacingOccurrences(of: "{n}", with: number.formatted())
-        }
-        return Self.localized("visual.series.\(name)")
-    }
-
     private func markDescription(_ mark: GlifiStudioVisualMark) -> String {
-        var parts = [mark.label, seriesName(mark.series)]
-        if visualization.axes.count == 2 {
-            parts.append("\(format(mark.x)), \(format(mark.y))")
+        var parts = [mark.label, labels.seriesName(mark.series)]
+        if visualization.axes.count == 1 {
+            parts.append(labels.format(mark.x))
+        } else if visualization.axes.count == 2 {
+            parts.append("\(labels.format(mark.x)), \(labels.format(mark.y))")
         }
         return parts.joined(separator: ", ")
-    }
-
-    private static func localized(_ key: String) -> String {
-        Bundle.main.localizedString(forKey: key, value: nil, table: nil)
     }
 }
 

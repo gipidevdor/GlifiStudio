@@ -2,6 +2,23 @@
 
 # Benchmark
 
+## Layout e visite analitiche (GS-VER-173)
+
+```sh
+swift run -c release --package-path Packages/GlifiCore GlifiBenchmark --analysis-storage-optimization
+```
+
+Le sezioni opzionali sono
+`factorization`, `graph` e `resampling`; la modalità rifiuta Debug.
+I nove casi coprono NMF ordinaria/wide/tall, centralità armonica su tre topologie
+con nodi in ordine non banale, bootstrap con tre lunghezze di blocco.
+Un warm-up e cinque campioni; input/configurazione e ultimo output sono
+controllati integralmente fuori timer. Le chiamate precedenti non sono
+confrontate singolarmente. Archiviare il binario e i sorgenti di baseline prima
+dei kernel; confrontare in processi separati senza build concorrenti.
+Registrare tempi, RSS dell'intera sezione, ambiente, termica e alimentazione.
+Nessuna soglia locale diventa gate né sostituisce la validazione scientifica.
+
 ## Query sparse e silhouette (GS-VER-172)
 
 ```sh
@@ -206,3 +223,25 @@ termico/energetico. Eventuali RSS di `time -l` riguardano l'intera invocazione,
 compresi preparazione e riferimento. La guard della misura esplicita in Debug
 viene verificata separatamente come controllo negativo; non diventa un nuovo
 gate prestazionale del prodotto.
+
+## Stili dei grafici e OCR di sistema
+
+Il benchmark degli stili usa il modello di produzione `StudioPlotSeries` e un
+riferimento che replica il calcolo precedente. Controlla l'intero vettore degli
+indici e alterna l'ordine di misura su sette passaggi. Si compila dalla radice
+con i moduli e gli oggetti prodotti da SwiftPM, in Release.
+
+```sh
+swift build -c release --package-path Packages/GlifiCore --target GlifiKit
+bin=$(swift build -c release --package-path Packages/GlifiCore --show-bin-path)
+out=$(mktemp -d)
+swiftc -swift-version 6 -O -parse-as-library -Xcc -DACCELERATE_NEW_LAPACK \
+  -I "$bin/Modules" Apps/Shared/StudioPlotSeries.swift Benchmarks/macOS/StudioPlotSeriesBenchmark.swift \
+  "$bin"/GlifiKit.build/*.o "$bin"/GlifiCore.build/*.o -lsqlite3 -o "$out/plot-series"
+"$out/plot-series"
+```
+
+La prova Vision genera due righe sintetiche e produce JSON su stdout. Ogni
+configurazione riporta le letture completate e l'eventuale errore. Per
+riprodurla e interpretare le misure consultare
+[GS-VER-270](../docs/evidenze/GS-VER-270-grafici-comandi-neural-engine.md).

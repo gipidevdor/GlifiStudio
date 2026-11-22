@@ -40,6 +40,7 @@ public enum GlifiStudioMDSMethod: String, Codable, Sendable {
     case metric
     case kruskal
     case sammon
+    case ordinal
 
     var core: GlifiMDSMethod {
         switch self {
@@ -47,6 +48,7 @@ public enum GlifiStudioMDSMethod: String, Codable, Sendable {
         case .metric: .metric
         case .kruskal: .kruskal
         case .sammon: .sammon
+        case .ordinal: .ordinal
         }
     }
 }
@@ -75,7 +77,7 @@ public struct GlifiStudioSOMResult: Encodable, Equatable, Sendable {
     public let seed: UInt64
 
     init(_ value: GlifiSOMResult) {
-        methodIdentifier = GlifiSOMResult.identifier
+        methodIdentifier = value.methodIdentifier
         width = value.width
         height = value.height
         prototypes = value.prototypes
@@ -312,6 +314,7 @@ private func mapTextAnalysisFailure<Value>(
 /// Shared distance choices for document, word and code matrices.
 public enum GlifiStudioTextDistance: String, Codable, Sendable {
     case jaccard
+    case simpson
     case dice
     case cosine
     case euclidean
@@ -320,6 +323,7 @@ public enum GlifiStudioTextDistance: String, Codable, Sendable {
     var core: GlifiTextDistance {
         switch self {
         case .jaccard: .jaccard
+        case .simpson: .simpson
         case .dice: .dice
         case .cosine: .cosine
         case .euclidean: .euclidean
@@ -372,6 +376,8 @@ extension GlifiStudioTextAnalytics {
 
 /// Grouped code counts retain denominators and the count of missing group values.
 public struct GlifiStudioCodeCrosstab: Encodable, Equatable, Sendable {
+    /// Code order retained for native presentation, without changing JSON v1.
+    public let codes: [String]
     /// Canonical group labels.
     public let groups: [String]
     /// Group by code counts.
@@ -380,6 +386,11 @@ public struct GlifiStudioCodeCrosstab: Encodable, Equatable, Sendable {
     public let sizes: [Int]
     /// Documents with no group value.
     public let missingCount: Int
+
+    // Preserve the existing JSON v1 shape; native clients also retain column identities.
+    private enum CodingKeys: String, CodingKey {
+        case groups, counts, sizes, missingCount
+    }
 }
 
 extension GlifiStudioCodingMatrix {
@@ -388,7 +399,7 @@ extension GlifiStudioCodingMatrix {
         try mapTextAnalysisFailure {
             let result = try coreValue.crosstab(groups: groups)
             return GlifiStudioCodeCrosstab(
-                groups: result.groups, counts: result.counts, sizes: result.sizes,
+                codes: codes, groups: result.groups, counts: result.counts, sizes: result.sizes,
                 missingCount: result.missing
             )
         }

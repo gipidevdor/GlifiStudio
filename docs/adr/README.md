@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-ADR-IDX-001 |
 | Tipo | Registro delle decisioni architetturali |
-| Versione | 0.30.0 |
+| Versione | 0.32.0 |
 | Stato | Attivo |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-21 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | Non applicabile; registro operativo |
 
 Gli ADR documentano le scelte architetturali importanti, il contesto in cui sono state prese e le conseguenze accettate.
@@ -53,6 +53,8 @@ Gli ADR documentano le scelte architetturali importanti, il contesto in cui sono
 - [ADR-0030 — Corpus gold italiano di provenienza esterna](0030-corpus-gold-italiano-esterno.md) — Accettato
 - [ADR-0031 — Approvazione numerica con oracoli eseguibili e tolleranze dichiarate](0031-approvazione-numerica-con-oracoli-eseguibili.md) — Accettato
 
+- [ADR-0034 — Riprogettazione della GUI e laboratorio avanzato](0034-riprogettazione-gui-e-laboratorio-avanzato.md) — Ambito e architettura accettati; verifiche separate
+
 ## Modello per i nuovi ADR
 
 Ogni ADR deve contenere titolo, stato, contesto, decisione, conseguenze e, quando utile, alternative considerate. Gli ADR accettati non vengono riscritti per adattarli a decisioni successive.
@@ -60,3 +62,11 @@ Ogni ADR deve contenere titolo, stato, contesto, decisione, conseguenze e, quand
 - [ADR-0032 — Operatori analitici nativi](0032-operatori-analitici-nativi.md) — Ambito accettato; capacità candidate
 
 - [ADR-0033 — Completamento del laboratorio di analisi testuale macOS](0033-laboratorio-analisi-testuale-macos.md) — Programma e confini accettati; verifiche per incremento
+
+- [ADR-0035 — Completamento nativo delle varianti KH Coder](0035-completamento-nativo-kh-coder.md) — Ambito e architettura accettati; gate in verifica e varianti nuove candidate
+
+- [ADR-0040 — Integrazioni native Apple coordinate e misurate](0040-integrazioni-native-misurate.md) — Attuazione dei contratti esistenti; prove separate
+
+- [ADR-0041 — Copertura delle capacità analitiche del core nelle app](0041-copertura-funzionale-core-nelle-app.md) — Ambito e architettura accettati; verifiche separate
+
+- [ADR-0036 — Parità continua fra GlifiKit e CLI](0036-parita-continua-kit-cli.md) — Ambito e architettura accettati; inventario pubblico e verifiche di parità permanenti

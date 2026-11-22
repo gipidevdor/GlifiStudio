@@ -11,13 +11,14 @@ struct StudioKeynessView: View {
     @State private var requestedPage = 1
 
     var body: some View {
-        Group {
+        let sourceLookup = StudioSourceLookup(sources: model.snapshot?.sources ?? [])
+        return Group {
             if let snapshot = model.snapshot, model.selectedIntent.usesComparisonGroups {
                 groupsSection(snapshot.sources)
                 parametersSection
             }
             if let comparison = model.lastKeyness {
-                resultSection(comparison)
+                resultSection(comparison, sourceLookup: sourceLookup)
                 termsSection
                 methodSection(comparison)
             }
@@ -123,7 +124,9 @@ struct StudioKeynessView: View {
         .disabled(model.isBusy)
     }
 
-    private func resultSection(_ comparison: GlifiStudioKeynessResult) -> some View {
+    private func resultSection(
+        _ comparison: GlifiStudioKeynessResult, sourceLookup: StudioSourceLookup
+    ) -> some View {
         Section("keyness.title") {
             Text("keyness.mac.result.context").font(.caption).foregroundStyle(.secondary)
             LabeledContent("keyness.target-tokens") {
@@ -147,8 +150,12 @@ struct StudioKeynessView: View {
             }
             DisclosureGroup("keyness.mac.groups.effective") {
                 Text("keyness.mac.groups.effective-help").font(.caption).foregroundStyle(.secondary)
-                effectiveGroup("group.target", ids: comparison.targetSourceRevisionIDs)
-                effectiveGroup("group.reference", ids: comparison.referenceSourceRevisionIDs)
+                effectiveGroup(
+                    "group.target", ids: comparison.targetSourceRevisionIDs,
+                    sourceLookup: sourceLookup)
+                effectiveGroup(
+                    "group.reference", ids: comparison.referenceSourceRevisionIDs,
+                    sourceLookup: sourceLookup)
             }
             Text("keyness.mac.interpretation.help").font(.callout)
         }
@@ -313,18 +320,18 @@ struct StudioKeynessView: View {
         }
     }
 
-    private func effectiveGroup(_ title: LocalizedStringKey, ids: [String]) -> some View {
+    private func effectiveGroup(
+        _ title: LocalizedStringKey, ids: [String], sourceLookup: StudioSourceLookup
+    ) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title).font(.headline)
-            ForEach(ids, id: \.self) { sourceName(revisionID: $0) }
+            ForEach(ids, id: \.self) { sourceName(revisionID: $0, sourceLookup: sourceLookup) }
         }
     }
 
-    private func sourceName(revisionID: String) -> some View {
+    private func sourceName(revisionID: String, sourceLookup: StudioSourceLookup) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            if let index = model.snapshot?.sources.firstIndex(where: {
-                $0.sourceRevisionID == revisionID
-            }) {
+            if let index = sourceLookup.index(of: revisionID) {
                 sourceName(index: index, revisionID: revisionID)
             } else {
                 Text("summary.source.label")

@@ -1593,33 +1593,7 @@ public actor GlifiEngine {
         format: GlifiTextFormat,
         limits: GlifiTextImportLimits
     ) throws -> GlifiImportedText {
-        let values = try url.resourceValues(forKeys: [
-            .fileSizeKey,
-            .isRegularFileKey,
-            .isSymbolicLinkKey,
-        ])
-        guard values.isRegularFile == true, values.isSymbolicLink != true else {
-            throw GlifiFailure(
-                code: "file.not-regular",
-                category: .invalidInput,
-                operation: .importText,
-                retryDisposition: .afterCorrection,
-                retainedState: .unchanged,
-                messageKey: "failure.file.not-regular"
-            )
-        }
-        if let fileSize = values.fileSize, fileSize > limits.maximumByteCount {
-            throw GlifiFailure(
-                code: "text.byte-limit-exceeded",
-                category: .insufficientResources,
-                operation: .importText,
-                retryDisposition: .afterConditionsChange,
-                retainedState: .unchanged,
-                messageKey: "failure.text.byte-limit-exceeded",
-                arguments: ["maximumByteCount": String(limits.maximumByteCount)]
-            )
-        }
-        let data = try Data(contentsOf: url, options: [.mappedIfSafe, .uncached])
+        let data = try GlifiSourceFileReader.read(at: url, limits: limits)
         return try textImporter.importText(from: data, format: format, limits: limits)
     }
 

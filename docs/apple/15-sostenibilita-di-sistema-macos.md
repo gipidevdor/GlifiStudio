@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-APL-015 |
 | Tipo | Standard applicativo Apple |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | Approvato |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-22 |
 | Approvazione | ADR-0018 |
 
 ## Scopo
@@ -130,3 +130,14 @@ Riferimenti Apple: [ridurre l'uso della batteria](https://developer.apple.com/do
 [timer](https://developer.apple.com/library/archive/documentation/Performance/Conceptual/power_efficiency_guidelines_osx/Timers.html),
 [ProcessInfo](https://developer.apple.com/documentation/foundation/processinfo) e
 [DispatchSourceMemoryPressure](https://developer.apple.com/documentation/dispatch/dispatchsourcememorypressure).
+
+## Attività del piano utente
+
+GlifiKit delimita il piano ammesso ed esplicitamente richiesto con un’attività
+Foundation `userInitiatedAllowingIdleSystemSleep`, reason statica e owner finito.
+Il rilascio con `defer` precede il risultato o la failure pubblicati; la
+cancellazione conserva lo stesso cleanup e le condizioni critiche sono rifiutate
+prima di aprire l’attività. Non sono aggiunti timer, assertion di idle sleep o
+opt-out globali. L’adattatore iPadOS non richiede un’assertion macOS e non concede
+esecuzione in background. Test di bilanciamento e limiti delle prove App Nap:
+[GS-VER-260](../evidenze/GS-VER-260-integrazioni-native-apple.md).
