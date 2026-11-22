@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.13 |
+| Versione | 0.92.14 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -627,6 +627,20 @@ e risultati del trasporto; i nuovi profili restano candidate.
 e il gate macOS della versione unita superato: 771 test Core/Kit in
 Debug/Release e nei sanitizzatori, 113 test nativi e 189 controlli sulle 63 fixture CLI. ADR-0043 governa l’estensione; le clausole
 CMP-160 e CMP-162 conservano i propri stati, senza promozioni V6 o GUI.
+
+
+## Rifinitura analitica e ammissione cumulativa (GS-DOR-305)
+
+RF-087, RQ-025, RQ-058, RQ-060 e RQ-063 collegano le regressioni numeriche,
+Unicode e dei budget ai percorsi Core/Kit/CLI. GlifiKHNumericRefinementTests,
+GlifiNaiveBayesNumericalRefinementTests, GlifiTermUnicodeRefinementTests,
+GlifiExploratoryBudgetRefinementTests, GlifiSOMGaussianRefinementTests e
+GlifiSOMWorkflowRefinementTests distinguono i difetti prima delle correzioni.
+GlifiAnalysisPlannerTests e GlifiPlannerProducerRefinementTests verificano il
+residuo globale e l'identità distinta dai vecchi piani. Le prove CLI aggiungono
+confronti esatti per subnormali, byte Unicode e classificazione.
+[GS-VER-305](evidenze/GS-VER-305-rifinitura-kh.md) registra l'audit e i gate locali
+superati; GS-VER-300 resta il precedente snapshot. Nessuna promozione scientifica.
 
 ## Regia del piano e grammatica numerica (GS-DOR-284)
 

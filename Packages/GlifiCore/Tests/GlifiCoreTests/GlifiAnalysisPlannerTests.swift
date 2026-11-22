@@ -293,3 +293,29 @@ private func revision(_ value: String) throws -> SourceRevisionID {
 private func digest(_ character: Character) -> String {
     "sha256:" + String(repeating: character, count: 64)
 }
+
+@Test("Planner keyness dependencies consume the same budget as later capabilities")
+func khRefinementPlannerConsumesKeynessBeforeExtendedCapabilities() throws {
+    let target = try planningSource("00000000-0000-0000-0000-000000000001", .plainText, 100)
+    let reference = try planningSource("00000000-0000-0000-0000-000000000002", .markdown, 200)
+    let request = try GlifiAnalysisPlanRequest(
+        intent: .compareObjects,
+        targetSourceRevisionIDs: [target.sourceRevisionID],
+        referenceSourceRevisionIDs: [reference.sourceRevisionID],
+        maximumEstimatedWorkUnits: 1_000)
+    let plan = try GlifiAnalysisPlanner().plan(
+        request: request, sourceRootDigest: digest("f"), configuredLanguageCode: "it",
+        sources: [target, reference])
+    // Source profiles cost 164+264 and keyness costs 556: the admitted bundle
+    // consumes 984. Similarity's additional 684 must be deferred, not added.
+    #expect(plan.totalEstimatedWorkUnits == 984)
+    #expect(plan.totalEstimatedWorkUnits <= request.maximumEstimatedWorkUnits)
+    #expect(plan.steps.contains { $0.operation == .compareKeyness })
+    #expect(!plan.steps.contains { $0.operation == .compareSimilarity })
+    let similarity = try #require(
+        plan.decisions.first {
+            $0.capabilityIdentifier == "studio.glifi.capability.group-similarity.v1"
+        })
+    #expect(similarity.applicability == .deferred)
+    #expect(similarity.reasonIdentifiers == ["planner.work-budget-exceeded"])
+}

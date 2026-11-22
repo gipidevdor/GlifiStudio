@@ -110,12 +110,10 @@ extension GlifiExploratoryAnalysis {
         guard count <= limits.maximumPairwiseObjects else {
             throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
         }
-        try requireWork([count, count, dimensions, maximumIterations], limits)
-        if ties == .primary {
-            try admitOrdinalPrimary(
-                count: count, dimensions: dimensions, iterations: maximumIterations,
-                starts: 1, classicalInitialization: initialization == .classical, limits: limits)
-        }
+        try admitIterativeMDSResources(
+            count: count, dimensions: dimensions, iterations: maximumIterations,
+            starts: 1, method: .ordinal, ordinalTies: ties,
+            classicalInitialization: initialization == .classical, limits: limits)
         for row in 0..<count {
             try Task.checkCancellation()
             guard dissimilarities[row][row] == 0 else {
@@ -214,18 +212,12 @@ extension GlifiExploratoryAnalysis {
             method == .ordinal || ordinalTies == .secondary
         else { throw exploratoryFailure("exploratory.invalid-parameters") }
         let count = dissimilarities.count
-        try requireWork([count, count, dimensions, maximumIterations, starts], limits)
-        if ordinalTies == .primary {
-            try admitOrdinalPrimary(
-                count: count, dimensions: dimensions, iterations: maximumIterations,
-                starts: starts, limits: limits)
+        guard count >= 2, dimensions < count else {
+            throw exploratoryFailure("exploratory.invalid-parameters")
         }
-        let coordinateCells = count.multipliedReportingOverflow(by: dimensions)
-        let storedCells = coordinateCells.partialValue.addingReportingOverflow(
-            maximumIterations + 1)
-        guard !coordinateCells.overflow, !storedCells.overflow, storedCells.partialValue > 0,
-            starts <= limits.maximumCells / storedCells.partialValue
-        else { throw exploratoryFailure("exploratory.resource-limit", .insufficientResources) }
+        try admitIterativeMDSResources(
+            count: count, dimensions: dimensions, iterations: maximumIterations,
+            starts: starts, method: method, ordinalTies: ordinalTies, limits: limits)
         var runs: [GlifiMDSResult] = []
         runs.reserveCapacity(starts)
         var chosen = 0
@@ -416,8 +408,9 @@ package func ordinalDisparities(
     return result
 }
 
-private func admitOrdinalPrimary(
-    count: Int, dimensions: Int, iterations: Int, starts: Int,
+package func admitIterativeMDSResources(
+    count: Int, dimensions: Int, iterations: Int, starts: Int, method: GlifiMDSMethod,
+    ordinalTies: GlifiMDSOrdinalTies = .secondary,
     classicalInitialization: Bool = false,
     limits: GlifiExploratoryLimits
 ) throws {
@@ -427,10 +420,31 @@ private func admitOrdinalPrimary(
     let pairCount = count * (count - 1) / 2
     let comparisons = max(1, Int.bitWidth - pairCount.leadingZeroBitCount)
     var work = limits.maximumWork
-    try consumeOrdinalBudget([count, count, dimensions, iterations, starts], remaining: &work)
-    try consumeOrdinalBudget([pairCount, comparisons, iterations + 1, starts], remaining: &work)
+    // Reserve the initial geometry plus every permitted optimization step, not just
+    // accepted steps. The legacy variants can evaluate all 32 backtracking candidates.
+    try consumeOrdinalBudget([count, count, dimensions, iterations + 1, starts], remaining: &work)
+    switch method {
+    case .ordinal:
+        try consumeOrdinalBudget([pairCount, comparisons, starts], remaining: &work)
+        try consumeOrdinalBudget([pairCount, iterations + 1, starts], remaining: &work)
+        if ordinalTies == .primary {
+            try consumeOrdinalBudget(
+                [pairCount, comparisons, iterations + 1, starts], remaining: &work)
+        }
+    case .metric, .kruskal, .sammon:
+        try consumeOrdinalBudget(
+            [32, count, count, dimensions, iterations, starts], remaining: &work)
+        if method == .kruskal {
+            // One initial objective, one disparity fit before each step and up to
+            // 32 candidate objectives: each independently sorts and fits the pairs.
+            try consumeOrdinalBudget(
+                [pairCount, comparisons, 33 * iterations + 1, starts], remaining: &work)
+        }
+    case .classical:
+        throw exploratoryFailure("exploratory.invalid-parameters")
+    }
     if classicalInitialization {
-        try consumeOrdinalBudget([count, count, count], remaining: &work)
+        try consumeOrdinalBudget([count, count, count, starts], remaining: &work)
     }
     var cells = limits.maximumCells
     // Input/working distances, pair records, both PAVA stacks and retained run diagnostics.

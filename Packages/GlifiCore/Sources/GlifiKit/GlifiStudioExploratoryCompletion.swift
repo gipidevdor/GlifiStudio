@@ -95,15 +95,15 @@ public enum GlifiStudioExploratoryCompletion {
         codebookClusterCount: Int? = nil
     ) async throws(GlifiStudioFailure) -> GlifiStudioAdvancedSOMResult {
         try mapExploratoryCompletionFailure {
-            if let codebookClusterCount {
-                guard width > 0, height > 0, width <= 1_024, height <= 1_024,
-                    width <= 1_024 / height, codebookClusterCount > 0,
-                    codebookClusterCount <= width * height
-                else { throw exploratoryFailure("exploratory.invalid-parameters") }
-                // Admit the optional composition before paying for a full map fit.
-                let units = width * height
-                try requireWork([units, units, units, matrix.first?.count ?? 0], .standard)
-            }
+            guard width > 0, height > 0, width <= 1_024, height <= 1_024,
+                width <= 1_024 / height
+            else { throw exploratoryFailure("exploratory.invalid-parameters") }
+            // Reserve fit, U-matrix and optional Ward in the same workflow budget,
+            // before allocating normalized data or paying for an iterative map fit.
+            try admitBatchSOMResources(
+                rows: matrix.count, columns: matrix.first?.count ?? 0,
+                units: width * height, epochs: epochs, includeCodebookAnalysis: true,
+                clusterCount: codebookClusterCount, limits: .standard)
             let map = try GlifiExploratoryAnalysis.selfOrganizingMap(
                 matrix, width: width, height: height, seed: seed, epochs: epochs,
                 initialRadius: initialRadius, finalRadius: finalRadius, tolerance: tolerance,

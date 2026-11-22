@@ -119,45 +119,56 @@ public enum GlifiNaiveBayes {
         guard documents.count <= limits.maximumCells else {
             throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
         }
+        var remainingWork = limits.maximumWork
+        try admitClassifierWork([documents.count], remaining: &remainingWork)
         let tokenCount = try classifierTokenCount(documents)
-        try requireWork([documents.count], limits)
-        try requireWork([tokenCount], limits)
-        let table = try GlifiDocumentTermTable(documents: documents)
-        let classes = Array(Set(labels)).sorted()
+        try admitClassifierWork([tokenCount], remaining: &remainingWork)
+        let identities = try classifierTrainingIdentities(
+            documents: documents, labels: labels, remaining: &remainingWork, limits: limits)
+        let classes = identities.classes
         guard classes.count >= 2 else {
             throw exploratoryFailure("naive-bayes.insufficient-classes", .insufficientData)
         }
-        guard classes.count <= limits.maximumCells / table.terms.count else {
+        guard classes.count <= limits.maximumCells / identities.terms.count else {
             throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
         }
-        var remainingWork = limits.maximumWork
-        try admitClassifierWork([documents.count], remaining: &remainingWork)
-        try admitClassifierWork([tokenCount], remaining: &remainingWork)
-        try admitClassifierWork([classes.count, table.terms.count], remaining: &remainingWork)
+        try admitClassifierWork(
+            [classes.count, identities.terms.count, 2], remaining: &remainingWork)
+        let table = try GlifiDocumentTermTable(documents: documents, vocabulary: identities.terms)
         let positions = Dictionary(
             uniqueKeysWithValues: classes.enumerated().map { ($0.element, $0.offset) })
         var counts = Array(
-            repeating: Array(repeating: 0.0, count: table.terms.count), count: classes.count)
-        var classTotals = [Double](repeating: 0, count: classes.count)
+            repeating: Array(repeating: 0, count: table.terms.count), count: classes.count)
+        var classTotals = [Int](repeating: 0, count: classes.count)
         var classDocuments = [Int](repeating: 0, count: classes.count)
         for index in documents.indices {
             if index.isMultiple(of: 256) { try Task.checkCancellation() }
             guard let category = positions[labels[index]] else { continue }
             classDocuments[category] += 1
-            classTotals[category] += Double(table.totals[index])
-            for (term, count) in table.rows[index] { counts[category][term] += Double(count) }
+            classTotals[category] += table.totals[index]
+            for (term, count) in table.rows[index] { counts[category][term] += count }
         }
         let priorMass = Double(table.terms.count) * smoothing
         guard priorMass.isFinite else { throw exploratoryFailure("naive-bayes.invalid-smoothing") }
-        let likelihoods = classes.indices.map { category in
-            counts[category].map { log($0 + smoothing) - log(classTotals[category] + priorMass) }
+        let complementaryMass = Double(table.terms.count - 1) * smoothing
+        let likelihoods = try classes.indices.map { category in
+            try Task.checkCancellation()
+            let total = classTotals[category]
+            let denominator = Double(total) + priorMass
+            let logDenominator = log(denominator)
+            return counts[category].map {
+                naiveBayesLogLikelihood(
+                    $0, total: total, smoothing: smoothing,
+                    complementaryMass: complementaryMass,
+                    denominator: denominator, logDenominator: logDenominator)
+            }
         }
         guard likelihoods.allSatisfy({ $0.allSatisfy(\.isFinite) }) else {
             throw exploratoryFailure("exploratory.numeric-overflow")
         }
         return GlifiNaiveBayesModel(
             classes: classes, vocabulary: table.terms,
-            logPriors: classDocuments.map { log(Double($0) / Double(documents.count)) },
+            logPriors: classDocuments.map { naiveBayesLogPrior($0, total: documents.count) },
             logLikelihoods: likelihoods, smoothing: smoothing
         )
     }
@@ -221,7 +232,17 @@ public enum GlifiNaiveBayes {
         let tokenCount = try classifierTokenCount(documents)
         let tokenBytes = try admitClassifierStringBytes(
             documents.joined(), passes: 2, remaining: &remainingWork)
-        let classes = Array(Set(labels)).sorted()
+        let categorySet = Set(labels)
+        let categoryBytes = try admitClassifierStringBytes(
+            categorySet, passes: 1, remaining: &remainingWork)
+        let categorySortLevels =
+            categorySet.count < 2
+            ? 0 : Int.bitWidth - (categorySet.count - 1).leadingZeroBitCount
+        try admitClassifierWork(
+            [categorySet.count, categorySortLevels], remaining: &remainingWork)
+        try admitClassifierWork(
+            [categoryBytes, categorySortLevels], remaining: &remainingWork)
+        let classes = categorySet.sorted()
         guard classes.count >= 2 else {
             throw exploratoryFailure("naive-bayes.insufficient-classes", .insufficientData)
         }
@@ -245,7 +266,8 @@ public enum GlifiNaiveBayes {
         try admitClassifierWork([documents.count, classes.count], remaining: &remainingWork)
         try admitClassifierWork([documents.count, folds, 2], remaining: &remainingWork)
         try admitClassifierWork([tokenCount, folds], remaining: &remainingWork)
-        try admitClassifierWork([classes.count, vocabularyCount, folds], remaining: &remainingWork)
+        try admitClassifierWork(
+            [classes.count, vocabularyCount, folds, 2], remaining: &remainingWork)
         try admitClassifierWork([tokenCount, classes.count], remaining: &remainingWork)
         try admitClassifierWork([documents.count, classes.count], remaining: &remainingWork)
         try admitClassifierWork([classes.count, classes.count], remaining: &remainingWork)
@@ -259,6 +281,12 @@ public enum GlifiNaiveBayes {
         try admitClassifierWork([folds, 4, vocabularyBytes], remaining: &remainingWork)
         try admitClassifierWork([folds, 2, tokenBytes], remaining: &remainingWork)
         try admitClassifierWork([folds, 2, labelBytes], remaining: &remainingWork)
+        try admitClassifierWork([folds, classes.count], remaining: &remainingWork)
+        try admitClassifierWork([folds, categoryBytes], remaining: &remainingWork)
+        try admitClassifierWork(
+            [folds, classes.count, categorySortLevels], remaining: &remainingWork)
+        try admitClassifierWork(
+            [folds, categoryBytes, categorySortLevels], remaining: &remainingWork)
         try admitClassifierWork(
             [folds, vocabularyCount, vocabularySortLevels], remaining: &remainingWork)
         try admitClassifierWork(
@@ -317,6 +345,71 @@ public enum GlifiNaiveBayes {
             seed: seed
         )
     }
+}
+
+/// Computes a class prior without rounding a dominant exact-count proportion to one.
+func naiveBayesLogPrior(_ count: Int, total: Int) -> Double {
+    if count > total / 2 {
+        let complement = total - count
+        return complement == 0 ? 0 : log1p(-Double(complement) / Double(total))
+    }
+    return log(Double(count) / Double(total))
+}
+
+/// Preserves small exact-count complements when the smoothed probability exceeds one half.
+///
+/// The ordinary path retains the original difference-of-logs evaluation.
+func naiveBayesLogLikelihood(
+    _ count: Int, total: Int, smoothing: Double, complementaryMass: Double,
+    denominator: Double, logDenominator: Double
+) -> Double {
+    let complement = Double(total - count) + complementaryMass
+    if complement == 0 { return 0 }
+    if complement < denominator / 2 {
+        let fraction = complement / denominator
+        return fraction == 0 ? 0 : log1p(-fraction)
+    }
+    return log(Double(count) + smoothing) - logDenominator
+}
+
+private func classifierTrainingIdentities(
+    documents: [[String]], labels: [String], remaining: inout Int,
+    limits: GlifiExploratoryLimits
+) throws -> (terms: [String], classes: [String]) {
+    // Reserve raw hashing and lookups before either identity set or the sparse table.
+    let labelBytes = try admitClassifierStringBytes(labels, passes: 2, remaining: &remaining)
+    let tokenBytes = try admitClassifierStringBytes(
+        documents.joined(), passes: 2, remaining: &remaining)
+    guard labelBytes <= 67_108_864, tokenBytes <= 67_108_864 - labelBytes else {
+        throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
+    }
+    var vocabulary = Set<String>()
+    for (index, token) in documents.joined().enumerated() {
+        if index.isMultiple(of: 4_096) { try Task.checkCancellation() }
+        guard !token.isEmpty else { throw exploratoryFailure("text-table.invalid-vocabulary") }
+        vocabulary.insert(token)
+        guard vocabulary.count <= 100_000 else {
+            throw exploratoryFailure("text-table.invalid-vocabulary")
+        }
+    }
+    guard !vocabulary.isEmpty else { throw exploratoryFailure("text-table.invalid-vocabulary") }
+    let categories = Set(labels)
+    guard categories.count <= limits.maximumCells / vocabulary.count else {
+        throw exploratoryFailure("exploratory.resource-limit", .insufficientResources)
+    }
+    let vocabularyBytes = try admitClassifierStringBytes(
+        vocabulary, passes: 2, remaining: &remaining)
+    let categoryBytes = try admitClassifierStringBytes(
+        categories, passes: 1, remaining: &remaining)
+    try admitClassifierWork([vocabulary.count, 3], remaining: &remaining)
+    try admitClassifierWork([categories.count], remaining: &remaining)
+    for (count, bytes) in [(vocabulary.count, vocabularyBytes), (categories.count, categoryBytes)] {
+        let levels = count < 2 ? 0 : Int.bitWidth - (count - 1).leadingZeroBitCount
+        try admitClassifierWork([count, levels], remaining: &remaining)
+        try admitClassifierWork([bytes, levels], remaining: &remaining)
+    }
+    try Task.checkCancellation()
+    return (vocabulary.sorted(), categories.sorted())
 }
 
 private func classifierTokenCount(_ documents: [[String]]) throws -> Int {

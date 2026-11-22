@@ -33,3 +33,14 @@
 macOS richiesta dall’iniziatore. Il possibile difetto di budget del planner
 emerso nell’audit è stato segnalato alla chat di correttezza: non viene corretto
 implicitamente in questo refactoring.
+
+## Integrazione delle correzioni concorrenti
+
+Dopo i gate locali e remoti superati su `53cf248`, main ha pubblicato le
+correzioni KH in `00d1cd1` e la minimizzazione delle evidenze in `a2716ef`.
+Il lotto integra esattamente `a2716ef`, preservandone codice, test e stati di
+matrice. I quattro file di produzione del refactoring restano identici alla
+prima revisione verificata. Il confronto API/CLI viene ripetuto contro la nuova
+base; gli esiti del gate sul codice unito sono registrati nella PR #44,
+separatamente dai risultati originari. Nessun nuovo fix numerico è introdotto
+dal refactoring.

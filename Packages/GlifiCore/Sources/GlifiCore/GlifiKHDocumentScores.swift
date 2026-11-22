@@ -66,6 +66,7 @@ public enum GlifiKHDocumentScores {
         try khScoreConsume([counts.count, columns, 4], remaining: &work)
         try khScoreConsume([counts.count], remaining: &work)
         try khScoreConsume([columns, 2], remaining: &work)
+        var minimumRelativeExponent = Int.max
         for row in counts.indices {
             try Task.checkCancellation()
             guard counts[row].count == columns, exposures[row].isFinite, exposures[row] > 0
@@ -75,10 +76,17 @@ public enum GlifiKHDocumentScores {
                 guard counts[row][column].isFinite, counts[row][column] >= 0 else {
                     throw exploratoryFailure("kh-document-score.invalid-input")
                 }
+                if counts[row][column] > 0 {
+                    minimumRelativeExponent = min(
+                        minimumRelativeExponent,
+                        counts[row][column].exponent - exposures[row].exponent)
+                }
             }
         }
         var idf: [Double] = []
         idf.reserveCapacity(columns)
+        var minimumMultiplierExponent = Int.max
+        var maximumDivisorExponent = Int.min
         for (column, frequency) in documentFrequencies.enumerated() {
             if column.isMultiple(of: 1_024) { try Task.checkCancellation() }
             guard frequency > 0, frequency <= corpusDocumentCount else {
@@ -91,6 +99,37 @@ public enum GlifiKHDocumentScores {
                 frequency == corpusDocumentCount || value > 0
             else { throw exploratoryFailure("kh-document-score.numeric-range") }
             idf.append(value)
+            if value > 0 {
+                minimumMultiplierExponent = min(minimumMultiplierExponent, value.exponent)
+            }
+            maximumDivisorExponent = max(maximumDivisorExponent, value == 0 ? 0 : value.exponent)
+        }
+        let minimumFactorExponent: Int
+        switch mode {
+        case .tf: minimumFactorExponent = 0
+        case .tfIdf: minimumFactorExponent = minimumMultiplierExponent
+        case .tfDividedByIdf: minimumFactorExponent = -maximumDivisorExponent
+        }
+        // Each normalized four-factor ratio lies in (1/4,4). This conservative
+        // bound skips the extra scan for ordinary data without changing its arithmetic.
+        if minimumRelativeExponent != Int.max, minimumFactorExponent != Int.max,
+            minimumRelativeExponent + minimumFactorExponent <= -1_020
+        {
+            for row in counts.indices {
+                try Task.checkCancellation()
+                for column in 0..<columns {
+                    if column.isMultiple(of: 1_024) { try Task.checkCancellation() }
+                    let factors = khScoreFactors(idf[column], mode: mode)
+                    guard counts[row][column] > 0, factors.numerator > 0 else { continue }
+                    let approximation = khScoreApproximation(
+                        counts[row][column], numerator: factors.numerator,
+                        exposure: exposures[row], denominator: factors.denominator)
+                    if approximation.value <= Double.leastNormalMagnitude {
+                        // Admit every possible long-division step before allocating outputs.
+                        try khScoreConsume([54], remaining: &work)
+                    }
+                }
+            }
         }
         var contributions: [[Double]] = []
         var scores: [Double] = []
@@ -104,22 +143,10 @@ public enum GlifiKHDocumentScores {
             var correction = 0.0
             for column in 0..<columns {
                 if column.isMultiple(of: 1_024) { try Task.checkCancellation() }
-                let numerator: Double
-                let denominator: Double
-                switch mode {
-                case .tf:
-                    numerator = 1
-                    denominator = 1
-                case .tfIdf:
-                    numerator = idf[column]
-                    denominator = 1
-                case .tfDividedByIdf:
-                    numerator = 1
-                    denominator = idf[column] == 0 ? 1 : idf[column]
-                }
+                let factors = khScoreFactors(idf[column], mode: mode)
                 let contribution = try khScoreRatio(
-                    counts[row][column], numerator: numerator,
-                    exposure: exposures[row], denominator: denominator)
+                    counts[row][column], numerator: factors.numerator,
+                    exposure: exposures[row], denominator: factors.denominator)
                 terms.append(contribution)
                 let adjusted = contribution - correction
                 let updated = sum + adjusted
@@ -156,12 +183,78 @@ private func khScoreRatio(
     _ count: Double, numerator: Double, exposure: Double, denominator: Double
 ) throws -> Double {
     guard count > 0, numerator > 0 else { return 0 }
+    let approximation = khScoreApproximation(
+        count, numerator: numerator, exposure: exposure, denominator: denominator)
+    if approximation.value <= Double.leastNormalMagnitude {
+        return try khScoreSubnormalRatio(
+            count, numerator: numerator, exposure: exposure, denominator: denominator,
+            exponent: approximation.exponent)
+    }
+    guard approximation.value.isFinite else {
+        throw exploratoryFailure("kh-document-score.numeric-range")
+    }
+    return approximation.value
+}
+
+private func khScoreFactors(
+    _ idf: Double, mode: GlifiKHDocumentScoreMode
+) -> (numerator: Double, denominator: Double) {
+    switch mode {
+    case .tf: (1, 1)
+    case .tfIdf: (idf, 1)
+    case .tfDividedByIdf: (1, idf == 0 ? 1 : idf)
+    }
+}
+
+private func khScoreApproximation(
+    _ count: Double, numerator: Double, exposure: Double, denominator: Double
+) -> (value: Double, exponent: Int) {
     let exponent = count.exponent + numerator.exponent - exposure.exponent - denominator.exponent
     let significand =
         count.significand * numerator.significand / exposure.significand / denominator.significand
-    let result = Double(sign: .plus, exponent: exponent, significand: significand)
-    guard result.isFinite, result > 0 else {
+    return (Double(sign: .plus, exponent: exponent, significand: significand), exponent)
+}
+
+private func khScoreSubnormalRatio(
+    _ count: Double, numerator: Double, exposure: Double, denominator: Double, exponent: Int
+) throws -> Double {
+    // Every binary64 significand is a 53-bit integer times 2^-52, including
+    // normalized subnormal inputs. Products therefore fit in 106 bits exactly.
+    let unit = 4_503_599_627_370_496.0
+    let top = UInt128(count.significand * unit) * UInt128(numerator.significand * unit)
+    var bottom = UInt128(exposure.significand * unit) * UInt128(denominator.significand * unit)
+    let shift = exponent + 1_074
+    // The significand ratio is strictly below four: shifts below -2 cannot
+    // reach half a subnormal quantum. At the upper boundary at most 54 shifts suffice.
+    guard shift >= -2, shift <= 54 else {
         throw exploratoryFailure("kh-document-score.numeric-range")
     }
-    return result
+    var quotient: UInt128
+    var remainder: UInt128
+    if shift >= 0 {
+        quotient = top / bottom
+        remainder = top % bottom
+        if shift > 0 {
+            for _ in 0..<shift {
+                quotient *= 2
+                remainder *= 2
+                if remainder >= bottom {
+                    remainder -= bottom
+                    quotient += 1
+                }
+            }
+        }
+    } else {
+        bottom <<= -shift
+        quotient = top / bottom
+        remainder = top % bottom
+    }
+    let doubled = remainder * 2
+    if doubled > bottom || (doubled == bottom && !quotient.isMultiple(of: 2)) { quotient += 1 }
+    // This path covers subnormals and their immediate normal boundary. Integer
+    // quantum counts through 2^53 convert and scale by 2^-1074 without another rounding.
+    guard quotient > 0, quotient <= UInt128(1) << 53 else {
+        throw exploratoryFailure("kh-document-score.numeric-range")
+    }
+    return Double(quotient) * Double.leastNonzeroMagnitude
 }

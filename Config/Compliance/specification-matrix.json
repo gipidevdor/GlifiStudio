@@ -1180,14 +1180,16 @@
       "tests": [
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisPlannerTests.swift",
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioServiceTests.swift",
-        "Scripts/verify.sh"
+        "Scripts/verify.sh",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPlannerProducerRefinementTests.swift"
       ],
       "fixtures": [
         "Fixtures/Persistence/v1/basic/source.txt",
         "Fixtures/Markdown/v1/source.md"
       ],
       "evidence": [
-        "docs/evidenze/GS-VER-027-planner-mvp-deterministico.md"
+        "docs/evidenze/GS-VER-027-planner-mvp-deterministico.md",
+        "docs/evidenze/GS-VER-305-rifinitura-kh.md"
       ],
       "gate": "G2",
       "status": "verified",
@@ -2076,11 +2078,13 @@
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisPlannerTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisExecutionTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiInterpretationTests.swift",
-        "Scripts/verify.sh"
+        "Scripts/verify.sh",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPlannerProducerRefinementTests.swift"
       ],
       "fixtures": [],
       "evidence": [
-        "docs/evidenze/GS-VER-106-planner-v2-capability-estese.md"
+        "docs/evidenze/GS-VER-106-planner-v2-capability-estese.md",
+        "docs/evidenze/GS-VER-305-rifinitura-kh.md"
       ],
       "gate": "G3",
       "status": "verified",
@@ -2869,11 +2873,18 @@
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTermExtractionTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHDocumentScoresTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHLegacyClusteringTests.swift",
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHChiSquareTests.swift"
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHChiSquareTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExploratoryBudgetRefinementTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHNumericRefinementTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiNaiveBayesNumericalRefinementTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSOMGaussianRefinementTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTermUnicodeRefinementTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiSOMWorkflowRefinementTests.swift"
       ],
       "fixtures": [
         "Packages/GlifiCore/Tests/Oracles/R/kh_operators.R",
-        "Fixtures/TextAnalysis/v1/cases.json"
+        "Fixtures/TextAnalysis/v1/cases.json",
+        "Packages/GlifiCore/Tests/Oracles/Python/kh_refinement.py"
       ],
       "evidence": [
         "docs/evidenze/GS-VER-160-operatori-analitici-nativi.md",
@@ -2883,7 +2894,8 @@
         "docs/pianificazione/dor-completamento-kh-coder.md",
         "docs/evidenze/GS-VER-233-completamento-kh-coder.md",
         "docs/evidenze/GS-VER-234-riverifica-correttezza-completezza.md",
-        "docs/evidenze/GS-VER-300-completezza-funzionale-kh.md"
+        "docs/evidenze/GS-VER-300-completezza-funzionale-kh.md",
+        "docs/evidenze/GS-VER-305-rifinitura-kh.md"
       ],
       "gate": "G3",
       "status": "implemented",
@@ -2922,7 +2934,8 @@
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioLinguisticPipelineTests.swift",
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiAdvancedTextAnalysisTransportTests.swift",
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiTextAnalysisReauditTests.swift",
-        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiKHAnalysisTransportTests.swift"
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiKHAnalysisTransportTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiSOMWorkflowRefinementTests.swift"
       ],
       "fixtures": [
         "Fixtures/TextAnalysis/v1/cases.json"
@@ -2931,7 +2944,8 @@
         "docs/evidenze/GS-VER-162-parita-operatori-kit-cli.md",
         "docs/evidenze/GS-VER-233-completamento-kh-coder.md",
         "docs/evidenze/GS-VER-234-riverifica-correttezza-completezza.md",
-        "docs/evidenze/GS-VER-300-completezza-funzionale-kh.md"
+        "docs/evidenze/GS-VER-300-completezza-funzionale-kh.md",
+        "docs/evidenze/GS-VER-305-rifinitura-kh.md"
       ],
       "gate": "G3",
       "status": "verified",
