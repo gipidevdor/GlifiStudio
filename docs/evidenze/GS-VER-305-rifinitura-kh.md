@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-VER-305 |
 | Tipo | Revisione avversariale e regressioni |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | Superato localmente |
 | Responsabile | Codex e tre agenti |
 | Ultima modifica | 2026-11-22 |
@@ -86,7 +86,8 @@ Il gate comprende inoltre 244 righe di oracolo e 64 casi Fraction binary64,
 260 confronti integrali e 51 rifiuti, due formati di importazione espliciti,
 22 checkpoint di recupero dopo interruzione del processo e due PDF/A conformi.
 Le [prove strutturate](allegati/GS-VER-305-verifica.json) conservano comandi,
-UTC, tempi, hash dei log, risultati e inventario. Log completi, riproduzioni e
+UTC, tempi, hash dei log, risultati e inventario, senza identificatori hardware
+e con percorsi home abbreviati. Log completi, riproduzioni e
 bundle xcresult sono conservati localmente nell'archivio GS-VER-305.
 
 Xcode ha emesso il preesistente avviso di CoreSimulator non allineato
