@@ -126,6 +126,54 @@ public struct GlifiStudioKHCollocationInput: Codable, Equatable, Sendable {
     }
 }
 
+/// Exact document frequencies for a condition and term, permitting their document sets to overlap.
+public struct GlifiStudioKHWordAssociationInput: Codable, Equatable, Sendable {
+    /// Documents jointly satisfying the condition and containing the term.
+    public let jointCount: Int
+    /// Documents satisfying the caller-declared condition.
+    public let conditionDocumentCount: Int
+    /// Documents containing the term across the complete universe.
+    public let termDocumentCount: Int
+    /// Complete document universe before selecting the condition.
+    public let totalDocumentCount: Int
+
+    /// Stores exact document frequencies; execution validates their shared 2×2 universe.
+    public init(
+        jointCount: Int, conditionDocumentCount: Int, termDocumentCount: Int,
+        totalDocumentCount: Int
+    ) {
+        self.jointCount = jointCount
+        self.conditionDocumentCount = conditionDocumentCount
+        self.termDocumentCount = termDocumentCount
+        self.totalDocumentCount = totalDocumentCount
+    }
+
+    /// Rejects unknown keys and explicit null counts without coercing numeric types.
+    public init(from decoder: any Decoder) throws {
+        let f = try khFields(decoder, allowed: [
+            "jointCount", "conditionDocumentCount", "termDocumentCount", "totalDocumentCount",
+        ])
+        self.init(
+            jointCount: try f.khRequired("jointCount"),
+            conditionDocumentCount: try f.khRequired("conditionDocumentCount"),
+            termDocumentCount: try f.khRequired("termDocumentCount"),
+            totalDocumentCount: try f.khRequired("totalDocumentCount"))
+    }
+
+    func core() throws -> GlifiCooccurrenceCounts {
+        guard jointCount >= 0, conditionDocumentCount >= 0, termDocumentCount >= 0,
+            totalDocumentCount >= 0, conditionDocumentCount <= totalDocumentCount,
+            termDocumentCount <= totalDocumentCount, jointCount <= conditionDocumentCount,
+            jointCount <= termDocumentCount,
+            termDocumentCount - jointCount <= totalDocumentCount - conditionDocumentCount
+        else { throw textRequestFailure("kh-word-association.invalid-counts") }
+        return try GlifiCooccurrenceCounts(
+            jointCount: jointCount, firstOnlyCount: conditionDocumentCount - jointCount,
+            secondOnlyCount: termDocumentCount - jointCount,
+            neitherCount: totalDocumentCount - conditionDocumentCount - (termDocumentCount - jointCount))
+    }
+}
+
 /// An independently observed compound; nested occurrences must not be counted twice.
 public struct GlifiStudioTermCandidate: Codable, Equatable, Sendable {
     /// Ordered lexical keys already segmented by the caller, without an inferred join operation.

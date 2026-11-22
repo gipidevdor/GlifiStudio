@@ -4710,6 +4710,37 @@
       "gate": "G3",
       "status": "implemented",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-187",
+      "clause": "GS-STD-001-12 § 12.7; identità canoniche di query, accordo e report",
+      "specification": "docs/standard/12-implementazione-swift.md",
+      "requirements": [
+        "RQ-009",
+        "RQ-023",
+        "RQ-028",
+        "RQ-042",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryModel.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiCodingAgreementAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiScientificExport.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCanonicalInputDigestOptimizationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiReportDigestOptimizationTests.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCanonicalInputDigestOptimizationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiReportDigestOptimizationTests.swift"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-179-identita-canoniche.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }

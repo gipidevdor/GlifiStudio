@@ -12,6 +12,15 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Codifica delle identità canoniche
+
+- Query e tabelle di accordo riusano il codificatore SHA-256 interno,
+  conservando i byte canonici e tutti i comportamenti di validazione.
+- Revisioni di report e helper dei manifest scientifici mantengono identità,
+  preimmagini e formato v1 con la stessa codifica bounded (GS-VER-179).
+- Il supporto dei benchmark distingue esplicitamente SHA del produttore,
+  incluso nella misura, e checksum di verifica fuori timer.
+
 ### Ottimizzazioni complementari di grafi ed export
 
 - Riutilizzo dei buffer nelle visite di betweenness, con ordine numerico e

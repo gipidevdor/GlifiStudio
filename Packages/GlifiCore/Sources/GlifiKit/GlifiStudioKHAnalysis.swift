@@ -67,7 +67,10 @@ extension GlifiStudioKHAnalysisRequest {
                 return (result.methodIdentifier, .som(.init(result)))
             case let .collocationScores(input):
                 let result = try GlifiKHCollocationAnalysis.scores(input.core())
-                return ("KH-collocation-MI3-Z-global-token-window-v1", .collocation(.init(result)))
+                return (GlifiKHCollocationScores.identifier, .collocation(.init(result)))
+            case let .wordAssociation(input):
+                let result = try GlifiKHWordAssociationAnalysis.scores(input.core())
+                return (GlifiKHWordAssociationScores.identifier, .wordAssociation(.init(result)))
             case let .termScores(candidates, preprocessing, adjacency, work):
                 let result = try GlifiTermExtraction.score(
                     candidates.map {

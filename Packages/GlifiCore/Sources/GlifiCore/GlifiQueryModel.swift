@@ -398,7 +398,7 @@ public struct GlifiQueryAST: Codable, Equatable, Sendable {
     /// Returns the SHA-256 identity of the canonical v1 representation.
     public func canonicalDigest() throws -> String {
         let hash = SHA256.hash(data: try canonicalData())
-        return "sha256:" + hash.map { String(format: "%02x", $0) }.joined()
+        return canonicalSHA256Digest(hash)
     }
 }
 

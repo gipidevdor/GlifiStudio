@@ -46,7 +46,7 @@ def main():
     args = parser.parse_args()
     binary = args.binary.resolve()
     cases = json.loads(FIXTURES.read_text())["cases"]
-    assert len(cases) == 52 and len({case["id"] for case in cases}) == len(cases)
+    assert len(cases) == 54 and len({case["id"] for case in cases}) == len(cases)
     checks = 0
     with tempfile.TemporaryDirectory(prefix="GlifiTextAnalysisCLI-") as temporary:
         directory = Path(temporary)
@@ -177,6 +177,13 @@ def main():
                                    "documentCounts": [1, 1], "tokenCounts": [[-1], [1]], "smoothing": 1}}), 3, "invalidInput")
         rejects(encoded({"operation": "validate-classifier-kappa", "documents": [["a"], ["b"]],
                          "labels": ["A", "B"], "folds": 2, "seed": 0}), 5, "insufficientData")
+
+        rejects(encoded({"operation": "word-association", "counts": {"jointCount": 0,
+                         "conditionDocumentCount": 8, "termDocumentCount": 8,
+                         "totalDocumentCount": 10}}), 3, "invalidInput")
+        rejects(encoded({"operation": "word-association", "counts": {"jointCount": 1,
+                         "conditionDocumentCount": 2, "termDocumentCount": 3,
+                         "totalDocumentCount": 10, "secret-canary": 1}}), 3, "invalidInput")
 
         if os.geteuid() != 0:
             protected = directory / "secret-canary-protected.json"
