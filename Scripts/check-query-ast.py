@@ -20,9 +20,10 @@ def main() -> None:
     options = parser.parse_args()
     canary = "ZQXCANARY42"
 
-    def run(*arguments: str, status: int = 0, code: str | None = None) -> dict:
+    def run(*arguments: str, status: int = 0, code: str | None = None,
+            project: str | None = None) -> dict:
         process = subprocess.run(
-            [options.executable, "--format", "json", "query", options.project, *arguments],
+            [options.executable, "--format", "json", "query", project or options.project, *arguments],
             capture_output=True, text=True, timeout=30, check=False,
         )
         assert process.returncode == status, (process.returncode, process.stdout, process.stderr)
@@ -106,6 +107,36 @@ def main() -> None:
             run(*arguments, status=2)
         assert run("--text", "normalized:due") == baseline
         assert run("--ast", str(path)) == baseline
+
+        def synthetic_project(name: str, text: str) -> str:
+            source = root / f"{name}.txt"
+            project = root / f"{name}.glifi"
+            source.write_text(text, encoding="utf-8")
+            for arguments in [
+                ["project", "create", str(project)],
+                ["import", str(project), "--input-format", "plainText", str(source)],
+            ]:
+                process = subprocess.run(
+                    [options.executable, "--format", "json", *arguments],
+                    capture_output=True, text=True, timeout=30, check=False,
+                )
+                assert process.returncode == 0, (arguments[0], process.stderr)
+            return str(project)
+
+        late = synthetic_project("late-match", "a " * 1_002 + "b")
+        result = run("--text", "a BEFORE/0 b", project=late)["result"]
+        assert result["matchedSourceCount"] == 1 and not result["isTruncated"]
+        assert [(m["startUTF8"], m["endUTF8"]) for m in result["matches"]] == [(2_002, 2_005)]
+
+        exhausted = synthetic_project("anchor-budget", "a " * 100_001 + "b")
+        failure = run(
+            "--text", "a BEFORE/0 b", project=exhausted, status=7,
+            code="query.intermediate-anchor-limit-exceeded",
+        )["failure"]
+        assert failure["category"] == "insufficientResources", failure
+        assert failure["retryDisposition"] == "afterConditionsChange", failure
+        # A failed evaluation must leave the project usable and unchanged.
+        assert run("--text", "b", project=exhausted)["result"]["matchedSourceCount"] == 1
     print("QueryAST CLI: parità, limiti, file ostili, permessi, argomenti e privacy superati")
 
 

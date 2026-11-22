@@ -1337,15 +1337,14 @@ struct StudioDocumentLifecycleTests {
         let previousSnapshot = model.snapshot
         let observation = ExecutionCancellationObservation()
         _ = withObservationTracking(options: .didSet) {
-            model.canCancelAnalysis
+            model.isBusy
         } onChange: { event in
             guard event.kind == .didSet else { return }
             event.cancel()
             MainActor.assumeIsolated {
                 observation.observed = true
-                // Cancels the caller before its handler is registered, without a scheduling race.
+                // Admission runs in the caller before task creation and cancellation registration.
                 withUnsafeCurrentTask { $0?.cancel() }
-                #expect(model.canCancelAnalysis)
                 #expect(model.isBusy)
             }
         }
@@ -1603,6 +1602,177 @@ struct StudioDocumentLifecycleTests {
         await model.runQuery()
         #expect(model.lastFailure == nil)
         #expect(model.queryResult?.matches.count == 1)
+    }
+
+    @Test func closingWaitsForOwnedWorkAndDiscardsWaitingAttachmentsBeforeReopening() async throws {
+        let root = try makeRoot()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let model = StudioHomeModel()
+        await model.attachDocument(
+            at: root.appending(path: "Closing.glifi"), needsPackageInitialization: true)
+        try await importSource(into: model, in: root)
+        let gate = DocumentAttachmentTestGate()
+        let entered = AsyncStream<Bool>.makeStream(bufferingPolicy: .bufferingNewest(1))
+        var cancellationObserved = false
+        let opening = Task { @MainActor in
+            await model.reopenLastProject(using: { _ in
+                await gate.hold(entered: entered.continuation)
+                cancellationObserved = Task.isCancelled
+            })
+            entered.continuation.finish()
+        }
+        defer {
+            gate.release()
+            opening.cancel()
+        }
+        var events = entered.stream.makeAsyncIterator()
+        try #require(await events.next() == true)
+        let waitingURL = root.appending(path: "MustNotOpen.glifi")
+        let attaching = try await beginDocumentAttachment(model, at: waitingURL, initialize: true)
+        defer { attaching.cancel() }
+
+        let closing = Task.immediate { @MainActor in await model.closeProject() }
+        #expect(model.isBusy)
+        #expect(model.snapshot != nil)
+        gate.release()
+        await closing.value
+        await opening.value
+        await attaching.value
+
+        #expect(cancellationObserved)
+        #expect(!model.isBusy)
+        #expect(model.projectURL == nil)
+        #expect(model.snapshot == nil)
+        #expect(model.lastProfile == nil)
+        #expect(model.lastFailure == nil)
+        #expect(!FileManager.default.fileExists(atPath: waitingURL.path))
+        await model.closeProject()
+        let reopenedURL = root.appending(path: "Reopened.glifi")
+        await model.attachDocument(at: reopenedURL, needsPackageInitialization: true)
+        #expect(model.projectURL == reopenedURL)
+        #expect(model.snapshot?.generation == 0)
+        #expect(model.lastFailure == nil)
+    }
+
+    @Test func reattachmentDuringRepeatedTeardownWaitsForItsTerminalState() async throws {
+        let root = try makeRoot()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let model = StudioHomeModel()
+        await model.attachDocument(
+            at: root.appending(path: "Previous.glifi"), needsPackageInitialization: true)
+        let (gate, opening) = try await beginSuspendedReopening(model)
+        defer {
+            gate.release()
+            opening.cancel()
+        }
+        let closing = Task.immediate { @MainActor in await model.closeProject() }
+        let repeated = Task.immediate { @MainActor in await model.closeProject() }
+        let destination = root.appending(path: "Reattached.glifi")
+        let attaching = try await beginDocumentAttachment(model, at: destination, initialize: true)
+        defer { attaching.cancel() }
+        #expect(model.isBusy)
+        #expect(!FileManager.default.fileExists(atPath: destination.path))
+
+        gate.release()
+        await opening.value
+        await closing.value
+        await repeated.value
+        await attaching.value
+
+        #expect(model.projectURL == destination)
+        #expect(model.snapshot?.generation == 0)
+        #expect(model.lastFailure == nil)
+        #expect(!model.isBusy)
+    }
+
+    @Test func completedTeardownReleasesTheOperationOwner() async {
+        var model: StudioHomeModel? = StudioHomeModel()
+        weak let releasedModel = model
+        await model?.runCoreAnalysis {}
+        await model?.closeProject()
+        model = nil
+        #expect(releasedModel == nil)
+    }
+
+    @Test func documentAttachmentWaitsAcrossDistinctTeardownGenerations() async throws {
+        for cancelsAdmission in [false, true] {
+            let firstGate = DocumentAttachmentTestGate()
+            let secondGate = DocumentAttachmentTestGate()
+            let thirdGate = DocumentAttachmentTestGate()
+            let entered = AsyncStream<Bool>.makeStream(bufferingPolicy: .bufferingNewest(3))
+            var secondFinished = false
+            let first = Task.immediate { @MainActor in
+                await firstGate.hold(entered: entered.continuation)
+            }
+            let second = Task.immediate { @MainActor in
+                await secondGate.hold(entered: entered.continuation)
+                secondFinished = true
+            }
+            let third = Task.immediate { @MainActor in
+                await thirdGate.hold(entered: entered.continuation)
+            }
+            defer {
+                firstGate.release()
+                secondGate.release()
+                thirdGate.release()
+                first.cancel()
+                second.cancel()
+                third.cancel()
+                entered.continuation.finish()
+            }
+            var entering = entered.stream.makeAsyncIterator()
+            for _ in 0..<3 { try #require(await entering.next() == true) }
+            let observed = AsyncStream<Int>.makeStream(bufferingPolicy: .bufferingNewest(8))
+            var current: Task<Void, Never>? = first
+            var generation = 1
+            var admissionCount = 0
+            var admitted: Bool?
+            let waiting = Task.immediate { @MainActor in
+                admitted = await studioAdmitAfterLatestOwnedTask(
+                    current: {
+                        if current != nil { observed.continuation.yield(generation) }
+                        return current
+                    },
+                    admission: {
+                        #expect(secondFinished, "Admission preceded completion of the latest task")
+                        admissionCount += 1
+                        return true
+                    })
+                observed.continuation.yield(0)
+            }
+            defer {
+                current = nil
+                waiting.cancel()
+                observed.continuation.finish()
+            }
+            var observations = observed.stream.makeAsyncIterator()
+            try #require(await observations.next() == 1)
+            current = second
+            generation = 2
+            firstGate.release()
+            try #require(await observations.next() == 2, "The latest task was not awaited")
+            #expect(admissionCount == 0)
+            #expect(!secondFinished)
+
+            if cancelsAdmission {
+                current = third
+                generation = 3
+                waiting.cancel()
+            } else {
+                current = nil
+            }
+            secondGate.release()
+            #expect(await observations.next() == 0, "Cancellation waited for another generation")
+            current = nil
+            thirdGate.release()
+            await waiting.value
+            await first.value
+            await second.value
+            await third.value
+
+            #expect(admissionCount == (cancelsAdmission ? 0 : 1))
+            #expect(admitted == (cancelsAdmission ? nil : true))
+        }
     }
 
     private func beginSuspendedReopening(_ model: StudioHomeModel) async throws -> (

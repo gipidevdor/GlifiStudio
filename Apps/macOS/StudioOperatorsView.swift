@@ -32,15 +32,20 @@ struct StudioOperatorsView: View {
                     results.frame(minWidth: 360)
                 }
             } else {
-                VStack(spacing: 0) {
-                    Picker("operators.workspace", selection: $showsResults) {
-                        Text("text-analysis.workspace.configuration").tag(false)
-                        Text("text-analysis.workspace.results").tag(true)
+                TabView(selection: $showsResults) {
+                    Tab(value: false) {
+                        configuration
+                    } label: {
+                        Text("text-analysis.workspace.configuration")
                     }
-                    .pickerStyle(.segmented)
-                    .padding()
-                    if showsResults { results } else { configuration }
+                    Tab(value: true) {
+                        results
+                    } label: {
+                        Text("text-analysis.workspace.results")
+                    }
                 }
+                .tabViewStyle(.grouped)
+                .padding()
             }
         }
         .navigationTitle("operators.title")

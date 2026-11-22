@@ -237,6 +237,278 @@ func queryEvaluatorRejectsUnavailableCapabilities() throws {
     }
 }
 
+@Test("Il contesto KWIC estremo resta nei token disponibili senza overflow")
+func queryEvaluatorBoundsExtremeContext() throws {
+    let source = try imported("uno due tre quattro")
+    let tokenization = try GlifiItalianTokenizer().tokenize(source.text)
+    let query = GlifiQueryAST(root: .term(field: .form, value: "due", matchMode: .exact))
+    let result = try GlifiQueryEvaluator().evaluate(
+        query, in: source, tokenization: tokenization,
+        limits: queryTermLimits(maximumResultCount: Int.max, contextTokenCount: Int.max))
+
+    let match = try #require(result.matches.first)
+    #expect(match.range.text(in: source.text) == "due")
+    #expect(match.leftContextRange?.text(in: source.text) == "uno")
+    #expect(match.rightContextRange?.text(in: source.text) == "tre quattro")
+    #expect(!result.isTruncated)
+}
+
+@Test("La prossimità trova anche operandi oltre il limite delle righe materializzate")
+func queryEvaluatorDoesNotTruncateProximityOperands() throws {
+    let source = try imported("a a a b")
+    let tokenization = try GlifiItalianTokenizer().tokenize(source.text)
+    let query = GlifiQueryAST(
+        root: .proximity(
+            left: .term(field: .form, value: "a", matchMode: .exact),
+            right: .term(field: .form, value: "b", matchMode: .exact),
+            distance: 0, unit: .surfaceToken, ordered: true))
+    let result = try GlifiQueryEvaluator().evaluate(
+        query, in: source, tokenization: tokenization,
+        limits: queryTermLimits(maximumResultCount: 1))
+
+    #expect(result.matchedScope)
+    #expect(result.matches.map { $0.range.text(in: source.text) } == ["a b"])
+    #expect(!result.isTruncated)
+}
+
+@Test("L'unione booleana conserva le prime righe canoniche indipendentemente dai figli")
+func queryEvaluatorCanonicalizesBoundedBooleanUnions() throws {
+    let source = try imported("a a a b b b")
+    let tokenization = try GlifiItalianTokenizer().tokenize(source.text)
+    let a = GlifiQueryNode.term(field: .form, value: "a", matchMode: .exact)
+    let b = GlifiQueryNode.term(field: .form, value: "b", matchMode: .exact)
+    for root in [GlifiQueryNode.or([a, b]), .or([b, a]), .and([a, b]), .and([b, a])] {
+        let result = try GlifiQueryEvaluator().evaluate(
+            GlifiQueryAST(root: root), in: source, tokenization: tokenization,
+            limits: queryTermLimits(maximumResultCount: 2))
+
+        #expect(result.matchedScope)
+        #expect(result.matches.map(\.range) == Array(tokenization.tokens.prefix(2)).map(\.range))
+        #expect(result.isTruncated)
+    }
+}
+
+@Test("La prossimità bounded coincide con l'enumerazione indipendente dei piccoli input")
+func queryEvaluatorMatchesExhaustiveProximityReference() throws {
+    for bits in 0..<32 {
+        let forms = (0..<5).map { bits & (1 << $0) == 0 ? "a" : "b" }
+        let source = try imported(forms.joined(separator: " "))
+        let tokenization = try GlifiItalianTokenizer().tokenize(source.text)
+        for ordered in [false, true] {
+            var intervals: Set<[Int]> = []
+            for left in forms.indices where forms[left] == "a" {
+                for right in forms.indices where forms[right] == "b" {
+                    guard !ordered || left < right, abs(left - right) - 1 <= 2 else {
+                        continue
+                    }
+                    intervals.insert([min(left, right) * 2, max(left, right) * 2 + 1])
+                }
+            }
+            let expected = try intervals.sorted { $0.lexicographicallyPrecedes($1) }.map {
+                try GlifiUTF8Range(start: $0[0], end: $0[1])
+            }
+            let query = GlifiQueryAST(
+                root: .proximity(
+                    left: .term(field: .form, value: "a", matchMode: .exact),
+                    right: .term(field: .form, value: "b", matchMode: .exact),
+                    distance: 2, unit: .surfaceToken, ordered: ordered))
+            for maximumResultCount in [0, 1, 2, 10] {
+                let result = try GlifiQueryEvaluator().evaluate(
+                    query, in: source, tokenization: tokenization,
+                    limits: queryTermLimits(maximumResultCount: maximumResultCount))
+                #expect(result.matchedScope == !expected.isEmpty)
+                #expect(result.matches.map(\.range) == Array(expected.prefix(maximumResultCount)))
+                #expect(result.isTruncated == (expected.count > maximumResultCount))
+            }
+        }
+    }
+}
+
+@Test("I budget intermedi sono globali e non dipendono dal numero di righe richieste")
+func queryEvaluatorEnforcesGlobalIntermediateBudgets() throws {
+    let source = try imported("a a a b")
+    let tokenization = try GlifiItalianTokenizer().tokenize(source.text)
+    let query = GlifiQueryAST(
+        root: .proximity(
+            left: .term(field: .form, value: "a", matchMode: .exact),
+            right: .term(field: .form, value: "b", matchMode: .exact),
+            distance: 0, unit: .surfaceToken, ordered: true))
+    let accepted = try GlifiQueryEvaluator().evaluate(
+        query, in: source, tokenization: tokenization,
+        limits: queryTermLimits(
+            maximumResultCount: 1, maximumIntermediateAnchorCount: 5,
+            maximumEvaluationStepCount: 17))
+    #expect(accepted.matches.map { $0.range.text(in: source.text) } == ["a b"])
+    for (anchors, steps, code) in [
+        (4, 17, "query.intermediate-anchor-limit-exceeded"),
+        (5, 16, "query.evaluation-step-limit-exceeded"),
+    ] {
+        do {
+            _ = try GlifiQueryEvaluator().evaluate(
+                query, in: source, tokenization: tokenization,
+                limits: queryTermLimits(
+                    maximumResultCount: 1, maximumIntermediateAnchorCount: anchors,
+                    maximumEvaluationStepCount: steps))
+            Issue.record("An exhausted global query budget succeeded")
+        } catch let failure as GlifiFailure {
+            #expect(failure.code == code)
+            #expect(failure.category == .insufficientResources)
+            #expect(failure.operation == .query)
+        }
+    }
+}
+
+@Test("L'indice di prossimità conserva intervalli annidati, sovrapposti e deduplicati")
+func queryEvaluatorMatchesNestedIntervalReference() throws {
+    let source = try imported("a b a b a b a")
+    let tokenization = try GlifiItalianTokenizer().tokenize(source.text)
+    let a = GlifiQueryNode.term(field: .form, value: "a", matchMode: .exact)
+    let b = GlifiQueryNode.term(field: .form, value: "b", matchMode: .exact)
+    let ab = GlifiQueryNode.phrase(field: .form, values: ["a", "b"], slop: 0)
+    let aba = GlifiQueryNode.phrase(field: .form, values: ["a", "b", "a"], slop: 0)
+    let variants: [(node: GlifiQueryNode, spans: [(Int, Int)])] = [
+        (a, [(0, 1), (2, 3), (4, 5), (6, 7)]),
+        (b, [(1, 2), (3, 4), (5, 6)]),
+        (ab, [(0, 2), (2, 4), (4, 6)]),
+        (aba, [(0, 3), (2, 5), (4, 7)]),
+        (.or([a, aba]), [(0, 1), (0, 3), (2, 3), (2, 5), (4, 5), (4, 7), (6, 7)]),
+        (.and([b, ab]), [(0, 2), (1, 2), (2, 4), (3, 4), (4, 6), (5, 6)]),
+        (
+            .proximity(left: a, right: b, distance: 0, unit: .surfaceToken, ordered: true),
+            [(0, 2), (2, 4), (4, 6)]
+        ),
+    ]
+    for left in variants {
+        for right in variants {
+            for ordered in [false, true] {
+                for distance in [0, 1, Int.max] {
+                    var intervals: Set<[Int]> = []
+                    for l in left.spans {
+                        for r in right.spans {
+                            if l.1 <= r.0, r.0 - l.1 <= distance {
+                                intervals.insert([l.0 * 2, r.1 * 2 - 1])
+                            } else if !ordered, r.1 <= l.0, l.0 - r.1 <= distance {
+                                intervals.insert([r.0 * 2, l.1 * 2 - 1])
+                            }
+                        }
+                    }
+                    let expected = try intervals.sorted { $0.lexicographicallyPrecedes($1) }.map {
+                        try GlifiUTF8Range(start: $0[0], end: $0[1])
+                    }
+                    let query = GlifiQueryAST(
+                        root: .proximity(
+                            left: left.node, right: right.node, distance: distance,
+                            unit: .surfaceToken, ordered: ordered))
+                    for maximumResultCount in [0, 1, 4, 100] {
+                        let result = try GlifiQueryEvaluator().evaluate(
+                            query, in: source, tokenization: tokenization,
+                            limits: queryTermLimits(
+                                maximumResultCount: maximumResultCount,
+                                maximumProximityDistance: Int.max))
+                        #expect(result.matchedScope == !expected.isEmpty)
+                        #expect(
+                            result.matches.map(\.range)
+                                == Array(expected.prefix(maximumResultCount)))
+                        #expect(result.isTruncated == (expected.count > maximumResultCount))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Test("La prossimità selettiva non esplora il prodotto cartesiano degli operandi")
+func queryEvaluatorIndexesSelectiveProximityWithinBudget() throws {
+    let source = try imported(
+        String(repeating: "a ", count: 1_001) + String(repeating: "b ", count: 1_001))
+    let tokenization = try GlifiItalianTokenizer().tokenize(source.text)
+    let query = try GlifiQueryParser().parse("a BEFORE/0 b")
+    let result = try GlifiQueryEvaluator().evaluate(
+        query, in: source, tokenization: tokenization,
+        limits: queryTermLimits(maximumResultCount: 1, maximumEvaluationStepCount: 16_000))
+
+    #expect(result.matchedScope)
+    #expect(result.matches.map(\.range) == [try GlifiUTF8Range(start: 2_000, end: 2_003)])
+    #expect(!result.isTruncated)
+}
+
+@Test("Frasi e NFA regex rispettano lo stesso budget di passi della valutazione")
+func queryEvaluatorBoundsPhraseAndRegexWork() throws {
+    let source = try imported("aaaa c c c b")
+    let tokenization = try GlifiItalianTokenizer().tokenize(source.text)
+    let queries = [
+        GlifiQueryAST(root: .phrase(field: .form, values: ["aaaa", "b"], slop: 3)),
+        GlifiQueryAST(root: .regex(field: .form, pattern: "^a+$", flags: [])),
+    ]
+    for query in queries {
+        #expect(
+            try GlifiQueryEvaluator().evaluate(
+                query, in: source, tokenization: tokenization
+            ).matchedScope)
+        do {
+            _ = try GlifiQueryEvaluator().evaluate(
+                query, in: source, tokenization: tokenization,
+                limits: queryTermLimits(maximumResultCount: 1, maximumEvaluationStepCount: 5))
+            Issue.record("An exhausted phrase or regex budget succeeded")
+        } catch let failure as GlifiFailure {
+            #expect(failure.code == "query.evaluation-step-limit-exceeded")
+            #expect(failure.category == .insufficientResources)
+        }
+    }
+}
+
+@Test("I byte aggregati di una frase sono validati prima di normalizzazione e lavoro")
+func queryEvaluatorBoundsProgrammaticPhraseBytesBeforeWork() throws {
+    let evaluator = GlifiQueryEvaluator()
+    let limits = queryTermLimits(
+        maximumResultCount: 1, maximumEvaluationStepCount: 0, maximumQueryByteCount: 4)
+    try evaluator.validate(
+        GlifiQueryAST(root: .phrase(field: .normalized, values: ["é", "ab"], slop: 0)),
+        limits: limits)
+    let source = try imported("é ab")
+    let tokenization = try GlifiItalianTokenizer().tokenize(source.text)
+    for values in [["e\u{0301}", "ab"], [String(repeating: "a", count: 65_537)]] {
+        let query = GlifiQueryAST(root: .phrase(field: .normalized, values: values, slop: 0))
+        do {
+            _ = try evaluator.evaluate(
+                query, in: source, tokenization: tokenization, limits: limits)
+            Issue.record("An oversized programmatic phrase succeeded")
+        } catch let failure as GlifiFailure {
+            #expect(failure.code == "query.byte-limit-exceeded")
+            #expect(failure.category == .insufficientResources)
+            #expect(failure.operation == .query)
+        }
+    }
+}
+
+@Test("L'inizializzatore query originale resta utilizzabile come valore funzione")
+func queryLimitsPreserveLegacyInitializerFunctionReference() {
+    let factory: (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) -> GlifiQueryLimits =
+        GlifiQueryLimits.init
+    let standard = GlifiQueryLimits.standard
+    let limits = factory(
+        standard.maximumQueryByteCount, standard.maximumDepth, standard.maximumNodeCount,
+        standard.maximumPhraseTokenCount, standard.maximumProximityDistance,
+        standard.maximumRegexByteCount, standard.maximumRegexInputByteCount,
+        standard.maximumSourceCount, standard.maximumScannedByteCount,
+        standard.maximumResultCount, standard.contextTokenCount)
+    #expect(limits == standard)
+}
+
+@Test("La distanza estrema di una frase resta nei token disponibili senza overflow")
+func queryEvaluatorBoundsExtremePhraseSlop() throws {
+    let source = try imported("zero uno prova due tre")
+    let tokenization = try GlifiItalianTokenizer().tokenize(source.text)
+    let query = GlifiQueryAST(
+        root: .phrase(field: .form, values: ["uno", "tre"], slop: Int.max))
+    let result = try GlifiQueryEvaluator().evaluate(
+        query, in: source, tokenization: tokenization,
+        limits: queryTermLimits(maximumResultCount: Int.max, maximumProximityDistance: Int.max))
+
+    #expect(result.matches.map { $0.range.text(in: source.text) } == ["uno prova due tre"])
+    #expect(!result.isTruncated)
+}
+
 @Test("Il motore interroga la generazione persistita senza accesso laterale allo store")
 func engineQueriesPersistedProject() async throws {
     let root = FileManager.default.temporaryDirectory.appending(
@@ -324,20 +596,29 @@ private func queryTermExpectedMatches(
     }
 }
 
-private func queryTermLimits(maximumResultCount: Int) -> GlifiQueryLimits {
+private func queryTermLimits(
+    maximumResultCount: Int,
+    maximumProximityDistance: Int = GlifiQueryLimits.standard.maximumProximityDistance,
+    contextTokenCount: Int = 1,
+    maximumIntermediateAnchorCount: Int = 100_000,
+    maximumEvaluationStepCount: Int = 1_000_000,
+    maximumQueryByteCount: Int = GlifiQueryLimits.standard.maximumQueryByteCount
+) -> GlifiQueryLimits {
     let standard = GlifiQueryLimits.standard
     return GlifiQueryLimits(
-        maximumQueryByteCount: standard.maximumQueryByteCount,
+        maximumQueryByteCount: maximumQueryByteCount,
         maximumDepth: standard.maximumDepth,
         maximumNodeCount: standard.maximumNodeCount,
         maximumPhraseTokenCount: standard.maximumPhraseTokenCount,
-        maximumProximityDistance: standard.maximumProximityDistance,
+        maximumProximityDistance: maximumProximityDistance,
         maximumRegexByteCount: standard.maximumRegexByteCount,
         maximumRegexInputByteCount: standard.maximumRegexInputByteCount,
         maximumSourceCount: standard.maximumSourceCount,
         maximumScannedByteCount: standard.maximumScannedByteCount,
         maximumResultCount: maximumResultCount,
-        contextTokenCount: 1)
+        contextTokenCount: contextTokenCount,
+        maximumIntermediateAnchorCount: maximumIntermediateAnchorCount,
+        maximumEvaluationStepCount: maximumEvaluationStepCount)
 }
 
 private func imported(_ text: String) throws -> GlifiImportedText {

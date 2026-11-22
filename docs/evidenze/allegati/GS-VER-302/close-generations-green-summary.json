@@ -1,0 +1,23 @@
+{
+  "result": "Passed",
+  "passedTests": 1,
+  "failedTests": 0,
+  "skippedTests": 0,
+  "totalTestCount": 1,
+  "newRegressionDetailsKeys": [
+    "devices",
+    "duration",
+    "durationInSeconds",
+    "hasMediaAttachments",
+    "hasPerformanceMetrics",
+    "testDescription",
+    "testIdentifier",
+    "testIdentifierURL",
+    "testName",
+    "testPlanConfigurations",
+    "testResult",
+    "testRuns"
+  ],
+  "newRegressionRunCount": 1,
+  "runtimeWarningCount": 0
+}

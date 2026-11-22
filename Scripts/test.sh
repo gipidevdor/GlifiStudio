@@ -17,9 +17,8 @@ trap cleanup EXIT
 
 cd "$project_directory"
 
-glifi_sweep_stale_temporaries "$temporary_root"
-glifi_require_free_space "$temporary_root"
-glifi_prepare_build_cache "$build_cache_directory"
+glifi_require_free_space "$temporary_root" || exit 1
+glifi_prepare_build_cache "$build_cache_directory" || exit 1
 
 case "${1:-}" in
     --macos-app)

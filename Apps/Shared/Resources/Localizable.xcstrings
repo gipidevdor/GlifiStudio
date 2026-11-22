@@ -9893,6 +9893,38 @@
         }
       }
     },
+    "failure.query.evaluation-step-limit-exceeded" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The query exceeded its computation budget. Narrow the search or simplify the query."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La ricerca ha superato il budget di calcolo. Restringi l'ambito o semplifica la query."
+          }
+        }
+      }
+    },
+    "failure.query.intermediate-anchor-limit-exceeded" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The query requires too many intermediate matches. Narrow the search or simplify the query."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La ricerca richiede troppe corrispondenze intermedie. Restringi l'ambito o semplifica la query."
+          }
+        }
+      }
+    },
     "failure.query.invalid-ast" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -45332,6 +45364,222 @@
           "stringUnit": {
             "state": "translated",
             "value": "Units with code"
+          }
+        }
+      }
+    },
+    "evaluation.observation.field %@ %lld" : {
+      "comment": "Accessible name of a field within a numbered evaluation observation.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, observation %2$lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, osservazione %2$lld"
+          }
+        }
+      }
+    },
+    "evaluation.document.field %@ %lld" : {
+      "comment": "Accessible name of a field within a numbered annotated document.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, document %2$lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, documento %2$lld"
+          }
+        }
+      }
+    },
+    "evaluation.feature.field %@ %lld %@ %lld" : {
+      "comment": "Accessible field name with observation number, gold or predicted side, and feature number.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, observation %2$lld, %3$@, feature %4$lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, osservazione %2$lld, %3$@, tratto %4$lld"
+          }
+        }
+      }
+    },
+    "evaluation.entity.field %@ %lld %@ %lld" : {
+      "comment": "Accessible field name with document number, gold or predicted side, and entity number.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, document %2$lld, %3$@, entity %4$lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, documento %2$lld, %3$@, entità %4$lld"
+          }
+        }
+      }
+    },
+    "evaluation.observation.remove %lld" : {
+      "comment": "Accessible action name for removing one numbered observation.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove observation %lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rimuovi osservazione %lld"
+          }
+        }
+      }
+    },
+    "evaluation.document.remove %lld" : {
+      "comment": "Accessible action name for removing one numbered annotated document.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove document %lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rimuovi documento %lld"
+          }
+        }
+      }
+    },
+    "evaluation.feature.remove %lld %@ %lld" : {
+      "comment": "Accessible removal action with observation, gold or predicted side, and feature number.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove feature %3$lld, %2$@, observation %1$lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rimuovi tratto %3$lld, %2$@, osservazione %1$lld"
+          }
+        }
+      }
+    },
+    "evaluation.entity.remove %lld %@ %lld" : {
+      "comment": "Accessible removal action with document, gold or predicted side, and entity number.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove entity %3$lld, %2$@, document %1$lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rimuovi entità %3$lld, %2$@, documento %1$lld"
+          }
+        }
+      }
+    },
+    "evaluation.feature.add %lld %@" : {
+      "comment": "Accessible add action with observation number and gold or predicted side.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a feature, observation %1$lld, %2$@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiungi un tratto, osservazione %1$lld, %2$@"
+          }
+        }
+      }
+    },
+    "evaluation.entity.add %lld %@" : {
+      "comment": "Accessible add action with document number and gold or predicted side.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add an entity, document %1$lld, %2$@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiungi un’entità, documento %1$lld, %2$@"
+          }
+        }
+      }
+    },
+    "evaluation.feature.number %lld" : {
+      "comment": "Visible heading identifying a feature within one gold or predicted annotation group.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feature %lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tratto %lld"
+          }
+        }
+      }
+    },
+    "evaluation.entity.number %lld" : {
+      "comment": "Visible heading identifying an entity within one gold or predicted annotation group.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entity %lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entità %lld"
           }
         }
       }

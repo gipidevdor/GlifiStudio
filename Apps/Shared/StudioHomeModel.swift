@@ -24,6 +24,21 @@ enum StudioBusyState: Sendable, Equatable {
     case working(messageKey: String)
 }
 
+/// Admits work synchronously after every currently owned task has reached its terminal state.
+///
+/// The owner clears or replaces its current task before that task completes.
+@MainActor
+func studioAdmitAfterLatestOwnedTask<Result: Sendable>(
+    current: @MainActor () -> Task<Void, Never>?, admission: @MainActor () -> Result
+) async -> Result? {
+    while let task = current() {
+        await task.value
+        guard !Task.isCancelled else { return nil }
+    }
+    guard !Task.isCancelled else { return nil }
+    return admission()
+}
+
 enum StudioIntentOption: String, CaseIterable, Identifiable, Sendable {
     case understandCollection = "understand.collection"
     case discoverContents = "discover.contents"
@@ -416,11 +431,50 @@ final class StudioHomeModel {
     private var session: GlifiStudioProjectSession?
     private var activeExecution: GlifiStudioAnalysisExecution?
     #if os(macOS)
+        private var activeOperationTask: Task<Void, Never>?
         private var activeAnalysisTask: Task<Void, any Error>?
+        private var projectClosingTask: Task<Void, Never>?
+        private var isClosingProject = false
         private var latestDocumentAttachmentID: UUID?
         private var documentAttachmentWaiter: StudioDocumentAttachmentWaiter?
     #endif
     private var securityScopedProjectURL: URL?
+
+    #if os(macOS)
+        /// Drains owned work before releasing the session and its security-scoped access.
+        func closeProject() async {
+            if let projectClosingTask {
+                await projectClosingTask.value
+                return
+            }
+            isClosingProject = true
+            latestDocumentAttachmentID = nil
+            let waiting = documentAttachmentWaiter
+            documentAttachmentWaiter = nil
+            waiting?.continuation.resume()
+            let operation = activeOperationTask
+            operation?.cancel()
+            activeAnalysisTask?.cancel()
+            activeExecution?.cancel()
+            let closing = Task { @MainActor [self] in
+                defer {
+                    isClosingProject = false
+                    projectClosingTask = nil
+                }
+                await operation?.value
+                await session?.close()
+                session = nil
+                activeExecution = nil
+                securityScopedProjectURL?.stopAccessingSecurityScopedResource()
+                securityScopedProjectURL = nil
+                projectURL = nil
+                snapshot = nil
+                clearAnalysisState()
+            }
+            projectClosingTask = closing
+            await closing.value
+        }
+    #endif
 
     init(service: GlifiStudioService = GlifiStudioService()) {
         self.service = service
@@ -547,7 +601,7 @@ final class StudioHomeModel {
     }
 
     func createProject() async {
-        await run(messageKey: "progress.creating-project") {
+        await run(messageKey: "progress.creating-project") { [self] in
             let root = try Self.projectsRoot()
             try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
             let sanitized = Self.sanitizeFileName(projectNameDraft)
@@ -561,12 +615,18 @@ final class StudioHomeModel {
             return
         }
         #if os(macOS)
-            guard !Task.isCancelled else { return }
-            let requestID = UUID()
-            latestDocumentAttachmentID = requestID
-            let superseded = documentAttachmentWaiter
-            documentAttachmentWaiter = nil
-            superseded?.continuation.resume()
+            guard
+                let requestID = await studioAdmitAfterLatestOwnedTask(
+                    current: { projectClosingTask },
+                    admission: { [self] in
+                        let requestID = UUID()
+                        latestDocumentAttachmentID = requestID
+                        let superseded = documentAttachmentWaiter
+                        documentAttachmentWaiter = nil
+                        superseded?.continuation.resume()
+                        return requestID
+                    })
+            else { return }
             defer { finishDocumentAttachment(requestID) }
             while documentAttachmentIsCurrent(requestID) {
                 guard projectURL?.standardizedFileURL != url.standardizedFileURL || session == nil
@@ -582,7 +642,7 @@ final class StudioHomeModel {
                 {
                     admitted = await run(
                         messageKey: "progress.creating-project", documentAttachmentID: requestID
-                    ) {
+                    ) { [self] in
                         try await initializePackage(
                             at: url, allowsEmptyPlaceholder: true,
                             documentAttachmentID: requestID)
@@ -600,7 +660,7 @@ final class StudioHomeModel {
             if needsPackageInitialization,
                 !FileManager.default.fileExists(atPath: url.appending(path: "manifest.json").path)
             {
-                await run(messageKey: "progress.creating-project") {
+                await run(messageKey: "progress.creating-project") { [self] in
                     try await initializePackage(at: url, allowsEmptyPlaceholder: true)
                 }
             } else {
@@ -616,7 +676,7 @@ final class StudioHomeModel {
     private func openProject(at url: URL, documentAttachmentID: UUID?) async -> Bool {
         await run(
             messageKey: "progress.opening-project", documentAttachmentID: documentAttachmentID
-        ) {
+        ) { [self] in
             guard documentAttachmentIsCurrent(documentAttachmentID) else { return }
             let accessGranted = url.startAccessingSecurityScopedResource()
             do {
@@ -678,8 +738,9 @@ final class StudioHomeModel {
 
     #if os(macOS)
         /// Dispatches reopening through the native document action without replacing this session.
-        func reopenLastProject(using opener: @MainActor (URL) async throws -> Void) async {
-            await run(messageKey: "progress.opening-project") {
+        func reopenLastProject(using opener: @escaping @MainActor (URL) async throws -> Void) async
+        {
+            await run(messageKey: "progress.opening-project") { [self] in
                 let url = try resolvedLastProjectURL()
                 let accessGranted = url.startAccessingSecurityScopedResource()
                 defer {
@@ -733,7 +794,7 @@ final class StudioHomeModel {
     }
 
     func importSources(at urls: [URL]) async {
-        await run(messageKey: "progress.importing") {
+        await run(messageKey: "progress.importing") { [self] in
             let active = try requireSession()
             importProgressTotal = urls.count
             importProgressCompleted = 0
@@ -762,7 +823,7 @@ final class StudioHomeModel {
     }
 
     func planInvestigation() async {
-        await run(messageKey: "progress.planning") {
+        await run(messageKey: "progress.planning") { [self] in
             let active = try requireSession()
             let request = makePlanRequest()
             let planned = try await active.planAnalysis(request)
@@ -784,7 +845,7 @@ final class StudioHomeModel {
     }
 
     func executePlan() async {
-        await run(messageKey: "progress.executing") {
+        await run(messageKey: "progress.executing") { [self] in
             let active = try requireSession()
             let request = makePlanRequest()
             lastPlanRequest = request
@@ -816,7 +877,7 @@ final class StudioHomeModel {
     }
 
     func createInvestigationFromExecution() async {
-        await run(messageKey: "progress.investigating") {
+        await run(messageKey: "progress.investigating") { [self] in
             let active = try requireSession()
             guard let executionResult else {
                 throw presentationFailure(messageKey: "failure.investigation.missing-execution")
@@ -849,7 +910,7 @@ final class StudioHomeModel {
     }
 
     func refreshInvestigationHeads() async {
-        await run(messageKey: "progress.investigating") {
+        await run(messageKey: "progress.investigating") { [self] in
             let active = try requireSession()
             investigationHeads = try await active.investigationHeads()
             if let current = investigation {
@@ -866,7 +927,7 @@ final class StudioHomeModel {
     }
 
     func reviseEditorialSelection() async {
-        await run(messageKey: "progress.revising-selection") {
+        await run(messageKey: "progress.revising-selection") { [self] in
             let active = try requireSession()
             guard let investigation else {
                 throw presentationFailure(messageKey: "failure.export.missing-investigation")
@@ -889,7 +950,7 @@ final class StudioHomeModel {
     }
 
     func runQuery() async {
-        await run(messageKey: "progress.querying") {
+        await run(messageKey: "progress.querying") { [self] in
             let active = try requireSession()
             let trimmed = queryDraft.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty else {
@@ -908,7 +969,7 @@ final class StudioHomeModel {
 
     func selectQueryMatch(_ match: GlifiStudioQueryMatch) async {
         #if os(macOS)
-            await run(messageKey: "progress.loading-source") {
+            await run(messageKey: "progress.loading-source") { [self] in
                 let active = try requireSession()
                 let source = try await active.sourceText(sourceRevisionID: match.sourceRevisionID)
                 selectedQueryMatchID = match.id
@@ -916,7 +977,7 @@ final class StudioHomeModel {
             }
         #else
             selectedQueryMatchID = match.id
-            await run(messageKey: "progress.loading-source") {
+            await run(messageKey: "progress.loading-source") { [self] in
                 let active = try requireSession()
                 sourceText = try await active.sourceText(sourceRevisionID: match.sourceRevisionID)
             }
@@ -924,14 +985,14 @@ final class StudioHomeModel {
     }
 
     func browseSource(_ sourceRevisionID: String) async {
-        await run(messageKey: "progress.loading-source") {
+        await run(messageKey: "progress.loading-source") { [self] in
             browsedSourceText = try await requireSession().sourceText(
                 sourceRevisionID: sourceRevisionID)
         }
     }
 
     func openEvidenceSource(_ evidence: GlifiStudioEvidence) async {
-        await run(messageKey: "progress.loading-source") {
+        await run(messageKey: "progress.loading-source") { [self] in
             let active = try requireSession()
             guard let reference = evidence.sourceReferences.first else {
                 throw presentationFailure(messageKey: "failure.evidence.missing-source")
@@ -958,7 +1019,7 @@ final class StudioHomeModel {
     /// Selects one datum of a view and opens its first reachable source.
     func selectVisualMark(_ mark: GlifiStudioVisualMark) async {
         #if os(macOS)
-            await run(messageKey: "progress.loading-source") {
+            await run(messageKey: "progress.loading-source") { [self] in
                 guard let sourceRevisionID = mark.sourceRevisionIDs.first else {
                     selectedVisualMarkID = mark.id
                     clearEvidenceSource()
@@ -977,7 +1038,7 @@ final class StudioHomeModel {
             guard let sourceRevisionID = mark.sourceRevisionIDs.first else {
                 return
             }
-            await run(messageKey: "progress.loading-source") {
+            await run(messageKey: "progress.loading-source") { [self] in
                 let active = try requireSession()
                 evidenceSourceText = try await active.sourceText(sourceRevisionID: sourceRevisionID)
                 // Il lineage contributivo raggiunge il documento, non posizioni esatte.
@@ -1009,7 +1070,7 @@ final class StudioHomeModel {
     }
 
     func loadQualitativeState() async {
-        await run(messageKey: "progress.loading-coding") {
+        await run(messageKey: "progress.loading-coding") { [self] in
             let active = try requireSession()
             qualitativeState = try await active.qualitativeState()
             try await refreshCodingTexts(active)
@@ -1017,7 +1078,7 @@ final class StudioHomeModel {
     }
 
     func loadCodingSource(_ sourceRevisionID: String) async {
-        await run(messageKey: "progress.loading-source") {
+        await run(messageKey: "progress.loading-source") { [self] in
             let active = try requireSession()
             codingPassage = nil
             codingSegments = try await active.textSegments(sourceRevisionID: sourceRevisionID)
@@ -1032,7 +1093,7 @@ final class StudioHomeModel {
     /// Resolves a structured passage selection and keeps it as the passage to code.
     func resolvePassage(_ selection: GlifiStudioPassageSelection) async {
         guard let sourceRevisionID = codingSourceRevisionID else { return }
-        await run(messageKey: "progress.loading-source") {
+        await run(messageKey: "progress.loading-source") { [self] in
             let active = try requireSession()
             codingPassage = nil
             codingPassage = try await active.passage(
@@ -1106,7 +1167,7 @@ final class StudioHomeModel {
     func assessAgreement(coders: [String], revision: Int? = nil) async {
         guard let codebook = activeCodebook else { return }
         let requestedRevision = revision ?? codebook.revision
-        await run(messageKey: "progress.assessing-agreement") {
+        await run(messageKey: "progress.assessing-agreement") { [self] in
             let active = try requireSession()
             let result = try await active.assessStoredCodingAgreement(
                 codebookID: codebook.codebookID, codebookRevision: requestedRevision,
@@ -1120,7 +1181,7 @@ final class StudioHomeModel {
     }
 
     private func appendQualitative(_ change: GlifiStudioQualitativeChange) async {
-        await run(messageKey: "progress.recording-coding") {
+        await run(messageKey: "progress.recording-coding") { [self] in
             let active = try requireSession()
             do {
                 qualitativeState = try await active.appendQualitativeChange(change)
@@ -1213,7 +1274,7 @@ final class StudioHomeModel {
         }
 
         func openSummarySource(_ selected: GlifiStudioSelectedSentence) async {
-            await run(messageKey: "progress.loading-source") {
+            await run(messageKey: "progress.loading-source") { [self] in
                 let active = try requireSession()
                 let source = try await active.sourceText(
                     sourceRevisionID: selected.sentence.sourceRevisionID)
@@ -1250,7 +1311,7 @@ final class StudioHomeModel {
         }
 
         func openBM25Source(_ document: GlifiStudioBM25RankedDocument) async {
-            await run(messageKey: "progress.loading-source") {
+            await run(messageKey: "progress.loading-source") { [self] in
                 bm25SourceText = try await requireSession().sourceText(
                     sourceRevisionID: document.sourceRevisionID)
             }
@@ -1687,7 +1748,7 @@ final class StudioHomeModel {
     #endif
 
     func exportInvestigation(to destinationDirectory: URL) async {
-        await run(messageKey: "progress.exporting") {
+        await run(messageKey: "progress.exporting") { [self] in
             let active = try requireSession()
             guard let investigation else {
                 throw presentationFailure(messageKey: "failure.export.missing-investigation")
@@ -2043,7 +2104,7 @@ final class StudioHomeModel {
         operation: @escaping @MainActor () async throws -> Void
     ) async {
         #if os(macOS)
-            await run(messageKey: messageKey) {
+            await run(messageKey: messageKey) { [self] in
                 let task = Task { @MainActor in try await operation() }
                 activeAnalysisTask = task
                 defer { activeAnalysisTask = nil }
@@ -2061,27 +2122,52 @@ final class StudioHomeModel {
     @discardableResult
     private func run(
         messageKey: String, documentAttachmentID: UUID? = nil,
-        operation: () async throws -> Void
+        operation: @escaping @MainActor () async throws -> Void
     ) async -> Bool {
+        #if os(macOS)
+            guard !isClosingProject else { return false }
+        #endif
         guard !isBusy, documentAttachmentIsCurrent(documentAttachmentID) else { return false }
         busyState = .working(messageKey: messageKey)
         lastFailure = nil
-        defer {
-            busyState = .idle
-            #if os(macOS)
-                let waiting = documentAttachmentWaiter
-                documentAttachmentWaiter = nil
-                waiting?.continuation.resume()
-            #endif
-        }
+        #if os(macOS)
+            let task = Task { @MainActor [self] in
+                defer {
+                    activeOperationTask = nil
+                    busyState = .idle
+                    let waiting = documentAttachmentWaiter
+                    documentAttachmentWaiter = nil
+                    waiting?.continuation.resume()
+                }
+                await performOperation(operation)
+            }
+            activeOperationTask = task
+            await withTaskCancellationHandler {
+                await task.value
+            } onCancel: {
+                task.cancel()
+            }
+        #else
+            defer { busyState = .idle }
+            await performOperation(operation)
+        #endif
+        return true
+    }
+
+    private func performOperation(_ operation: () async throws -> Void) async {
         do {
+            try Task.checkCancellation()
             try await operation()
         } catch let failure as GlifiStudioFailure {
             lastFailure = failure
+        } catch is CancellationError {
+            lastFailure = GlifiStudioFailure(
+                code: "operation.cancelled", category: "cancelled", operation: "present",
+                retryDisposition: "newRequest", retainedState: "unchanged",
+                messageKey: "failure.category.cancelled")
         } catch {
             lastFailure = presentationFailure(messageKey: "failure.internal.unexpected")
         }
-        return true
     }
 
     private func presentationFailure(messageKey: String) -> GlifiStudioFailure {

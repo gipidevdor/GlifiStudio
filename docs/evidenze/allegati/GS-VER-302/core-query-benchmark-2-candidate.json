@@ -1,0 +1,79 @@
+{
+  "cachePolicy" : "warm process; setup and one untimed warm-up; no cache flush",
+  "configuration" : "Release, GlifiBenchmark --query-evaluation",
+  "device" : "Mac16,3",
+  "lowPowerModeAtEnd" : true,
+  "lowPowerModeAtStart" : true,
+  "measurements" : [
+    {
+      "check" : "source=sha256:1cc07f52369bd3042161e1e52d2d36a4822812cd408ee4b5232891a726b3b35f; query=sha256:2f6fc3ca4b40c87304bb63ed8d49594c6b2ee0f151a6eef34229c468db5243be; matches=100; independent exact UTF-8 intervals; truncated=false; complete equality 8\/8 evaluations",
+      "generator" : "deterministic repeated ASCII; import\/tokenization\/parser outside timer",
+      "identifier" : "ordered-proximity-100x100",
+      "maximumSeconds" : 0.000154292,
+      "medianSeconds" : 0.000147209,
+      "minimumSeconds" : 0.000128833,
+      "requirement" : "GS-QRY-001; RQ-009, RQ-042"
+    },
+    {
+      "check" : "source=sha256:e5bbeb6edcc10fd685409e810762221c4f5f6f6280666a5d1fcddc8509f10b33; query=sha256:cf628315126a30460f09589ceafc3d84c1f2c1c609da2cd000cd1da15ad1623d; matches=100; independent exact UTF-8 intervals; truncated=false; complete equality 8\/8 evaluations",
+      "generator" : "deterministic repeated ASCII; import\/tokenization\/parser outside timer",
+      "identifier" : "symmetric-proximity-100x100",
+      "maximumSeconds" : 0.000204334,
+      "medianSeconds" : 0.000181541,
+      "minimumSeconds" : 0.000180916,
+      "requirement" : "GS-QRY-001; RQ-009, RQ-042"
+    },
+    {
+      "check" : "source=sha256:59aa271871c21379f83c1244123cd8b340180a4081091fb15d7a1063dc5f0ba7; query=sha256:b5147e9c2a37c165e25b567652da58e59d5905222b0413d81c68a8dc3f404165; matches=1000; independent exact UTF-8 intervals; truncated=false; complete equality 8\/8 evaluations",
+      "generator" : "deterministic repeated ASCII; import\/tokenization\/parser outside timer",
+      "identifier" : "boolean-union-1000-tokens",
+      "maximumSeconds" : 0.000473208,
+      "medianSeconds" : 0.000459459,
+      "minimumSeconds" : 0.000439667,
+      "requirement" : "GS-QRY-001; RQ-009, RQ-042"
+    }
+  ],
+  "operatingSystem" : "Version 27.2.1 (Build 26B131)",
+  "physicalMemoryBytes" : 17179869184,
+  "rawSamplesSeconds" : {
+    "boolean-union-1000-tokens" : [
+      0.000473208,
+      0.000455792,
+      0.000459459,
+      0.000459708,
+      0.000439667,
+      0.000444042,
+      0.000463417
+    ],
+    "ordered-proximity-100x100" : [
+      0.000152541,
+      0.000147209,
+      0.000139916,
+      0.000130042,
+      0.000147458,
+      0.000154292,
+      0.000128833
+    ],
+    "symmetric-proximity-100x100" : [
+      0.000204334,
+      0.000187708,
+      0.00018475,
+      0.000180916,
+      0.000181541,
+      0.000181333,
+      0.000181042
+    ]
+  },
+  "samples" : 7,
+  "sourceHashes" : {
+    "GlifiBenchmark\/GlifiQueryEvaluationBenchmarks.swift" : "sha256:7242c0a6967d7aa8d3163e0eb6668164bd9da10274ea90579fc23822d7192e09",
+    "GlifiBenchmark\/main.swift" : "sha256:248ffb8bd8932a85084ab6a3f2b68c9a737209d4609aa1c6e285fd7a013cc412",
+    "GlifiCore\/GlifiQueryEvaluator.swift" : "sha256:2c9a423bd3dcbdd684641cf3aac25f1429f8aaa7361ee68e0c594c6857726571",
+    "GlifiCore\/GlifiQueryModel.swift" : "sha256:c5a3676fc2bc510185a0b11ddf8d2a5cb60491738b8c04de1ef62153c72c2e83"
+  },
+  "statistic" : "median, min, max wall-clock seconds per evaluation",
+  "thermalStateAtEnd" : "nominal",
+  "thermalStateAtStart" : "nominal",
+  "threshold" : "observational before\/after comparison; no release gate",
+  "warmUpRuns" : 1
+}

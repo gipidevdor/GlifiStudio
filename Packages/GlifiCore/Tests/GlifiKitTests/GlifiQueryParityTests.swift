@@ -6,6 +6,67 @@ import Testing
 
 @testable import GlifiKit
 
+@Test(
+    "Core e Kit conservano match tardivi e failure dei budget intermedi",
+    arguments: [1_002, 100_001])
+func queryIntermediateBudgetParity(repetitions: Int) async throws {
+    let root = FileManager.default.temporaryDirectory.appending(
+        path: "GlifiQueryBudgetParity-\(UUID().uuidString)", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: false)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let text = String(repeating: "a ", count: repetitions) + "b"
+    let source = root.appending(path: "synthetic.txt")
+    try Data(text.utf8).write(to: source)
+    let session = try await GlifiStudioService().createProject(at: root.appending(path: "Q.glifi"))
+    do {
+        _ = try await session.importText(at: source, format: .plainText)
+        let generation = try await session.snapshot().generation
+        let imported = try GlifiTextImporter().importText(from: Data(text.utf8), format: .plainText)
+        let tokens = try GlifiItalianTokenizer().tokenize(imported.text)
+        let ast = try GlifiQueryParser().parse("a BEFORE/0 b")
+        if repetitions < GlifiQueryLimits.standard.maximumIntermediateAnchorCount {
+            let core = try GlifiQueryEvaluator().evaluate(ast, in: imported, tokenization: tokens)
+            let kit = try await session.query("a BEFORE/0 b")
+            #expect(core.matchedScope && kit.matchedSourceCount == 1)
+            #expect(core.matches.count == 1 && kit.matches.count == 1)
+            #expect(kit.matches.map(\.startUTF8) == [repetitions * 2 - 2])
+            #expect(kit.matches.map(\.endUTF8) == [repetitions * 2 + 1])
+            #expect(core.matches.map { $0.range.start } == kit.matches.map(\.startUTF8))
+            #expect(core.matches.map { $0.range.end } == kit.matches.map(\.endUTF8))
+            #expect(!core.isTruncated && !kit.isTruncated)
+            #expect(try await session.query(canonicalAST: ast.canonicalData()) == kit)
+        } else {
+            do {
+                _ = try GlifiQueryEvaluator().evaluate(ast, in: imported, tokenization: tokens)
+                Issue.record("Core accepted an exhausted intermediate-anchor budget")
+            } catch let failure as GlifiFailure {
+                #expect(failure.code == "query.intermediate-anchor-limit-exceeded")
+                #expect(failure.category == .insufficientResources)
+            }
+            for canonical in [false, true] {
+                do {
+                    if canonical {
+                        _ = try await session.query(canonicalAST: ast.canonicalData())
+                    } else {
+                        _ = try await session.query("a BEFORE/0 b")
+                    }
+                    Issue.record("Kit accepted an exhausted intermediate-anchor budget")
+                } catch let failure as GlifiStudioFailure {
+                    #expect(failure.code == "query.intermediate-anchor-limit-exceeded")
+                    #expect(failure.category == "insufficientResources")
+                    #expect(failure.retryDisposition == "afterConditionsChange")
+                    #expect(failure.operation == "query" && failure.arguments.isEmpty)
+                }
+            }
+        }
+        #expect(try await session.snapshot().generation == generation)
+        await session.close()
+    } catch {
+        await session.close()
+        throw error
+    }
+}
+
 // RF-080: GlifiCore e GlifiKit compilano la stessa QueryAST canonica e producono gli stessi
 // intervalli nello stesso ordine; app e CLI usano solo `GlifiStudioProjectSession.query`.
 private struct QueryFixture: Decodable {

@@ -1,0 +1,162 @@
+{
+  "baselineCommit": "8901f4ad3f17a27f02fc7628221641d66346b38c",
+  "order": [
+    "baseline",
+    "candidate",
+    "candidate",
+    "baseline"
+  ],
+  "configuration": "Release, identical versioned --query-evaluation harness overlay on archived baseline",
+  "device": "Mac16,3",
+  "operatingSystem": "Version 27.2.1 (Build 26B131)",
+  "thermalState": "nominal throughout",
+  "lowPowerMode": true,
+  "sourceHashes": {
+    "baseline": {
+      "GlifiBenchmark/GlifiQueryEvaluationBenchmarks.swift": "sha256:7242c0a6967d7aa8d3163e0eb6668164bd9da10274ea90579fc23822d7192e09",
+      "GlifiBenchmark/main.swift": "sha256:248ffb8bd8932a85084ab6a3f2b68c9a737209d4609aa1c6e285fd7a013cc412",
+      "GlifiCore/GlifiQueryEvaluator.swift": "sha256:7c51f0cbce4b4dc3d8d9cd9a411ab9e74bd8e97748ead65e384967941bb06cbb",
+      "GlifiCore/GlifiQueryModel.swift": "sha256:374a49d8fcc5f42d9b18e2533e1a6ad4f04184443bd08111cecb66648954a20f"
+    },
+    "candidate": {
+      "GlifiBenchmark/GlifiQueryEvaluationBenchmarks.swift": "sha256:7242c0a6967d7aa8d3163e0eb6668164bd9da10274ea90579fc23822d7192e09",
+      "GlifiBenchmark/main.swift": "sha256:248ffb8bd8932a85084ab6a3f2b68c9a737209d4609aa1c6e285fd7a013cc412",
+      "GlifiCore/GlifiQueryEvaluator.swift": "sha256:2c9a423bd3dcbdd684641cf3aac25f1429f8aaa7361ee68e0c594c6857726571",
+      "GlifiCore/GlifiQueryModel.swift": "sha256:c5a3676fc2bc510185a0b11ddf8d2a5cb60491738b8c04de1ef62153c72c2e83"
+    }
+  },
+  "binarySHA256": {
+    "baseline": "3c93e781f5f56844604fa5c9a4cd09dc6cfb9516baccf0b6729c7d627d785453",
+    "candidate": "877431a15e03156104190c37987cabe3a7fa35f1b06484ca6e29dfedb38c46f6"
+  },
+  "workloads": {
+    "boolean-union-1000-tokens": {
+      "baselineMedianSeconds": 0.0004922500000000001,
+      "candidateMedianSeconds": 0.00042764599999999995,
+      "candidateToBaselineRatio": 0.8687577450482477,
+      "sampleCountEach": 14,
+      "rawSamplesSeconds": {
+        "baseline": [
+          0.000580625,
+          0.000505125,
+          0.000485041,
+          0.000494167,
+          0.000483083,
+          0.0004795,
+          0.00048025,
+          0.000508375,
+          0.00050575,
+          0.000494792,
+          0.000501958,
+          0.000490333,
+          0.00048775,
+          0.000486666
+        ],
+        "candidate": [
+          0.000473208,
+          0.000455792,
+          0.000459459,
+          0.000459708,
+          0.000439667,
+          0.000444042,
+          0.000463417,
+          0.000415625,
+          0.00038625,
+          0.000382,
+          0.000375875,
+          0.000383083,
+          0.000380667,
+          0.000389792
+        ]
+      }
+    },
+    "ordered-proximity-100x100": {
+      "baselineMedianSeconds": 0.000103541,
+      "candidateMedianSeconds": 0.0001419165,
+      "candidateToBaselineRatio": 1.3706309577848388,
+      "sampleCountEach": 14,
+      "rawSamplesSeconds": {
+        "baseline": [
+          0.000115125,
+          0.000114958,
+          9.9167e-05,
+          0.000103041,
+          9.9167e-05,
+          0.000101083,
+          9.5083e-05,
+          0.000118959,
+          0.000119209,
+          0.000102917,
+          0.000108792,
+          0.000104041,
+          0.000105083,
+          0.000101
+        ],
+        "candidate": [
+          0.000152541,
+          0.000147209,
+          0.000139916,
+          0.000130042,
+          0.000147458,
+          0.000154292,
+          0.000128833,
+          0.000153333,
+          0.000149958,
+          0.000142958,
+          0.000129584,
+          0.000133167,
+          0.000140875,
+          0.000131958
+        ]
+      }
+    },
+    "symmetric-proximity-100x100": {
+      "baselineMedianSeconds": 0.00010449999999999999,
+      "candidateMedianSeconds": 0.000161375,
+      "candidateToBaselineRatio": 1.5442583732057418,
+      "sampleCountEach": 14,
+      "rawSamplesSeconds": {
+        "baseline": [
+          9.8708e-05,
+          9.4541e-05,
+          0.000100416,
+          0.000110125,
+          9.6542e-05,
+          9.575e-05,
+          9.9625e-05,
+          0.000108583,
+          0.000104625,
+          0.000104375,
+          0.000109959,
+          0.000107042,
+          0.000104875,
+          0.000106208
+        ],
+        "candidate": [
+          0.000204334,
+          0.000187708,
+          0.00018475,
+          0.000180916,
+          0.000181541,
+          0.000181333,
+          0.000181042,
+          0.000141834,
+          0.000130875,
+          0.000130125,
+          0.000130667,
+          0.000129,
+          0.000128917,
+          0.000129708
+        ]
+      }
+    }
+  },
+  "observationalOnly": true,
+  "limitations": [
+    "Low Power Mode remained enabled in all runs; no settings changed.",
+    "Small synthetic workloads, no G4 threshold or universal performance claim.",
+    "Fixture checks compare source/query identity, exact expected ranges, row counts and completeness across versions; full DTO equality is checked between repetitions within each version."
+  ],
+  "fixtureChecksEqualAcrossVersions": true,
+  "completeResultsStableWithinEachVersion": true
+}

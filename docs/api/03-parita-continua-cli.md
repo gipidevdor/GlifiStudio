@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-API-003 |
 | Tipo | Contratto normativo della parità delle interfacce |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | Implementato; verifiche e limiti registrati in GS-VER-275 |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -84,6 +84,14 @@ del JSON è **1 MiB**, con profondità massima **32**. Si rifiutano UTF-8 e JSON
 non validi, chiavi duplicate anche dopo la decodifica degli escape, campi
 sconosciuti e versioni incompatibili prima del calcolo. Restano applicabili
 anche i limiti specifici dell'operazione nativa.
+
+Anche gli ingressi legacy con file `--request` (piano/esecuzione/visualizzazione,
+indagine, export, codifica e accordo) condividono l'ammissione su un solo
+descrittore e il limite incrementale di 1 MiB. Una richiesta assente è
+`invalidInput` con exit 3; permessi insufficienti sono `authorizationDenied`
+e la richiesta oltre limite è `insufficientResources`, con i retry previsti
+dalla tassonomia. GS-VER-302 registra le regressioni di processo di questi
+ingressi; il contratto di JSON condiviso dei nuovi comandi rimane invariato.
 
 Un campo opzionale per cui il codec omette il valore `nil` **DEVE** essere
 omesso; non si usa `null` per introdurre un campo che il codec eliminerebbe.

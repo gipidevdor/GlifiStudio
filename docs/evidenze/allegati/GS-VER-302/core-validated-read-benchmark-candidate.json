@@ -1,0 +1,204 @@
+{
+  "cachePolicy" : "warm OS page cache; setup and one untimed warm-up; no cache flush",
+  "configuration" : "Release, GlifiBenchmark --validated-reads-query",
+  "device" : "Mac16,3",
+  "lowPowerModeAtEnd" : true,
+  "lowPowerModeAtStart" : true,
+  "measurements" : [
+    {
+      "check" : "bytes=1048576; sha256:aab84e946fcc8447394011ade53d5e165ac6daf962023bc8df00cff89af7715a; sourceID=source:00000000-0000-0000-0000-000000000001; root=sha256:a032d5fa092a6362d1c83a210fc75ad83829a50ca939a1afced7c43681c4214e; exact equality 8\/8 reads",
+      "generator" : "deterministic repeated Italian UTF-8; source 1048576 bytes; ASCII JSON artifact 1048588 bytes; setup\/import\/recovery outside timer",
+      "identifier" : "validated-source-read-1mib",
+      "maximumSeconds" : 0.00107125,
+      "medianSeconds" : 0.001033666,
+      "minimumSeconds" : 0.001025875,
+      "requirement" : "RQ-009, RQ-043, RQ-044"
+    },
+    {
+      "check" : "bytes=1048576; sha256:aab84e946fcc8447394011ade53d5e165ac6daf962023bc8df00cff89af7715a; sourceID=source:00000000-0000-0000-0000-000000000001; root=sha256:a032d5fa092a6362d1c83a210fc75ad83829a50ca939a1afced7c43681c4214e; exact equality 8\/8 reads",
+      "generator" : "deterministic repeated Italian UTF-8; source 1048576 bytes; ASCII JSON artifact 1048588 bytes; setup\/import\/recovery outside timer",
+      "identifier" : "validated-recovery-source-read-1mib",
+      "maximumSeconds" : 0.001076291,
+      "medianSeconds" : 0.001026708,
+      "minimumSeconds" : 0.001017084,
+      "requirement" : "RQ-009, RQ-043, RQ-044"
+    },
+    {
+      "check" : "bytes=1048588; sha256:847dc284bf6e62998befb579544b39cd4027482a9228c5ebbf03605b2b3a0541; artifactID=artifact:sha256:847dc284bf6e62998befb579544b39cd4027482a9228c5ebbf03605b2b3a0541; descriptor=sha256:79db61d2cd894d26f76ef7843e25217e045064498c58edf2797346b93704f0b9; nodeID=analysis-node:sha256:46286a11a735a225a0e3800f585d492974787a79d22ba0ffb3064220771f8798; exact equality 8\/8 reads",
+      "generator" : "deterministic repeated Italian UTF-8; source 1048576 bytes; ASCII JSON artifact 1048588 bytes; setup\/import\/recovery outside timer",
+      "identifier" : "validated-artifact-read-1mib",
+      "maximumSeconds" : 0.001122375,
+      "medianSeconds" : 0.001041875,
+      "minimumSeconds" : 0.001027166,
+      "requirement" : "RQ-009, RQ-043, RQ-044"
+    },
+    {
+      "check" : "bytes=8388608; sha256:81b6e7f11aca77e1070604993e306b169031b02dc27775dcc6ec4c2ad48af60b; sourceID=source:00000000-0000-0000-0000-000000000008; root=sha256:eb84460ef9edbcccae807df45c766aa3c9a6a0dd40e58cf54bcc78482a286e8c; exact equality 8\/8 reads",
+      "generator" : "deterministic repeated Italian UTF-8; source 8388608 bytes; ASCII JSON artifact 8388620 bytes; setup\/import\/recovery outside timer",
+      "identifier" : "validated-source-read-8mib",
+      "maximumSeconds" : 0.007084916,
+      "medianSeconds" : 0.007028333,
+      "minimumSeconds" : 0.007004167,
+      "requirement" : "RQ-009, RQ-043, RQ-044"
+    },
+    {
+      "check" : "bytes=8388608; sha256:81b6e7f11aca77e1070604993e306b169031b02dc27775dcc6ec4c2ad48af60b; sourceID=source:00000000-0000-0000-0000-000000000008; root=sha256:eb84460ef9edbcccae807df45c766aa3c9a6a0dd40e58cf54bcc78482a286e8c; exact equality 8\/8 reads",
+      "generator" : "deterministic repeated Italian UTF-8; source 8388608 bytes; ASCII JSON artifact 8388620 bytes; setup\/import\/recovery outside timer",
+      "identifier" : "validated-recovery-source-read-8mib",
+      "maximumSeconds" : 0.007073375,
+      "medianSeconds" : 0.007050625,
+      "minimumSeconds" : 0.006994667,
+      "requirement" : "RQ-009, RQ-043, RQ-044"
+    },
+    {
+      "check" : "bytes=8388620; sha256:92309aeede44f267d654ba50617f34b23b53d2018aac7770e4894144d29e5d5b; artifactID=artifact:sha256:92309aeede44f267d654ba50617f34b23b53d2018aac7770e4894144d29e5d5b; descriptor=sha256:99384b48c581c247bb1e6c8e64196abdd42c47bd789174d2c264ca7c42cbcff4; nodeID=analysis-node:sha256:3bd84cadaf536f2b53dc368b9e9c072331618516107b38ce9fffb40a11583181; exact equality 8\/8 reads",
+      "generator" : "deterministic repeated Italian UTF-8; source 8388608 bytes; ASCII JSON artifact 8388620 bytes; setup\/import\/recovery outside timer",
+      "identifier" : "validated-artifact-read-8mib",
+      "maximumSeconds" : 0.007212208,
+      "medianSeconds" : 0.00708725,
+      "minimumSeconds" : 0.006977375,
+      "requirement" : "RQ-009, RQ-043, RQ-044"
+    },
+    {
+      "check" : "bytes=33554432; sha256:19a3662771e931adcb0212dba7956d54375f812f6fa2e923fdbe8597a7f4bda9; sourceID=source:00000000-0000-0000-0000-000000000032; root=sha256:ff52fa8cdafe19b9ea083a16748b9d10d982e605352c883bd28af7a1204af7e5; exact equality 8\/8 reads",
+      "generator" : "deterministic repeated Italian UTF-8; source 33554432 bytes; ASCII JSON artifact 33554444 bytes; setup\/import\/recovery outside timer",
+      "identifier" : "validated-source-read-32mib",
+      "maximumSeconds" : 0.027040542,
+      "medianSeconds" : 0.026839791,
+      "minimumSeconds" : 0.026412,
+      "requirement" : "RQ-009, RQ-043, RQ-044"
+    },
+    {
+      "check" : "bytes=33554432; sha256:19a3662771e931adcb0212dba7956d54375f812f6fa2e923fdbe8597a7f4bda9; sourceID=source:00000000-0000-0000-0000-000000000032; root=sha256:ff52fa8cdafe19b9ea083a16748b9d10d982e605352c883bd28af7a1204af7e5; exact equality 8\/8 reads",
+      "generator" : "deterministic repeated Italian UTF-8; source 33554432 bytes; ASCII JSON artifact 33554444 bytes; setup\/import\/recovery outside timer",
+      "identifier" : "validated-recovery-source-read-32mib",
+      "maximumSeconds" : 0.029553708,
+      "medianSeconds" : 0.029424334,
+      "minimumSeconds" : 0.027054958,
+      "requirement" : "RQ-009, RQ-043, RQ-044"
+    },
+    {
+      "check" : "bytes=33554444; sha256:6abd7815508c62af8995d06d292938e7643396e637d1016dcb8c98f5483eab02; artifactID=artifact:sha256:6abd7815508c62af8995d06d292938e7643396e637d1016dcb8c98f5483eab02; descriptor=sha256:fc27210b7d9af1558fa539058289fddfe6d0c4f460159c622d49162ab8c91164; nodeID=analysis-node:sha256:13e8019f3494a956bb8f3e8c956f6fd31510d9596e18fb537dd83cec85df6e57; exact equality 8\/8 reads",
+      "generator" : "deterministic repeated Italian UTF-8; source 33554432 bytes; ASCII JSON artifact 33554444 bytes; setup\/import\/recovery outside timer",
+      "identifier" : "validated-artifact-read-32mib",
+      "maximumSeconds" : 0.030427125,
+      "medianSeconds" : 0.02934275,
+      "minimumSeconds" : 0.029196209,
+      "requirement" : "RQ-009, RQ-043, RQ-044"
+    },
+    {
+      "check" : "source=sha256:598ef075f7168bfd6b02e4ab984002a46302f3e009ea06caaf34f2918de0a220; query=sha256:21c7e3373750b108e2c3a3c14f414248be3388c3cb17997aef083aba7a062794; matchedScope=false; matches=0; truncated=false; exact equality 8\/8 evaluations",
+      "generator" : "100,000 tokens; eight repeated Unicode forms; import\/tokenization\/parser outside timer",
+      "identifier" : "normalized-absent-term-100000-unicode-tokens",
+      "maximumSeconds" : 0.094498375,
+      "medianSeconds" : 0.092836917,
+      "minimumSeconds" : 0.092134375,
+      "requirement" : "RF-080, RQ-009, RQ-042"
+    }
+  ],
+  "operatingSystem" : "Version 27.2.1 (Build 26B131)",
+  "rawSamplesSeconds" : {
+    "normalized-absent-term-100000-unicode-tokens" : [
+      0.093429958,
+      0.094498375,
+      0.092412125,
+      0.092836917,
+      0.092888667,
+      0.092134375,
+      0.0922615
+    ],
+    "validated-artifact-read-1mib" : [
+      0.001122375,
+      0.001041875,
+      0.0010315,
+      0.001066583,
+      0.00103025,
+      0.001027166,
+      0.001061375
+    ],
+    "validated-artifact-read-32mib" : [
+      0.029196209,
+      0.029429542,
+      0.029483125,
+      0.02934275,
+      0.029245792,
+      0.029247792,
+      0.030427125
+    ],
+    "validated-artifact-read-8mib" : [
+      0.007212208,
+      0.007147708,
+      0.007101084,
+      0.007031167,
+      0.00708725,
+      0.00703675,
+      0.006977375
+    ],
+    "validated-recovery-source-read-1mib" : [
+      0.001023584,
+      0.001017084,
+      0.001032209,
+      0.001076291,
+      0.00103325,
+      0.001019584,
+      0.001026708
+    ],
+    "validated-recovery-source-read-32mib" : [
+      0.027054958,
+      0.027479583,
+      0.029524458,
+      0.029553708,
+      0.029388458,
+      0.029424334,
+      0.029453666
+    ],
+    "validated-recovery-source-read-8mib" : [
+      0.007073375,
+      0.007051958,
+      0.007067292,
+      0.006994667,
+      0.007004291,
+      0.007050625,
+      0.007006042
+    ],
+    "validated-source-read-1mib" : [
+      0.00104625,
+      0.001041792,
+      0.001033666,
+      0.00107125,
+      0.001027709,
+      0.001032917,
+      0.001025875
+    ],
+    "validated-source-read-32mib" : [
+      0.026412,
+      0.026771375,
+      0.026839791,
+      0.02699225,
+      0.026842542,
+      0.027040542,
+      0.026681916
+    ],
+    "validated-source-read-8mib" : [
+      0.007084916,
+      0.007078041,
+      0.007004167,
+      0.007013375,
+      0.007012291,
+      0.007028333,
+      0.007045625
+    ]
+  },
+  "samples" : 7,
+  "sourceHashes" : {
+    "GlifiBenchmark\/GlifiValidatedReadBenchmarks.swift" : "sha256:670788f7234343173ca344d923d3bfb4d5b8215b8ebb4b95856ad7967bfb5dde",
+    "GlifiBenchmark\/main.swift" : "sha256:248ffb8bd8932a85084ab6a3f2b68c9a737209d4609aa1c6e285fd7a013cc412",
+    "GlifiCore\/GlifiProjectPackage.swift" : "sha256:0e8b813a7e8082e2196aa9350f75af97dda323e879f9985bd139bfd9ad02fcb8",
+    "GlifiCore\/GlifiQueryEvaluator.swift" : "sha256:2c9a423bd3dcbdd684641cf3aac25f1429f8aaa7361ee68e0c594c6857726571"
+  },
+  "statistic" : "median, min, max wall-clock seconds",
+  "thermalStateAtEnd" : "nominal",
+  "thermalStateAtStart" : "nominal",
+  "threshold" : "observational before\/after comparison; no release gate",
+  "warmUpRuns" : 1
+}

@@ -46,21 +46,20 @@ struct StudioAdvancedAnalysisView: View {
                                 .frame(minWidth: 400)
                         }
                     } else {
-                        VStack(spacing: 0) {
-                            Picker("advanced.pane", selection: $compactResults) {
-                                Text("advanced.settings-pane").tag(false)
-                                Text("advanced.results-pane").tag(true)
+                        TabView(selection: $compactResults) {
+                            Tab(value: false) {
+                                ScrollView { configuration(snapshot).padding() }
+                            } label: {
+                                Text("advanced.settings-pane")
                             }
-                            .pickerStyle(.segmented)
-                            .padding()
-                            ScrollView {
-                                if compactResults {
-                                    results.padding()
-                                } else {
-                                    configuration(snapshot).padding()
-                                }
+                            Tab(value: true) {
+                                ScrollView { results.padding() }
+                            } label: {
+                                Text("advanced.results-pane")
                             }
                         }
+                        .tabViewStyle(.grouped)
+                        .padding()
                     }
                 }
             } else {

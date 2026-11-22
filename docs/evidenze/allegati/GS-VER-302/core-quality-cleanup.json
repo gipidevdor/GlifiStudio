@@ -1,0 +1,10 @@
+{
+  "removedOwnedArtifactsKiB": 490308,
+  "directories": {
+    "Cache/CoreBaselineRelease": 239020,
+    "Cache/CoreCandidateRelease": 246008,
+    "core-release-baseline": 5280
+  },
+  "sharedDebugAndGateCachesUntouched": true,
+  "rawBenchmarkReportsAndSourceManifestRetained": true
+}

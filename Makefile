@@ -100,8 +100,7 @@ build-ipados:
 	xcodebuild build -workspace GlifiStudio.xcworkspace -scheme GlifiStudio-iPadOS -configuration Debug -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO
 
 clean-cache:
-	rm -rf "$${GLIFI_VERIFY_CACHE:-$$HOME/Library/Caches/GlifiStudio/verify}"
-	@echo "Cache di build rimossa."
+	./Scripts/clean-build-cache.sh
 
 cache-size:
 	@du -sh "$${GLIFI_VERIFY_CACHE:-$$HOME/Library/Caches/GlifiStudio/verify}" 2>/dev/null || echo "Nessuna cache presente."

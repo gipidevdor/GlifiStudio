@@ -35,18 +35,20 @@ struct StudioStatisticsView: View {
                         results.frame(minWidth: 380)
                     }
                 } else {
-                    VStack(spacing: 0) {
-                        Picker("statistics.pane", selection: $statistics.pane) {
-                            Text("statistics.configuration").tag(StudioStatisticsPane.configuration)
-                            Text("statistics.results").tag(StudioStatisticsPane.results)
+                    TabView(selection: $statistics.pane) {
+                        Tab(value: StudioStatisticsPane.configuration) {
+                            configuration
+                        } label: {
+                            Text("statistics.configuration")
                         }
-                        .pickerStyle(.segmented)
-                        .padding()
-                        switch statistics.pane {
-                        case .configuration: configuration
-                        case .results: results
+                        Tab(value: StudioStatisticsPane.results) {
+                            results
+                        } label: {
+                            Text("statistics.results")
                         }
                     }
+                    .tabViewStyle(.grouped)
+                    .padding()
                 }
             }
         }

@@ -242,6 +242,11 @@ struct StudioHomeView: View {
                 needsPackageInitialization: needsPackageInitialization
             )
         }
+        #if os(macOS)
+            .onDisappear {
+                Task.immediate { await model.closeProject() }
+            }
+        #endif
     }
 
     @ViewBuilder private var toolPicker: some View {

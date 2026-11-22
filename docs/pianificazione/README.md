@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.28 |
+| Versione | 1.6.29 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -28,6 +28,8 @@ distribuisce quattro agenti su query, feedback statico, revisione e integrazione
 preservando i confini del lavoro già in corso nell'altra chat.
 
 ## Indice
+
+- [GS-DOR-302 — Robustezza trasversale della baseline](dor-robustezza-trasversale.md) — Ready; query, ingressi CLI, chiusura macOS e proprietà delle cache
 
 - [GS-DOR-173 — Layout e visite dei kernel analitici](dor-layout-e-visite-analitiche.md) — Ready
 
@@ -150,5 +152,7 @@ preservando i confini del lavoro già in corso nell'altra chat.
 - [GS-DOR-305 — Riverifica e rifinitura dei profili KH](dor-rifinitura-kh.md) — Ready
 
 - [GS-DOR-284 — Regia del piano e input numerico](dor-regia-del-piano-e-input-numerico.md) — Ready; dispatch del passo e grammatica editor condivisi
+
+- [GS-DOR-304 — Componenti e campi nativi nei laboratori macOS](dor-hig-laboratori-macos.md) — Ready; implementazione, gate e preflight macOS superati sul checkpoint 9c9e0098; audit interattivi aperti
 
 - [GS-DOR-310 — Importazione PDF ed EPUB](dor-importazione-pdf-epub.md) — Ready; PDFKit, Vision e parser EPUB bounded

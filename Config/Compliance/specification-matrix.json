@@ -4855,6 +4855,73 @@
       "blockingReason": null
     },
     {
+      "id": "CMP-302",
+      "clause": "GS-STD-001-29 § 29.6; Regressioni di overflow, completezza, teardown e proprietà delle risorse",
+      "specification": "docs/standard/29-eccellenza-ingegneristica-apple.md",
+      "requirements": [
+        "RF-001",
+        "RF-015",
+        "RF-016",
+        "RF-018",
+        "RQ-058",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryEvaluator.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryModel.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/CLITextAnalysisInput.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift",
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/StudioHomeView.swift",
+        "Scripts/build-cache.sh"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiQueryEvaluatorTests.swift",
+        "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+        "Scripts/check-build-cache.py",
+        "Scripts/check-kit-cli-parity.py",
+        "Scripts/verify.sh"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-302-robustezza-trasversale.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-304",
+      "clause": "GS-APL-002 § Componenti nativi e campi dei laboratori macOS (GS-DOR-304)",
+      "specification": "docs/apple/02-interfaccia-adattiva.md",
+      "requirements": [
+        "RQ-012",
+        "RQ-047",
+        "RQ-063"
+      ],
+      "code": [
+        "Apps/macOS/StudioTextAnalysisView.swift",
+        "Apps/macOS/StudioAdvancedAnalysisView.swift",
+        "Apps/macOS/StudioCorpusMethodsView.swift",
+        "Apps/macOS/StudioStatisticsView.swift",
+        "Apps/macOS/StudioEvaluationView.swift",
+        "Apps/macOS/StudioOperatorsView.swift",
+        "Apps/macOS/StudioLinguisticView.swift"
+      ],
+      "tests": [
+        "Scripts/check-localization.py",
+        "Scripts/verify.sh",
+        "Apps/macOS/Tests/StudioEvaluationTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-304-hig-laboratori-macos.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
       "id": "CMP-310",
       "clause": "ADR-0044 § importazione nativa PDF ed EPUB e snapshot atomico",
       "specification": "docs/adr/0044-importazione-nativa-pdf-epub.md",

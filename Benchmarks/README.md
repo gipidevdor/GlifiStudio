@@ -258,3 +258,18 @@ La prova Vision genera due righe sintetiche e produce JSON su stdout. Ogni
 configurazione riporta le letture completate e l'eventuale errore. Per
 riprodurla e interpretare le misure consultare
 [GS-VER-270](../docs/evidenze/GS-VER-270-grafici-comandi-neural-engine.md).
+
+## Valutazione delle query
+
+`swift run --package-path Packages/GlifiCore --configuration release GlifiBenchmark --query-evaluation`
+misura due prossimità con 100 ancore per operando e un'unione booleana su
+1.000 token. Importazione, tokenizzazione e parser restano fuori dal timer;
+intervalli UTF-8 attesi indipendenti e DTO completi sono verificati. Una
+valutazione di riscaldamento precede sette campioni, tutti registrati. Il
+report conserva hash dei sorgenti, hardware, memoria, stato termico ed energia.
+
+Per confrontare implementazioni si usa lo stesso harness in Release sulla
+baseline congelata e sul candidato, alternando l'ordine. GS-VER-302 distingue
+la correzione con budget dall'indicizzazione delle finestre di prossimità,
+conservando anche i costi intermedi. Le misure sono informative: nessuna soglia
+G4, promessa universale o variazione delle impostazioni energetiche.
