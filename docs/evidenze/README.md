@@ -14,8 +14,8 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
-- [GS-VER-177 — Buffer indicizzati della betweenness](GS-VER-177-betweenness-indicizzata.md) — Verifica in corso
-- [GS-VER-178 — Codifica dei digest degli export visuali](GS-VER-178-digest-export-viste.md) — Verifica in corso
+- [GS-VER-177 — Buffer indicizzati della betweenness](GS-VER-177-betweenness-indicizzata.md) — Riferimenti bitwise, misure sotto contesa e gate integrato superati
+- [GS-VER-178 — Codifica dei digest degli export visuali](GS-VER-178-digest-export-viste.md) — Byte invariati, misure distinte per fase e gate integrato superati
 
 - [GS-VER-270 — Grafici audio, comandi di documento e prova del Neural Engine](GS-VER-270-grafici-comandi-neural-engine.md)
 

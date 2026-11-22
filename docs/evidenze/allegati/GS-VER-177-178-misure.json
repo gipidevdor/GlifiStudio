@@ -3401,6 +3401,1175 @@
       "logSHA256": "975e976faf65c505c8c2153410cd25ddfeb375bffdda2644da268dc631068e5a",
       "unchangedFailingFilesFromBase": true,
       "upstreamCorrection": "aec1a009ea3add4f2d136bc1e85d61c2b6472bd3"
+    },
+    {
+      "codeCommit": "d5a09ad",
+      "command": "make verify",
+      "profile": "macOS and iPadOS",
+      "exitCode": 0,
+      "coreTests": 553,
+      "kitTests": 112,
+      "nativeMacOSTests": 99,
+      "totalTests": 764,
+      "cliChecks": 95,
+      "sharedCliFixtures": 30,
+      "recoveryCheckpoints": 22,
+      "numericalOracleRows": 194,
+      "independentFractionOracleCases": 64,
+      "conformingPDFA2uFiles": 2,
+      "builds": [
+        "macOS Debug test",
+        "macOS Release",
+        "iPadOS Simulator Debug",
+        "iPadOS Simulator Release"
+      ],
+      "all271IntegratedSwiftFilesUnchanged": true,
+      "logSHA256": "5684d0f18de407fe8cb803bd08d1d18f937f7d86c2495d462565857d79b0cf77",
+      "nativeTestSummary": {
+        "title": "Test - GlifiStudio-macOS",
+        "result": "Passed",
+        "totalTestCount": 99,
+        "passedTests": 99,
+        "failedTests": 0,
+        "skippedTests": 0,
+        "startTime": 1795348597.883,
+        "finishTime": 1795348656.368,
+        "expectedFailures": 0,
+        "testFailures": []
+      },
+      "nativeArchive": {
+        "archiveSHA256": "60a9639ea56fbc30b3ff524bedc6f573a4242ea64efc2d1aa440a7e3f546ac4a",
+        "regularFileCount": 666,
+        "allArchivedFileDigestsMatch": true
+      },
+      "limits": [
+        "All performance ratios were observed under host contention, not isolation.",
+        "No iPadOS runtime or physical-device testing.",
+        "Host CoreSimulator1171.7.0 is older than Xcode expected1174.21.0; builds completed.",
+        "Existing iPadOS opening-documents-in-place warning remains; no App Store or G4 closure."
+      ]
     }
-  ]
+  ],
+  "integration": {
+    "upstreamCorrectionCommit": "aec1a009ea3add4f2d136bc1e85d61c2b6472bd3",
+    "mergeCommit": "d5a09ad69d0ccce4491956fc915e65f9c617e6c2",
+    "ownedSourceTestHarnessFilesUnchanged": true,
+    "integratedInventory": [
+      {
+        "path": "Packages/GlifiCore/Package.swift",
+        "sha256": "390130809eefe8840277be50388ad58b63f647e8d34341cf476d80a2249c0600"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiBM25SparseOptimizationBenchmarks.swift",
+        "sha256": "08544a6115d6fb5aead054e8828f12349cd9836ae7bf32d0ada922c353525c20"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiBetweennessNumericsBenchmarks.swift",
+        "sha256": "7a3d6e2187b032e3fbe22e0af665541fbaa823f991f4a73eeccc3a60a04580f8"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiDescriptiveRefinementBenchmarks.swift",
+        "sha256": "564aa1b17a3f343c6c662129e88c5ffd17388a32f36ba492ca62006fbb620a6f"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiFactorizationRefinementBenchmarks.swift",
+        "sha256": "61e65d38254ee3b24d6aed455dea78b99a570547503fe66673d5eba04cb447bb"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiFactorizationStorageBenchmarks.swift",
+        "sha256": "dc95e5325b28919fd8dfb29add25f3e287d6b9d3380a57305fb71bae3e9c77dd"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiGraphOptimizationBenchmarks.swift",
+        "sha256": "7070262e4f5a309fbedec6a38845c11d8f23f43de5a944794f0300b8f4828113"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiLexicalOptimizationBenchmarks.swift",
+        "sha256": "9df6d1bf56d5457241b699d766160807302f905ce5be638ee8fb07875046f97a"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiMetadataOptimizationBenchmarks.swift",
+        "sha256": "2301ab43783216e2bcc079df0a716005cd7552bcc7a6fc65d53c8f77d22c49be"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiMultivariateOptimizationBenchmarks.swift",
+        "sha256": "d09793e589b3d3ca77cca6fdb48da9bf667cd16f6e17fd179c2db0b969083d44"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiResamplingOptimizationBenchmarks.swift",
+        "sha256": "389f24096e6af0eced1490b2f897e953d8c10edaa6a024693ca6b15ba93931bd"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiSilhouetteOptimizationBenchmarks.swift",
+        "sha256": "6c778f70fecdfe0b30ad5b1d094b247208f172af0a193800cfce22da937b7142"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiTemporalRefinementBenchmarks.swift",
+        "sha256": "4d8ca59d365701b78a1a3cc0b5e59c8daf54239fcbfe27d40ac9dfea6a669235"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiTextOperatorBenchmarks.swift",
+        "sha256": "58036202a23502198b71046b3da1e96d84d21b326dc96d0064c26d3574e60bbd"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiTraversalOptimizationBenchmarks.swift",
+        "sha256": "d91bbec1e54d66bec52b55fe4631b249fb56f589ad0ef71dbe1d2c02bab37ec7"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiValidatedReadBenchmarks.swift",
+        "sha256": "670788f7234343173ca344d923d3bfb4d5b8215b8ebb4b95856ad7967bfb5dde"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiWeightingRefinementBenchmarks.swift",
+        "sha256": "fbcf63012f74386c4200fc5eb89838f2c1a3cc0bbd7aedbc1e6d59c8770544e6"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiBenchmark/main.swift",
+        "sha256": "653c158872ace5eee068c5571e6a1df3b995362575960dc7131c9ba9fdcd3503"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCLI/CLITextAnalysisInput.swift",
+        "sha256": "c938cb3bb9ac14a028665147286a23183c3c850c3c515893f854efd14a38de36"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift",
+        "sha256": "c5657e1a1a8b1430d9f42e7b692d63ff19b642328b3c5ef8a6f29b617c543d2a"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiAgreementAnalysis.swift",
+        "sha256": "d7cf1951043a00fcc68a816588a35cc16dcec7725b379c392fa3abb7319cf5a2"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiAgreementExtensions.swift",
+        "sha256": "4dfe57d08ae9b9d64971befec49f802c967f64d93072991e1da986e5dccc286c"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiAnalysisArtifacts.swift",
+        "sha256": "7c2fc713d783979ee007e3014472d80d44b2d9e03b15d5eaed0ba7c6e4849ed5"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiAnalysisExecution.swift",
+        "sha256": "dcbadc7e5e926f7d68b078266bbabf6549ad67a09285654374e651aa9a7fb55b"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiAnalysisGraph.swift",
+        "sha256": "7fde3f0ebf3da8e0fce5a832f3f9a1b75622c71ae1428d42605c831c9086c0d9"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiAnalysisPlanner.swift",
+        "sha256": "00aa0454121d7231e7f242c5fad812f1479347f9985278a92380e37062469936"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiBM25QueryPostings.swift",
+        "sha256": "c6083d2f12cb863d5316ec04e643912bd5c7c8b8af12edc4d5ea3226b76e7a4a"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiCodingAgreementAnalysis.swift",
+        "sha256": "50f89a1b8397780776dfeca47fda5bf2e0d8e04dcbaea34d275eb35375588c7a"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiCodingRules.swift",
+        "sha256": "8475dd0c630058b832b58f3177bcb3b11d1722f15120ae968c5c62de87ad0c4a"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiCollocationAnalysis.swift",
+        "sha256": "e6164899eae9796fc9184d91e8281e7830ce4524d1b9fe70601b8fcbba09dffc"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiCommunityAlgorithms.swift",
+        "sha256": "b2f90a4427756b6c91fc3eeaf87c22a26a2722e0d7fa3ae93dbff29ff2dea6e5"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiContingencyAnalysis.swift",
+        "sha256": "556f3abe775f0f52c00fabde50cad8f87d0ab8afad56ca16bf1e84f419a64185"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiCorpusAnalysis.swift",
+        "sha256": "c947274407239f942852c40b96c9dd084e0ad615e52190c2c88ae9fc66b4c739"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiCorpusDerivedAnalyses.swift",
+        "sha256": "1df3120cdfd6b286605e27073d5d607ff909f3860bbb127739258449e7c14c86"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiCorpusMultivariateAnalysis.swift",
+        "sha256": "8eb3927c1dee7a3b00831e4c35082b96361df2a2a04adf7538f970d4b918ac52"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiCorpusNetworkAnalyses.swift",
+        "sha256": "686f96414738171c15ae0c44d3086c348ff0f39716415a82e635b0e5c0858c60"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiCorpusSimilarityAnalysis.swift",
+        "sha256": "939e77a4abe0c91e53d7ff7c33aa687229204855acda0abea6bf45258247cad8"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiDerivedAnalyses.swift",
+        "sha256": "867773812f7885ab134129a9b98c374a82e0d2f477e0d50b3bd6754ae7fa3d38"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiDescriptiveStatistics.swift",
+        "sha256": "5fe71442e61382ce12a10641d2364cec033e91a91b2626c9798ec4404221aac4"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiDiagnostics.swift",
+        "sha256": "e322749295c99bbfa14fe303674e530a9dcffd93b51565913a01944bb45d6976"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiDigestEncoding.swift",
+        "sha256": "ec5593b55a10bebe4e2a796f881b2d296b697dce9a0571a1bd5897bb66114c1c"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiDispersionAnalysis.swift",
+        "sha256": "ae1b7c2c8fe9f3d76eb0e15de2bec43a4927b8b72d06120f2527302da3ad6f0b"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiDistributionFunctions.swift",
+        "sha256": "cdc19be7e3965e8e862bcbc9b898fb4886b49ae352ddb735593456197d512e77"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiEffectSizeStatistics.swift",
+        "sha256": "fb56926c1f83e16a8f39e060547d8e8275c3de30b797e530f30e637550e896f6"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
+        "sha256": "3257ba566ede3a481729410083d9984484e4bbd4656130c578455e06d1812342"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineDerivedAnalyses.swift",
+        "sha256": "936c3d017d79cdc4708aaceef1d07acdccbd51e7902fccbe3c6a987d814ecb56"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiEngineQualitative.swift",
+        "sha256": "c497919c46eabad8dbea2864302bb3cd85d8fdc90b94cdca68e3c2389b351ea5"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiExploratoryAnalysis.swift",
+        "sha256": "dcf1d9105b868795b6907e50eff52a9fd6f1c677a7f1bb007e3506845ab0bce9"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiExploratoryCompletion.swift",
+        "sha256": "f894bc1949f46bcdc2117c44cfbc02d48f121f55a491ebc087e9433cca3dd3a8"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiExtractiveSummaryAnalysis.swift",
+        "sha256": "b74fd38556099ad3270eff82754aa589d6a52c2c7c849c8902e0a7cec0e4a324"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiFailure.swift",
+        "sha256": "d13b46640b0bad94ea67abdbac30e962a31118817a0e1f50ef58a607825187b0"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiGraphAlgorithmSupport.swift",
+        "sha256": "66ecd4c63234a1a5e6d3f2c7d46b304d21e525485e2d586cd92b2979b821905f"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiGraphBinary64Sum.swift",
+        "sha256": "95c43358839f0caa8ec92bf5bc4851bf4a1af88df1feb7f5c4ea323640af8db0"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiGraphLayouts.swift",
+        "sha256": "15c7851dd8f3c6ff33c37b8ecf5b30d29008c11103495ff81ee89cdc80880b66"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiGraphSpanningTree.swift",
+        "sha256": "af6e3ba4f1926344ae1ab7b7ca2fbf846a80b0eacb76c8427b93463361d6e0b2"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiIdentifiers.swift",
+        "sha256": "7e518c114fe27a66456a1ad30c0bde383631ce179266b58e7fa0468e1bb935e6"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiInferenceExtensions.swift",
+        "sha256": "d91dd5b111d9b65ffb92c0705e6d22873765be256b1254458d148ea1f69f7242"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiInterpretation.swift",
+        "sha256": "6f99ca9f8c77f7f3cd0082aceae05c9bd813bd3a9a5d6d1968d8ab55c34854b0"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiInvestigation.swift",
+        "sha256": "0dda0c936bcf64a27432a56b1a6a73c51698b313abe0541e0e03e7147ee0b7ed"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiItalianStemmer.swift",
+        "sha256": "6b47e18ef8ed74e3eb40b54fd4c3c40223bce7a8c460ce07f3b79d8858daca31"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiItalianTokenizer.swift",
+        "sha256": "536073b18e01d4d853e1a5f4df6a95c799218de4ebb9a746c4a1ad912031f1b5"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiKeynessAnalysis.swift",
+        "sha256": "eccf45e1225c2813985e44dfee94bc49c34c26ba8a1ab371e7d1544880243570"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiLDAModelSelection.swift",
+        "sha256": "80e26200c032dfa6331ecf70ef6bef682d79e526e7782c7bfeb94c89f57e02c0"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiLanguageConfiguration.swift",
+        "sha256": "683ff6ab5eedadf762740352949aaae25095ead0e1f5e52c319da39ac751f2b4"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiLexicalDistributionAnalysis.swift",
+        "sha256": "346a5e10cb923537ef86131678b3d9f0cbe555bfbe92a22a4ad549301e110eb9"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiLexicalDiversityAnalysis.swift",
+        "sha256": "049799517e20d8cb47a9c15ec1cdc7f84168ea53686c715a56df6b27e9ca7c00"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiLexicalLawsAnalysis.swift",
+        "sha256": "7fa186459af2c3ffb78a809179797f028c51fa001e27326b6c6c1be2d59556d6"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiLinearAlgebra.swift",
+        "sha256": "728314821b2c704d4ec5d876cd142b0e6fbe213ac9b74e47341ba300e0270689"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiLinguisticEvaluation.swift",
+        "sha256": "fa2a8e64e50235e0846399bf796ef60ef15def188535b3c0b6c668a7e7f24f65"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiLinguisticPipeline.swift",
+        "sha256": "2d24d395c60819fac56b3508ada91431064d4b7445c7a35ea6bbb3c8518b2865"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiMarkdownExtractor.swift",
+        "sha256": "1690a7e4daff7dae12777242d0a0a653b8b11a82559e00f7955990838aa5c0b9"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiMultivariateMethods.swift",
+        "sha256": "419a603d2c674f55a2c14e4dfedbb97add4e17d9dc9927d0b5afc366add48999"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiNGramFrequencyAnalysis.swift",
+        "sha256": "4e7d80123b55d703031d2208ccaefed807cefe01ba79934f530c97f8c920bcb2"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiNetworkAnalysis.swift",
+        "sha256": "e6b793b5504a3a86c111f457e1ed5db0c71547f6156be0488b96171291fb19c9"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiNetworkExtensions.swift",
+        "sha256": "4795b3b4ff33d11316d6b593e7c1c0d55c0f9a80e944c30f45424c45721bfc5b"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiOperationalPolicy.swift",
+        "sha256": "8c74393c3abd74d2de364209edca499f855648a768679d58d37cd1799b6250a0"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiPackageDirectory.swift",
+        "sha256": "b4bb21fabcb407206165f1db518e180646161b3d0356e318c9c27972cc0aa5b0"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiPairedLocationStatistics.swift",
+        "sha256": "369e1abaf420bfce4f4b0087c0024a0f50837ceacf3223bed6e2654c97e1ba74"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiPostHocAnalysis.swift",
+        "sha256": "d572877c6b5e7bf4939aac361e13585bf804b38c137c0b75c4d5d74bf6d41620"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiPostHocStatistics.swift",
+        "sha256": "2b4c1798532f9b2e8bd48fad812e5fb2cadaed2b9dfadfcfd143fb4914e94e1f"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiProbabilisticTextAnalysis.swift",
+        "sha256": "d32227827254b611fa17bea05ad69ab19e1d74e950680e02dbb85918b36258c4"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiProjectPackage.swift",
+        "sha256": "52b12ceb69048812039b75fa759724a4c670310df3f496e4020abd6c504e3b98"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiProjectRecoveryTesting.swift",
+        "sha256": "ba0237dce837c67e92927b6ae52b06cab47c917d0b0b55e2c8ad1af0fe1a5fdc"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiQualitativeHistory.swift",
+        "sha256": "06fb20fc79bca28e1ecb3f3e66493e71db2d25f94184e26a9e6ee09d7af14497"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryEvaluator.swift",
+        "sha256": "7c51f0cbce4b4dc3d8d9cd9a411ab9e74bd8e97748ead65e384967941bb06cbb"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryModel.swift",
+        "sha256": "90981ef82d87bdbd77063b56f2f805620a4e4cb17657dc7c2ec74f891996860a"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryParser.swift",
+        "sha256": "55b69a1c43f1219413e825ef311d8becdc48e55a336844c35977347f6a3fbc5c"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiRankAndCorrelationStatistics.swift",
+        "sha256": "d295b58e4e7cbe9e80b7bdfcc378b12e1215108252172cdcb396a60b60b0b872"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiResamplingStatistics.swift",
+        "sha256": "c6f0e13eb7c812ec3587fd0a9303975ab748a76ec31efef5dab88fe75d8d84ce"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiSQLiteProjectStore.swift",
+        "sha256": "adcd4e4df5131835b350fea4668fa00860fe9a5fe6f982ccf3459e9a2462c6e0"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiScientificExport.swift",
+        "sha256": "6918b2a525a602209937f300d610c979d45514ea155fd71b116be8c8c9f1f4da"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiScientificExportRenderer.swift",
+        "sha256": "d10d3480856f4a52a11d966968597baed8dc66d0c9fedf10b980cebb715e1476"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiSilhouetteComputation.swift",
+        "sha256": "1c99272f4f3e260145c8eaa290ea2f8ebdb3439f2715bc122cb4995eb820d821"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiSimilarityAnalysis.swift",
+        "sha256": "f5cb73cfd9f456737372c29e264fd6891614221fa276b6a9d77ecee871094704"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiSimilarityExtensions.swift",
+        "sha256": "63b01cb3a646e43e7df9f934dc86fdff560dd4625e1484b277f0dea73ca1e04f"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiSimpsonSimilarity.swift",
+        "sha256": "55acac734faca5278da1189f047820ed3dd53c14dd204297fc57eb7728a116e9"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiSourceFileReader.swift",
+        "sha256": "93a8fffd270c7f3ecc501e0daa069a99c6d47b69940c97003551963395a88098"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiSpanMap.swift",
+        "sha256": "04bee0d21445bfbcb480db104cefb48881abe123e0a27be4552febf5f287e53b"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiStatisticalFoundation.swift",
+        "sha256": "7e148c2d22552da31a1dca5b541b1ee572a8278eb00be3a493217ae28c54f3b7"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiSummaryGraphScoring.swift",
+        "sha256": "3c1511c569b91ae5d14c15be4c5d8f830528ef112f52a34fb5237650a6f6800c"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiSupportPolicies.swift",
+        "sha256": "e87ad852fb077eba43b77eec3ade7b1ea435cd71af9d7a8ffbdc28f037357473"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiTemporalAnalysis.swift",
+        "sha256": "68ffa99e9693168d054a9d6e9131217d2a9e186850fb1282571281bbd0705d51"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiTermWeighting.swift",
+        "sha256": "e26a0302fe298479c98d316789ece4c7a9a3fb9c65cbb35308b2cda55dd1dae1"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiTextAnalyzer.swift",
+        "sha256": "5ebb69008ecb5a58dfd182347bcf4c73eebe4abd44d55338eca585f61c708847"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiTextMatrixOperators.swift",
+        "sha256": "7dda45827c4dcd5aec47387d142a671fe1fe81df72073f88997add21e77ba4be"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiTextModel.swift",
+        "sha256": "c64cebaf699a4e875e6727a6f28baa18847f9f50e340cd0e31e9c828909e3ffc"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiWelchANOVA.swift",
+        "sha256": "6ec0edddd80122e9e3aa2702d625f4aa5fefa2889d110b9e88286da201338ae0"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiWindowCooccurrenceAnalysis.swift",
+        "sha256": "6fe4cdd25f905b5b5dcb305d08756a2ccad56cb6763bd0b4882b6f08dacd2a25"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiAnalysisExecutionPresentation.swift",
+        "sha256": "1b3e017a47fd703af7f089199cf2601c692e958be58ddcb900ac66ca9efaac22"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiAnalysisPlanPresentation.swift",
+        "sha256": "2edebf4544e2058f81eb11a71c37f2267cd83f7bda9fca2ed58c709a1cb51f45"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiCorpusAnalysisPresentation.swift",
+        "sha256": "4c361b3db879dfd0980a8b0ad36bea1f20c1c482c19ef29d52927364b5930894"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiCorpusSimilarityPresentation.swift",
+        "sha256": "c2b29c5bb4dfd338e05d2c235a6ac80a3ef6676e7d0b1c9647c262a72ed45da1"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift",
+        "sha256": "3ccf1fb04389901aa41dd4391ccab9dd02a7aa1e140eba81a8ea5634934abe7c"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiExtractiveSummaryPresentation.swift",
+        "sha256": "f1c6a3e781dfbb524b9706e6b1513a70e7015d65f94672198b9b1e33016912eb"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiInterpretationPresentation.swift",
+        "sha256": "c221f5427d0d639018ef62fc3ef3e76718f0b305f5aa97149b5b396dce58e995"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiInvestigationPresentation.swift",
+        "sha256": "ae4583c53dc7cfa911f0b3a1cd81179ffe46c3648c057e22da6912db0c1e1bc9"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiKeynessPresentation.swift",
+        "sha256": "d00b24c04af2aee51468c596a4f3d15a46aa74e7be8acf69d95823b3d8c3ef13"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiLexicalDiversityPresentation.swift",
+        "sha256": "5be8ca11f1ab1f5c35d30331a796590653a02ec98971c78ffe4c282d967dde21"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiLexicalLawsPresentation.swift",
+        "sha256": "f4c170d1f0356f9f88897172b69dfd4b5706a2c04cf07cbc72ae342077783794"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiNGramFrequencyPresentation.swift",
+        "sha256": "b29e98c1f918d10a9fa4dd70f97cbc353db8992d4808e6bae900b2d77bfc9dfc"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiQualitativePresentation.swift",
+        "sha256": "71656bc8bee36491dfd1102107559f357a1c52c6a2a038810b32115a3f82f929"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiScientificExportPresentation.swift",
+        "sha256": "99ddadffc2008d606090815a730146f97ff8d90650691449bbed9fea43ae4d3c"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioAdvancedTextAnalysisRequest.swift",
+        "sha256": "5472221931a1a64bffdccc2c15b58f18df67343abc494c66e152ce284ed8886b"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioCoreOperators.swift",
+        "sha256": "9749a4cad1112a6fec60a21413827b5c0bde3de7056d7c7625f28890dee1132d"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioEvaluationWorkbench.swift",
+        "sha256": "90e9d1b5ea9f27fb37296916ea2abdf7ab3accbbafeb27095c2c46a1cf31bb8e"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioExploratoryCompletion.swift",
+        "sha256": "cbd0740f1a7c26846af6fe89d108b63bee1f583871b1de89c54b1d412db932af"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioGraphAlgorithms.swift",
+        "sha256": "dd9cb982f917005c05dda9d9ac5657dbd8c35fc06e4d1ba4d80173e5ff1d5792"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioLDAModelSelection.swift",
+        "sha256": "7957d0a79e2c5d1e904f0dc18cb970813bf7f2588ac1c506f24d2a8b2910c98b"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioLexicalStatistics.swift",
+        "sha256": "6de0d539473c02db25ed67acfd92b44a4b12e5f0755ca019578390fcb0b60008"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioLinguisticEvaluation.swift",
+        "sha256": "045aa4ee8da41a056b11783a29ed107a87b3cc643f6573f3e3ffe760202dd56c"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioLinguisticPipeline.swift",
+        "sha256": "11754cdba615767eb580ce33558ec099436779b068ade11a40fba012c0f0019d"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProcessActivity.swift",
+        "sha256": "87f21e80f0168205341dd9d03c1a1dcf3dce770252b3fee9647125868fda09ad"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectTextAnalysis.swift",
+        "sha256": "674732e6a389c072dcc29850d1da30d435fc4175736630f4096bef7c4ff06805"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioRuntimeEnvironment.swift",
+        "sha256": "7f00221921983e45837b65b0d837aa15d786eb139a26f877e020f9ce043df869"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift",
+        "sha256": "9d03d7acc2876d8caf9f9106dc15b6c59d2d1699932aaab2028b1afd3ae5bedb"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioStatisticsWorkbench.swift",
+        "sha256": "91f0296185fcf64adfb978f50b126a8ffab1a8c2d1674900767781dbe1de3012"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalysisJSON.swift",
+        "sha256": "e6c5725e7e2fe22712144d2fc821763f0db7f69d6ef2fd320a9c32dcaed88ffa"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalysisRequest.swift",
+        "sha256": "71d4fec730f0a7ca1df8e48fda0a712572e3664fb92eae9efbe0baa1970318f7"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalytics.swift",
+        "sha256": "03a8fa5559bd92bcae26c641a518e7352553b49ca91b398c3a003c5933495f8c"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioWelchANOVA.swift",
+        "sha256": "58d2c1873d3c54f8babf8bb709a649d1f0a5fe91711ac33514362c372bd4dd34"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiTemporalAnalysisPresentation.swift",
+        "sha256": "8aaeffdbd6c992fc230a633d892cdddcd7c3a82accae2637918d4c0a2619ac14"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiTermWeightingPresentation.swift",
+        "sha256": "014988d4d5f610e5638a311a9fc1b5543d22800321dbbcafecc76c1bed44c849"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiVisualizationExport.swift",
+        "sha256": "92fd1b8babe059693cac31b6006c922143bd26b324cae89f8fbf4a0e651db76e"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiVisualizationPresentation.swift",
+        "sha256": "99a122aa78868cd3b50b39193232475f942032811b76dd5c935a3bbec1be8299"
+      },
+      {
+        "path": "Packages/GlifiCore/Sources/GlifiRecoveryHarness/main.swift",
+        "sha256": "a23492643d569c905b7a7edf19d92fd555c471773b3c31209420177b07568411"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiBenchmarkTestSupport/GlifiPipelineBenchmarkSupport.swift",
+        "sha256": "3721ce3314445571bbc5f03163f55a030a3f03c2d09a623f2e976dc98e22dae0"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAgreementAnalysisTests.swift",
+        "sha256": "b2e3dcb457d85230eb8a5933d4650c792a869abdb9207adada647c5be2ff9eba"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAgreementExtensionsTests.swift",
+        "sha256": "c57cf825070dd6ef8513c71acbdac70c838799c90a62a6ff344c1f95bc86a630"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisExecutionTests.swift",
+        "sha256": "1e517b64200ebbe5f95b22fa08e6174a9f4c3084f3a97673261e410b7b9ae16b"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisGraphOptimizationTests.swift",
+        "sha256": "ec45d7d6e615692536cfa8aaa9929c6258e7d7c6efa4fae438296212e5c585da"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisGraphTests.swift",
+        "sha256": "89a305512e697656a5e8fbf00b8fa6e5880486692edd149d19c3df87daaa2e73"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisPlannerTests.swift",
+        "sha256": "323ce6e93a39cee85bc6fd52333a3bde0f8f0bfdea0763aabad2f34ce5c24cdf"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiBM25SparseOptimizationTests.swift",
+        "sha256": "4be38916560e13e71a4e19812ed87951e52db6346bce450c92699ae21688ac88"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiBetweennessNumericsTests.swift",
+        "sha256": "2cbdce8fb55afa24cb1278003ddca43f12fcf2a09cfb00e8f1ccb8245ea0628b"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCSVExportOptimizationTests.swift",
+        "sha256": "1d5eed7f7bb5d84f250922cc4d06ebac12684ffbbc912608162d28207f89f04d"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiClusteringOptimizationTests.swift",
+        "sha256": "84b29b540f5ef6a7f715ef4f67aaf6f6da547ad3062ae5bb70e47acd24463063"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCodingRuleReauditTests.swift",
+        "sha256": "279c9564102566fa4f9c9271a2577fa74bad1d6e49f0a0d100f0b59e2734d92f"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCollocationAnalysisTests.swift",
+        "sha256": "5e280c667647f689cfeec32405e7df396411ce5f3cfd1c1790ecdd5e2a181920"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCollocationOverflowTests.swift",
+        "sha256": "fb37c93d02017a21a2715bed3dc8ed3504a7fb5ec8adb9d84e67464ef14b6aba"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiContingencyAnalysisTests.swift",
+        "sha256": "978abd9f9a760b0739f3e5b28d3e622dd63edabec3ba23324f64d48b218f734f"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCorpusAnalysisTests.swift",
+        "sha256": "bbea6ff495b71ec7181b01cb19f72187a11686d86c3370dcad81abccd62ddf06"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCorpusDerivedAnalysesTests.swift",
+        "sha256": "84cf3a7a4f9a70b05fd18ff031821d1abf962afeaad9c6de96a581d017da54c1"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCorpusSimilarityAnalysisTests.swift",
+        "sha256": "656b061c5deaca2850b056c8eef327a4234eb8831f8f6391ef30bf1fa7e1bdcc"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDigestEncodingTests.swift",
+        "sha256": "dbb71597b02141e2e49efc9ae9b88b132f618f0082f6315c9e6dfd56c106e778"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDigestOptimizationTests.swift",
+        "sha256": "8a91099b99b3410025de5b982019d43a1539f3d9fba03f07778d6ad91d763362"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDispersionAnalysisTests.swift",
+        "sha256": "d4b2e5935416383876c34a53f265aea1a7b6f56352c8f8d0d9c55e65ef569eb7"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiEngineTests.swift",
+        "sha256": "7975e1bd4b997c161870d464f6d14156b938f97d2676d45156bd84e5467bfb05"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExploratoryCompletionBenchmarks.swift",
+        "sha256": "e67712320c84c6b09c4b50c5ab9f45f906c92a3c2ded807f064b8fa9e395de96"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExploratoryCompletionTests.swift",
+        "sha256": "c32751be1f69a6672652ccd2cf2eee11b8e5a0d015f49b69cad0d856fe47eca3"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExploratoryReauditTests.swift",
+        "sha256": "bc4d24ca474d657e998653a4526c2af60b6c2cebca0da5960944c918ab4e4ba0"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExternalOracleTests.swift",
+        "sha256": "87834882392ae3946a63493b0f3260e91e18d36a9f1ba1f650ef75a5bb9416cc"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExtractiveSummaryTests.swift",
+        "sha256": "a9c0c47de84ca33da8ae72624362052132c9e09461d8de3b6d4afed7322d117c"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiFactorizationRefinementTests.swift",
+        "sha256": "058cee139a32725b397b0a00ca7125f11282c8cb512470d07ad38ddb7115b8b3"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiFailureTaxonomyTests.swift",
+        "sha256": "42d3c0cfba3298713b9b32e7811dfea74b5a2c5cf4d19329a270d5ca0b249562"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiFuzzTests.swift",
+        "sha256": "b193f36478e445e3ded8ab7408c1c531d6e9a04b6a6d754d66eea6fcbc0344b0"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiGraphBinary64SumTests.swift",
+        "sha256": "1b7d980663cb47483c5f600546c373a904740d6801e71e1009e73c81acb0b52b"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiGraphCompletionBenchmarkTests.swift",
+        "sha256": "bd978b2271764b65cccae155f59ca76e9bc9d86fbbf6f3275a143e456e4d09af"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiGraphCompletionTests.swift",
+        "sha256": "2c6f16f2c784bd9aae9510f7910531c9ee8dbdb28b86abf32cee6a2f1a38d26b"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiGraphFractionOracleTests.swift",
+        "sha256": "08aca48dca1662215fcbb637e4e8c12bfeea6f13a8b5841500f34d87a543dd88"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiHarmonicTraversalOptimizationTests.swift",
+        "sha256": "8de39c8a88ff52a38704905c22ac1c593330bc836f37cbdc4e8d085dd69c5ac9"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiIdentifiersTests.swift",
+        "sha256": "a1d5c332157be0d5f7aab0f91cde24daba07d066bda04c97c03e838097fa19bd"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiInferenceExtensionsTests.swift",
+        "sha256": "c0061fbfc58f1d52989e1d2748f22bef7dc513aaaaf8289976cefe4dcd914b76"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiInterpretationTests.swift",
+        "sha256": "c80491a3665499e8d73448c77fb8f43dc707aa6e991f328537b76c7a5460b3ab"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiInvestigationTests.swift",
+        "sha256": "9286698aaf6c608836a0b8edad3c6ee03f2cb7ed98c6ad18d83811d3af03c3b8"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiItalianTokenizerTests.swift",
+        "sha256": "4c1ef242e00bcb2402282587248de58cade5cd397489e4aa00bc4786c8cb8701"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHOperatorTests.swift",
+        "sha256": "37fc2f769d46e4025972641042c29010a24f771572078415e3b5b32bed716ceb"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHReauditContractTests.swift",
+        "sha256": "9ea5b0bcf5546e9d5e6ca5e2894b6de7bf688c4574e7db06e977052a96f529bb"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHScientificReviewTests.swift",
+        "sha256": "e828dedc05a87d9c809df78e8d29bbbb458518e12ed3b1faa6b3c366a4907814"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKeynessAnalysisTests.swift",
+        "sha256": "3e6237bd4d7f6fef7ce9f587271136160975ce5e770309c0747cc60229238b90"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKeynessCacheContractTests.swift",
+        "sha256": "e246eb00d84c4ddf7ff7510b370d4d06001191e2b7e75017696c0b3f0c849c0f"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLDAModelSelectionBenchmarkTests.swift",
+        "sha256": "7322d2569aea35de4c96e33accc0be088c61898b95a36ab773df400460c5fef0"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLDAModelSelectionTests.swift",
+        "sha256": "a962b8eb099680e9b275bd1e8d4bd7497338054906dec9941b0fdb68f8ed6079"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLexicalDistributionTests.swift",
+        "sha256": "da2814ff6a68947a05ab133f947826c3489f0552cf8ef8d86f4ecc2793c8be75"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLexicalDiversityTests.swift",
+        "sha256": "f08e10de89cfc7a4f97c7e522ee5c89589b72d3464f533bd952b57e1be60171b"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLexicalLawsTests.swift",
+        "sha256": "467df3008ae747af89708a7214ea45a03e31e2256c40774210ef049383a27066"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLimitClosureTests.swift",
+        "sha256": "f653ae49f19b5abd5343ac4700fdd2ffd098c5abd2fa6c45cbe87ee57468f0ff"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLinguisticEvaluationTests.swift",
+        "sha256": "7e32c602a0cde90752aeb37676de91b71c8293cfddacdbf5182632b035f6fbeb"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLinguisticPipelineBenchmarkTests.swift",
+        "sha256": "d1d4500e178b33fb3733185c3d0c98c6c5aa40efee85c43ecb31e8fad7efc424"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLinguisticPipelineTests.swift",
+        "sha256": "d9af9df52a5f9449a758c3eef26ab52c697a086f9cfb6b9e854e4048295a162f"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiMarkdownExtractorTests.swift",
+        "sha256": "e40d592cdfa87623a9269d75b152a82bcafed29eca22525d81ad83b9a2c399ea"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiMovingBlockBootstrapOptimizationTests.swift",
+        "sha256": "52bb470b8f787551b54e2605f831c1d4239a317478a891f874b8408e56151e57"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiMultivariateMethodsTests.swift",
+        "sha256": "8cc615f598da2f63bf81aa4fa40a2ae66f0d3b27d6a753a8b54a3c6593283a61"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiNGramFrequencyTests.swift",
+        "sha256": "8b53bd9d007389ec9ec828230ef506a56518f98602c18f53a340dae763c375a7"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiNaiveBayesReauditTests.swift",
+        "sha256": "fc109d0b666d37746ae8899f3bf9e926ac118d891181d86fce73e220d9b0260f"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiNetworkAnalysisTests.swift",
+        "sha256": "ea8b0e7740405cf3556c855ade5d417391c9cd51710d18c42c183d634fefdc64"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiNetworkExtensionsTests.swift",
+        "sha256": "edb601cd073428c4ac5ddf4246a10422bddea49d082d5718bc3ca79ff4da57c0"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiNetworkScaleTests.swift",
+        "sha256": "7f8be141031f8656930111017710a76db4e41868e95e4a6cddc96e508b738acc"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiOperationalPolicyTests.swift",
+        "sha256": "698be7fc5914857ee4276a655e12285f832271403ffa856c918eeb12b503ec82"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPackageDirectoryTests.swift",
+        "sha256": "bb3b87c1fb4e88c4fa3be66e90bcabcfc894726546e7bf4ff9d1675d7144bf8a"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPairedLocationStatisticsTests.swift",
+        "sha256": "a4aec364f0422187b5df40061979942ca35943c2066f97d2d6d6946f94f95903"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPostHocStatisticsTests.swift",
+        "sha256": "d49dea6cf02b7062def40bb0626be9d54ee78654aa91d756566644ca6d93b14a"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiProjectCandidateManifestTests.swift",
+        "sha256": "6fbbece59b2eb86d46c4084dde3cd263015d71b46248f0202dd65debbebad2db"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiProjectPackageTests.swift",
+        "sha256": "d07c06554f3eb6b3fd8f0de06dcfbad77faecaccdb378555b60e80f151c4a7de"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiQualitativeHistoryTests.swift",
+        "sha256": "082154a39f64a72e648555469feb8ff94cf46791706b230490196e4fb1eb86ea"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiQualitativePersistenceTests.swift",
+        "sha256": "db2f87815437ae5f69202c43e3145277a191b4bba769f6e8d292218033aff535"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiQueryASTInputTests.swift",
+        "sha256": "6d546b4c46e68f30d21a7d6a0cf1c57638d9640d5c1ccf17f17de3fabdc90e22"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiQueryEvaluatorTests.swift",
+        "sha256": "84bfbde44715c01cf8798dbbe9a141f7a1791256e2d9411862d197bbb7976775"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiQueryParserTests.swift",
+        "sha256": "27265652d51e63a8016f1a7470a12fb1f5b08f025b6e0f59c5667c1aa6d05607"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiRankAndCorrelationStatisticsTests.swift",
+        "sha256": "27ce2f6115b3637dccc724b4b26d643910a16b47e11d3b900ea32eacb534320c"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiResamplingCancellationTests.swift",
+        "sha256": "d11c4b2d099e69339a53376dcfc8e61aa75169583142c6db39263e2b7d745bab"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiResamplingStatisticsTests.swift",
+        "sha256": "e8d813186d40f2eae60cfb5dc81563858ef053bcf6939c1814f1861ab8638173"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiRuntimeExecutionTests.swift",
+        "sha256": "57fcccd622baf90e0b7eeda19306e3b36dfa20a041233d2fdf5f0be07f09a38b"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiScientificExportTests.swift",
+        "sha256": "0bea1405b667473c4ef5a4967e36efdb82e1e7fa79b55f76f0a2807acda5443f"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSilhouetteOptimizationTests.swift",
+        "sha256": "6840f678408c5a951c8686d8c980c30df452a192a9c66d14a86add1bb05b4e02"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSimilarityAnalysisTests.swift",
+        "sha256": "d0221a0c39a15082b88462ecdd1d35a9ab9a3b8f0e4fd77d4cc1ae47f51c3b56"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSimilarityNumericalRangeTests.swift",
+        "sha256": "80d679b9a54d08a90d2b5eb7ad016cd4030b3951e24769cb3251f76688295bab"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSourceFileReaderTests.swift",
+        "sha256": "1cf0f8b5d17681ddcef68d140915bfc2410920e615425474fdad894f8d8df799"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSpanMapCompositionTests.swift",
+        "sha256": "d699a5d22c9abe4ebfe0e0bce41b27b4cbef3d2ffea78e50806110cd305308e1"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSpanMapOptimizationTests.swift",
+        "sha256": "6b5c693eb2d1a028eab1ae0115728c24609a9b4d043c6a53eab97c5b8254c037"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSpanMapReauditTests.swift",
+        "sha256": "5336d1e0929c45f7682f5953c1ffd30c53ee9bab884f2d108d1d4c390598adb0"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiStatisticalFoundationTests.swift",
+        "sha256": "359b698015ddb28d8692fc2e7762441bcb260a3658a8a2a2c2a24c46488b4491"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSummaryGraphTests.swift",
+        "sha256": "60443bfafcf0888ab5ab84eab0f96c6d8e98f787e40ecdc9d7231605605c23c2"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSummarySourceMappingTests.swift",
+        "sha256": "4773af31251a21ca2608c28df030e31fd5e97270f8c53e389936600ca6f39efb"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSupportPoliciesTests.swift",
+        "sha256": "67edb6f59c8e6cc8b278c6e50c0fb3aee4180d89b6e8048fff1ff9aa0b1da975"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTemporalAnalysisTests.swift",
+        "sha256": "cfc376b0bba3875c89e07ce34ed9b5f6a104f8ea8fa00a694779651367b0940f"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTermWeightingTests.swift",
+        "sha256": "537ac8e44c252e64f8031ec678c43dbdcc2be9663e715b4def829a0999f4d378"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTextImporterTests.swift",
+        "sha256": "f4098f818a36ce17f430b750bf29d33cee6ef7ec14d5b2de7afdeab666b041ef"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTokenizerOptimizationTests.swift",
+        "sha256": "c8ca11c2140c27b9b5141a253fa7ce4308cc69761fd942e1de08733bfa7371ef"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTokenizerQualityTests.swift",
+        "sha256": "a7a5258cc012bd005e18e9e7281faa1a36014cc27ea42b59c07d6259353093bb"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTruncatedSVDTests.swift",
+        "sha256": "7e2c65cb0988adea988daa04feb6ad271aa458b19644a7903d364f1cafc2588f"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiVerifiedPayloadReadTests.swift",
+        "sha256": "cbc9e05de9899dd709174208c01629691710c4ffc6ee9cf79e5506d9060ef428"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiWeightingRefinementTests.swift",
+        "sha256": "5edbdbfe5d2d1f400e38874ff80766400a16c838aa15e9445e8f4891174823a1"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiWelchANOVATests.swift",
+        "sha256": "435e2bc1c9f9ddbbc4aa5a4a64243ec69b800b7a44f35eeb606d8a9d46ef847a"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiWindowCooccurrenceAnalysisTests.swift",
+        "sha256": "d2c34efcd84f347e5f61ecc43c766219266b5e123d58ba470c30cc3586701020"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiAdvancedTextAnalysisTransportTests.swift",
+        "sha256": "5d2d2fac0ab54c64686e5ae247166471746a788fa2ad1c147fba28c64392d9d1"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiCoreOperatorsTests.swift",
+        "sha256": "39ad5308908a2fb0cb308febae490929e72e2961598d0a0a88fa577697f961cb"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiEvaluationWorkbenchTests.swift",
+        "sha256": "df1159b138a9479215686892ea262f9faf96f41b99c0f119738cafa3cecb107c"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiExtractiveSummaryCompatibilityTests.swift",
+        "sha256": "b15744e1bc59286d4b6f34c514caefbe8f4c96c1c411e0e35cb5a5645d51a19e"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiKHOperatorFacadeTests.swift",
+        "sha256": "f61e28e2f86ff3c216a3fefd19b19a0917a2921f3c8f05e66c7d84e6481477d4"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiKeynessOptionsTests.swift",
+        "sha256": "8710cf931a247517b9ae086339c8417c37600295282b8b81fdd1df43c2acf256"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiLexicalStatisticsFacadeTests.swift",
+        "sha256": "41c52dc3b1b7ac32b14fce3d70015210276222d545a1877d8b062d33600fce8e"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiLinguisticEvaluationFacadeTests.swift",
+        "sha256": "bfb3c675cf625912182dc5490e3b538715b92a2f6c7004a9452f9b3f32f3c7d9"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiMultivariateProjectionOptimizationTests.swift",
+        "sha256": "8ebfb7a50eda5ef0e2ddd11a3c14a973c06f4af26852551b305dbdeef11ea2c8"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiPrivacyAndRevisionTests.swift",
+        "sha256": "f15a71ec20ce52a32bff278391077c179a0b0a5ff5aaf367ed1d23d4a9cd0eb9"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiProjectLaboratoryInputTests.swift",
+        "sha256": "c2ab60612584be183b9074050c2bfe598cdb10ae8b782d4d5d9a97a3731bd642"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiQualitativeServiceTests.swift",
+        "sha256": "37c51848999e0f1d67e1f90b81bc0980791c61aa55d73a8f8a514a1ea6b4996b"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiQueryParityTests.swift",
+        "sha256": "d6ede3b2d4432b20960fad159593740cd9577077f27475c0d46c454e8cf7b927"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStatisticsWorkbenchTests.swift",
+        "sha256": "41448b801eee723a12d95958a3db83b861309d317dcd943fb6ece7f53a7769e0"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioExploratoryCompletionTests.swift",
+        "sha256": "eda2fd23d4974867389e973e514b8a1707c63f72bef4df05d26f39d876e1f2be"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioGraphAlgorithmsTests.swift",
+        "sha256": "fbcd65ac1ea2009227df3e99f442fcb4c2bb4f73bfea9ba21ef6a429c1e94ace"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioLinguisticPipelineTests.swift",
+        "sha256": "7e31027c2305e1a1b30280d548078df1be4714856708ad1bdec9ceec03df690d"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioProcessActivityTests.swift",
+        "sha256": "00bff9f7e2268068bdad6f6d93361cfcd7b64f2b595db5fceca98aba236be332"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioRuntimeEnvironmentTests.swift",
+        "sha256": "011d0a461a1c949656e32e43659e25ce048a6740e7f3c88fc19a2798a0794525"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudioServiceTests.swift",
+        "sha256": "17e07062ff3eae3ce690a97201af4b8ffa8ffb03b8e4eaf1da54f99ac83bac0d"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiSummarySourceMappingTests.swift",
+        "sha256": "dd37d97800f64f5c3ecc77d8d5b096f1f7d91d8fb930b0ce31b20ceda1fd3fe4"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiTemporalAnalysisPresentationTests.swift",
+        "sha256": "4abdfe390723353c3a78395392a29f617da239ddc855608fd8d76f5ca55a49d4"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiTextAnalysisReauditTests.swift",
+        "sha256": "f26248fba868993bcde826a57c5844bb85c7f1bfae596936b6294f4e71f131eb"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiTextAnalysisTransportTests.swift",
+        "sha256": "793b51c3c70519c901756a8dbe3d9783df879a33545f7465a3f12a3b6894c58c"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiVisualExportDigestOptimizationTests.swift",
+        "sha256": "e014f7e050a2f6c8fa0a5b1ab74d3689a2dbee07e3216ff1541dc2eb2baf7326"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiVisualExportIntegrityTests.swift",
+        "sha256": "dccc1b06d8fc426750f94a301dc49e268ff2ce3b22cdc6fad30fd93394dff675"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiVisualizationTests.swift",
+        "sha256": "57f73c87339156d15856756bca8de5ef98df4da58eb5cd3caa133b77623765a0"
+      }
+    ],
+    "measurementScope": "The timed before/after pair changes only the two kernels on source base 38bba29; the later upstream integration is validated separately. All betweenness runs observed compiler activity on the host."
+  },
+  "cleanup": {
+    "measurement": "du -sk allocated blocks before removal, not isolated APFS/df free-space attribution",
+    "removedDirectories": [
+      {
+        "path": "/tmp/GlifiIndexed177Cache",
+        "allocatedKiBBeforeRemoval": 3702440
+      },
+      {
+        "path": "/tmp/GlifiIndexed177Transient",
+        "allocatedKiBBeforeRemoval": 500
+      },
+      {
+        "path": "/tmp/GlifiIndexed177Reports/binaries",
+        "allocatedKiBBeforeRemoval": 42016
+      },
+      {
+        "path": "/tmp/GlifiIndexed177Reports/draft",
+        "allocatedKiBBeforeRemoval": 36
+      }
+    ],
+    "totalAllocatedKiBRemoved": 3744992,
+    "onlyOwnedRegenerableDirectories": true,
+    "nativeArchiveVerifiedBeforeRemoval": true
+  },
+  "finalQuality": {
+    "command": "make quality",
+    "exitCode": 0,
+    "logSHA256": "c30e519d3abbb38a15014e4abb72adcd443195d794ac97d4ba84fbf661b039a5",
+    "codeUnchangedAfterFullGate": true
+  }
 }

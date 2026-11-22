@@ -29,3 +29,10 @@
 kernel. Predecessori in blocchi contigui dimensionati con il grado entrante:
 append nell'ordine originale, memoria O(V+E); reset limitato ai nodi visitati.
 Nessuna promozione scientifica o attestazione G4.
+
+## Esito del lotto
+
+Implementazione, riferimenti e gate integrato conclusi in
+[GS-VER-177](../evidenze/GS-VER-177-betweenness-indicizzata.md), con 764 test e tutte le build
+previste. Le misure sono osservate sotto contesa e conservano i limiti
+specifici del workload; nessuna promozione scientifica o attestazione G4.

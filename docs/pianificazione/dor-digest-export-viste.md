@@ -27,3 +27,10 @@
 **Ready** sulla base pubblicata `38bba29`, prima del coding. Eventuali ulteriori
 copie CSV possono essere valutate soltanto in una misura separata successiva,
 con identità dei byte e beneficio ripetuto; non fanno parte della patch minima.
+
+## Esito del lotto
+
+Implementazione, riferimenti e gate integrato conclusi in
+[GS-VER-178](../evidenze/GS-VER-178-digest-export-viste.md), con 764 test e tutte le build
+previste. Le misure sono osservate sotto contesa e conservano i limiti
+specifici del workload; nessuna promozione scientifica o attestazione G4.

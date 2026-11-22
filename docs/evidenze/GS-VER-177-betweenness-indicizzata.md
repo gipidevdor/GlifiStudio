@@ -7,7 +7,7 @@
 | Identificatore | GS-VER-177 |
 | Tipo | Evidenza di correttezza e prestazioni |
 | Versione | 1.0.0 |
-| Stato | Verifica in corso |
+| Stato | Superato localmente con limiti dichiarati |
 | Responsabile | Codex, con quattro agenti concorrenti |
 | Ultima modifica | 2026-11-22 |
 | Approvazione | Ottimizzazione complementare richiesta dall'iniziatore |
@@ -81,7 +81,7 @@ Il primo make verify sulla base 38bba29 si ferma con exit 2 su due test
 preesistenti degli intervalli del testo; i relativi file sono identici alla
 base e non dipendono dai kernel di questo lotto. La correzione già pubblicata
 dall'altra chat in aec1a00 viene integrata prima di ripetere il gate completo.
-Nessun controllo viene indebolito e nessun gate è ancora dichiarato superato.
+Il gate integrato è poi superato; nessun controllo viene indebolito.
 
 ## Limiti del confronto
 
@@ -93,3 +93,40 @@ Il censimento include anche nomi di processo fra parentesi e potenzialmente
 terminati; ps non misura la contesa istantanea. Tutti e quattro i workload
 hanno contatori finiti: il fallback overflow è verificato per correttezza,
 senza un benchmark prestazionale dedicato.
+
+## Integrazione complementare
+
+La correzione aec1a00 è confluita nel merge d5a09ad senza modificare nessuno
+dei cinque file posseduti dal lotto (due kernel, due file test e il benchmark).
+Le misure descrivono il confronto sulla base 38bba29; la verifica funzionale
+congiunta riguarda la composizione con aec1a00. Gli inventari delle due fasi
+sono distinti nel riscontro JSON. La ripetizione integrata ha già superato
+553 test Core, 112 Kit, 95 controlli CLI, due PDF/A-2u e 22 checkpoint recovery;
+la parte nativa è poi conclusa con 99 test passati e zero saltati.
+
+## Chiusura verificata e pulizia
+
+make verify integrato termina con **exit 0** sul codice di d5a09ad:
+**553 Core + 112 Kit + 99 nativi macOS = 764 test**, 95 controlli CLI su trenta
+fixture condivise, 194 righe di oracoli numerici, 64 casi Fraction indipendenti,
+due PDF/A-2u e 22 checkpoint recovery. Build Debug/Release macOS e iPadOS
+Simulator completate. Tutti i 271 file Swift dell'inventario integrato sono
+identici prima e dopo il gate. Gli ultimi aggiornamenti riguardano soltanto
+registri, changelog ed evidenze e sono sottoposti ai controlli statici finali.
+
+Il simulatore dell'host resta 1171.7.0 contro 1174.21.0 richiesto da Xcode;
+le build generiche terminano comunque. Non sono eseguiti test runtime iPadOS
+o su dispositivo. Resta l'avviso preesistente sull'apertura in-place dei
+documenti iPadOS; nessuna attestazione App Store o G4 viene chiusa.
+
+Archiviati e verificati i 666 file del risultato nativo; log, report, fonti,
+inventari e protocollo sono conservati anche in
+`~/Library/Caches/GlifiStudio/evidence/GS-VER-177-178`.
+Rimossi soltanto cache e binari rigenerabili di questa sessione:
+**3,744,992 KiB, circa 3.57 GiB**, misurati con du prima
+della rimozione. È una misura dei blocchi attribuiti ai percorsi rimossi,
+non una differenza df isolata su APFS. Toolchain, dipendenze, prove utili e
+file delle altre chat sono conservati.
+
+make quality finale termina con exit 0 dopo l’aggiornamento dei registri:
+controlli statici, dialetto Swift e formattazione superati.

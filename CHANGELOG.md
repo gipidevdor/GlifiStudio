@@ -12,6 +12,14 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Ottimizzazioni complementari di grafi ed export
+
+- Riutilizzo dei buffer nelle visite di betweenness, con ordine numerico e
+  fallback estremi conservati bit per bit (GS-VER-177).
+- Codifica UTF-8 dei digest degli export visuali, con bundle e controlli di
+  integrità invariati; misure distinte del digest e delle operazioni complete
+  (GS-VER-178). Le misure locali sotto contesa restano informative.
+
 ### Integrazioni native Apple coordinate
 
 - Letture esterne Foundation coordinate e bounded prima della decodifica, con
