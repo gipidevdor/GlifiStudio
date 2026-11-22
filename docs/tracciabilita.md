@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.14 |
+| Versione | 0.92.16 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-22 |
@@ -13,6 +13,24 @@
 ## Scopo
 
 La matrice collega le fonti iniziali alle necessità degli stakeholder, ai requisiti software, alle parti dell'architettura e alle evidenze di verifica pianificate. Gli identificatori fanno riferimento a [Requisiti](requisiti.md) e [Architettura](architettura.md).
+
+## Progetto Xcode completo e verificabile
+
+| Requisiti e clausola | Attuazione circoscritta | Verifica |
+| --- | --- | --- |
+| RQ-005, RQ-062, RQ-063; GS-STD-001-08 § 8.4; CMP-306 | Navigator completo senza nuova membership Sources; configurazioni test distinte, schemi, package locale e descrizione documento it/en | [GS-DOR-306](pianificazione/dor-progetto-xcode-completo.md) Ready; checker completo/portabile e fixture, sei configurazioni risolte; [GS-VER-306](evidenze/GS-VER-306-progetto-xcode-completo.md): gate, nativi Debug/Release e preflight macOS superati sul checkpoint 328169f7 |
+
+CMP-306 è `implemented`: 215 oggetti PBX, 12 cartelle native e 1219 file
+inventariati nel controllo mirato; 23 fixture negative e cinque positive
+lessicali. Il rifiuto dei duplicati raw ha RED/GREEN distinto dalla
+normalizzazione di plutil. Il verificatore bundle compilato ha una fixture
+sintetica positiva e sette negative; il bundle reale ha lookup it/en e 15 voci
+ispezionate, senza corrispondenze nell'ambito vietato dichiarato. Gate e archivio
+sono superati; i nativi Debug e Release hanno ciascuno 125 definizioni e 409
+esecuzioni, zero failure/skip/runtime warning. La composizione è base d368285
+overlay 302/303/304, 1219 file invariati durante le prove: nessun esito è
+attribuito al nuovo Core 305 del checkout principale 76e5871. Nessuna prova Finder,
+restoration interattiva, UI assistiva o test plan è inferita; EA-T-01 resta aperto.
 
 ## Componenti e campi nativi dei laboratori macOS
 

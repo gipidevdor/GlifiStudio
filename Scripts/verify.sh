@@ -49,6 +49,7 @@ Scripts/check-failure-taxonomy.py
 Scripts/check-failure-messages.py
 Scripts/check-apple-baseline.py
 Scripts/check-app-store-baseline.py
+python3 Scripts/check-xcode-project.py --self-test
 Scripts/check-swift-dialect.py
 Scripts/format.sh --check
 pdfa_output_directory="$temporary_build_directory/PDFA"

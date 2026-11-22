@@ -24,6 +24,11 @@ Scripts/check-failure-taxonomy.py
 Scripts/check-failure-messages.py
 Scripts/check-apple-baseline.py
 Scripts/check-app-store-baseline.py
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    python3 Scripts/check-xcode-project.py --self-test
+else
+    python3 Scripts/check-xcode-project.py --portable
+fi
 Scripts/check-swift-dialect.py
 
 print "quality-static: repository, docs, compliance, failure, dialetto e baseline statiche superati"

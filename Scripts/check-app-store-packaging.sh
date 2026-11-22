@@ -97,4 +97,9 @@ if [[ "$verification_scope" == "all" ]]; then
     [[ -f "$pad_resources/Assets.car" ]]
 fi
 
+xcrun swift -swift-version 6 \
+    -module-cache-path "$build_cache_directory/BundleVerifierModuleCache" \
+    "$script_directory/check-macos-bundle.swift" \
+    "$temporary_directory/GlifiStudio-macOS.xcarchive/Products/Applications/GlifiStudio.app"
+
 print "App Store packaging: static analysis and unsigned archives valid"

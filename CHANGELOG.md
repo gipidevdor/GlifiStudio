@@ -12,6 +12,21 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Progetto Xcode completo — GS-DOR-306
+
+- Navigator esteso ai file del repository con cartelle native senza membership
+  di build, gruppo Tests e package GlifiCore visibile; Sources delle app e dei
+  test preservati.
+- Configurazioni hostless Debug/Release distinte, dipendenza GlifiKit esplicita
+  nei test e schema macOS con analisi Release e build dei test solo per testing.
+- Descrizione del documento localizzata it/en tramite InfoPlist.xcstrings;
+  rimossa la chiave secure-restoration non documentata, conservando la policy
+  AppKit degli SDK supportati senza nuovo delegate o entitlement.
+- Controllo di grafo/inventario con parser nativo e profilo portabile distinto,
+  fixture negative e guard lessicale sulle definizioni duplicate. Gate, nativi
+  Debug/Release e archivio macOS senza firma superati sul checkpoint 328169f7
+  (GS-VER-306); il nuovo Core 305 e le prove interattive restano separati.
+
 ### Test degli scenari di analisi
 
 - Producer del piano versione2 per separare la cache della policy corretta dai piani storici, che restano leggibili e immutati; nessuna migrazione del package o cambio di schema.

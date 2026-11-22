@@ -128,3 +128,7 @@ verify-app-store-all:
 .PHONY: check-analysis-scenarios
 check-analysis-scenarios:
 	python3 Scripts/check-analysis-scenarios.py --self-test
+
+.PHONY: check-xcode-project
+check-xcode-project:
+	python3 Scripts/check-xcode-project.py --self-test

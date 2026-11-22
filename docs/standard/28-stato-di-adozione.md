@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-STD-001-28 |
 | Tipo | Capitolo normativo |
-| Versione | 1.13.15 |
+| Versione | 1.13.17 |
 | Stato | Attivo |
 | Responsabile | Amministratore del repository, provvisorio |
 | Ultima modifica | 2026-11-22 |
@@ -120,3 +120,23 @@ Le tab e i campi sono implementati; questa attuazione di GS-APL-002/003 non prom
 audit di RQ-012, la validazione RQ-030 o i criteri EA «Da introdurre». Le prove
 visuali, assistive, di Full Keyboard Access e pseudolocalizzazione restano
 aperte; iPadOS non appartiene al lotto. Nessun nuovo gate è introdotto.
+
+## Progetto e configurazioni Xcode GS-DOR-306
+
+CMP-306 è `implemented`: navigator e membership sono controllati rispetto
+all'inventario, i test hostless distinguono Debug/Release e la descrizione del
+documento ha un catalogo InfoPlist it/en. Il checker nativo usa plutil con guard
+lessicale dei duplicati; il profilo portabile Ubuntu dichiara un ambito ridotto.
+Le prove mirate dei metadati, delle sei configurazioni risolte e delle fixture
+sono superate; [GS-VER-306](../evidenze/GS-VER-306-progetto-xcode-completo.md)
+registra gate, test nativi Debug/Release e archivio macOS senza firma superati
+sul checkpoint 328169f7: 793 test Core/Kit, 125 definizioni/409 esecuzioni native
+in ciascuna configurazione e 1219 file invariati. L'esito riguarda base d368285
+con overlay 302/303/304, non il nuovo Core 305 del checkout principale 76e5871.
+
+Release dei test non equivale ai test plan di EA-T-01 e non promuove sanitizer,
+prestazioni, accessibilità, restoration o G4/G5. La chiave plist non documentata
+rimossa non viene sostituita da un delegate o da nuovi entitlement; la policy
+secure coding documentata di AppKit rimane il riferimento. Il bundle reale ha
+lookup it/en e metadati verificati, ma Finder, restoration e iPadOS non ricevono
+una verifica interattiva dal lotto.
