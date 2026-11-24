@@ -1,0 +1,40 @@
+{
+  "result": "Passed",
+  "totalTestCount": 117,
+  "passedTests": 117,
+  "failedTests": 0,
+  "skippedTests": 0,
+  "runtimeWarningCount": 0,
+  "sanitizerDiagnosticLines": [],
+  "command": "xcodebuild test -enableThreadSanitizer YES; complete GlifiStudio-macOS suite",
+  "exitCode": 0,
+  "identity": {
+    "commitBefore": "98d458554de317524447bcfd9eae3355a71dfce6",
+    "commitAfter": "98d458554de317524447bcfd9eae3355a71dfce6",
+    "sourceInputFileCount": 540,
+    "sourceInputSHA256Before": "f0fafbecf4f6d31969bea2d8e9c3bbb2fed35e1dd5c901a6dcc6b8512d76d6cb",
+    "sourceInputSHA256After": "f0fafbecf4f6d31969bea2d8e9c3bbb2fed35e1dd5c901a6dcc6b8512d76d6cb",
+    "sourceInputsUnchanged": true,
+    "workingTreeAfter": "clean"
+  },
+  "instrumentation": {
+    "linkedRuntime": [
+      "@rpath/libclang_rt.tsan_osx_dynamic.dylib (compatibility version 0.0.0, current version 0.0.0)"
+    ],
+    "observedProbeSymbols": [
+      "___tsan_func_entry",
+      "___tsan_init",
+      "___tsan_read1",
+      "___tsan_read16",
+      "___tsan_read2",
+      "___tsan_read4",
+      "___tsan_read8",
+      "___tsan_write1",
+      "___tsan_write16",
+      "___tsan_write2",
+      "___tsan_write4",
+      "___tsan_write8"
+    ]
+  },
+  "logSHA256": "622d2830a6101360e9423b91915e20be4419099b8b2e778c7ac0c9289031f9b4"
+}

@@ -1,0 +1,10 @@
+{
+  "schema": "studio.glifi.persistence-fixture-manifest",
+  "schemaVersion": 1,
+  "license": "BSD-3-Clause",
+  "purpose": "Scenari di package .glifi eseguiti dal gate tramite la CLI.",
+  "cases": [
+    "Fixtures/Persistence/v1/basic/case.json",
+    "Fixtures/Persistence/v2/selective-invalidation/case.json"
+  ]
+}

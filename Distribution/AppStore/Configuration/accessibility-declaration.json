@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "status": "unverified",
+  "commonTasks": [],
+  "platforms": {
+    "iPadOS": {
+      "voiceOver": false,
+      "voiceControl": false,
+      "largerText": false,
+      "darkInterface": false,
+      "sufficientContrast": false,
+      "reducedMotion": false,
+      "captions": false,
+      "audioDescriptions": false
+    },
+    "macOS": {
+      "voiceOver": false,
+      "voiceControl": false,
+      "largerText": false,
+      "darkInterface": false,
+      "sufficientContrast": false,
+      "reducedMotion": false,
+      "captions": false,
+      "audioDescriptions": false
+    }
+  },
+  "verifiedOnDevices": false,
+  "lastReviewed": null
+}

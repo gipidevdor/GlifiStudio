@@ -1,0 +1,78 @@
+{
+  "schema": "studio.glifi.validation-manifest",
+  "schemaVersion": 1,
+  "id": "validation-term-weighting-bm25-v1",
+  "capabilityIdentifier": "corpus-term-weighting-v1+corpus-bm25-ranking-v1",
+  "methodIdentifiers": [
+    "TF-raw-v1",
+    "TF-binary-v1",
+    "TF-L1-v1",
+    "TF-max-v1",
+    "TF-augmented-v1",
+    "TF-sublinear-v1",
+    "IDF-none-v1",
+    "IDF-unsmoothed-v1",
+    "IDF-smooth-v1",
+    "RowNorm-none-v1",
+    "RowNorm-L1-v1",
+    "RowNorm-L2-v1",
+    "BM25-v1"
+  ],
+  "status": "supported",
+  "license": "BSD-3-Clause",
+  "toolchain": {
+    "swiftLanguageMode": "6",
+    "swiftToolsVersion": "6.4",
+    "platforms": [
+      "macOS 27",
+      "iPadOS 27"
+    ]
+  },
+  "levels": {
+    "V0": {
+      "status": "pass",
+      "description": "Schema degli Artifact e precondizioni N>0, avgdl>0, k1>0, 0≤b≤1 verificati."
+    },
+    "V1": {
+      "status": "pass",
+      "description": "Riga vuota, df=N, df=0 rifiutato per IDF non smussata, termine fuori vocabolario e query vuota."
+    },
+    "V2": {
+      "status": "pass",
+      "description": "Formule indipendenti in R (Tests/Oracles/R/weighting.R)."
+    },
+    "V3": {
+      "status": "pass",
+      "description": "Persistenza, riuso per get-or-store e parità GlifiCore/Kit/CLI (GS-VER-115)."
+    },
+    "V4": {
+      "status": "pass",
+      "description": "Oracoli versionati in Tests/Oracles/expected.txt come golden numerico, riletti da make check-oracles.",
+      "datasets": [
+        "Packages/GlifiCore/Tests/Oracles/expected.txt"
+      ]
+    },
+    "V5": {
+      "status": "not-applicable",
+      "description": "Un solo backend nel nucleo 0.1."
+    }
+  },
+  "limits": [
+    "Normalizzazione pivotata e BM25F fuori specifica."
+  ],
+  "evidence": [
+    "docs/evidenze/GS-VER-115-ponderazione-termini-e-bm25.md"
+  ],
+  "numericAgreement": {
+    "comparisonMode": "absoluteTolerance",
+    "absoluteTolerance": 1e-12,
+    "oracle": "Packages/GlifiCore/Tests/Oracles/R/weighting.R",
+    "notes": "Sei varianti TF, IDF non smussata e smussata, normalizzazioni L1/L2 e BM25 confrontati con le formule indipendenti in R."
+  },
+  "review": {
+    "reviewer": "Iniziatore del progetto",
+    "date": "2026-09-20",
+    "kind": "interna",
+    "scope": "ADR-0031: livelli, oracolo indipendente e tolleranza dichiarata"
+  }
+}

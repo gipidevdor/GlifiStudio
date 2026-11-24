@@ -1,0 +1,72 @@
+{
+  "schema": "studio.glifi.validation-manifest",
+  "schemaVersion": 1,
+  "id": "validation-linguistic-evaluation-v1",
+  "capabilityIdentifier": "linguistic-evaluation",
+  "methodIdentifiers": [
+    "LinguisticClassification-exact-v1",
+    "LinguisticBoundaries-exact-UTF8-v1",
+    "LinguisticNER-exact-UTF8-v1",
+    "LinguisticMorphology-exact-set-v1",
+    "LinguisticLemmas-exact-v1"
+  ],
+  "status": "candidate",
+  "statusReason": "Implementazione headless verificata; promozione scientifica per variante separata secondo ADR-0031, nessuna promozione implicita del prodotto.",
+  "license": "BSD-3-Clause",
+  "toolchain": {
+    "swiftLanguageMode": "6",
+    "swiftToolsVersion": "6.4",
+    "platforms": [
+      "macOS 27",
+      "iPadOS 27"
+    ]
+  },
+  "levels": {
+    "V0": {
+      "status": "pass",
+      "description": "Forma, dominio, finitezza, limiti e cancellazione coperti dai test mirati GS-VER-168."
+    },
+    "V1": {
+      "status": "pass",
+      "description": "Casi sintetici minimi e degeneri con risultati esatti o motivi di indisponibilità espliciti."
+    },
+    "V2": {
+      "status": "pass",
+      "description": "Conteggi/confusion/set esatti e frazioni calcolate a mano; nessuna evidenza di qualità del backend linguistico.",
+      "oracle": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLinguisticEvaluationTests.swift"
+    },
+    "V3": {
+      "status": "pass",
+      "description": "Invarianti di conteggio, identità/ordine o scala e parità della facciata pertinenti alla famiglia."
+    },
+    "V4": {
+      "status": "pass",
+      "description": "Dataset sintetici BSD-3-Clause nei test e negli oracoli, senza corpus privati o dipendenze esterne di prodotto.",
+      "datasets": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLinguisticEvaluationTests.swift"
+      ]
+    },
+    "V5": {
+      "status": "not-applicable",
+      "description": "Un solo backend; audit GUI, review scientifica esterna e qualità empirica restano separati."
+    }
+  },
+  "limits": [
+    "Contratto in memoria bounded; nessuna estensione automatica di planner, UI o metadati persistenti.",
+    "Nessuna review umana o validazione empirica simulata."
+  ],
+  "evidence": [
+    "docs/evidenze/GS-VER-168-completamento-algoritmi.md"
+  ],
+  "numericAgreement": {
+    "comparisonMode": "structural",
+    "oracle": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLinguisticEvaluationTests.swift",
+    "notes": "Conteggi/confusion/set esatti e frazioni calcolate a mano; nessuna evidenza di qualità del backend linguistico."
+  },
+  "review": {
+    "reviewer": "Codex, revisione tecnica automatizzata",
+    "date": "2026-11-21",
+    "kind": "automatica interna",
+    "scope": "Contratti headless, formule, regressioni e limiti; nessuna promozione a supported."
+  }
+}

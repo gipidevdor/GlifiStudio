@@ -1,0 +1,130 @@
+<!-- SPDX-License-Identifier: BSD-3-Clause -->
+
+# GS-VER-280 — Struttura e coesione del codice
+
+| Campo | Valore |
+| --- | --- |
+| Identificatore | GS-VER-280 |
+| Tipo | Evidenza di refactoring e compatibilità |
+| Versione | 1.0.0 |
+| Stato | Confronti API/CLI e prove mirate superati; gate finale nel registro PR |
+| Responsabile | Iniziatore del progetto, con supporto Codex |
+| Ultima modifica | 2026-11-22 |
+| Approvazione | Richiesta esplicita di migliorare struttura e ingegneria del software |
+| Riferimenti | [Issue #41](https://github.com/gipidevdor/GlifiStudio/issues/41); GS-DOR-280; CMP-280/281/282/283; GS-AD-001; GS-STD-001-10/12/29 |
+
+## Baseline e perimetro
+
+Baseline `38bba29`: l’audit distingue dimensione dei file e responsabilità.
+I cataloghi di DTO immutabili non sono trattati come oggetti grassi. Gli interventi
+riguardano la coesione bootstrap/sessione/modelli Kit, i blocchi duplicati di
+staging e generazione del package e l’ownership della sessione CLI.
+
+## Struttura prima e dopo
+
+| Area | Prima | Dopo | Beneficio osservabile nel codice |
+| --- | --- | --- | --- |
+| Contratti applicativi Kit | Bootstrap, modelli e actor nello stesso file da 1.383 righe | Servizio 92, modelli 281 e sessione 1.004 righe | Ruoli separati, stato e helper privati dell’actor coesi |
+| Policy ordinarie della sessione | Nove copie di admission e traduzione errori | Un helper privato, nove callsite | Un punto di manutenzione per la stessa policy; eccezioni preservate |
+| Commit del package | Quattro copie di staging e costruzione digest/manifest | Una factory privata per ciascuna responsabilità | Le validazioni e i checkpoint di famiglia restano espliciti |
+| Corpi dei quattro commit | 657 righe | 497 righe | Meno coordinamento ripetuto nei singoli casi; helper contati nel totale del file |
+| Ownership CLI | 38 sessioni, 42 close distribuite | Owner privato con due close (successo/failure) | Chiusura anche sui percorsi prima non protetti, prima della presentazione |
+| Stream execute/visualize | Due loop con la stessa validazione | Un collector privato | Identica gestione di progresso, completamento mancante/duplicato ed errore tardivo |
+
+Il totale dei sorgenti produttivi toccati, includendo entrambi i nuovi file, passa
+da 6.369 a 6.303 righe. Il file CLI cresce di sette righe: il beneficio è la
+responsabilità condivisa, non un limite di righe. I cataloghi DTO, la GUI, i
+workbench e i kernel numerici non sono stati suddivisi per motivi cosmetici.
+Il [confronto strutturale](allegati/GS-VER-280/structure-comparison.json) conserva
+conteggi e hash dei sorgenti prima/dopo.
+
+## Compatibilità verificata
+
+- Baseline CLI compilata e congelata prima delle patch su `38bba29`.
+- `swift-api-digester -dump-sdk` su Core e Kit: interi dump API equivalenti dopo
+  ordinamento dei soli nodi di dichiarazione al livello radice. Nessuna firma,
+  attributo, parametro, membro o informazione di tipo è rimossa o normalizzata.
+  Confronto [API](allegati/GS-VER-280/api-compatibility.json); non è certificazione
+  ABI né introduzione di un gate di rilascio globale.
+- Confronto completo di stdout, stderr ed exit code in 98 casi sintetici, senza
+  eliminare campi: 30 fixture in entrambi i formati, ingressi malformati, status,
+  letture e failure del progetto. Tutti i byte coincidono; nessun path temporaneo
+  compare nell’output. [Risultati](allegati/GS-VER-280/cli-compatibility.json) e
+  [programma riproducibile](allegati/GS-VER-280/compare-cli.py).
+- Compilazione congiunta CLI/Core/Kit superata; 28 test Core e 26 Kit mirati
+  superati, inclusi writer, interruzione, recovery, storia qualitativa, admission,
+  errori, sessione e lease dell’attività.
+- Revisione indipendente: API/accessi invariati; mapping distinti del bootstrap e
+  della sessione preservati. I/O e checkpoint dei quattro commit restano nel
+  medesimo ordine, comprese le asimmetrie qualitative e Investigation. Il confronto del primo incremento conserva stati e metadati delle 157
+  clausole preesistenti e aggiunge soltanto i riferimenti Kit a 38 righe; le
+  successive correzioni di `aec1a00` mantengono la propria evidenza e il proprio ambito.
+
+## Riscontro e correzione pubblicata della baseline
+
+Il primo gate completo ha superato 110 test Kit e ha segnalato due failure nei
+546 test Core. Lo snapshot immutabile `38bba29`, compilato separatamente senza il
+refactoring, riproduce entrambe (2 test, exit 1): i test costruivano range vuoti o
+invertiti che il decoder già rifiutava. I tre sorgenti coinvolti erano identici
+alla baseline, come registra la [prova separata](allegati/GS-VER-280/baseline-range-failures.json).
+
+La chat di revisione ha poi pubblicato `aec1a00`: risoluzione completa con
+ADR-0042, validazione SpanMap e test aggiornati. Il candidato incorpora tale
+commit, mantenendo la risoluzione del suo proprietario; il tentativo locale di
+solo allineamento dei test è superato e non viene consegnato. Non si rimuove una
+guardia produttiva né si usa il primo gate fallito come evidenza di successo.
+La verifica finale riguarda la composizione aggiornata.
+
+Successivamente è incorporato anche `db2bac1` (GS-VER-177/178), pubblicato dalla
+chat algoritmica: ottimizzazioni di grafi ed export indipendenti dai cinque
+sorgenti del refactoring. Il passaggio precedente aveva già superato 550 test
+Core, 110 Kit, 99 definizioni native/319 esecuzioni, 95 controlli CLI, 22 punti di
+interruzione e tutte le build Debug/Release. Il packaging è stato interrotto
+intenzionalmente per aggiornare la base, senza usarlo come prova di successo.
+Il gate finale nel registro PR riguarda l’unione completa.
+
+## Gate finale e riproduzione
+
+
+Su richiesta ribadita dall’iniziatore, il gate finale è macOS. Gli ingressi
+predefiniti Make e CI selezionano `--macos-only`; il profilo `*-all` è esplicito.
+La pipeline multipiattaforma è stata fermata e non è usata come prova di un
+preflight globale completato. La fase condivisa/macOS sul codice congelato aveva
+già superato 553 test Core, 112 Kit, 99 test nativi/319 esecuzioni, 95 controlli
+CLI, 22 checkpoint e i due PDF/A, con build macOS Debug/Release. Il packaging
+macOS è superato con `check-app-store-packaging.sh --macos-only` (exit 0):
+analisi statica e archivio unsigned validi. Il controllo statico è ripetuto
+dopo l’aggiornamento di Make/CI e della documentazione, con exit 0.
+
+La verifica dei profili copre sei piani Make e cinque casi positivi/negativi:
+[priorità macOS verificata](allegati/GS-VER-280/macos-default-profile.json).
+I controlli condivisi e macOS restano attivi; il checker rifiuta il ritorno
+implicito al profilo globale nei due ingressi predefiniti e nella CI.
+
+Il gate macOS `make verify-app-store` comprende `verify.sh --macos-only` e il packaging macOS.
+Il suo esito non è dedotto dalle prove mirate. I risultati tardivi del gate
+locale e della CI sono registrati nella [PR #42](https://github.com/gipidevdor/GlifiStudio/pull/42),
+sulla revisione finale, senza anticiparli in questo snapshot.
+I cinque sorgenti del refactoring e le metriche strutturali sono congelati in
+`d5d45e5`. Dopo l’integrazione di `aec1a00` i confronti API e i 98 casi CLI sono
+stati rieseguiti con esito identico; sei test mirati di intervalli, SpanMap e
+annotazioni sono superati. Le revisioni successive conservano separatamente
+prova della baseline, correzione pubblicata e gate finale della composizione.
+
+Per il confronto CLI compilare `GlifiCLI` della baseline e del candidato con la
+stessa toolchain, congelare i due eseguibili e invocare:
+
+```sh
+python3 docs/evidenze/allegati/GS-VER-280/compare-cli.py \
+  --reference /percorso/GlifiCLI-baseline --candidate /percorso/GlifiCLI-candidate \
+  --workspace "$PWD" --output /percorso/cli-compatibility.json
+```
+
+Il programma genera e rimuove progetti sintetici; i risultati dei comandi di
+scrittura e degli stream posseduti sono verificati dal gate completo. Il confronto
+API usa `-avoid-location -avoid-tool-args` e lo stesso SDK/triple macOS dei moduli
+compilati. I dump integrali restano fra le evidenze locali utili, mentre il
+report versionato conserva gli hash normalizzati e l’esito dei due moduli.
+
+Nessun benchmark di velocità, consumo energetico, audit manuale o promozione
+scientifica è attestato da questo refactoring.

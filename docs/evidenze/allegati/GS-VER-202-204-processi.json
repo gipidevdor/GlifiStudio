@@ -1,0 +1,27 @@
+{
+  "scope": "RSS massimo dell'intera invocazione swift test/time-l, inclusi SwiftPM, fixture, riferimenti e controlli; non singolo kernel o UI",
+  "processes": {
+    "baseline": {
+      "SpanMap": {
+        "maximumResidentSetBytesWholeInvocation": 110673920
+      },
+      "Tokenizer": {
+        "maximumResidentSetBytesWholeInvocation": 73564160
+      },
+      "CSV": {
+        "maximumResidentSetBytesWholeInvocation": 131907584
+      }
+    },
+    "candidate": {
+      "SpanMap": {
+        "maximumResidentSetBytesWholeInvocation": 88457216
+      },
+      "Tokenizer": {
+        "maximumResidentSetBytesWholeInvocation": 73564160
+      },
+      "CSV": {
+        "maximumResidentSetBytesWholeInvocation": 137199616
+      }
+    }
+  }
+}

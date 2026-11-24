@@ -1,0 +1,211 @@
+{
+  "spdxLicenseIdentifier": "BSD-3-Clause",
+  "evidenceID": "GS-VER-222",
+  "date": "2026-11-22",
+  "scope": "Riprogettazione della GUI e integrazione del laboratorio nativo in memoria; nessuna promozione scientifica o chiusura G4/G5",
+  "sourceFingerprint": {
+    "baseRevision": "02c1c666437a58743dba40193b9a94d4a7a3a11c",
+    "sourceFileCount": 334,
+    "sourceSHA256": "c77d0e37d78a2d9684de224c8799fedf85aae30781f5665dca42ebb15220129f",
+    "roots": [
+      "Apps",
+      "Packages",
+      "Config",
+      "Scripts",
+      "GlifiStudio.xcodeproj",
+      ".swift-format",
+      "Makefile"
+    ],
+    "enumeration": "git ls-files --cached --others --exclude-standard sulle radici dichiarate; path ordinati",
+    "digestAlgorithm": "SHA-256 della concatenazione path relativo UTF-8, NUL, contenuto e NUL per ciascun path ordinato",
+    "scopeNote": "Ingressi del gate finale in worktree detached isolato; esecuzioni precedenti identificate separatamente",
+    "snapshotKind": "Worktree Git detached con overlay della copia condivisa",
+    "copyConsistencyVerified": true,
+    "copyConsistencyScope": "Digest e conteggio uguali prima e dopo la copia della sorgente condivisa e nel worktree isolato",
+    "unchangedAfterVerification": true,
+    "postVerificationFileCount": 334,
+    "postVerificationSHA256": "c77d0e37d78a2d9684de224c8799fedf85aae30781f5665dca42ebb15220129f"
+  },
+  "targetedMacOSTests": {
+    "command": "xcodebuild test -workspace GlifiStudio.xcworkspace -scheme GlifiStudio-macOS",
+    "selectedSuites": [
+      "StudioAdvancedAnalysisTests",
+      "StudioWorkspaceTests",
+      "StudioDocumentLifecycleTests"
+    ],
+    "exitCode": 0,
+    "testDefinitions": 44,
+    "deviceExecutions": 70,
+    "failed": 0,
+    "skipped": 0,
+    "advancedExecutions": 14,
+    "summaryVariants": 7,
+    "sourceScope": "I test mirati precedono la correzione finale di CocoaError.userCancelled nei due exporter",
+    "rawLogSHA256": "32075e6288bff4be2201d14aa0b7c53fe5ee7a95463a1d9d9fc96fc8dd1a86d6",
+    "hostDiagnostics": [
+      "Framework CoreSimulator 1171.7.0 precedente al build 1174.21.0 richiesto da Xcode; supporto dei dispositivi simulatori disabilitato",
+      "Avviso DVTAssertions sul completamento della preparazione diagnostica di IDELaunchSession"
+    ],
+    "limitations": [
+      "Nessun test runtime iPadOS",
+      "Diagnostici host distinti dai fallimenti dei test applicativi"
+    ]
+  },
+  "independentOracles": {
+    "require": true,
+    "pythonVersion": "3.14",
+    "reproducedRows": 194,
+    "status": "passed"
+  },
+  "staticChecks": {
+    "documentation": "passed",
+    "compliance": "passed",
+    "localization": "passed",
+    "architecture": "passed",
+    "swiftDialect": "passed",
+    "diffWhitespace": "passed"
+  },
+  "fullVerification": {
+    "command": "make verify",
+    "status": "passed-isolated",
+    "exitCode": 0,
+    "isolatedSnapshot": true,
+    "explicitPythonVersion": "3.14",
+    "explicitVERAPDF": true,
+    "completedStages": {
+      "packageTests": {
+        "status": "passed",
+        "testCount": 423,
+        "durationSeconds": 13.224
+      },
+      "oracleRowsReproduced": 194,
+      "textAnalysisCLIChecks": 51,
+      "recoveryCheckpoints": 22,
+      "queryAST": "passed",
+      "macOSNativeTests": {
+        "result": "Passed",
+        "testDefinitions": 67,
+        "executions": 224,
+        "failedTests": 0,
+        "skippedTests": 0,
+        "runtimeWarnings": 0,
+        "platform": "macOS",
+        "systemVersion": "27.2.1"
+      },
+      "externalPDFA2uFiles": 2,
+      "textAnalysisFixtures": 15,
+      "builds": [
+        "macOS Debug",
+        "macOS Release",
+        "iPadOS Debug",
+        "iPadOS Release"
+      ],
+      "codeSigningRequired": false,
+      "iPadOSRuntimeTestsExecuted": false
+    },
+    "remainingStages": [],
+    "buildAndHostWarnings": [
+      "Framework CoreSimulator 1171.7.0 precedente al build 1174.21.0 richiesto da Xcode; diagnostico non bloccante",
+      "Avviso iPadOS relativo all’apertura sul posto dei documenti ancora aperto"
+    ],
+    "zeroBuildWarningsClaimed": false
+  },
+  "externalPDFAValidation": {
+    "gateProbe": "VERAPDF configurato esplicitamente nel nuovo gate isolato",
+    "installedValidatorVersion": "1.30.4",
+    "requireStatus": "passed-on-interrupted-run",
+    "validPDFA2uFilesOnInterruptedRun": 2,
+    "isolatedGateStatus": "passed",
+    "isolatedValidatedFiles": 2,
+    "validatorConfiguredExplicitly": true
+  },
+  "guiObservation": {
+    "performed": true,
+    "build": "macOS Debug",
+    "screenshotCaptured": true,
+    "observed": [
+      "Creazione documentale nativa",
+      "Sidebar",
+      "Panoramica vuota",
+      "Menu Area di lavoro",
+      "Apertura e salvataggio di progetto temporaneo vuoto",
+      "Difetto di copertura della sidebar dovuto a context/status bar globali"
+    ],
+    "interruption": "Mac ribloccato prima di completare i flussi interattivi",
+    "notValidated": [
+      "Strumenti con dati",
+      "Risultati",
+      "Tastiera e focus end-to-end",
+      "Ridimensionamento della finestra",
+      "Tecnologie assistive",
+      "Dialoghi di esportazione di sistema"
+    ],
+    "subsequentCodeFix": "Context e status bar spostati nel dettaglio del NavigationSplitView; correzione inclusa nello snapshot isolato",
+    "subsequentCodeFixObservedLive": false,
+    "finalObservationState": "MacLocked; controllo interattivo finale non completabile"
+  },
+  "empiricalErgonomicsValidated": false,
+  "scientificStatusChanged": false,
+  "g4Closed": false,
+  "g5Closed": false,
+  "previousVerificationAttempt": {
+    "command": "make verify",
+    "status": "interrupted",
+    "complete": false,
+    "inputSourceFileCount": 334,
+    "inputSourceSHA256": "7a70a611de646cf218a4db6067f8e2961137135cf3017d2b8e21c33bde15b5fa",
+    "sourceScope": "Working tree condiviso cambiato durante la run; gli esiti parziali non sono attribuiti a uno snapshot immutabile",
+    "interruptionReason": "Sorgenti concorrenti e correzione del contesto/status bar dopo osservazione visiva",
+    "observedPassed": {
+      "packageTests": 423,
+      "oracleRows": 194,
+      "textAnalysisCLIChecks": 51,
+      "recoveryCheckpoints": 22,
+      "queryAST": true,
+      "externalPDFA2uFilesWithRequire": 2
+    },
+    "externalPDFValidatorVersion": "1.30.4"
+  },
+  "sharedCopyComparisonAfterGate": {
+    "sourceFileCount": 334,
+    "sourceSHA256": "233d051f57eba304004cc5e5ce528f4feb0c3acabe777d55225578b7633137f6",
+    "differentFiles": [
+      "Config/Compliance/specification-matrix.json"
+    ],
+    "changedFields": [
+      {
+        "clause": "CMP-230",
+        "field": "status",
+        "before": "implemented",
+        "after": "verified"
+      },
+      {
+        "clause": "CMP-232",
+        "field": "status",
+        "before": "implemented",
+        "after": "verified"
+      }
+    ],
+    "otherFilesIdentical": 333,
+    "scopeNote": "Soli stati documentali successivi al gate; runtime e altri ingressi verificati coincidono"
+  },
+  "complianceClause": {
+    "id": "CMP-222",
+    "status": "implemented",
+    "reason": "Gate automatico superato; ergonomia e accessibilità richiedono audit ancora aperti"
+  },
+  "cleanup": {
+    "removedKiB": 2852132,
+    "retainedAppKiB": 37468,
+    "agentPreviouslyRemovedKiB": 519936,
+    "totalRemovedGiB": 3.216,
+    "retainedForVisualReview": [
+      "Debug application",
+      "Saved synthetic review project",
+      "Four synthetic review inputs",
+      "Verification evidence"
+    ],
+    "verifiedWorktreeRemoved": true,
+    "temporaryXCResultRemovedAfterSummary": true
+  }
+}

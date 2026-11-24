@@ -1,0 +1,76 @@
+{
+  "schema": "studio.glifi.validation-manifest",
+  "schemaVersion": 1,
+  "id": "validation-keyness-gtest-fisher-ha-ci-bh-v2",
+  "capabilityIdentifier": "keyness-gtest-fisher-ha-ci-bh-v2",
+  "methodIdentifiers": [
+    "GTest-v1",
+    "ChiSquareSurvival-df1-erfc-v1",
+    "FisherSelection-min-expected-5-v1",
+    "FisherExactTwoSided-v1",
+    "OddsRatio-HA-v1",
+    "LogRatio-HA-v1-base2",
+    "LogRatioCI-Katz-HA-v1",
+    "OddsRatioCI-Woolf-HA-v1",
+    "BenjaminiHochberg-v1"
+  ],
+  "status": "supported",
+  "license": "BSD-3-Clause",
+  "toolchain": {
+    "swiftLanguageMode": "6",
+    "swiftToolsVersion": "6.4",
+    "platforms": [
+      "macOS 27",
+      "iPadOS 27"
+    ]
+  },
+  "levels": {
+    "V0": {
+      "status": "pass",
+      "description": "Schema confronto e precondizioni gruppi disgiunti verificate."
+    },
+    "V1": {
+      "status": "pass",
+      "description": "Casi degeneri, attese basse con selezione di Fisher e attese alte con G-test nei test Core."
+    },
+    "V2": {
+      "status": "pass",
+      "description": "Oracoli indipendenti: fisher.test e formule di Katz/Woolf in R (Tests/Oracles/R/keyness.R) e ricalcolo Python di keyness-gtest-fisher-ha-ci-bh-v2 in reference-cases."
+    },
+    "V3": {
+      "status": "pass",
+      "description": "Persistenza Artifact keyness.v2 e parità GlifiCore/Kit/CLI (GS-VER-118)."
+    },
+    "V4": {
+      "status": "pass",
+      "description": "Fixture scientifiche versionate come golden numerico.",
+      "datasets": [
+        "Fixtures/Scientific/v1/reference-cases.json"
+      ]
+    },
+    "V5": {
+      "status": "not-applicable",
+      "description": "Un solo backend nel nucleo 0.1."
+    }
+  },
+  "limits": [
+    "Soglie di supporto validate empiricamente in G4.",
+    "Dataset esterni pubblicati non ancora collegati."
+  ],
+  "evidence": [
+    "docs/evidenze/GS-VER-023-keyness-gtest-bh.md",
+    "docs/evidenze/GS-VER-118-keyness-fisher-e-intervalli.md"
+  ],
+  "numericAgreement": {
+    "comparisonMode": "absoluteTolerance",
+    "absoluteTolerance": 1e-10,
+    "oracle": "Packages/GlifiCore/Tests/Oracles/R/keyness.R",
+    "notes": "G-test, selezione di Fisher, log ratio e odds ratio con IC: il confronto più largo imposto dai test è 1e-10 sugli estremi degli intervalli; i valori chiusi restano entro 1e-12."
+  },
+  "review": {
+    "reviewer": "Iniziatore del progetto",
+    "date": "2026-09-20",
+    "kind": "interna",
+    "scope": "ADR-0031: livelli, oracolo indipendente e tolleranza dichiarata"
+  }
+}

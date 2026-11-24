@@ -1,0 +1,16 @@
+{
+  "schema": "studio.glifi.persistence-fixture",
+  "schemaVersion": 2,
+  "caseID": "selective-invalidation",
+  "license": "BSD-3-Clause",
+  "sources": ["alfa.txt", "beta.txt"],
+  "unrelatedSource": "estranea.txt",
+  "expected": {
+    "generationAfterImports": 2,
+    "generationAfterAnalysis": 4,
+    "generationAfterUnrelatedImport": 5,
+    "artifactCountAfterUnrelatedImport": 2,
+    "artifactReusedAfterUnrelatedImport": true
+  },
+  "purpose": "Un'analisi dichiarata su due fonti sopravvive all'importazione di una terza fonte estranea ed è riusata senza ricalcolo (ADR-0028)."
+}

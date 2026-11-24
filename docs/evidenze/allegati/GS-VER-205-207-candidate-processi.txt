@@ -1,0 +1,79 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Invocazioni seriali Release; time-l comprende setup, riferimenti e runner.
+# Graph
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test "La costruzione del DAG coincide con Kahn scalare e misura soltanto workload espliciti" started.
+✔ Test "La costruzione del DAG coincide con Kahn scalare e misura soltanto workload espliciti" passed after 13.268 seconds.
+✔ Test run with 1 test in 0 suites passed after 13.269 seconds.
+       15.17 real        14.70 user         0.41 sys
+           131776512  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               67915  page reclaims
+                1468  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 385  voluntary context switches
+                1777  involuntary context switches
+          4642719812  instructions retired
+          1245587781  cycles elapsed
+            25248560  peak memory footprint
+
+# Projection
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test "La proiezione Kit coincide con il riferimento e misura soltanto workload espliciti" started.
+✔ Test "La proiezione Kit coincide con il riferimento e misura soltanto workload espliciti" passed after 0.821 seconds.
+✔ Test run with 1 test in 0 suites passed after 0.821 seconds.
+        2.24 real         1.99 user         0.30 sys
+            73531392  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               47261  page reclaims
+                 842  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  51  voluntary context switches
+                1174  involuntary context switches
+          4565603501  instructions retired
+          1229777633  cycles elapsed
+            25035592  peak memory footprint
+
+# Digest
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test "Digest, identificatori e descrittori conservano il contratto e misurano workload espliciti" started.
+✔ Test "Digest, identificatori e descrittori conservano il contratto e misurano workload espliciti" passed after 18.378 seconds.
+✔ Test run with 1 test in 0 suites passed after 18.378 seconds.
+       19.80 real        19.42 user         0.41 sys
+           384466944  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               69214  page reclaims
+                 844  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  51  voluntary context switches
+                1698  involuntary context switches
+          4559053506  instructions retired
+          1223130357  cycles elapsed
+            25133872  peak memory footprint

@@ -1,0 +1,17 @@
+{
+  "result": "Failed",
+  "passedTests": 0,
+  "failedTests": 1,
+  "skippedTests": 0,
+  "totalTestCount": 1,
+  "nodeTypes": {
+    "Test Plan": 1,
+    "Unit test bundle": 1,
+    "Test Suite": 1,
+    "Test Case": 1,
+    "Failure Message": 3
+  },
+  "failures": [
+    "Expectation failed: await watchdog.value == false: Attachment blocked teardown admission"
+  ]
+}

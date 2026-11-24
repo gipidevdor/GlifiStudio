@@ -1,0 +1,66 @@
+{
+  "schema": "studio.glifi.validation-manifest",
+  "schemaVersion": 1,
+  "id": "validation-scientific-export-v1",
+  "capabilityIdentifier": "scientific-export-v1",
+  "methodIdentifiers": [
+    "ExportManifest-v1",
+    "ReportRevision-v1",
+    "PDF-A-2u",
+    "CSV-lossless-v1"
+  ],
+  "status": "candidate",
+  "license": "BSD-3-Clause",
+  "toolchain": {
+    "swiftLanguageMode": "6",
+    "swiftToolsVersion": "6.4",
+    "platforms": [
+      "macOS 27",
+      "iPadOS 27"
+    ]
+  },
+  "levels": {
+    "V0": {
+      "status": "pass",
+      "description": "Schema ExportManifest e precondizioni di destinazione verificate."
+    },
+    "V1": {
+      "status": "pass",
+      "description": "Interruzioni staging e digest mismatch nei test Core."
+    },
+    "V2": {
+      "status": "pass",
+      "description": "Round-trip JSON/Markdown/CSV/PDF con oracolo di digest nei test."
+    },
+    "V3": {
+      "status": "pass",
+      "description": "Export atomico e verifyExport dopo riapertura (GS-VER-032/033)."
+    },
+    "V4": {
+      "status": "pass",
+      "description": "Anteprima Markdown UI e receipt Kit come regressione operativa.",
+      "datasets": [
+        "Fixtures/Persistence/v1/basic/case.json"
+      ]
+    },
+    "V5": {
+      "status": "not-applicable",
+      "description": "Un solo renderer Apple-native nel nucleo 0.1."
+    }
+  },
+  "limits": [
+    "Screenshot e App Review materials non fanno parte di questo manifesto.",
+    "Accessibilità del PDF esportato da auditare su dispositivo."
+  ],
+  "evidence": [
+    "docs/evidenze/GS-VER-032-export-scientifico.md",
+    "docs/evidenze/GS-VER-033-export-pdf-csv.md",
+    "docs/evidenze/GS-VER-041-query-manifest-e-preview-export.md"
+  ],
+  "numericAgreement": {
+    "comparisonMode": "structural",
+    "oracle": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiScientificExportTests.swift",
+    "notes": "Round-trip JSON/Markdown/CSV/PDF con digest: l'oracolo è strutturale, non numerico."
+  },
+  "statusReason": "L'oracolo di V2 è un test del prodotto, non un'implementazione indipendente: ADR-0031 non ammette l'approvazione."
+}

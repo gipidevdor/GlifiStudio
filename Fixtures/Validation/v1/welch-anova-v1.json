@@ -1,0 +1,71 @@
+{
+  "schema": "studio.glifi.validation-manifest",
+  "schemaVersion": 1,
+  "id": "validation-welch-anova-v1",
+  "capabilityIdentifier": "welch-anova",
+  "methodIdentifiers": [
+    "WelchOneWayANOVA-v1"
+  ],
+  "status": "candidate",
+  "statusReason": "Implementazione headless verificata; promozione scientifica per variante separata secondo ADR-0031, nessuna promozione implicita del prodotto.",
+  "license": "BSD-3-Clause",
+  "toolchain": {
+    "swiftLanguageMode": "6",
+    "swiftToolsVersion": "6.4",
+    "platforms": [
+      "macOS 27",
+      "iPadOS 27"
+    ]
+  },
+  "levels": {
+    "V0": {
+      "status": "pass",
+      "description": "Forma, dominio, finitezza, limiti e cancellazione coperti dai test mirati GS-VER-168."
+    },
+    "V1": {
+      "status": "pass",
+      "description": "Casi sintetici minimi e degeneri con risultati esatti o motivi di indisponibilità espliciti."
+    },
+    "V2": {
+      "status": "pass",
+      "description": "F/df/p confrontati con oneway.test R; identità con t-Welch a due gruppi e invarianza di scala. Decimal80 verifica separatamente offset fra gruppi, con confronti relativi su F e assoluti su df (GS-VER-171).",
+      "oracle": "Packages/GlifiCore/Tests/Oracles/R/welch_anova.R"
+    },
+    "V3": {
+      "status": "pass",
+      "description": "Invarianti di conteggio, identità/ordine o scala e parità della facciata pertinenti alla famiglia."
+    },
+    "V4": {
+      "status": "pass",
+      "description": "Dataset sintetici BSD-3-Clause nei test e negli oracoli, senza corpus privati o dipendenze esterne di prodotto.",
+      "datasets": [
+        "Packages/GlifiCore/Tests/Oracles/R/welch_anova.R",
+        "Packages/GlifiCore/Tests/Oracles/Python/welch_precision.py"
+      ]
+    },
+    "V5": {
+      "status": "not-applicable",
+      "description": "Un solo backend; audit GUI, review scientifica esterna e qualità empirica restano separati."
+    }
+  },
+  "limits": [
+    "Contratto in memoria bounded; nessuna estensione automatica di planner, UI o metadati persistenti.",
+    "Nessuna review umana o validazione empirica simulata."
+  ],
+  "evidence": [
+    "docs/evidenze/GS-VER-168-completamento-algoritmi.md",
+    "docs/evidenze/GS-VER-171-integrazione-algoritmi.md"
+  ],
+  "numericAgreement": {
+    "comparisonMode": "absoluteTolerance",
+    "oracle": "Packages/GlifiCore/Tests/Oracles/R/welch_anova.R",
+    "notes": "F/df/p confrontati con oneway.test R; identità con t-Welch a due gruppi e invarianza di scala. Estremi aggiuntivi Decimal80: abs(F/expectedF-1)<1e-12 e abs(df-expectedDF)<1e-12; nessuna modifica alla tolleranza assoluta dei casi R.",
+    "absoluteTolerance": 1e-12
+  },
+  "review": {
+    "reviewer": "Codex, revisione tecnica automatizzata",
+    "date": "2026-11-21",
+    "kind": "automatica interna",
+    "scope": "Contratti headless, formule, regressioni e limiti; nessuna promozione a supported."
+  }
+}

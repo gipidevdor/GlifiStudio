@@ -1,0 +1,161 @@
+{
+  "availableCoreMLDevices" : [
+    "ANE",
+    "CPU"
+  ],
+  "modes" : [
+    {
+      "recognitionLevel" : "fast",
+      "supportedMainStageDevices" : [
+        "CPU"
+      ],
+      "supportsItalian" : true,
+      "trials" : [
+        {
+          "expected" : "La città è già pronta per la ricerca.",
+          "failure" : {
+            "code" : 1,
+            "domain" : "Vision.VisionError",
+            "reason" : "internalError(\"Failed to create CVPixelBuffer\")"
+          },
+          "mainStagePolicy" : "automatic",
+          "readings" : [
+
+          ],
+          "sample" : "accents"
+        },
+        {
+          "expected" : "Riga 27, valore 3,5 su 100.",
+          "failure" : {
+            "code" : 1,
+            "domain" : "Vision.VisionError",
+            "reason" : "internalError(\"Failed to create CVPixelBuffer\")"
+          },
+          "mainStagePolicy" : "automatic",
+          "readings" : [
+
+          ],
+          "sample" : "numbers"
+        },
+        {
+          "expected" : "La città è già pronta per la ricerca.",
+          "failure" : {
+            "code" : 1,
+            "domain" : "Vision.VisionError",
+            "reason" : "internalError(\"Failed to create CVPixelBuffer\")"
+          },
+          "mainStagePolicy" : "CPU",
+          "readings" : [
+
+          ],
+          "sample" : "accents"
+        },
+        {
+          "expected" : "Riga 27, valore 3,5 su 100.",
+          "failure" : {
+            "code" : 1,
+            "domain" : "Vision.VisionError",
+            "reason" : "internalError(\"Failed to create CVPixelBuffer\")"
+          },
+          "mainStagePolicy" : "CPU",
+          "readings" : [
+
+          ],
+          "sample" : "numbers"
+        }
+      ]
+    },
+    {
+      "recognitionLevel" : "accurate",
+      "supportedMainStageDevices" : [
+        "ANE",
+        "CPU"
+      ],
+      "supportsItalian" : true,
+      "trials" : [
+        {
+          "expected" : "La città è già pronta per la ricerca.",
+          "failure" : {
+            "code" : 1,
+            "domain" : "Vision.VisionError",
+            "reason" : "internalError(\"Failed to create CVPixelBuffer\")"
+          },
+          "mainStagePolicy" : "automatic",
+          "readings" : [
+
+          ],
+          "sample" : "accents"
+        },
+        {
+          "expected" : "Riga 27, valore 3,5 su 100.",
+          "failure" : {
+            "code" : 1,
+            "domain" : "Vision.VisionError",
+            "reason" : "internalError(\"Failed to create CVPixelBuffer\")"
+          },
+          "mainStagePolicy" : "automatic",
+          "readings" : [
+
+          ],
+          "sample" : "numbers"
+        },
+        {
+          "expected" : "La città è già pronta per la ricerca.",
+          "failure" : {
+            "code" : 1,
+            "domain" : "Vision.VisionError",
+            "reason" : "internalError(\"Failed to create CVPixelBuffer\")"
+          },
+          "mainStagePolicy" : "ANE",
+          "readings" : [
+
+          ],
+          "sample" : "accents"
+        },
+        {
+          "expected" : "Riga 27, valore 3,5 su 100.",
+          "failure" : {
+            "code" : 1,
+            "domain" : "Vision.VisionError",
+            "reason" : "internalError(\"Failed to create CVPixelBuffer\")"
+          },
+          "mainStagePolicy" : "ANE",
+          "readings" : [
+
+          ],
+          "sample" : "numbers"
+        },
+        {
+          "expected" : "La città è già pronta per la ricerca.",
+          "failure" : {
+            "code" : 1,
+            "domain" : "Vision.VisionError",
+            "reason" : "internalError(\"Failed to create CVPixelBuffer\")"
+          },
+          "mainStagePolicy" : "CPU",
+          "readings" : [
+
+          ],
+          "sample" : "accents"
+        },
+        {
+          "expected" : "Riga 27, valore 3,5 su 100.",
+          "failure" : {
+            "code" : 1,
+            "domain" : "Vision.VisionError",
+            "reason" : "internalError(\"Failed to create CVPixelBuffer\")"
+          },
+          "mainStagePolicy" : "CPU",
+          "readings" : [
+
+          ],
+          "sample" : "numbers"
+        }
+      ]
+    }
+  ],
+  "operatingSystem" : "Version 27.2.1 (Build 26B131)",
+  "recognitionLanguage" : "it-IT",
+  "repetitionsAfterFirst" : 5,
+  "requestRevision" : 3
+}

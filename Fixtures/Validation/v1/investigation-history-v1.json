@@ -1,0 +1,65 @@
+{
+  "schema": "studio.glifi.validation-manifest",
+  "schemaVersion": 1,
+  "id": "validation-investigation-history-v1",
+  "capabilityIdentifier": "investigation-history-v1",
+  "methodIdentifiers": [
+    "InvestigationHistory-v1",
+    "InvestigationEvent-append-only-v1",
+    "EditorialSelection-v1"
+  ],
+  "status": "candidate",
+  "license": "BSD-3-Clause",
+  "toolchain": {
+    "swiftLanguageMode": "6",
+    "swiftToolsVersion": "6.4",
+    "platforms": [
+      "macOS 27",
+      "iPadOS 27"
+    ]
+  },
+  "levels": {
+    "V0": {
+      "status": "pass",
+      "description": "Schema Investigation/Event e invarianti append-only verificati staticamente."
+    },
+    "V1": {
+      "status": "pass",
+      "description": "Creazione, selezione editoriale, diramazione e invalidazione nei test Core."
+    },
+    "V2": {
+      "status": "pass",
+      "description": "Riapertura teste e riuso Artifact piano/interpretazione (GS-VER-031)."
+    },
+    "V3": {
+      "status": "pass",
+      "description": "Migrazione schema e fail-closed su predecessor non valido."
+    },
+    "V4": {
+      "status": "pass",
+      "description": "UI Must: teste, storia eventIDs, lineage Artifact e salto Evidence→fonte.",
+      "datasets": [
+        "Fixtures/Validation/v1/manifest.json"
+      ]
+    },
+    "V5": {
+      "status": "not-applicable",
+      "description": "Un solo modello di storia Investigation nel nucleo 0.1."
+    }
+  },
+  "limits": [
+    "Autosave e recovery power-loss reali ancora aperti.",
+    "Studi UX sulla comprensione della storia non eseguiti."
+  ],
+  "evidence": [
+    "docs/evidenze/GS-VER-031-investigation-history.md",
+    "docs/evidenze/GS-VER-039-kwic-fonte-teste-indagine.md",
+    "docs/evidenze/GS-VER-049-evidence-fonte-e-investigation-manifest.md"
+  ],
+  "numericAgreement": {
+    "comparisonMode": "structural",
+    "oracle": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiInvestigationTests.swift",
+    "notes": "Teste, ramificazioni e riuso degli Artifact dopo riapertura: confronto strutturale."
+  },
+  "statusReason": "L'oracolo di V2 è un test del prodotto, non un'implementazione indipendente: ADR-0031 non ammette l'approvazione."
+}

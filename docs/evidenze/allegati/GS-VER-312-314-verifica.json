@@ -1,0 +1,385 @@
+{
+  "schema": "studio.glifi.corrective-verification",
+  "schemaVersion": 1,
+  "status": "passed-local-macos",
+  "recordedAtUTC": "2026-11-24T19:23:28.147355+00:00",
+  "evidence": [
+    "GS-VER-312",
+    "GS-VER-313",
+    "GS-VER-314"
+  ],
+  "baseCommit": "741da2e509c03b520b9b39e3eba4af2915911731",
+  "sourceFingerprint": "345c5f70a0ce4133c1325476a92f08ce40815bdad272ca5d75dc432131474b0e",
+  "sourceFileCount": 1284,
+  "sourceArchiveSHA256": "ecefa347474d20bced42c22e7e04c6cb39c1b14d03b70fc368ca777831d4d15d",
+  "sourceIntegrity": {
+    "recordedAtUTC": "2026-11-24T19:18:16.476115+00:00",
+    "sourceFingerprint": "345c5f70a0ce4133c1325476a92f08ce40815bdad272ca5d75dc432131474b0e",
+    "files": 1284,
+    "contentsAndModesUnchanged": true,
+    "inventoryUnchanged": true,
+    "archiveContentsAndModesVerified": true,
+    "indexUnchanged": true,
+    "headUnchanged": true,
+    "archiveSHA256": "ecefa347474d20bced42c22e7e04c6cb39c1b14d03b70fc368ca777831d4d15d"
+  },
+  "environment": {
+    "recordedAtUTC": "2026-11-24T18:45:08.179228+00:00",
+    "baseCommit": "741da2e509c03b520b9b39e3eba4af2915911731",
+    "hostOS": "27.2.1",
+    "architecture": "arm64",
+    "model": "Mac16,3",
+    "processor": "Apple M4",
+    "memoryBytes": 17179869184,
+    "xcode": "Xcode 27.2\nBuild version 27B52",
+    "swift": "Apple Swift version 6.4.2 (swiftlang-6.4.2.1.9 clang-2100.4.1.1)\nTarget: arm64-apple-macosx27.2.0",
+    "scope": "macOS; automatic checks only; iPadOS deferred"
+  },
+  "verification": {
+    "command": [
+      "make",
+      "verify"
+    ],
+    "profile": "macOS",
+    "exitCode": 0,
+    "elapsedSeconds": 515.1766694169492,
+    "startUTC": "2026-11-24T19:07:50.310731+00:00",
+    "endUTC": "2026-11-24T19:16:25.491355+00:00",
+    "packageTests": {
+      "GlifiCore": 736,
+      "GlifiKit": 161
+    },
+    "nativeDebug": {
+      "definitionCount": 133,
+      "executionCount": 420,
+      "parameterizedDefinitionCount": 25,
+      "parameterizedRunCount": 312,
+      "nonparameterizedDefinitionAndRunCount": 108,
+      "runtimeWarnings": [],
+      "expectedFailures": 0
+    },
+    "statisticsRelease": {
+      "definitionCount": 12,
+      "executionCount": 57,
+      "runtimeWarnings": [],
+      "elapsedSeconds": 78.442,
+      "sourcesUnchangedDuringRun": true
+    },
+    "oracleLines": 244,
+    "fractionCases": 64,
+    "pdfACount": 2,
+    "textAnalysisFixtures": 63,
+    "textAnalysisCLIChecks": 196,
+    "kitOperations": 132,
+    "kitCompleteParityChecks": 264,
+    "kitRejectionChecks": 51,
+    "projectCLIChecks": 64,
+    "publicDeclarations": 2840,
+    "operationVariants": 172,
+    "integrationWorkflows": 5,
+    "recoveryCheckpoints": 22,
+    "nativeImportFormats": 4,
+    "buildCacheTests": 14,
+    "pdfACheckerTests": 6,
+    "pdfACheckerMainInvocations": 9,
+    "oracleCheckerTests": 4
+  },
+  "regressions": {
+    "pdfA": {
+      "phase": "GREEN",
+      "recordedAtUTC": "2026-11-24T18:40:28.438529+00:00",
+      "exitCode": 0,
+      "elapsedSeconds": 0.38189079193398356,
+      "checkerSHA256": "e67993729977c76a1c45690672b4677d4b51c4228812abfd6dcf0f2269f6c799",
+      "testSHA256": "521e9935e8d177c07f66e18d73190fe70f7a8b2b3fa978d784d1fc04fe58744e",
+      "testDefinitions": 6,
+      "controlledMainInvocations": 9
+    },
+    "oracleFiniteness": {
+      "recordedAtUTC": "2026-11-24T18:49:21.962143+00:00",
+      "testSHA256": "002085d5c44fe569d3e61dd8e5e1ba1a8fc1d869c5ed0b4a1f111d7575befb65",
+      "baselineCheckerSHA256": "541494b1ff67e48e71ee3ad3a9d1b3e4cf23e0ff05de39555432c789132c2223",
+      "candidateCheckerSHA256": "ceabb2cd041f5865ce3bfc78bc2eb510b135161e009d47c4303a0f9dd719fb67",
+      "redExitCode": 1,
+      "greenExitCode": 0,
+      "testDefinitions": 4,
+      "sameTestsUsedForRedAndGreen": true,
+      "redUsesIsolatedCopyOfGitBaseline": true,
+      "finiteTolerancePolicy": "unchanged; relative1e-12 with absolute floor1e-15; lexical linkage skips magnitudes below1e-9"
+    },
+    "statistics": "Due RED distinti confermati: decimale visibile non trovato e task Locale già cancellato che sovrascrive la presentazione. Candidato di risoluzione del bundle test fallito conservato separatamente."
+  },
+  "benchmark": {
+    "scope": "Helper di ammissione metadata reali compilati Release; non latenza end-to-end, I/O, RSS o energia.",
+    "environment": {
+      "os": "ProductName:\t\tmacOS\nProductVersion:\t\t27.2.1\nBuildVersion:\t\t26B131",
+      "architecture": "arm64",
+      "swift": "Apple Swift version 6.4.2 (swiftlang-6.4.2.1.9 clang-2100.4.1.1)\nTarget: arm64-apple-macosx27.2.0",
+      "cpu": "Apple M4",
+      "logicalCPUs": "10",
+      "memoryBytes": "17179869184"
+    },
+    "generation": {
+      "randomness": "none",
+      "uuidPattern": "31400000-0000-4000-8000-%012x with source index + 1",
+      "sourceByteCount": "1024 + index % 31",
+      "canonicalByteCount": "16384 + index % 97",
+      "formats": "First richCount sources alternate PDF/EPUB; remaining sources plainText.",
+      "artifactOrder": "Reversed: first richCount reserved valid records, then artifactCount - richCount nonreserved records; ordinal selects source modulo sourceCount.",
+      "digest": "Sources use sha256: plus 64 zeroes; actual descriptor canonical JSON and digest APIs generate artifact IDs, nodes and header digests.",
+      "exactGeneratorSource": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDocumentExtractionPersistenceTests.swift:documentAdmissionFixture, documentAdmissionSource, documentAdmissionArtifact and documentAdmissionArtifactRecord"
+    },
+    "protocol": {
+      "samplesPerMethod": 7,
+      "order": "Alternating baseline/candidate and candidate/baseline each repetition",
+      "warmup": "One full array comparison per method and shape before timing",
+      "clock": "DispatchTime.now().uptimeNanoseconds",
+      "validation": "Complete output arrays compared to independent known counts after every timed call; no performance pass/fail threshold."
+    },
+    "inputSHA256": {
+      "Packages/GlifiCore/Sources/GlifiCore/GlifiDocumentExtractionPersistence.swift": "e0fcf6d5571d8e05f665e6a5456ad7ac40db95d7165a7348f80a0017a60bab60",
+      "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift": "a2cf87dba6b1b8e32a4d6015bc86e0850592e109a62019586457d9c93694f91b",
+      "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDocumentExtractionPersistenceTests.swift": "23223851a03dfe3b750bd7742cf3dd6e287409be72828dd5c0b4a4131a8e36a3"
+    },
+    "compiledArtifactSHA256": {
+      "GlifiCoreTests": "c5fda327e784cb163d780ca4a6f5c83810509293430e8c3ebd2fdf9874a75f6b",
+      "GlifiDocumentExtractionPersistence.o": "97121f1e6cfd13e563d87f33b90537d13fab938bf64e1f5bc3ff791df0116c64",
+      "GlifiDocumentExtractionPersistenceTests.o": "3a87228a090edc9f5fdc7eb03acae75e8bbcdcce5f6b61fbb48018a613d4d31e"
+    },
+    "compilerGuardPre": [],
+    "compilerGuardPost": [],
+    "reports": [
+      {
+        "artifacts": 1000,
+        "artifactStride": 368,
+        "baselineMedianMs": 0.003708,
+        "baselineMs": [
+          0.004833,
+          0.003875,
+          0.003792,
+          0.003708,
+          0.003666,
+          0.003667,
+          0.003666
+        ],
+        "candidateMedianMs": 0.010625,
+        "candidateMs": [
+          0.010708,
+          0.010208,
+          0.010875,
+          0.010625,
+          0.010042,
+          0.010166,
+          0.010708
+        ],
+        "checksum": 14544712,
+        "label": "plain-control",
+        "richSources": 0,
+        "samples": 7,
+        "schema": "studio.glifi.document-admission-benchmark.v1",
+        "sources": 1000,
+        "sourceStride": 80,
+        "expectedAdmittedBytes": 1038908,
+        "speedup": 0.3489882352941176,
+        "deltaMedianMs": 0.006917000000000001
+      },
+      {
+        "artifacts": 50,
+        "artifactStride": 368,
+        "baselineMedianMs": 0.214875,
+        "baselineMs": [
+          0.213917,
+          0.212833,
+          0.212334,
+          0.215291,
+          0.214875,
+          0.215667,
+          0.215083
+        ],
+        "candidateMedianMs": 0.070542,
+        "candidateMs": [
+          0.070542,
+          0.06925,
+          0.077708,
+          0.07,
+          0.069833,
+          0.0765,
+          0.077458
+        ],
+        "checksum": 5738600,
+        "label": "small-rich",
+        "richSources": 25,
+        "samples": 7,
+        "schema": "studio.glifi.document-admission-benchmark.v1",
+        "sources": 25,
+        "sourceStride": 80,
+        "expectedAdmittedBytes": 409900,
+        "speedup": 3.0460576677723914,
+        "deltaMedianMs": -0.14433300000000002
+      },
+      {
+        "artifacts": 500,
+        "artifactStride": 368,
+        "baselineMedianMs": 0.465792,
+        "baselineMs": [
+          0.465792,
+          0.476083,
+          0.465833,
+          0.466541,
+          0.465583,
+          0.465375,
+          0.46575
+        ],
+        "candidateMedianMs": 0.08675,
+        "candidateMs": [
+          0.08675,
+          0.085458,
+          0.091125,
+          0.090792,
+          0.090292,
+          0.08525,
+          0.08525
+        ],
+        "checksum": 6829424,
+        "label": "mixed-100",
+        "richSources": 25,
+        "samples": 7,
+        "schema": "studio.glifi.document-admission-benchmark.v1",
+        "sources": 100,
+        "sourceStride": 80,
+        "expectedAdmittedBytes": 487816,
+        "speedup": 5.36936023054755,
+        "deltaMedianMs": -0.379042
+      },
+      {
+        "artifacts": 2000,
+        "artifactStride": 368,
+        "baselineMedianMs": 9.4485,
+        "baselineMs": [
+          9.473458,
+          9.578667,
+          9.593542,
+          9.4485,
+          9.416875,
+          9.403583,
+          9.405209
+        ],
+        "candidateMedianMs": 0.402417,
+        "candidateMs": [
+          0.414,
+          0.404834,
+          0.398083,
+          0.398417,
+          0.407791,
+          0.402417,
+          0.392834
+        ],
+        "checksum": 30560530,
+        "label": "mixed-250",
+        "richSources": 125,
+        "samples": 7,
+        "schema": "studio.glifi.document-admission-benchmark.v1",
+        "sources": 250,
+        "sourceStride": 80,
+        "expectedAdmittedBytes": 2182895,
+        "speedup": 23.47937587129768,
+        "deltaMedianMs": -9.046083
+      },
+      {
+        "artifacts": 5000,
+        "artifactStride": 368,
+        "baselineMedianMs": 118.464083,
+        "baselineMs": [
+          122.140167,
+          120.024625,
+          118.464083,
+          118.482875,
+          118.392166,
+          118.116583,
+          118.028459
+        ],
+        "candidateMedianMs": 1.509458,
+        "candidateMs": [
+          1.532917,
+          1.507125,
+          1.509458,
+          1.507916,
+          1.526333,
+          1.513917,
+          1.498458
+        ],
+        "checksum": 122287858,
+        "label": "mixed-1000",
+        "richSources": 500,
+        "samples": 7,
+        "schema": "studio.glifi.document-admission-benchmark.v1",
+        "sources": 1000,
+        "sourceStride": 80,
+        "expectedAdmittedBytes": 8734847,
+        "speedup": 78.4812051743076,
+        "deltaMedianMs": -116.95462500000001
+      }
+    ],
+    "sourceUnchanged": true,
+    "resultLogSHA256": "53934b8782beb0f4fc5bef984fe78aba9a1c3cb3861b28bd0c0e22026bf00b4d",
+    "exitCode": 0,
+    "elapsedSeconds": 3.7412509159999994
+  },
+  "releaseBundle": {
+    "bundleName": "GlifiStudio.app",
+    "documentLocalizations": {
+      "en": "Glifi Studio Project",
+      "it": "Progetto Glifi Studio"
+    },
+    "documentTypeIdentifier": "studio.glifi.project",
+    "finderOrLaunchServicesPresentationVerified": false,
+    "generatedBuildMetadata": {
+      "minimumSystemMajorVersion": 27,
+      "minimumSystemVersion": "27.0",
+      "sdkMajorVersion": 27,
+      "sdkName": "macosx27.2"
+    },
+    "payloadInspection": {
+      "forbiddenDirectoryNames": [
+        ".github",
+        "benchmarks",
+        "config",
+        "design",
+        "distribution",
+        "docs",
+        "fixtures",
+        "packages",
+        "scripts",
+        "tests"
+      ],
+      "forbiddenExtensions": [
+        "xcconfig",
+        "xctest"
+      ],
+      "inspectedEntries": 15,
+      "matchesWithinDeclaredScope": 0
+    },
+    "rawDescriptionKey": "Progetto Glifi Studio",
+    "requiredResources": [
+      "PrivacyInfo.xcprivacy",
+      "Assets.car"
+    ],
+    "schema": "studio.glifi.macos-bundle-verification",
+    "schemaVersion": 1,
+    "secureStateRestorationRuntimeVerified": false,
+    "verifiedScope": [
+      "Raw document and exported UTI declarations.",
+      "Generated minimum macOS and SDK version metadata.",
+      "Required packaged resources and Foundation localized string lookup for it/en.",
+      "Bundle entries matching the listed directory names or file extensions."
+    ]
+  },
+  "limitations": [
+    "Sole verifiche automatiche macOS; iPadOS rinviato.",
+    "Nessuna verifica visuale, VoiceOver/Finder/LaunchServices/restoration o gate G4/G5.",
+    "Nessuna CI remota della composizione locale non committata; nessun archivio App Store nuovo.",
+    "Diagnostica IDELaunchSession DVTAssertions di Xcode distinta dai runtimeWarnings dei test (zero).",
+    "Le tolleranze finite storiche degli oracoli e il linkage lessicale sotto 1e-9 non sono stati modificati.",
+    "Metadati delle evidenze chiusi dopo il gate, con confronto finale separato per tutti gli altri file."
+  ]
+}

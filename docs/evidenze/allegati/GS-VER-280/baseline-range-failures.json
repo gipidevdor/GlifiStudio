@@ -1,0 +1,18 @@
+{
+  "baselineRevision": "38bba2931d9048ce46b0885e4933305b04b3d760",
+  "baselineIsolatedTestExit": 1,
+  "baselineFailingTests": [
+    "linguisticExternalAnnotationsRequireExactSourceBytes",
+    "spanMapOptimizationPreservesLegacyDecodedMaps"
+  ],
+  "baselineFailure": "Both fail before their expected later checks with GlifiFailure text.invalid-range, tokenize, invalidInput, unchanged",
+  "baselineLogSHA256": "68dc6aba397d89af45d91f63514063710865531327078bf1e86d504b18ec0bdf",
+  "productionFilesUnchangedFromBaselineSHA256": {
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiTextModel.swift": "c64cebaf699a4e875e6727a6f28baa18847f9f50e340cd0e31e9c828909e3ffc",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiSpanMap.swift": "3bda338c6c449ef2a2361091b27605262f2dd802c045158217110b30298c7d03",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiLinguisticPipeline.swift": "2d24d395c60819fac56b3508ada91431064d4b7445c7a35ea6bbb3c8518b2865"
+  },
+  "schemaIdentifier": "studio.glifi.verification.baseline-range-failures.v1",
+  "evidenceSnapshot": "1d6547e before incorporation of the published correction",
+  "resolution": "Incorporate origin/main aec1a00, including ADR-0042, production validation and its authoritative tests; the intermediate local test-only alignment is superseded."
+}

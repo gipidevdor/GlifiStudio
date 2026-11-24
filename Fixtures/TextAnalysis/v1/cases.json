@@ -1,0 +1,2409 @@
+{
+  "schema": "studio.glifi.text-analysis-fixtures",
+  "schemaVersion": 1,
+  "license": "BSD-3-Clause",
+  "provenance": "Synthetic cases authored for native request/CLI parity; no third-party corpus.",
+  "numericTolerance": {
+    "absolute": 1e-12,
+    "relative": 1e-12
+  },
+  "cases": [
+    {
+      "id": "mds-classical",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "mds",
+        "matrix": [
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            0
+          ]
+        ],
+        "dimensions": 1,
+        "method": "classical",
+        "seed": 18446744073709551615,
+        "maximumIterations": 50
+      },
+      "methodIdentifier": "MDS-classical-LAPACK-v1",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "mds-metric",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "mds",
+        "matrix": [
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            0
+          ]
+        ],
+        "dimensions": 1,
+        "method": "metric",
+        "seed": 17,
+        "maximumIterations": 50
+      },
+      "methodIdentifier": "MDS-metric-SMACOF-v1",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "mds-kruskal",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "mds",
+        "matrix": [
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            0
+          ]
+        ],
+        "dimensions": 1,
+        "method": "kruskal",
+        "seed": 17,
+        "maximumIterations": 50
+      },
+      "methodIdentifier": "MDS-nonmetric-secondary-ties-Stress1-v2",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "mds-sammon",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "mds",
+        "matrix": [
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            0
+          ]
+        ],
+        "dimensions": 1,
+        "method": "sammon",
+        "seed": 17,
+        "maximumIterations": 50
+      },
+      "methodIdentifier": "MDS-Sammon-v1",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "som",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "som",
+        "matrix": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "width": 1,
+        "height": 1,
+        "seed": 17,
+        "epochs": 4
+      },
+      "expected": {
+        "prototypes": [
+          [
+            1,
+            2
+          ]
+        ],
+        "assignments": [
+          0,
+          0
+        ]
+      },
+      "methodIdentifier": "SOM-batch-gaussian-rectangular-v1",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "clara",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "clara",
+        "matrix": [
+          [
+            0
+          ],
+          [
+            1
+          ],
+          [
+            9
+          ],
+          [
+            10
+          ]
+        ],
+        "clusterCount": 2,
+        "seed": 17,
+        "sampleSize": 4
+      },
+      "expected": {
+        "objective": 2
+      },
+      "methodIdentifier": "CLARA-PAM-Euclidean-v1",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "classify",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "classify",
+        "documents": [
+          [
+            "rosso"
+          ],
+          [
+            "blu"
+          ]
+        ],
+        "labels": [
+          "A",
+          "B"
+        ],
+        "predictionDocuments": [
+          [
+            "rosso"
+          ],
+          [
+            "ignoto"
+          ]
+        ]
+      },
+      "expected": {
+        "labels": [
+          "A",
+          "A"
+        ],
+        "ignoredTokenCounts": [
+          0,
+          1
+        ]
+      },
+      "methodIdentifier": "MultinomialNaiveBayes-Laplace-v1",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "validate-classifier",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "validate-classifier",
+        "documents": [
+          [
+            "rosso"
+          ],
+          [
+            "rosso",
+            "rosso"
+          ],
+          [
+            "blu"
+          ],
+          [
+            "blu",
+            "blu"
+          ]
+        ],
+        "labels": [
+          "A",
+          "A",
+          "B",
+          "B"
+        ],
+        "folds": 2,
+        "seed": 17
+      },
+      "expected": {
+        "accuracy": 1,
+        "confusion": [
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            2
+          ]
+        ]
+      },
+      "methodIdentifier": "MultinomialNaiveBayes-stratified-CV-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "lda",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "lda",
+        "documents": [
+          [
+            "rosso"
+          ],
+          [
+            "blu"
+          ]
+        ],
+        "topicCount": 1,
+        "seed": 17,
+        "burnIn": 0,
+        "sampleCount": 2,
+        "thinning": 1
+      },
+      "expected": {
+        "topicTerms": [
+          [
+            0.5,
+            0.5
+          ]
+        ]
+      },
+      "methodIdentifier": "LDA-collapsed-Gibbs-predictive-mean-v2",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "coding",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "coding",
+        "units": [
+          {
+            "id": "1",
+            "text": "casa"
+          },
+          {
+            "id": "2",
+            "text": "mare"
+          }
+        ],
+        "rules": "*Casa\ncasa"
+      },
+      "expected": {
+        "values": [
+          [
+            1
+          ],
+          [
+            0
+          ]
+        ],
+        "frequencies": [
+          1
+        ]
+      },
+      "methodIdentifier": "KH-coding-compatible-v2",
+      "validationStatus": "supported"
+    },
+    {
+      "id": "code-crosstab",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "code-crosstab",
+        "units": [
+          {
+            "id": "1",
+            "text": "casa"
+          },
+          {
+            "id": "2",
+            "text": "mare"
+          }
+        ],
+        "rules": "*Casa\ncasa",
+        "groups": [
+          "x",
+          null
+        ]
+      },
+      "expected": {
+        "groups": [
+          "x"
+        ],
+        "counts": [
+          [
+            1
+          ]
+        ],
+        "sizes": [
+          1
+        ],
+        "missingCount": 1
+      },
+      "methodIdentifier": "KH-coding-binary-crosstab-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "dissimilarities",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "dissimilarities",
+        "matrix": [
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "metric": "cosine"
+      },
+      "expected": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "methodIdentifier": "Text-distance-cosine-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "correspondence",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "correspondence",
+        "matrix": [
+          [
+            4,
+            1
+          ],
+          [
+            1,
+            4
+          ]
+        ]
+      },
+      "expected": {
+        "totalInertia": 0.36
+      },
+      "methodIdentifier": "CA-SVD-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "hierarchical",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "hierarchical",
+        "matrix": [
+          [
+            0,
+            1,
+            3
+          ],
+          [
+            1,
+            0,
+            2
+          ],
+          [
+            3,
+            2,
+            0
+          ]
+        ]
+      },
+      "expected": {
+        "heights": [
+          1,
+          2.5
+        ],
+        "sizes": [
+          2,
+          3
+        ]
+      },
+      "methodIdentifier": "HAC-dissimilarities-average-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "network",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "network",
+        "matrix": [
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "labels": [
+          "a",
+          "b"
+        ]
+      },
+      "expected": {
+        "endpoints": [
+          [
+            0,
+            1
+          ]
+        ],
+        "weights": [
+          0.5
+        ]
+      },
+      "methodIdentifier": "Column-Jaccard-network-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "community-edgeBetweenness",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "communities",
+        "graph": {
+          "nodes": [
+            "A",
+            "B",
+            "C"
+          ],
+          "edges": [
+            {
+              "source": "A",
+              "target": "B",
+              "weight": 2
+            },
+            {
+              "source": "B",
+              "target": "C",
+              "weight": 1
+            },
+            {
+              "source": "A",
+              "target": "C",
+              "weight": 4
+            }
+          ]
+        },
+        "method": "edgeBetweenness",
+        "limits": {
+          "maximumNodeCount": 8,
+          "maximumEdgeCount": 12,
+          "maximumPairwiseCells": 1024,
+          "maximumWork": 100000
+        }
+      },
+      "methodIdentifier": "GirvanNewman-inverse-strength-exact-binary64-v2",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "community-fastGreedy",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "communities",
+        "graph": {
+          "nodes": [
+            "A",
+            "B",
+            "C"
+          ],
+          "edges": [
+            {
+              "source": "A",
+              "target": "B",
+              "weight": 2
+            },
+            {
+              "source": "B",
+              "target": "C",
+              "weight": 1
+            },
+            {
+              "source": "A",
+              "target": "C",
+              "weight": 4
+            }
+          ]
+        },
+        "method": "fastGreedy",
+        "limits": {
+          "maximumNodeCount": 8,
+          "maximumEdgeCount": 12,
+          "maximumPairwiseCells": 128,
+          "maximumWork": 100000
+        }
+      },
+      "methodIdentifier": "ClausetNewmanMoore-weighted-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "community-walktrap",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "communities",
+        "graph": {
+          "nodes": [
+            "A",
+            "B",
+            "C"
+          ],
+          "edges": [
+            {
+              "source": "A",
+              "target": "B",
+              "weight": 2
+            },
+            {
+              "source": "B",
+              "target": "C",
+              "weight": 1
+            },
+            {
+              "source": "A",
+              "target": "C",
+              "weight": 4
+            }
+          ]
+        },
+        "method": "walktrap",
+        "limits": {
+          "maximumNodeCount": 8,
+          "maximumEdgeCount": 12,
+          "maximumPairwiseCells": 128,
+          "maximumWork": 100000
+        }
+      },
+      "methodIdentifier": "Walktrap-weighted-mean-loops-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "layout-fruchtermanReingold",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "graph-layout",
+        "graph": {
+          "nodes": [
+            "A",
+            "B",
+            "C"
+          ],
+          "edges": [
+            {
+              "source": "A",
+              "target": "B",
+              "weight": 2
+            },
+            {
+              "source": "B",
+              "target": "C",
+              "weight": 1
+            },
+            {
+              "source": "A",
+              "target": "C",
+              "weight": 4
+            }
+          ]
+        },
+        "method": "fruchtermanReingold",
+        "seed": 7,
+        "maximumIterations": 30,
+        "limits": {
+          "maximumNodeCount": 8,
+          "maximumEdgeCount": 12,
+          "maximumPairwiseCells": 128,
+          "maximumWork": 100000
+        }
+      },
+      "methodIdentifier": "FruchtermanReingold-unweighted-square-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "layout-kamadaKawai",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "graph-layout",
+        "graph": {
+          "nodes": [
+            "A",
+            "B",
+            "C"
+          ],
+          "edges": [
+            {
+              "source": "A",
+              "target": "B",
+              "weight": 2
+            },
+            {
+              "source": "B",
+              "target": "C",
+              "weight": 1
+            },
+            {
+              "source": "A",
+              "target": "C",
+              "weight": 4
+            }
+          ]
+        },
+        "method": "kamadaKawai",
+        "seed": 7,
+        "maximumIterations": 30,
+        "limits": {
+          "maximumNodeCount": 8,
+          "maximumEdgeCount": 12,
+          "maximumPairwiseCells": 128,
+          "maximumWork": 100000
+        }
+      },
+      "methodIdentifier": "KamadaKawai-hop-component-extension-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "prim-forest",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "minimum-spanning-forest",
+        "graph": {
+          "nodes": [
+            "A",
+            "B",
+            "C"
+          ],
+          "edges": [
+            {
+              "source": "A",
+              "target": "B",
+              "weight": 2
+            },
+            {
+              "source": "B",
+              "target": "C",
+              "weight": 1
+            },
+            {
+              "source": "A",
+              "target": "C",
+              "weight": 4
+            }
+          ]
+        },
+        "limits": {
+          "maximumNodeCount": 8,
+          "maximumEdgeCount": 12,
+          "maximumPairwiseCells": 128,
+          "maximumWork": 100000
+        }
+      },
+      "methodIdentifier": "Prim-minimum-spanning-forest-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "totalWeight": 3,
+        "componentCount": 1
+      }
+    },
+    {
+      "id": "distance-simpson",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "dissimilarities",
+        "matrix": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        "metric": "simpson"
+      },
+      "methodIdentifier": "Text-distance-simpson-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "mds-ordinal",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "mds",
+        "matrix": [
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            0
+          ]
+        ],
+        "dimensions": 1,
+        "method": "ordinal",
+        "seed": 7,
+        "maximumIterations": 50
+      },
+      "methodIdentifier": "MDS-ordinal-SMACOF-secondary-ties-normalized-raw-stress-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "mds-search",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "mds-search",
+        "matrix": [
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            0
+          ]
+        ],
+        "dimensions": 1,
+        "seed": 7,
+        "starts": 3,
+        "maximumIterations": 50
+      },
+      "methodIdentifier": "MDS-multistart-SplitMix64-minimum-objective-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "som-hexagonal",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "som-advanced",
+        "matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "width": 2,
+        "height": 2,
+        "seed": 7,
+        "epochs": 3,
+        "topology": "hexagonal",
+        "codebookClusterCount": 2
+      },
+      "methodIdentifier": "SOM-batch-gaussian-hexagonal-odd-row-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "lda-selection",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "lda-selection",
+        "documents": [
+          [
+            "a",
+            "b",
+            "a"
+          ],
+          [
+            "b",
+            "a",
+            "b"
+          ],
+          [
+            "a",
+            "b",
+            "a"
+          ],
+          [
+            "b",
+            "b",
+            "a"
+          ]
+        ],
+        "candidateTopicCounts": [
+          1,
+          2
+        ],
+        "seed": 7,
+        "options": {
+          "folds": 2,
+          "burnIn": 2,
+          "sampleCount": 3,
+          "thinning": 1
+        }
+      },
+      "methodIdentifier": "LDA-model-selection-training-vocabulary-CV-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "linguistic-normalized",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "linguistic",
+        "text": "Le ragazze cantavano."
+      },
+      "methodIdentifier": "Linguistic-Italian-normalized-surface-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "linguistic-stemming",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "linguistic",
+        "text": "Le ragazze cantavano.",
+        "options": {
+          "base": "italian-snowball-3.1.0"
+        }
+      },
+      "methodIdentifier": "Linguistic-Italian-italian-snowball-3.1.0-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "linguistic-availability",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "linguistic-availability"
+      },
+      "methodIdentifier": "Linguistic-Italian-availability-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "linguistic-coding",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "linguistic-coding",
+        "units": [
+          {
+            "id": "1",
+            "text": "Le ragazze cantavano."
+          }
+        ],
+        "rules": "*Presenza\nragazz",
+        "options": {
+          "base": "italian-snowball-3.1.0"
+        }
+      },
+      "methodIdentifier": "KH-coding-compatible-v2+Linguistic-Italian-italian-snowball-3.1.0-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "matrix": {
+          "values": [
+            [
+              1
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": "kh-zscore-rows",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "matrix-zscore",
+        "matrix": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            2,
+            4,
+            6
+          ]
+        ],
+        "axis": "rows"
+      },
+      "methodIdentifier": "KH-sample-z-score-v1",
+      "validationStatus": "candidate",
+      "expected": [
+        [
+          -1,
+          0,
+          1
+        ],
+        [
+          -1,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "id": "kh-zscore-columns",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "matrix-zscore",
+        "matrix": [
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            5
+          ]
+        ],
+        "axis": "columns",
+        "constantPolicy": "zeros"
+      },
+      "methodIdentifier": "KH-sample-z-score-v1",
+      "validationStatus": "candidate",
+      "expected": [
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "id": "kh-external-exposure",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "matrix-per-thousand",
+        "matrix": [
+          [
+            2,
+            3
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "exposures": [
+          100,
+          2
+        ]
+      },
+      "methodIdentifier": "KH-per-thousand-external-exposure-v1",
+      "validationStatus": "candidate",
+      "expected": [
+        [
+          20,
+          30
+        ],
+        [
+          500,
+          0
+        ]
+      ]
+    },
+    {
+      "id": "kh-context",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "word-context",
+        "levels": [
+          {
+            "level": "sentence",
+            "alpha": 2,
+            "targetCounts": [
+              [
+                1,
+                0
+              ],
+              [
+                3,
+                1
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "contextCounts": [
+              [
+                1,
+                2
+              ],
+              [
+                3,
+                4
+              ],
+              [
+                5,
+                8
+              ]
+            ]
+          }
+        ],
+        "targetIDs": [
+          "a",
+          "b"
+        ],
+        "contextIDs": [
+          "x",
+          "y"
+        ]
+      },
+      "methodIdentifier": "KH-word-context-conditional-mean-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "values": [
+          [
+            4,
+            6
+          ],
+          [
+            8,
+            12
+          ]
+        ],
+        "supportCounts": [
+          [
+            2,
+            2
+          ]
+        ],
+        "targetIDs": [
+          "a",
+          "b"
+        ],
+        "contextIDs": [
+          "x",
+          "y"
+        ]
+      }
+    },
+    {
+      "id": "kh-ca-principal",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "correspondence-scaled",
+        "matrix": [
+          [
+            30,
+            10
+          ],
+          [
+            10,
+            30
+          ]
+        ],
+        "rowScaling": "principal",
+        "columnScaling": "standard"
+      },
+      "methodIdentifier": "CA-coordinate-scaling-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "singularValues": [
+          0.5
+        ]
+      }
+    },
+    {
+      "id": "kh-ca-symmetric",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "correspondence-scaled",
+        "matrix": [
+          [
+            30,
+            10
+          ],
+          [
+            10,
+            30
+          ]
+        ],
+        "rowScaling": "symmetric",
+        "columnScaling": "symmetric"
+      },
+      "methodIdentifier": "CA-coordinate-scaling-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "singularValues": [
+          0.5
+        ]
+      }
+    },
+    {
+      "id": "kh-ordinal-primary",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "mds-ordinal",
+        "matrix": [
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "dimensions": 1,
+        "ties": "primary",
+        "seed": 300,
+        "maximumIterations": 50
+      },
+      "methodIdentifier": "MDS-ordinal-SMACOF-primary-ties-normalized-raw-stress-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "kh-ordinal-secondary",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "mds-ordinal",
+        "matrix": [
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "dimensions": 1,
+        "ties": "secondary",
+        "seed": 300,
+        "maximumIterations": 50
+      },
+      "methodIdentifier": "MDS-ordinal-SMACOF-secondary-ties-normalized-raw-stress-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "kh-ordinal-search",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "mds-ordinal-search",
+        "matrix": [
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "dimensions": 1,
+        "starts": 3,
+        "ties": "primary",
+        "seed": 300,
+        "maximumIterations": 20
+      },
+      "methodIdentifier": "MDS-multistart-SplitMix64-minimum-objective-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "kh-pca-init",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "som-pca-initialization",
+        "matrix": [
+          [
+            0
+          ],
+          [
+            2
+          ],
+          [
+            4
+          ]
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "methodIdentifier": "SOM-PCA-linear-unscaled-canonical-v1",
+      "validationStatus": "candidate",
+      "expected": [
+        [
+          -2
+        ],
+        [
+          2
+        ],
+        [
+          6
+        ]
+      ]
+    },
+    {
+      "id": "kh-som-hexagonal",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "som-kh",
+        "matrix": [
+          [
+            0
+          ],
+          [
+            2
+          ],
+          [
+            4
+          ]
+        ],
+        "width": 2,
+        "height": 1,
+        "topology": "hexagonal",
+        "firstPhase": {
+          "steps": 5,
+          "initialLearningRate": 0.05,
+          "initialRadius": 2
+        },
+        "secondPhase": {
+          "steps": 7,
+          "initialLearningRate": 0.02,
+          "initialRadius": 1
+        },
+        "initialCodebooks": [
+          [
+            0
+          ],
+          [
+            4
+          ]
+        ]
+      },
+      "methodIdentifier": "SOM-KH-online-inverse-two-phase-hexagonal-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "completedSteps": 12,
+        "initialCodebooks": [
+          [
+            0
+          ],
+          [
+            4
+          ]
+        ]
+      }
+    },
+    {
+      "id": "kh-som-rectangular",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "som-kh",
+        "matrix": [
+          [
+            0
+          ],
+          [
+            2
+          ],
+          [
+            4
+          ]
+        ],
+        "width": 2,
+        "height": 1,
+        "topology": "rectangular",
+        "firstPhase": {
+          "steps": 5,
+          "initialLearningRate": 0.05,
+          "initialRadius": 2
+        },
+        "secondPhase": {
+          "steps": 7,
+          "initialLearningRate": 0.02,
+          "initialRadius": 1
+        },
+        "initialCodebooks": [
+          [
+            0
+          ],
+          [
+            4
+          ]
+        ],
+        "codebookClusterCount": 1
+      },
+      "methodIdentifier": "SOM-KH-online-inverse-two-phase-rectangular-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "completedSteps": 12,
+        "initialCodebooks": [
+          [
+            0
+          ],
+          [
+            4
+          ]
+        ],
+        "codebookClustering": {
+          "assignments": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "id": "kh-som-defaults",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "som-kh",
+        "matrix": [
+          [
+            0
+          ],
+          [
+            2
+          ],
+          [
+            4
+          ]
+        ],
+        "width": 2,
+        "height": 1
+      },
+      "methodIdentifier": "SOM-KH-online-inverse-two-phase-hexagonal-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "completedSteps": 2000
+      }
+    },
+    {
+      "id": "kh-global-collocation",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "kh-collocation",
+        "counts": {
+          "jointCount": 4,
+          "nodeFrequency": 10,
+          "collocateFrequency": 20,
+          "corpusTokenCount": 1000,
+          "windowSpan": 10
+        }
+      },
+      "methodIdentifier": "KH-collocation-global-token-window-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "mi3": 8.321928094887362,
+        "mutualInformation": 4.321928094887363,
+        "tScore": 1.9,
+        "jaccard": 0.15384615384615385,
+        "dice": 0.26666666666666666
+      }
+    },
+    {
+      "id": "kh-undefined-collocation",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "kh-collocation",
+        "counts": {
+          "jointCount": 0,
+          "nodeFrequency": 0,
+          "collocateFrequency": 0,
+          "corpusTokenCount": 0,
+          "windowSpan": 10
+        }
+      },
+      "methodIdentifier": "KH-collocation-global-token-window-v1",
+      "validationStatus": "candidate"
+    },
+    {
+      "id": "kh-term-scores-token",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "term-scores",
+        "candidates": [
+          {
+            "components": [
+              "a",
+              "a"
+            ],
+            "frequency": 2
+          }
+        ],
+        "preprocessingIdentifier": "synthetic-candidates-v1",
+        "adjacencyMode": "token"
+      },
+      "methodIdentifier": "TermExtract-LR-FLR-independent-average1-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "terms": [
+          {
+            "components": [
+              "a",
+              "a"
+            ],
+            "frequency": 2,
+            "lr": 3.0,
+            "flr": 6.0
+          }
+        ],
+        "independentOccurrenceCount": 2
+      }
+    },
+    {
+      "id": "kh-term-scores-type",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "term-scores",
+        "candidates": [
+          {
+            "components": [
+              "a",
+              "a"
+            ],
+            "frequency": 2
+          }
+        ],
+        "preprocessingIdentifier": "synthetic-candidates-v1",
+        "adjacencyMode": "type"
+      },
+      "methodIdentifier": "TermExtract-LR-FLR-independent-average1-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "terms": [
+          {
+            "components": [
+              "a",
+              "a"
+            ],
+            "frequency": 2,
+            "lr": 2.0,
+            "flr": 4.0
+          }
+        ],
+        "independentOccurrenceCount": 2
+      }
+    },
+    {
+      "id": "kh-term-extract-english",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "term-extraction",
+        "documents": [
+          {
+            "id": "synthetic-english",
+            "text": "data mining. data mining",
+            "linguisticContract": "synthetic-preannotated-english-v1",
+            "tokens": [
+              {
+                "surface": "data",
+                "base": "data",
+                "partOfSpeech": "N",
+                "startUTF8": 0,
+                "endUTF8": 4,
+                "sentence": 0
+              },
+              {
+                "surface": "mining",
+                "base": "mining",
+                "partOfSpeech": "N",
+                "startUTF8": 5,
+                "endUTF8": 11,
+                "sentence": 0
+              },
+              {
+                "surface": "data",
+                "base": "data",
+                "partOfSpeech": "N",
+                "startUTF8": 13,
+                "endUTF8": 17,
+                "sentence": 1
+              },
+              {
+                "surface": "mining",
+                "base": "mining",
+                "partOfSpeech": "N",
+                "startUTF8": 18,
+                "endUTF8": 24,
+                "sentence": 1
+              }
+            ]
+          }
+        ],
+        "rule": {
+          "identifier": "maximal-noun-run-v1",
+          "allowedPartsOfSpeech": [
+            "N"
+          ]
+        }
+      },
+      "methodIdentifier": "TermExtract-LR-FLR-independent-average1-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "documentIDs": [
+          "synthetic-english"
+        ]
+      }
+    },
+    {
+      "id": "kh-term-extract-japanese",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "term-extraction",
+        "documents": [
+          {
+            "id": "synthetic-japanese",
+            "text": "情報検索",
+            "linguisticContract": "synthetic-preannotated-japanese-v1",
+            "tokens": [
+              {
+                "surface": "情報",
+                "base": "情報",
+                "partOfSpeech": "N",
+                "startUTF8": 0,
+                "endUTF8": 6,
+                "sentence": 0
+              },
+              {
+                "surface": "検索",
+                "base": "検索",
+                "partOfSpeech": "N",
+                "startUTF8": 6,
+                "endUTF8": 12,
+                "sentence": 0
+              }
+            ]
+          }
+        ],
+        "rule": {
+          "identifier": "maximal-noun-run-v1",
+          "allowedPartsOfSpeech": [
+            "N"
+          ]
+        }
+      },
+      "methodIdentifier": "TermExtract-LR-FLR-independent-average1-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "documentIDs": [
+          "synthetic-japanese"
+        ]
+      }
+    },
+    {
+      "id": "kh-incremental-initial",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "incremental-classifier",
+        "documents": [
+          [
+            "a",
+            "a"
+          ]
+        ],
+        "labels": [
+          "A"
+        ],
+        "smoothing": 0.5
+      },
+      "methodIdentifier": "MultinomialNaiveBayes-incremental-counts-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "state": {
+          "classes": [
+            "A"
+          ],
+          "vocabulary": [
+            "a"
+          ],
+          "documentCounts": [
+            1
+          ],
+          "tokenCounts": [
+            [
+              2
+            ]
+          ],
+          "smoothing": 0.5
+        }
+      }
+    },
+    {
+      "id": "kh-incremental-continue",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "continue-classifier",
+        "state": {
+          "classes": [
+            "A"
+          ],
+          "vocabulary": [
+            "a"
+          ],
+          "documentCounts": [
+            1
+          ],
+          "tokenCounts": [
+            [
+              2
+            ]
+          ],
+          "smoothing": 0.5
+        },
+        "documents": [
+          [
+            "b"
+          ]
+        ],
+        "labels": [
+          "B"
+        ],
+        "predictionDocuments": [
+          [
+            "a"
+          ],
+          [
+            "b"
+          ],
+          [
+            "unknown"
+          ]
+        ]
+      },
+      "methodIdentifier": "MultinomialNaiveBayes-incremental-counts-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "state": {
+          "classes": [
+            "A",
+            "B"
+          ],
+          "vocabulary": [
+            "a",
+            "b"
+          ],
+          "documentCounts": [
+            1,
+            1
+          ],
+          "tokenCounts": [
+            [
+              2,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "smoothing": 0.5
+        },
+        "predictions": {
+          "labels": [
+            "A",
+            "B",
+            "A"
+          ],
+          "ignoredTokenCounts": [
+            0,
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "kh-classifier-kappa",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "validate-classifier-kappa",
+        "documents": [
+          [
+            "a"
+          ],
+          [
+            "a",
+            "a"
+          ],
+          [
+            "b"
+          ],
+          [
+            "b",
+            "b"
+          ]
+        ],
+        "labels": [
+          "A",
+          "A",
+          "B",
+          "B"
+        ],
+        "folds": 2,
+        "seed": 300
+      },
+      "methodIdentifier": "MultinomialNaiveBayes-stratified-CV-CohenKappa-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "kappa": 1,
+        "observedAgreement": 1,
+        "expectedAgreement": 0.5
+      }
+    },
+    {
+      "id": "kh-word-association",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "word-association",
+        "counts": {
+          "jointCount": 20,
+          "conditionDocumentCount": 40,
+          "termDocumentCount": 30,
+          "totalDocumentCount": 100
+        }
+      },
+      "methodIdentifier": "KH-word-association-document-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "conditionalProbability": 0.5,
+        "unconditionalProbability": 0.3,
+        "differential": 0.2,
+        "lift": 1.6666666666666667,
+        "jaccard": 0.4,
+        "ochiai": 0.5773502691896258,
+        "isPositiveAssociation": true
+      }
+    },
+    {
+      "id": "kh-word-association-overlap",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "word-association",
+        "counts": {
+          "jointCount": 70,
+          "conditionDocumentCount": 80,
+          "termDocumentCount": 90,
+          "totalDocumentCount": 100
+        }
+      },
+      "methodIdentifier": "KH-word-association-document-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "conditionalProbability": 0.875,
+        "unconditionalProbability": 0.9,
+        "differential": -0.025,
+        "lift": 0.9722222222222222,
+        "jaccard": 0.7,
+        "isPositiveAssociation": false
+      }
+    },
+    {
+      "id": "kh-document-score-tf",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "document-scores",
+        "counts": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            2,
+            4,
+            0
+          ]
+        ],
+        "exposures": [
+          10,
+          20
+        ],
+        "documentFrequencies": [
+          1,
+          5,
+          10
+        ],
+        "corpusDocumentCount": 10,
+        "mode": "tf"
+      },
+      "methodIdentifier": "KH-document-tf-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "inverseDocumentFrequencies": [
+          1.0,
+          0.3010299956639812,
+          0.0
+        ],
+        "termContributions": [
+          [
+            0.1,
+            0.2,
+            0.3
+          ],
+          [
+            0.1,
+            0.2,
+            0.0
+          ]
+        ],
+        "scores": [
+          0.6,
+          0.30000000000000004
+        ]
+      }
+    },
+    {
+      "id": "kh-document-score-tfIdf",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "document-scores",
+        "counts": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            2,
+            4,
+            0
+          ]
+        ],
+        "exposures": [
+          10,
+          20
+        ],
+        "documentFrequencies": [
+          1,
+          5,
+          10
+        ],
+        "corpusDocumentCount": 10,
+        "mode": "tfIdf"
+      },
+      "methodIdentifier": "KH-document-tf-log10-idf-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "inverseDocumentFrequencies": [
+          1.0,
+          0.3010299956639812,
+          0.0
+        ],
+        "termContributions": [
+          [
+            0.1,
+            0.06020599913279624,
+            0.0
+          ],
+          [
+            0.1,
+            0.06020599913279624,
+            0.0
+          ]
+        ],
+        "scores": [
+          0.16020599913279626,
+          0.16020599913279626
+        ]
+      }
+    },
+    {
+      "id": "kh-document-score-tfDividedByIdf",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "document-scores",
+        "counts": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            2,
+            4,
+            0
+          ]
+        ],
+        "exposures": [
+          10,
+          20
+        ],
+        "documentFrequencies": [
+          1,
+          5,
+          10
+        ],
+        "corpusDocumentCount": 10,
+        "mode": "tfDividedByIdf"
+      },
+      "methodIdentifier": "KH-document-tf-divided-by-log10-idf-zero-one-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "inverseDocumentFrequencies": [
+          1.0,
+          0.3010299956639812,
+          0.0
+        ],
+        "termContributions": [
+          [
+            0.1,
+            0.6643856189774725,
+            0.3
+          ],
+          [
+            0.1,
+            0.6643856189774725,
+            0.0
+          ]
+        ],
+        "scores": [
+          1.0643856189774725,
+          0.7643856189774725
+        ]
+      }
+    },
+    {
+      "id": "kh-ward-d2",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "kh-hierarchical-ward-d2",
+        "dissimilarities": [
+          [
+            0,
+            0.5,
+            1
+          ],
+          [
+            0.5,
+            0,
+            0.75
+          ],
+          [
+            1,
+            0.75,
+            0
+          ]
+        ]
+      },
+      "methodIdentifier": "KH-hclust-WardD2-dissimilarities-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "objectCount": 3,
+        "children": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "heights": [
+          0.5,
+          0.9789450103725609
+        ],
+        "sizes": [
+          2,
+          3
+        ],
+        "wardIncrements": [
+          null,
+          null
+        ]
+      }
+    },
+    {
+      "id": "kh-chi-square-yates",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "kh-chi-square",
+        "counts": [
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ]
+      },
+      "methodIdentifier": "KH-chi-square-Yates-Pearson-residuals-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "status": "defined",
+        "statistic": 0.0,
+        "pValue": 1.0,
+        "degreesOfFreedom": 1,
+        "appliedCorrection": "yates",
+        "expected": [
+          [
+            0.5,
+            0.5
+          ],
+          [
+            0.5,
+            0.5
+          ]
+        ]
+      }
+    },
+    {
+      "id": "kh-chi-square-pearson",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "kh-chi-square",
+        "counts": [
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "correction": "none"
+      },
+      "methodIdentifier": "KH-chi-square-Yates-Pearson-residuals-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "status": "defined",
+        "statistic": 2.0,
+        "pValue": 0.15729920705028516,
+        "appliedCorrection": "none"
+      }
+    },
+    {
+      "id": "kh-chi-square-degenerate",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "kh-chi-square",
+        "counts": [
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ]
+      },
+      "methodIdentifier": "KH-chi-square-Yates-Pearson-residuals-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "status": "zeroMarginal",
+        "degreesOfFreedom": 1
+      }
+    },
+    {
+      "id": "kh-code-crosstab-yates",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "code-crosstab-significance",
+        "units": [
+          {
+            "id": "0",
+            "text": "casa"
+          },
+          {
+            "id": "1",
+            "text": "altro"
+          },
+          {
+            "id": "2",
+            "text": "casa"
+          },
+          {
+            "id": "3",
+            "text": "casa"
+          },
+          {
+            "id": "4",
+            "text": "casa"
+          }
+        ],
+        "rules": "*Home\ncasa\n*Always\n1 == 1\n*Never\nassente",
+        "groups": [
+          "A",
+          "A",
+          "B",
+          "B",
+          null
+        ]
+      },
+      "methodIdentifier": "KH-coding-crosstab-chi-square-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "groups": [
+          "A",
+          "B"
+        ],
+        "codes": [
+          "Home",
+          "Always",
+          "Never"
+        ],
+        "counts": [
+          [
+            1,
+            2,
+            0
+          ],
+          [
+            2,
+            2,
+            0
+          ]
+        ],
+        "groupSizes": [
+          2,
+          2
+        ],
+        "excludedDocumentCount": 1,
+        "significance": [
+          {
+            "code": "Home",
+            "test": {
+              "statistic": 0.0,
+              "pValue": 1.0,
+              "appliedCorrection": "yates"
+            }
+          },
+          {
+            "code": "Always",
+            "test": {
+              "status": "zeroMarginal"
+            }
+          },
+          {
+            "code": "Never",
+            "test": {
+              "status": "zeroMarginal"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "kh-code-crosstab-three-groups",
+      "request": {
+        "schema": "studio.glifi.text-analysis-request",
+        "schemaVersion": 1,
+        "operation": "code-crosstab-significance",
+        "units": [
+          {
+            "id": "0",
+            "text": "altro"
+          },
+          {
+            "id": "1",
+            "text": "altro"
+          },
+          {
+            "id": "2",
+            "text": "casa"
+          },
+          {
+            "id": "3",
+            "text": "altro"
+          },
+          {
+            "id": "4",
+            "text": "casa"
+          },
+          {
+            "id": "5",
+            "text": "casa"
+          }
+        ],
+        "rules": "*Home\ncasa",
+        "groups": [
+          "A",
+          "A",
+          "B",
+          "B",
+          "C",
+          "C"
+        ]
+      },
+      "methodIdentifier": "KH-coding-crosstab-chi-square-v1",
+      "validationStatus": "candidate",
+      "expected": {
+        "counts": [
+          [
+            0
+          ],
+          [
+            1
+          ],
+          [
+            2
+          ]
+        ],
+        "groupSizes": [
+          2,
+          2,
+          2
+        ],
+        "significance": [
+          {
+            "code": "Home",
+            "test": {
+              "statistic": 4.0,
+              "pValue": 0.1353352832366127,
+              "degreesOfFreedom": 2,
+              "appliedCorrection": "none"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

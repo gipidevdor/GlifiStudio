@@ -1,0 +1,52 @@
+[
+  {
+    "observedAtUTC": "2026-11-22T09:00:31.888114+00:00",
+    "externalRelevantProcesses": [],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T09:00:31.932287+00:00",
+    "externalRelevantProcesses": [],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T09:00:32.481241+00:00",
+    "externalRelevantProcesses": [],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T09:00:33.036030+00:00",
+    "externalRelevantProcesses": [],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T09:00:33.590227+00:00",
+    "externalRelevantProcesses": [],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T09:00:34.143445+00:00",
+    "externalRelevantProcesses": [],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T09:00:34.690173+00:00",
+    "externalRelevantProcesses": [],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T09:00:35.243677+00:00",
+    "externalRelevantProcesses": [],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T09:00:35.799004+00:00",
+    "externalRelevantProcesses": [],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T09:00:36.362240+00:00",
+    "externalRelevantProcesses": [],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  }
+]

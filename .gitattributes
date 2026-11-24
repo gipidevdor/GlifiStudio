@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: BSD-3-Clause
+
+* text=auto eol=lf
+
+*.md text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.py text eol=lf
+*.sh text eol=lf
+Makefile text eol=lf
+*.pbxproj text eol=lf
+*.xcconfig text eol=lf
+*.xcscheme text eol=lf
+*.xcworkspacedata text eol=lf
+*.xcstrings text eol=lf
+*.xcprivacy text eol=lf
+*.entitlements text eol=lf
+
+*.icns binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
+*.png binary
+*.zip binary

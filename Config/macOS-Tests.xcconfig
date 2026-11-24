@@ -1,0 +1,4 @@
+// SPDX-License-Identifier: BSD-3-Clause
+
+#include "Debug.xcconfig"
+#include "macOS-Tests-Common.xcconfig"

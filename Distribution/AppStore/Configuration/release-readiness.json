@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "productMinimumFunctionality": true,
+  "allMustFlowsImplemented": true,
+  "unitAndIntegrationTestsPassing": false,
+  "uiTestsPassing": false,
+  "manualDeviceQACompleted": false,
+  "accessibilityAuditCompleted": false,
+  "performanceAndEnergyAuditCompleted": false,
+  "internalTestFlightCompleted": false,
+  "externalTestFlightCompleted": false,
+  "screenshotsApproved": false,
+  "metadataApproved": false,
+  "privacyPolicyPublished": false,
+  "supportPagePublished": false,
+  "signedArchivesValidated": false,
+  "appReviewSubmitted": false,
+  "unlistedRequestApproved": false
+}

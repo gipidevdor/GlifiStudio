@@ -1,0 +1,11 @@
+{
+  "schema": "studio.glifi.markdown-fixture-manifest",
+  "schemaVersion": 1,
+  "id": "markdown-v1-seed",
+  "license": "BSD-3-Clause",
+  "provenance": "Documento Markdown sintetico originale in lingua italiana.",
+  "purpose": "Seed per estrazione md-extract-v1 e lineage extractedUTF8 verso sourceBytes.",
+  "reviewStatus": "seed-v1",
+  "source": "Fixtures/Markdown/v1/source.md",
+  "expected": "Fixtures/Markdown/v1/expected.json"
+}

@@ -1,0 +1,65 @@
+{
+  "schema": "studio.glifi.validation-manifest",
+  "schemaVersion": 1,
+  "id": "validation-analysis-execution-v1",
+  "capabilityIdentifier": "analysis-execution-v1",
+  "methodIdentifiers": [
+    "AnalysisPlanExecution-v1",
+    "OperationProgress-v1",
+    "CooperativeCancellation-v1"
+  ],
+  "status": "candidate",
+  "license": "BSD-3-Clause",
+  "toolchain": {
+    "swiftLanguageMode": "6",
+    "swiftToolsVersion": "6.4",
+    "platforms": [
+      "macOS 27",
+      "iPadOS 27"
+    ]
+  },
+  "levels": {
+    "V0": {
+      "status": "pass",
+      "description": "Schema esecuzione, progress monotono e ownership stream verificati staticamente."
+    },
+    "V1": {
+      "status": "pass",
+      "description": "Admission, Artifact ordinati, cancellazione cooperativa nei test Core."
+    },
+    "V2": {
+      "status": "pass",
+      "description": "Riuso Artifact dopo riapertura; oracolo di ordine step (GS-VER-028)."
+    },
+    "V3": {
+      "status": "pass",
+      "description": "Fail-closed su DAG invalido e superfici Kit/CLI execute."
+    },
+    "V4": {
+      "status": "pass",
+      "description": "UI Must: progress, cancel, Artifact e interpretazione post-execute.",
+      "datasets": [
+        "Fixtures/Validation/v1/manifest.json"
+      ]
+    },
+    "V5": {
+      "status": "not-applicable",
+      "description": "Un solo esecutore piano MVP nel nucleo 0.1."
+    }
+  },
+  "limits": [
+    "Progresso intra-nodo e checkpoint intermedi ancora aperti.",
+    "Benchmark hardware e parallelismo fuori dal nucleo 0.1."
+  ],
+  "evidence": [
+    "docs/evidenze/GS-VER-028-esecuzione-piano-progressi.md",
+    "docs/evidenze/GS-VER-050-execution-artifacts-assessment-ui.md",
+    "docs/evidenze/GS-VER-051-execution-manifest-e-cmp010.md"
+  ],
+  "numericAgreement": {
+    "comparisonMode": "structural",
+    "oracle": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAnalysisExecutionTests.swift",
+    "notes": "Materializzazione dei passi, progresso monotono e riuso: confronto strutturale."
+  },
+  "statusReason": "L'oracolo di V2 è un test del prodotto, non un'implementazione indipendente: ADR-0031 non ammette l'approvazione."
+}

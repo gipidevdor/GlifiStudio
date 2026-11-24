@@ -1,0 +1,23 @@
+{
+  "green": {
+    "result": "Passed",
+    "totalTestCount": 1,
+    "passedTests": 1,
+    "failedTests": 0,
+    "skippedTests": 0,
+    "failures": []
+  },
+  "mutantIf": {
+    "result": "Failed",
+    "totalTestCount": 1,
+    "passedTests": 0,
+    "failedTests": 1,
+    "skippedTests": 0,
+    "failures": [
+      "Expectation failed: secondFinished: Admission preceded completion of the latest task"
+    ]
+  },
+  "mutantExitCode": 65,
+  "restoredSourceSHA256": "261258793075a2ba5bed3eeff20863f6139214244add185a6b05ad56e708b409",
+  "restorationVerified": true
+}

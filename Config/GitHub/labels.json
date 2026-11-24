@@ -1,0 +1,102 @@
+[
+  {
+    "name": "type:bug",
+    "color": "D73A4A",
+    "description": "Comportamento errato o regressione riproducibile"
+  },
+  {
+    "name": "type:feature",
+    "color": "1D76DB",
+    "description": "Nuova capacità o miglioramento osservabile"
+  },
+  {
+    "name": "type:architecture",
+    "color": "5319E7",
+    "description": "Decisione architetturale o cambiamento strutturale"
+  },
+  {
+    "name": "type:documentation",
+    "color": "0075CA",
+    "description": "Documentazione controllata o materiale per collaboratori"
+  },
+  {
+    "name": "type:dependencies",
+    "color": "0366D6",
+    "description": "Aggiornamento controllato di dipendenze o GitHub Actions"
+  },
+  {
+    "name": "type:security",
+    "color": "B60205",
+    "description": "Lavoro di sicurezza autorizzato e non sensibile"
+  },
+  {
+    "name": "status:triage",
+    "color": "FBCA04",
+    "description": "In attesa di classificazione e responsabile"
+  },
+  {
+    "name": "status:blocked",
+    "color": "BFD4F2",
+    "description": "Impossibile procedere senza una dipendenza o decisione"
+  },
+  {
+    "name": "status:needs-decision",
+    "color": "D4C5F9",
+    "description": "Richiede una decisione esplicita o un ADR"
+  },
+  {
+    "name": "priority:p0",
+    "color": "B60205",
+    "description": "Criticità immediata o rilascio bloccato"
+  },
+  {
+    "name": "priority:p1",
+    "color": "D93F0B",
+    "description": "Alta priorità per la milestone corrente"
+  },
+  {
+    "name": "priority:p2",
+    "color": "FBCA04",
+    "description": "Priorità ordinaria pianificata"
+  },
+  {
+    "name": "priority:p3",
+    "color": "C2E0C6",
+    "description": "Bassa priorità o opportunità futura"
+  },
+  {
+    "name": "platform:macos",
+    "color": "0E8A16",
+    "description": "Riguarda l'app o il comportamento macOS"
+  },
+  {
+    "name": "platform:ipados",
+    "color": "0E8A16",
+    "description": "Riguarda l'app o il comportamento iPadOS"
+  },
+  {
+    "name": "area:core",
+    "color": "006B75",
+    "description": "Motore condiviso GlifiCore"
+  },
+  {
+    "name": "area:ui",
+    "color": "006B75",
+    "description": "Interfaccia, accessibilità e interazione"
+  },
+  {
+    "name": "area:ci",
+    "color": "006B75",
+    "description": "Build, test, automazione e repository"
+  },
+  {
+    "name": "area:performance",
+    "color": "006B75",
+    "description": "Prestazioni, memoria, energia e benchmark"
+  },
+  {
+    "name": "area:localization",
+    "color": "006B75",
+    "description": "Italiano iniziale e internazionalizzazione"
+  }
+]

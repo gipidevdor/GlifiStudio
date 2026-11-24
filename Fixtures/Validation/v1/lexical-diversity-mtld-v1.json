@@ -1,0 +1,66 @@
+{
+  "schema": "studio.glifi.validation-manifest",
+  "schemaVersion": 1,
+  "id": "validation-lexical-diversity-mtld-v1",
+  "capabilityIdentifier": "corpus-lexical-diversity-mtld-v1",
+  "methodIdentifiers": [
+    "MTLD-bidirectional-v1"
+  ],
+  "status": "supported",
+  "license": "BSD-3-Clause",
+  "toolchain": {
+    "swiftLanguageMode": "6",
+    "swiftToolsVersion": "6.4",
+    "platforms": [
+      "macOS 27",
+      "iPadOS 27"
+    ]
+  },
+  "levels": {
+    "V0": {
+      "status": "pass",
+      "description": "Schema con +∞ esplicito e soglia in (0,1) verificati."
+    },
+    "V1": {
+      "status": "pass",
+      "description": "Sequenza vuota, tutti token distinti (+∞), sequenza costante e soglie non valide."
+    },
+    "V2": {
+      "status": "pass",
+      "description": "Implementazione indipendente in R (Tests/Oracles/R/diversity.R)."
+    },
+    "V3": {
+      "status": "pass",
+      "description": "Persistenza, riuso e parità GlifiCore/Kit/CLI (GS-VER-116)."
+    },
+    "V4": {
+      "status": "pass",
+      "description": "Oracoli versionati in Tests/Oracles/expected.txt come golden numerico, riletti da make check-oracles.",
+      "datasets": [
+        "Packages/GlifiCore/Tests/Oracles/expected.txt"
+      ]
+    },
+    "V5": {
+      "status": "not-applicable",
+      "description": "Un solo backend nel nucleo 0.1."
+    }
+  },
+  "limits": [
+    "Oracolo R indipendente, non pacchetto terzo; soglia 0,72 candidata."
+  ],
+  "evidence": [
+    "docs/evidenze/GS-VER-116-mtld-bidirezionale.md"
+  ],
+  "numericAgreement": {
+    "comparisonMode": "absoluteTolerance",
+    "absoluteTolerance": 1e-12,
+    "oracle": "Packages/GlifiCore/Tests/Oracles/R/diversity.R",
+    "notes": "MTLD bidirezionale con fattore parziale; il caso non definito è confrontato come valore esatto, non entro tolleranza."
+  },
+  "review": {
+    "reviewer": "Iniziatore del progetto",
+    "date": "2026-09-20",
+    "kind": "interna",
+    "scope": "ADR-0031: livelli, oracolo indipendente e tolleranza dichiarata"
+  }
+}

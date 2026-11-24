@@ -1,0 +1,17 @@
+{
+  "title": "Test - GlifiStudio-macOS",
+  "result": "Passed",
+  "totalTestCount": 36,
+  "passedTests": 36,
+  "failedTests": 0,
+  "skippedTests": 0,
+  "expectedFailures": 0,
+  "runtimeWarnings": [],
+  "deviceRuns": [
+    {
+      "passedTests": 45,
+      "failedTests": 0,
+      "skippedTests": 0
+    }
+  ]
+}

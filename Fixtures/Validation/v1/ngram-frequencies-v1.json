@@ -1,0 +1,69 @@
+{
+  "schema": "studio.glifi.validation-manifest",
+  "schemaVersion": 1,
+  "id": "validation-ngram-frequencies-v1",
+  "capabilityIdentifier": "corpus-ngram-frequencies-v1",
+  "methodIdentifiers": [
+    "Form-v1",
+    "WordNGram-v1",
+    "CharNGram-graphemes-v1",
+    "CharNGram-graphemes-padded-v1",
+    "TermFilter-v1"
+  ],
+  "status": "supported",
+  "license": "BSD-3-Clause",
+  "toolchain": {
+    "swiftLanguageMode": "6",
+    "swiftToolsVersion": "6.4",
+    "platforms": [
+      "macOS 27",
+      "iPadOS 27"
+    ]
+  },
+  "levels": {
+    "V0": {
+      "status": "pass",
+      "description": "Schema, dimensioni e filtri validati con codici tipizzati."
+    },
+    "V1": {
+      "status": "pass",
+      "description": "Forme più corte di n, stopword che creerebbero adiacenze false, troncatura e filtri al limite."
+    },
+    "V2": {
+      "status": "pass",
+      "description": "Conteggi indipendenti in R (Tests/Oracles/R/ngrams.R)."
+    },
+    "V3": {
+      "status": "pass",
+      "description": "Persistenza dal testo con normalizzazione del profilo e parità GlifiCore/Kit/CLI (GS-VER-117)."
+    },
+    "V4": {
+      "status": "pass",
+      "description": "Oracoli versionati in Tests/Oracles/expected.txt come golden numerico, riletti da make check-oracles.",
+      "datasets": [
+        "Packages/GlifiCore/Tests/Oracles/expected.txt"
+      ]
+    },
+    "V5": {
+      "status": "not-applicable",
+      "description": "Un solo backend nel nucleo 0.1."
+    }
+  },
+  "limits": [
+    "Nessuna lista di stopword predefinita per scelta di prodotto."
+  ],
+  "evidence": [
+    "docs/evidenze/GS-VER-117-ngrammi-e-frequenze-filtrate.md"
+  ],
+  "numericAgreement": {
+    "comparisonMode": "exactInteger",
+    "oracle": "Packages/GlifiCore/Tests/Oracles/R/ngrams.R",
+    "notes": "Conteggi e frequenze documentali sono interi esatti; le quote relative sono confrontate entro 1e-15."
+  },
+  "review": {
+    "reviewer": "Iniziatore del progetto",
+    "date": "2026-09-20",
+    "kind": "interna",
+    "scope": "ADR-0031: livelli, oracolo indipendente e tolleranza dichiarata"
+  }
+}

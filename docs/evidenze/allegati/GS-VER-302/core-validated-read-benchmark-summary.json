@@ -1,0 +1,54 @@
+{
+  "configuration": "Release; unchanged --validated-reads-query harness",
+  "baselineCommit": "8901f4ad3f17a27f02fc7628221641d66346b38c",
+  "order": [
+    "baseline",
+    "candidate"
+  ],
+  "baselineMedianSeconds": 0.089983542,
+  "candidateMedianSeconds": 0.092836917,
+  "candidateToBaselineRatio": 1.0317099653623327,
+  "rawSamplesSeconds": {
+    "baseline": [
+      0.090213708,
+      0.089956375,
+      0.089983542,
+      0.089917,
+      0.090979709,
+      0.089857,
+      0.090347333
+    ],
+    "candidate": [
+      0.093429958,
+      0.094498375,
+      0.092412125,
+      0.092836917,
+      0.092888667,
+      0.092134375,
+      0.0922615
+    ]
+  },
+  "reportFiles": [
+    "core-validated-read-benchmark-baseline.json",
+    "core-validated-read-benchmark-candidate.json"
+  ],
+  "observationalOnly": true,
+  "context": {
+    "baseline": {
+      "device": "Mac16,3",
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "thermalStateAtStart": "nominal",
+      "thermalStateAtEnd": "nominal",
+      "lowPowerModeAtStart": true,
+      "lowPowerModeAtEnd": true
+    },
+    "candidate": {
+      "device": "Mac16,3",
+      "operatingSystem": "Version 27.2.1 (Build 26B131)",
+      "thermalStateAtStart": "nominal",
+      "thermalStateAtEnd": "nominal",
+      "lowPowerModeAtStart": true,
+      "lowPowerModeAtEnd": true
+    }
+  }
+}

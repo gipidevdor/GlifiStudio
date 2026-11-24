@@ -1,0 +1,44 @@
+{
+  "$comment": "SPDX-License-Identifier: BSD-3-Clause",
+  "date": "2026-11-22",
+  "measurementScope": "Allocated KiB before removal, not APFS free-space delta; symlink targets counted separately once",
+  "removed": [
+    {
+      "path": "/tmp/GlifiKHCompletion-exploratory-build",
+      "allocatedKiB": 1093428,
+      "source": "Measured specialized-agent cleanup"
+    },
+    {
+      "path": "/tmp/GlifiKHCompletion-linguistic-build/SwiftPM",
+      "allocatedKiB": 558836,
+      "source": "linguistic-cleanup.json"
+    },
+    {
+      "path": "/tmp/GlifiKHCompletion-root-build",
+      "allocatedKiB": 556456,
+      "source": "GlifiKHCompletion-root-cleanup.json"
+    },
+    {
+      "path": "/tmp/GlifiKHCompletion-graph-build",
+      "allocatedKiB": 1307720,
+      "absentAfterRemoval": true
+    },
+    {
+      "path": "/tmp/GlifiKHCompletion-verify-cache",
+      "allocatedKiB": 2351184,
+      "absentAfterRemoval": true
+    },
+    {
+      "path": "/tmp/GlifiKHCompletion-verify-tmp",
+      "allocatedKiB": 164,
+      "absentAfterRemoval": true
+    }
+  ],
+  "totalAllocatedKiBRemoved": 5867788,
+  "retained": [
+    "Source worktree for GUI integration",
+    "Committed source, test and benchmark evidence",
+    "Useful logs, oracle provenance, parity JSON and macOS xcresult archive in ~/Library/Caches/GlifiStudio/evidence/GS-VER-233",
+    "Other chats worktrees and caches; active toolchains and dependencies"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "path": "Apps/Shared/StudioHomeModel.swift",
+  "change": "Insert one blank documentation-comment line between the summary and its invariant.",
+  "executableSourceChanged": false,
+  "preLintSourceSHA256": "261258793075a2ba5bed3eeff20863f6139214244add185a6b05ad56e708b409",
+  "postLintSourceSHA256": "7cf408891e60e85972d6822e27a29d677ebb9a38d8f4c52cd24fcb16c815306c",
+  "preLintTestEvidence": "close-barrier-full-tsan-summary.json",
+  "finalGateUsesPostLintSource": true
+}

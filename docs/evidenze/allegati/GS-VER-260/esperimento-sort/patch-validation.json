@@ -1,0 +1,12 @@
+{
+  "baselineCommit": "02c1c66",
+  "patchSHA256": "07d78f31d972ed7f6c42fbbaa9b0f10af07706bb99daf7614741f50a55dabd8d",
+  "gitApplyCheckExitCode": 0,
+  "appliedFilesMatchFrozenNativeInventory": true,
+  "filesSHA256": {
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiDescriptiveStatistics.swift": "999f7a06fcb84c79a4da8a8fd8cb1c4cddc611a9f70b4daa53b07c25fab34ca5",
+    "Packages/GlifiCore/Sources/GlifiBenchmark/main.swift": "df90c7d9b53461637bef144c77977c66fe6c6d9a1d6528f7406ab377d63edebb",
+    "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiAppleDescriptiveSortingBenchmarks.swift": "b6bc4950afe6b056e45d4d55228c0932d9fb23fe206ef23ab5baa52c284ad056",
+    "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiAppleDescriptiveSortingTests.swift": "5546825da01c57876fef31965d2a4d117a717c6ec61c3db0837aa5d4df58833f"
+  }
+}

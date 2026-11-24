@@ -1,0 +1,43 @@
+# SPDX-License-Identifier: BSD-3-Clause
+
+name: Decisione architetturale
+description: Valuta una scelta durevole o trasversale.
+title: "adr: "
+labels:
+  - type:architecture
+  - status:needs-decision
+body:
+  - type: textarea
+    id: contesto
+    attributes:
+      label: Contesto e vincoli
+      description: Indica vincoli, parti coinvolte, obiettivi di qualità e decisioni vigenti.
+    validations:
+      required: true
+  - type: textarea
+    id: decisione
+    attributes:
+      label: Decisione proposta
+      description: Descrivi una scelta concreta e verificabile.
+    validations:
+      required: true
+  - type: textarea
+    id: alternative
+    attributes:
+      label: Alternative
+      description: Confronta lo stato attuale e le alternative realistiche.
+    validations:
+      required: true
+  - type: textarea
+    id: conseguenze
+    attributes:
+      label: Conseguenze e reversibilità
+    validations:
+      required: true
+  - type: textarea
+    id: evidenze
+    attributes:
+      label: Evidenze necessarie
+      description: Indica prototipi, benchmark, analisi delle minacce, compatibilità o fonti necessarie.
+    validations:
+      required: true

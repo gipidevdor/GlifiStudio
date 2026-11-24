@@ -1,0 +1,18 @@
+{
+  "schema": "studio.glifi.linguistic-fixture-manifest",
+  "schemaVersion": 1,
+  "id": "it-token-gold-v1",
+  "languageTag": "it",
+  "locale": "it-IT",
+  "tokenContract": "it-token-v1",
+  "license": "BSD-3-Clause",
+  "provenance": "Testo di pubblico dominio: Carlo Collodi (1826-1890), «Le avventure di Pinocchio», capitolo 1 (1881-1883). Trascrizione ripresa da it.wikisource.org (Pagina:Le avventure di Pinocchio.djvu/9-13, revisione recuperata il 2026-09-20) e ripulita dalla marcatura wiki da Scripts/build-italian-gold.py. L'opera è in pubblico dominio; la trascrizione fedele di un'opera di pubblico dominio non fonda un diritto nuovo, e la fonte è comunque attribuita. Nessun dato personale.",
+  "purpose": "Corpus gold su prosa italiana reale per i confini di token e di frase di it-token-v1: apostrofi tipografici, elisioni, clitici, ellissi e forme ottocentesche. Non contiene lemma, POS o NER.",
+  "reviewStatus": "gold-v1-token-sentence",
+  "annotation": "Annotazione prodotta da un'implementazione indipendente del contratto (Scripts/build-italian-gold.py) e confrontata con il tokenizzatore del prodotto; le divergenze sono decise in adjudications.json.",
+  "cases": "Fixtures/Linguistics/it-gold-v1/token-boundaries.json",
+  "split": {
+    "validation": ["pinocchio-00", "pinocchio-01", "pinocchio-02", "pinocchio-03", "pinocchio-04", "pinocchio-05", "pinocchio-06", "pinocchio-07"],
+    "test": ["pinocchio-08", "pinocchio-09", "pinocchio-10", "pinocchio-11", "pinocchio-12", "pinocchio-13", "pinocchio-14"]
+  }
+}

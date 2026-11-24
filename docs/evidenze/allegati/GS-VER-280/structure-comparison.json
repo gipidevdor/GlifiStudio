@@ -1,0 +1,77 @@
+{
+  "schemaIdentifier": "studio.glifi.verification.structure-comparison.v1",
+  "baseline": {
+    "revision": "38bba2931d9048ce46b0885e4933305b04b3d760",
+    "cliBinarySHA256": "b7202c8dc96d83f9e2be23496980bff52a3c156bf79b6c25beeef0a12c5b9e67",
+    "files": {
+      "Packages/GlifiCore/Sources/GlifiCore/GlifiProjectPackage.swift": {
+        "lineCount": 2810,
+        "sha256": "52b12ceb69048812039b75fa759724a4c670310df3f496e4020abd6c504e3b98"
+      },
+      "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift": {
+        "lineCount": 1383,
+        "sha256": "9d03d7acc2876d8caf9f9106dc15b6c59d2d1699932aaab2028b1afd3ae5bedb"
+      },
+      "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift": {
+        "lineCount": 2176,
+        "sha256": "c5657e1a1a8b1430d9f42e7b692d63ff19b642328b3c5ef8a6f29b617c543d2a"
+      }
+    }
+  },
+  "candidateFiles": {
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiProjectPackage.swift": {
+      "lineCount": 2743,
+      "sha256": "0e8b813a7e8082e2196aa9350f75af97dda323e879f9985bd139bfd9ad02fcb8"
+    },
+    "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift": {
+      "lineCount": 2183,
+      "sha256": "16027ade3e48a7c01394be435a0296f89d98223dc2e9fa068244ec54ace0de52"
+    },
+    "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioService.swift": {
+      "lineCount": 92,
+      "sha256": "b2de1a4529139aa43d9519c48963efafbb2d298e1ba85470287f409bb074ce85"
+    },
+    "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift": {
+      "lineCount": 1004,
+      "sha256": "87aee44c5ff22852993973e699c66365a1bb4c325a9f291c03c391727ab32448"
+    },
+    "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioServiceModels.swift": {
+      "lineCount": 281,
+      "sha256": "9b571681d4b4386192c28ed9678cb4825449099a86ac5e45ab40dce4ab96ccbe"
+    }
+  },
+  "productionSourceLinesBefore": 6369,
+  "productionSourceLinesAfter": 6303,
+  "structuralChanges": {
+    "kitOrdinaryPolicyCopies": {
+      "before": 9,
+      "after": 1,
+      "callSites": 9
+    },
+    "packageFamilyCommitLines": {
+      "before": 657,
+      "after": 497,
+      "scope": "Four commit bodies; new shared helpers included separately in file totals"
+    },
+    "packageStagingImplementations": {
+      "before": 4,
+      "after": 1
+    },
+    "packageCandidateManifestImplementations": {
+      "before": 4,
+      "after": 1
+    },
+    "cliSessionOpenCallSites": 38,
+    "cliScatteredSessionCloseCalls": {
+      "before": 42,
+      "after": 2,
+      "scope": "Success and failure branches of the single private owner"
+    }
+  },
+  "targetedTests": {
+    "core": 28,
+    "kit": 26,
+    "outcome": "passed"
+  },
+  "interpretation": "Cohesion and shared ownership/policy; all new production files counted. No speed, energy or major LOC reduction claim."
+}

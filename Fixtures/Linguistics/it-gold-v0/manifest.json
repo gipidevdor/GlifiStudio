@@ -1,0 +1,18 @@
+{
+  "schema": "studio.glifi.linguistic-fixture-manifest",
+  "schemaVersion": 1,
+  "id": "it-token-gold-v0",
+  "languageTag": "it",
+  "locale": "it-IT",
+  "tokenContract": "it-token-v1",
+  "license": "BSD-3-Clause",
+  "provenance": "Sottoinsieme sintetico originale del progetto, revisionato per offset UTF-8; nessun dato personale o corpus di terzi.",
+  "purpose": "Corpus gold V0 limitato a tokenizzazione e confini di frase per it-token-v1. Non include lemma, POS o NER.",
+  "reviewStatus": "gold-v0-token",
+  "split": {
+    "train": [],
+    "validation": ["it-apostrophe-ascii", "it-abbreviation-boundary"],
+    "test": ["it-clitic-compound", "it-number-currency"]
+  },
+  "cases": "Fixtures/Linguistics/it-gold-v0/token-boundaries.json"
+}

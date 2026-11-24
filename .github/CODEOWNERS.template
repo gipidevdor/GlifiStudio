@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copiare come .github/CODEOWNERS e sostituire ogni segnaposto con handle o team verificati.
+
+* @PROJECT_OWNER
+
+/.github/ @REPOSITORY_MAINTAINERS
+/Config/ @REPOSITORY_MAINTAINERS
+/Scripts/ @REPOSITORY_MAINTAINERS
+/GlifiStudio.xcodeproj/ @APPLE_BUILD_MAINTAINERS
+/GlifiStudio.xcworkspace/ @APPLE_BUILD_MAINTAINERS
+/docs/adr/ @ARCHITECTURE_MAINTAINERS
+/SECURITY.md @SECURITY_MAINTAINERS
+/docs/apple/04-privacy-e-sicurezza.md @SECURITY_MAINTAINERS
+/docs/repository/06-segreti-e-firma-apple.md @SECURITY_MAINTAINERS

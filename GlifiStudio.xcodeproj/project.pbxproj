@@ -1,0 +1,847 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B64000000000000000000001 /* StudioCorpusPresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A64000000000000000000001 /* StudioCorpusPresentationTests.swift */; };
+		B10000000000000000000001 /* StudioHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000001 /* StudioHomeView.swift */; };
+		B10000000000000000000011 /* StudioVisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000020 /* StudioVisualizationView.swift */; };
+		B10000000000000000000013 /* StudioCodingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000021 /* StudioCodingView.swift */; };
+		B10000000000000000000014 /* StudioCodingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000021 /* StudioCodingView.swift */; };
+		B10000000000000000000012 /* StudioVisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000020 /* StudioVisualizationView.swift */; };
+		B10000000000000000000002 /* GlifiStudioMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000002 /* GlifiStudioMacApp.swift */; };
+		B10000000000000000000015 /* StudioTextAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000022 /* StudioTextAnalysisView.swift */; };
+		B50000000000000000000001 /* StudioKeynessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000001 /* StudioKeynessView.swift */; };
+		B63000000000000000000002 /* StudioSourceLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63000000000000000000002 /* StudioSourceLookup.swift */; };
+		B10000000000000000000003 /* StudioHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000001 /* StudioHomeView.swift */; };
+		B10000000000000000000004 /* GlifiStudioPadApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000003 /* GlifiStudioPadApp.swift */; };
+		B10000000000000000000005 /* GlifiKit in Frameworks */ = {isa = PBXBuildFile; productRef = J10000000000000000000001 /* GlifiKit */; };
+		B10000000000000000000006 /* GlifiKit in Frameworks */ = {isa = PBXBuildFile; productRef = J10000000000000000000002 /* GlifiKit */; };
+		B10000000000000000000007 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000D /* Localizable.xcstrings */; };
+		B10000000000000000000008 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000D /* Localizable.xcstrings */; };
+		B10000000000000000000009 /* StudioHomeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000E /* StudioHomeModel.swift */; };
+		B1000000000000000000000A /* StudioHomeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000E /* StudioHomeModel.swift */; };
+		B1000000000000000000000B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000F /* PrivacyInfo.xcprivacy */; };
+		B1000000000000000000000C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000F /* PrivacyInfo.xcprivacy */; };
+		B1000000000000000000000D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000011 /* Assets.xcassets */; };
+		B1000000000000000000000E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000011 /* Assets.xcassets */; };
+		B1000000000000000000000F /* GlifiStudioDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000012 /* GlifiStudioDocument.swift */; };
+		B10000000000000000000010 /* GlifiStudioDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000012 /* GlifiStudioDocument.swift */; };
+		B30000000000000000000001 /* StudioMacRuntimeMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30000000000000000000001 /* StudioMacRuntimeMonitor.swift */; };
+		B60000000000000000000001 /* StudioWorkspaceNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60000000000000000000001 /* StudioWorkspaceNavigation.swift */; };
+		B60000000000000000000002 /* StudioWorkspaceNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60000000000000000000001 /* StudioWorkspaceNavigation.swift */; };
+		B60000000000000000000003 /* StudioWorkspaceNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60000000000000000000001 /* StudioWorkspaceNavigation.swift */; };
+		B60000000000000000000004 /* StudioAdvancedAnalysisModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60000000000000000000002 /* StudioAdvancedAnalysisModel.swift */; };
+		B60000000000000000000005 /* StudioAdvancedAnalysisModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60000000000000000000002 /* StudioAdvancedAnalysisModel.swift */; };
+		B60000000000000000000006 /* StudioAdvancedAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60000000000000000000003 /* StudioAdvancedAnalysisView.swift */; };
+		B60000000000000000000007 /* StudioLexicalLawsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60000000000000000000004 /* StudioLexicalLawsView.swift */; };
+		B60000000000000000000008 /* StudioWorkspaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60000000000000000000005 /* StudioWorkspaceTests.swift */; };
+		B60000000000000000000009 /* StudioAdvancedAnalysisTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60000000000000000000006 /* StudioAdvancedAnalysisTests.swift */; };
+		B70000000000000000000001 /* StudioOperatorsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000001 /* StudioOperatorsModel.swift */; };
+		B70000000000000000000002 /* StudioOperatorsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000001 /* StudioOperatorsModel.swift */; };
+		B70000000000000000000003 /* StudioOperatorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000002 /* StudioOperatorsView.swift */; };
+		B70000000000000000000004 /* StudioCorpusMethodsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000003 /* StudioCorpusMethodsModel.swift */; };
+		B70000000000000000000005 /* StudioCorpusMethodsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000003 /* StudioCorpusMethodsModel.swift */; };
+		B70000000000000000000006 /* StudioCorpusMethodsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000004 /* StudioCorpusMethodsView.swift */; };
+		B70000000000000000000007 /* StudioStatisticsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000005 /* StudioStatisticsModel.swift */; };
+		B70000000000000000000008 /* StudioStatisticsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000005 /* StudioStatisticsModel.swift */; };
+		B70000000000000000000009 /* StudioStatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000006 /* StudioStatisticsView.swift */; };
+		B7000000000000000000000A /* StudioEvaluationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000007 /* StudioEvaluationModel.swift */; };
+		B7000000000000000000000B /* StudioEvaluationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000007 /* StudioEvaluationModel.swift */; };
+		B7000000000000000000000C /* StudioEvaluationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000008 /* StudioEvaluationView.swift */; };
+		B7000000000000000000000D /* StudioCoreMethodRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000009 /* StudioCoreMethodRoute.swift */; };
+		B7000000000000000000000E /* StudioCoreMethodRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000009 /* StudioCoreMethodRoute.swift */; };
+		B7000000000000000000000F /* StudioVisualExportPreparation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7000000000000000000000A /* StudioVisualExportPreparation.swift */; };
+		B70000000000000000000010 /* StudioVisualExportPreparation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7000000000000000000000A /* StudioVisualExportPreparation.swift */; };
+		B70000000000000000000011 /* StudioVisualExportPreparation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7000000000000000000000A /* StudioVisualExportPreparation.swift */; };
+		B70000000000000000000012 /* StudioOperatorsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7000000000000000000000B /* StudioOperatorsTests.swift */; };
+		B8A100000000000000000001 /* StudioFactorAudioGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A100000000000000000001 /* StudioFactorAudioGraph.swift */; };
+		B8A200000000000000000001 /* StudioPlotSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A200000000000000000001 /* StudioPlotSeries.swift */; };
+		B8A100000000000000000002 /* StudioFactorAudioGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A100000000000000000001 /* StudioFactorAudioGraph.swift */; };
+		B8A200000000000000000002 /* StudioPlotSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A200000000000000000001 /* StudioPlotSeries.swift */; };
+		B8A100000000000000000003 /* StudioFactorAudioGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A100000000000000000001 /* StudioFactorAudioGraph.swift */; };
+		B8A200000000000000000003 /* StudioPlotSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A200000000000000000001 /* StudioPlotSeries.swift */; };
+		B8A100000000000000000004 /* StudioWorkspaceCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A100000000000000000002 /* StudioWorkspaceCommands.swift */; };
+		B8A100000000000000000005 /* StudioWorkspaceCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A100000000000000000002 /* StudioWorkspaceCommands.swift */; };
+		B8A100000000000000000006 /* StudioFactorAudioGraphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A100000000000000000003 /* StudioFactorAudioGraphTests.swift */; };
+		B71000000000000000000001 /* StudioCorpusMethodsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71000000000000000000001 /* StudioCorpusMethodsTests.swift */; };
+		B71000000000000000000002 /* StudioStatisticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71000000000000000000002 /* StudioStatisticsTests.swift */; };
+		B71000000000000000000003 /* StudioEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71000000000000000000003 /* StudioEvaluationTests.swift */; };
+		B8A100000000000000000007 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000D /* Localizable.xcstrings */; };
+		B72000000000000000000001 /* StudioLinguisticModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72000000000000000000001 /* StudioLinguisticModel.swift */; };
+		B72000000000000000000002 /* StudioLinguisticModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72000000000000000000001 /* StudioLinguisticModel.swift */; };
+		B72000000000000000000003 /* StudioLinguisticView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72000000000000000000002 /* StudioLinguisticView.swift */; };
+		B72000000000000000000004 /* StudioLinguisticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72000000000000000000003 /* StudioLinguisticTests.swift */; };
+		B30600000000000000000001 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A30600000000000000000013 /* InfoPlist.xcstrings */; };
+		B30600000000000000000002 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A30600000000000000000013 /* InfoPlist.xcstrings */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildFile section for macOS tests */
+		B63000000000000000000003 /* StudioSourceLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63000000000000000000002 /* StudioSourceLookup.swift */; };
+		B63000000000000000000004 /* StudioSourceLookupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63000000000000000000003 /* StudioSourceLookupTests.swift */; };
+		B63000000000000000000001 /* StudioSelectionConsistencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63000000000000000000001 /* StudioSelectionConsistencyTests.swift */; };
+		B50000000000000000000002 /* StudioKeynessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000002 /* StudioKeynessTests.swift */; };
+		B50000000000000000000003 /* StudioKeynessValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000003 /* StudioKeynessValidationTests.swift */; };
+		B40000000000000000000001 /* StudioTermWeightingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A40000000000000000000001 /* StudioTermWeightingTests.swift */; };
+		B20000000000000000000001 /* StudioDocumentLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* StudioDocumentLifecycleTests.swift */; };
+		B20000000000000000000002 /* StudioHomeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000E /* StudioHomeModel.swift */; };
+		B20000000000000000000003 /* GlifiKit in Frameworks */ = {isa = PBXBuildFile; productRef = J20000000000000000000001 /* GlifiKit */; };
+		B30000000000000000000002 /* StudioMacRuntimeMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30000000000000000000001 /* StudioMacRuntimeMonitor.swift */; };
+		B30000000000000000000003 /* StudioMacRuntimeMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30000000000000000000002 /* StudioMacRuntimeMonitorTests.swift */; };
+/* End PBXBuildFile section for macOS tests */
+
+/* Begin PBXFileReference section */
+		A10000000000000000000001 /* StudioHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioHomeView.swift; sourceTree = "<group>"; };
+		A10000000000000000000020 /* StudioVisualizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioVisualizationView.swift; sourceTree = "<group>"; };
+		A10000000000000000000021 /* StudioCodingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioCodingView.swift; sourceTree = "<group>"; };
+		A10000000000000000000002 /* GlifiStudioMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlifiStudioMacApp.swift; sourceTree = "<group>"; };
+		A10000000000000000000022 /* StudioTextAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTextAnalysisView.swift; sourceTree = "<group>"; };
+		A50000000000000000000001 /* StudioKeynessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioKeynessView.swift; sourceTree = "<group>"; };
+		A63000000000000000000002 /* StudioSourceLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioSourceLookup.swift; sourceTree = "<group>"; };
+		A10000000000000000000003 /* GlifiStudioPadApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlifiStudioPadApp.swift; sourceTree = "<group>"; };
+		A10000000000000000000004 /* GlifiStudio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GlifiStudio.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000005 /* GlifiStudio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GlifiStudio.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000006 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		A10000000000000000000007 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		A10000000000000000000008 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		A10000000000000000000009 /* macOS-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "macOS-Debug.xcconfig"; sourceTree = "<group>"; };
+		A1000000000000000000000A /* macOS-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "macOS-Release.xcconfig"; sourceTree = "<group>"; };
+		A1000000000000000000000B /* iPadOS-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "iPadOS-Debug.xcconfig"; sourceTree = "<group>"; };
+		A1000000000000000000000C /* iPadOS-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "iPadOS-Release.xcconfig"; sourceTree = "<group>"; };
+		A1000000000000000000000D /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		A1000000000000000000000E /* StudioHomeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioHomeModel.swift; sourceTree = "<group>"; };
+		A1000000000000000000000F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		A10000000000000000000010 /* GlifiStudio-macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "GlifiStudio-macOS.entitlements"; sourceTree = "<group>"; };
+		A10000000000000000000011 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A10000000000000000000012 /* GlifiStudioDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlifiStudioDocument.swift; sourceTree = "<group>"; };
+		A10000000000000000000013 /* GlifiStudio-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GlifiStudio-Info.plist"; sourceTree = "<group>"; };
+		A30000000000000000000001 /* StudioMacRuntimeMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioMacRuntimeMonitor.swift; sourceTree = "<group>"; };
+		A30000000000000000000002 /* StudioMacRuntimeMonitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioMacRuntimeMonitorTests.swift; sourceTree = "<group>"; };
+		A60000000000000000000001 /* StudioWorkspaceNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioWorkspaceNavigation.swift; sourceTree = "<group>"; };
+		A60000000000000000000002 /* StudioAdvancedAnalysisModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioAdvancedAnalysisModel.swift; sourceTree = "<group>"; };
+		A60000000000000000000003 /* StudioAdvancedAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioAdvancedAnalysisView.swift; sourceTree = "<group>"; };
+		A60000000000000000000004 /* StudioLexicalLawsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioLexicalLawsView.swift; sourceTree = "<group>"; };
+		A60000000000000000000005 /* StudioWorkspaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioWorkspaceTests.swift; sourceTree = "<group>"; };
+		A60000000000000000000006 /* StudioAdvancedAnalysisTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioAdvancedAnalysisTests.swift; sourceTree = "<group>"; };
+		A70000000000000000000001 /* StudioOperatorsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioOperatorsModel.swift; sourceTree = "<group>"; };
+		A70000000000000000000002 /* StudioOperatorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioOperatorsView.swift; sourceTree = "<group>"; };
+		A70000000000000000000003 /* StudioCorpusMethodsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioCorpusMethodsModel.swift; sourceTree = "<group>"; };
+		A70000000000000000000004 /* StudioCorpusMethodsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioCorpusMethodsView.swift; sourceTree = "<group>"; };
+		A70000000000000000000005 /* StudioStatisticsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioStatisticsModel.swift; sourceTree = "<group>"; };
+		A70000000000000000000006 /* StudioStatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioStatisticsView.swift; sourceTree = "<group>"; };
+		A70000000000000000000007 /* StudioEvaluationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioEvaluationModel.swift; sourceTree = "<group>"; };
+		A70000000000000000000008 /* StudioEvaluationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioEvaluationView.swift; sourceTree = "<group>"; };
+		A70000000000000000000009 /* StudioCoreMethodRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioCoreMethodRoute.swift; sourceTree = "<group>"; };
+		A7000000000000000000000A /* StudioVisualExportPreparation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioVisualExportPreparation.swift; sourceTree = "<group>"; };
+		A7000000000000000000000B /* StudioOperatorsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioOperatorsTests.swift; sourceTree = "<group>"; };
+		A8A100000000000000000001 /* StudioFactorAudioGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioFactorAudioGraph.swift; sourceTree = "<group>"; };
+		A8A200000000000000000001 /* StudioPlotSeries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioPlotSeries.swift; sourceTree = "<group>"; };
+		A8A100000000000000000002 /* StudioWorkspaceCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioWorkspaceCommands.swift; sourceTree = "<group>"; };
+		A8A100000000000000000003 /* StudioFactorAudioGraphTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioFactorAudioGraphTests.swift; sourceTree = "<group>"; };
+		A71000000000000000000001 /* StudioCorpusMethodsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioCorpusMethodsTests.swift; sourceTree = "<group>"; };
+		A71000000000000000000002 /* StudioStatisticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioStatisticsTests.swift; sourceTree = "<group>"; };
+		A71000000000000000000003 /* StudioEvaluationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioEvaluationTests.swift; sourceTree = "<group>"; };
+		A72000000000000000000001 /* StudioLinguisticModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioLinguisticModel.swift; sourceTree = "<group>"; };
+		A72000000000000000000002 /* StudioLinguisticView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioLinguisticView.swift; sourceTree = "<group>"; };
+		A72000000000000000000003 /* StudioLinguisticTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioLinguisticTests.swift; sourceTree = "<group>"; };
+		A30600000000000000000001 /* .editorconfig */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".editorconfig"; sourceTree = "<group>"; };
+		A30600000000000000000002 /* .gitattributes */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".gitattributes"; sourceTree = "<group>"; };
+		A30600000000000000000003 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".gitignore"; sourceTree = "<group>"; };
+		A30600000000000000000004 /* .swift-format */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ".swift-format"; sourceTree = "<group>"; };
+		A30600000000000000000005 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "AGENTS.md"; sourceTree = "<group>"; };
+		A30600000000000000000006 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "CHANGELOG.md"; sourceTree = "<group>"; };
+		A30600000000000000000007 /* CODE_OF_CONDUCT.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "CODE_OF_CONDUCT.md"; sourceTree = "<group>"; };
+		A30600000000000000000008 /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "CONTRIBUTING.md"; sourceTree = "<group>"; };
+		A30600000000000000000009 /* GOVERNANCE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "GOVERNANCE.md"; sourceTree = "<group>"; };
+		A3060000000000000000000A /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = "LICENSE"; sourceTree = "<group>"; };
+		A3060000000000000000000B /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = "Makefile"; sourceTree = "<group>"; };
+		A3060000000000000000000C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "README.md"; sourceTree = "<group>"; };
+		A3060000000000000000000D /* SECURITY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "SECURITY.md"; sourceTree = "<group>"; };
+		A3060000000000000000000E /* SUPPORT.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "SUPPORT.md"; sourceTree = "<group>"; };
+		A3060000000000000000000F /* appunti 2.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "appunti 2.txt"; sourceTree = "<group>"; };
+		A30600000000000000000010 /* appunti-1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "appunti-1.txt"; sourceTree = "<group>"; };
+		A30600000000000000000011 /* macOS-Tests-Common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "macOS-Tests-Common.xcconfig"; sourceTree = "<group>"; };
+		A30600000000000000000012 /* macOS-Tests-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "macOS-Tests-Release.xcconfig"; sourceTree = "<group>"; };
+		A30600000000000000000013 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = "InfoPlist.xcstrings"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileReference section for macOS tests */
+		A64000000000000000000001 /* StudioCorpusPresentationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioCorpusPresentationTests.swift; sourceTree = "<group>"; };
+		A63000000000000000000003 /* StudioSourceLookupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioSourceLookupTests.swift; sourceTree = "<group>"; };
+		A63000000000000000000001 /* StudioSelectionConsistencyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioSelectionConsistencyTests.swift; sourceTree = "<group>"; };
+		A50000000000000000000002 /* StudioKeynessTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioKeynessTests.swift; sourceTree = "<group>"; };
+		A50000000000000000000003 /* StudioKeynessValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioKeynessValidationTests.swift; sourceTree = "<group>"; };
+		A40000000000000000000001 /* StudioTermWeightingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTermWeightingTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000001 /* StudioDocumentLifecycleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioDocumentLifecycleTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000002 /* GlifiStudioMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GlifiStudioMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000003 /* macOS-Tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "macOS-Tests.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section for macOS tests */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		C30600000000000000000011 /* docs */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {};
+			explicitFolders = ();
+			path = "docs";
+			sourceTree = "<group>";
+		};
+		C30600000000000000000012 /* Scripts */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {};
+			explicitFolders = ();
+			path = "Scripts";
+			sourceTree = "<group>";
+		};
+		C30600000000000000000013 /* Fixtures */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {};
+			explicitFolders = ();
+			path = "Fixtures";
+			sourceTree = "<group>";
+		};
+		C30600000000000000000014 /* Design */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {};
+			explicitFolders = ();
+			path = "Design";
+			sourceTree = "<group>";
+		};
+		C30600000000000000000015 /* Distribution */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {};
+			explicitFolders = ();
+			path = "Distribution";
+			sourceTree = "<group>";
+		};
+		C30600000000000000000016 /* Benchmarks */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {};
+			explicitFolders = ();
+			path = "Benchmarks";
+			sourceTree = "<group>";
+		};
+		C30600000000000000000017 /* .github */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {};
+			explicitFolders = ();
+			path = ".github";
+			sourceTree = "<group>";
+		};
+		C30600000000000000000018 /* CLI */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {};
+			explicitFolders = ();
+			path = "CLI";
+			sourceTree = "<group>";
+		};
+		C30600000000000000000019 /* Compliance */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {};
+			explicitFolders = ();
+			path = "Compliance";
+			sourceTree = "<group>";
+		};
+		C3060000000000000000001A /* GitHub */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {};
+			explicitFolders = ();
+			path = "GitHub";
+			sourceTree = "<group>";
+		};
+		C3060000000000000000001B /* Testing */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {};
+			explicitFolders = ();
+			path = "Testing";
+			sourceTree = "<group>";
+		};
+		C3060000000000000000001C /* GlifiCore */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {};
+			explicitFolders = ();
+			path = "GlifiCore";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D10000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000005 /* GlifiKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D10000000000000000000005 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000006 /* GlifiKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXFrameworksBuildPhase section for macOS tests */
+		D20000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (B20000000000000000000003 /* GlifiKit in Frameworks */,);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section for macOS tests */
+
+/* Begin PBXGroup section */
+		C10000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				C30600000000000000000001 /* Repository Metadata */,
+				C10000000000000000000002 /* Apps */,
+				C30600000000000000000002 /* Packages */,
+				C10000000000000000000006 /* Config */,
+				C30600000000000000000011 /* docs */,
+				C30600000000000000000012 /* Scripts */,
+				C30600000000000000000013 /* Fixtures */,
+				C30600000000000000000014 /* Design */,
+				C30600000000000000000015 /* Distribution */,
+				C30600000000000000000016 /* Benchmarks */,
+				C30600000000000000000017 /* .github */,
+				C10000000000000000000007 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C10000000000000000000002 /* Apps */ = {
+			isa = PBXGroup;
+			children = (
+				C10000000000000000000003 /* Shared */,
+				C10000000000000000000004 /* macOS */,
+				C10000000000000000000005 /* iPadOS */,
+			);
+			path = Apps;
+			sourceTree = "<group>";
+		};
+		C10000000000000000000003 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				A7000000000000000000000A /* StudioVisualExportPreparation.swift */,
+				A60000000000000000000001 /* StudioWorkspaceNavigation.swift */,
+				A10000000000000000000001 /* StudioHomeView.swift */,
+				A8A100000000000000000001 /* StudioFactorAudioGraph.swift */,
+				A8A200000000000000000001 /* StudioPlotSeries.swift */,
+				A8A100000000000000000002 /* StudioWorkspaceCommands.swift */,
+				A10000000000000000000020 /* StudioVisualizationView.swift */,
+				A10000000000000000000021 /* StudioCodingView.swift */,
+				A1000000000000000000000E /* StudioHomeModel.swift */,
+				A10000000000000000000012 /* GlifiStudioDocument.swift */,
+				C10000000000000000000008 /* Resources */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		C10000000000000000000004 /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				A72000000000000000000001 /* StudioLinguisticModel.swift */,
+				A72000000000000000000002 /* StudioLinguisticView.swift */,
+				A70000000000000000000001 /* StudioOperatorsModel.swift */,
+				A70000000000000000000002 /* StudioOperatorsView.swift */,
+				A70000000000000000000003 /* StudioCorpusMethodsModel.swift */,
+				A70000000000000000000004 /* StudioCorpusMethodsView.swift */,
+				A70000000000000000000005 /* StudioStatisticsModel.swift */,
+				A70000000000000000000006 /* StudioStatisticsView.swift */,
+				A70000000000000000000007 /* StudioEvaluationModel.swift */,
+				A70000000000000000000008 /* StudioEvaluationView.swift */,
+				A70000000000000000000009 /* StudioCoreMethodRoute.swift */,
+				A60000000000000000000002 /* StudioAdvancedAnalysisModel.swift */,
+				A60000000000000000000003 /* StudioAdvancedAnalysisView.swift */,
+				A60000000000000000000004 /* StudioLexicalLawsView.swift */,
+				A10000000000000000000002 /* GlifiStudioMacApp.swift */,
+				A30000000000000000000001 /* StudioMacRuntimeMonitor.swift */,
+				A10000000000000000000022 /* StudioTextAnalysisView.swift */,
+				A50000000000000000000001 /* StudioKeynessView.swift */,
+				A63000000000000000000002 /* StudioSourceLookup.swift */,
+				C30600000000000000000003 /* Tests */,
+			);
+			path = macOS;
+			sourceTree = "<group>";
+		};
+		C10000000000000000000005 /* iPadOS */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000003 /* GlifiStudioPadApp.swift */,
+			);
+			path = iPadOS;
+			sourceTree = "<group>";
+		};
+		C10000000000000000000006 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000006 /* Base.xcconfig */,
+				A10000000000000000000007 /* Debug.xcconfig */,
+				A10000000000000000000008 /* Release.xcconfig */,
+				A10000000000000000000009 /* macOS-Debug.xcconfig */,
+				A1000000000000000000000A /* macOS-Release.xcconfig */,
+				A1000000000000000000000B /* iPadOS-Debug.xcconfig */,
+				A1000000000000000000000C /* iPadOS-Release.xcconfig */,
+				A20000000000000000000003 /* macOS-Tests.xcconfig */,
+				A10000000000000000000010 /* GlifiStudio-macOS.entitlements */,
+				A10000000000000000000013 /* GlifiStudio-Info.plist */,
+				A30600000000000000000011 /* macOS-Tests-Common.xcconfig */,
+				A30600000000000000000012 /* macOS-Tests-Release.xcconfig */,
+				C30600000000000000000018 /* CLI */,
+				C30600000000000000000019 /* Compliance */,
+				C3060000000000000000001A /* GitHub */,
+				C3060000000000000000001B /* Testing */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		C10000000000000000000007 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000004 /* GlifiStudio.app */,
+				A10000000000000000000005 /* GlifiStudio.app */,
+				A20000000000000000000002 /* GlifiStudioMacTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C10000000000000000000008 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A1000000000000000000000D /* Localizable.xcstrings */,
+				A1000000000000000000000F /* PrivacyInfo.xcprivacy */,
+				A10000000000000000000011 /* Assets.xcassets */,
+				A30600000000000000000013 /* InfoPlist.xcstrings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		C30600000000000000000001 /* Repository Metadata */ = {
+			isa = PBXGroup;
+			children = (
+				A30600000000000000000001 /* .editorconfig */,
+				A30600000000000000000002 /* .gitattributes */,
+				A30600000000000000000003 /* .gitignore */,
+				A30600000000000000000004 /* .swift-format */,
+				A30600000000000000000005 /* AGENTS.md */,
+				A30600000000000000000006 /* CHANGELOG.md */,
+				A30600000000000000000007 /* CODE_OF_CONDUCT.md */,
+				A30600000000000000000008 /* CONTRIBUTING.md */,
+				A30600000000000000000009 /* GOVERNANCE.md */,
+				A3060000000000000000000A /* LICENSE */,
+				A3060000000000000000000B /* Makefile */,
+				A3060000000000000000000C /* README.md */,
+				A3060000000000000000000D /* SECURITY.md */,
+				A3060000000000000000000E /* SUPPORT.md */,
+				A3060000000000000000000F /* appunti 2.txt */,
+				A30600000000000000000010 /* appunti-1.txt */,
+			);
+			name = "Repository Metadata";
+			sourceTree = "<group>";
+		};
+		C30600000000000000000002 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				C3060000000000000000001C /* GlifiCore */,
+			);
+			path = "Packages";
+			sourceTree = "<group>";
+		};
+		C30600000000000000000003 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				A60000000000000000000006 /* StudioAdvancedAnalysisTests.swift */,
+				A71000000000000000000001 /* StudioCorpusMethodsTests.swift */,
+				A64000000000000000000001 /* StudioCorpusPresentationTests.swift */,
+				A20000000000000000000001 /* StudioDocumentLifecycleTests.swift */,
+				A71000000000000000000003 /* StudioEvaluationTests.swift */,
+				A8A100000000000000000003 /* StudioFactorAudioGraphTests.swift */,
+				A50000000000000000000002 /* StudioKeynessTests.swift */,
+				A50000000000000000000003 /* StudioKeynessValidationTests.swift */,
+				A72000000000000000000003 /* StudioLinguisticTests.swift */,
+				A30000000000000000000002 /* StudioMacRuntimeMonitorTests.swift */,
+				A7000000000000000000000B /* StudioOperatorsTests.swift */,
+				A63000000000000000000001 /* StudioSelectionConsistencyTests.swift */,
+				A63000000000000000000003 /* StudioSourceLookupTests.swift */,
+				A71000000000000000000002 /* StudioStatisticsTests.swift */,
+				A40000000000000000000001 /* StudioTermWeightingTests.swift */,
+				A60000000000000000000005 /* StudioWorkspaceTests.swift */,
+			);
+			path = "Tests";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E10000000000000000000001 /* GlifiStudio-macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = H10000000000000000000002 /* Build configuration list for PBXNativeTarget "GlifiStudio-macOS" */;
+			buildPhases = (
+				D10000000000000000000001 /* Sources */,
+				D10000000000000000000002 /* Frameworks */,
+				D10000000000000000000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "GlifiStudio-macOS";
+			packageProductDependencies = (
+				J10000000000000000000001 /* GlifiKit */,
+			);
+			productName = GlifiStudio;
+			productReference = A10000000000000000000004 /* GlifiStudio.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E10000000000000000000002 /* GlifiStudio-iPadOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = H10000000000000000000003 /* Build configuration list for PBXNativeTarget "GlifiStudio-iPadOS" */;
+			buildPhases = (
+				D10000000000000000000004 /* Sources */,
+				D10000000000000000000005 /* Frameworks */,
+				D10000000000000000000006 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "GlifiStudio-iPadOS";
+			packageProductDependencies = (
+				J10000000000000000000002 /* GlifiKit */,
+			);
+			productName = GlifiStudio;
+			productReference = A10000000000000000000005 /* GlifiStudio.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXNativeTarget section for macOS tests */
+		E20000000000000000000001 /* GlifiStudioMacTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = H20000000000000000000001;
+			buildPhases = (D20000000000000000000001, D20000000000000000000002, D8A100000000000000000001,);
+			buildRules = ();
+			dependencies = ();
+			name = GlifiStudioMacTests;
+			packageProductDependencies = (J20000000000000000000001 /* GlifiKit */,);
+			productName = GlifiStudioMacTests;
+			productReference = A20000000000000000000002 /* GlifiStudioMacTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section for macOS tests */
+
+/* Begin PBXProject section */
+		F10000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					E10000000000000000000001 = {
+						CreatedOnToolsVersion = 27.0;
+						SystemCapabilities = {
+							com.apple.HardenedRuntime = {
+								enabled = 1;
+							};
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
+					};
+					E10000000000000000000002 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+				};
+			};
+			buildConfigurationList = H10000000000000000000001 /* Build configuration list for PBXProject "GlifiStudio" */;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = it;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				it,
+				en,
+				Base,
+			);
+			mainGroup = C10000000000000000000001;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				I10000000000000000000001 /* XCLocalSwiftPackageReference "Packages/GlifiCore" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C10000000000000000000007 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E10000000000000000000001 /* GlifiStudio-macOS */,
+				E10000000000000000000002 /* GlifiStudio-iPadOS */,
+				E20000000000000000000001 /* GlifiStudioMacTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D10000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000007 /* Localizable.xcstrings in Resources */,
+				B1000000000000000000000B /* PrivacyInfo.xcprivacy in Resources */,
+				B1000000000000000000000D /* Assets.xcassets in Resources */,
+				B30600000000000000000001 /* InfoPlist.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D10000000000000000000006 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000008 /* Localizable.xcstrings in Resources */,
+				B1000000000000000000000C /* PrivacyInfo.xcprivacy in Resources */,
+				B1000000000000000000000E /* Assets.xcassets in Resources */,
+				B30600000000000000000002 /* InfoPlist.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8A100000000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B8A100000000000000000007 /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D10000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B72000000000000000000001 /* StudioLinguisticModel.swift in Sources */,
+				B72000000000000000000003 /* StudioLinguisticView.swift in Sources */,
+				B70000000000000000000001 /* StudioOperatorsModel.swift in Sources */,
+				B70000000000000000000003 /* StudioOperatorsView.swift in Sources */,
+				B70000000000000000000004 /* StudioCorpusMethodsModel.swift in Sources */,
+				B70000000000000000000006 /* StudioCorpusMethodsView.swift in Sources */,
+				B70000000000000000000007 /* StudioStatisticsModel.swift in Sources */,
+				B70000000000000000000009 /* StudioStatisticsView.swift in Sources */,
+				B7000000000000000000000A /* StudioEvaluationModel.swift in Sources */,
+				B7000000000000000000000C /* StudioEvaluationView.swift in Sources */,
+				B7000000000000000000000D /* StudioCoreMethodRoute.swift in Sources */,
+				B7000000000000000000000F /* StudioVisualExportPreparation.swift in Sources */,
+				B60000000000000000000001 /* StudioWorkspaceNavigation.swift in Sources */,
+				B60000000000000000000004 /* StudioAdvancedAnalysisModel.swift in Sources */,
+				B60000000000000000000006 /* StudioAdvancedAnalysisView.swift in Sources */,
+				B60000000000000000000007 /* StudioLexicalLawsView.swift in Sources */,
+				B10000000000000000000001 /* StudioHomeView.swift in Sources */,
+				B8A100000000000000000001 /* StudioFactorAudioGraph.swift in Sources */,
+				B8A200000000000000000001 /* StudioPlotSeries.swift in Sources */,
+				B8A100000000000000000004 /* StudioWorkspaceCommands.swift in Sources */,
+				B10000000000000000000011 /* StudioVisualizationView.swift in Sources */,
+				B10000000000000000000013 /* StudioCodingView.swift in Sources */,
+				B10000000000000000000009 /* StudioHomeModel.swift in Sources */,
+				B1000000000000000000000F /* GlifiStudioDocument.swift in Sources */,
+				B10000000000000000000002 /* GlifiStudioMacApp.swift in Sources */,
+				B30000000000000000000001 /* StudioMacRuntimeMonitor.swift in Sources */,
+				B10000000000000000000015 /* StudioTextAnalysisView.swift in Sources */,
+				B50000000000000000000001 /* StudioKeynessView.swift in Sources */,
+				B63000000000000000000002 /* StudioSourceLookup.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D10000000000000000000004 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B70000000000000000000010 /* StudioVisualExportPreparation.swift in Sources */,
+				B60000000000000000000002 /* StudioWorkspaceNavigation.swift in Sources */,
+				B10000000000000000000003 /* StudioHomeView.swift in Sources */,
+				B8A100000000000000000002 /* StudioFactorAudioGraph.swift in Sources */,
+				B8A200000000000000000002 /* StudioPlotSeries.swift in Sources */,
+				B8A100000000000000000005 /* StudioWorkspaceCommands.swift in Sources */,
+				B10000000000000000000012 /* StudioVisualizationView.swift in Sources */,
+				B10000000000000000000014 /* StudioCodingView.swift in Sources */,
+				B1000000000000000000000A /* StudioHomeModel.swift in Sources */,
+				B10000000000000000000010 /* GlifiStudioDocument.swift in Sources */,
+				B10000000000000000000004 /* GlifiStudioPadApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section for macOS tests */
+		D20000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B72000000000000000000002 /* StudioLinguisticModel.swift in Sources */,
+				B72000000000000000000004 /* StudioLinguisticTests.swift in Sources */,
+				B71000000000000000000003 /* StudioEvaluationTests.swift in Sources */,
+				B71000000000000000000002 /* StudioStatisticsTests.swift in Sources */,
+				B71000000000000000000001 /* StudioCorpusMethodsTests.swift in Sources */,
+				B64000000000000000000001 /* StudioCorpusPresentationTests.swift in Sources */,
+				B70000000000000000000002 /* StudioOperatorsModel.swift in Sources */,
+				B70000000000000000000005 /* StudioCorpusMethodsModel.swift in Sources */,
+				B70000000000000000000008 /* StudioStatisticsModel.swift in Sources */,
+				B7000000000000000000000B /* StudioEvaluationModel.swift in Sources */,
+				B7000000000000000000000E /* StudioCoreMethodRoute.swift in Sources */,
+				B70000000000000000000011 /* StudioVisualExportPreparation.swift in Sources */,
+				B70000000000000000000012 /* StudioOperatorsTests.swift in Sources */,
+				B60000000000000000000009 /* StudioAdvancedAnalysisTests.swift in Sources */,
+				B60000000000000000000003 /* StudioWorkspaceNavigation.swift in Sources */,
+				B60000000000000000000005 /* StudioAdvancedAnalysisModel.swift in Sources */,
+				B8A100000000000000000003 /* StudioFactorAudioGraph.swift in Sources */,
+				B8A200000000000000000003 /* StudioPlotSeries.swift in Sources */,
+				B8A100000000000000000006 /* StudioFactorAudioGraphTests.swift in Sources */,
+				B60000000000000000000008 /* StudioWorkspaceTests.swift in Sources */,
+				B20000000000000000000001 /* StudioDocumentLifecycleTests.swift in Sources */,
+				B40000000000000000000001 /* StudioTermWeightingTests.swift in Sources */,
+				B50000000000000000000002 /* StudioKeynessTests.swift in Sources */,
+				B50000000000000000000003 /* StudioKeynessValidationTests.swift in Sources */,
+				B63000000000000000000001 /* StudioSelectionConsistencyTests.swift in Sources */,
+				B63000000000000000000003 /* StudioSourceLookup.swift in Sources */,
+				B63000000000000000000004 /* StudioSourceLookupTests.swift in Sources */,
+				B20000000000000000000002 /* StudioHomeModel.swift in Sources */,
+				B30000000000000000000002 /* StudioMacRuntimeMonitor.swift in Sources */,
+				B30000000000000000000003 /* StudioMacRuntimeMonitorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section for macOS tests */
+
+/* Begin XCBuildConfiguration section */
+		G10000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A10000000000000000000007 /* Debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		G10000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A10000000000000000000008 /* Release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		G10000000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A10000000000000000000009 /* macOS-Debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		G10000000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1000000000000000000000A /* macOS-Release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		G10000000000000000000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1000000000000000000000B /* iPadOS-Debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		G10000000000000000000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1000000000000000000000C /* iPadOS-Release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCBuildConfiguration section for macOS tests */
+		G20000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A20000000000000000000003 /* macOS-Tests.xcconfig */;
+			buildSettings = {};
+			name = Debug;
+		};
+		G20000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A30600000000000000000012 /* macOS-Tests-Release.xcconfig */;
+			buildSettings = {};
+			name = Release;
+		};
+/* End XCBuildConfiguration section for macOS tests */
+
+/* Begin XCConfigurationList section */
+		H10000000000000000000001 /* Build configuration list for PBXProject "GlifiStudio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				G10000000000000000000001 /* Debug */,
+				G10000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		H10000000000000000000002 /* Build configuration list for PBXNativeTarget "GlifiStudio-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				G10000000000000000000003 /* Debug */,
+				G10000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		H10000000000000000000003 /* Build configuration list for PBXNativeTarget "GlifiStudio-iPadOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				G10000000000000000000005 /* Debug */,
+				G10000000000000000000006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCConfigurationList section for macOS tests */
+		H20000000000000000000001 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (G20000000000000000000001, G20000000000000000000002,);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section for macOS tests */
+
+/* Begin XCLocalSwiftPackageReference section */
+		I10000000000000000000001 /* XCLocalSwiftPackageReference "Packages/GlifiCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/GlifiCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		J10000000000000000000001 /* GlifiKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = I10000000000000000000001 /* XCLocalSwiftPackageReference "Packages/GlifiCore" */;
+			productName = GlifiKit;
+		};
+		J10000000000000000000002 /* GlifiKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = I10000000000000000000001 /* XCLocalSwiftPackageReference "Packages/GlifiCore" */;
+			productName = GlifiKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+
+/* Begin XCSwiftPackageProductDependency section for macOS tests */
+		J20000000000000000000001 /* GlifiKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = I10000000000000000000001 /* XCLocalSwiftPackageReference "Packages/GlifiCore" */;
+				productName = GlifiKit;
+		};
+/* End XCSwiftPackageProductDependency section for macOS tests */
+	};
+	rootObject = F10000000000000000000001 /* Project object */;
+}

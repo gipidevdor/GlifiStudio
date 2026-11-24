@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-21",
+  "removedAtDelivery": [
+    {
+      "pathRole": "shared-verification-cache",
+      "allocatedKiB": 2723060
+    },
+    {
+      "pathRole": "release-probe",
+      "allocatedKiB": 261688
+    },
+    {
+      "pathRole": "red-log",
+      "allocatedKiB": 12
+    }
+  ],
+  "allocatedKiBAtDelivery": 2984760,
+  "redSnapshotPreviouslyRemovedKiB": 509064,
+  "totalAllocatedKiBRemoved": 3493824,
+  "volumeFreeSpaceDeltaMeasured": false,
+  "preserved": [
+    "source and tests",
+    "controlled evidence and compact verification JSON",
+    "existing veraPDF/Java/Python toolchains",
+    "other chat snapshot and caches"
+  ]
+}

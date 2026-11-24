@@ -1,0 +1,82 @@
+{
+  "schema": "studio.glifi.scientific-reference-fixtures",
+  "schemaVersion": 1,
+  "numericType": "IEEE-754 binary64",
+  "cases": [
+    {
+      "id": "pearson-chi-square-2x2-balanced", "method": "PearsonChiSquare-v1", "formula": "sum((observed-expected)^2/expected)",
+      "input": {"table": [[10, 20], [20, 10]]},
+      "expected": {"statistic": 6.666666666666667, "cramersV": 0.3333333333333333},
+      "comparison": {"kind": "absoluteTolerance", "value": 1e-12}
+    },
+    {
+      "id": "cosine-three-dimensional", "method": "Cosine-v1", "formula": "dot(x,y)/(norm2(x)*norm2(y))",
+      "input": {"left": [1, 2, 0], "right": [2, 1, 2]},
+      "expected": {"similarity": 0.5962847939999439},
+      "comparison": {"kind": "absoluteTolerance", "value": 1e-12}
+    },
+    {
+      "id": "pmi-natural-log", "method": "PMI-v1", "formula": "ln((cooccurrence*total)/(leftCount*rightCount))",
+      "input": {"cooccurrence": 10, "leftCount": 20, "rightCount": 25, "total": 100},
+      "expected": {"pmi": 0.6931471805599453, "npmi": 0.30102999566398114},
+      "comparison": {"kind": "absoluteTolerance", "value": 1e-12}
+    },
+    {
+      "id": "tfidf-smoothed-two-documents", "method": "TFIDF-v1/IDF-smooth-v1", "formula": "idf=ln((N+1)/(df+1))+1; weight=rawTF*idf",
+      "input": {"documents": [["a", "a", "b"], ["b", "c"]]},
+      "expected": {
+        "idf": {"a": 1.4054651081081644, "b": 1.0, "c": 1.4054651081081644},
+        "vectors": [{"a": 2.8109302162163288, "b": 1.0, "c": 0.0}, {"a": 0.0, "b": 1.0, "c": 1.4054651081081644}]
+      },
+      "comparison": {"kind": "absoluteTolerance", "value": 1e-12}
+    },
+    {
+      "id": "corpus-profile-italian-two-documents", "method": "corpus-profile-it-v1", "formula": "D/N/V; f/N; df/range; GriesDP-v1; TTR-v1; MSTTR-v1; MATTR-v1; word-bigram; TF-raw-v1/IDF-smooth-v1/TFIDF-v1",
+      "input": {"documents": [["casa", "casa", "mare"], ["casa", "città"]], "windowSize": 2},
+      "expected": {
+        "documentCount": 2,
+        "lexicalTokenCount": 5,
+        "typeCount": 3,
+        "terms": {
+          "casa": {"frequency": 3, "relativeFrequency": 0.6, "documentFrequency": 2, "range": 2, "griesDP": 0.06666666666666667},
+          "città": {"frequency": 1, "relativeFrequency": 0.2, "documentFrequency": 1, "range": 1, "griesDP": 0.6},
+          "mare": {"frequency": 1, "relativeFrequency": 0.2, "documentFrequency": 1, "range": 1, "griesDP": 0.4}
+        },
+        "diversity": {"ttr": 0.6, "msttr": 0.75, "mattr": 0.875},
+        "bigramCounts": {"casa casa": 1, "casa città": 1, "casa mare": 1},
+        "matrix": {
+          "counts": [[2, 0, 1], [1, 1, 0]],
+          "tfidf": [[2.0, 0.0, 1.4054651081081644], [1.0, 1.4054651081081644, 0.0]]
+        }
+      },
+      "comparison": {"kind": "absoluteTolerance", "value": 1e-12}
+    },
+    {
+      "id": "keyness-gtest-ha-bh-v1", "method": "GTest-v1/ChiSquareSurvival-df1-erfc-v1/OddsRatio-HA-v1/LogRatio-HA-v1-base2/BenjaminiHochberg-v1", "formula": "G=2*sum(O*ln(O/E)); p=erfc(sqrt(G/2)); HA=+0.5 per cell; q=BH(p)",
+      "input": {"target": ["casa", "casa", "mare"], "reference": ["casa", "città", "città"]},
+      "expected": {
+        "targetTokenCount": 3,
+        "referenceTokenCount": 3,
+        "terms": {
+          "casa": {"targetFrequency": 2, "referenceFrequency": 1, "targetRelativeFrequency": 0.6666666666666666, "referenceRelativeFrequency": 0.3333333333333333, "gStatistic": 0.679596147181589, "pValue": 0.4097258240633153, "qValue": 0.4097258240633153, "oddsRatioHaldaneAnscombe": 2.777777777777778, "log2RatioHaldaneAnscombe": 0.7369655941662062, "minimumExpectedCount": 1.5},
+          "città": {"targetFrequency": 0, "referenceFrequency": 2, "targetRelativeFrequency": 0.0, "referenceRelativeFrequency": 0.6666666666666666, "gStatistic": 3.8190850097688767, "pValue": 0.05067190234699019, "qValue": 0.15201570704097056, "oddsRatioHaldaneAnscombe": 0.0857142857142857, "log2RatioHaldaneAnscombe": -2.321928094887362, "minimumExpectedCount": 1.0},
+          "mare": {"targetFrequency": 1, "referenceFrequency": 0, "targetRelativeFrequency": 0.3333333333333333, "referenceRelativeFrequency": 0.0, "gStatistic": 1.5876494966267793, "pValue": 0.20766227685840058, "qValue": 0.3114934152876009, "oddsRatioHaldaneAnscombe": 4.2, "log2RatioHaldaneAnscombe": 1.584962500721156, "minimumExpectedCount": 0.5}
+        }
+      },
+      "comparison": {"kind": "absoluteTolerance", "value": 1e-12}
+    },
+    {
+      "id": "keyness-gtest-fisher-ha-ci-bh-v2", "method": "GTest-v1/FisherSelection-min-expected-5-v1/FisherExactTwoSided-v1/LogRatioCI-Katz-HA-v1/OddsRatioCI-Woolf-HA-v1/BenjaminiHochberg-v1",
+      "formula": "Fisher se min(E)<5; p Fisher = somma delle P(tabella) con P <= P_oss(1+1e-7); IC 95%: Katz su ln del rapporto dei tassi, Woolf su ln OR, celle +0,5; q = BH dei p selezionati",
+      "input": {"target": ["casa", "casa", "mare"], "reference": ["casa", "città", "città"], "confidenceLevel": 0.95},
+      "expected": {
+        "terms": {
+          "casa": {"pValue": 1.0, "qValue": 1.0, "log2RatioLower": -1.39159718331577, "log2RatioUpper": 2.86552837164818, "oddsRatioLower": 0.158649266806663, "oddsRatioUpper": 48.6358968939905},
+          "città": {"pValue": 0.4, "qValue": 1.0, "log2RatioLower": -6.21954751439024, "log2RatioUpper": 1.57569132461552, "oddsRatioLower": 0.00236889077053129, "oddsRatioUpper": 3.1014257250293},
+          "mare": {"pValue": 1.0, "qValue": 1.0, "log2RatioLower": -2.57719663458431, "log2RatioUpper": 5.74712163602663, "oddsRatioLower": 0.116075647756033, "oddsRatioUpper": 151.969860526436}
+        }
+      },
+      "comparison": {"kind": "absoluteTolerance", "value": 1e-9}
+    }
+  ]
+}

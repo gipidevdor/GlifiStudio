@@ -1,0 +1,10 @@
+{
+  "schema": "studio.glifi.scientific-fixture-manifest",
+  "schemaVersion": 1,
+  "id": "scientific-v1-seed",
+  "license": "BSD-3-Clause",
+  "provenance": "Casi sintetici con formule dichiarate e valori ricalcolati dal gate indipendente dal codice prodotto.",
+  "purpose": "Seed V1 per convenzioni e tolleranze; non sostituisce oracoli esterni, dataset pubblicati o review scientifica.",
+  "reviewStatus": "unreviewed-seed",
+  "cases": "Fixtures/Scientific/v1/reference-cases.json"
+}

@@ -1,0 +1,8 @@
+{
+  "initialGraphAndProjectionExitCodes": 0,
+  "initialDigestExitCode": 1,
+  "cause": "Wrong test expectation for graph failure retainedState; corrected to lastCommittedGeneration, identifier unchanged",
+  "productionCodeChangedForCorrection": false,
+  "timerFixtureAndChecksumChanged": false,
+  "completeBaselineReacquired": true
+}

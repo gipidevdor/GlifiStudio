@@ -1,0 +1,56 @@
+# SPDX-License-Identifier: BSD-3-Clause
+
+# macOS metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100/
+.Trashes/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Package.resolved is intentionally versioned for reproducible application builds.
+
+# Xcode local state and generated output
+build/
+DerivedData/
+*.xcarchive
+*.xcresult
+*.xcuserstate
+xcuserdata/
+**/xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+*.moved-aside
+
+# Build artifacts
+*.dSYM
+*.dSYM.zip
+*.ipa
+*.profdata
+*.profraw
+.coverage/
+
+# Editors and temporary files
+.idea/
+.vscode/
+__pycache__/
+*.py[cod]
+*.swp
+*.swo
+*~
+tmp/
+
+# Local configuration, credentials, provisioning, and signing material
+.env
+.env.*
+!.env.example
+*.cer
+*.key
+*.mobileprovision
+*.p12
+*.p8
+*.pem

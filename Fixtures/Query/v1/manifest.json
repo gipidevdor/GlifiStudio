@@ -1,0 +1,10 @@
+{
+  "schema": "studio.glifi.query-fixture-manifest",
+  "schemaVersion": 1,
+  "id": "query-v1-seed",
+  "license": "BSD-3-Clause",
+  "provenance": "Testo e query sintetici originali in lingua italiana.",
+  "purpose": "Oracolo seed per semantica query, diagnostica e offset UTF-8 half-open.",
+  "reviewStatus": "seed-v1",
+  "cases": "Fixtures/Query/v1/cases.json"
+}

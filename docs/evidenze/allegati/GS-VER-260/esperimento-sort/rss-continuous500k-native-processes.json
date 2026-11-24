@@ -1,0 +1,22 @@
+[
+  {
+    "observedAtUTC": "2026-11-22T09:00:30.603054+00:00",
+    "externalRelevantProcesses": [],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T09:00:30.648392+00:00",
+    "externalRelevantProcesses": [],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T09:00:31.204654+00:00",
+    "externalRelevantProcesses": [],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  },
+  {
+    "observedAtUTC": "2026-11-22T09:00:31.767147+00:00",
+    "externalRelevantProcesses": [],
+    "sanitization": "Derived monitor: only relevant processName/PID/CPU retained; command lines, paths and unrelated top-CPU process list removed."
+  }
+]

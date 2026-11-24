@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "status": "draft",
+  "contact": {
+    "firstName": null,
+    "lastName": null,
+    "email": null,
+    "phone": null
+  },
+  "signInRequired": false,
+  "demoAccount": null,
+  "reviewNotes": "Glifi Studio è destinata alla distribuzione App Store non in elenco. Questa nota deve essere completata con istruzioni riproducibili per ogni flusso da revisionare e con eventuali dipendenze hardware o dati dimostrativi.",
+  "backendRequired": false,
+  "requiredHardware": [],
+  "attachments": []
+}

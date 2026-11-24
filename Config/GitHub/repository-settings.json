@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "description": "Ambiente nativo per macOS e iPadOS dedicato a documenti, corpus e analisi testuale.",
+  "visibility": "private",
+  "defaultBranch": "main",
+  "features": {
+    "issues": true,
+    "projects": false,
+    "wiki": false,
+    "discussions": false,
+    "templateRepository": false
+  },
+  "merge": {
+    "squash": true,
+    "mergeCommit": false,
+    "rebase": false,
+    "autoMerge": "required-if-available",
+    "allowBranchUpdate": true,
+    "deleteBranchOnMerge": true,
+    "squashMessage": "pr-title-description"
+  },
+  "actions": {
+    "enabled": true,
+    "allowedActions": "selected",
+    "githubOwnedAllowed": true,
+    "verifiedCreatorsAllowed": false,
+    "shaPinningRequired": true,
+    "defaultWorkflowPermissions": "read",
+    "canApprovePullRequests": false,
+    "externalWorkflowAccess": "none"
+  },
+  "security": {
+    "branchRulesets": "required-if-available",
+    "dependencyGraph": "required",
+    "dependabotAlerts": "required",
+    "automatedSecurityUpdates": "required",
+    "secretScanning": "required-if-available",
+    "pushProtection": "required-if-available",
+    "codeScanning": "evaluate-when-available"
+  },
+  "topics": [
+    "apple-silicon",
+    "document-analysis",
+    "ipados",
+    "macos",
+    "natural-language-processing",
+    "swift",
+    "swiftui"
+  ]
+}

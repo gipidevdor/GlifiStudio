@@ -1,0 +1,43 @@
+# SPDX-License-Identifier: BSD-3-Clause
+
+name: Proposta di funzionalità
+description: Proponi una funzione per un problema verificabile.
+title: "feat: "
+labels:
+  - type:feature
+  - status:triage
+body:
+  - type: textarea
+    id: necessita
+    attributes:
+      label: Necessità
+      description: Quale problema dell'utente vuoi risolvere?
+    validations:
+      required: true
+  - type: textarea
+    id: risultato
+    attributes:
+      label: Risultato desiderato
+      description: Descrivi il risultato osservabile per l'utente.
+    validations:
+      required: true
+  - type: textarea
+    id: criteri
+    attributes:
+      label: Criteri di accettazione
+      description: Elenca condizioni misurabili da verificare.
+    validations:
+      required: true
+  - type: textarea
+    id: alternative
+    attributes:
+      label: Alternative considerate
+      description: Includi lo stato attuale e la scelta di non intervenire.
+  - type: checkboxes
+    id: impatti
+    attributes:
+      label: Impatti
+      options:
+        - label: Ho considerato macOS e iPadOS.
+        - label: Ho considerato accessibilità, italiano iniziale e localizzazione futura.
+        - label: Ho considerato privacy, sicurezza, prestazioni ed energia.

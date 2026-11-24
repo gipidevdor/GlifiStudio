@@ -1,0 +1,69 @@
+{
+  "schema": "studio.glifi.validation-manifest",
+  "schemaVersion": 1,
+  "id": "validation-kh-naive-bayes-review-v1",
+  "capabilityIdentifier": "native-kh-naive-bayes",
+  "methodIdentifiers": [
+    "MultinomialNaiveBayes-Laplace-v1"
+  ],
+  "status": "supported",
+  "license": "BSD-3-Clause",
+  "toolchain": {
+    "swiftLanguageMode": "6",
+    "swiftToolsVersion": "6.4",
+    "platforms": [
+      "macOS 27",
+      "iPadOS 27"
+    ]
+  },
+  "levels": {
+    "V0": {
+      "status": "pass",
+      "description": "Precondizioni, forma, finitezza e budget verificati dai test di GlifiKHOperatorTests e GlifiKHScientificReviewTests."
+    },
+    "V1": {
+      "status": "pass",
+      "description": "Casi minimi calcolati analiticamente e diagnostica fail-closed."
+    },
+    "V2": {
+      "status": "pass",
+      "description": "Posteriori multinomiali e log-probabilità subnormali contro R; ordine token, vocabolario congelato e cross-validation.",
+      "oracle": "Packages/GlifiCore/Tests/Oracles/R/kh_operators.R"
+    },
+    "V3": {
+      "status": "pass",
+      "description": "Riproducibilità, invarianti e metamorfismi pertinenti; nessuna promozione della UI o del planner persistente."
+    },
+    "V4": {
+      "status": "pass",
+      "description": "Dataset sintetici BSD-3-Clause e attese numeriche/strutturali negli oracoli eseguibili versionati, collegati ai test Swift.",
+      "datasets": [
+        "Packages/GlifiCore/Tests/Oracles/R/kh_operators.R",
+        "Packages/GlifiCore/Tests/Oracles/expected.txt"
+      ]
+    },
+    "V5": {
+      "status": "not-applicable",
+      "description": "Un solo backend di prodotto per la variante; prove su dispositivo e review esterna prima della 1.0 restano aperte."
+    }
+  },
+  "limits": [
+    "Supporto delle primitive headless entro i limiti dichiarati, distinto dalla parità di tutte le opzioni KH Coder e dall'integrazione nel prodotto.",
+    "La review tecnica automatica non equivale a una riproduzione scientifica esterna V6; nessuna garanzia generale di errori zero."
+  ],
+  "evidence": [
+    "docs/evidenze/GS-VER-161-revisione-scientifica-operatori.md"
+  ],
+  "numericAgreement": {
+    "comparisonMode": "absoluteTolerance",
+    "oracle": "Packages/GlifiCore/Tests/Oracles/R/kh_operators.R",
+    "notes": "Posteriori multinomiali e log-probabilità subnormali contro R; ordine token, vocabolario congelato e cross-validation.",
+    "absoluteTolerance": 1e-12
+  },
+  "review": {
+    "reviewer": "Codex, revisione tecnica automatizzata su richiesta dell'iniziatore",
+    "date": "2026-11-01",
+    "kind": "automatica interna",
+    "scope": "Formule, oracoli indipendenti, invarianti, regressioni e tolleranze delle primitive; V6 esterno escluso"
+  }
+}

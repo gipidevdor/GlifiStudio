@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "productName": "Glifi Studio",
+  "bundleIdentifier": "studio.glifi.GlifiStudio",
+  "platforms": [
+    "iPadOS",
+    "macOS"
+  ],
+  "primaryLocale": "it-IT",
+  "distributionMethod": "unlisted",
+  "releaseMode": "manual",
+  "category": "PRODUCTIVITY",
+  "marketingVersion": "0.1.0",
+  "buildNumber": "1",
+  "appleDeveloperTeamID": null,
+  "appStoreConnectAppID": null,
+  "sku": null,
+  "privacyPolicyURL": null,
+  "supportURL": null,
+  "ageRatingCompleted": false,
+  "contentRightsCompleted": false,
+  "priceAndAvailabilityCompleted": false,
+  "regions": []
+}

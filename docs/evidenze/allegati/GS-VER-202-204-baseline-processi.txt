@@ -1,0 +1,79 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Log dei tre filtri Release seriali; time -l include fixture e riferimenti.
+# Invocazione SpanMap
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test "La ricerca e la composizione di SpanMap coincidono con il riferimento lineare completo" started.
+✔ Test "La ricerca e la composizione di SpanMap coincidono con il riferimento lineare completo" passed after 1.770 seconds.
+✔ Test run with 1 test in 0 suites passed after 1.771 seconds.
+        4.98 real         3.98 user         0.70 sys
+           110673920  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               76040  page reclaims
+                3194  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                2244  voluntary context switches
+                1979  involuntary context switches
+          4651367106  instructions retired
+          1260912969  cycles elapsed
+            25363320  peak memory footprint
+
+# Invocazione Tokenizer
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test "Il tokenizer conserva l'output legacy e misura soltanto workload espliciti" started.
+✔ Test "Il tokenizer conserva l'output legacy e misura soltanto workload espliciti" passed after 10.299 seconds.
+✔ Test run with 1 test in 0 suites passed after 10.300 seconds.
+       11.70 real        11.44 user         0.31 sys
+            73564160  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               46284  page reclaims
+                 844  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  55  voluntary context switches
+                1320  involuntary context switches
+          4557039646  instructions retired
+          1213730137  cycles elapsed
+            24838960  peak memory footprint
+
+# Invocazione CSV
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test "Il renderer CSV coincide con il riferimento e misura soltanto workload espliciti" started.
+✔ Test "Il renderer CSV coincide con il riferimento e misura soltanto workload espliciti" passed after 5.238 seconds.
+✔ Test run with 1 test in 0 suites passed after 5.238 seconds.
+        6.66 real         6.39 user         0.31 sys
+           131907584  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               51137  page reclaims
+                 842  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  52  voluntary context switches
+                1218  involuntary context switches
+          4575712646  instructions retired
+          1230206414  cycles elapsed
+            25232224  peak memory footprint

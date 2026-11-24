@@ -1,0 +1,14 @@
+{
+  "schema": "studio.glifi.persistence-fixture",
+  "schemaVersion": 1,
+  "caseID": "basic-round-trip",
+  "license": "BSD-3-Clause",
+  "source": "source.txt",
+  "expected": {
+    "generation": 1,
+    "sourceCount": 1,
+    "lexicalTokenCount": 3,
+    "typeCount": 2
+  },
+  "purpose": "Round-trip canonico di creazione, importazione e riapertura del package .glifi."
+}

@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-21",
+  "removedDirectory": "/tmp/GlifiStudioPipeline202-cache",
+  "allocatedKiBBeforeRemoval": 3443576,
+  "allocatedGiBBeforeRemoval": 3.28405,
+  "directoryAbsentAfterRemoval": true,
+  "openFilesObservedBeforeRemoval": 0,
+  "preserved": [
+    "Controlled benchmark samples, inventories, logs and test summaries",
+    "Verified compressed benchmark source archive",
+    "Active toolchains and dependencies",
+    "Other chats' files and build caches"
+  ],
+  "measurementScope": "Allocated size of this directory before removal; not APFS volume free-space delta"
+}

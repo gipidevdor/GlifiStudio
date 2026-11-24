@@ -1,0 +1,157 @@
+{
+  "schema": "studio.glifi.main-integration-verification-evidence",
+  "schemaVersion": 1,
+  "identifier": "GS-VER-301",
+  "date": "2026-11-22",
+  "gate": {
+    "command": "make verify",
+    "exitCode": 0,
+    "profile": "macOS only; iPadOS builds deferred",
+    "logSHA256": "f494755f40421c8fdb3aeb027b600e4c3ca3a089ece857192f495d1693e98f75"
+  },
+  "sourceSnapshot": {
+    "testedCommit": "9959f92c3b7fb9c77184c1b6c5b6537dfb29134e",
+    "sourceInputFileCount": 519,
+    "sourceInputSHA256": "d85f9925d29e36d62c412a24d5ae6b0fac58b85dbc145c4fecbb8abe3f2a17c9",
+    "fingerprintFormat": "Sorted relative UTF-8 path, NUL, file contents, NUL; SHA-256",
+    "frozenInputHashesUnchangedBeforePublication": true
+  },
+  "toolchain": {
+    "Xcode": "27.2",
+    "AppleSwift": "6.4.2",
+    "macOS": "27.2.1",
+    "Python": "3.14.10"
+  },
+  "checks": {
+    "publicKitDeclarations": 2753,
+    "textAnalysisOperationTags": 36,
+    "khOperationTags": 15,
+    "textAnalysisFixtures": 54,
+    "textAnalysisCLIChecks": 165,
+    "standaloneSharedOperations": 130,
+    "completeResultParityComparisons": 260,
+    "negativeCLIChecks": 51,
+    "explicitImportFormatChecks": 2,
+    "independentNumericalOracleRows": 219,
+    "binary64FractionOracleCases": 64,
+    "recoveryKillCheckpoints": 22
+  },
+  "tests": {
+    "coreDefinitions": 611,
+    "kitDefinitions": 140,
+    "macOS": {
+      "result": "Passed",
+      "passedTests": 113,
+      "failedTests": 0,
+      "skippedTests": 0,
+      "totalTestCount": 113,
+      "executions": 345
+    }
+  },
+  "builds": {
+    "macOSDebugAndTests": "passed",
+    "macOSRelease": "passed",
+    "iPadOS": "deferred by selected verification profile"
+  },
+  "notExecuted": [
+    {
+      "check": "Independent PDF/A-2u validation",
+      "reason": "veraPDF executable absent"
+    },
+    {
+      "check": "iPadOS builds and device/simulator tests",
+      "reason": "macOS-only verification profile"
+    }
+  ],
+  "observedWarnings": [
+    "CoreSimulator 1171.7.0 is older than Xcode-required 1174.21.0; macOS verification completed."
+  ],
+  "git": {
+    "publishedCodeCommit": "9959f92c3b7fb9c77184c1b6c5b6537dfb29134e",
+    "localBranchesAfterCleanup": [
+      "main"
+    ],
+    "remoteBranchesAfterCleanup": [
+      "main"
+    ],
+    "forcePushUsed": false,
+    "deletedRemoteBranches": [
+      "codex/analysis-optimization-20261122",
+      "codex/canonical-producers-20261122",
+      "codex/complementary-analysis-20261122",
+      "codex/indexed-optimization-20261122",
+      "feat/integrate-studio-and-cli"
+    ],
+    "deletedAdditionalLocalBranches": [
+      "chore/preserve-gui-core-baseline",
+      "codex/gui-core-coverage-223",
+      "codex/kh-functional-completion-20261122"
+    ],
+    "detachedWorktreePreservation": [
+      {
+        "branchRemovedFromWorktree": "chore/preserve-gui-core-baseline",
+        "headRetained": "e9ec0341851a43870d4761db1d2295c9105df472",
+        "before": {
+          "statusEntries": 0,
+          "workSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "statusEntries": 0,
+          "workSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "unchangedDuringDetach": true
+      },
+      {
+        "branchRemovedFromWorktree": "codex/gui-core-coverage-223",
+        "headRetained": "1f8ea2bdcd013eeaa00f8376ab6460af23e3774e",
+        "before": {
+          "statusEntries": 0,
+          "workSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "statusEntries": 0,
+          "workSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "unchangedDuringDetach": true
+      },
+      {
+        "branchRemovedFromWorktree": "codex/kh-functional-completion-20261122",
+        "headRetained": "32b06f74d49d0f74a0cf1f36cafa982dc908aab2",
+        "before": {
+          "statusEntries": 30,
+          "workSHA256": "b863ae92cbdbd35ec1cbc0bf54828e7f23670d8bad215234c6a1c723ead7ca6b"
+        },
+        "after": {
+          "statusEntries": 30,
+          "workSHA256": "b863ae92cbdbd35ec1cbc0bf54828e7f23670d8bad215234c6a1c723ead7ca6b"
+        },
+        "unchangedDuringDetach": true
+      }
+    ],
+    "ongoingKHWorkAfterSavedCommitExcluded": true
+  },
+  "cleanup": {
+    "ownedArtifactsAllocatedKiBBeforeRemoval": 1670056,
+    "measurement": "du -sk; owned integration cache and temporary verification files only; verification evidence retained",
+    "removed": true
+  },
+  "localDuplicateRecovery": {
+    "preservedOutsideRepository": 242,
+    "identicalToCanonical": 241,
+    "identicalToPriorEvidenceCommit": 1,
+    "priorEvidenceCommit": "8a1683d",
+    "uniqueWorkFound": false,
+    "cause": "undetermined",
+    "finalStaticCheckRepeatedAfterRelocation": true
+  },
+  "finalMetadataChecks": {
+    "make quality-static": {
+      "exitCode": 0,
+      "logSHA256": "3940f8de3b382c5461cac92dfcb4be55aabab9d9dac83be26a8b7bda605bd3cc"
+    },
+    "Scripts/format.sh --check": {
+      "exitCode": 0,
+      "logSHA256": "94b77e54d07f09f37d38b9f9cae149ebe1a191f32106013f52f3447313203a96"
+    }
+  }
+}

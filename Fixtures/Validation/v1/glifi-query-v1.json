@@ -1,0 +1,71 @@
+{
+  "schema": "studio.glifi.validation-manifest",
+  "schemaVersion": 1,
+  "id": "validation-glifi-query-v1",
+  "capabilityIdentifier": "glifi-query-v1",
+  "methodIdentifiers": [
+    "QueryAST-v1",
+    "KWIC-v1",
+    "SpanMap-sourceRanges"
+  ],
+  "status": "supported",
+  "license": "BSD-3-Clause",
+  "toolchain": {
+    "swiftLanguageMode": "6",
+    "swiftToolsVersion": "6.4",
+    "platforms": [
+      "macOS 27",
+      "iPadOS 27"
+    ]
+  },
+  "levels": {
+    "V0": {
+      "status": "pass",
+      "description": "Schema QueryAST e limiti parser bounded verificati dai contract test."
+    },
+    "V1": {
+      "status": "pass",
+      "description": "Casi validi/invalidi, prossimità, booleani e regex NFA nei test Core."
+    },
+    "V2": {
+      "status": "pass",
+      "description": "Fixture Query/v1 e oracolo di intervalli UTF-8 in Scripts/check-fixtures.py."
+    },
+    "V3": {
+      "status": "pass",
+      "description": "Riapertura package e KWIC su generazione persistita (GS-VER-020/021)."
+    },
+    "V4": {
+      "status": "pass",
+      "description": "Fixture query versionate e salto fonte UI con sourceRanges.",
+      "datasets": [
+        "Fixtures/Query/v1/manifest.json",
+        "Fixtures/Markdown/v1/manifest.json"
+      ]
+    },
+    "V5": {
+      "status": "not-applicable",
+      "description": "Un solo backend di valutazione nel nucleo 0.1."
+    }
+  },
+  "limits": [
+    "Metadati, annotazioni, cursor e streaming query restano aperti.",
+    "Studi UX sul salto alla fonte non ancora eseguiti."
+  ],
+  "evidence": [
+    "docs/evidenze/GS-VER-020-query-ast-kwic-bounded.md",
+    "docs/evidenze/GS-VER-039-kwic-fonte-teste-indagine.md",
+    "docs/evidenze/GS-VER-041-query-manifest-e-preview-export.md"
+  ],
+  "numericAgreement": {
+    "comparisonMode": "exactInteger",
+    "oracle": "Scripts/check-fixtures.py",
+    "notes": "Intervalli UTF-8 e conteggi di match sono esatti: nessuna tolleranza ammessa."
+  },
+  "review": {
+    "reviewer": "Iniziatore del progetto",
+    "date": "2026-09-20",
+    "kind": "interna",
+    "scope": "ADR-0031: livelli, oracolo indipendente e tolleranza dichiarata"
+  }
+}

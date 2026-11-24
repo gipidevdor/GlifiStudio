@@ -1,0 +1,18 @@
+{
+  "schema": "studio.glifi.tokenization-baseline",
+  "schemaVersion": 1,
+  "license": "BSD-3-Clause",
+  "corpus": "Fixtures/Linguistics/it-gold-v0/token-boundaries.json",
+  "corpusDigest": "sha256:f0ad65c9f2c2bcbeb1d041f3b15e06c58d60c23b380d83ebc9f78afbfeab2eed",
+  "tokenContract": "it-token-v1",
+  "metric": "span-level exact match, P/R/F1 sui token lessicali e sulle frasi (GS-MET-001-18)",
+  "observed": {
+    "caseCount": 4,
+    "goldTokenCount": 13,
+    "goldSentenceCount": 4,
+    "tokenBoundaryF1": 1.0,
+    "sentenceBoundaryF1": 1.0
+  },
+  "purpose": "Linea di base che blocca le regressioni (ADR-0030): il gate fallisce se F1 scende sotto i valori osservati su questo corpus. Non è una soglia assoluta di accettazione: quella richiede un corpus rappresentativo e resta in G4.",
+  "limits": "Corpus gold sintetico di quattro casi e tredici token lessicali: gli F1 pari a 1 misurano l'assenza di regressioni sui casi limite, non la qualità su lingua reale, per la quale vale it-gold-v1."
+}

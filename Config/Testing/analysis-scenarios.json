@@ -1,0 +1,620 @@
+{
+  "schema": "studio.glifi.analysis-scenarios",
+  "schemaVersion": 1,
+  "scope": "Scenari condivisi Core/Kit/CLI e modelli macOS; iPadOS rinviato.",
+  "groups": [
+    {
+      "id": "GS-SCN-001",
+      "command": "statistics",
+      "variants": [
+        "alphaInterval",
+        "alphaNominal",
+        "alphaNumeric",
+        "anova",
+        "benjaminiHochberg",
+        "blockBootstrap",
+        "bonferroni",
+        "bootstrapBCa",
+        "bootstrapMean",
+        "cohenD",
+        "cohenKappa",
+        "contingency",
+        "descriptive",
+        "dunn",
+        "epsilonSquared",
+        "fPValue",
+        "fisherExact",
+        "fleissKappa",
+        "gamesHowell",
+        "hedgesG",
+        "kruskalWallis",
+        "mannWhitney",
+        "monteCarloChiSquare",
+        "normalCDF",
+        "normalDensity",
+        "normalQuantile",
+        "oneSampleT",
+        "pairedT",
+        "pearson",
+        "pearsonInterval",
+        "permutation",
+        "plannedContrasts",
+        "rangeCDF",
+        "rangeQuantile",
+        "rangeTail",
+        "rankBiserial",
+        "spearman",
+        "spearmanExact",
+        "tPValue",
+        "tQuantile",
+        "tukey",
+        "welchANOVA",
+        "welchT",
+        "wilcoxon"
+      ],
+      "contracts": [
+        "Input e precondizioni espliciti; dati sintetici bounded.",
+        "Risultato completo, errori tipizzati e parità di trasporto.",
+        "Riferimenti scientifici e proprietà indipendenti per famiglia."
+      ],
+      "tests": [
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStatisticsWorkbenchTests.swift",
+          "symbol": "everyOperatorMatchesItsCoreEntryPoint"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStatisticsWorkbenchTests.swift",
+          "symbol": "rejectsMissingPairsNonFiniteDataAndExcessiveWorkWithoutTruncation"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStatisticsWorkbenchTests.swift",
+          "symbol": "observesCancellationBeforeParsingAndExecution"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioStatisticsTests.swift",
+          "symbol": "executesEveryMethodAndRetainsTheCapturedDraft"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioStatisticsTests.swift",
+          "symbol": "immediateResetRejectsPublicationAndRetryCapturesOnlyTheNewInput"
+        }
+      ],
+      "scientificReferences": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiStatisticalFoundationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiRankAndCorrelationStatisticsTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiInferenceExtensionsTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExternalOracleTests.swift"
+      ],
+      "nativeScope": "Tutti i 44 metodi nel modello macOS; richieste e risultati catturati.",
+      "headlessOnly": []
+    },
+    {
+      "id": "GS-SCN-002",
+      "command": "operator",
+      "variants": [
+        "betweenness",
+        "communities",
+        "cosine",
+        "degree",
+        "dice",
+        "distances",
+        "eigenvector",
+        "euclidean",
+        "graphLayout",
+        "hacCutCount",
+        "hacCutHeight",
+        "harmonicCloseness",
+        "heapsFit",
+        "hellinger",
+        "jaccard",
+        "jensenShannon",
+        "jensenShannonDistance",
+        "kMeans",
+        "kl",
+        "lexicalObservation",
+        "lidstone",
+        "louvain",
+        "lsa",
+        "manhattan",
+        "minimumSpanningForest",
+        "modularity",
+        "multisetDice",
+        "nmf",
+        "pageRank",
+        "pca",
+        "silhouette",
+        "simpson",
+        "strongComponents",
+        "svd",
+        "transformBinary",
+        "transformCounts",
+        "transformPerThousand",
+        "transformTFIDF",
+        "transpose",
+        "truncatedSVD",
+        "weakComponents",
+        "weightedBetweenness",
+        "weightedCloseness",
+        "weightedJaccard",
+        "zipfFit"
+      ],
+      "contracts": [
+        "Input e precondizioni espliciti; dati sintetici bounded.",
+        "Risultato completo, errori tipizzati e parità di trasporto.",
+        "Riferimenti scientifici e proprietà indipendenti per famiglia."
+      ],
+      "tests": [
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiCoreOperatorsTests.swift",
+          "symbol": "executesEveryExplicitOperator"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiCoreOperatorsTests.swift",
+          "symbol": "rejectsMalformedUnboundedOrAmbiguousInputs"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiCoreOperatorsTests.swift",
+          "symbol": "cancellationUsesTheSharedFailureTaxonomy"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioOperatorsTests.swift",
+          "symbol": "everyNativeExampleRetainsEffectiveInputAndScientificStructure"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioOperatorsTests.swift",
+          "symbol": "immediateResetRejectsPublicationAndAllowsAnUncancelledRetry"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioOperatorsTests.swift",
+          "symbol": "denseGraphPreviewKeepsEveryEdgeInTheCapturedTables"
+        }
+      ],
+      "scientificReferences": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiMultivariateMethodsTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiGraphCompletionTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSimilarityAnalysisTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLexicalLawsTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExternalOracleTests.swift"
+      ],
+      "nativeScope": "Tutti i 45 esempi del modello macOS; pagine complete e anteprima bounded.",
+      "headlessOnly": []
+    },
+    {
+      "id": "GS-SCN-003",
+      "command": "evaluation",
+      "variants": [
+        "boundaries",
+        "boundariesWithText",
+        "classification",
+        "lemmas",
+        "lexicalHeaps",
+        "lexicalObserve",
+        "lexicalSummary",
+        "lexicalZipf",
+        "morphology",
+        "namedEntities",
+        "namedEntitiesWithText",
+        "temporal",
+        "welchANOVA"
+      ],
+      "contracts": [
+        "Input e precondizioni espliciti; dati sintetici bounded.",
+        "Risultato completo, errori tipizzati e parità di trasporto.",
+        "Riferimenti scientifici e proprietà indipendenti per famiglia."
+      ],
+      "tests": [
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiEvaluationCommandTests.swift",
+          "symbol": "everyCommandMatchesTheNativeOperation"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiEvaluationCommandTests.swift",
+          "symbol": "rejectsUnknownFieldsVersionsDuplicateKeysAndInvalidNativeInput"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiEvaluationCommandTests.swift",
+          "symbol": "cancellationPrecedesDecodingOrComputation"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioEvaluationTests.swift",
+          "symbol": "linguisticInputsMatchTheFacadeWithoutAProject"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioEvaluationTests.swift",
+          "symbol": "temporalMetadataAndCountsAreFrozenWithoutPersistingAssignments"
+        }
+      ],
+      "scientificReferences": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTemporalAnalysisTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiStatisticalFoundationTests.swift"
+      ],
+      "nativeScope": "Sei strumenti GUI: cinque evaluator e tempo. Le primitive lessicali restano raggiungibili anche negli operatori.",
+      "headlessOnly": []
+    },
+    {
+      "id": "GS-SCN-004",
+      "command": "project-call",
+      "variants": [
+        "association",
+        "bm25",
+        "characterCount",
+        "collocations",
+        "corpus",
+        "correlate",
+        "dispersion",
+        "diversity",
+        "exportVisualization",
+        "groupMetric",
+        "keyness",
+        "laws",
+        "multivariate",
+        "network",
+        "ngrams",
+        "paired",
+        "passages",
+        "postHoc",
+        "prepareInput",
+        "similarity",
+        "sourceText",
+        "summarize",
+        "temporal",
+        "weighting",
+        "windowCollocations",
+        "windowNetwork"
+      ],
+      "contracts": [
+        "Input e precondizioni espliciti; dati sintetici bounded.",
+        "Risultato completo, errori tipizzati e parità di trasporto.",
+        "Riferimenti scientifici e proprietà indipendenti per famiglia."
+      ],
+      "tests": [
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiProjectCommandTests.swift",
+          "symbol": "everyProjectOperationMatchesTheNativeSession"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiProjectCommandTests.swift",
+          "symbol": "invalidProjectCommandsDoNotMutateTheProject"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiProjectCommandTests.swift",
+          "symbol": "cancellationPrecedesProjectMutation"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiProjectCommandTests.swift",
+          "symbol": "analyticalChoicesHaveExhaustiveRoundTrips"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioCorpusMethodsTests.swift",
+          "symbol": "executesEveryPersistedCorpusMethod"
+        }
+      ],
+      "scientificReferences": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCorpusAnalysisTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCorpusDerivedAnalysesTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKeynessCacheContractTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSummarySourceMappingTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiScientificExportTests.swift"
+      ],
+      "nativeScope": "Percorsi di progetto esistenti e 17 analisi corpus; non un unico picker di 26 comandi.",
+      "headlessOnly": []
+    },
+    {
+      "id": "GS-SCN-005",
+      "command": "profile",
+      "variants": [
+        "epub",
+        "markdown",
+        "pdf",
+        "plainText"
+      ],
+      "contracts": [
+        "Input e precondizioni espliciti; dati sintetici bounded.",
+        "Risultato completo, errori tipizzati e parità di trasporto.",
+        "Riferimenti scientifici e proprietà indipendenti per famiglia."
+      ],
+      "tests": [
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiProfileCommandTests.swift",
+          "symbol": "jsonProfilePreservesEveryNativeField"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiProfileCommandTests.swift",
+          "symbol": "malformedProfileRequestsDoNotAccessAFile"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiDocumentImportWorkflowTests.swift",
+          "symbol": "binaryDocumentsRemainQueryableAfterReopen"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioDocumentLifecycleTests.swift",
+          "symbol": "richDocumentExtensionsImportAndRestoreCapturedSources"
+        }
+      ],
+      "scientificReferences": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTextImporterTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiMarkdownExtractorTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiItalianTokenizerTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPDFImporterTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiEPUBImporterTests.swift"
+      ],
+      "nativeScope": "Importazione TXT, Markdown, PDF ed EPUB, con riconoscimento automatico per estensione e selezione esplicita; il contenuto resta validato.",
+      "headlessOnly": []
+    },
+    {
+      "id": "GS-SCN-006",
+      "command": "text-analysis",
+      "variants": [
+        "clara",
+        "classify",
+        "code-crosstab",
+        "code-crosstab-significance",
+        "coding",
+        "communities",
+        "continue-classifier",
+        "correspondence",
+        "correspondence-scaled",
+        "dissimilarities",
+        "document-scores",
+        "graph-layout",
+        "hierarchical",
+        "incremental-classifier",
+        "kh-chi-square",
+        "kh-collocation",
+        "kh-hierarchical-ward-d2",
+        "lda",
+        "lda-selection",
+        "linguistic",
+        "linguistic-availability",
+        "linguistic-coding",
+        "matrix-per-thousand",
+        "matrix-zscore",
+        "mds",
+        "mds-ordinal",
+        "mds-ordinal-search",
+        "mds-search",
+        "minimum-spanning-forest",
+        "network",
+        "som",
+        "som-advanced",
+        "som-kh",
+        "som-pca-initialization",
+        "term-extraction",
+        "term-scores",
+        "validate-classifier",
+        "validate-classifier-kappa",
+        "word-association",
+        "word-context"
+      ],
+      "contracts": [
+        "Tutti i tag piatti dei tre livelli di richieste.",
+        "Valori attesi delle fixture controllati dalla CLI; identità canonica e payload typed/JSON.",
+        "Cancellazione preventiva di ogni fixture in entrambi i percorsi."
+      ],
+      "tests": [
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiTextAnalysisTransportTests.swift",
+          "symbol": "textAnalysisFixtureParity"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiTextAnalysisTransportTests.swift",
+          "symbol": "textAnalysisCanonicalIdentity"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiTextAnalysisTransportTests.swift",
+          "symbol": "textAnalysisStrictRequests"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiAnalysisScenarioTests.swift",
+          "symbol": "analysisScenarioEveryFixturePreservesPreCancellation"
+        },
+        {
+          "path": "Scripts/check-text-analysis-cli.py",
+          "symbol": "main"
+        }
+      ],
+      "scientificReferences": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHOperatorTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHScientificReviewTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHReauditContractTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHCollocationScoresTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKHExploratoryProfilesTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExploratoryCompletionTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLinguisticPipelineTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExternalOracleTests.swift"
+      ],
+      "nativeScope": "Le 12 famiglie iniziali e le 9 avanzate hanno gli adattatori GUI esistenti. Le 19 estensioni KH successive sono Core/Kit/CLI, senza route GUI dedicata.",
+      "headlessOnly": [
+        "code-crosstab-significance",
+        "continue-classifier",
+        "correspondence-scaled",
+        "document-scores",
+        "incremental-classifier",
+        "kh-chi-square",
+        "kh-collocation",
+        "kh-hierarchical-ward-d2",
+        "matrix-per-thousand",
+        "matrix-zscore",
+        "mds-ordinal",
+        "mds-ordinal-search",
+        "som-kh",
+        "som-pca-initialization",
+        "term-extraction",
+        "term-scores",
+        "validate-classifier-kappa",
+        "word-association",
+        "word-context"
+      ]
+    }
+  ],
+  "workflows": [
+    {
+      "id": "GS-SCN-007",
+      "description": "Progetto importato e operazioni pure con oracoli manuali",
+      "contracts": [
+        "Ordine, digest, Unicode e conteggi reali delle fonti.",
+        "Trasformazioni e codifica esplicite senza mutare la snapshot."
+      ],
+      "tests": [
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiAnalysisScenarioTests.swift",
+          "symbol": "analysisScenarioImportedProjectFeedsPureFamiliesWithoutMutation"
+        }
+      ],
+      "limitations": [
+        "Non produce Artifact o finding per i risultati di sessione."
+      ]
+    },
+    {
+      "id": "GS-SCN-008",
+      "description": "Persistenza, riapertura, riuso e revisioni storiche",
+      "contracts": [
+        "Artifact e valori scientifici stabili dopo close/open.",
+        "Input invalidi non committano; nuova revisione distinta dalla precedente.",
+        "Le generazioni di lettura seguono il contratto della snapshot corrente."
+      ],
+      "tests": [
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiAnalysisScenarioTests.swift",
+          "symbol": "analysisScenarioPersistedReuseDistinguishesHistoricalRevisions"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioCorpusMethodsTests.swift",
+          "symbol": "executesEveryPersistedCorpusMethod"
+        }
+      ],
+      "limitations": [
+        "Le 17 famiglie sono parametrizzate nel modello; la revisione storica ha un oracolo di associazione esplicito."
+      ]
+    },
+    {
+      "id": "GS-SCN-009",
+      "description": "Cattura, pagine, reset e retry dei laboratori puri",
+      "contracts": [
+        "Il reset invalida il task precedente senza richiedere cancellazione del Task.",
+        "Le pagine visitano tutte le righe senza ricomputare il risultato.",
+        "Linguistica locale esplicita e nessun fallback inventato."
+      ],
+      "tests": [
+        {
+          "path": "Apps/macOS/Tests/StudioStatisticsTests.swift",
+          "symbol": "immediateResetRejectsPublicationAndRetryCapturesOnlyTheNewInput"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioOperatorsTests.swift",
+          "symbol": "immediateResetRejectsPublicationAndAllowsAnUncancelledRetry"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioOperatorsTests.swift",
+          "symbol": "denseGraphPreviewKeepsEveryEdgeInTheCapturedTables"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioLinguisticTests.swift",
+          "symbol": "paginationVisitsAllTokensAndResetPreventsLatePublication"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioLinguisticTests.swift",
+          "symbol": "projectCopiesRetainTheirOriginAndChangingProjectsClearsTheWorkbench"
+        }
+      ],
+      "limitations": [
+        "Test dei modelli; non automazione UI o audit VoiceOver."
+      ]
+    },
+    {
+      "id": "GS-SCN-010",
+      "description": "Varianti avanzate e metadati temporali dichiarati",
+      "contracts": [
+        "Seed, criterio, geometria, Ward e parametri effettivi.",
+        "Date e fusi espliciti; missing, fuori dominio e date invalide separati."
+      ],
+      "tests": [
+        {
+          "path": "Apps/macOS/Tests/StudioAdvancedAnalysisTests.swift",
+          "symbol": "seededSearchRetainsTheDeclaredIterativeMethod"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioAdvancedAnalysisTests.swift",
+          "symbol": "topicSelectionPreservesEveryCriterionAndValidationChoice"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioAdvancedAnalysisTests.swift",
+          "symbol": "completionTablesRetainEveryRunPrototypeAndFold"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioEvaluationTests.swift",
+          "symbol": "temporalMetadataAndCountsAreFrozenWithoutPersistingAssignments"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioAdvancedAnalysisTests.swift",
+          "symbol": "advancedSOMRetainsGeometryAndOptionalWardWithoutChangingTheProject"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioEvaluationTests.swift",
+          "symbol": "instantCalendarBucketsRespectDSTAndTheExclusiveUpperBoundary"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioEvaluationTests.swift",
+          "symbol": "missingTemporalMetadataKeepsItsDeclaredPolicyAndExposure"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioEvaluationTests.swift",
+          "symbol": "invalidTemporalDraftPreservesTheResultAndProjectThenAllowsCorrection"
+        }
+      ],
+      "limitations": [
+        "La disponibilità Apple è osservata localmente, senza accuratezza gold inventata."
+      ]
+    },
+    {
+      "id": "GS-SCN-011",
+      "description": "Tutti gli 11 intenti del planner: esecuzione spiegabile e precondizioni",
+      "contracts": [
+        "Inventario esplicito esaustivo, decisioni e motivi delle capability.",
+        "Un solo terminale, progresso, grounding e riuso persistito.",
+        "Un piano non eseguibile può essere persistito; la successiva esecuzione rifiutata non aggiunge commit analitici.",
+        "Popolazione senza token: nessun finding inventato.",
+        "La somma dei costi di tutti i passi non supera il massimo aggregato, anche ai confini tra bundle keyness e famiglie estese.",
+        "Il producer del planner versione2 separa il ricalcolo corretto dai piani storici versione1, che restano leggibili e immutati."
+      ],
+      "tests": [
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiPlannerScenarioTests.swift",
+          "symbol": "publicIntentInventoryMatchesTheDeclaredScenarios"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiPlannerScenarioTests.swift",
+          "symbol": "everyPublicIntentHasAnExplainableDurableOutcome"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiPlannerScenarioTests.swift",
+          "symbol": "nonExecutablePlansExplainTheirPreconditionsWithoutAnalyticalCommits"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiPlannerScenarioTests.swift",
+          "symbol": "invalidRequestsPreserveTheWholeProject"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiPlannerScenarioTests.swift",
+          "symbol": "anEmptyTokenPopulationProducesAnExplicitInsufficientEvidenceOutcome"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPlannerBudgetScenarioTests.swift",
+          "symbol": "comparisonBundlesAndExtendedFamiliesShareOneGlobalBudget"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiPlannerBudgetScenarioTests.swift",
+          "symbol": "legacyPlansStayReadableWhileCurrentRequestsUseTheBudgetCorrectProducer"
+        }
+      ],
+      "limitations": [
+        "Lo stato supported di un metodo non è promosso dalla sola esecuzione."
+      ]
+    }
+  ],
+  "limitations": [
+    "L’inventario esaustivo delle operazioni non è la prova per ogni possibile input o combinazione di parametri.",
+    "Gli oracoli sono proprietà e riferimenti per famiglia; parità fra interfacce da sola non dimostra correttezza scientifica.",
+    "Gli stati dei manifest, G4/G5, audit assistivi, usabilità e runtime iPadOS non sono promossi."
+  ]
+}

@@ -1,0 +1,142 @@
+# 28. Stato di adozione iniziale
+
+| Campo | Valore |
+| --- | --- |
+| Identificatore | GS-STD-001-28 |
+| Tipo | Capitolo normativo |
+| Versione | 1.13.17 |
+| Stato | Attivo |
+| Responsabile | Amministratore del repository, provvisorio |
+| Ultima modifica | 2026-11-22 |
+| Approvazione | Registro operativo; baseline normativa ancora proposta |
+| Documento padre | [GS-STD-001](../standard-di-progetto.md) |
+
+| Area | Stato documentato al 2026-11-21 | Azione necessaria |
+| --- | --- | --- |
+| Standard interno | Completo, proposto | Assegnare responsabili e approvare la baseline |
+| Documentazione controllata | Strutturata e verificata automaticamente | Approvare gli information item sostanziali |
+| Requisiti | Baseline candidata | Assegnare priorità, metriche e validazione stakeholder |
+| Architettura | Separazione prodotto/motore accettata (ADR-0002) | Mantenere il gate `check-architecture` e la superficie Kit |
+| Fondazione scientifica | GS-MET-001 e ADR-0013 definiti; nucleo Must con ValidationManifest V0–V4 | Mantenere oracoli; review scientifica esterna e dataset ranking aperti |
+| Esperienza utente | GS-UX-001 e UI Must su GlifiKit (G3 candidato, GS-VER-035…071, GS-VER-074…083) | VoiceOver dispositivo, studi UX e soglie G4 |
+| Design implementativo | Dieci specifiche GS-DOM–GS-PROD; G1 leggero chiuso; G2 headless chiuso | Chiudere G4/G5 su dispositivi e distribuzione |
+| Tracciabilità | Matrice machine-readable; DoR operativa (GS-DOR-001, CMP-014) | Aggiungere scheda DoR a ogni nuova vertical slice |
+| Controllo versione | Primo commit pubblicato su `main` nel remote privato canonico | Applicare protezioni server-side quando disponibili |
+| Codice e test | Baseline eseguibile macOS/iPadOS, package condiviso, facciata diagnostica e policy runtime coperte da test | Evolvere per vertical slice guidate dai requisiti |
+| Ciclo documentale macOS | GS-VER-230/231/232 superate per automatici sul checkpoint ffbfb431: 486 test Core/Kit, 67 definizioni/224 esecuzioni native, gate e preflight macOS; lookup misurato con compromessi espliciti. Generazione 4d6969dd conservata separatamente | Verificare separatamente WIP 223 e layout successivi; GUI, file coordination e autorizzazioni sandbox reali restano da validare, G4 aperto |
+| Toolchain Swift | Apple Swift 6.4, Swift 6 language mode, SwiftPM tools 6.4 e strict concurrency verificati | Rivalutare solo con una toolchain Xcode 27 compatibile o nuova ADR |
+| Sicurezza e privacy | GS-SEC-001 completo per asset, trust boundary e THR-001–THR-020; zero telemetria e logging tipizzato | Assegnare responsabile ed eseguire corpus avversario, fuzz, kill test e audit build |
+| API e CLI | Lifecycle, failure, progressi, cancellazione e operazioni di progetto/analisi/indagine/export implementati; trasporti condivisi e controllo della superficie pubblica per la parità continua verificati su 126 operazioni (GS-API-003, GS-VER-275), oltre ai contratti delle rispettive evidenze | Mantenere il gate di parità; completare copertura delle altre operazioni lunghe e verifica GUI senza promettere ABI prematura |
+| Eccellenza ingegneristica Apple | GS-STD-001-29 e ADR-0024 definiscono criteri EA-* e soglie iniziali; presupposti ereditati verificati o configurati, nessun nuovo gate | Introdurre per fase test plan con sanitizer, test UI con `performAccessibilityAudit`, metriche XCTest, DocC, diff API e classi hardware di riferimento (EA-T-01…07, EA-M-01/02) |
+| Sostenibilità macOS | Policy pura e adattatore event-driven con snapshot atomici, admission delle sessioni e controllo fra nodi; test Core/Kit e monitor nel workspace superati (GS-VER-182) | Acquisire idle reale, energia, App Nap, Instruments e calibrazione hardware; il microbenchmark dello snapshot non sostituisce la verifica applicativa |
+| GitHub | Remote privato, impostazioni, 20 etichette, Dependabot e audit attivi | Abilitare piano per ruleset, Secret Scanning e push protection |
+| CI | Workflow static-quality, format-check, verify e app-store-baseline; esecuzione remota storica documentata in GS-VER-141 con Rscript e veraPDF assenti sul runner | Mantenere evidenze riferite alla revisione verificata e controlli obbligatori/opzionali espliciti; lo stato remoto corrente richiede nuova osservazione |
+| Coverage e benchmark | Benchmark Release riproducibili disponibili (GS-VER-109, GS-VER-134, GS-VER-160); soglie e classi hardware ancora da approvare | Acquisire baseline Instruments, energia e hardware di riferimento; mantenere separati benchmark informativi e soglie vincolanti |
+| App Store | Distribuzione non in elenco approvata; identità, metadati, privacy, icona e gate versionati | Completare prodotto, account Apple, URL, screenshot, dispositivi e TestFlight |
+| Rilascio | Preflight e packaging senza firma predisposti; pubblicazione intenzionalmente assente | Assegnare identità di firma e superare ogni gate di submission |
+| Licenza | BSD-3-Clause attiva | Definire titolarità e modello contributivo |
+| Piattaforme iniziali | macOS 27 e iPadOS 27 approvate | Definire classi hardware e parità |
+| Backup | Remote primario attivo; piano definito | Configurare copia indipendente e provare il ripristino |
+
+Un elemento `Configurato` non è `Verificato` finché non esiste un'esecuzione osservata nell'ambiente dichiarato. La baseline locale viene verificata da `make verify`; protezioni, backup e CI remote richiedono evidenze successive.
+
+## Incrementi complementari del 2026-11-21
+
+- Feedback delle failure anticipato in `make quality-static`: tassonomia e
+  messaggi già verificati dal gate completo ora eseguiti anche nel loop rapido,
+  con controlli positivi e negativi (GS-VER-180, CMP-180). Nessun nuovo criterio
+  EA diventa gate; audit GUI e G4 restano separati.
+- Query testuali: profondità dell’AST controllata con visita iterativa, radice a
+  zero e incremento per arco anche per AND/OR e NEAR/BEFORE; regressioni prima
+  e dopo, parità decoder/Kit e fuzz superati (GS-VER-181, CMP-181). Limiti
+  sintattici, byte/nodi e semantica regex restano invariati; indice e streaming
+  non sono promossi.
+
+- Manifest candidato: quattro percorsi di commit usano un helper descriptor-relative
+  bounded e confrontano i byte attesi prima della pubblicazione. Sono superati
+  32 casi mirati e il confronto con un mutante senza uguaglianza esatta
+  (GS-VER-183). Replacement, cleanup, SQLite e identità della radice mantengono
+  CMP-095 blocked.
+
+- Ottimizzazione misurata di letture payload e termine query (GS-VER-200/201):
+  confronto Release con fixture e risultati identici, nove scenari I/O e una
+  scansione normalizzata Unicode; verifiche e budget preservati. Misure
+  informative nel perimetro delle API, senza promozione di soglie di rilascio,
+  performance UI, energia o G4.
+
+- Costi di scala della pipeline (GS-VER-202/203/204): lookup/composizione SpanMap,
+  riconoscimento dei token speciali e riferimenti CSV ottimizzati dopo baseline
+  Release; dieci workload con output completo identico e gate integrato superati.
+  Restano espliciti costo di preparazione, memoria locale e RSS dell'intera
+  invocazione; nessuna soglia G4, garanzia energetica o certificazione UI nuova.
+
+- Pianificazione, proiezioni e identità (GS-VER-205/206/207/208): coda DAG con
+  heap, appartenenza indicizzata CA e codifica/validazione SHA-256 verificati
+  su tre fasi Release con output completi identici; costi piccoli e RSS espliciti.
+  Supporto dei benchmark condiviso dai soli test, senza prodotto runtime;
+  guard Debug e gate integrato superati, nessuna soglia G4 nuova.
+
+L'incremento ADR-0041 espone le capacità analitiche utente del core nei laboratori
+macOS e completa l'editor qualitativo condiviso. La verifica è registrata in
+[GS-VER-223](../evidenze/GS-VER-223-copertura-core-app.md); CMP-223 resta implemented.
+Questo stato non promuove i criteri assistivi o prestazionali di GS-STD-001-29.
+
+## Lotto nativo Apple GS-DOR-260
+
+L’inventario GS-APL-016 distingue API già adottate, lavori delle altre chat,
+integrazioni del lotto e tecnologie condizionali. Reader bounded e ownership delle
+attività hanno prove automatiche in GS-VER-260. Il sort vDSP valutato è scartato
+sulla base di misure complete e conserva il sort Swift in produzione. I comandi
+standard sono configurati nella scena macOS e compilati; prove manuali di
+VoiceOver, App Nap, energia, provider e dispositivi/G4 restano aperte. Nessun
+criterio Da introdurre viene convertito in un gate soltanto perché la sua API è
+disponibile.
+
+## Coesione e compatibilità nel refactoring GS-DOR-280
+
+GS-VER-280 registra la separazione interna dei ruoli Kit, gli owner privati CLI
+e le factory private del package. Il confronto API Core/Kit e la parità di byte
+CLI sono prove circoscritte al lotto: non attuano un gate globale di rilascio o
+una promessa ABI. Gli stati scientifici e i criteri Da introdurre restano
+invariati. Non sono fissate soglie di righe, velocità o consumo energetico.
+
+## Robustezza trasversale GS-DOR-302
+
+La revisione distingue correttezza dei risultati, budget intermedi delle query,
+ammissione CLI, chiusura della sessione macOS e proprietà delle cache.
+GS-VER-302 registra regressioni prima/dopo, misure Release e l'effettivo esito
+dei sanitizer e del gate. Nessun criterio Da introdurre diventa conforme per
+la sola presenza della configurazione; audit assistivi, dispositivi, energia e
+copertura universale restano esclusi.
+
+## Correzione strutturale HIG dei laboratori macOS
+
+[GS-DOR-304](../pianificazione/dor-hig-laboratori-macos.md) è Ready per tab native
+nei sette rami compatti e campi/azioni contestuali del laboratorio Valutazione.
+CMP-304 resta `implemented`; [GS-VER-304](../evidenze/GS-VER-304-hig-laboratori-macos.md)
+registra gate e preflight macOS superati sul checkpoint 9c9e0098, base d368285,
+1172 file invariati, 771 test Core/Kit e 113 definizioni/345 esecuzioni native.
+Le tab e i campi sono implementati; questa attuazione di GS-APL-002/003 non promuove gli
+audit di RQ-012, la validazione RQ-030 o i criteri EA «Da introdurre». Le prove
+visuali, assistive, di Full Keyboard Access e pseudolocalizzazione restano
+aperte; iPadOS non appartiene al lotto. Nessun nuovo gate è introdotto.
+
+## Progetto e configurazioni Xcode GS-DOR-306
+
+CMP-306 è `implemented`: navigator e membership sono controllati rispetto
+all'inventario, i test hostless distinguono Debug/Release e la descrizione del
+documento ha un catalogo InfoPlist it/en. Il checker nativo usa plutil con guard
+lessicale dei duplicati; il profilo portabile Ubuntu dichiara un ambito ridotto.
+Le prove mirate dei metadati, delle sei configurazioni risolte e delle fixture
+sono superate; [GS-VER-306](../evidenze/GS-VER-306-progetto-xcode-completo.md)
+registra gate, test nativi Debug/Release e archivio macOS senza firma superati
+sul checkpoint 328169f7: 793 test Core/Kit, 125 definizioni/409 esecuzioni native
+in ciascuna configurazione e 1219 file invariati. L'esito riguarda base d368285
+con overlay 302/303/304, non il nuovo Core 305 del checkout principale 76e5871.
+
+Release dei test non equivale ai test plan di EA-T-01 e non promuove sanitizer,
+prestazioni, accessibilità, restoration o G4/G5. La chiave plist non documentata
+rimossa non viene sostituita da un delegate o da nuovi entitlement; la policy
+secure coding documentata di AppKit rimane il riferimento. Il bundle reale ha
+lookup it/en e metadati verificati, ma Finder, restoration e iPadOS non ricevono
+una verifica interattiva dal lotto.

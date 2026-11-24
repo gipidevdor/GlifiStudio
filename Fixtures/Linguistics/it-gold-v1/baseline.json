@@ -1,0 +1,18 @@
+{
+  "schema": "studio.glifi.tokenization-baseline",
+  "schemaVersion": 1,
+  "license": "BSD-3-Clause",
+  "corpus": "Fixtures/Linguistics/it-gold-v1/token-boundaries.json",
+  "corpusDigest": "sha256:af3e19ae33a642dbab59f5647530deea7ecf67597d3103a6a4e8256719e3684a",
+  "tokenContract": "it-token-v1",
+  "metric": "span-level exact match, P/R/F1 sui token lessicali e sulle frasi (GS-MET-001-18)",
+  "observed": {
+    "caseCount": 15,
+    "goldTokenCount": 434,
+    "goldSentenceCount": 19,
+    "tokenBoundaryF1": 1.0,
+    "sentenceBoundaryF1": 1.0
+  },
+  "purpose": "Linea di base su prosa italiana reale (ADR-0030): il gate fallisce se P/R/F1 scendono sotto questi valori. Misurata confrontando il tokenizzatore con un'annotazione prodotta da un'implementazione indipendente del contratto.",
+  "limits": "L'accordo pieno dice che le due implementazioni del contratto coincidono su questo testo, non che entrambe siano corrette. Il corpus è un capitolo di un solo autore ottocentesco: non copre registri contemporanei, cifre, URL, email o testo misto, coperti dalle fixture sintetiche."
+}
