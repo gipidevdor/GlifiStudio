@@ -153,6 +153,191 @@ func scientificExportInterruptionPreservesDestination(
     #expect(!leftovers.contains { $0.contains(".exporting-") })
 }
 
+@Test(
+    "An already cancelled scientific export preserves user files and publishes nothing",
+    arguments: [false, true])
+func scientificExportPreCancelledPreservesDestination(existingDestination: Bool) async throws {
+    let fixture = try await exportFixture()
+    defer { try? FileManager.default.removeItem(at: fixture.root) }
+    let destination = fixture.root.appending(
+        path: "Cancelled.glifiexport", directoryHint: .isDirectory)
+    if existingDestination {
+        try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: false)
+    }
+    let userFile = (existingDestination ? destination : fixture.root).appending(
+        path: "user-note.txt")
+    let userData = Data("Keep this existing user file".utf8)
+    try userData.write(to: userFile)
+    let projectManifest = fixture.root.appending(path: "Export.glifi/manifest.json")
+    let originalManifest = try Data(contentsOf: projectManifest)
+    let request = try GlifiScientificExportRequest(
+        investigationHeadEventID: fixture.investigation.headEventID)
+    let task = Task {
+        withUnsafeCurrentTask { $0?.cancel() }
+        return try GlifiScientificExporter().export(
+            snapshot: fixture.snapshot,
+            investigation: fixture.investigation,
+            interpretationRecord: fixture.interpretationRecord,
+            interpretation: fixture.interpretation,
+            request: request,
+            to: destination,
+            environment: deterministicEnvironment,
+            createdAt: Date(timeIntervalSince1970: 1_700_000_000))
+    }
+    do {
+        _ = try await task.value
+        Issue.record("An already cancelled export succeeded")
+    } catch is CancellationError {
+        // The engine translates this cancellation to the existing export failure contract.
+    }
+    #expect(FileManager.default.fileExists(atPath: destination.path) == existingDestination)
+    #expect(try Data(contentsOf: userFile) == userData)
+    #expect(try Data(contentsOf: projectManifest) == originalManifest)
+    let leftovers = try FileManager.default.contentsOfDirectory(atPath: fixture.root.path)
+    #expect(!leftovers.contains { $0.contains(".exporting-") })
+}
+
+@Test(
+    "Scientific export cancellation respects the rename commit and preserves exact output",
+    arguments: GlifiExportInterruption.allCases, [false, true])
+func scientificExportCancellationAtCheckpoint(
+    checkpoint: GlifiExportInterruption, cancels: Bool
+) async throws {
+    let fixture = try await exportFixture()
+    defer { try? FileManager.default.removeItem(at: fixture.root) }
+    let reference = fixture.root.appending(
+        path: "Reference.glifiexport", directoryHint: .isDirectory)
+    let destination = fixture.root.appending(
+        path: "Observed.glifiexport", directoryHint: .isDirectory)
+    let projectManifest = fixture.root.appending(path: "Export.glifi/manifest.json")
+    let originalManifest = try Data(contentsOf: projectManifest)
+    let request = try GlifiScientificExportRequest(
+        investigationHeadEventID: fixture.investigation.headEventID,
+        formats: [.csv, .json, .markdown])
+    let exportID = try #require(UUID(uuidString: "90000000-0000-0000-0000-000000000317"))
+    let createdAt = Date(timeIntervalSince1970: 1_700_000_000)
+    let expectedReceipt = try GlifiScientificExporter().export(
+        snapshot: fixture.snapshot,
+        investigation: fixture.investigation,
+        interpretationRecord: fixture.interpretationRecord,
+        interpretation: fixture.interpretation,
+        request: request,
+        to: reference,
+        environment: deterministicEnvironment,
+        exportID: exportID,
+        createdAt: createdAt)
+    let task = Task { () throws -> (GlifiExportReceipt?, Bool) in
+        do {
+            let receipt = try GlifiScientificExporter().export(
+                snapshot: fixture.snapshot,
+                investigation: fixture.investigation,
+                interpretationRecord: fixture.interpretationRecord,
+                interpretation: fixture.interpretation,
+                request: request,
+                to: destination,
+                environment: deterministicEnvironment,
+                exportID: exportID,
+                createdAt: createdAt,
+                interruption: checkpoint,
+                interruptionBehavior: .observe {
+                    if cancels { withUnsafeCurrentTask { $0?.cancel() } }
+                })
+            return (receipt, Task.isCancelled)
+        } catch is CancellationError {
+            return (nil, Task.isCancelled)
+        }
+    }
+    let (receipt, wasCancelled) = try await task.value
+    #expect(wasCancelled == cancels)
+    if cancels, checkpoint != .destinationCommitted {
+        #expect(receipt == nil)
+        #expect(!FileManager.default.fileExists(atPath: destination.path))
+    } else {
+        #expect(receipt == expectedReceipt)
+        let manifest = try GlifiScientificExporter.verifyExport(at: destination)
+        #expect(manifest.exportID == expectedReceipt.exportID)
+        let names = try FileManager.default.contentsOfDirectory(atPath: reference.path).sorted()
+        #expect(
+            try FileManager.default.contentsOfDirectory(atPath: destination.path).sorted() == names)
+        for name in names {
+            #expect(
+                try Data(contentsOf: destination.appending(path: name))
+                    == Data(contentsOf: reference.appending(path: name)))
+        }
+    }
+    #expect(try Data(contentsOf: projectManifest) == originalManifest)
+    _ = try GlifiScientificExporter.verifyExport(at: reference)
+    let leftovers = try FileManager.default.contentsOfDirectory(atPath: fixture.root.path)
+    #expect(!leftovers.contains { $0.contains(".exporting-") })
+}
+
+@Test(
+    "Scientific export verification preserves cancellation instead of reporting corrupt data",
+    arguments: [false, true])
+func scientificExportVerificationPreservesCancellation(directRead: Bool) async throws {
+    let fixture = try await exportFixture()
+    defer { try? FileManager.default.removeItem(at: fixture.root) }
+    let destination = fixture.root.appending(
+        path: "Verified.glifiexport", directoryHint: .isDirectory)
+    _ = try GlifiScientificExporter().export(
+        snapshot: fixture.snapshot,
+        investigation: fixture.investigation,
+        interpretationRecord: fixture.interpretationRecord,
+        interpretation: fixture.interpretation,
+        request: GlifiScientificExportRequest(
+            investigationHeadEventID: fixture.investigation.headEventID, formats: [.json]),
+        to: destination,
+        environment: deterministicEnvironment)
+    let original = try GlifiScientificExporter.verifyExport(at: destination)
+    let task = Task {
+        let directory = try GlifiPackageDirectory(at: destination)
+        withUnsafeCurrentTask { $0?.cancel() }
+        if directRead {
+            _ = try GlifiScientificExporter.readFile(
+                GlifiScientificExporter.manifestFileName, in: directory,
+                maximumByteCount: GlifiProjectPackage.maximumManifestByteCount,
+                failureCode: "export.invalid-manifest")
+        } else {
+            _ = try GlifiScientificExporter.verifyExport(at: destination)
+        }
+    }
+    do {
+        try await task.value
+        Issue.record("Cancelled verification succeeded")
+    } catch is CancellationError {
+        // Cancellation must cross the nested verification boundary unchanged.
+    }
+    #expect(try GlifiScientificExporter.verifyExport(at: destination) == original)
+}
+
+@Test("A simulated postcommit export failure preserves the verified destination and taxonomy")
+func scientificExportPostcommitInterruptionRetainsDestination() async throws {
+    let fixture = try await exportFixture()
+    defer { try? FileManager.default.removeItem(at: fixture.root) }
+    let destination = fixture.root.appending(
+        path: "Committed.glifiexport", directoryHint: .isDirectory)
+    do {
+        _ = try GlifiScientificExporter().export(
+            snapshot: fixture.snapshot,
+            investigation: fixture.investigation,
+            interpretationRecord: fixture.interpretationRecord,
+            interpretation: fixture.interpretation,
+            request: GlifiScientificExportRequest(
+                investigationHeadEventID: fixture.investigation.headEventID),
+            to: destination,
+            environment: deterministicEnvironment,
+            interruption: .destinationCommitted)
+        Issue.record("The existing simulated postcommit failure was ignored")
+    } catch let failure as GlifiFailure {
+        #expect(failure.code == "export.simulated-interruption")
+        #expect(failure.category == .transientIO)
+        #expect(failure.retainedState == .lastCommittedGeneration)
+    }
+    _ = try GlifiScientificExporter.verifyExport(at: destination)
+    let leftovers = try FileManager.default.contentsOfDirectory(atPath: fixture.root.path)
+    #expect(!leftovers.contains { $0.contains(".exporting-") })
+}
+
 @Test("La traslazione dell'xref sposta solo gli offset a valle e riallinea startxref")
 func crossReferenceShiftsOnlyOffsetsAfterBoundary() throws {
     // Due oggetti; il secondo segue il punto in cui uno stream viene accorciato di un byte.

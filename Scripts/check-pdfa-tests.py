@@ -10,6 +10,7 @@ import importlib.util
 import io
 from pathlib import Path
 import shlex
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -125,6 +126,73 @@ class PDFACheckerTests(unittest.TestCase):
                 self.assertIn("controllo saltato", output.getvalue())
                 self.assertNotIn("PDF conformi", output.getvalue())
                 process.assert_not_called()
+
+    def test_export_failure_cleans_owned_output_and_propagates_the_original_error(self) -> None:
+        for failure in (subprocess.CalledProcessError(1, ["swift", "test"]), KeyboardInterrupt()):
+            with self.subTest(failure=type(failure).__name__):
+                created: list[Path] = []
+                original_mkdtemp = tempfile.mkdtemp
+
+                def make_output(*args, **kwargs):
+                    path = Path(original_mkdtemp(*args, dir=self.root, **kwargs))
+                    created.append(path)
+                    return str(path)
+
+                def failed_export(directory: Path) -> None:
+                    (directory / "partial.pdf").write_bytes(b"partial synthetic output")
+                    raise failure
+
+                with (
+                    patch.object(sys, "argv", [str(CHECKER), "--require"]),
+                    patch.object(self.checker, "locate", return_value="/synthetic/verapdf"),
+                    patch.object(self.checker.tempfile, "mkdtemp", side_effect=make_output),
+                    patch.object(self.checker, "export_pdfs", side_effect=failed_export),
+                    patch.object(self.checker.subprocess, "run") as validator,
+                ):
+                    with self.assertRaises(type(failure)) as raised:
+                        self.checker.main()
+                self.assertIs(raised.exception, failure)
+                self.assertEqual(len(created), 1)
+                self.assertFalse(created[0].exists())
+                self.assertTrue(self.inputs.is_dir())
+                validator.assert_not_called()
+
+    def test_owned_output_is_removed_after_validator_success_or_failure(self) -> None:
+        for exit_code in (0, 79):
+            with self.subTest(exit_code=exit_code):
+                exported: list[Path] = []
+                original_mkdtemp = tempfile.mkdtemp
+
+                def make_output(*args, **kwargs):
+                    return original_mkdtemp(*args, dir=self.root, **kwargs)
+
+                def successful_export(directory: Path) -> None:
+                    exported.append(directory)
+                    (directory / "report.pdf").write_bytes(b"synthetic output")
+
+                result = subprocess.CompletedProcess([], exit_code, "PASS report.pdf\n", "")
+                with (
+                    patch.object(sys, "argv", [str(CHECKER), "--require"]),
+                    patch.object(self.checker, "locate", return_value="/synthetic/verapdf"),
+                    patch.object(self.checker.tempfile, "mkdtemp", side_effect=make_output),
+                    patch.object(self.checker, "export_pdfs", side_effect=successful_export),
+                    patch.object(self.checker, "java_environment", return_value={}),
+                    patch.object(self.checker.subprocess, "run", return_value=result),
+                    contextlib.redirect_stdout(io.StringIO()),
+                    contextlib.redirect_stderr(io.StringIO()),
+                ):
+                    status = self.checker.main()
+                self.assertEqual(status, 0 if exit_code == 0 else 1)
+                self.assertEqual(len(exported), 1)
+                self.assertFalse(exported[0].exists())
+
+    def test_explicit_input_directory_is_preserved_after_validator_failure(self) -> None:
+        sentinel = self.inputs / "user-owned.pdf"
+        sentinel.write_bytes(b"preserve user input")
+        status, _, _ = self.invoke(output="", exit_code=79)
+        self.assertNotEqual(status, 0)
+        self.assertTrue(self.inputs.is_dir())
+        self.assertEqual(sentinel.read_bytes(), b"preserve user input")
 
 
 if __name__ == "__main__":

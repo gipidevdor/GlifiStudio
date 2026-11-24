@@ -1,0 +1,203 @@
+{
+  "schema": "studio.glifi.corrective-verification",
+  "schemaVersion": 1,
+  "status": "passed-local-macos",
+  "recordedAtUTC": "2026-11-24T20:45:28.186654+00:00",
+  "evidence": [
+    "GS-VER-315",
+    "GS-VER-316",
+    "GS-VER-317"
+  ],
+  "baseCommit": "741da2e509c03b520b9b39e3eba4af2915911731",
+  "baselineFingerprint": "8f2c1f9ded6451351ff5ab65b31dcf901f0a556ff5829ee87b318a9edd84c00c",
+  "sourceFingerprint": "919d1366731d548ca3446f766ac9dcb547fed0d3f32d8dc697da2b26e9951c9c",
+  "sourceFileCount": 1291,
+  "sourceArchiveSHA256": "4eb8686da10505e064f005cbb27d99a016579428ba36713b448d59af1b3cf17a",
+  "sourceIntegrity": {
+    "recordedAtUTC": "2026-11-24T20:44:10.109154+00:00",
+    "sourceFingerprint": "919d1366731d548ca3446f766ac9dcb547fed0d3f32d8dc697da2b26e9951c9c",
+    "files": 1291,
+    "contentsAndModesUnchanged": true,
+    "inventoryUnchanged": true,
+    "archiveContentsAndModesVerified": true,
+    "indexUnchanged": true,
+    "headUnchanged": true,
+    "archiveSHA256": "4eb8686da10505e064f005cbb27d99a016579428ba36713b448d59af1b3cf17a"
+  },
+  "verification": {
+    "command": [
+      "make",
+      "verify"
+    ],
+    "profile": "macOS",
+    "exitCode": 0,
+    "elapsedSeconds": 513.990235208068,
+    "startUTC": "2026-11-24T20:35:08.133915+00:00",
+    "endUTC": "2026-11-24T20:43:42.128238+00:00",
+    "packageTests": {
+      "GlifiCore": 740,
+      "GlifiKit": 161
+    },
+    "nativeDebug": {
+      "definitionCount": 133,
+      "executionCount": 420,
+      "parameterizedDefinitionCount": 25,
+      "parameterizedRunCount": 312,
+      "nonparameterizedDefinitionAndRunCount": 108,
+      "runtimeWarnings": [],
+      "expectedFailures": 0
+    },
+    "macOSDebugTests": true,
+    "macOSReleaseBuild": true,
+    "newReleaseTestRun": false,
+    "oracleLines": 244,
+    "fractionCases": 64,
+    "pdfACount": 2,
+    "textAnalysisFixtures": 63,
+    "textAnalysisCLIChecks": 196,
+    "kitOperations": 132,
+    "kitCompleteParityChecks": 264,
+    "kitRejectionChecks": 51,
+    "projectCLIChecks": 64,
+    "publicDeclarations": 2840,
+    "operationVariants": 172,
+    "integrationWorkflows": 5,
+    "recoveryCheckpoints": 22,
+    "nativeImportFormats": 4,
+    "pdfACheckerTests": 9,
+    "oracleCheckerTests": 13
+  },
+  "pdfACleanup": {
+    "baselineFingerprint": "8f2c1f9ded6451351ff5ab65b31dcf901f0a556ff5829ee87b318a9edd84c00c",
+    "baselineCheckerSHA256": "e67993729977c76a1c45690672b4677d4b51c4228812abfd6dcf0f2269f6c799",
+    "candidateCheckerSHA256": "b76fae1a59a90377719da08a522cff3daa0084aff235cb50f09dd18f9fc5bed6",
+    "testSHA256": "db5abbf9c9dda0a54d48834c5e8ce676e6bbc048b73cf9a49906a31f7fb4cae3",
+    "redExitCode": 1,
+    "redFailures": 2,
+    "greenExitCode": 0,
+    "testDefinitions": 9,
+    "controlledMainInvocations": 14,
+    "testChangesBetweenRedAndGreen": false,
+    "exceptionKinds": [
+      "CalledProcessError",
+      "KeyboardInterrupt"
+    ],
+    "originalExceptionIdentityPreserved": true,
+    "explicitUserDirectoryPreserved": true
+  },
+  "tinyOracles": {
+    "sourceSHA256": {
+      "Scripts/check-oracles.py": "7ed8e01f05f82fc3ef0f4611f717b9aa5d4c0784eb5bad9bd63797537bc806ca",
+      "Scripts/check-oracles-tests.py": "0b6bd9c7a086f8014522cff0da58b8fcaa4c5a94b2e8870e4ce77a5b1ab2cec1"
+    },
+    "testDefinitions": 13,
+    "redExitCode": 1,
+    "redExpectedFailures": 79,
+    "greenExitCode": 0,
+    "referencesUnchanged": true,
+    "referenceCount": 36,
+    "referenceSHA256": {
+      "Packages/GlifiCore/Tests/Oracles/Python/kh_coding.py": "77384569cd37c66bbdf75add587e62ad5a73f4836786958810b8e9329f98a9d7",
+      "Packages/GlifiCore/Tests/Oracles/Python/kh_lexical_profiles.py": "a3634fbf4bf50cf4469dae9da38b22bb040c0dcd8589968654f477da9cd5196b",
+      "Packages/GlifiCore/Tests/Oracles/Python/kh_refinement.py": "c19f130e2a76cce5bfb5536a8842757a4d9b846bbc2fa18c428cdfc1d26240f6",
+      "Packages/GlifiCore/Tests/Oracles/Python/lexical_laws.py": "e24b00d78c0bb03f2b2a58284e3e4cb50a5a1ab0c6f50cec7df6aa4940f5a2e8",
+      "Packages/GlifiCore/Tests/Oracles/Python/silhouette_extremes.py": "3ef100dbb24ac0d924fb702c0a35deb01c362fa38da3d45160503a54f1354c53",
+      "Packages/GlifiCore/Tests/Oracles/Python/similarity.py": "92b431e50c38186cffe8576d188a07c3a9282732f7f2c3a9215f576bd59df05f",
+      "Packages/GlifiCore/Tests/Oracles/Python/splitmix64.py": "426d3667880f1e3b37b0c5c95d2c39254a169b668d743427263e8f34cd62b992",
+      "Packages/GlifiCore/Tests/Oracles/Python/summary.py": "e03eb38b40ba09e7215ea4ea6d63b17f423b0625634485f7714bd799301d4353",
+      "Packages/GlifiCore/Tests/Oracles/Python/summary_graph.py": "02a64b6c9b3ab0b7310384d26103caebb495ff2ec59ef208fa810163942c04bd",
+      "Packages/GlifiCore/Tests/Oracles/Python/weighting_refinement.py": "6b5c63cca1f17ae9a71a866382935bca9511396ddbe1caf153d2c15195fdddd4",
+      "Packages/GlifiCore/Tests/Oracles/Python/welch_precision.py": "45a0cd29fdc59a44ffb57053fad65a58e867d14d8172c284bba2195e2f6e38ac",
+      "Packages/GlifiCore/Tests/Oracles/R/agreement.R": "cb24330513b7549a0d81de6f7bce6b3acf9ecd21e0ef39d3ff0ad8bc551d1522",
+      "Packages/GlifiCore/Tests/Oracles/R/common.R": "c1339699cc580f2c41a829be5b39e95bb7dcd7cc1505b9d37b5340ae66a70821",
+      "Packages/GlifiCore/Tests/Oracles/R/distributions.R": "cf226ec08d66954af6594ea6261c5822e3d525811daadce897d9f45c01dff58e",
+      "Packages/GlifiCore/Tests/Oracles/R/diversity.R": "5fb41d240067b5a272170613028ddb82bdfe1d6b65a7e407ea094f11c2520043",
+      "Packages/GlifiCore/Tests/Oracles/R/inference.R": "6fd237b31d152e269ef6202acef2a3d8b35528518960967a863b5f8eff6086d0",
+      "Packages/GlifiCore/Tests/Oracles/R/keyness.R": "0b31b5e777b999afcd3ddaad0837085aeb19be20ac8e9d0cf23db226db715d48",
+      "Packages/GlifiCore/Tests/Oracles/R/kh_chi_square.R": "a1c1672b50be46b7413bafa64a40385f657487904ad878bb1a9876ce4ad3afba",
+      "Packages/GlifiCore/Tests/Oracles/R/kh_document_scores_ward.R": "024965ce422523f8f64c4de25cdc72bd2f545156d35e85fec530ccfec9be5ba7",
+      "Packages/GlifiCore/Tests/Oracles/R/kh_exploratory_profiles.R": "d901a5dde9e2ee33277f47c63055d115ad3c0471f846d644c9db37ae005a6135",
+      "Packages/GlifiCore/Tests/Oracles/R/kh_matrix_preparation.R": "63424f3cf3aa9d03161fa204f70be167df28a05efe943ed0a2708f966faa6d7f",
+      "Packages/GlifiCore/Tests/Oracles/R/kh_operators.R": "06ed9dc010b47f9ea7860c8bafb9fd0151264dfc31680272621cdbcdd76de1ba",
+      "Packages/GlifiCore/Tests/Oracles/R/lexical_distributions.R": "64e8c609689cdab8aaad9d3f993d01d6e07b0bf364d2bec7aa278dbcbac495f8",
+      "Packages/GlifiCore/Tests/Oracles/R/multivariate.R": "65a1fc013226169e9e622ee568c640c74b52480323d989e826c4e88bbbf3f20d",
+      "Packages/GlifiCore/Tests/Oracles/R/networks.R": "d563799e070a6809e38b5f85648bbdff85d7002c559fe2c0585408f007bae885",
+      "Packages/GlifiCore/Tests/Oracles/R/ngrams.R": "2a71a2d998881e85e0d7420e5ff9978df0130647dfdcf5964256a5add166dcc3",
+      "Packages/GlifiCore/Tests/Oracles/R/posthoc.R": "3e159a2cc836e06af67139fb5f9e104e9e0caca558c498a32406fa443cc3fd4e",
+      "Packages/GlifiCore/Tests/Oracles/R/visualization.R": "09bf68f3fc20d5383a2097cba957358fed8b791c6eb0bcf81e0a8adf6de01853",
+      "Packages/GlifiCore/Tests/Oracles/R/weighting.R": "f55d84c5c91510c6c0ccef7976678c72d402651a2464a71f04ffa61ec487bbdd",
+      "Packages/GlifiCore/Tests/Oracles/R/welch_anova.R": "56eb2a7667b61ecd60e344fa91c6c38f8514172e5a76a217eb8673e2f690a35d",
+      "Packages/GlifiCore/Tests/Oracles/expected.txt": "0e3c7502037a4762db1245803e6a4fe051f4177fe270db93ccb8c91cbc7dab06",
+      "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLexicalDistributionTests.swift": "da2814ff6a68947a05ab133f947826c3489f0552cf8ef8d86f4ecc2793c8be75",
+      "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLexicalLawsTests.swift": "467df3008ae747af89708a7214ea45a03e31e2256c40774210ef049383a27066",
+      "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiNaiveBayesNumericalRefinementTests.swift": "db9c9d5b0d1ab31e6762603d8f4a0dbcb08c0a3835cb966702d5a4d2d432d264",
+      "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSOMGaussianRefinementTests.swift": "ebe58c473a3a5cb400236b270babbe81be6244f1fa84e72c796459370053cfa5",
+      "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSimilarityAnalysisTests.swift": "d0221a0c39a15082b88462ecdd1d35a9ab9a3b8f0e4fd77d4cc1ae47f51c3b56"
+    },
+    "relativeTolerance": 1e-12,
+    "absoluteFloorOnlyForRoundOffPositions": 1e-15,
+    "roundOffPositions": {
+      "lexical_distributions:HEAPS": [
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "lexical_laws:LAWS_ZIPF_INFO_RESIDUAL_SUM": [
+        0
+      ]
+    },
+    "linkageExceptionMagnitudeStrictlyBelow": 1e-09,
+    "meaningfulTinyZeroMutationsRejected": 7,
+    "meaningfulTinyRelativeMutationsRejected": 14,
+    "linkageScope": "Presenza lessicale, non prova dell’uso negli assert."
+  },
+  "exportCancellation": {
+    "sourceSHA256": {
+      "Packages/GlifiCore/Sources/GlifiCore/GlifiScientificExport.swift": "dbe0ddedcfcaf0d0064fda6e7e23a585103fae71764defccca9ec7e3920810fe",
+      "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiScientificExportTests.swift": "597f05523d5ffb5791625df2199a3bd16492c36328c9b05a343a6aeb0bf46d7d"
+    },
+    "red": "Task già cancellato: successo e destinazione pubblicata inattesi.",
+    "green": {
+      "result": "core317-green-results.json",
+      "log": "core317-green.log",
+      "definitions": 18,
+      "executions": 46,
+      "failures": 0,
+      "newDefinitions": 4,
+      "newExecutions": 13,
+      "elapsedSeconds": 37.276955625,
+      "inputUnchanged": true,
+      "logSHA256": "8e34e6d47b3c23efd38fe7a5ebac89f8bb1c785aaf327dc8e7b78d1bcfb4b965",
+      "formatLintAndDiffCheckExit": 0,
+      "scope": [
+        "Pre-cancel with absent/existing destination preserves user data and project manifest.",
+        "Cancellation injected by self-cancel at each of three existing precommit checkpoints leaves no destination or staging.",
+        "Noncancelled observers at all four checkpoints preserve exact JSON/Markdown/CSV file bytes, manifest and receipt versus default behavior.",
+        "Cancellation flag at destinationCommitted preserves success and exact receipt/output.",
+        "Nested verifyExport and readFile preserve pre-cancellation rather than remapping it to corrupt data.",
+        "Historical postcommit throwFailure retains a verified destination and the existing transientIO/lastCommittedGeneration taxonomy.",
+        "Existing all-format canonical/tamper/PDF pagination/unsafe file/chunk/corpus recovery/CSV reference tests pass."
+      ]
+    },
+    "intermediateFailure": {
+      "result": "core317-green-first-results.json",
+      "log": "core317-green-first.log",
+      "description": "The first GREEN attempt passed cancellation and parity cases, but one new postcommit-fault assertion incorrectly expected validatedCheckpoint. Existing defaultRetained permits transientIO only unchanged/lastCommittedGeneration. Only this expectation/name was corrected; runtime remained byte-identical."
+    },
+    "commitPoint": "rename staging→destinazione",
+    "beforeCommit": "CancellationError conservato, staging rimosso, destinazione/file utente preservati",
+    "afterCommit": "Nessun nuovo check Task; successo e receipt conservati",
+    "kitAdmission": "Cancellazione già presente prima dell’admission conserva lastCommittedGeneration storico; dopo admission Engine mappa unchanged."
+  },
+  "limitations": [
+    "Sole verifiche automatiche macOS; nessun test o build iPadOS.",
+    "Nessun audit visuale/assistivo manuale né promozione G4/G5.",
+    "Nessuna CI remota o pubblicazione della composizione locale non committata.",
+    "Build Release superata; nessuna nuova esecuzione test Release o archivio App Store dichiarata.",
+    "Diagnostica IDELaunchSession DVTAssertions di Xcode distinta da zero runtimeWarnings nativi.",
+    "Il confronto byte/receipt dell’export riguarda default e observer del candidato per JSON/MD/CSV; nessun golden binario prepatch/postpatch o identità PDF rivendicata.",
+    "Le sole evidenze e metadati vengono chiusi dopo il gate; gli altri file sono confrontati separatamente."
+  ]
+}

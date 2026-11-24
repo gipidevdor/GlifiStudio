@@ -12,6 +12,17 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Cancellazione dell'export e precisione dei controlli
+
+- Export scientifico cancellabile ai checkpoint prima del rename finale;
+  staging rimosso e successo conservato dopo il commit (GS-DOR-317).
+- Confronto degli oracoli significativo anche per NB/SOM/JS molto piccoli;
+  eccezioni limitate ai sei residui di arrotondamento già documentati
+  (GS-DOR-316).
+- Output temporaneo della validazione PDF/A rimosso anche se l'export
+  preliminare fallisce o viene interrotto; input espliciti preservati
+  (GS-DOR-315).
+
 ### Ricerca statistica e verificatori automatici
 
 - Ricerca statistica macOS coerente con numeri e simboli mostrati nel locale

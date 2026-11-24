@@ -66,8 +66,9 @@ def main() -> int:
     else:
         directory = Path(tempfile.mkdtemp(prefix="GlifiPDFAOutput-"))
         cleanup = directory
-        export_pdfs(directory)
     try:
+        if cleanup is not None:
+            export_pdfs(directory)
         pdfs = sorted(directory.glob("*.pdf"))
         if not pdfs:
             print("Validazione PDF/A: nessun PDF esportato da validare", file=sys.stderr)

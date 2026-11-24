@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.33 |
+| Versione | 1.6.34 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-24 |
@@ -28,6 +28,12 @@ distribuisce quattro agenti su query, feedback statico, revisione e integrazione
 preservando i confini del lavoro già in corso nell'altra chat.
 
 ## Indice
+
+- [GS-DOR-317 — Cancellazione dell’export scientifico](dor-cancellazione-export-scientifico.md) — Ready
+
+- [GS-DOR-316 — Oracoli per valori molto piccoli](dor-oracoli-valori-piccoli.md) — Ready
+
+- [GS-DOR-315 — Cleanup della validazione PDF/A](dor-cleanup-validazione-pdfa.md) — Ready
 
 - [GS-DOR-314 — Ammissione documentale per gruppi](dor-ammissione-documentale-batch.md) — Ready; indice temporaneo selettivo e misura
 

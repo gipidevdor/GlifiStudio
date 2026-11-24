@@ -765,6 +765,7 @@ enum GlifiExportInterruption: String, Sendable, CaseIterable {
 enum GlifiExportInterruptionBehavior: Sendable {
     case throwFailure
     case invoke(@Sendable () -> Never)
+    case observe(@Sendable () -> Void)
 }
 
 struct GlifiScientificExporter: Sendable {
@@ -784,6 +785,7 @@ struct GlifiScientificExporter: Sendable {
         interruption: GlifiExportInterruption? = nil,
         interruptionBehavior: GlifiExportInterruptionBehavior = .throwFailure
     ) throws -> GlifiExportReceipt {
+        try Task.checkCancellation()
         let report = try GlifiReportRevision(
             investigation: investigation,
             interpretation: interpretation
@@ -796,6 +798,7 @@ struct GlifiScientificExporter: Sendable {
             directoryHint: .isDirectory
         )
         do {
+            try Task.checkCancellation()
             try fileManager.createDirectory(
                 at: staging,
                 withIntermediateDirectories: false,
@@ -803,6 +806,7 @@ struct GlifiScientificExporter: Sendable {
             )
             var payloads: [GlifiScientificExportPayload] = []
             for format in request.formats {
+                try Task.checkCancellation()
                 switch format {
                 case .csv:
                     payloads += try GlifiScientificExportRenderer.csvPayloads(report)
@@ -840,6 +844,7 @@ struct GlifiScientificExporter: Sendable {
                 }
             }
             for payload in payloads {
+                try Task.checkCancellation()
                 guard payload.data.count <= Self.maximumFileByteCount else {
                     throw exportFailure(
                         "export.file-too-large",
@@ -853,8 +858,9 @@ struct GlifiScientificExporter: Sendable {
                 )
             }
             try interruptIfRequested(.payloadsWritten, interruption, behavior: interruptionBehavior)
-            let records = payloads.map {
-                GlifiExportManifest.FileRecord(
+            let records = try payloads.map {
+                try Task.checkCancellation()
+                return GlifiExportManifest.FileRecord(
                     path: $0.path,
                     mediaType: $0.mediaType,
                     schema: $0.schema,
@@ -862,6 +868,7 @@ struct GlifiScientificExporter: Sendable {
                     sha256: digest($0.data)
                 )
             }.sorted { $0.path < $1.path }
+            try Task.checkCancellation()
             let manifest = try makeManifest(
                 snapshot: snapshot,
                 investigation: investigation,
@@ -874,6 +881,7 @@ struct GlifiScientificExporter: Sendable {
                 exportID: exportID,
                 createdAt: createdAt
             )
+            try Task.checkCancellation()
             let manifestData = try GlifiExportCanonicalJSON.encode(manifest)
             guard manifestData.count <= GlifiProjectPackage.maximumManifestByteCount else {
                 throw exportFailure(
@@ -882,6 +890,7 @@ struct GlifiScientificExporter: Sendable {
                     retainedState: .unchanged
                 )
             }
+            try Task.checkCancellation()
             try manifestData.write(
                 to: staging.appending(path: Self.manifestFileName),
                 options: .withoutOverwriting
@@ -898,6 +907,7 @@ struct GlifiScientificExporter: Sendable {
                 interruption,
                 behavior: interruptionBehavior
             )
+            try Task.checkCancellation()
             try fileManager.moveItem(at: staging, to: destination)
             try interruptIfRequested(
                 .destinationCommitted,
@@ -913,6 +923,9 @@ struct GlifiScientificExporter: Sendable {
         } catch let failure as GlifiFailure {
             try? fileManager.removeItem(at: staging)
             throw failure
+        } catch is CancellationError {
+            try? fileManager.removeItem(at: staging)
+            throw CancellationError()
         } catch {
             try? fileManager.removeItem(at: staging)
             throw exportFailure(
@@ -925,6 +938,7 @@ struct GlifiScientificExporter: Sendable {
     }
 
     static func verifyExport(at exportURL: URL) throws -> GlifiExportManifest {
+        try Task.checkCancellation()
         let directory: GlifiPackageDirectory
         do {
             directory = try GlifiPackageDirectory(at: exportURL)
@@ -961,6 +975,7 @@ struct GlifiScientificExporter: Sendable {
         var verifiedReport: GlifiReportRevision?
         var csvDataByPath: [String: Data] = [:]
         for record in manifest.files {
+            try Task.checkCancellation()
             let fileData = try readFile(
                 record.path, in: directory,
                 maximumByteCount: maximumFileByteCount,
@@ -993,11 +1008,13 @@ struct GlifiScientificExporter: Sendable {
         if let verifiedReport {
             for payload in try GlifiScientificExportRenderer.csvPayloads(verifiedReport)
             where expectedNames.contains(payload.path) {
+                try Task.checkCancellation()
                 guard csvDataByPath[payload.path] == payload.data else {
                     throw exportFailure("export.csv-report-mismatch", category: .corruption)
                 }
             }
         }
+        try Task.checkCancellation()
         return manifest
     }
 
@@ -1009,6 +1026,7 @@ struct GlifiScientificExporter: Sendable {
         failureCode: String
     ) throws -> Data {
         do {
+            try Task.checkCancellation()
             guard maximumByteCount >= 0,
                 expectedByteCount.map({ $0 >= 0 && $0 <= maximumByteCount }) ?? true
             else {
@@ -1029,6 +1047,7 @@ struct GlifiScientificExporter: Sendable {
             let byteCount = Int(status.st_size)
             var data = Data()
             while true {
+                try Task.checkCancellation()
                 let remaining = byteCount - data.count
                 let chunk = try handle.read(upToCount: min(remaining, 65_535) + 1) ?? Data()
                 if chunk.isEmpty { break }
@@ -1043,7 +1062,10 @@ struct GlifiScientificExporter: Sendable {
             else {
                 throw exportFailure(failureCode)
             }
+            try Task.checkCancellation()
             return data
+        } catch is CancellationError {
+            throw CancellationError()
         } catch {
             throw exportFailure(failureCode)
         }
@@ -1310,6 +1332,9 @@ struct GlifiScientificExporter: Sendable {
             break
         case .invoke(let action):
             action()
+        case .observe(let action):
+            action()
+            return
         }
         throw exportFailure(
             "export.simulated-interruption",

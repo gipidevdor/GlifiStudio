@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.20.15 |
+| Versione | 1.20.16 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-24 |
@@ -15,6 +15,12 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 - [GS-VER-275 — Parità continua fra GlifiKit e CLI](GS-VER-275-parita-continua-kit-cli.md) — Gate completo superato: 126 operazioni, 252 confronti e inventario pubblico verificato; PDF/A saltato per assenza di veraPDF
 
 ## Indice
+
+- [GS-VER-317 — Cancellazione dell’export scientifico](GS-VER-317-cancellazione-export-scientifico.md) — Superato localmente: regressioni e gate macOS
+
+- [GS-VER-316 — Oracoli per valori molto piccoli](GS-VER-316-oracoli-valori-piccoli.md) — Superato localmente: regressioni e gate macOS
+
+- [GS-VER-315 — Cleanup della validazione PDF/A](GS-VER-315-cleanup-validazione-pdfa.md) — Superato localmente: regressioni e gate macOS
 
 - [GS-VER-314 — Ammissione documentale per gruppi](GS-VER-314-ammissione-documentale-batch.md) — Superato localmente: semantica differenziale, misure Release e gate macOS
 

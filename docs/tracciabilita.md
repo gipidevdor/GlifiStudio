@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.21 |
+| Versione | 0.92.22 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-24 |
@@ -13,6 +13,18 @@
 ## Scopo
 
 La matrice collega le fonti iniziali alle necessità degli stakeholder, ai requisiti software, alle parti dell'architettura e alle evidenze di verifica pianificate. Gli identificatori fanno riferimento a [Requisiti](requisiti.md) e [Architettura](architettura.md).
+
+## Ownership, precisione dei riferimenti e cancellazione dell'export
+
+| Requisiti e clausola | Attuazione circoscritta | Verifica |
+| --- | --- | --- |
+| RQ-062/063; CMP-315 | Cleanup dell'output PDF/A durante unwind dell'export preliminare, input forniti conservati | [GS-DOR-315](pianificazione/dor-cleanup-validazione-pdfa.md); RED/GREEN e gate macOS superati in [GS-VER-315](evidenze/GS-VER-315-cleanup-validazione-pdfa.md) |
+| RQ-008/027/062/063; CMP-316 | Relativo puro per tiny significativi e linkage; sei eccezioni di arrotondamento senza aumento delle tolleranze | [GS-DOR-316](pianificazione/dor-oracoli-valori-piccoli.md); regressioni e gate macOS superati in [GS-VER-316](evidenze/GS-VER-316-oracoli-valori-piccoli.md) |
+| RF-085, RQ-011/058/060/061/062/063; CMP-317 | Cancellazione cooperativa fino al rename dell'export, receipt conservato dopo commit | [GS-DOR-317](pianificazione/dor-cancellazione-export-scientifico.md); regressioni e gate macOS superati in [GS-VER-317](evidenze/GS-VER-317-cancellazione-export-scientifico.md) |
+
+Le prove del lotto precedente 312–314 restano storiche e preservate. Nessun
+risultato numerico, formato di progetto o API pubblica cambia; i nuovi esiti
+vengono attestati soltanto dalle rispettive evidenze osservate.
 
 ## Correzioni dei verificatori e della ricerca statistica
 

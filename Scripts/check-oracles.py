@@ -5,14 +5,15 @@
 Each R script under Packages/GlifiCore/Tests/Oracles/R and each Python script under
 Packages/GlifiCore/Tests/Oracles/Python prints lines «KEY value…». The check:
 
-1. reruns every oracle and compares finite output with expected.txt (relative 1e-12 with an
-   absolute floor of 1e-15; hexadecimal values exactly);
-2. requires non-integer values with magnitude at least 1e-9 from non-INFO keys to appear as
-   numeric literals in the Swift tests, using the same tolerance. Smaller values need their
-   dedicated scientific regressions; this lexical check does not attest their linkage.
+1. reruns every oracle and compares finite output with expected.txt (relative 1e-12;
+   hexadecimal values exactly). Only six exact OLS roundoff positions retain the historical
+   absolute floor of 1e-15;
+2. requires non-integer values from non-INFO keys to occur as numeric literals in the Swift
+   tests, using the floor-free relative tolerance. Only the same OLS roundoff positions remain
+   exempt below the historical magnitude cutoff of 1e-9.
 
-Nonfinite numerical values are rejected in comparisons and non-INFO links. The historical
-absolute floor does not protect tiny nonzero quantities from being replaced by zero.
+Nonfinite numerical values are rejected in comparisons and non-INFO links. Literal occurrence
+is a lexical check, not proof that a Swift assertion consumes or verifies the reference.
 
 Without Rscript or the required R packages the check is skipped (exit 0) unless --require is
 given; --update rewrites expected.txt from a fresh run.
@@ -32,6 +33,13 @@ ORACLES = PROJECT / "Packages/GlifiCore/Tests/Oracles"
 EXPECTED = ORACLES / "expected.txt"
 SWIFT_TESTS = PROJECT / "Packages/GlifiCore/Tests/GlifiCoreTests"
 LITERAL = re.compile(r"(?<![\w.])-?\d[\d_]*(?:\.\d[\d_]*)?(?:[eE][-+]?\d+)?")
+# The HEAPS fixture has log(y) = 0.5 * log(x), hence zero model RMSE/residuals.
+# OLS with an intercept also has a zero residual sum. Preserve only these six
+# numerical roundoff positions, not entire models or keys sharing their names.
+ROUND_OFF_POSITIONS = {
+    "lexical_distributions:HEAPS": frozenset(range(3, 8)),
+    "lexical_laws:LAWS_ZIPF_INFO_RESIDUAL_SUM": frozenset({0}),
+}
 
 
 def run_oracles() -> list[str]:
@@ -59,10 +67,13 @@ def parse(line: str) -> tuple[str, list[str]]:
 
 
 def close(left: float, right: float) -> bool:
-    return (
-        math.isfinite(left) and math.isfinite(right)
-        and abs(left - right) <= max(1e-12 * max(abs(left), abs(right)), 1e-15)
-    )
+    if not math.isfinite(left) or not math.isfinite(right):
+        return False
+    if left == right:
+        return True
+    # Divide the error rather than multiplying a possibly subnormal scale by
+    # the tolerance. Opposite finite extremes overflow the difference and reject.
+    return abs(left - right) / max(abs(left), abs(right)) <= 1e-12
 
 
 def compare(expected: list[str], actual: list[str]) -> list[str]:
@@ -75,9 +86,15 @@ def compare(expected: list[str], actual: list[str]) -> list[str]:
         if want_key != got_key or len(want_values) != len(got_values):
             errors.append(f"struttura diversa: {want_key} / {got_key}")
             continue
-        for a, b in zip(want_values, got_values):
+        for position, (a, b) in enumerate(zip(want_values, got_values)):
             if a.startswith("0x") or b.startswith("0x"):
                 ok = a == b
+            elif position in ROUND_OFF_POSITIONS.get(want_key, ()):
+                left, right = float(a), float(b)
+                ok = (
+                    math.isfinite(left) and math.isfinite(right)
+                    and abs(left - right) <= max(1e-12 * max(abs(left), abs(right)), 1e-15)
+                )
             else:
                 ok = close(float(a), float(b))
             if not ok:
@@ -108,7 +125,7 @@ def check_links(lines: list[str]) -> list[str]:
         key, values = parse(line)
         if key.split(":", 1)[1].startswith("INFO_"):
             continue
-        for value in values:
+        for position, value in enumerate(values):
             if value.startswith("0x"):
                 if int(value, 16) not in hexadecimal:
                     errors.append(f"{key}: {value} assente dai test Swift")
@@ -117,7 +134,9 @@ def check_links(lines: list[str]) -> list[str]:
             if not math.isfinite(number):
                 errors.append(f"{key}: {value} non finito")
                 continue
-            if number < 1e-9 or number == round(number):
+            if number == round(number):
+                continue
+            if number < 1e-9 and position in ROUND_OFF_POSITIONS.get(key, ()):
                 continue
             if not any(close(number, literal) for literal in literals):
                 errors.append(f"{key}: {value} assente dai test Swift")
@@ -153,7 +172,10 @@ def main() -> int:
         print(error, file=sys.stderr)
     if errors:
         return 1
-    print(f"Oracoli numerici: {len(actual)} righe riprodotte e collegate ai test Swift")
+    print(
+        f"Oracoli numerici: {len(actual)} righe riprodotte; presenza lessicale nei test Swift "
+        "verificata (non prova dell'uso negli assert)"
+    )
     return 0
 
 

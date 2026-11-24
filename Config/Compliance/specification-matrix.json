@@ -5188,6 +5188,85 @@
       "gate": "G2",
       "status": "implemented",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-315",
+      "clause": "GS-STD-001-16 § 16.2 cleanup dei temporanei nella validazione PDF/A",
+      "specification": "docs/standard/16-strategia-di-verifica-e-test.md",
+      "requirements": [
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Scripts/check-pdfa.py"
+      ],
+      "tests": [
+        "Scripts/check-pdfa-tests.py"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/pianificazione/dor-cleanup-validazione-pdfa.md",
+        "docs/evidenze/GS-VER-315-cleanup-validazione-pdfa.md",
+        "docs/evidenze/allegati/GS-VER-315-317-verifica.json"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-316",
+      "clause": "GS-STD-001-16 § 16.2 verifica dei valori numerici piccoli",
+      "specification": "docs/standard/16-strategia-di-verifica-e-test.md",
+      "requirements": [
+        "RQ-008",
+        "RQ-027",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Scripts/check-oracles.py"
+      ],
+      "tests": [
+        "Scripts/check-oracles-tests.py"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/pianificazione/dor-oracoli-valori-piccoli.md",
+        "docs/evidenze/GS-VER-316-oracoli-valori-piccoli.md",
+        "docs/evidenze/allegati/GS-VER-315-317-verifica.json"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-317",
+      "clause": "GS-API-001 § 7 cancellazione fino al commit dell’export scientifico",
+      "specification": "docs/api/README.md",
+      "requirements": [
+        "RF-085",
+        "RQ-011",
+        "RQ-058",
+        "RQ-060",
+        "RQ-061",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiScientificExport.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiScientificExportTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/pianificazione/dor-cancellazione-export-scientifico.md",
+        "docs/evidenze/GS-VER-317-cancellazione-export-scientifico.md",
+        "docs/evidenze/allegati/GS-VER-315-317-verifica.json"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }
