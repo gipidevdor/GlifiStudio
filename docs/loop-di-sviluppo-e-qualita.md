@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DEV-002 |
 | Tipo | Guida controllata del loop di sviluppo |
-| Versione | 1.8.1 |
+| Versione | 1.9.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-26 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -135,6 +135,16 @@ non ammessa di categoria, retry e stato conservato oppure un messaggio di
 failure privo di traduzione interrompe subito `quality-static` con la
 diagnostica del controllo. La stessa verifica anticipata si applica a
 `make quality` e al job CI `static-quality`, senza richiedere Swift o Xcode.
+
+`make check-licenses`, incluso in `quality-static` e `make verify`, controlla
+l'inventario `Config/Licenses/materials.json`, i riferimenti e gli avvisi
+locali. Ogni nuovo manifest di dipendenza, workflow o asset nei percorsi
+controllati deve essere inventariato. Il controllo del bundle confronta
+LICENSE e THIRD_PARTY_NOTICES.txt con gli originali; gli avvisi vanno forniti
+anche con una distribuzione separata della CLI o delle librerie.
+La [revisione delle fonti](algoritmi-e-provenienza.md) distingue materiali
+incorporati, specifiche matematiche e strumenti usati soltanto come oracoli.
+La verifica automatica è strutturale e non sostituisce tale revisione.
 
 ## Cache di build e spazio su disco
 

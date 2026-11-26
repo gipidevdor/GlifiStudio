@@ -59,7 +59,9 @@ extension GlifiStatisticalFoundation {
 
     /// Quantile of Student's t by bisection on its CDF.
     public static func tQuantile(_ probability: Double, degreesOfFreedom: Double) throws -> Double {
-        guard probability > 0, probability < 1, degreesOfFreedom > 0 else {
+        guard probability > 0, probability < 1, probability.isFinite,
+            degreesOfFreedom > 0, degreesOfFreedom.isFinite
+        else {
             throw inferenceFailure("statistics.invalid-probability", category: .invalidInput)
         }
         if probability == 0.5 { return 0 }

@@ -559,7 +559,8 @@ def validate_markdown(manifest: dict[str, Any], errors: list[str]) -> int:
 
 
 def validate_gold_linguistic(
-    manifest: dict[str, Any], errors: list[str], review_status: str = "gold-v0-token"
+    manifest: dict[str, Any], errors: list[str], review_status: str = "gold-v0-token",
+    expected_id: str = "it-token-gold-v0",
 ) -> int:
     """Validate one Italian gold corpus with reviewed splits and its recorded baseline."""
     if manifest.get("schema") != "studio.glifi.linguistic-fixture-manifest":
@@ -567,10 +568,43 @@ def validate_gold_linguistic(
         return 0
     if manifest.get("reviewStatus") != review_status:
         errors.append(f"manifest gold linguistico: reviewStatus atteso {review_status}")
+    if manifest.get("id") != expected_id:
+        errors.append(f"manifest gold linguistico: id atteso {expected_id}")
     if manifest.get("tokenContract") != "it-token-v1":
         errors.append("manifest gold linguistico: tokenContract non valido")
     if manifest.get("license") != "BSD-3-Clause" or not manifest.get("provenance"):
         errors.append("manifest gold linguistico: licenza/provenienza mancante")
+    if expected_id == "it-token-gold-v1":
+        if (
+            manifest.get("licenseScope") != "original-annotations-and-metadata-only"
+            or manifest.get("sourceLicense") != "CC-BY-SA-3.0"
+            or manifest.get("sourceAttribution") != "Fixtures/Linguistics/it-gold-v1/ATTRIBUTION.md"
+        ):
+            errors.append("manifest gold esterno: separazione di diritti e attribuzione mancante")
+        source = PROJECT_DIRECTORY / "Fixtures/Linguistics/it-gold-v1/source/pinocchio-capitolo-1.txt"
+        attribution = PROJECT_DIRECTORY / "Fixtures/Linguistics/it-gold-v1/ATTRIBUTION.md"
+        if not attribution.is_file():
+            errors.append("manifest gold esterno: attribuzione della fonte assente")
+        if not source.is_file() or hashlib.sha256(source.read_bytes()).hexdigest() != manifest.get("sourceSHA256"):
+            errors.append("manifest gold esterno: testo della fonte modificato dopo la revisione")
+        revisions = manifest.get("sourceRevisions")
+        if not isinstance(revisions, list) or len(revisions) != 5:
+            errors.append("manifest gold esterno: cinque revisioni della fonte obbligatorie")
+        else:
+            seen_revisions: set[int] = set()
+            for page_number, revision in enumerate(revisions, start=9):
+                if (
+                    not isinstance(revision, dict)
+                    or not isinstance(revision.get("revisionID"), int)
+                    or isinstance(revision.get("revisionID"), bool)
+                    or revision.get("revisionID", 0) <= 0
+                    or revision.get("revisionID") in seen_revisions
+                    or revision.get("url") != f"https://it.wikisource.org/w/index.php?oldid={revision.get('revisionID')}"
+                    or revision.get("title") != f"Pagina:Le avventure di Pinocchio.djvu/{page_number}"
+                ):
+                    errors.append("manifest gold esterno: revisione della fonte non valida")
+                elif isinstance(revision, dict):
+                    seen_revisions.add(revision["revisionID"])
     split = manifest.get("split")
     if not isinstance(split, dict):
         errors.append("manifest gold linguistico: split mancante")
@@ -842,7 +876,8 @@ def main() -> int:
     linguistic_count = validate_linguistic(manifests.get("it-token-v1-seed", {}), errors)
     gold_count = validate_gold_linguistic(manifests.get("it-token-gold-v0", {}), errors)
     gold_count += validate_gold_linguistic(
-        manifests.get("it-token-gold-v1", {}), errors, review_status="gold-v1-token-sentence"
+        manifests.get("it-token-gold-v1", {}), errors, review_status="gold-v1-token-sentence",
+        expected_id="it-token-gold-v1",
     )
     scientific_count = validate_scientific(manifests.get("scientific-v1-seed", {}), errors)
     validation_count = validate_validation_catalog(manifests.get("validation-v1", {}), errors)

@@ -5,24 +5,38 @@ import Testing
 
 @testable import GlifiCore
 
-@Test("LR e FLR token/type coincidono con l'esempio originale e radici Decimal indipendenti")
-func termExtractionMatchesOriginalPaperAndDecimalOracle() throws {
-    let candidates = try termExtractionPaperCandidates()
+@Test(
+    "LR e FLR token/type coincidono su un grafo sintetico originale e radici Decimal indipendenti")
+func termExtractionSyntheticGraphMatchesDecimalOracle() throws {
+    let candidates = try termExtractionSyntheticCandidates()
     let expected = [
         [
-            2.9129506302439405, 3.1301691601465746, 2.632148025904985,
-            2.632148025904985, 2.5697965868506506, 2.632148025904985, 4.898979485566356,
+            6.402171745887359, 8.3785270244319783, 5.4567491292047272,
+            4.4994938258187203, 9.3808315196468595, 8.3785270244319783,
+            5.4772255750516612, 3.1622776601683795, 1,
         ],
         [
-            2.213363839400643, 2.213363839400643, 2.213363839400643,
-            2.213363839400643, 1.9063685859938732, 2.213363839400643, 3.4641016151377544,
+            2.7108060108295344, 3.4641016151377544, 2.8844991406148166,
+            2.5768375032589712, 4, 3.4641016151377544,
+            2.4494897427831779, 2.4494897427831779, 1,
         ],
     ]
-    let trigramFLR = [14.696938456699069, 10.392304845413264]
+    let leaderFLR = [41.892635122159888, 17.320508075688775]
+    let rankings = [
+        [
+            ["w", "u"], ["u", "v"], ["w", "w"], ["u", "w"], ["v", "w", "x"],
+            ["v"], ["x", "u", "v", "x"], ["z"], ["x"],
+        ],
+        [
+            ["w", "u"], ["u", "v"], ["v", "w", "x"], ["w", "w"], ["u", "w"],
+            ["v"], ["z"], ["x", "u", "v", "x"], ["x"],
+        ],
+    ]
     for (index, mode) in [GlifiTermAdjacencyMode.token, .type].enumerated() {
         let result = try GlifiTermExtraction.score(
-            candidates, adjacencyMode: mode, preprocessingIdentifier: "paper-example-v1")
-        #expect(result.independentOccurrenceCount == 10)
+            candidates, adjacencyMode: mode, preprocessingIdentifier: "synthetic-term-graph-v2")
+        #expect(result.independentOccurrenceCount == 24)
+        #expect(result.terms.count == 9 && result.components.count == 5)
         let byTerm = Dictionary(uniqueKeysWithValues: result.terms.map { ($0.components, $0) })
         for (offset, candidate) in candidates.enumerated() {
             let term = try #require(byTerm[candidate.components])
@@ -32,15 +46,23 @@ func termExtractionMatchesOriginalPaperAndDecimalOracle() throws {
                 termExtractionClose(term.flr, expected[index][offset] * Double(candidate.frequency))
             )
         }
-        let trigram = try #require(result.components.first { $0.component == "trigram" })
-        #expect(trigram.leftFrequency == 5 && trigram.rightFrequency == 3)
-        #expect(trigram.leftTypeCount == 3 && trigram.rightTypeCount == 2)
-        #expect(result.terms.first?.components == ["trigram"])
-        #expect(termExtractionClose(try #require(result.terms.first).flr, trigramFLR[index]))
+        let u = try #require(result.components.first { $0.component == "u" })
+        #expect(u.leftFrequency == 6 && u.rightFrequency == 7)
+        #expect(u.leftTypeCount == 2 && u.rightTypeCount == 2)
+        let w = try #require(result.components.first { $0.component == "w" })
+        #expect(w.leftFrequency == 7 && w.rightFrequency == 10)
+        #expect(w.leftTypeCount == 3 && w.rightTypeCount == 3)
+        let isolated = try #require(result.components.first { $0.component == "z" })
+        #expect(isolated.leftFrequency == 0 && isolated.rightFrequency == 0)
+        #expect(isolated.leftTypeCount == 0 && isolated.rightTypeCount == 0)
+        #expect(try #require(byTerm[["z"]]).lr == 1)
+        #expect(try #require(byTerm[["z"]]).flr == 4)
+        #expect(result.terms.map(\.components) == rankings[index])
+        #expect(termExtractionClose(try #require(result.terms.first).flr, leaderFLR[index]))
         #expect(
             try GlifiTermExtraction.score(
                 candidates.reversed(), adjacencyMode: mode,
-                preprocessingIdentifier: "paper-example-v1") == result)
+                preprocessingIdentifier: "synthetic-term-graph-v2") == result)
     }
 }
 
@@ -291,7 +313,7 @@ func termExtractionHandlesRepresentableFrequencyExtremes() throws {
 
 @Test("Una cancellazione già richiesta interrompe sia l'estrazione sia il calcolo LR")
 func termExtractionCancellationPrecedesAllWork() async throws {
-    let candidates = try termExtractionPaperCandidates()
+    let candidates = try termExtractionSyntheticCandidates()
     let scoreTask = Task {
         withUnsafeCurrentTask { $0?.cancel() }
         _ = try GlifiTermExtraction.score(candidates, preprocessingIdentifier: "keys")
@@ -309,15 +331,18 @@ private func termExtractionClose(_ actual: Double, _ expected: Double) -> Bool {
     abs(actual - expected) <= 3e-13 * max(1, abs(expected))
 }
 
-private func termExtractionPaperCandidates() throws -> [GlifiTermCandidate] {
+private func termExtractionSyntheticCandidates() throws -> [GlifiTermCandidate] {
+    // Original symbolic graph: a cycle, self-adjacency, repetition and an isolated component.
     try [
-        GlifiTermCandidate(components: ["trigram", "statistics"], frequency: 1),
-        GlifiTermCandidate(components: ["word", "trigram"], frequency: 2),
-        GlifiTermCandidate(components: ["class", "trigram"], frequency: 1),
-        GlifiTermCandidate(components: ["trigram", "extraction"], frequency: 1),
-        GlifiTermCandidate(components: ["word", "trigram", "statistics"], frequency: 1),
-        GlifiTermCandidate(components: ["character", "trigram"], frequency: 1),
-        GlifiTermCandidate(components: ["trigram"], frequency: 3),
+        GlifiTermCandidate(components: ["u", "v"], frequency: 4),
+        GlifiTermCandidate(components: ["u", "w"], frequency: 2),
+        GlifiTermCandidate(components: ["v", "w", "x"], frequency: 3),
+        GlifiTermCandidate(components: ["x", "u", "v", "x"], frequency: 1),
+        GlifiTermCandidate(components: ["w", "w"], frequency: 2),
+        GlifiTermCandidate(components: ["w", "u"], frequency: 5),
+        GlifiTermCandidate(components: ["v"], frequency: 2),
+        GlifiTermCandidate(components: ["x"], frequency: 1),
+        GlifiTermCandidate(components: ["z"], frequency: 4),
     ]
 }
 

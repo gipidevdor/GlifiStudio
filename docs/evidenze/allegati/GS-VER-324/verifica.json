@@ -1,0 +1,360 @@
+{
+  "schema": "studio.glifi.statistical-performance-verification",
+  "schemaVersion": 1,
+  "identifier": "GS-VER-324",
+  "date": "2026-11-26",
+  "status": "passed",
+  "baseHEAD": "07547a94724d0446a535eb84c72098a22bd39c6e",
+  "agents": 4,
+  "performance": [
+    {
+      "identifier": "normal-ordinary",
+      "baselineMedianSeconds": 4.154587361653646e-06,
+      "finalMedianSeconds": 4.15058837890625e-07,
+      "speedup": 10.00963473701155,
+      "outputDigestIdentical": false,
+      "maximumULPDelta": 2,
+      "baselineMinSeconds": 4.1514236924913195e-06,
+      "baselineMaxSeconds": 4.180656141493055e-06,
+      "finalMinSeconds": 4.137934841579861e-07,
+      "finalMaxSeconds": 4.172544216579861e-07
+    },
+    {
+      "identifier": "normal-extreme",
+      "baselineMedianSeconds": 2.2745881835937497e-05,
+      "finalMedianSeconds": 3.18424648030599e-06,
+      "speedup": 7.1432541345705545,
+      "outputDigestIdentical": true,
+      "maximumULPDelta": 0,
+      "baselineMinSeconds": 2.2729200561523436e-05,
+      "baselineMaxSeconds": 2.2836510538736978e-05,
+      "finalMinSeconds": 3.1665581461588546e-06,
+      "finalMaxSeconds": 3.186287801106771e-06
+    },
+    {
+      "identifier": "t-upper-tail",
+      "baselineMedianSeconds": 3.9260486886160714e-07,
+      "finalMedianSeconds": 3.924845424107143e-07,
+      "speedup": 1.000306576279804,
+      "outputDigestIdentical": true,
+      "maximumULPDelta": 0,
+      "baselineMinSeconds": 3.9205147879464283e-07,
+      "baselineMaxSeconds": 3.93801171875e-07,
+      "finalMinSeconds": 3.919921875e-07,
+      "finalMaxSeconds": 3.9373487723214285e-07
+    },
+    {
+      "identifier": "f-upper-tail",
+      "baselineMedianSeconds": 4.459025065104167e-07,
+      "finalMedianSeconds": 4.45068359375e-07,
+      "speedup": 1.00187420003657,
+      "outputDigestIdentical": true,
+      "maximumULPDelta": 0,
+      "baselineMinSeconds": 4.452080729166667e-07,
+      "baselineMaxSeconds": 4.504259114583333e-07,
+      "finalMinSeconds": 4.443468098958333e-07,
+      "finalMaxSeconds": 4.4869518229166667e-07
+    },
+    {
+      "identifier": "t-quantile",
+      "baselineMedianSeconds": 4.573558203125e-05,
+      "finalMedianSeconds": 4.56627470703125e-05,
+      "speedup": 1.0015950630570989,
+      "outputDigestIdentical": true,
+      "maximumULPDelta": 0,
+      "baselineMinSeconds": 4.560506184895833e-05,
+      "baselineMaxSeconds": 4.578412565104167e-05,
+      "finalMinSeconds": 4.5541123697916666e-05,
+      "finalMaxSeconds": 4.5772894531250005e-05
+    },
+    {
+      "identifier": "contingency-association",
+      "baselineMedianSeconds": 1.9997220052083335e-06,
+      "finalMedianSeconds": 1.9956936035156254e-06,
+      "speedup": 1.0020185471785907,
+      "outputDigestIdentical": true,
+      "maximumULPDelta": 0,
+      "baselineMinSeconds": 1.9822049153645833e-06,
+      "baselineMaxSeconds": 2.0211181640625e-06,
+      "finalMinSeconds": 1.9720255533854167e-06,
+      "finalMaxSeconds": 2.01702880859375e-06
+    },
+    {
+      "identifier": "keyness-512-terms",
+      "baselineMedianSeconds": 0.0029360390625,
+      "finalMedianSeconds": 0.00046370575,
+      "speedup": 6.331685691842295,
+      "outputDigestIdentical": true,
+      "maximumULPDelta": 0,
+      "baselineMinSeconds": 0.002929375,
+      "baselineMaxSeconds": 0.002980635375,
+      "finalMinSeconds": 0.00046049475,
+      "finalMaxSeconds": 0.000466578125
+    },
+    {
+      "identifier": "keyness-4096-terms",
+      "baselineMedianSeconds": 0.023564552000000002,
+      "finalMedianSeconds": 0.0037590625000000003,
+      "speedup": 6.268731099842048,
+      "outputDigestIdentical": true,
+      "maximumULPDelta": 0,
+      "baselineMinSeconds": 0.0235047915,
+      "baselineMaxSeconds": 0.0238468125,
+      "finalMinSeconds": 0.003743229,
+      "finalMaxSeconds": 0.003937917
+    }
+  ],
+  "maximumResidentSetSizeBytes": {
+    "hoist-time.txt": 82280448,
+    "baseline-initial-time.txt": 82477056,
+    "paired-2-candidate-time.txt": 82427904,
+    "final-paired-2-final-time.txt": 82182144,
+    "final-paired-1-baseline-time.txt": 82444288,
+    "final-paired-4-baseline-time.txt": 82444288,
+    "paired-4-baseline-time.txt": 82526208,
+    "final-paired-3-final-time.txt": 82198528,
+    "paired-1-baseline-time.txt": 82427904,
+    "paired-3-candidate-time.txt": 82378752
+  },
+  "warmUpRuns": 1,
+  "samplesPerProcess": 7,
+  "finalProcessOrder": [
+    "baseline",
+    "final",
+    "final",
+    "baseline"
+  ],
+  "comparison": "Medians of all fourteen samples per variant; identical frozen harness and input SHA256; every output checked outside timer.",
+  "oracleReplay": {
+    "exit": 0,
+    "stdout": "Kernel oracle: normal=254 t=74 F=132 chi-square=126 BCa=36 EffectSize=18",
+    "byteIdentical": true,
+    "sha256": "52a8c9f7b0021329eb003d1976be3eb7e94269199be735873f49f9080e1fed1d"
+  },
+  "targetedTests": {
+    "baselineDefinitions": 8,
+    "candidateCoreDefinitions": 26,
+    "candidateKitDefinitions": 4,
+    "baselineNewTestCorrection": "A new assertion incorrectly required bit equality to an R reference rounded to one for F(minsubnormal,0.1,1000); only actual statistic-zero endpoints remain exact, preserving original declared relative tolerances.",
+    "referenceCounts": {
+      "normal": 254,
+      "t": 74,
+      "F": 132,
+      "chiSquare": 126,
+      "BCa": 36,
+      "effectSize": 18
+    },
+    "referenceValuesBitAttested": 3664
+  },
+  "decisions": {
+    "keynessHoist": "accepted; full results and digests identical",
+    "normalSolver": "accepted under existing D1; maximum observed baseline delta 2 ULP in final benchmark, independent R checks unchanged",
+    "betaGammaPairing": "rejected; no stable benefit above noise, both source files restored byte-identically"
+  },
+  "limitations": [
+    "Observed on one arm64 macOS device with Low Power Mode enabled and nominal thermal state throughout.",
+    "No claim about UI, energy, physical cold I/O, universal monotonicity, or release budgets.",
+    "RSS is for the entire benchmark process, including fixture setup and checks.",
+    "The new R JSON is independently replayed and byte-compared explicitly; make verify reruns the existing 248-row oracle suite and consumes the frozen new reference data in Swift tests.",
+    "No new dependency, numerical variant, backend, entitlement, or user data format."
+  ],
+  "integratedVerification": {
+    "run": {
+      "command": [
+        "make",
+        "verify"
+      ],
+      "exit": 0,
+      "seconds": 481.1604904170017,
+      "controlledFingerprint": "b87e0f5f3d003339fbb01f07ab8cbe92706699e71afa22464bc048ad8239a800",
+      "sourceManifest": "final-source-manifest.json"
+    },
+    "coreDefinitionsPassed": 760,
+    "kitDefinitionsPassed": 164,
+    "native": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "modelName": "iMac",
+            "osBuildNumber": "26B131",
+            "osVersion": "27.2.1",
+            "platform": "macOS"
+          },
+          "expectedFailures": 0,
+          "failedTests": 0,
+          "passedTests": 420,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "GlifiStudio-macOS · Built with macOS 27.2.1",
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "finishTime": 1795718116.969,
+      "passedTests": 133,
+      "result": "Passed",
+      "runtimeWarnings": [],
+      "skippedTests": 0,
+      "startTime": 1795718055.001,
+      "statistics": [
+        {
+          "subtitle": "312 test runs",
+          "title": "25 tests ran with dynamic parameters"
+        }
+      ],
+      "testFailures": [],
+      "title": "Test - GlifiStudio-macOS",
+      "topInsights": [],
+      "totalTestCount": 133
+    },
+    "oracleRows": 248,
+    "binary64FractionCases": 64,
+    "PDF_A_2u_Files": 2,
+    "textCLISharedFixtures": 63,
+    "textCLIChecks": 196,
+    "kitCLIOperations": 132,
+    "kitCLICompleteComparisons": 264,
+    "publicAPIDeclarations": 2840,
+    "operationVariants": 172,
+    "integrationScenarios": 5,
+    "processKillCheckpoints": 22,
+    "debugGuard": {
+      "exit": 64,
+      "stdoutEmpty": true,
+      "diagnostic": "This benchmark requires a Release build.",
+      "expectedOutcomeObserved": true
+    },
+    "releaseBundle": {
+      "bundleName": "GlifiStudio.app",
+      "documentLocalizations": {
+        "en": "Glifi Studio Project",
+        "it": "Progetto Glifi Studio"
+      },
+      "documentTypeIdentifier": "studio.glifi.project",
+      "finderOrLaunchServicesPresentationVerified": false,
+      "generatedBuildMetadata": {
+        "minimumSystemMajorVersion": 27,
+        "minimumSystemVersion": "27.0",
+        "sdkMajorVersion": 27,
+        "sdkName": "macosx27.2"
+      },
+      "payloadInspection": {
+        "forbiddenDirectoryNames": [
+          ".github",
+          "benchmarks",
+          "config",
+          "design",
+          "distribution",
+          "docs",
+          "fixtures",
+          "packages",
+          "scripts",
+          "tests"
+        ],
+        "forbiddenExtensions": [
+          "xcconfig",
+          "xctest"
+        ],
+        "inspectedEntries": 17,
+        "matchesWithinDeclaredScope": 0
+      },
+      "rawDescriptionKey": "Progetto Glifi Studio",
+      "requiredResources": [
+        "PrivacyInfo.xcprivacy",
+        "Assets.car",
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.txt"
+      ],
+      "schema": "studio.glifi.macos-bundle-verification",
+      "schemaVersion": 1,
+      "secureStateRestorationRuntimeVerified": false,
+      "verifiedScope": [
+        "Raw document and exported UTI declarations.",
+        "Generated minimum macOS and SDK version metadata.",
+        "Required packaged resources and Foundation localized string lookup for it/en.",
+        "Byte identity of project license and third-party notices against repository originals.",
+        "Bundle entries matching the listed directory names or file extensions."
+      ]
+    }
+  },
+  "cleanup": {
+    "cacheBeforeKiB": 2345512,
+    "cacheRemoved": true,
+    "spikes": {
+      "removed": [
+        {
+          "name": "glifi-325-probabilities-hex.txt",
+          "bytes": 166416
+        },
+        {
+          "name": "glifi-325-qnorm.txt",
+          "bytes": 152916
+        },
+        {
+          "name": "glifi-325-spike.py",
+          "bytes": 3637
+        },
+        {
+          "name": "glifi-325-parsed-r-hex.txt",
+          "bytes": 129067
+        },
+        {
+          "name": "glifi-325-probabilities.txt",
+          "bytes": 163470
+        },
+        {
+          "name": "glifi-325-spike-results-hex.json",
+          "bytes": 5684
+        },
+        {
+          "name": "glifi-325-qnorm-hex.txt",
+          "bytes": 152943
+        },
+        {
+          "name": "glifi-325-spike-results.json",
+          "bytes": 4585
+        },
+        {
+          "name": "glifi-325-prepared",
+          "bytes": 492717
+        },
+        {
+          "name": "GlifiKernel326-h97r0dci",
+          "bytes": 23047
+        }
+      ],
+      "removedBytes": 1294482
+    },
+    "retained": "Sources, controlled evidence, baseline/intermediate/final binaries and build manifests, raw samples, sanitized results and useful logs; installed toolchains and dependencies.",
+    "removedCacheGiB": 2.2368545532226562,
+    "pythonBytecodeRemoved": [
+      {
+        "path": "Packages/GlifiCore/Tests/Oracles/Python/__pycache__/summary.cpython-312.pyc",
+        "bytes": 28067
+      }
+    ]
+  },
+  "source": {
+    "baseHEAD": "07547a94724d0446a535eb84c72098a22bd39c6e",
+    "frozenFiles": 1349,
+    "controlledFiles": 618,
+    "controlledFingerprint": "b87e0f5f3d003339fbb01f07ab8cbe92706699e71afa22464bc048ad8239a800",
+    "includesOracleSourceAndJSON": [
+      "docs/evidenze/allegati/GS-VER-324/griglia-kernel.R",
+      "docs/evidenze/allegati/GS-VER-324/griglia-kernel.json"
+    ],
+    "unchangedAfterVerification": true,
+    "fullManifestLocalFile": "final-source-manifest.json"
+  },
+  "finalMetadataChecks": {
+    "documentation": true,
+    "compliance": true,
+    "licenses": true,
+    "diffWhitespace": true,
+    "controlledSourceAndOracleDataUnchanged": true
+  }
+}

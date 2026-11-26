@@ -1,0 +1,6 @@
+{
+  "exit": 64,
+  "stdoutEmpty": true,
+  "diagnostic": "This benchmark requires a Release build.",
+  "expectedOutcomeObserved": true
+}

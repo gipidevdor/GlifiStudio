@@ -61,3 +61,13 @@ in G4.
 
 **Superato localmente: la tokenizzazione italiana è ora misurata su prosa reale contro
 un'annotazione indipendente, con linea di base che blocca le regressioni.**
+
+## Rettifica di provenienza — 2026-11-26
+
+La ricostruzione storica precedente non prova la licenza di ogni apporto alla
+trascrizione né il trattamento della marcatura wiki. GS-VER-318 distingue ora
+opera, trascrizione e annotazione e collega quindici paragrafi alle cinque
+revisioni specifiche della fonte. Il generatore Python rigenera le annotazioni
+dal sorgente locale; non acquisisce o ripulisce Wikisource. L’autorizzazione
+registrata nell’ADR non sostituisce i diritti della fonte. Le prove linguistiche
+qui riportate restano storiche, senza nuova esecuzione implicita.

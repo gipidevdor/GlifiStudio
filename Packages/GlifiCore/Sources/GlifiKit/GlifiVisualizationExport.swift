@@ -71,8 +71,78 @@ public struct GlifiStudioVisualExportReceipt: Codable, Equatable, Sendable {
 
 /// Deterministic construction and verified writing of view exports.
 public enum GlifiStudioVisualExport {
+    enum WriteCheckpoint: CaseIterable, Sendable {
+        case prepared
+        case payloadWritten
+        case beforeCommit
+        case committed
+    }
+
     /// Manifest file name.
     public static let manifestFileName = "visual-export-manifest.json"
+
+    /// Writes only verified bytes, observing cancellation until the atomic rename.
+    ///
+    /// The internal observer makes commit-boundary regression tests deterministic.
+    static func write(
+        _ files: [String: Data], to destinationURL: URL,
+        checkpoint: @Sendable (WriteCheckpoint) -> Void = { _ in }
+    ) throws -> GlifiStudioVisualExportReceipt {
+        let fileManager = FileManager.default
+        let staging = destinationURL.deletingLastPathComponent().appending(
+            path: ".glifi-visual-export-\(UUID().uuidString)", directoryHint: .isDirectory)
+        var ownsStaging = false
+        defer {
+            if ownsStaging { try? fileManager.removeItem(at: staging) }
+        }
+        do {
+            try Task.checkCancellation()
+            _ = try verify(files)
+            guard let manifest = files[manifestFileName] else {
+                throw GlifiStudioFailure(
+                    code: "visual-export.integrity-failed", category: "corruption",
+                    operation: "export", retryDisposition: "never",
+                    retainedState: "readOnlyRecovery",
+                    messageKey: "failure.visual-export.integrity-failed")
+            }
+            let receipt = GlifiStudioVisualExportReceipt(
+                manifestDigest: digest(manifest), fileCount: files.count)
+            checkpoint(.prepared)
+            try Task.checkCancellation()
+            guard !fileManager.fileExists(atPath: destinationURL.path) else {
+                throw GlifiStudioFailure(
+                    code: "visual-export.destination-exists", category: "invalidInput",
+                    operation: "export", retryDisposition: "afterCorrection",
+                    retainedState: "unchanged",
+                    messageKey: "failure.visual-export.destination-exists")
+            }
+            try fileManager.createDirectory(at: staging, withIntermediateDirectories: false)
+            ownsStaging = true
+            for (path, data) in files.sorted(by: { $0.key < $1.key }) {
+                try Task.checkCancellation()
+                try data.write(to: staging.appending(path: path), options: .withoutOverwriting)
+                checkpoint(.payloadWritten)
+            }
+            checkpoint(.beforeCommit)
+            try Task.checkCancellation()
+            try fileManager.moveItem(at: staging, to: destinationURL)
+            ownsStaging = false
+            checkpoint(.committed)
+            return receipt
+        } catch let failure as GlifiStudioFailure {
+            throw failure
+        } catch is CancellationError {
+            throw GlifiStudioFailure(
+                code: "operation.cancelled", category: "cancelled", operation: "export",
+                retryDisposition: "newRequest", retainedState: "unchanged",
+                messageKey: "failure.operation.cancelled")
+        } catch {
+            throw GlifiStudioFailure(
+                code: "visual-export.write-failed", category: "transientIO", operation: "export",
+                retryDisposition: "transientBackoff", retainedState: "unchanged",
+                messageKey: "failure.visual-export.write-failed")
+        }
+    }
 
     /// Files of the export: equivalent table, specification and manifest.
     ///

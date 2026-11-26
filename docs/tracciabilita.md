@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.92.22 |
+| Versione | 0.94.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-24 |
+| Ultima modifica | 2026-11-26 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -735,3 +735,27 @@ risultato pubblico; l’auto-cancellazione al checkpoint 1 richiede un passo
 completato e `CancellationError`, senza dipendenza da attese temporali.
 GS-VER-286 distingue i mirati superati dal gate corrente della composizione,
 ancora aperto: la diagnosi OCR resta nel lotto documentale proprietario.
+
+## Licenze, fonti e correttezza dei risultati
+
+| Requisiti | Implementazione e verifica | Evidenza |
+| --- | --- | --- |
+| RQ-062, RQ-063 | Fonti algoritmiche, avvisi, attribuzione della trascrizione e annotazioni separate; inventario con digest di revisione | CMP-318; GS-VER-318 |
+| RQ-008, RQ-011, RQ-027, RQ-062, RQ-063 | Nuclei numerici originali, log-gamma reentrant, code estreme e non finitezza; revisioni selettive per evitare riuso di risultati precedenti | CMP-319; GS-VER-319 |
+| RQ-011, RQ-058, RQ-060, RQ-061, RQ-062, RQ-063 | Cancellazione fino al commit dell’export delle viste, conservazione di dati e file utente, stesso trasporto CLI | CMP-320; GS-VER-320 |
+| RQ-062, RQ-063 | Gate dell’inventario e dei metadati gold, risorse legali e identità dei testi nel bundle macOS | CMP-321; GS-VER-321 |
+| RQ-027, RQ-062, RQ-063 | Esempio LR/FLR derivato dalla pubblicazione sostituito da dati originali, Decimal indipendente e regressioni dei discriminanti | CMP-323; GS-VER-323 |
+
+La revisione distingue conformità strutturale verificabile, provenienza
+ricostruita e diritti non dimostrabili automaticamente. Non promuove
+implicitamente manifest scientifici, diritti storici o G4/G5.
+
+## Ottimizzazione statistica misurata
+
+RQ-008/009/027/060/062/063 collegano CMP-324 al riuso del quantile nella
+keyness e all’harness Release, CMP-325 all’inversione normale protetta e
+CMP-326 alla valutazione del candidato beta/gamma poi scartato.
+GS-VER-324 confronta fasi isolate e binari alternati, GS-VER-325 documenta
+D1 e consumatori, GS-VER-326 conserva risultati negativi e ripristino.
+La nuova griglia verifica bit dei riferimenti R, casi limite, failure e
+propagazione degli intervalli; non promuove soglie prestazionali o G4/G5.

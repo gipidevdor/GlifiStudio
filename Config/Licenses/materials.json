@@ -1,0 +1,472 @@
+{
+  "schema": "studio.glifi.license-inventory",
+  "schemaVersion": 1,
+  "reviewedOn": "2026-11-26",
+  "materials": [
+    {
+      "id": "glifi-original",
+      "category": "project-original",
+      "paths": [
+        "LICENSE",
+        "Packages/GlifiCore/Package.swift",
+        "Packages/GlifiCore/Sources/**/*.swift",
+        "Apps/**/*.swift"
+      ],
+      "sourceURLs": [],
+      "revision": "Repository revision recorded by verification",
+      "licenseExpression": "BSD-3-Clause",
+      "distribution": "application",
+      "relationship": "original-work",
+      "noticeFile": "LICENSE",
+      "status": "reviewed",
+      "notes": "Licenza dei contributi originali; le voci specifiche Snowball e SplitMix conservano provenienza e avvisi distinti. Nessuna dipendenza remota SwiftPM dichiarata."
+    },
+    {
+      "id": "apple-system-frameworks",
+      "category": "runtime-system",
+      "paths": [
+        "Packages/GlifiCore/Package.swift",
+        "Config/Base.xcconfig",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiLinearAlgebra.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiScientificExportRenderer.swift"
+      ],
+      "sourceURLs": [
+        "https://www.apple.com/legal/sla/",
+        "https://developer.apple.com/support/terms/"
+      ],
+      "revision": "System and SDK version recorded by verification",
+      "licenseExpression": "LicenseRef-Apple-SDK-and-System",
+      "distribution": "external-tool",
+      "relationship": "system-api",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Framework, modelli e font di sistema sono forniti dal sistema/SDK; non sono relicenziati BSD. Nessun font o modello Apple è copiato come asset del repository. I font incorporati nei documenti richiedono permessi di embedding specifici."
+    },
+    {
+      "id": "sqlite-system",
+      "category": "runtime-system",
+      "paths": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiSQLiteProjectStore.swift",
+        "Packages/GlifiCore/Package.swift"
+      ],
+      "sourceURLs": [
+        "https://www.sqlite.org/copyright.html"
+      ],
+      "revision": "SQLite supplied by Apple system SDK",
+      "licenseExpression": "LicenseRef-SQLite-Public-Domain",
+      "distribution": "external-tool",
+      "relationship": "system-library",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Collegamento alla libreria sqlite3 di sistema; nessun sorgente o binario SQLite vendorizzato. La dichiarazione di pubblico dominio riguarda i deliverable upstream, non eventuali script build."
+    },
+    {
+      "id": "zlib-system",
+      "category": "runtime-system",
+      "paths": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiZIPReader.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiScientificExportRenderer.swift"
+      ],
+      "sourceURLs": [
+        "https://zlib.net/zlib_license.html"
+      ],
+      "revision": "zlib supplied by Apple system SDK",
+      "licenseExpression": "Zlib",
+      "distribution": "external-tool",
+      "relationship": "system-library",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Uso del modulo zlib fornito da SDK/sistema per deflate/inflate; nessun sorgente o binario zlib vendorizzato."
+    },
+    {
+      "id": "snowball-italian",
+      "category": "algorithm-specification",
+      "paths": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiItalianStemmer.swift"
+      ],
+      "sourceURLs": [
+        "https://snowballstem.org/algorithms/italian/stemmer.html",
+        "https://snowballstem.org/license.html",
+        "https://raw.githubusercontent.com/snowballstem/snowball/v3.1.0/COPYING"
+      ],
+      "revision": "Snowball Italian 3.1.0",
+      "licenseExpression": "BSD-3-Clause",
+      "distribution": "application",
+      "relationship": "implementation-from-specification",
+      "noticeFile": "THIRD_PARTY_NOTICES.txt",
+      "status": "reviewed",
+      "notes": "Regole e tabelle della specifica implementate in Swift; nessun compilatore/libstemmer incluso. Avvisi upstream pagina e release conservati, senza attribuirli al progetto."
+    },
+    {
+      "id": "splitmix64-vigna",
+      "category": "algorithm-specification",
+      "paths": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiResamplingStatistics.swift",
+        "Packages/GlifiCore/Tests/Oracles/Python/splitmix64.py"
+      ],
+      "sourceURLs": [
+        "https://prng.di.unimi.it/splitmix.c"
+      ],
+      "revision": "Fixed-increment SplitMix64, Sebastiano Vigna 2015",
+      "licenseExpression": "LicenseRef-SplitMix-Public-Domain-Permission",
+      "distribution": "application",
+      "relationship": "algorithm-adaptation",
+      "noticeFile": "THIRD_PARTY_NOTICES.txt",
+      "status": "reviewed",
+      "notes": "Costanti e trasformazione della sequenza derivano dalla fonte primaria; conservata dedica al pubblico dominio con permesso esplicito di uso/copia/modifica/distribuzione e disclaimer."
+    },
+    {
+      "id": "nist-dlmf-mathematical-reference",
+      "category": "algorithm-specification",
+      "paths": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiStatisticalFoundation.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiDistributionFunctions.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiContingencyAnalysis.swift"
+      ],
+      "sourceURLs": [
+        "https://dlmf.nist.gov/8.17",
+        "https://dlmf.nist.gov/8.9",
+        "https://dlmf.nist.gov/7.9",
+        "https://dlmf.nist.gov/about/notices"
+      ],
+      "revision": "DLMF 1.2.8, 2026-09-15",
+      "licenseExpression": "LicenseRef-NIST-DLMF",
+      "distribution": "external-reference",
+      "relationship": "mathematical-reference",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Riferimento alle identità matematiche; implementazioni Swift proprie. Non sono redistribuiti pagine, testo, immagini, tabelle o codice DLMF. DLMF dichiara copyright NIST e restrizioni commerciali sui contenuti: non è una fonte di codice BSD né genericamente pubblico dominio."
+    },
+    {
+      "id": "numerical-recipes-removed",
+      "category": "replaced-implementation",
+      "paths": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiStatisticalFoundation.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiContingencyAnalysis.swift"
+      ],
+      "sourceURLs": [
+        "https://www.numerical.recipes/otherstufftop.html",
+        "https://www.numerical.recipes/institutionalinfo.html"
+      ],
+      "revision": "Baseline before GS-VER-319",
+      "licenseExpression": "LicenseRef-Numerical-Recipes-Restricted",
+      "distribution": "external-reference",
+      "relationship": "replaced-implementation",
+      "noticeFile": null,
+      "status": "replaced",
+      "notes": "La baseline citava betacf/betai e Numerical Recipes; non esiste una concessione di redistribuzione registrata. I nuclei sono sostituiti da implementazioni proprie su relazioni matematiche. Non acquisiti o distribuiti sorgenti NR; nessuna presunzione di bonifica della storia Git."
+    },
+    {
+      "id": "acklam-coefficients-removed",
+      "category": "replaced-implementation",
+      "paths": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiDistributionFunctions.swift"
+      ],
+      "sourceURLs": [
+        "https://web.archive.org/web/20151030215631/http://home.online.no/~pjacklam/notes/invnorm/"
+      ],
+      "revision": "Baseline before GS-VER-319",
+      "licenseExpression": "LicenseRef-Acklam-Unverified",
+      "distribution": "external-reference",
+      "relationship": "replaced-implementation",
+      "noticeFile": null,
+      "status": "replaced",
+      "notes": "La baseline usa coefficienti Acklam senza prova primaria conservata del permesso. Il permesso originale non è stato verificato e non è assunto: coefficienti rimossi mediante inversione indipendente della coda normale."
+    },
+    {
+      "id": "pinocchio-wikisource-transcription",
+      "category": "test-data",
+      "paths": [
+        "Fixtures/Linguistics/it-gold-v1/source/pinocchio-capitolo-1.txt",
+        "Fixtures/Linguistics/it-gold-v1/token-boundaries.json",
+        "Fixtures/Linguistics/it-gold-v1/manifest.json"
+      ],
+      "sourceURLs": [
+        "https://it.wikisource.org/wiki/Le_avventure_di_Pinocchio/Capitolo_1",
+        "https://it.wikisource.org/w/index.php?oldid=2028448",
+        "https://it.wikisource.org/w/index.php?oldid=2028537",
+        "https://it.wikisource.org/w/index.php?oldid=2433443",
+        "https://it.wikisource.org/w/index.php?oldid=3650771",
+        "https://it.wikisource.org/w/index.php?oldid=2433462",
+        "https://creativecommons.org/licenses/by-sa/3.0/"
+      ],
+      "revision": "Wikisource page revisions verified 2026-11-26; original acquisition 2026-09-20",
+      "licenseExpression": "CC-BY-SA-3.0",
+      "distribution": "source-only",
+      "relationship": "selected-transcription",
+      "noticeFile": "Fixtures/Linguistics/it-gold-v1/ATTRIBUTION.md",
+      "status": "reviewed",
+      "notes": "Testo di Collodi distinto da trascrizione Wikisource e annotazioni originali. Conservata prudenzialmente CC BY-SA 3.0 per eventuali apporti protetti della trascrizione; non si impongono diritti sul testo originario in pubblico dominio. Fixture non inclusa nelle risorse app."
+    },
+    {
+      "id": "original-fixture-annotations",
+      "category": "project-original",
+      "paths": [
+        "Fixtures/Linguistics/it-gold-v1/adjudications.json",
+        "Fixtures/Linguistics/it-gold-v1/baseline.json",
+        "Fixtures/DocumentImport/v1/README.md",
+        "Fixtures/DocumentImport/v1/book.epub",
+        "Fixtures/DocumentImport/v1/digital.pdf",
+        "Scripts/build-rich-document-fixtures.py",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTermExtractionTests.swift",
+        "Packages/GlifiCore/Tests/Oracles/Python/kh_lexical_profiles.py"
+      ],
+      "sourceURLs": [],
+      "revision": "Repository revision recorded by verification",
+      "licenseExpression": "BSD-3-Clause",
+      "distribution": "source-only",
+      "relationship": "original-test-material",
+      "noticeFile": "LICENSE",
+      "status": "reviewed",
+      "notes": "Annotazioni e documenti sintetici originali; eventuali campi di testo ripreso da Wikisource mantengono la voce separata. PDF fixture usa nome Helvetica, senza programma font incorporato. GS-VER-323 sostituisce il vecchio esempio LR/FLR adattato da una pubblicazione con nove candidate originali (cinque simboli, frequenze somma 24, ciclo/self-loop/componente ripetuto/isolato); cambia struttura e frequenze, non soltanto nomi. Le pubblicazioni restano riferimenti delle formule, non fonti della nuova fixture."
+    },
+    {
+      "id": "r-numerical-oracle",
+      "category": "development-tool",
+      "paths": [
+        "Packages/GlifiCore/Tests/Oracles/R/*.R",
+        "Packages/GlifiCore/Tests/Oracles/expected.txt",
+        "Scripts/check-oracles.py",
+        "docs/evidenze/allegati/GS-VER-324/griglia-kernel.R"
+      ],
+      "sourceURLs": [
+        "https://www.r-project.org/about.html",
+        "https://www.r-project.org/COPYING",
+        "https://www.gnu.org/licenses/gpl-faq.html#WhatCaseIsOutputGPL"
+      ],
+      "revision": "R 4.6.0; oracle library environment verified 2026-11-26",
+      "licenseExpression": "GPL-2.0-or-later",
+      "distribution": "external-tool",
+      "relationship": "oracle-process",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "R eseguito come processo separato su input sintetici originali; nessun runtime/sorgente R incorporato nell’app o vendorizzato. Si conservano soltanto riferimenti numerici, non componenti o testi del programma. Gli script chiamanti originali restano BSD; eventuali nuovi output contenenti materiale del programma richiedono nuova review."
+    },
+    {
+      "id": "r-igraph-oracle",
+      "category": "development-tool",
+      "paths": [
+        "Packages/GlifiCore/Tests/Oracles/R/networks.R"
+      ],
+      "sourceURLs": [
+        "https://cran.r-project.org/web/packages/igraph/index.html"
+      ],
+      "revision": "igraph 2.3.3; existing oracle library environment verified 2026-11-26",
+      "licenseExpression": "GPL-2.0-or-later",
+      "distribution": "external-tool",
+      "relationship": "oracle-process",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Pacchetto R usato soltanto dall’oracolo separato; nessun collegamento/copia di implementazione nel prodotto. Versione non fissata nel repository: riproducibilità dell’ambiente va registrata con le prove, non dedotta dall’attuale catalogo CRAN."
+    },
+    {
+      "id": "r-nmf-oracle",
+      "category": "development-tool",
+      "paths": [
+        "Packages/GlifiCore/Tests/Oracles/R/multivariate.R"
+      ],
+      "sourceURLs": [
+        "https://cran.r-project.org/web/packages/NMF/index.html"
+      ],
+      "revision": "NMF 0.28; existing oracle library environment verified 2026-11-26",
+      "licenseExpression": "GPL-2.0-or-later",
+      "distribution": "external-tool",
+      "relationship": "oracle-process",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Pacchetto R usato soltanto dall’oracolo separato; nessun collegamento/copia di implementazione nel prodotto. Versione non fissata nel repository: riproducibilità dell’ambiente va registrata con le prove, non dedotta dall’attuale catalogo CRAN."
+    },
+    {
+      "id": "r-cluster-oracle",
+      "category": "development-tool",
+      "paths": [
+        "Packages/GlifiCore/Tests/Oracles/R/kh_operators.R"
+      ],
+      "sourceURLs": [
+        "https://cran.r-project.org/web/packages/cluster/index.html"
+      ],
+      "revision": "cluster 2.1.8.2; existing oracle library environment verified 2026-11-26",
+      "licenseExpression": "GPL-2.0-or-later",
+      "distribution": "external-tool",
+      "relationship": "oracle-process",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Pacchetto R usato soltanto dall’oracolo separato; nessun collegamento/copia di implementazione nel prodotto. Versione non fissata nel repository: riproducibilità dell’ambiente va registrata con le prove, non dedotta dall’attuale catalogo CRAN."
+    },
+    {
+      "id": "python-numerical-oracle",
+      "category": "development-tool",
+      "paths": [
+        "Packages/GlifiCore/Tests/Oracles/Python/*.py",
+        "Scripts/check-binary64-sum-oracle.py"
+      ],
+      "sourceURLs": [
+        "https://docs.python.org/3/license.html"
+      ],
+      "revision": "Python 3.12.14 existing verification environment",
+      "licenseExpression": "Python-2.0",
+      "distribution": "external-tool",
+      "relationship": "oracle-process",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Script originali e libreria standard per Fraction/Decimal/math; nessun pacchetto scientifico Python di terzi o runtime Python distribuito nell’app."
+    },
+    {
+      "id": "verapdf-validator",
+      "category": "development-tool",
+      "paths": [
+        "Scripts/check-pdfa.py"
+      ],
+      "sourceURLs": [
+        "https://verapdf.org/home/"
+      ],
+      "revision": "Installed validator version recorded by verification",
+      "licenseExpression": "GPL-3.0-or-later OR MPL-2.0",
+      "distribution": "external-tool",
+      "relationship": "validator-process",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Validatore PDF/A separato con licenza propria; non incluso nell’app né nel repository. Nessun corpus veraPDF copiato nelle fixture del progetto."
+    },
+    {
+      "id": "kh-coder-reference",
+      "category": "algorithm-specification",
+      "paths": [
+        "docs/metodi-analitici/23-operatori-kh-coder.md",
+        "Packages/GlifiCore/Tests/Oracles/Python/kh_lexical_profiles.py",
+        "Packages/GlifiCore/Tests/Oracles/R/kh_document_scores_ward.R",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiKHChiSquareAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiKHLegacyClustering.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiKHSelfOrganizingMap.swift"
+      ],
+      "sourceURLs": [
+        "https://khcoder.net/en/",
+        "https://khcoder.net/en/manual_en_v3.pdf",
+        "https://github.com/ko-ichi-h/khcoder",
+        "https://raw.githubusercontent.com/ko-ichi-h/khcoder/master/LICENSE",
+        "https://svn.r-project.org/R/trunk/src/library/stats/R/chisq.test.R",
+        "https://svn.r-project.org/R/trunk/src/library/stats/src/hclust.f"
+      ],
+      "revision": "KH public source 7b7fbc1ae3b3b59c524189fbcbb1c616cb6ef006; native introductions 94c564b/d368285; reviewed 2026-11-26",
+      "licenseExpression": "LicenseRef-KH-Coder-Reference-Only",
+      "distribution": "external-reference",
+      "relationship": "behavioral-reference",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Manuale e sorgenti pubblici storici GPL-2.0 sono stati consultati per i comportamenti: GS-MET-001-23 dichiara tale uso. Nessun sorgente, manuale, esempio o asset KH vendorizzato o collegato osservato; la review statica non prova il processo di scrittura storico né certifica clean-room. Qualunque nuovo port/adattamento di codice richiede verifica distinta. Il confronto campionario include KH SOM/chi-square, R chisq.test e Ward hclust: le ricorrenze e convenzioni comuni non dimostrano da sole un port del codice. R som GPL>=3 ha voce separata."
+    },
+    {
+      "id": "github-actions-checkout",
+      "category": "ci-action",
+      "paths": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/app-store.yml"
+      ],
+      "sourceURLs": [
+        "https://raw.githubusercontent.com/actions/checkout/3d3c42e5aac5ba805825da76410c181273ba90b1/LICENSE"
+      ],
+      "revision": "3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "licenseExpression": "MIT",
+      "distribution": "external-tool",
+      "relationship": "ci-action",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Azione eseguita dal runner CI e fissata al commit indicato; non distribuita nell’app o vendorizzata. Licenze delle dipendenze transitive rimangono nell’azione upstream."
+    },
+    {
+      "id": "github-actions-cache",
+      "category": "ci-action",
+      "paths": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/app-store.yml"
+      ],
+      "sourceURLs": [
+        "https://raw.githubusercontent.com/actions/cache/55cc8345863c7cc4c66a329aec7e433d2d1c52a9/LICENSE"
+      ],
+      "revision": "55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
+      "licenseExpression": "MIT",
+      "distribution": "external-tool",
+      "relationship": "ci-action",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Azione eseguita dal runner CI e fissata al commit indicato; non distribuita nell’app o vendorizzata. Licenze delle dipendenze transitive rimangono nell’azione upstream."
+    },
+    {
+      "id": "glifi-generated-app-icon",
+      "category": "original-asset",
+      "paths": [
+        "Design/AppIcon/*.png",
+        "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/*.png",
+        "Design/README.md"
+      ],
+      "sourceURLs": [],
+      "revision": "Existing master and prompt documented in Design/README.md",
+      "licenseExpression": "BSD-3-Clause",
+      "distribution": "application",
+      "relationship": "project-generated-asset",
+      "noticeFile": "LICENSE",
+      "status": "reviewed",
+      "notes": "Asset generato per il progetto, senza file terzi incorporati documentati; adozione come marchio/distintività da approvare prima della submission. La review non certifica esclusività o registrabilità del simbolo."
+    },
+    {
+      "id": "glifi-generated-hero",
+      "category": "original-asset",
+      "paths": [
+        "docs/assets/*.png",
+        "Design/glifistudio-hero-prompt.md"
+      ],
+      "sourceURLs": [],
+      "revision": "2026-09-15 generation documented by prompt",
+      "licenseExpression": "BSD-3-Clause",
+      "distribution": "source-only",
+      "relationship": "project-generated-asset",
+      "noticeFile": "LICENSE",
+      "status": "reviewed",
+      "notes": "Hero generata dal progetto per README, provenienza nel prompt; non inclusa nel bundle app. Nessuna garanzia di esclusività dei contenuti generati."
+    },
+    {
+      "id": "r-som-source-reference",
+      "category": "algorithm-specification",
+      "paths": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiKHSelfOrganizingMap.swift",
+        "Packages/GlifiCore/Tests/Oracles/R/kh_exploratory_profiles.R",
+        "docs/metodi-analitici/23-operatori-kh-coder.md"
+      ],
+      "sourceURLs": [
+        "https://cran.r-project.org/web/packages/som/index.html",
+        "https://raw.githubusercontent.com/cran/som/a56214b9583cea8e4f2856d28d9461072ec3d20c/R/som.R",
+        "https://raw.githubusercontent.com/cran/som/a56214b9583cea8e4f2856d28d9461072ec3d20c/src/som.cc",
+        "https://raw.githubusercontent.com/cran/som/a56214b9583cea8e4f2856d28d9461072ec3d20c/src/SomParam.h",
+        "https://raw.githubusercontent.com/cran/som/a56214b9583cea8e4f2856d28d9461072ec3d20c/DESCRIPTION"
+      ],
+      "revision": "som 0.3-5.2; CRAN source mirror a56214b9583cea8e4f2856d28d9461072ec3d20c",
+      "licenseExpression": "GPL-3.0-or-later",
+      "distribution": "external-reference",
+      "relationship": "source-informed-behavioral-reference",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Sorgenti R/C++ consultati per schedule/PCA/default e confrontati manualmente con Swift corrente e introduttivo. Il fit nativo riproduce questi comportamenti matematici, con struttura scalare/LAPACK propria, rispetto a TNT/SomParam upstream. Nessuna copia espressiva inequivocabile osservata nel campione; nessuna certificazione clean-room. Il pacchetto non è incorporato o richiamato dagli oracoli, che usano R base."
+    }
+  ],
+  "reviewedInputs": {
+    ".github/workflows/app-store.yml": "e6ffc46a84d6992c630f7254237ba2b511ac2e518bf70328674268ae9db5c0ee",
+    ".github/workflows/ci.yml": "7d3d2124ac7c81d6b88e72487c320b7e642b669e1ebc1fb68a33305e397c6d38",
+    "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-iPadOS-1024.png": "80e0893f803c4dcf30b9ebce534674b60dfb1f73ec248bc2581f90deebfcd337",
+    "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-128.png": "7da94d8cc0361a1d8fa2f40f673a72a31de83713e6f68d63d5a382b1affffdea",
+    "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-128@2x.png": "dee40571ba25bde3976b7e0b6cef3f5eb5ec4cb2796ec459ce66ed8dc6019aa4",
+    "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-16.png": "269eeb9d57cdaa0848457538099bc383115b4c5079e7def568a46e04bf9039cc",
+    "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-16@2x.png": "1a891eb428c3a2cf5bac4fb3233401dd9870a49019bdc2cace27d6d54c126946",
+    "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-256.png": "dee40571ba25bde3976b7e0b6cef3f5eb5ec4cb2796ec459ce66ed8dc6019aa4",
+    "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-256@2x.png": "b54f304ab20fb2c03b0c4729926a6e26fe138fc9d567e457bdc43eababd5e443",
+    "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-32.png": "1a891eb428c3a2cf5bac4fb3233401dd9870a49019bdc2cace27d6d54c126946",
+    "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-32@2x.png": "90ec675eb4ac9121de21930cc9dbf82194561c1a9bc63ca98d675919ac6aae6d",
+    "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-512.png": "b54f304ab20fb2c03b0c4729926a6e26fe138fc9d567e457bdc43eababd5e443",
+    "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-512@2x.png": "80e0893f803c4dcf30b9ebce534674b60dfb1f73ec248bc2581f90deebfcd337",
+    "Design/AppIcon/AppIcon-master-1024.png": "80e0893f803c4dcf30b9ebce534674b60dfb1f73ec248bc2581f90deebfcd337",
+    "Fixtures/Linguistics/it-gold-v1/ATTRIBUTION.md": "eadd4b52188de68c2cfe74d3d70071bd4226603c79a3d4ba5efee7022fa5dfe1",
+    "LICENSE": "81f47968bba326e331d547c1a4030f240512d62cb6e8c537cec2616da82d7d72",
+    "Packages/GlifiCore/Package.swift": "390130809eefe8840277be50388ad58b63f647e8d34341cf476d80a2249c0600",
+    "THIRD_PARTY_NOTICES.txt": "dc869382f68d264c0054b209cf7f7c0926e09df5daeef8c9fd9b0895acabf944",
+    "docs/assets/glifistudio-hero.png": "672cc4fa464ba426f625ff19bf252bf33019b255de649b4a540cfbc920168f19"
+  }
+}

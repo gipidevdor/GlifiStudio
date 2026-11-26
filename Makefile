@@ -53,6 +53,11 @@ check-recovery:
 check-repository:
 	./Scripts/check-repository.py
 
+.PHONY: check-licenses
+check-licenses:
+	python3 -B Scripts/check-licenses-tests.py
+	python3 -B Scripts/check-licenses.py
+
 check-secrets:
 	./Scripts/check-secrets.py
 

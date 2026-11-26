@@ -37,7 +37,7 @@ CONFIGS = {
 }
 NATIVE_FOLDERS = {
     "docs", "Scripts", "Fixtures", "Design", "Distribution", "Benchmarks", ".github",
-    "Config/CLI", "Config/Compliance", "Config/GitHub", "Config/Testing", "Packages/GlifiCore",
+    "Config/CLI", "Config/Compliance", "Config/GitHub", "Config/Licenses", "Config/Testing", "Packages/GlifiCore",
 }
 # This is the reviewed hostless support contract from d368285 / capture fdda8209.
 # App sources and actual test files are derived independently from the filesystem.
@@ -495,7 +495,7 @@ def validate_graph(root: Path, graph: dict, paths: list[str], issues: Problems) 
         return {path for path in paths if path.startswith(prefix + "/") and path.endswith(".swift") and (not exclude_tests or not path.startswith("Apps/macOS/Tests/"))}
     shared = swift("Apps/Shared")
     expected_sources = {TARGETS[0]: shared | swift("Apps/macOS", True), TARGETS[1]: shared | swift("Apps/iPadOS"), TARGETS[2]: swift("Apps/macOS/Tests") | TEST_SUPPORT}
-    resources = {"Apps/Shared/Resources/" + name for name in ["Assets.xcassets", "PrivacyInfo.xcprivacy", "Localizable.xcstrings", "InfoPlist.xcstrings"]}
+    resources = {"Apps/Shared/Resources/" + name for name in ["Assets.xcassets", "PrivacyInfo.xcprivacy", "Localizable.xcstrings", "InfoPlist.xcstrings"]} | {"LICENSE", "THIRD_PARTY_NOTICES.txt"}
     expected_resources = {TARGETS[0]: resources, TARGETS[1]: resources, TARGETS[2]: {"Apps/Shared/Resources/Localizable.xcstrings"}}
     used_build_files: Counter[str] = Counter()
     for name, target in targets.items():
@@ -634,6 +634,8 @@ def negative_tests(root: Path, graph: dict, paths: list[str]) -> int:
         "wrong platform source": lambda o: o[objects[source_phase]["files"][0]].update(fileRef=next(k for k, v in objects.items() if v.get("path") == "GlifiStudioPadApp.swift")),
         "navigator target membership": lambda o: o[target_id].update(fileSystemSynchronizedGroups=[folder_id]),
         "missing package": lambda o: o[target_id].update(packageProductDependencies=[]),
+        "missing project license": lambda o: o[resource_phase]["files"].remove("B32100000000000000000001"),
+        "missing third-party notices": lambda o: o[resource_phase]["files"].remove("B32100000000000000000003"),
         "wrong configuration": lambda o: o[next(k for k in o[o[target_id]["buildConfigurationList"]]["buildConfigurations"] if o[k]["name"] == "Release")].update(baseConfigurationReference=next(k for k, v in o.items() if v.get("path") == "macOS-Debug.xcconfig")),
         "duplicate project target": lambda o: o[graph["rootObject"]]["targets"].append(project["targets"][0]),
         "project Release inline DEBUG": lambda o: o[project_release]["buildSettings"].update(SWIFT_ACTIVE_COMPILATION_CONDITIONS="DEBUG"),

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B32100000000000000000001 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = A3060000000000000000000A /* LICENSE */; };
+		B32100000000000000000002 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = A3060000000000000000000A /* LICENSE */; };
+		B32100000000000000000003 /* THIRD_PARTY_NOTICES.txt in Resources */ = {isa = PBXBuildFile; fileRef = A32100000000000000000001 /* THIRD_PARTY_NOTICES.txt */; };
+		B32100000000000000000004 /* THIRD_PARTY_NOTICES.txt in Resources */ = {isa = PBXBuildFile; fileRef = A32100000000000000000001 /* THIRD_PARTY_NOTICES.txt */; };
 		B64000000000000000000001 /* StudioCorpusPresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A64000000000000000000001 /* StudioCorpusPresentationTests.swift */; };
 		B10000000000000000000001 /* StudioHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000001 /* StudioHomeView.swift */; };
 		B10000000000000000000011 /* StudioVisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000020 /* StudioVisualizationView.swift */; };
@@ -95,6 +99,7 @@
 /* End PBXBuildFile section for macOS tests */
 
 /* Begin PBXFileReference section */
+		A32100000000000000000001 /* THIRD_PARTY_NOTICES.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = THIRD_PARTY_NOTICES.txt; sourceTree = SOURCE_ROOT; };
 		A10000000000000000000001 /* StudioHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioHomeView.swift; sourceTree = "<group>"; };
 		A10000000000000000000020 /* StudioVisualizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioVisualizationView.swift; sourceTree = "<group>"; };
 		A10000000000000000000021 /* StudioCodingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioCodingView.swift; sourceTree = "<group>"; };
@@ -182,6 +187,13 @@
 /* End PBXFileReference section for macOS tests */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		C32100000000000000000001 /* Licenses */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {};
+			explicitFolders = ();
+			path = Licenses;
+			sourceTree = "<group>";
+		};
 		C30600000000000000000011 /* docs */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			explicitFileTypes = {};
@@ -395,6 +407,7 @@
 				A30600000000000000000012 /* macOS-Tests-Release.xcconfig */,
 				C30600000000000000000018 /* CLI */,
 				C30600000000000000000019 /* Compliance */,
+				C32100000000000000000001 /* Licenses */,
 				C3060000000000000000001A /* GitHub */,
 				C3060000000000000000001B /* Testing */,
 			);
@@ -435,6 +448,7 @@
 				A30600000000000000000008 /* CONTRIBUTING.md */,
 				A30600000000000000000009 /* GOVERNANCE.md */,
 				A3060000000000000000000A /* LICENSE */,
+				A32100000000000000000001 /* THIRD_PARTY_NOTICES.txt */,
 				A3060000000000000000000B /* Makefile */,
 				A3060000000000000000000C /* README.md */,
 				A3060000000000000000000D /* SECURITY.md */,
@@ -595,6 +609,8 @@
 				B1000000000000000000000B /* PrivacyInfo.xcprivacy in Resources */,
 				B1000000000000000000000D /* Assets.xcassets in Resources */,
 				B30600000000000000000001 /* InfoPlist.xcstrings in Resources */,
+				B32100000000000000000001 /* LICENSE in Resources */,
+				B32100000000000000000003 /* THIRD_PARTY_NOTICES.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -606,6 +622,8 @@
 				B1000000000000000000000C /* PrivacyInfo.xcprivacy in Resources */,
 				B1000000000000000000000E /* Assets.xcassets in Resources */,
 				B30600000000000000000002 /* InfoPlist.xcstrings in Resources */,
+				B32100000000000000000002 /* LICENSE in Resources */,
+				B32100000000000000000004 /* THIRD_PARTY_NOTICES.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

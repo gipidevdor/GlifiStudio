@@ -57,6 +57,7 @@ completo.
 | GS-AD-001 | [Descrizione dell'architettura](architettura.md) | Stakeholder, concern, viewpoint, view e decisioni | ISO/IEC/IEEE 42010:2022 | Bozza controllata |
 | GS-GLO-001 | [Glossario](glossario.md) | Vocabolario comune e termini controllati | Supporta tutti gli information item | Bozza controllata |
 | GS-LIC-001 | [Politica di licenza](licenza.md) | Ambito BSD-3-Clause, copyright e materiali di terzi | OSI/SPDX | Attivo |
+| GS-LIC-002 | [Provenienza degli algoritmi](algoritmi-e-provenienza.md) | Fonti, avvisi, materiali di test e confini degli strumenti esterni | Fonti primarie e inventario revisionato | Revisione locale con limiti dichiarati |
 | GS-I18N-001 | [Baseline linguistica italiana](localizzazione-italiana.md) | Lingua e locale predefiniti dell'analisi testuale | ADR-0004 | Bozza controllata |
 | GS-I18N-002 | [Internazionalizzazione dell'interfaccia](internazionalizzazione-interfaccia.md) | Catalogo, chiavi semantiche, formattazione e indipendenza linguistica | ADR-0005 | Bozza controllata |
 | GS-APL-* | [Pratiche e portafoglio tecnologico Apple](apple/README.md) | UI, documenti, AI on-device, accelerazione Apple silicon, dati, sistema, qualità e distribuzione | ADR-0006; ADR-0008; documentazione Apple | Attivo |

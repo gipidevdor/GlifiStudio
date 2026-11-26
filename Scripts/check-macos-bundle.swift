@@ -101,11 +101,21 @@ func verifyBundle(at bundleURL: URL) throws -> [String: Any] {
         projectTypes.first?["UTTypeDescription"] as? String == descriptionKey,
         "The raw exported UTI description changed.")
 
-    let requiredResources = ["PrivacyInfo.xcprivacy", "Assets.car"]
+    let requiredResources = [
+        "PrivacyInfo.xcprivacy", "Assets.car", "LICENSE", "THIRD_PARTY_NOTICES.txt",
+    ]
     for name in requiredResources {
         try require(
             FileManager.default.fileExists(atPath: resources.appendingPathComponent(name).path),
             "Missing packaged resource: \(name)")
+    }
+    let projectDirectory = URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent().deletingLastPathComponent()
+    for name in ["LICENSE", "THIRD_PARTY_NOTICES.txt"] {
+        let original = try Data(contentsOf: projectDirectory.appendingPathComponent(name))
+        let packaged = try Data(contentsOf: resources.appendingPathComponent(name))
+        try require(
+            !original.isEmpty && packaged == original, "Altered packaged legal text: \(name)")
     }
     let expectedLocalizations = ["it": descriptionKey, "en": "Glifi Studio Project"]
     var documentLocalizations: [String: String] = [:]
@@ -154,6 +164,7 @@ func verifyBundle(at bundleURL: URL) throws -> [String: Any] {
             "Raw document and exported UTI declarations.",
             "Generated minimum macOS and SDK version metadata.",
             "Required packaged resources and Foundation localized string lookup for it/en.",
+            "Byte identity of project license and third-party notices against repository originals.",
             "Bundle entries matching the listed directory names or file extensions.",
         ],
         "finderOrLaunchServicesPresentationVerified": false,

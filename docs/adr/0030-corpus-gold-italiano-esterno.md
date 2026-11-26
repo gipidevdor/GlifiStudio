@@ -5,10 +5,10 @@
 | Campo | Valore |
 | --- | --- |
 | Identificatore | GS-ADR-0030 |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | Accettato |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-20 |
+| Ultima modifica | 2026-11-26 |
 | Decisore | Iniziatore del progetto |
 | Data proposta | 2026-09-20 |
 | Data decisione | 2026-09-20 |
@@ -78,10 +78,16 @@ che richiede un'autorizzazione esplicita dell'iniziatore per la fonte scelta.
 
 Carlo Collodi (1826-1890), «Le avventure di Pinocchio», capitolo 1, trascrizione di
 it.wikisource.org (`Pagina:Le avventure di Pinocchio.djvu/9-13`), recuperata il 2026-09-20 con
-l'autorizzazione esplicita dell'iniziatore. L'autore è morto nel 1890: l'opera è in pubblico
-dominio senza ambiguità, e la trascrizione fedele di un'opera di pubblico dominio non fonda un
-diritto nuovo; la fonte è comunque attribuita nel manifest. `Scripts/build-italian-gold.py`
-documenta e riproduce la derivazione dal testo alla fixture.
+l'autorizzazione esplicita dell'iniziatore. La review GS-VER-318 del 2026-11-26 rettifica
+la descrizione dei diritti: testo storico di Collodi, eventuali apporti protetti della
+trascrizione Wikisource e annotazioni originali sono distinti. L’attribuzione conserva
+prudenzialmente la via CC BY-SA 3.0 dichiarata nei metadati della fonte per la trascrizione;
+le annotazioni e i metadati originali restano BSD. Non si afferma in via generale che una
+trascrizione non possa comportare diritti. Manifest e
+[attribuzione](../../Fixtures/Linguistics/it-gold-v1/ATTRIBUTION.md) registrano hash e
+revisioni delle cinque pagine verificate. `Scripts/build-italian-gold.py` rigenera le
+annotazioni dal testo locale già selezionato: non scarica né ripulisce le pagine wiki.
+La rettifica non cambia la decisione di adottare una fonte redistribuibile.
 
 Il corpus copre prosa narrativa; le righe di dialogo aperte da lineetta sono **escluse** dalla v1
 perché il contratto non specifica ancora dove finisca una frase in un turno di dialogo. È una

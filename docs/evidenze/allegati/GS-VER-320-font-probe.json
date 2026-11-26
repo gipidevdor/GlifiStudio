@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-26",
+  "kind": "Local CoreText metadata observation; not a license clearance",
+  "platform": "macOS with Xcode 27 SDK",
+  "rendererSource": "Packages/GlifiCore/Sources/GlifiCore/GlifiScientificExportRenderer.swift",
+  "baseFonts": [
+    { "postScriptName": ".SFNS-Regular", "os2Version": 4, "fsType": 0 },
+    { "postScriptName": ".SFNS-Bold", "os2Version": 4, "fsType": 0 },
+    { "postScriptName": "Menlo-Regular", "os2Version": 3, "fsType": 0 }
+  ],
+  "shapedRunProbe": {
+    "text": "Latino 中文 العربية e 👩‍🔬",
+    "requestedRole": "CTFontUIFontType.system",
+    "fonts": [
+      { "postScriptName": ".SFNS-Regular", "os2Version": 4, "fsType": 0 },
+      { "postScriptName": ".PingFangUITextSC-Regular", "os2Version": 5, "fsType": 4 },
+      { "postScriptName": ".SFArabic-Regular", "os2Version": 4, "fsType": 4 },
+      { "postScriptName": ".AppleColorEmojiUI", "os2Version": 3, "fsType": 4 }
+    ]
+  },
+  "observation": "No restricted-embedding, no-subsetting or bitmap-only bit was observed in these local fonts",
+  "sources": [
+    "https://developer.apple.com/documentation/coretext/ctfontcopytable(_:_:_:)",
+    "https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6OS2.html",
+    "https://learn.microsoft.com/en-us/typography/opentype/spec/os2#fstype"
+  ],
+  "limits": [
+    "CTFontGetEmbeddingPermissions is absent from the local CoreText/CoreGraphics SDK headers",
+    "Observed metadata is not independent evidence of complete legal permission",
+    "Probe does not cover arbitrary Unicode text, installed fonts or future operating systems",
+    "Renderer does not currently enforce a runtime fsType policy on every shaped run",
+    "A future guard needs version-aware OS/2 parsing, missing-table handling and validation of body and footer fallback runs"
+  ]
+}

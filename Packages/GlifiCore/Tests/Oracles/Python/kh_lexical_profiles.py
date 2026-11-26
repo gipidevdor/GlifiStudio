@@ -9,8 +9,10 @@ Yoshida/Nakagawa (2005), section 3.2, Type/Token-LR and add-one smoothing:
 https://aclanthology.org/I05-1024.pdf
 
 Only standard-library arithmetic; no production module or external NLP package.
-The term fixture adapts the original paper's trigram example. Frequency means
-independent occurrence, not an occurrence embedded in another listed candidate.
+The term fixture is original synthetic project data: five artificial symbols,
+nine candidates, cycles, self-adjacency, repetition and an isolated component.
+The papers specify formulas, not fixture data. Frequency means independent
+occurrence, not an occurrence embedded in another listed candidate.
 """
 
 from collections import Counter, defaultdict
@@ -65,13 +67,15 @@ def word_association(a, b, c, d):
 
 def term_scores(mode):
     candidates = {
-        ('trigram', 'statistics'): 1,
-        ('word', 'trigram'): 2,
-        ('class', 'trigram'): 1,
-        ('trigram', 'extraction'): 1,
-        ('word', 'trigram', 'statistics'): 1,
-        ('character', 'trigram'): 1,
-        ('trigram',): 3,
+        ('u', 'v'): 4,
+        ('u', 'w'): 2,
+        ('v', 'w', 'x'): 3,
+        ('x', 'u', 'v', 'x'): 1,
+        ('w', 'w'): 2,
+        ('w', 'u'): 5,
+        ('v',): 2,
+        ('x',): 1,
+        ('z',): 4,
     }
     left, right = defaultdict(Counter), defaultdict(Counter)
     for parts, frequency in candidates.items():
@@ -109,4 +113,4 @@ print('KH_WORD_ASSOCIATION', numbers(word_association(12, 18, 8, 62)))
 print('KH_WORD_ASSOCIATION_OVERLAP', numbers(word_association(60, 20, 15, 5)))
 for mode in ('token', 'type'):
     print('TERM_LR_' + mode.upper(), numbers(value['lr'] for value in term_scores(mode)))
-print('TERM_FLR_TRIGRAM', numbers(term_scores(mode)[-1]['flr'] for mode in ('token', 'type')))
+print('TERM_FLR_W_U', numbers(term_scores(mode)[5]['flr'] for mode in ('token', 'type')))

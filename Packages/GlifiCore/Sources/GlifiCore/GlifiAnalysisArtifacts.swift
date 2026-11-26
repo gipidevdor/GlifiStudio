@@ -344,7 +344,7 @@ enum GlifiAnalysisArtifactDescriptorFactory {
         return try GlifiAnalysisDescriptor(
             artifactTypeIdentifier: "studio.glifi.artifact.keyness",
             algorithmIdentifier: GlifiKeynessAnalyzer.comparisonIdentifier,
-            algorithmVersion: "1",
+            algorithmVersion: "2",
             corpusIdentifier: snapshot.projectID.canonicalValue,
             corpusVersionDigest: try snapshot.corpusVersionDigest(
                 for: targetSourceRevisionIDs + referenceSourceRevisionIDs),

@@ -1,0 +1,296 @@
+{
+  "probabilities": 7627,
+  "hex_input_transport_exact": true,
+  "results": {
+    "baseline": {
+      "max_ulp_vs_R": 5,
+      "max_ulp_case": [
+        "0x1.4c2b16070b354p-2",
+        -0.45547684737028593,
+        -0.45547684737028565
+      ],
+      "changed_bits_vs_baseline": 0,
+      "max_ulp_vs_baseline": 0,
+      "delta_examples": [],
+      "bad_absolute_2e-13": 0,
+      "monotonicity_violations": 0,
+      "monotonicity_examples": [],
+      "evaluations_median": 57,
+      "evaluations_max": 110,
+      "evaluations_mean": 56.925003277828765
+    },
+    "newton_fast": {
+      "max_ulp_vs_R": 5,
+      "max_ulp_case": [
+        "0x1.6bbd73689bbb0p-3",
+        -0.9245214573566576,
+        -0.924521457356657
+      ],
+      "changed_bits_vs_baseline": 3130,
+      "max_ulp_vs_baseline": 4,
+      "delta_examples": [
+        [
+          "0x0.0000000000001p-1022",
+          -38.46740561714434,
+          -38.467405617144344,
+          1
+        ],
+        [
+          "0x0.0000000000002p-1022",
+          -38.44939448087598,
+          -38.44939448087599,
+          1
+        ],
+        [
+          "0x0.0000000000003p-1022",
+          -38.43885473456996,
+          -38.43885473456995,
+          1
+        ],
+        [
+          "0x0.0000000000004p-1022",
+          -38.43137491494828,
+          -38.43137491494827,
+          1
+        ],
+        [
+          "0x0.000000000001bp-1022",
+          -38.381689341374425,
+          -38.38168934137442,
+          1
+        ]
+      ],
+      "bad_absolute_2e-13": 0,
+      "monotonicity_violations": 1,
+      "monotonicity_examples": [
+        [
+          "0x1.000000000000fp-2",
+          "0x1.0000000000010p-2",
+          -0.674489750196079,
+          -0.6744897501960792
+        ]
+      ],
+      "evaluations_median": 6,
+      "evaluations_max": 12,
+      "evaluations_mean": 6.872295791267864
+    },
+    "newton_conservative": {
+      "max_ulp_vs_R": 5,
+      "max_ulp_case": [
+        "0x1.4c2b16070b354p-2",
+        -0.45547684737028593,
+        -0.45547684737028565
+      ],
+      "changed_bits_vs_baseline": 42,
+      "max_ulp_vs_baseline": 4,
+      "delta_examples": [
+        [
+          "0x1.fac6a30384d10p-4",
+          -1.1565673160280001,
+          -1.1565673160279997,
+          2
+        ],
+        [
+          "0x1.0839f21c2cc08p-3",
+          -1.131051192315725,
+          -1.1310511923157254,
+          2
+        ],
+        [
+          "0x1.0e8fa096ecc9cp-3",
+          -1.1164728867276463,
+          -1.1164728867276468,
+          2
+        ],
+        [
+          "0x1.2f39cbaac0fecp-3",
+          -1.044792439135641,
+          -1.0447924391356413,
+          2
+        ],
+        [
+          "0x1.6832250db2148p-3",
+          -0.9311929056088557,
+          -0.9311929056088555,
+          2
+        ]
+      ],
+      "bad_absolute_2e-13": 0,
+      "monotonicity_violations": 0,
+      "monotonicity_examples": [],
+      "evaluations_median": 9,
+      "evaluations_max": 12,
+      "evaluations_mean": 9.541366199029763
+    },
+    "halley_fast": {
+      "max_ulp_vs_R": 5,
+      "max_ulp_case": [
+        "0x1.4c2b16070b354p-2",
+        -0.45547684737028593,
+        -0.45547684737028565
+      ],
+      "changed_bits_vs_baseline": 3167,
+      "max_ulp_vs_baseline": 5,
+      "delta_examples": [
+        [
+          "0x0.0000000000001p-1022",
+          -38.46740561714434,
+          -38.467405617144344,
+          1
+        ],
+        [
+          "0x0.0000000000002p-1022",
+          -38.44939448087598,
+          -38.44939448087599,
+          1
+        ],
+        [
+          "0x0.0000000000004p-1022",
+          -38.43137491494828,
+          -38.43137491494827,
+          1
+        ],
+        [
+          "0x0.000000000001bp-1022",
+          -38.381689341374425,
+          -38.38168934137442,
+          1
+        ],
+        [
+          "0x0.0000000000020p-1022",
+          -38.37726552065382,
+          -38.377265520653815,
+          1
+        ]
+      ],
+      "bad_absolute_2e-13": 0,
+      "monotonicity_violations": 2,
+      "monotonicity_examples": [
+        [
+          "0x1.0000000000007p-2",
+          "0x1.0000000000008p-2",
+          -0.6744897501960804,
+          -0.6744897501960805
+        ],
+        [
+          "0x1.000000000000bp-2",
+          "0x1.000000000000cp-2",
+          -0.6744897501960798,
+          -0.6744897501960799
+        ]
+      ],
+      "evaluations_median": 4,
+      "evaluations_max": 10,
+      "evaluations_mean": 5.61334731873607
+    },
+    "halley_conservative": {
+      "max_ulp_vs_R": 5,
+      "max_ulp_case": [
+        "0x1.4c2b16070b354p-2",
+        -0.45547684737028593,
+        -0.45547684737028565
+      ],
+      "changed_bits_vs_baseline": 41,
+      "max_ulp_vs_baseline": 4,
+      "delta_examples": [
+        [
+          "0x1.65c0ebc8523a0p-4",
+          -1.3573048280454492,
+          -1.3573048280454496,
+          2
+        ],
+        [
+          "0x1.71d596a47e4c8p-4",
+          -1.3389616162991982,
+          -1.3389616162991977,
+          2
+        ],
+        [
+          "0x1.049adc5dce4b0p-3",
+          -1.1394944133763207,
+          -1.1394944133763203,
+          2
+        ],
+        [
+          "0x1.2f39cbaac0fecp-3",
+          -1.044792439135641,
+          -1.0447924391356413,
+          2
+        ],
+        [
+          "0x1.61871983a48f8p-3",
+          -0.943858567870167,
+          -0.9438585678701668,
+          2
+        ]
+      ],
+      "bad_absolute_2e-13": 0,
+      "monotonicity_violations": 0,
+      "monotonicity_examples": [],
+      "evaluations_median": 8,
+      "evaluations_max": 11,
+      "evaluations_mean": 8.311131506490101
+    }
+  },
+  "performance": "Function-evaluation counts only, no timing inference under concurrent Release build",
+  "schema": "studio.glifi.normal-quantile-spike-verification",
+  "schemaVersion": 1,
+  "identifier": "GS-VER-325",
+  "date": "2026-11-26",
+  "baseHEAD": "07547a94724d0446a535eb84c72098a22bd39c6e",
+  "methodSelected": "halley_conservative",
+  "algorithmRevisionRetained": "2, existing D1 contract; targeted primitive/BCa/effect-size tests and paired benchmark passed; full gate pending",
+  "sourcePath": "Packages/GlifiCore/Sources/GlifiCore/GlifiDistributionFunctions.swift",
+  "sourceBeforeSHA256": "f802ea1e88c34098e39f78e7cf532fcbc75fff4b0a2054a3cbedb8f6fd99c66c",
+  "formattedAppliedSourceSHA256": "e25bed48362a23d1b66350c0dbd2487c5b9d323a6004d15ebbee1caf66baa442",
+  "productTests": {
+    "status": "passed",
+    "reportedBy": "root",
+    "coreDefinitions": 26,
+    "kitDefinitions": 4,
+    "includesIndependentGridDefinitions": 8,
+    "scope": "Targeted candidate tests; full macOS make verify still pending"
+  },
+  "nativeAvailability": "math.h and Accelerate SDK macOS 27.2 independently scanned: erf/erfc available, no applicable public inverse-normal or inverse-erf primitive found",
+  "referenceTransport": "Python float.hex() preserves subnormal fixed exponent -1022; R as.numeric(input) and sprintf(%a) round-trip verified for every input; decimal trial rejected due input corruption",
+  "spikeSourceSHA256": "90870234f5f1710342268b3550fb2b8f6540cc2dbd67851ac86d0d9bde3524da",
+  "referenceValuesSHA256": "4cd130c59ffea005655605b910bce443750aa1bb3c89d4bb1d52e07986ed34a2",
+  "probabilityHexInputsSHA256": "8b98068479d8219404503d500a552f2dc3976296fefd8ede792f39ba9af5f5d7",
+  "limits": [
+    "Interpreted original spike; actual Swift targeted tests and paired Release timing passed as reported by root, with final composition and full gate pending.",
+    "Monotonicity observed on 7627 finite inputs, not a proof over every binary64 probability.",
+    "41 selected-candidate outputs differ from the baseline by at most 4 ULP; no bitwise identity claimed.",
+    "Evaluation counts are not timing results, and were collected during a concurrent Release build."
+  ],
+  "pairedReleaseBenchmark": {
+    "status": "passed, intermediate composition",
+    "reportedBy": "root",
+    "protocolAndRawSamplesReference": "GS-VER-324",
+    "passes": "ABBA, four quiescent Release passes",
+    "units": "microseconds per call",
+    "reportedMediansNotRawSamples": {
+      "ordinary": {
+        "baseline": [
+          4.156,
+          4.154
+        ],
+        "candidate": [
+          0.417,
+          0.415
+        ]
+      },
+      "extreme": {
+        "baselineApproximate": 22.738,
+        "candidate": [
+          3.171,
+          3.177
+        ]
+      }
+    },
+    "ordinaryMaximumULPDelta": 2,
+    "extremeBitIdentical": true,
+    "keyness512And4096OutputHashIdentical": true,
+    "keynessPerformanceIncludesIndependentHoisting": "GS-VER-324",
+    "finalCompositionRebuildAndFullGate": "pending root"
+  }
+}

@@ -167,6 +167,96 @@ func keynessLegacyDescriptorRemainsReadableWithoutReplacingTheCurrentNode() asyn
     #expect(try await reopened.artifactData(for: legacyRecord.artifactID) == originalBytes)
 }
 
+@Test("A previous numeric keyness revision remains readable and cannot replace the current cache")
+func keynessNumericRevisionRetainsHistoricalArtifacts() async throws {
+    let root = try keynessCacheRoot()
+    defer { try? FileManager.default.removeItem(at: root) }
+    let (project, target, reference) = try await keynessCacheProject(in: root)
+    let engine = GlifiEngine()
+    let original = try await engine.compareKeyness(
+        in: project, targetSourceRevisionIDs: [target], referenceSourceRevisionIDs: [reference])
+    let snapshot = await project.snapshot()
+    let record = try #require(snapshot.artifacts.first { $0.artifactID == original.artifactID })
+    #expect(record.node.descriptor.algorithmVersion == "2")
+    let previous = try distributionLegacyDescriptor(record.node.descriptor)
+    #expect(previous.outputSchemaIdentifier == record.node.descriptor.outputSchemaIdentifier)
+    let previousID = try previous.nodeID()
+    #expect(previousID != original.analysisNodeID)
+    let committed = try await project.storeArtifact(
+        GlifiKeynessArtifactPayload(analysisNodeID: previousID, comparison: original.comparison),
+        descriptor: previous)
+    let previousRecord = try #require(committed.artifacts.first { $0.node.id == previousID })
+    let bytes = try await project.artifactData(for: previousRecord.artifactID)
+    let reopened = try GlifiProjectPackage.open(at: root.appending(path: "Keyness.glifi"))
+    #expect(try await reopened.artifactData(for: previousRecord.artifactID) == bytes)
+    let current = try await engine.compareKeyness(
+        in: reopened, targetSourceRevisionIDs: [target], referenceSourceRevisionIDs: [reference])
+    #expect(current.artifactID == original.artifactID)
+    #expect(current.analysisNodeID != previousID)
+    #expect(await reopened.snapshot() == committed)
+}
+
+@Test("Distribution revisions change only the affected derived cache identities")
+func distributionDescriptorRevisionsAreSelective() async throws {
+    let root = try keynessCacheRoot()
+    defer { try? FileManager.default.removeItem(at: root) }
+    let (project, target, reference) = try await keynessCacheProject(in: root)
+    let snapshot = await project.snapshot()
+    func descriptor<Value: GlifiDerivedAnalysisResult>(
+        _ type: Value.Type, _ artifactType: String
+    ) throws -> GlifiAnalysisDescriptor {
+        try GlifiAnalysisArtifactDescriptorFactory.derived(
+            type, artifactTypeIdentifier: artifactType, snapshot: snapshot,
+            sourceRevisionIDs: [target, reference], selectionDomain: "distribution-revision.v1",
+            selectionValues: [target.canonicalValue, reference.canonicalValue],
+            analyticalUnitIdentifier: "document.v1", representationIdentifier: "reference.v1",
+            resolvedParameters: [:], linguisticProfileIdentifiers: [], dependencies: [])
+    }
+    let changed = try [
+        descriptor(GlifiCorpusAssociationAnalysis.self, "studio.glifi.artifact.corpus-association"),
+        descriptor(
+            GlifiGroupMetricComparison.self, "studio.glifi.artifact.group-metric-comparison"),
+        descriptor(GlifiPostHocAnalysis.self, "studio.glifi.artifact.group-metric-posthoc"),
+        descriptor(GlifiMetricCorrelationAnalysis.self, "studio.glifi.artifact.metric-correlation"),
+        descriptor(
+            GlifiPairedMetricAnalysis.self, "studio.glifi.artifact.paired-metric-comparison"),
+    ]
+    for current in changed {
+        let previous = try distributionLegacyDescriptor(current)
+        #expect(current.algorithmVersion == "2")
+        #expect(previous.algorithmVersion == "1")
+        #expect(current.outputSchemaIdentifier == previous.outputSchemaIdentifier)
+        #expect(current.algorithmIdentifier == previous.algorithmIdentifier)
+        #expect(try current.nodeID() != previous.nodeID())
+        #expect(
+            try JSONDecoder().decode(
+                GlifiAnalysisDescriptor.self, from: JSONEncoder().encode(previous)) == previous)
+    }
+    let unaffected = try [
+        descriptor(GlifiCorpusDispersionAnalysis.self, "studio.glifi.artifact.corpus-dispersion"),
+        descriptor(
+            GlifiCorpusLexicalNetworkAnalysis.self, "studio.glifi.artifact.corpus-lexical-network"),
+        descriptor(GlifiCodingAgreementAnalysis.self, "studio.glifi.artifact.coding-agreement"),
+    ]
+    for current in unaffected {
+        let previous = try distributionLegacyDescriptor(current)
+        #expect(current.algorithmVersion == "1")
+        #expect(current == previous)
+        #expect(try current.nodeID() == previous.nodeID())
+    }
+}
+
+private func distributionLegacyDescriptor(
+    _ descriptor: GlifiAnalysisDescriptor
+) throws -> GlifiAnalysisDescriptor {
+    var object = try #require(
+        JSONSerialization.jsonObject(
+            with: JSONEncoder().encode(descriptor)) as? [String: Any])
+    object["algorithmVersion"] = "1"
+    return try JSONDecoder().decode(
+        GlifiAnalysisDescriptor.self, from: JSONSerialization.data(withJSONObject: object))
+}
+
 private func keynessCacheRoot() throws -> URL {
     let root = FileManager.default.temporaryDirectory.appending(
         path: "GlifiKeynessCacheTests-\(UUID().uuidString)", directoryHint: .isDirectory)

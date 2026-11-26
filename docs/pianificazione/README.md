@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.34 |
+| Versione | 1.6.36 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-24 |
+| Ultima modifica | 2026-11-26 |
 | Approvazione | Non applicabile; registro operativo |
 
 Le schede DoR sono gate di ingresso al coding (GS-STD-001-07). Ogni unità di
@@ -28,6 +28,16 @@ distribuisce quattro agenti su query, feedback statico, revisione e integrazione
 preservando i confini del lavoro già in corso nell'altra chat.
 
 ## Indice
+
+- [GS-DOR-326 — Valutazione beta/gamma](dor-ottimizzazione-beta-gamma.md) — Confronto e criterio di scarto del candidato
+- [GS-DOR-325 — Quantile normale protetto](dor-quantile-normale-newton.md) — Accelerazione con fallback numerico conservato
+- [GS-DOR-324 — Prestazioni statistiche](dor-performance-statistica.md) — Baseline del prodotto, keyness, controlli e misure coordinate
+
+- [GS-DOR-323 — Fixture originale LR/FLR](dor-fixture-lr-flr-originale.md) — Dati e attese originali con discriminanti matematici conservati
+- [GS-DOR-321 — Distribuzione delle licenze](dor-distribuzione-licenze.md) — Inventario verificabile e testi nel bundle
+- [GS-DOR-320 — Cancellazione degli export delle viste](dor-cancellazione-export-viste.md) — Pubblicazione e cleanup al confine di commit
+- [GS-DOR-319 — Correttezza delle distribuzioni](dor-correttezza-algoritmica.md) — Nuclei numerici, provenienza e compatibilità
+- [GS-DOR-318 — Licenze e provenienza](dor-licenze-e-provenienza.md) — Fonti, attribuzioni e confini dell’audit
 
 - [GS-DOR-317 — Cancellazione dell’export scientifico](dor-cancellazione-export-scientifico.md) — Ready
 

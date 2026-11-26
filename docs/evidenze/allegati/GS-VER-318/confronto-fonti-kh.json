@@ -1,0 +1,130 @@
+{
+  "schema": "studio.glifi.algorithm-source-comparison",
+  "schemaVersion": 1,
+  "reviewedOn": "2026-11-26",
+  "method": "Manual comparison of current and introduction Swift with upstream source routines and published mathematical specifications. Includes source structure, data structures, observable constants, numerical guards and comments. Not an automated similarity certification or reconstruction of historical authoring. External sources were inspected in memory and not vendored.",
+  "sources": [
+    {
+      "id": "kh-som",
+      "url": "https://raw.githubusercontent.com/ko-ichi-h/khcoder/7b7fbc1ae3b3b59c524189fbcbb1c616cb6ef006/kh_lib/plotR/som.pm",
+      "sha256": "f85e9534cbf449911f8b8c813a56d381191086a0f0934853e9ec293a6283843c",
+      "bytes": 17750,
+      "sourceRetained": false
+    },
+    {
+      "id": "kh-chi",
+      "url": "https://raw.githubusercontent.com/ko-ichi-h/khcoder/7b7fbc1ae3b3b59c524189fbcbb1c616cb6ef006/kh_lib/kh_cod/func.pm",
+      "sha256": "04c065214dc474722f36236eeec5568e629ee6ad70172cf71b8808b467aeded7",
+      "bytes": 21957,
+      "sourceRetained": false
+    },
+    {
+      "id": "r-som-R/som.R",
+      "url": "https://raw.githubusercontent.com/cran/som/a56214b9583cea8e4f2856d28d9461072ec3d20c/R/som.R",
+      "sha256": "b44a336a2b3675d11a64c932eabe1d8cd9e2c02c7c98f9487ef77fd61be23d35",
+      "bytes": 12672,
+      "sourceRetained": false
+    },
+    {
+      "id": "r-som-src/som.cc",
+      "url": "https://raw.githubusercontent.com/cran/som/a56214b9583cea8e4f2856d28d9461072ec3d20c/src/som.cc",
+      "sha256": "cd084122702e2ba30a16b9f360501c38943f7fb765c539ea39ce8242ba1162a8",
+      "bytes": 6755,
+      "sourceRetained": false
+    },
+    {
+      "id": "r-som-src/SomParam.h",
+      "url": "https://raw.githubusercontent.com/cran/som/a56214b9583cea8e4f2856d28d9461072ec3d20c/src/SomParam.h",
+      "sha256": "f4c4f96401fe31e9e72d66a803ace1a30a8f5e4dd5dbb2b04c579f9e5f0e8c4e",
+      "bytes": 3981,
+      "sourceRetained": false
+    },
+    {
+      "id": "r-som-DESCRIPTION",
+      "url": "https://raw.githubusercontent.com/cran/som/a56214b9583cea8e4f2856d28d9461072ec3d20c/DESCRIPTION",
+      "sha256": "f94904371c2e6e0415f695e74ec1b0ce3306f1f907360a17d9cec23975ed817a",
+      "bytes": 537,
+      "sourceRetained": false
+    },
+    {
+      "id": "r-hclust",
+      "url": "https://svn.r-project.org/R/trunk/src/library/stats/src/hclust.f",
+      "revisionETag": "85237//trunk/src/library/stats/src/hclust.f",
+      "sha256": "eec23ca555f6ed8a3eabdf2c2aea74d8a07eab545defac4d730109716db3168c",
+      "sourceRetained": false
+    },
+    {
+      "id": "r-chisq",
+      "url": "https://svn.r-project.org/R/trunk/src/library/stats/R/chisq.test.R",
+      "inspection": "Primary source inspected with web tool 2026-11-26",
+      "sourceRetained": false
+    }
+  ],
+  "targets": [
+    {
+      "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiTermExtraction.swift",
+      "currentSHA256": "63191009581edd36ffa8c3970e7360d32e0e5dff7aaeccf27ef261fbed7fdaf5",
+      "introductionCommit": "94c564bca6374bdfc114c96d026559b99cecc538",
+      "introductionSHA256": "bf282f2daa8fb4273e1f58730d80945787630d34742b02d4104be0e6b169bcbb"
+    },
+    {
+      "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiKHSelfOrganizingMap.swift",
+      "currentSHA256": "541db5a7b9c18765a58a5b1ce0f76be8be9d64fa4d77f55812d9f3f819b045c9",
+      "introductionCommit": "94c564bca6374bdfc114c96d026559b99cecc538",
+      "introductionSHA256": "f65de65445a4873f2a9d5bd609bc2ac4bea19834c62ddf82f7ba25e234b8b6ca"
+    },
+    {
+      "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiKHChiSquareAnalysis.swift",
+      "currentSHA256": "724f3e1dfd805cb1177b3db9cb3f3d62626b4107ecb7425af943fcaa75c6b832",
+      "introductionCommit": "d368285010dca17f5ef72819da25b6890d0de32a",
+      "introductionSHA256": "ffcd18becc9a1a4c9128aa8f0de71810d9a78c7bc99dc4ccf1a99c25f7d77a3b"
+    },
+    {
+      "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiKHLegacyClustering.swift",
+      "currentSHA256": "b64b52eb204eaf1f97c0fb9427260be99546799ffe45d4b37158ea69f9c89b95",
+      "introductionCommit": "d368285010dca17f5ef72819da25b6890d0de32a",
+      "introductionSHA256": "53b902160891e71462951d890a822d86f9d4c1e1fd005fde1db0d81da321936c"
+    }
+  ],
+  "findings": [
+    {
+      "area": "SOM",
+      "commonBehavior": "Two phases; cyclic observation order; inverse learning schedule with C=L/100; linear radius; Gaussian neighbor; PCA grid plus/minus two deviations with largest axis assigned to widest grid dimension.",
+      "structuralDifferences": "Upstream uses R prcomp, TNT matrices and full delta/neighborhood matrices with SomParam function-pointer dispatch. Swift uses scalar loops, hypot distances, direct LAPACK thin SVD, bounded state, cancellation and explicit range failures; no R/C++ wrapper or dispatch reproduced.",
+      "conclusion": "Source-informed behavioral reimplementation is demonstrated; no unambiguous expressive copy identified in reviewed routines, without proving clean-room or absence of historical derivation."
+    },
+    {
+      "area": "Ward.D2",
+      "commonBehavior": "Squared dissimilarity and Lance-Williams Ward recurrence, square-root heights.",
+      "structuralDifferences": "R hclust uses condensed storage, nearest-neighbor arrays and cache invalidation. Swift scans all active pairs with stable project identities and returns project merge records; the existing pre-KH native hierarchical code already uses global pair scans and project identities. Current stable recurrence is algebraically rearranged and normalized for range.",
+      "conclusion": "Shared mathematical recurrence and compatibility do not establish an expressive port. Reviewed structures differ materially."
+    },
+    {
+      "area": "KHChiSquare",
+      "commonBehavior": "Pearson/Yates for 2x2, Pearson and standardized residual semantics.",
+      "structuralDifferences": "KH constructs R command text and parses process output; native Swift directly accumulates Int/UInt128 marginals and exact signed products, produces typed states, compensated sums and domain failures. R chisq.test has vector/factor interfaces, simulation, different error/warning and result wrapping not copied into Swift.",
+      "conclusion": "Reference semantics are established; no specific copied expressive structure identified in reviewed code."
+    },
+    {
+      "area": "LR/FLR",
+      "commonBehavior": "Published count/type adjacency formulas and add-one smoothing; native log1p/exp evaluation.",
+      "structuralDifferences": "Swift uses typed component observations, bounded candidates, ordered UTF8 evidence extraction and deterministic Unicode representative handling. Official TermExtract software site was inaccessible, so no primary software-source comparison was possible.",
+      "conclusion": "Formula correspondence inspected against primary papers, not a claimed audit of unavailable TermExtract source. Historical oracle/test explicitly used an adapted paper example; GS-VER-323 replaces it with nine original candidates on five artificial symbols, different counts and adjacency structure, retaining only the published formulas as references."
+    }
+  ],
+  "limitation": "A current or historical native-original comment is an authoring claim, not independent proof. No permission to copy GPL implementation code is inferred from this review. A positively identified code port would require applicable license approval or independent replacement; none was unambiguously demonstrated in this sample.",
+  "fixtureReplacement": {
+    "evidence": "GS-VER-323",
+    "files": [
+      {
+        "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTermExtractionTests.swift",
+        "sha256": "820e38a6006b5d601e8f68b5a86b6d92cb097ed7271b41f5313328dfcfa4ecd4"
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/Oracles/Python/kh_lexical_profiles.py",
+        "sha256": "6a5ba37125e58b1f4b2b363edfcdfc2c74af111acd7a1c331faaa285c1b3b66c"
+      }
+    ],
+    "status": "Source data frozen; tests and gate recorded separately by GS-VER-323"
+  }
+}

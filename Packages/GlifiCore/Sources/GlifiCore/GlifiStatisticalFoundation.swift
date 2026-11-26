@@ -59,10 +59,18 @@ public enum GlifiStatisticalFoundation {
                 category: .invalidInput
             )
         }
-        let x = degreesOfFreedom / (degreesOfFreedom + statistic * statistic)
-        let twoSided = clampProbability(
-            regularizedIncompleteBeta(x, degreesOfFreedom / 2, 0.5)
-        )
+        let twoSided: Double
+        if statistic == 0 {
+            twoSided = 1
+        } else {
+            // Log odds preserve both tiny t values and tails whose squared t
+            // would overflow, without subtracting a rounded probability from 1.
+            twoSided = try regularizedIncompleteBetaFromLogOdds(
+                2 * log(abs(statistic)) - log(degreesOfFreedom),
+                degreesOfFreedom / 2,
+                0.5
+            )
+        }
         switch alternative {
         case .twoSided:
             return twoSided
@@ -91,15 +99,10 @@ public enum GlifiStatisticalFoundation {
             )
         }
         guard statistic > 0 else { return 1 }
-        let x =
-            denominatorDegreesOfFreedom
-            / (denominatorDegreesOfFreedom + numeratorDegreesOfFreedom * statistic)
-        return clampProbability(
-            regularizedIncompleteBeta(
-                x,
-                denominatorDegreesOfFreedom / 2,
-                numeratorDegreesOfFreedom / 2
-            )
+        return try regularizedIncompleteBetaFromLogOdds(
+            log(numeratorDegreesOfFreedom) + log(statistic) - log(denominatorDegreesOfFreedom),
+            denominatorDegreesOfFreedom / 2,
+            numeratorDegreesOfFreedom / 2
         )
     }
 
@@ -214,55 +217,79 @@ public enum GlifiStatisticalFoundation {
     }
 }
 
-private func clampProbability(_ value: Double) -> Double {
-    min(max(value, 0), 1)
+/// Original implementation from the mathematical identities DLMF 8.17.4,
+/// 8.17.22 and 8.17.23.
+///
+/// The continued fraction is evaluated from its deepest
+/// denominator, with independently doubled truncation depths; no external
+/// implementation or coefficient table is incorporated.
+private func regularizedIncompleteBetaFromLogOdds(
+    _ logOdds: Double,
+    _ firstShape: Double,
+    _ secondShape: Double
+) throws -> Double {
+    guard firstShape > 0, secondShape > 0,
+        (firstShape + secondShape).isFinite, logOdds.isFinite
+    else {
+        throw statisticalFailure("statistics.non-finite-result", category: .invalidInput)
+    }
+    // logOdds = log((1-x)/x). Evaluate the smaller exponential only.
+    let correction = log1p(exp(-abs(logOdds)))
+    var logX = logOdds > 0 ? -logOdds - correction : -correction
+    var logComplement = logOdds > 0 ? -correction : logOdds - correction
+    var a = firstShape
+    var b = secondShape
+    let useComplement = logX >= log((a + 1) / (a + b + 2))
+    if useComplement {
+        swap(&logX, &logComplement)
+        swap(&a, &b)
+    }
+    let x = exp(logX)
+    let fraction = try incompleteBetaFractionFromBottom(a: a, b: b, x: x)
+    let logProbability =
+        logGamma(a + b) - logGamma(a) - logGamma(b)
+        + a * logX + b * logComplement - log(a) + log(fraction)
+    guard logProbability.isFinite else {
+        throw statisticalFailure("statistics.non-finite-result", category: .invalidInput)
+    }
+    let probability = useComplement ? -expm1(logProbability) : exp(logProbability)
+    guard probability.isFinite, probability >= -1e-12, probability <= 1 + 1e-12 else {
+        throw statisticalFailure("statistics.non-finite-result", category: .invalidInput)
+    }
+    return min(max(probability, 0), 1)
 }
 
-/// Regularized incomplete beta function `I_x(a, b)`, via the Lentz continued
-/// fraction (Numerical Recipes `betacf`/`betai`), each to double-precision
-/// convergence.
-private func regularizedIncompleteBeta(_ x: Double, _ a: Double, _ b: Double) -> Double {
-    guard x > 0 else { return 0 }
-    guard x < 1 else { return 1 }
-    let logBeta = logGamma(a + b) - logGamma(a) - logGamma(b)
-    let front = exp(logBeta + a * log(x) + b * log(1 - x))
-    if x < (a + 1) / (a + b + 2) {
-        return front * incompleteBetaContinuedFraction(a, b, x) / a
+private func incompleteBetaFractionFromBottom(a: Double, b: Double, x: Double) throws -> Double {
+    var previous: Double?
+    var depth = 16
+    while depth <= 2_048 {
+        try Task.checkCancellation()
+        var denominator = 1.0
+        for index in stride(from: depth, through: 1, by: -1) {
+            let half = Double(index / 2)
+            let offset = a + 2 * half
+            let coefficient: Double
+            if index.isMultiple(of: 2) {
+                coefficient = (half / (offset - 1)) * ((b - half) / offset) * x
+            } else {
+                coefficient = -((a + half) / offset) * ((a + b + half) / (offset + 1)) * x
+            }
+            denominator = 1 + coefficient / denominator
+            guard denominator.isFinite, denominator != 0 else {
+                throw statisticalFailure("statistics.non-finite-result", category: .invalidInput)
+            }
+        }
+        let fraction = 1 / denominator
+        if let previous, fraction > 0,
+            abs(fraction - previous) <= 8 * Double.ulpOfOne * abs(fraction)
+        {
+            return fraction
+        }
+        previous = fraction
+        depth *= 2
     }
-    return 1 - front * incompleteBetaContinuedFraction(b, a, 1 - x) / b
-}
-
-private func incompleteBetaContinuedFraction(_ a: Double, _ b: Double, _ x: Double) -> Double {
-    let tiny = 1e-300
-    var d = 1 - (a + b) * x / (a + 1)
-    if abs(d) < tiny { d = tiny }
-    d = 1 / d
-    var h = d
-    var c = 1.0
-    for step in 1...300 {
-        let stepValue = Double(step)
-        let evenTwo = 2 * stepValue
-        let evenCoefficient =
-            stepValue * (b - stepValue) * x / ((a - 1 + evenTwo) * (a + evenTwo))
-        d = 1 + evenCoefficient * d
-        if abs(d) < tiny { d = tiny }
-        c = 1 + evenCoefficient / c
-        if abs(c) < tiny { c = tiny }
-        d = 1 / d
-        h *= d * c
-
-        let oddCoefficient =
-            -(a + stepValue) * (a + b + stepValue) * x / ((a + evenTwo) * (a + 1 + evenTwo))
-        d = 1 + oddCoefficient * d
-        if abs(d) < tiny { d = tiny }
-        c = 1 + oddCoefficient / c
-        if abs(c) < tiny { c = tiny }
-        d = 1 / d
-        let delta = d * c
-        h *= delta
-        if abs(delta - 1) < 1e-14 { break }
-    }
-    return h
+    // A bounded fraction without observed convergence cannot certify a p-value.
+    throw statisticalFailure("statistics.non-finite-result", category: .invalidInput)
 }
 
 private func statisticalFailure(

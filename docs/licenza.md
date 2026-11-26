@@ -1,13 +1,15 @@
+<!-- SPDX-License-Identifier: BSD-3-Clause -->
+
 # Politica di licenza
 
 | Campo | Valore |
 | --- | --- |
 | Identificatore | GS-LIC-001 |
 | Tipo | Politica di licenza del progetto |
-| Versione | 0.1.0 |
+| Versione | 0.2.0 |
 | Stato | Attivo |
 | Responsabile | Glifi Studio contributors |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-26 |
 | Approvazione | Decisione dell'iniziatore del progetto, 2026-09-15 |
 | Licenza | BSD 3-Clause (`BSD-3-Clause`) |
 
@@ -58,3 +60,26 @@ Ogni rilascio deve includere:
 - l'inventario delle dipendenze e delle licenze applicabili;
 - gli avvisi di terzi richiesti;
 - l'identificatore SPDX nei metadati del pacchetto, quando supportato.
+
+## 7. Registro di provenienza e distribuzione
+
+[GS-LIC-002](algoritmi-e-provenienza.md) distingue riferimento matematico,
+implementazione da specifica, adattamento di codice, fixture e strumento esterno.
+L’[inventario controllato](../Config/Licenses/materials.json) riporta le condizioni
+della fonte senza applicarle automaticamente all’intero progetto.
+
+La distribuzione dell’app conserva il testo BSD del progetto e gli
+[avvisi di terzi](../THIRD_PARTY_NOTICES.txt). Il controllo del bundle ne verifica
+la presenza e l’integrità; non si limita alla presenza del file nel repository.
+Un futuro pacchetto CLI o sorgente deve conservare i medesimi testi applicabili.
+
+La fixture [Pinocchio](../Fixtures/Linguistics/it-gold-v1/ATTRIBUTION.md) è
+un’eccezione esplicita alla licenza generale: eventuali apporti protetti della
+trascrizione restano sotto le condizioni attribuite alla fonte, mentre
+annotazioni e metadati originali sono BSD. Le porzioni testuali nei JSON non sono
+relicenziate dalla BSD; la fixture non viene inclusa come risorsa dell’app.
+
+R, i pacchetti degli oracoli, veraPDF, Python e azioni CI rimangono strumenti
+esterni con licenze proprie. Prima di copiarli, collegarli o distribuirli nel
+prodotto serve una nuova valutazione. Una citazione di articolo o manuale non
+è una concessione di licenza sul relativo codice, testo, tabella o dato.

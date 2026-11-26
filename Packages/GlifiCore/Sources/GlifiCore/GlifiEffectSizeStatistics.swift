@@ -62,7 +62,7 @@ extension GlifiStatisticalFoundation {
             throw effectSizeFailure("statistics.insufficient-sample-size")
         }
         let factor = exp(
-            lgamma(degrees / 2) - log((degrees / 2).squareRoot()) - lgamma((degrees - 1) / 2)
+            logGamma(degrees / 2) - log((degrees / 2).squareRoot()) - logGamma((degrees - 1) / 2)
         )
         let standardError =
             ((first + second) / (first * second) + d * d / (2 * (first + second))).squareRoot()

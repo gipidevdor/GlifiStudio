@@ -1,0 +1,52 @@
+{
+  "bundleName": "GlifiStudio.app",
+  "documentLocalizations": {
+    "en": "Glifi Studio Project",
+    "it": "Progetto Glifi Studio"
+  },
+  "documentTypeIdentifier": "studio.glifi.project",
+  "finderOrLaunchServicesPresentationVerified": false,
+  "generatedBuildMetadata": {
+    "minimumSystemMajorVersion": 27,
+    "minimumSystemVersion": "27.0",
+    "sdkMajorVersion": 27,
+    "sdkName": "macosx27.2"
+  },
+  "payloadInspection": {
+    "forbiddenDirectoryNames": [
+      ".github",
+      "benchmarks",
+      "config",
+      "design",
+      "distribution",
+      "docs",
+      "fixtures",
+      "packages",
+      "scripts",
+      "tests"
+    ],
+    "forbiddenExtensions": [
+      "xcconfig",
+      "xctest"
+    ],
+    "inspectedEntries": 17,
+    "matchesWithinDeclaredScope": 0
+  },
+  "rawDescriptionKey": "Progetto Glifi Studio",
+  "requiredResources": [
+    "PrivacyInfo.xcprivacy",
+    "Assets.car",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.txt"
+  ],
+  "schema": "studio.glifi.macos-bundle-verification",
+  "schemaVersion": 1,
+  "secureStateRestorationRuntimeVerified": false,
+  "verifiedScope": [
+    "Raw document and exported UTI declarations.",
+    "Generated minimum macOS and SDK version metadata.",
+    "Required packaged resources and Foundation localized string lookup for it/en.",
+    "Byte identity of project license and third-party notices against repository originals.",
+    "Bundle entries matching the listed directory names or file extensions."
+  ]
+}
