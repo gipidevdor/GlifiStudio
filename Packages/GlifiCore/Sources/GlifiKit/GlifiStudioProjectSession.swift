@@ -746,44 +746,7 @@ public actor GlifiStudioProjectSession {
             generation: current.generation,
             createdAt: Date()
         )
-        _ = try GlifiStudioVisualExport.verify(files)
-        let fileManager = FileManager.default
-        guard !fileManager.fileExists(atPath: destinationURL.path) else {
-            throw GlifiStudioFailure(
-                GlifiFailure(
-                    code: "visual-export.destination-exists",
-                    category: .invalidInput,
-                    operation: .export,
-                    retryDisposition: .afterCorrection,
-                    retainedState: .unchanged,
-                    messageKey: "failure.visual-export.destination-exists"
-                ))
-        }
-        let staging = destinationURL.deletingLastPathComponent().appending(
-            path: ".glifi-visual-export-\(UUID().uuidString)", directoryHint: .isDirectory)
-        do {
-            try fileManager.createDirectory(at: staging, withIntermediateDirectories: false)
-            for (path, data) in files {
-                try data.write(to: staging.appending(path: path), options: .withoutOverwriting)
-            }
-            try fileManager.moveItem(at: staging, to: destinationURL)
-        } catch {
-            try? fileManager.removeItem(at: staging)
-            throw GlifiStudioFailure(
-                GlifiFailure(
-                    code: "visual-export.write-failed",
-                    category: .transientIO,
-                    operation: .export,
-                    retryDisposition: .transientBackoff,
-                    retainedState: .unchanged,
-                    messageKey: "failure.visual-export.write-failed"
-                ))
-        }
-        return GlifiStudioVisualExportReceipt(
-            manifestDigest: GlifiStudioVisualExport.digest(
-                files[GlifiStudioVisualExport.manifestFileName] ?? Data()),
-            fileCount: files.count
-        )
+        return try GlifiStudioVisualExport.write(files, to: destinationURL)
     }
 
     /// Appends one change to the qualitative history and returns the new projection.

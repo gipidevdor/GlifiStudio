@@ -11,6 +11,8 @@ cd "$project_directory"
 print "Controlli statici (senza Swift format né build Xcode)"
 
 Scripts/check-repository.py
+python3 -B Scripts/check-licenses-tests.py
+python3 -B Scripts/check-licenses.py
 Scripts/check-secrets.py
 Scripts/check-github-config.py
 Scripts/check-naming.py

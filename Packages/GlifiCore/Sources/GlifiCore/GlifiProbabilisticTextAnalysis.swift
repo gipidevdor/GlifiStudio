@@ -621,13 +621,13 @@ public enum GlifiLatentDirichletAllocation {
             if sweep >= burnIn, (sweep - burnIn + 1).isMultiple(of: thinning) {
                 if retainLogLikelihoods {
                     var likelihood = 0.0
-                    let logBeta: Double = lgamma(beta)
-                    let logMass: Double = lgamma(priorMass)
+                    let logBeta: Double = logGamma(beta)
+                    let logMass: Double = logGamma(priorMass)
                     for topic in 0..<topicCount {
-                        likelihood += logMass - lgamma(Double(totals[topic]) + priorMass)
+                        likelihood += logMass - logGamma(Double(totals[topic]) + priorMass)
                         for word in 0..<vocabularyCount {
                             let count = termCounts[word * topicCount + topic]
-                            if count > 0 { likelihood += lgamma(Double(count) + beta) - logBeta }
+                            if count > 0 { likelihood += logGamma(Double(count) + beta) - logBeta }
                         }
                     }
                     guard likelihood.isFinite else {

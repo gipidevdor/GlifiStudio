@@ -128,7 +128,8 @@ public enum GlifiContingencyAnalysis {
                 category: .insufficientData
             )
         }
-        let pValue = chiSquareUpperTailProbability(chiSquare, degreesOfFreedom: degreesOfFreedom)
+        let pValue = try chiSquareUpperTailProbability(
+            chiSquare, degreesOfFreedom: degreesOfFreedom)
         let minimumDimension = min(includedRowIndices.count, includedColumnIndices.count)
         let cramersV = (chiSquare / (Double(total) * Double(minimumDimension - 1))).squareRoot()
         return GlifiContingencyAssociation(
@@ -144,83 +145,92 @@ public enum GlifiContingencyAnalysis {
 }
 
 /// Upper-tail probability of a chi-square distribution: `P(χ²_df > x)`.
-func chiSquareUpperTailProbability(_ chiSquare: Double, degreesOfFreedom: Int) -> Double {
-    guard chiSquare.isFinite, chiSquare >= 0, degreesOfFreedom > 0 else { return 1 }
-    if chiSquare == 0 { return 1 }
-    return regularizedUpperIncompleteGamma(Double(degreesOfFreedom) / 2, chiSquare / 2)
-}
-
-/// Regularized upper incomplete gamma function `Q(a, x)`, via the Numerical
-/// Recipes series/continued-fraction split (series for `x < a+1`, continued
-/// fraction otherwise), each carried to double-precision convergence.
-private func regularizedUpperIncompleteGamma(_ a: Double, _ x: Double) -> Double {
-    guard a > 0, x >= 0 else { return 1 }
-    guard x != 0 else { return 1 }
-    if x < a + 1 {
-        return 1 - regularizedLowerIncompleteGammaSeries(a, x)
+func chiSquareUpperTailProbability(_ chiSquare: Double, degreesOfFreedom: Int) throws -> Double {
+    guard chiSquare.isFinite, chiSquare >= 0, degreesOfFreedom > 0 else {
+        throw contingencyFailure("statistics.invalid-distribution-parameters")
     }
-    return regularizedUpperIncompleteGammaContinuedFraction(a, x)
+    guard chiSquare > 0 else { return 1 }
+    return try regularizedUpperIncompleteGamma(Double(degreesOfFreedom) / 2, chiSquare / 2)
 }
 
-private func regularizedLowerIncompleteGammaSeries(_ a: Double, _ x: Double) -> Double {
-    var sum = 1.0 / a
-    var term = sum
-    var n = a
-    for _ in 0..<500 {
-        n += 1
-        term *= x / n
-        sum += term
-        if abs(term) < abs(sum) * 1e-16 { break }
-    }
-    return sum * exp(-x + a * log(x) - logGamma(a))
-}
-
-private func regularizedUpperIncompleteGammaContinuedFraction(_ a: Double, _ x: Double) -> Double {
-    let tiny = 1e-300
-    var b = x + 1 - a
-    var c = 1 / tiny
-    var d = 1 / b
-    var h = d
-    for i in 1...500 {
-        let an = -Double(i) * (Double(i) - a)
-        b += 2
-        d = an * d + b
-        if abs(d) < tiny { d = tiny }
-        c = b + an / c
-        if abs(c) < tiny { c = tiny }
-        d = 1 / d
-        let delta = d * c
-        h *= delta
-        if abs(delta - 1) < 1e-16 { break }
-    }
-    return exp(-x + a * log(x) - logGamma(a)) * h
-}
-
-/// Lanczos approximation (g=7, n=9) of `log Γ(x)`, accurate to double precision.
+/// Original evaluation of the mathematical identities DLMF 8.7.1 and 8.9.2.
 ///
-/// Shared across GlifiCore's statistical modules that need `logΓ`.
+/// The series uses compensated summation; the uncontracted gamma fraction is
+/// evaluated from its deepest denominator with doubled truncation depths.
+private func regularizedUpperIncompleteGamma(_ shape: Double, _ argument: Double) throws -> Double {
+    guard argument > 0 else { return 1 }
+    let logarithm: Double
+    let isComplement: Bool
+    if argument < shape + 1 {
+        var term = 1.0
+        var sum = 1.0
+        var compensation = 0.0
+        var converged = false
+        for index in 1...16_384 {
+            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
+            term *= argument / (shape + Double(index))
+            let adjusted = term - compensation
+            let next = sum + adjusted
+            compensation = (next - sum) - adjusted
+            sum = next
+            if term <= Double.ulpOfOne * sum {
+                converged = true
+                break
+            }
+        }
+        guard converged else {
+            throw contingencyFailure("statistics.non-finite-result")
+        }
+        logarithm = -argument + shape * log(argument) - logGamma(shape + 1) + log(sum)
+        isComplement = true
+    } else {
+        var previous: Double?
+        var convergedFraction: Double?
+        var depth = 16
+        while depth <= 16_384 {
+            try Task.checkCancellation()
+            var denominator = 1.0
+            for index in stride(from: depth, through: 1, by: -1) {
+                let half = Double(index / 2)
+                let numerator = index.isMultiple(of: 2) ? half : half + 1 - shape
+                denominator = 1 + (numerator / argument) / denominator
+                guard denominator.isFinite, denominator != 0 else {
+                    throw contingencyFailure("statistics.non-finite-result")
+                }
+            }
+            let fraction = (1 / argument) / denominator
+            if let previous, fraction > 0,
+                abs(fraction - previous) <= 8 * Double.ulpOfOne * abs(fraction)
+            {
+                convergedFraction = fraction
+                break
+            }
+            previous = fraction
+            depth *= 2
+        }
+        guard let fraction = convergedFraction else {
+            throw contingencyFailure("statistics.non-finite-result")
+        }
+        logarithm = -argument + shape * log(argument) - logGamma(shape) + log(fraction)
+        isComplement = false
+    }
+    guard logarithm.isFinite else {
+        throw contingencyFailure("statistics.non-finite-result")
+    }
+    // expm1 preserves a small upper tail when the lower probability is near 1.
+    let probability = isComplement ? -expm1(logarithm) : exp(logarithm)
+    guard probability.isFinite, probability >= -1e-12, probability <= 1 + 1e-12 else {
+        throw contingencyFailure("statistics.non-finite-result")
+    }
+    return min(max(probability, 0), 1)
+}
+
+/// The platform's reentrant log-gamma function; no coefficient table is embedded.
+///
+/// The SDK marks `lgamma` as not thread-safe; `lgamma_r` uses caller-owned sign storage.
 func logGamma(_ x: Double) -> Double {
-    let coefficients: [Double] = [
-        0.999_999_999_999_809_9,
-        676.520_368_121_885_1,
-        -1259.139_216_722_402_8,
-        771.323_428_777_653_13,
-        -176.615_029_162_140_59,
-        12.507_343_278_686_905,
-        -0.138_571_095_265_720_12,
-        9.984_369_578_019_572e-6,
-        1.505_632_735_149_312e-7,
-    ]
-    if x < 0.5 {
-        return log(.pi / sin(.pi * x)) - logGamma(1 - x)
-    }
-    let xAdjusted = x - 1
-    let t = xAdjusted + 7.5
-    var accumulator = coefficients[0]
-    for index in 1..<coefficients.count {
-        accumulator += coefficients[index] / (xAdjusted + Double(index))
-    }
-    return 0.5 * log(2 * .pi) + (xAdjusted + 0.5) * log(t) - t + log(accumulator)
+    var sign: Int32 = 0
+    return lgamma_r(x, &sign)
 }
 
 func contingencyFailure(

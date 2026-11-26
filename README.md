@@ -117,3 +117,5 @@ Il repository è privato. Per contribuire, segui la [guida ai contributi](CONTRI
 
 [BSD 3-Clause](LICENSE). Ambito, attribuzioni e materiali di terzi sono definiti
 nella [politica di licenza](docs/licenza.md).
+Le eccezioni sono registrate negli [avvisi di terzi](THIRD_PARTY_NOTICES.txt)
+e nel [registro delle fonti](docs/algoritmi-e-provenienza.md).

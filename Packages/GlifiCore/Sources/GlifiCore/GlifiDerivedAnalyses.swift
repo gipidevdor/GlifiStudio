@@ -119,7 +119,7 @@ extension GlifiAnalysisArtifactDescriptorFactory {
         try GlifiAnalysisDescriptor(
             artifactTypeIdentifier: artifactTypeIdentifier,
             algorithmIdentifier: Value.analysisIdentifier,
-            algorithmVersion: "1",
+            algorithmVersion: numericalAlgorithmVersion(for: artifactTypeIdentifier),
             corpusIdentifier: snapshot.projectID.canonicalValue,
             corpusVersionDigest: try snapshot.corpusVersionDigest(for: sourceRevisionIDs),
             selectionIdentifier: try selectionIdentifier(
@@ -141,6 +141,23 @@ extension GlifiAnalysisArtifactDescriptorFactory {
             sourceRevisionIDs: sourceRevisionIDs
         )
     }
+
+    /// Recompute only the families affected by the corrected distribution kernels.
+    ///
+    /// Payload schemas remain readable; historical algorithm revision 1 is retained.
+    private static func numericalAlgorithmVersion(for artifactType: String) -> String {
+        switch artifactType {
+        case "studio.glifi.artifact.corpus-association",
+            "studio.glifi.artifact.group-metric-comparison",
+            "studio.glifi.artifact.group-metric-posthoc",
+            "studio.glifi.artifact.metric-correlation",
+            "studio.glifi.artifact.paired-metric-comparison":
+            return "2"
+        default:
+            return "1"
+        }
+    }
+
 }
 
 func derivedAnalysisFailure(

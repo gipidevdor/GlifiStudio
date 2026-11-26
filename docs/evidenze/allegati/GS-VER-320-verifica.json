@@ -1,0 +1,42 @@
+{
+  "evidenceIdentifier": "GS-VER-320",
+  "date": "2026-11-26",
+  "platform": "macOS",
+  "red": {
+    "filter": "visualExportCancellationAfterAdmission",
+    "exitCode": 1,
+    "testDefinitions": 1,
+    "testExecutions": 2,
+    "issues": 6,
+    "observedDefect": "Native and project-command paths publish after cancellation during admission"
+  },
+  "green": {
+    "filter": "visualExport|visualizationExport|projectCommand",
+    "exitCode": 0,
+    "testDefinitions": 13,
+    "testExecutions": 22,
+    "newTestDefinitions": 3,
+    "newTestExecutions": 12,
+    "issues": 0,
+    "durationSeconds": 0.258
+  },
+  "formatLint": {
+    "exitCode": 0,
+    "fileCount": 3
+  },
+  "contracts": {
+    "publicAPIChanged": false,
+    "persistentSchemaChanged": false,
+    "bundleBytesChanged": false,
+    "commitPoint": "Staging directory rename to destination",
+    "preCommitCancellation": "operation.cancelled/cancelled/export/newRequest/unchanged",
+    "postCommitCancellation": "Successful receipt preserved",
+    "cleanup": "Only staging created by the current writer"
+  },
+  "limits": [
+    "Cooperative checkpoints do not interrupt individual synchronous Foundation calls",
+    "No cancellation latency benchmark",
+    "Integrated macOS gate recorded by the coordinator",
+    "No iPadOS run or manual graphical/accessibility audit"
+  ]
+}

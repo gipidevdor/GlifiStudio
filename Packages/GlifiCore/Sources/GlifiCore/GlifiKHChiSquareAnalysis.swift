@@ -299,7 +299,7 @@ func khChiSquarePValue(_ statistic: Double, degreesOfFreedom degrees: Int) throw
     }
     if statistic == 0 { return 1 }
     if degrees <= 1_000 {
-        let result = chiSquareUpperTailProbability(statistic, degreesOfFreedom: degrees)
+        let result = try chiSquareUpperTailProbability(statistic, degreesOfFreedom: degrees)
         guard result.isFinite, (0...1).contains(result) else {
             throw khChiSquareFailure("kh-chi-square.cdf-numeric-range")
         }

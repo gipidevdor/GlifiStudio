@@ -1,0 +1,125 @@
+{
+  "schema": "studio.glifi.license-source-verification",
+  "schemaVersion": 1,
+  "reviewedOn": "2026-11-26",
+  "sourceAPI": "https://it.wikisource.org/w/api.php",
+  "method": "Page revision bodies: remove noinclude blocks, File links, nested template blocks and remaining tags; concatenate page order 9–13; normalize whitespace only; exact substring check for each unmodified local paragraph. No spelling/punctuation/case folding.",
+  "sourceRevisions": [
+    {
+      "title": "Pagina:Le avventure di Pinocchio.djvu/9",
+      "revisionID": 2028448,
+      "url": "https://it.wikisource.org/w/index.php?oldid=2028448",
+      "timestamp": "2018-01-07T19:53:27Z"
+    },
+    {
+      "title": "Pagina:Le avventure di Pinocchio.djvu/10",
+      "revisionID": 2028537,
+      "url": "https://it.wikisource.org/w/index.php?oldid=2028537",
+      "timestamp": "2018-01-07T21:19:23Z"
+    },
+    {
+      "title": "Pagina:Le avventure di Pinocchio.djvu/11",
+      "revisionID": 2433443,
+      "url": "https://it.wikisource.org/w/index.php?oldid=2433443",
+      "timestamp": "2019-11-02T11:41:59Z"
+    },
+    {
+      "title": "Pagina:Le avventure di Pinocchio.djvu/12",
+      "revisionID": 3650771,
+      "url": "https://it.wikisource.org/w/index.php?oldid=3650771",
+      "timestamp": "2026-03-22T08:14:29Z"
+    },
+    {
+      "title": "Pagina:Le avventure di Pinocchio.djvu/13",
+      "revisionID": 2433462,
+      "url": "https://it.wikisource.org/w/index.php?oldid=2433462",
+      "timestamp": "2019-11-02T11:42:04Z"
+    }
+  ],
+  "paragraphChecks": [
+    {
+      "id": "pinocchio-00",
+      "normalizedParagraphFound": true
+    },
+    {
+      "id": "pinocchio-01",
+      "normalizedParagraphFound": true
+    },
+    {
+      "id": "pinocchio-02",
+      "normalizedParagraphFound": true
+    },
+    {
+      "id": "pinocchio-03",
+      "normalizedParagraphFound": true
+    },
+    {
+      "id": "pinocchio-04",
+      "normalizedParagraphFound": true
+    },
+    {
+      "id": "pinocchio-05",
+      "normalizedParagraphFound": true
+    },
+    {
+      "id": "pinocchio-06",
+      "normalizedParagraphFound": true
+    },
+    {
+      "id": "pinocchio-07",
+      "normalizedParagraphFound": true
+    },
+    {
+      "id": "pinocchio-08",
+      "normalizedParagraphFound": true
+    },
+    {
+      "id": "pinocchio-09",
+      "normalizedParagraphFound": true
+    },
+    {
+      "id": "pinocchio-10",
+      "normalizedParagraphFound": true
+    },
+    {
+      "id": "pinocchio-11",
+      "normalizedParagraphFound": true
+    },
+    {
+      "id": "pinocchio-12",
+      "normalizedParagraphFound": true
+    },
+    {
+      "id": "pinocchio-13",
+      "normalizedParagraphFound": true
+    },
+    {
+      "id": "pinocchio-14",
+      "normalizedParagraphFound": true
+    }
+  ],
+  "preservedFixtureFiles": [
+    {
+      "path": "Fixtures/Linguistics/it-gold-v1/source/pinocchio-capitolo-1.txt",
+      "sha256": "5905dc6d5c72ed8a0695046614593f41dff059d5c0902a394343f40ce512cd58",
+      "unchangedFromHEAD": true
+    },
+    {
+      "path": "Fixtures/Linguistics/it-gold-v1/token-boundaries.json",
+      "sha256": "af3e19ae33a642dbab59f5647530deea7ecf67597d3103a6a4e8256719e3684a",
+      "unchangedFromHEAD": true
+    },
+    {
+      "path": "Fixtures/Linguistics/it-gold-v1/adjudications.json",
+      "sha256": "b3074dc1ad34cb8df47fe962eb5e9c725b7fca122013141a233e62ee9137c1bc",
+      "unchangedFromHEAD": true
+    },
+    {
+      "path": "Fixtures/Linguistics/it-gold-v1/baseline.json",
+      "sha256": "45bca16c493b37b2eed306054abb516defa5316449d1e639276192b99744c9f4",
+      "unchangedFromHEAD": true
+    }
+  ],
+  "sourceMetadataLicenseURL": "https://creativecommons.org/licenses/by-sa/3.0/",
+  "limitation": "This validates current correspondence to specific pre-acquisition page revisions, not the missing original download log or a legal guarantee. Only metadata and hashes are retained; no source page content is vendored."
+}

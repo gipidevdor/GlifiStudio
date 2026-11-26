@@ -33,6 +33,8 @@ glifi_require_free_space "$temporary_root" || exit 1
 glifi_prepare_build_cache "$build_cache_directory" || exit 1
 
 Scripts/check-repository.py
+python3 -B Scripts/check-licenses-tests.py
+python3 -B Scripts/check-licenses.py
 Scripts/check-secrets.py
 Scripts/check-toolchain.sh
 python3 Scripts/check-build-cache.py
@@ -1293,6 +1295,11 @@ xcodebuild build \
     -derivedDataPath "$build_cache_directory/macOS" \
     CODE_SIGNING_ALLOWED=NO \
     COMPILATION_CACHE_ENABLE_CACHING=NO
+
+xcrun swift -swift-version 6 \
+    -module-cache-path "$build_cache_directory/BundleVerifierModuleCache" \
+    "$script_directory/check-macos-bundle.swift" \
+    "$build_cache_directory/macOS/Build/Products/Release/GlifiStudio.app"
 
 if [[ "$verification_scope" == "all" ]]; then
     xcodebuild build \

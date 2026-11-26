@@ -266,7 +266,7 @@ extension GlifiStatisticalFoundation {
         let lower = max(0, column - (total - row))
         let upper = min(row, column)
         func logChoose(_ n: Int, _ k: Int) -> Double {
-            lgamma(Double(n + 1)) - lgamma(Double(k + 1)) - lgamma(Double(n - k + 1))
+            logGamma(Double(n + 1)) - logGamma(Double(k + 1)) - logGamma(Double(n - k + 1))
         }
         let denominator = logChoose(total, column)
         let probabilities = (lower...upper).map {

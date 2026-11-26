@@ -1,13 +1,15 @@
+<!-- SPDX-License-Identifier: BSD-3-Clause -->
+
 # 13. Dipendenze e supply chain
 
 | Campo | Valore |
 | --- | --- |
 | Identificatore | GS-STD-001-13 |
 | Tipo | Capitolo normativo |
-| Versione | 0.3.0 |
+| Versione | 0.4.0 |
 | Stato | Proposto |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-26 |
 | Approvazione | Non ancora approvato |
 | Documento padre | [GS-STD-001](../standard-di-progetto.md) |
 
@@ -54,3 +56,27 @@ Il progetto adotta la BSD 3-Clause con identificatore SPDX `BSD-3-Clause`, secon
 - Il nome del titolare e dei contributori **NON DEVE** essere usato per approvare o promuovere prodotti derivati senza permesso scritto.
 - Materiali e dipendenze di terzi **DEVONO** mantenere licenze e avvisi applicabili.
 - Un cambiamento futuro di licenza **NON DEVE** essere presentato come revoca delle licenze già concesse sulle versioni distribuite.
+
+## 13.5 Fonti algoritmiche e materiali senza package manager
+
+L’inventario **DEVE** includere anche regole e tabelle implementative, frammenti
+adattati, generatori pseudo-casuali, fixture, immagini e strumenti di verifica:
+l’assenza di dipendenze SwiftPM esterne non basta a dimostrare la provenienza.
+Per ogni materiale **DEVONO** essere registrati fonte primaria, revisione,
+condizioni applicabili, relazione con l’implementazione, distribuzione e avvisi,
+secondo [GS-LIC-002](../algoritmi-e-provenienza.md).
+
+- Una citazione scientifica **NON DEVE** essere trattata come permesso di copia
+  dell’implementazione o dei contenuti della pubblicazione.
+- Un adattamento o port **DEVE** conservare gli obblighi della fonte; un nuovo
+  identificatore SPDX del progetto **NON DEVE** nasconderne la derivazione.
+- Testo originale, trascrizione e annotazioni di una fixture **DEVONO** avere
+  ambiti di licenza distinti quando differiscono; le porzioni riprodotte nei
+  file annotati **DEVONO** conservare attribuzione e condizioni della fonte.
+- Gli avvisi necessari alla distribuzione binaria **DEVONO** essere presenti
+  nel bundle e verificati sul prodotto costruito, oltre che nel repository.
+- Variazioni di manifest di dipendenza, azioni CI e asset inventariati **DEVONO**
+  richiedere aggiornamento dei digest revisionati, con review della provenienza.
+
+Il controllo strutturale **NON DEVE** essere presentato come certificazione di
+compatibilità legale, titolarità o assenza di diritti brevettuali e di marchio.

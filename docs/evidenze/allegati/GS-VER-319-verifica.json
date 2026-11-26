@@ -1,0 +1,61 @@
+{
+  "identifier": "GS-VER-319",
+  "date": "2026-11-26",
+  "target": "arm64 Apple macOS 27.2, Apple Swift 6.4.2, R 4.6.0",
+  "red": {
+    "definitions": 3,
+    "issues": 10,
+    "exit": 1,
+    "scope": "Subnormal/median normal quantiles and nonfinite t degrees"
+  },
+  "first_green": {
+    "core_tests": 41,
+    "kit_tests": 1,
+    "exit": 0
+  },
+  "numeric_green": {
+    "core_tests": 45,
+    "kit_tests": 1,
+    "exit": 0,
+    "t_values": 72,
+    "f_values": 392,
+    "chi_square_values": 63,
+    "concurrent_tasks": 32,
+    "log_gamma_calls": 4096
+  },
+  "cache_green": {
+    "tests": 17,
+    "exit": 0,
+    "legacy_keyness_read_reuse": true,
+    "derived_changed_families": 5,
+    "unchanged_families": 3
+  },
+  "boundary_probe": {
+    "exit": 0,
+    "scope": "Optimized extracted product normal quantile, four external R values and nextDown/nextUp boundary checks"
+  },
+  "oracles": {
+    "rows": 248,
+    "previous_rows_preserved": 244,
+    "fraction_cases": 64,
+    "new_values_final": 537,
+    "exit": 0
+  },
+  "tolerances": {
+    "grid_relative": 1e-09,
+    "normal_tail_absolute": 2e-13,
+    "grid_absolute_floor": 0
+  },
+  "logs_sha256": {
+    "red": "ca3e945e1dc5110563a9d94564b8a1aaa00b89cb5143de79aa93c06fe049d5b6",
+    "green": "3769a52181908484a8905ce7942e0182f33a6e115397e16d6c5deb8fbd691cd2",
+    "green-final": "7c88eb3fd6769d28372da3d61e4e03ff6a173fbfa2eb9c46fb29f97f42c72754",
+    "cache": "1e1cb60607134f8a2370ca35060c717325a8cdccb686faaedee445677a313a3a",
+    "oracles-final": "43b955a59b4d3579359663a0e3b76e5059a98fa04caa554b34e4b6dc74047037"
+  },
+  "limits": [
+    "Integrated make verify executed by root after final freeze",
+    "No child sanitizer run",
+    "Kernel benchmark uses extracted exact functions and stub error types, valid inputs, concurrent system load; not an app benchmark"
+  ]
+}

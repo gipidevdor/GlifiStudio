@@ -12,6 +12,21 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Licenze, distribuzioni statistiche e cancellazione delle viste
+
+- Inventario delle fonti e avvisi Snowball/SplitMix; attribuzione Wikisource
+  distinta dalle annotazioni originali. LICENSE e avvisi di terzi inclusi nel
+  bundle con controlli su contenuto e risorse (GS-VER-318, GS-VER-321).
+- Esempio LR/FLR derivato da una pubblicazione sostituito da un grafo sintetico
+  originale, con oracolo Decimal indipendente e copertura conservata
+  (GS-VER-323).
+- Nuclei beta/gamma e quantile normale riscritti da identità matematiche,
+  log-gamma nativo reentrant; corrette le code estreme e aggiornate
+  selettivamente le revisioni della cache (GS-VER-319).
+- Export delle viste cancellabile prima della pubblicazione, con staging
+  rimosso e file utente conservati; successo mantenuto dopo commit
+  (GS-VER-320).
+
 ### Cancellazione dell'export e precisione dei controlli
 
 - Export scientifico cancellabile ai checkpoint prima del rename finale;

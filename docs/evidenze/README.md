@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.20.16 |
+| Versione | 1.20.17 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-24 |
+| Ultima modifica | 2026-11-26 |
 | Approvazione | Non applicabile; registro operativo |
 
 Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un esito positivo prova soltanto l'ambito dichiarato e non sostituisce l'approvazione dei requisiti o della baseline.
@@ -15,6 +15,12 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 - [GS-VER-275 — Parità continua fra GlifiKit e CLI](GS-VER-275-parita-continua-kit-cli.md) — Gate completo superato: 126 operazioni, 252 confronti e inventario pubblico verificato; PDF/A saltato per assenza di veraPDF
 
 ## Indice
+
+- [GS-VER-323 — Fixture originale LR/FLR](GS-VER-323-fixture-lr-flr-originale.md) — Esempio editoriale sostituito da dati sintetici e oracolo indipendente
+- [GS-VER-321 — Distribuzione delle licenze](GS-VER-321-distribuzione-licenze.md) — Inventario, risorse legali e verifica della composizione macOS
+- [GS-VER-320 — Cancellazione degli export delle viste](GS-VER-320-correttezza-comportamenti.md) — Commit, cleanup e conservazione dei file utente
+- [GS-VER-319 — Correttezza delle distribuzioni statistiche](GS-VER-319-correttezza-algoritmica.md) — Sostituzioni numeriche, oracoli e revisioni selettive della cache
+- [GS-VER-318 — Licenze e provenienza](GS-VER-318-licenze-e-provenienza.md) — Fonti primarie, attribuzioni e limiti della revisione
 
 - [GS-VER-317 — Cancellazione dell’export scientifico](GS-VER-317-cancellazione-export-scientifico.md) — Superato localmente: regressioni e gate macOS
 

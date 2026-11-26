@@ -1,0 +1,67 @@
+{
+  "evidenceIdentifier": "GS-VER-323",
+  "date": "2026-11-26",
+  "fixtureProvenance": "Original project synthetic symbolic graph",
+  "runtimeChanged": false,
+  "publicAPIChanged": false,
+  "persistentSchemaChanged": false,
+  "componentOrder": ["u", "v", "w", "x", "z"],
+  "candidates": [
+    { "components": ["u", "v"], "frequency": 4 },
+    { "components": ["u", "w"], "frequency": 2 },
+    { "components": ["v", "w", "x"], "frequency": 3 },
+    { "components": ["x", "u", "v", "x"], "frequency": 1 },
+    { "components": ["w", "w"], "frequency": 2 },
+    { "components": ["w", "u"], "frequency": 5 },
+    { "components": ["v"], "frequency": 2 },
+    { "components": ["x"], "frequency": 1 },
+    { "components": ["z"], "frequency": 4 }
+  ],
+  "independentReview": {
+    "method": "Separate directed integer adjacency matrix and Decimal roots",
+    "adjacencyMatrix": [
+      [0, 5, 2, 0, 0],
+      [0, 0, 3, 1, 0],
+      [5, 0, 2, 3, 0],
+      [1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0]
+    ],
+    "independentOccurrences": 24,
+    "weightedComponentOccurrences": 46,
+    "weightedAdjacencyOccurrences": 22,
+    "tokenFactors": [56, 30, 88, 10, 1],
+    "typeFactors": [9, 6, 16, 6, 1],
+    "matchingLRValues": 18,
+    "matchingLeaderFLRValues": 2,
+    "matchingCompleteRankings": 2,
+    "blockers": 0
+  },
+  "baselineFixtureDifference": {
+    "changedTermRows": 3,
+    "unchangedOtherOracleRows": 6,
+    "expectedCatalogRows": 248,
+    "statisticalOracle319RowsPreserved": 4
+  },
+  "swiftTests": {
+    "filter": "termExtraction",
+    "platform": "macOS",
+    "exitCode": 0,
+    "definitions": 10,
+    "executions": 10,
+    "issues": 0,
+    "durationSeconds": 0.035
+  },
+  "pythonOracle": {
+    "version": "3.12.14",
+    "decimalPrecision": 80,
+    "comparedRows": 9,
+    "comparisonErrors": 0,
+    "swiftNumericLinkErrors": 0
+  },
+  "swiftFormatLint": { "exitCode": 0 },
+  "limits": [
+    "Integrated macOS gate and full CLI parity recorded by the coordinator",
+    "No runtime algorithm or scientific-method identity change",
+    "Historical Git revisions retain the previous fixture"
+  ]
+}

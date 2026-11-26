@@ -222,7 +222,7 @@ extension GlifiStatisticalFoundation {
         }
         let corrected = h / correction
         let degrees = groups.count - 1
-        let pValue = chiSquareUpperTailProbability(corrected, degreesOfFreedom: degrees)
+        let pValue = try chiSquareUpperTailProbability(corrected, degreesOfFreedom: degrees)
         return GlifiKruskalWallisResult(
             hStatistic: h,
             tieCorrection: correction,

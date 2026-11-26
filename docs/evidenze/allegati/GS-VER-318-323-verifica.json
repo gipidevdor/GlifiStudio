@@ -1,0 +1,385 @@
+{
+  "schema": "studio.glifi.license-correctness-verification",
+  "schemaVersion": 1,
+  "identifier": "GS-VER-318-323",
+  "date": "2026-11-26",
+  "status": "passed",
+  "environment": {
+    "target": "macOS only",
+    "macOS": "27.2.1",
+    "architecture": "arm64",
+    "Xcode": "27.2",
+    "AppleSwift": "6.4.2",
+    "Python": "3.12.14",
+    "R": "4.6.0",
+    "igraph": "2.3.3",
+    "NMF": "0.28",
+    "cluster": "2.1.8.2",
+    "newDependenciesInstalled": false
+  },
+  "source": {
+    "baseHEAD": "f95e4c463e7c99f17ee91ca155882a4c34553ff9",
+    "frozenFiles": 1318,
+    "nonDocumentFingerprint": "c701e8b65af5d2a35d4c60df093bebc9469d8b489be4642b711c4b041af6319e",
+    "nonDocumentFiles": 614,
+    "nonDocumentFilesUnchanged": true,
+    "indexMatchesHEAD": true,
+    "goldFilesByteIdenticalToHEAD": [
+      "Fixtures/Linguistics/it-gold-v1/source/pinocchio-capitolo-1.txt",
+      "Fixtures/Linguistics/it-gold-v1/token-boundaries.json",
+      "Fixtures/Linguistics/it-gold-v1/adjudications.json",
+      "Fixtures/Linguistics/it-gold-v1/baseline.json"
+    ],
+    "fullManifestLocalFile": "source-manifest.json"
+  },
+  "commands": [
+    {
+      "command": [
+        "make",
+        "verify"
+      ],
+      "exit": 0,
+      "seconds": 533.241863584,
+      "log": "make-verify.log"
+    },
+    {
+      "command": [
+        "Scripts/check-app-store-packaging.sh",
+        "--macos-only"
+      ],
+      "exit": 0,
+      "seconds": 483.484298709,
+      "log": "macos-packaging.log"
+    }
+  ],
+  "tests": {
+    "coreDefinitionsPassed": 752,
+    "kitDefinitionsPassed": 164,
+    "nativeSummary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "modelName": "iMac",
+            "osBuildNumber": "26B131",
+            "osVersion": "27.2.1",
+            "platform": "macOS"
+          },
+          "expectedFailures": 0,
+          "failedTests": 0,
+          "passedTests": 420,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "GlifiStudio-macOS · Built with macOS 27.2.1",
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "finishTime": 1795714120.012,
+      "passedTests": 133,
+      "result": "Passed",
+      "runtimeWarnings": [],
+      "skippedTests": 0,
+      "startTime": 1795714063.899,
+      "statistics": [
+        {
+          "subtitle": "312 test runs",
+          "title": "25 tests ran with dynamic parameters"
+        }
+      ],
+      "testFailures": [],
+      "title": "Test - GlifiStudio-macOS",
+      "topInsights": [],
+      "totalTestCount": 133
+    },
+    "licenseCheckerDefinitions": 9,
+    "xcodeNegativeFixtures": 25,
+    "oracleRows": 248,
+    "binary64FractionCases": 64,
+    "PDF_A_2u_Files": 2,
+    "textCLIFixtures": 63,
+    "textCLIChecks": 196,
+    "kitCLIOperations": 132,
+    "kitCLICompleteResultComparisons": 264,
+    "publicAPIDeclarations": 2840,
+    "operationVariants": 172,
+    "integrationScenarios": 5,
+    "processKillCheckpoints": 22
+  },
+  "licenses": {
+    "inventoryMaterials": 23,
+    "reviewedInputDigests": 19,
+    "upstreamNotices": [
+      "Snowball Italian",
+      "SplitMix64"
+    ],
+    "transcriptionSourceLicense": "CC-BY-SA-3.0",
+    "originalAnnotationLicense": "BSD-3-Clause",
+    "sourceParagraphsMatched": 15,
+    "sourcePageRevisions": 5,
+    "sampledKHImplementationsCompared": 4,
+    "paperFixtureReplacedWithOriginalData": true,
+    "historicalGitRightsCertified": false,
+    "legalZeroRiskCertified": false
+  },
+  "bundles": {
+    "release": {
+      "bundleName": "GlifiStudio.app",
+      "documentLocalizations": {
+        "en": "Glifi Studio Project",
+        "it": "Progetto Glifi Studio"
+      },
+      "documentTypeIdentifier": "studio.glifi.project",
+      "finderOrLaunchServicesPresentationVerified": false,
+      "generatedBuildMetadata": {
+        "minimumSystemMajorVersion": 27,
+        "minimumSystemVersion": "27.0",
+        "sdkMajorVersion": 27,
+        "sdkName": "macosx27.2"
+      },
+      "payloadInspection": {
+        "forbiddenDirectoryNames": [
+          ".github",
+          "benchmarks",
+          "config",
+          "design",
+          "distribution",
+          "docs",
+          "fixtures",
+          "packages",
+          "scripts",
+          "tests"
+        ],
+        "forbiddenExtensions": [
+          "xcconfig",
+          "xctest"
+        ],
+        "inspectedEntries": 17,
+        "matchesWithinDeclaredScope": 0
+      },
+      "rawDescriptionKey": "Progetto Glifi Studio",
+      "requiredResources": [
+        "PrivacyInfo.xcprivacy",
+        "Assets.car",
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.txt"
+      ],
+      "schema": "studio.glifi.macos-bundle-verification",
+      "schemaVersion": 1,
+      "secureStateRestorationRuntimeVerified": false,
+      "verifiedScope": [
+        "Raw document and exported UTI declarations.",
+        "Generated minimum macOS and SDK version metadata.",
+        "Required packaged resources and Foundation localized string lookup for it/en.",
+        "Byte identity of project license and third-party notices against repository originals.",
+        "Bundle entries matching the listed directory names or file extensions."
+      ]
+    },
+    "archive": {
+      "bundleName": "GlifiStudio.app",
+      "documentLocalizations": {
+        "en": "Glifi Studio Project",
+        "it": "Progetto Glifi Studio"
+      },
+      "documentTypeIdentifier": "studio.glifi.project",
+      "finderOrLaunchServicesPresentationVerified": false,
+      "generatedBuildMetadata": {
+        "minimumSystemMajorVersion": 27,
+        "minimumSystemVersion": "27.0",
+        "sdkMajorVersion": 27,
+        "sdkName": "macosx27.2"
+      },
+      "payloadInspection": {
+        "forbiddenDirectoryNames": [
+          ".github",
+          "benchmarks",
+          "config",
+          "design",
+          "distribution",
+          "docs",
+          "fixtures",
+          "packages",
+          "scripts",
+          "tests"
+        ],
+        "forbiddenExtensions": [
+          "xcconfig",
+          "xctest"
+        ],
+        "inspectedEntries": 17,
+        "matchesWithinDeclaredScope": 0
+      },
+      "rawDescriptionKey": "Progetto Glifi Studio",
+      "requiredResources": [
+        "PrivacyInfo.xcprivacy",
+        "Assets.car",
+        "LICENSE",
+        "THIRD_PARTY_NOTICES.txt"
+      ],
+      "schema": "studio.glifi.macos-bundle-verification",
+      "schemaVersion": 1,
+      "secureStateRestorationRuntimeVerified": false,
+      "verifiedScope": [
+        "Raw document and exported UTI declarations.",
+        "Generated minimum macOS and SDK version metadata.",
+        "Required packaged resources and Foundation localized string lookup for it/en.",
+        "Byte identity of project license and third-party notices against repository originals.",
+        "Bundle entries matching the listed directory names or file extensions."
+      ]
+    },
+    "negativeTests": {
+      "cases": [
+        {
+          "case": "intact",
+          "exit": 0,
+          "expectedOutcomeObserved": true,
+          "seconds": 2.726143375
+        },
+        {
+          "case": "missing-license",
+          "exit": 1,
+          "expectedOutcomeObserved": true,
+          "seconds": 0.5820518330000004
+        },
+        {
+          "case": "altered-license",
+          "exit": 1,
+          "expectedOutcomeObserved": true,
+          "seconds": 0.6678199999999999
+        },
+        {
+          "case": "missing-notices",
+          "exit": 1,
+          "expectedOutcomeObserved": true,
+          "seconds": 0.5934549580000006
+        },
+        {
+          "case": "altered-notices",
+          "exit": 1,
+          "expectedOutcomeObserved": true,
+          "seconds": 0.6168702919999998
+        }
+      ],
+      "nonDocumentFilesChangedSinceFreeze": [],
+      "allPassed": true
+    }
+  },
+  "review": {
+    "agents": 4,
+    "numericReentrancy": "All log-gamma uses call lgamma_r with caller-owned sign storage. SDK primary header checked.",
+    "cachePropagation": "Plan reuse still traverses current factories; interpretation identities depend on revised node IDs. Historical artifacts remain readable.",
+    "performanceEvidence": "GS-VER-319-misure-kernel.json records increased kernel cost; no speed improvement claimed."
+  },
+  "cleanup": {
+    "buildCacheBeforeKiB": 3139308,
+    "buildCacheRemoved": true,
+    "temporaryFiles": {
+      "removedFiles": [
+        {
+          "name": "glifi-319-t-oracle.tsv",
+          "bytes": 1787
+        },
+        {
+          "name": "glifi-319-green.log",
+          "bytes": 11256
+        },
+        {
+          "name": "glifi-319-oracle-lines-final.txt",
+          "bytes": 8635
+        },
+        {
+          "name": "glifi-319-red.log",
+          "bytes": 6237
+        },
+        {
+          "name": "glifi-319-oracles-final.log",
+          "bytes": 196
+        },
+        {
+          "name": "glifi-319-oracles.log",
+          "bytes": 926
+        },
+        {
+          "name": "glifi-319-f-oracle.tsv",
+          "bytes": 10522
+        },
+        {
+          "name": "glifi-319-oracle-lines.txt",
+          "bytes": 8580
+        },
+        {
+          "name": "glifi-319-spike.py",
+          "bytes": 1405
+        },
+        {
+          "name": "glifi-319-cache.log",
+          "bytes": 6001
+        },
+        {
+          "name": "glifi-319-green-final.log",
+          "bytes": 12068
+        },
+        {
+          "name": "glifi-319-chi-oracle.tsv",
+          "bytes": 1228
+        },
+        {
+          "name": "glifi-behavior-323-green.log",
+          "bytes": 4903
+        }
+      ],
+      "removedBytes": 73744
+    },
+    "retained": "Deliverables, source manifest, sanitized test and bundle summaries, RED/GREEN and integrated logs; installed toolchains and R/veraPDF dependencies.",
+    "removedBuildCacheGiB": 2.993877410888672,
+    "pythonBytecodeFilesRemoved": [
+      {
+        "path": "Scripts/__pycache__/check-licenses.cpython-312.pyc",
+        "bytes": 12217
+      },
+      {
+        "path": "Scripts/__pycache__/check-oracles.cpython-312.pyc",
+        "bytes": 10934
+      },
+      {
+        "path": "Scripts/__pycache__/check-fixtures.cpython-312.pyc",
+        "bytes": 57224
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/Oracles/Python/__pycache__/summary.cpython-312.pyc",
+        "bytes": 28067
+      },
+      {
+        "path": "Packages/GlifiCore/Tests/Oracles/Python/__pycache__/summary.cpython-314.pyc",
+        "bytes": 31092
+      }
+    ]
+  },
+  "limitations": [
+    "No iPadOS execution or remote CI run.",
+    "Unsigned local archive; no App Store submission.",
+    "No new manual GUI, accessibility, Instruments or sanitizer qualification.",
+    "Sampled source comparisons do not prove historical clean-room authorship or absence of patents.",
+    "Trademark and contribution ownership remain subject to applicable release decisions.",
+    "System-font embedding probe covers the observed local fonts and is not a universal rights check.",
+    "Prior Git revisions were not rewritten or cleared for publication.",
+    "Xcode IDELaunchSession/placeholder-device diagnostics observed; native result reports zero runtime warnings."
+  ],
+  "localDossier": "macOS-2026-11-26-licenses-correctness",
+  "finalMetadataChecks": {
+    "documentation": true,
+    "compliance": true,
+    "licenses": true,
+    "diffWhitespace": true,
+    "nonDocumentFingerprintUnchangedAfterDocumentationClosure": true
+  },
+  "commitPreparation": {
+    "baseHEAD": "84071b232ba79224a0f2818313a8be796e3803f4",
+    "baseTree": "aa81d5d8b32c43647e5bf010cceb45f71e8e6e67",
+    "verifiedBaseTreeIdentical": true,
+    "reason": "Remote main history changed while retaining an identical tree; the delivery branch starts at the current remote main without changing verified source files."
+  }
+}

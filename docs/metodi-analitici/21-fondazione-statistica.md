@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-21 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.1.4 |
+| Versione | 1.1.5 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-26 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -194,6 +194,50 @@ ottimizzazione e pseudo-casualità controllata. Non è ancora un target Swift
 obbligatorio. Swift, Accelerate, BNNS, Core ML e Metal/MPS sono backend: **NON
 DEVONO** definire la semantica scientifica. Ogni backend ha riferimento indipendente,
 tolleranze e benchmark end-to-end.
+
+## Revisione numerica delle distribuzioni — GS-VER-319
+
+I nuclei beta e gamma sono implementazioni Swift originali delle relazioni
+matematiche DLMF 8.17.4/22/23, 8.7.1 e 8.9.2. Le frazioni vengono valutate
+dal fondo con profondità raddoppiate e confronto fra approssimazioni successive;
+la serie gamma usa somma compensata. Non vengono incorporati sorgenti,
+coefficienti o testi di Numerical Recipes, Acklam, R o DLMF. DLMF resta una
+fonte matematica con condizioni editoriali proprie, distinte dalla licenza
+BSD del codice originale.
+
+Il nucleo beta calcola separatamente i logaritmi di `x` e `1-x` a partire dai
+log-odds: evita che un rapporto arrotondato a uno cancelli l'informazione
+per t e F vicini a zero e che il quadrato di t trabocchi nelle code. `expm1`
+preserva i complementi piccoli. Le frazioni beta hanno al massimo 2.048 livelli;
+la serie e la frazione gamma sono limitate rispettivamente a 16.384 termini e
+livelli. I confronti delle frazioni usano otto epsilon binary64, la serie un
+epsilon relativo al totale. Mancata convergenza o intermedi non rappresentabili
+falliscono con `statistics.non-finite-result`; input invalidi non producono
+probabilità fittizie.
+
+Il quantile normale inverte la legge con bisezione bounded in `[0,40]` sulla
+magnitudine: `erf` conserva precisione intorno alla mediana, mentre la coda
+logaritmica usa la frazione matematica DLMF 7.9.1 da magnitudine 8, con 64 livelli.
+Non usa coefficienti di approssimazione importati. Il limite di 200 bisezioni e
+l'arresto su estremi binary64 adiacenti coprono anche probabilità subnormali
+positive. Il quantile t valida anche la finitezza dei gradi di libertà prima
+della scorciatoia per la mediana. Il log-gamma di sistema usa `lgamma_r` con
+storage locale del segno: l'SDK Apple documenta `lgamma` come non thread-safe.
+Tutte le chiamate del motore transitano per il wrapper reentrante.
+
+La variante scientifica e gli schemi payload restano invariati. La revisione
+algoritmo nel descrittore passa a `2` per keyness e per `corpus-association`,
+`group-metric-comparison`, `group-metric-posthoc`, `metric-correlation` e
+`paired-metric-comparison`: i risultati della revisione precedente rimangono
+leggibili, ma non sono riusati per la richiesta corrente. Le altre famiglie
+conservano la revisione e l'identità precedenti.
+
+La griglia indipendente comprende 72 code t, 392 code F e 63 code chi-quadrato,
+con confronto relativo `1e-9` senza floor assoluto; zero di riferimento richiede
+zero esatto. Dieci riferimenti `qnorm` nelle code usano tolleranza assoluta
+`2e-13`. Restano attivi gli oracoli e le tolleranze precedenti. Questo controllo
+non certifica ogni combinazione possibile dei parametri né una licenza su
+implementazioni esterne.
 
 ## Verifica
 
