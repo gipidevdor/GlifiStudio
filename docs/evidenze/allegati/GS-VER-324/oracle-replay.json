@@ -1,0 +1,6 @@
+{
+  "exit": 0,
+  "stdout": "Kernel oracle: normal=254 t=74 F=132 chi-square=126 BCa=36 EffectSize=18",
+  "byteIdentical": true,
+  "sha256": "52a8c9f7b0021329eb003d1976be3eb7e94269199be735873f49f9080e1fed1d"
+}

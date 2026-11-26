@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.35 |
+| Versione | 1.6.36 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-26 |
@@ -28,6 +28,10 @@ distribuisce quattro agenti su query, feedback statico, revisione e integrazione
 preservando i confini del lavoro già in corso nell'altra chat.
 
 ## Indice
+
+- [GS-DOR-326 — Valutazione beta/gamma](dor-ottimizzazione-beta-gamma.md) — Confronto e criterio di scarto del candidato
+- [GS-DOR-325 — Quantile normale protetto](dor-quantile-normale-newton.md) — Accelerazione con fallback numerico conservato
+- [GS-DOR-324 — Prestazioni statistiche](dor-performance-statistica.md) — Baseline del prodotto, keyness, controlli e misure coordinate
 
 - [GS-DOR-323 — Fixture originale LR/FLR](dor-fixture-lr-flr-originale.md) — Dati e attese originali con discriminanti matematici conservati
 - [GS-DOR-321 — Distribuzione delle licenze](dor-distribuzione-licenze.md) — Inventario verificabile e testi nel bundle

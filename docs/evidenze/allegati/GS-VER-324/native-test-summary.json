@@ -1,0 +1,40 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "modelName": "iMac",
+        "osBuildNumber": "26B131",
+        "osVersion": "27.2.1",
+        "platform": "macOS"
+      },
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "passedTests": 420,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "GlifiStudio-macOS \u00b7 Built with macOS 27.2.1",
+  "expectedFailures": 0,
+  "failedTests": 0,
+  "finishTime": 1795718116.969,
+  "passedTests": 133,
+  "result": "Passed",
+  "runtimeWarnings": [],
+  "skippedTests": 0,
+  "startTime": 1795718055.001,
+  "statistics": [
+    {
+      "subtitle": "312 test runs",
+      "title": "25 tests ran with dynamic parameters"
+    }
+  ],
+  "testFailures": [],
+  "title": "Test - GlifiStudio-macOS",
+  "topInsights": [],
+  "totalTestCount": 133
+}

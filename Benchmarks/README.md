@@ -2,6 +2,34 @@
 
 # Benchmark
 
+## Distribuzioni statistiche e keyness (GS-DOR-324)
+
+```sh
+swift build -c release --package-path Packages/GlifiCore --product GlifiBenchmark
+<binario-Release>/GlifiBenchmark --distribution-performance
+```
+
+Il modo rifiuta Debug. Usa esclusivamente API del prodotto: quantile normale
+ordinario/estremo, code t/F, quantile t, associazione di contingenza e keyness
+su 512/4096 forme sintetiche. Preparazione e confronto completo di **ogni**
+risultato restano fuori timer; un warm-up e sette batch con numero di chiamate
+fisso. Il rapporto conserva campioni grezzi per chiamata, input/output SHA-256,
+bit dei risultati scalari, hash del binario e harness, hardware, memoria,
+stato termico e risparmio energetico prima/dopo.
+
+Prima dei kernel archiviare binario e inventario dei sorgenti compilati; lo
+stesso harness viene mantenuto per tutte le fasi. Gli hash dei produttori
+sono nel manifest esterno associato al binario, evitando di attribuire al
+vecchio eseguibile i sorgenti successivamente modificati. Confrontare binari
+in ordine alternato senza altre build/misure concorrenti; dichiarare mediana
+e dispersione. `time -l` misura RSS dell'intero processo, compreso setup.
+
+La prima fase isola lo spostamento del quantile invariato nella keyness;
+la fase successiva valuta i kernel. Nessun guadagno complessivo viene
+attribuito tacitamente a una sola modifica. I confronti del benchmark non
+sono oracoli scientifici: i test e la griglia R indipendente restano necessari.
+Le misure sono informative, senza nuove soglie o promesse su UI, energia e I/O.
+
 ## Betweenness e cammini estremi (GS-VER-174)
 
 ```sh

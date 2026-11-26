@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.93.0 |
+| Versione | 0.94.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-26 |
@@ -749,3 +749,13 @@ ancora aperto: la diagnosi OCR resta nel lotto documentale proprietario.
 La revisione distingue conformità strutturale verificabile, provenienza
 ricostruita e diritti non dimostrabili automaticamente. Non promuove
 implicitamente manifest scientifici, diritti storici o G4/G5.
+
+## Ottimizzazione statistica misurata
+
+RQ-008/009/027/060/062/063 collegano CMP-324 al riuso del quantile nella
+keyness e all’harness Release, CMP-325 all’inversione normale protetta e
+CMP-326 alla valutazione del candidato beta/gamma poi scartato.
+GS-VER-324 confronta fasi isolate e binari alternati, GS-VER-325 documenta
+D1 e consumatori, GS-VER-326 conserva risultati negativi e ripristino.
+La nuova griglia verifica bit dei riferimenti R, casi limite, failure e
+propagazione degli intervalli; non promuove soglie prestazionali o G4/G5.

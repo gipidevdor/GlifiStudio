@@ -218,8 +218,11 @@ public struct GlifiKeynessAnalyzer: Sendable {
 
         var provisional: [ProvisionalKeynessTerm] = []
         provisional.reserveCapacity(terms.count)
+        try Task.checkCancellation()
+        let criticalValue = try GlifiDistributionFunctions.normalQuantile(
+            (1 + options.confidenceLevel) / 2)
         for (position, term) in terms.enumerated() {
-            if position.isMultiple(of: 4_096) { try Task.checkCancellation() }
+            if position > 0, position.isMultiple(of: 4_096) { try Task.checkCancellation() }
             provisional.append(
                 try evaluate(
                     term: term,
@@ -228,8 +231,7 @@ public struct GlifiKeynessAnalyzer: Sendable {
                     targetTokenCount: target.lexicalTokenCount,
                     referenceTokenCount: reference.lexicalTokenCount,
                     lowExpectedCountThreshold: options.lowExpectedCountThreshold,
-                    criticalValue: try GlifiDistributionFunctions.normalQuantile(
-                        (1 + options.confidenceLevel) / 2)
+                    criticalValue: criticalValue
                 )
             )
         }

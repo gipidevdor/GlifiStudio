@@ -5413,6 +5413,103 @@
       "gate": "G2",
       "status": "implemented",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-324",
+      "clause": "GS-STD-001-17 § 17.3 ottimizzazione misurata di distribuzioni e keyness",
+      "specification": "docs/standard/17-benchmark-e-regressioni-prestazionali.md",
+      "requirements": [
+        "RQ-008",
+        "RQ-009",
+        "RQ-027",
+        "RQ-060",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiDistributionBenchmarks.swift",
+        "Packages/GlifiCore/Sources/GlifiBenchmark/main.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiKeynessAnalysis.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKeynessAnalysisTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDistributionBoundaryTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDistributionOracleGridTests.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Tests/Oracles/R/probability_distributions.R"
+      ],
+      "evidence": [
+        "docs/pianificazione/dor-performance-statistica.md",
+        "docs/evidenze/GS-VER-324-performance-statistica.md"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-325",
+      "clause": "GS-MET-001-21 § 3 ottimizzazione numerica 325",
+      "specification": "docs/metodi-analitici/21-fondazione-statistica.md",
+      "requirements": [
+        "RQ-008",
+        "RQ-009",
+        "RQ-027",
+        "RQ-060",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiDistributionFunctions.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDistributionOptimizationReferenceTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDistributionBoundaryTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDistributionOracleGridTests.swift"
+      ],
+      "fixtures": [
+        "docs/evidenze/allegati/GS-VER-324/griglia-kernel.R",
+        "docs/evidenze/allegati/GS-VER-324/griglia-kernel.json"
+      ],
+      "evidence": [
+        "docs/pianificazione/dor-quantile-normale-newton.md",
+        "docs/evidenze/GS-VER-325-quantile-normale-newton.md"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-326",
+      "clause": "GS-STD-001-17 § 17.3 valutazione e scarto del candidato beta/gamma",
+      "specification": "docs/standard/17-benchmark-e-regressioni-prestazionali.md",
+      "requirements": [
+        "RQ-008",
+        "RQ-009",
+        "RQ-027",
+        "RQ-060",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiBenchmark/GlifiDistributionBenchmarks.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDistributionOptimizationReferenceTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDistributionBoundaryTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDistributionOracleGridTests.swift"
+      ],
+      "fixtures": [
+        "docs/evidenze/allegati/GS-VER-324/griglia-kernel.R",
+        "docs/evidenze/allegati/GS-VER-324/griglia-kernel.json"
+      ],
+      "evidence": [
+        "docs/pianificazione/dor-ottimizzazione-beta-gamma.md",
+        "docs/evidenze/GS-VER-326-ottimizzazione-beta-gamma.md"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }

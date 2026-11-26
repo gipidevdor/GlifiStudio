@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.20.17 |
+| Versione | 1.20.18 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-26 |
@@ -15,6 +15,10 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 - [GS-VER-275 — Parità continua fra GlifiKit e CLI](GS-VER-275-parita-continua-kit-cli.md) — Gate completo superato: 126 operazioni, 252 confronti e inventario pubblico verificato; PDF/A saltato per assenza di veraPDF
 
 ## Indice
+
+- [GS-VER-326 — Valutazione beta/gamma](GS-VER-326-ottimizzazione-beta-gamma.md) — Candidato bit-identico scartato per beneficio non stabile
+- [GS-VER-325 — Quantile normale protetto](GS-VER-325-quantile-normale-newton.md) — Halley con bisezione finale e verifica D1
+- [GS-VER-324 — Prestazioni statistiche](GS-VER-324-performance-statistica.md) — Confronti Release, keyness e verifica della composizione macOS
 
 - [GS-VER-323 — Fixture originale LR/FLR](GS-VER-323-fixture-lr-flr-originale.md) — Esempio editoriale sostituito da dati sintetici e oracolo indipendente
 - [GS-VER-321 — Distribuzione delle licenze](GS-VER-321-distribuzione-licenze.md) — Inventario, risorse legali e verifica della composizione macOS

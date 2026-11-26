@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-MET-001-21 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.1.5 |
+| Versione | 1.1.6 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-26 |
@@ -215,15 +215,31 @@ epsilon relativo al totale. Mancata convergenza o intermedi non rappresentabili
 falliscono con `statistics.non-finite-result`; input invalidi non producono
 probabilità fittizie.
 
-Il quantile normale inverte la legge con bisezione bounded in `[0,40]` sulla
+Il quantile normale inverte la legge in un bracket bounded `[0,40]` sulla
 magnitudine: `erf` conserva precisione intorno alla mediana, mentre la coda
 logaritmica usa la frazione matematica DLMF 7.9.1 da magnitudine 8, con 64 livelli.
-Non usa coefficienti di approssimazione importati. Il limite di 200 bisezioni e
+Non usa coefficienti di approssimazione importati. GS-VER-325 restringe il bracket
+con al massimo dodici proposte Halley protette e un controllo dei segni nei
+vicini binary64; la scelta finale usa sempre bisezione. Le derivate servono
+soltanto a proporre passi finiti interni al bracket, con fallback invariato.
+Il limite complessivo di 200 iterazioni e
 l'arresto su estremi binary64 adiacenti coprono anche probabilità subnormali
 positive. Il quantile t valida anche la finitezza dei gradi di libertà prima
 della scorciatoia per la mediana. Il log-gamma di sistema usa `lgamma_r` con
 storage locale del segno: l'SDK Apple documenta `lgamma` come non thread-safe.
 Tutte le chiamate del motore transitano per il wrapper reentrante.
+
+GS-VER-324 calcola il quantile della keyness una sola volta dopo le medesime
+ammissioni e il checkpoint iniziale, prima del ciclo dei termini; risultati
+completi e digest restano identici nel confronto Release. Le proposte di
+accoppiamento beta/gamma GS-VER-326 sono state scartate per beneficio non
+stabile: i loro sorgenti restano quelli della baseline verificata.
+
+Le differenze di arrotondamento della normale restano nel contratto D1,
+senza cambiare formule, failure, tolleranze o revisione numerica `2`.
+Il confronto comprende monotonia campionaria, code subnormali, mediana,
+confine della coda e consumatori BCa/effect-size. La verifica non costituisce
+una prova di monotonia universale di ogni implementazione libm.
 
 La variante scientifica e gli schemi payload restano invariati. La revisione
 algoritmo nel descrittore passa a `2` per keyness e per `corpus-association`,

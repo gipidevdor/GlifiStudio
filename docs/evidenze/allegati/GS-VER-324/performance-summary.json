@@ -1,0 +1,98 @@
+[
+  {
+    "identifier": "normal-ordinary",
+    "baselineMedianSeconds": 4.154587361653646e-06,
+    "finalMedianSeconds": 4.15058837890625e-07,
+    "speedup": 10.00963473701155,
+    "outputDigestIdentical": false,
+    "maximumULPDelta": 2,
+    "baselineMinSeconds": 4.1514236924913195e-06,
+    "baselineMaxSeconds": 4.180656141493055e-06,
+    "finalMinSeconds": 4.137934841579861e-07,
+    "finalMaxSeconds": 4.172544216579861e-07
+  },
+  {
+    "identifier": "normal-extreme",
+    "baselineMedianSeconds": 2.2745881835937497e-05,
+    "finalMedianSeconds": 3.18424648030599e-06,
+    "speedup": 7.1432541345705545,
+    "outputDigestIdentical": true,
+    "maximumULPDelta": 0,
+    "baselineMinSeconds": 2.2729200561523436e-05,
+    "baselineMaxSeconds": 2.2836510538736978e-05,
+    "finalMinSeconds": 3.1665581461588546e-06,
+    "finalMaxSeconds": 3.186287801106771e-06
+  },
+  {
+    "identifier": "t-upper-tail",
+    "baselineMedianSeconds": 3.9260486886160714e-07,
+    "finalMedianSeconds": 3.924845424107143e-07,
+    "speedup": 1.000306576279804,
+    "outputDigestIdentical": true,
+    "maximumULPDelta": 0,
+    "baselineMinSeconds": 3.9205147879464283e-07,
+    "baselineMaxSeconds": 3.93801171875e-07,
+    "finalMinSeconds": 3.919921875e-07,
+    "finalMaxSeconds": 3.9373487723214285e-07
+  },
+  {
+    "identifier": "f-upper-tail",
+    "baselineMedianSeconds": 4.459025065104167e-07,
+    "finalMedianSeconds": 4.45068359375e-07,
+    "speedup": 1.00187420003657,
+    "outputDigestIdentical": true,
+    "maximumULPDelta": 0,
+    "baselineMinSeconds": 4.452080729166667e-07,
+    "baselineMaxSeconds": 4.504259114583333e-07,
+    "finalMinSeconds": 4.443468098958333e-07,
+    "finalMaxSeconds": 4.4869518229166667e-07
+  },
+  {
+    "identifier": "t-quantile",
+    "baselineMedianSeconds": 4.573558203125e-05,
+    "finalMedianSeconds": 4.56627470703125e-05,
+    "speedup": 1.0015950630570989,
+    "outputDigestIdentical": true,
+    "maximumULPDelta": 0,
+    "baselineMinSeconds": 4.560506184895833e-05,
+    "baselineMaxSeconds": 4.578412565104167e-05,
+    "finalMinSeconds": 4.5541123697916666e-05,
+    "finalMaxSeconds": 4.5772894531250005e-05
+  },
+  {
+    "identifier": "contingency-association",
+    "baselineMedianSeconds": 1.9997220052083335e-06,
+    "finalMedianSeconds": 1.9956936035156254e-06,
+    "speedup": 1.0020185471785907,
+    "outputDigestIdentical": true,
+    "maximumULPDelta": 0,
+    "baselineMinSeconds": 1.9822049153645833e-06,
+    "baselineMaxSeconds": 2.0211181640625e-06,
+    "finalMinSeconds": 1.9720255533854167e-06,
+    "finalMaxSeconds": 2.01702880859375e-06
+  },
+  {
+    "identifier": "keyness-512-terms",
+    "baselineMedianSeconds": 0.0029360390625,
+    "finalMedianSeconds": 0.00046370575,
+    "speedup": 6.331685691842295,
+    "outputDigestIdentical": true,
+    "maximumULPDelta": 0,
+    "baselineMinSeconds": 0.002929375,
+    "baselineMaxSeconds": 0.002980635375,
+    "finalMinSeconds": 0.00046049475,
+    "finalMaxSeconds": 0.000466578125
+  },
+  {
+    "identifier": "keyness-4096-terms",
+    "baselineMedianSeconds": 0.023564552000000002,
+    "finalMedianSeconds": 0.0037590625000000003,
+    "speedup": 6.268731099842048,
+    "outputDigestIdentical": true,
+    "maximumULPDelta": 0,
+    "baselineMinSeconds": 0.0235047915,
+    "baselineMaxSeconds": 0.0238468125,
+    "finalMinSeconds": 0.003743229,
+    "finalMaxSeconds": 0.003937917
+  }
+]

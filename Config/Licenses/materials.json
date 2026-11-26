@@ -226,7 +226,8 @@
       "paths": [
         "Packages/GlifiCore/Tests/Oracles/R/*.R",
         "Packages/GlifiCore/Tests/Oracles/expected.txt",
-        "Scripts/check-oracles.py"
+        "Scripts/check-oracles.py",
+        "docs/evidenze/allegati/GS-VER-324/griglia-kernel.R"
       ],
       "sourceURLs": [
         "https://www.r-project.org/about.html",

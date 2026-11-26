@@ -1,0 +1,10 @@
+{
+  "command": [
+    "make",
+    "verify"
+  ],
+  "exit": 0,
+  "seconds": 481.1604904170017,
+  "controlledFingerprint": "b87e0f5f3d003339fbb01f07ab8cbe92706699e71afa22464bc048ad8239a800",
+  "sourceManifest": "final-source-manifest.json"
+}

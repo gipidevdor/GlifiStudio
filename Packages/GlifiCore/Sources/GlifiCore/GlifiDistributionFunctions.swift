@@ -16,9 +16,10 @@ public enum GlifiDistributionFunctions {
 
     /// Standard normal quantile `Φ⁻¹(p)` for `0 < p < 1`.
     ///
-    /// Original bounded inversion of the normal law through system `erf`/`erfc`.
-    /// The extreme tail is evaluated in logarithms using the mathematical
-    /// continued fraction in DLMF 7.9.1; no approximation coefficients are imported.
+    /// Original safeguarded inversion of the normal law through system `erf`/`erfc`.
+    /// The extreme tail uses the mathematical continued fraction in DLMF 7.9.1.
+    /// Safeguarded Halley steps narrow the bracket before its final bounded bisection;
+    /// no approximation coefficients are imported.
     public static func normalQuantile(_ p: Double) throws -> Double {
         guard p > 0, p < 1, p.isFinite else {
             throw GlifiFailure(
@@ -33,29 +34,98 @@ public enum GlifiDistributionFunctions {
         guard p != 0.5 else { return 0 }
         let tailProbability = min(p, 1 - p)
         let logProbability = log(tailProbability)
+        let centralProbability = abs(2 * p - 1)
+        let usesCentralResidual = tailProbability >= 0.25
         // The least positive binary64 probability has a quantile magnitude <39.
         var lower = 0.0
         var upper = 40.0
-        let centralProbability = abs(2 * p - 1)
-        for _ in 0..<200 {
-            let middle = lower + (upper - lower) / 2
-            if middle == lower || middle == upper { break }
-            let belowQuantile: Bool
-            if tailProbability >= 0.25 {
-                // erf retains relative precision for probabilities adjacent to 1/2.
-                belowQuantile = erf(middle / 2.0.squareRoot()) < centralProbability
-            } else {
-                belowQuantile = normalLogUpperTail(middle) > logProbability
+        var magnitude =
+            usesCentralResidual
+            ? centralProbability * (Double.pi / 2).squareRoot()
+            : (-2 * logProbability).squareRoot()
+        var usesInterpolation = true
+        func isBelowQuantile(_ value: Double) -> Bool {
+            if usesCentralResidual {
+                return erf(value / 2.0.squareRoot()) < centralProbability
             }
-            if belowQuantile { lower = middle } else { upper = middle }
+            return normalLogUpperTail(value).logProbability > logProbability
         }
-        let magnitude = lower + (upper - lower) / 2
-        return p < 0.5 ? -magnitude : magnitude
+        for iteration in 0..<200 {
+            let attemptsHalleyStep = usesInterpolation && iteration < 12
+            let belowQuantile: Bool
+            var proposedMagnitude: Double?
+            var step = 0.0
+            if usesCentralResidual {
+                // erf preserves relative precision adjacent to the median.
+                let residual = erf(magnitude / 2.0.squareRoot()) - centralProbability
+                belowQuantile = residual < 0
+                if attemptsHalleyStep {
+                    let derivative =
+                        (2 / Double.pi).squareRoot() * exp(-magnitude * magnitude / 2)
+                    let newtonStep = -residual / derivative
+                    let denominator = 1 - magnitude * newtonStep / 2
+                    step = denominator > 0 ? newtonStep / denominator : newtonStep
+                }
+            } else {
+                let tail = normalLogUpperTail(magnitude, includingHazard: attemptsHalleyStep)
+                let residual = tail.logProbability - logProbability
+                belowQuantile = residual > 0
+                if attemptsHalleyStep {
+                    // d(log Q)/dx = -h and h' = h(h-x), where h = density/Q.
+                    let newtonStep = residual / tail.hazard
+                    let denominator = 1 + newtonStep * (tail.hazard - magnitude) / 2
+                    step = denominator > 0 ? newtonStep / denominator : newtonStep
+                }
+            }
+            if belowQuantile { lower = magnitude } else { upper = magnitude }
+            if attemptsHalleyStep {
+                proposedMagnitude = magnitude + step
+                if abs(step) <= 8 * magnitude.ulp {
+                    // A rounded zero residual must not select an arbitrary point
+                    // on a floating-point plateau. Verify both bracket signs and
+                    // retain the final bisection instead of returning the iterate.
+                    var lowerProbe = magnitude
+                    var upperProbe = magnitude
+                    for _ in 0..<8 {
+                        lowerProbe = lowerProbe.nextDown
+                        upperProbe = upperProbe.nextUp
+                    }
+                    lowerProbe = max(lower, lowerProbe)
+                    upperProbe = min(upper, upperProbe)
+                    if lowerProbe < upperProbe, isBelowQuantile(lowerProbe),
+                        !isBelowQuantile(upperProbe)
+                    {
+                        lower = lowerProbe
+                        upper = upperProbe
+                        usesInterpolation = false
+                    }
+                }
+            }
+            let nextMagnitude: Double
+            if usesInterpolation, let proposedMagnitude, proposedMagnitude.isFinite,
+                proposedMagnitude > lower, proposedMagnitude < upper
+            {
+                nextMagnitude = proposedMagnitude
+            } else {
+                nextMagnitude = lower + (upper - lower) / 2
+            }
+            if nextMagnitude == lower || nextMagnitude == upper { break }
+            magnitude = nextMagnitude
+        }
+        let result = lower + (upper - lower) / 2
+        return p < 0.5 ? -result : result
     }
 
-    private static func normalLogUpperTail(_ magnitude: Double) -> Double {
+    private static func normalLogUpperTail(
+        _ magnitude: Double,
+        includingHazard: Bool = false
+    ) -> (logProbability: Double, hazard: Double) {
         if magnitude < 8 {
-            return log(0.5 * erfc(magnitude / 2.0.squareRoot()))
+            let logProbability = log(0.5 * erfc(magnitude / 2.0.squareRoot()))
+            let hazard =
+                includingHazard
+                ? exp(-magnitude * magnitude / 2 - log(2 * Double.pi) / 2 - logProbability) : 0
+            return (logProbability, hazard)
         }
         // Mills ratio from DLMF 7.9.1, after substituting z = magnitude/sqrt(2).
         // At magnitude >= 8, 64 levels exceed binary64 precision; evaluating
@@ -64,7 +134,10 @@ public enum GlifiDistributionFunctions {
         for numerator in stride(from: 64, through: 1, by: -1) {
             denominator = magnitude + Double(numerator) / denominator
         }
-        return -magnitude * magnitude / 2 - log(2 * Double.pi) / 2 - log(denominator)
+        return (
+            -magnitude * magnitude / 2 - log(2 * Double.pi) / 2 - log(denominator),
+            denominator
+        )
     }
 
     /// Cumulative distribution of the studentized range `P(Q ≤ q)` for `k` means and

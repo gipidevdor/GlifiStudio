@@ -12,6 +12,16 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Prestazioni statistiche con correttezza conservata
+
+- Keyness: quantile dell'intervallo calcolato una sola volta per confronto,
+  mantenendo ammissioni, cancellazione, risultati e digest (GS-VER-324).
+- Quantile normale: passi Halley protetti restringono il bracket prima della
+  bisezione finale; conservati contratto D1, code e tolleranze (GS-VER-325).
+- Griglia R indipendente estesa a BCa/effect-size, con attestazione dei bit
+  degli input e delle attese. Il candidato beta/gamma è scartato perché il
+  guadagno non supera stabilmente il rumore (GS-VER-326).
+
 ### Licenze, distribuzioni statistiche e cancellazione delle viste
 
 - Inventario delle fonti e avvisi Snowball/SplitMix; attribuzione Wikisource

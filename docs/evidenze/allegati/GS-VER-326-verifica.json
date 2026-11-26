@@ -1,0 +1,83 @@
+{
+  "evidenceIdentifier": "GS-VER-326",
+  "date": "2026-11-26",
+  "status": "Experiment completed; paired candidate rejected and pre-326 sources restored",
+  "scope": [
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiStatisticalFoundation.swift",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiContingencyAnalysis.swift"
+  ],
+  "candidate": {
+    "strategy": "Pair adjacent even and odd continued-fraction coefficients from the bottom",
+    "floatingPointUpdateOrderChanged": false,
+    "coefficientFormulaChanged": false,
+    "convergenceCriterionChanged": false,
+    "maximumDepthChanged": false,
+    "cancellationCheckpointsChanged": false,
+    "publicAPIChanged": false,
+    "productiveSourceChanged": false,
+    "retained": false
+  },
+  "numericalSpike": {
+    "optimization": "swiftc -O",
+    "method": "Extracted baseline and paired kernels, failure-code stub",
+    "comparisons": 2920,
+    "bitwiseEqualSuccesses": 2739,
+    "matchingFailureCodes": 181,
+    "mismatches": 0,
+    "cancelledTaskCases": 8,
+    "matchingCancellationOutcomes": 8,
+    "minimumTAndFDegrees": 0.1,
+    "maximumTAndFDegrees": 1e+100,
+    "maximumChiSquareDegrees": 1000000,
+    "includesSubnormalAndLargestFiniteStatistics": true
+  },
+  "performance": {
+    "method": "Coordinator product public-API comparison in ABBA order",
+    "unit": "microseconds per call",
+    "sourcePrecision": "Rounded coordinator report; full evidence retained by coordinator",
+    "coordinatorEvidence": "GS-VER-324",
+    "concurrentSpikeTimingUsed": false,
+    "passes": {
+      "tPValue": {
+        "A1": 0.392,
+        "B1": 0.395,
+        "B2": 0.395,
+        "A2": 0.394
+      },
+      "fUpperTail": {
+        "A1": 0.451,
+        "B1": 0.449,
+        "B2": 0.445,
+        "A2": 0.446
+      },
+      "tQuantile": {
+        "A1": 45.69,
+        "B1": 45.03,
+        "B2": 45.02,
+        "A2": 45.79
+      },
+      "contingencyAssociation": {
+        "A1": 1.982,
+        "B1": 2.014,
+        "B2": 1.932,
+        "A2": 2.007
+      }
+    },
+    "allFourOutputFamiliesBitwiseEqual": true,
+    "allFourOutputDigestsEqual": true,
+    "decision": "Reject: no stable benefit demonstrated; median changes below 5%"
+  },
+  "pending": [
+    "Coordinator integrated macOS gate on final composition"
+  ],
+  "productionCompositionValidation": {
+    "releaseBuild": "passed as reported by coordinator",
+    "focusedTests": 30,
+    "focusedTestsPassed": 30,
+    "coordinatorEvidence": "GS-VER-324"
+  },
+  "restoredSourceSHA256": {
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiStatisticalFoundation.swift": "63eab0bde8dcd69e2c1d693a1ff07162fc854d8f6df621b1b55a3a44126adaac",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiContingencyAnalysis.swift": "c0a47e5dd0cc29f352856f287bdff1eb4d18d5d77445887d3ebaeee748920e76"
+  }
+}
