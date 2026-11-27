@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VIZ-001 |
 | Tipo | Specifica di design delle visualizzazioni |
-| Versione | 1.1.2 |
+| Versione | 1.1.3 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-27 |
 | Approvazione | Baseline proposta; prototipi percettivi e accessibili richiesti |
 | Riferimenti | GS-MET-001-22; GS-UX-001-09; GS-UI-001; GS-DAT-001; ADR-0016 |
 
@@ -126,6 +126,33 @@ dopo audit di compatibilità e sicurezza; non è requisito MVP.
 L'export dichiara filtri, dimensione, versione software, downsampling e data di
 generazione. Un'immagine senza provenance non è considerata export scientifico
 completo.
+
+### Verifica della fonte nella sessione
+
+Prima di scrivere l'export di una vista, la sessione **DEVE** verificare che
+l'Artifact sia corrente e che nodo produttore, analisi e metodo dichiarati
+corrispondano alla fonte persistita. La lettura del payload necessario al
+confronto mantiene i controlli di schema, identità e integrità del progetto;
+failure e cancellazione attraversano il confine GlifiKit con operazione
+`export`. Un payload non appartenente agli schemi di vista supportati viene
+rifiutato.
+
+Anche l'ammissione di questa operazione attraversa lo stesso confine:
+la sessione chiusa conserva codice, retry e stato del lifecycle con operazione
+`export`; una task già cancellata conserva l'operazione `export` e lo stato
+`unchanged`. Il lifecycle delle altre operazioni non cambia.
+
+Metadati scientifici incompatibili producono
+`visual-export.source-mismatch`, categoria `invalidInput`, senza pubblicare
+file o modificare la generazione. La vista deve essere rigenerata dalla
+fonte prima di ripetere l'export. L'Artifact assente conserva la failure
+`visual-export.stale-artifact`.
+
+Questo confronto non richiede l'uguaglianza con la vista standard: assi
+alternativi ammessi e altre scelte di presentazione restano disponibili.
+La verifica riguarda i metadati del produttore; non autentica eventuali
+coordinate, valori o trasformazioni modificati dal chiamante. Il controllo
+offline descritto sotto conserva il proprio contratto distinto.
 
 ### Profilo macchina v1 e verifica offline
 

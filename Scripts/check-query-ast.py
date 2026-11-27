@@ -81,6 +81,21 @@ def main() -> None:
         run("--ast", str(path), status=7, code="query.depth-limit-exceeded")
         write({"type": "regex", "field": "form", "pattern": canary, "flags": 4})
         run("--ast", str(path), status=3, code="query.regex-rejected")
+        unavailable = {
+            "type": "and", "children": [
+                {**term, "value": canary}, {**term, "field": "lemma"},
+            ],
+        }
+        write(unavailable)
+        failure = run("--ast", str(path), status=5, code="query.unsupported-field")["failure"]
+        assert failure["category"] == "insufficientData", failure
+        run("--text", f"{canary} AND lemma:due", status=5, code="query.unsupported-field")
+        write({"type": "not", "child": unavailable})
+        run("--ast", str(path), status=5, code="query.unsupported-field")
+        for pattern in [r"a\1", r"\bparola\b", r"\D+", r"\t", "[a-z]", "[[:alpha:]]"]:
+            write({"type": "regex", "field": "form", "pattern": pattern, "flags": 0})
+            run("--ast", str(path), status=3, code="query.regex-rejected")
+            run("--text", f"form:/{pattern}/i", status=3, code="query.regex-rejected")
         write(term)
         link = root / "linked.json"
         link.symlink_to(path)

@@ -132,7 +132,7 @@ extension GlifiStatisticalFoundation {
         )
         let tail = (1 - confidenceLevel) / 2
         return GlifiBootstrapInterval(
-            estimate: sample.reduce(0, +) / Double(sample.count),
+            estimate: try resamplingLocation(sample).estimate,
             confidenceLevel: confidenceLevel,
             lower: try quantileType7(means, probability: tail),
             upper: try quantileType7(means, probability: 1 - tail),
@@ -150,6 +150,7 @@ extension GlifiStatisticalFoundation {
         checkpoint: (Int) throws -> Void = { _ in try Task.checkCancellation() }
     ) throws -> [Double] {
         try checkpoint(0)
+        let conditioned = try conditionedResamplingSample(sample)
         var progress = ResamplingObservationProgress()
         var generator = GlifiSplitMix64(seed: seed)
         var means: [Double] = []
@@ -164,12 +165,18 @@ extension GlifiStatisticalFoundation {
                 let take = try progress.chunkCount(
                     upTo: sample.count - drawn, checkpoint: checkpoint)
                 for _ in 0..<take {
-                    total += sample[generator.index(below: sample.count)]
+                    total += conditioned.values[generator.index(below: sample.count)]
                 }
                 progress.consume(take)
                 drawn += take
             }
-            means.append(total / Double(sample.count))
+            let mean =
+                conditioned.constant
+                ?? resamplingScale(total / Double(sample.count), by: conditioned.exponent)
+            guard mean.isFinite else {
+                throw resamplingFailure("statistics.non-finite-result", category: .invalidInput)
+            }
+            means.append(mean)
         }
         try checkpoint(progress.completed)
         let sorted = means.sorted()
@@ -220,6 +227,7 @@ extension GlifiStatisticalFoundation {
                 resampleCount: resampleCount, seed: seed, checkpoint: checkpoint)
         }
         try checkpoint(0)
+        let conditioned = try conditionedResamplingSample(sequence)
         var progress = ResamplingObservationProgress()
         var generator = GlifiSplitMix64(seed: seed)
         let count = sequence.count
@@ -238,20 +246,28 @@ extension GlifiStatisticalFoundation {
                 while offset < take {
                     let chunk = try progress.chunkCount(upTo: take - offset, checkpoint: checkpoint)
                     let end = offset + chunk
-                    for position in offset..<end { total += sequence[start + position] }
+                    for position in offset..<end {
+                        total += conditioned.values[start + position]
+                    }
                     progress.consume(chunk)
                     offset = end
                 }
                 drawn += take
             }
-            means.append(total / Double(count))
+            let mean =
+                conditioned.constant
+                ?? resamplingScale(total / Double(count), by: conditioned.exponent)
+            guard mean.isFinite else {
+                throw resamplingFailure("statistics.non-finite-result", category: .invalidInput)
+            }
+            means.append(mean)
         }
         try checkpoint(progress.completed)
         means.sort()
         try checkpoint(progress.completed)
         let tail = (1 - confidenceLevel) / 2
         return GlifiBootstrapInterval(
-            estimate: sequence.reduce(0, +) / Double(count),
+            estimate: try resamplingLocation(sequence).estimate,
             confidenceLevel: confidenceLevel,
             lower: try quantileType7(means, probability: tail),
             upper: try quantileType7(means, probability: 1 - tail),
@@ -277,42 +293,55 @@ extension GlifiStatisticalFoundation {
         guard sample1.allSatisfy(\.isFinite), sample2.allSatisfy(\.isFinite) else {
             throw resamplingFailure("statistics.non-finite-value", category: .invalidInput)
         }
+        // Admission precedes conditioning, allocation and cancellation checkpoints.
+        switch strategy {
+        case .exact:
+            guard
+                let assignments = binomialCoefficient(sample1.count + sample2.count, sample1.count),
+                assignments <= maximumExactPermutationCount
+            else {
+                throw resamplingFailure(
+                    "statistics.exact-permutation-too-large", category: .invalidInput)
+            }
+        case .monteCarlo(let sampleCount, _):
+            guard (1...maximumResampleCount).contains(sampleCount) else {
+                throw resamplingFailure(
+                    "statistics.invalid-resampling-parameters", category: .invalidInput)
+            }
+        }
         let pooled = sample1 + sample2
-        let total = pooled.reduce(0, +)
         let first = sample1.count
         let second = sample2.count
+        let conditioned = try centeredInferenceCoordinates(pooled)
+        let values = conditioned.values
+        let total = values.reduce(0, +)
         func difference(firstSum: Double) -> Double {
             firstSum / Double(first) - (total - firstSum) / Double(second)
         }
-        let observed = difference(firstSum: sample1.reduce(0, +))
-        // Tolleranza relativa per confronti fra somme uguali calcolate in ordini diversi.
-        let tolerance = 1e-12 * max(1, pooled.map(abs).max() ?? 1)
+        let normalizedObserved = difference(firstSum: values.prefix(first).reduce(0, +))
+        let observed = resamplingScale(normalizedObserved, by: conditioned.exponent)
+        guard observed.isFinite else {
+            throw resamplingFailure("statistics.non-finite-result", category: .invalidInput)
+        }
+        // Roundoff tolerance is relative to the centered span, independent of units and offset.
+        let tolerance = 1e-12 * (values.map(abs).max() ?? 0)
         func isExtreme(_ value: Double) -> Bool {
             switch alternative {
-            case .twoSided: abs(value) >= abs(observed) - tolerance
-            case .greater: value >= observed - tolerance
-            case .less: value <= observed + tolerance
+            case .twoSided: abs(value) >= abs(normalizedObserved) - tolerance
+            case .greater: value >= normalizedObserved - tolerance
+            case .less: value <= normalizedObserved + tolerance
             }
         }
 
         switch strategy {
         case .exact:
-            guard
-                let assignments = binomialCoefficient(pooled.count, first),
-                assignments <= maximumExactPermutationCount
-            else {
-                throw resamplingFailure(
-                    "statistics.exact-permutation-too-large",
-                    category: .invalidInput
-                )
-            }
             var extreme = 0
             var evaluated = 0
             var chosen = Array(0..<first)
             while true {
                 if evaluated.isMultiple(of: 4_096) { try Task.checkCancellation() }
                 evaluated += 1
-                if isExtreme(difference(firstSum: chosen.reduce(0.0) { $0 + pooled[$1] })) {
+                if isExtreme(difference(firstSum: chosen.reduce(0.0) { $0 + values[$1] })) {
                     extreme += 1
                 }
                 guard advanceCombination(&chosen, universe: pooled.count) else { break }
@@ -326,23 +355,17 @@ extension GlifiStatisticalFoundation {
                 alternative: alternative
             )
         case .monteCarlo(let sampleCount, let seed):
-            guard (1...maximumResampleCount).contains(sampleCount) else {
-                throw resamplingFailure(
-                    "statistics.invalid-resampling-parameters",
-                    category: .invalidInput
-                )
-            }
             var generator = GlifiSplitMix64(seed: seed)
-            var values = pooled
+            var shuffled = values
             var extreme = 0
             for iteration in 0..<sampleCount {
                 if iteration.isMultiple(of: 1_024) { try Task.checkCancellation() }
                 // Fisher–Yates parziale: bastano le prime `first` posizioni.
                 for position in 0..<first {
-                    let other = position + generator.index(below: values.count - position)
-                    values.swapAt(position, other)
+                    let other = position + generator.index(below: shuffled.count - position)
+                    shuffled.swapAt(position, other)
                 }
-                if isExtreme(difference(firstSum: values[0..<first].reduce(0, +))) {
+                if isExtreme(difference(firstSum: shuffled[0..<first].reduce(0, +))) {
                     extreme += 1
                 }
             }
@@ -367,7 +390,131 @@ extension GlifiStatisticalFoundation {
         let lowerIndex = Int(position.rounded(.down))
         let upperIndex = min(lowerIndex + 1, sorted.count - 1)
         let fraction = position - Double(lowerIndex)
-        return sorted[lowerIndex] + fraction * (sorted[upperIndex] - sorted[lowerIndex])
+        let lower = sorted[lowerIndex]
+        let upper = sorted[upperIndex]
+        guard lower.isFinite, upper.isFinite else {
+            throw resamplingFailure("statistics.non-finite-result", category: .invalidInput)
+        }
+        let difference = upper - lower
+        let value: Double
+        if difference.isFinite {
+            // Retain the original ordered arithmetic, including its signed-zero result.
+            value = lower + fraction * difference
+        } else {
+            guard fraction > 0 else { return lower }
+            value = (1 - fraction) * lower + fraction * upper
+        }
+        guard value.isFinite else {
+            throw resamplingFailure("statistics.non-finite-result", category: .invalidInput)
+        }
+        return value
+    }
+
+    /// Mean and optional leave-one-out means, preserving ordinary ordered sums.
+    static func resamplingLocation(
+        _ sample: [Double], includeJackknife: Bool = false
+    ) throws -> (estimate: Double, jackknife: [Double]) {
+        guard !sample.isEmpty, !includeJackknife || sample.count >= 2 else {
+            throw resamplingFailure("statistics.insufficient-sample-size")
+        }
+        let conditioned = try conditionedResamplingSample(sample)
+        let total = conditioned.values.reduce(0, +)
+        let estimate =
+            conditioned.constant
+            ?? resamplingScale(
+                total / Double(sample.count), by: conditioned.exponent)
+        guard estimate.isFinite else {
+            throw resamplingFailure("statistics.non-finite-result", category: .invalidInput)
+        }
+        guard includeJackknife else { return (estimate, []) }
+        var jackknife: [Double] = []
+        jackknife.reserveCapacity(sample.count)
+        for (index, value) in conditioned.values.enumerated() {
+            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
+            let mean =
+                conditioned.constant
+                ?? resamplingScale(
+                    (total - value) / Double(sample.count - 1), by: conditioned.exponent)
+            guard mean.isFinite else {
+                throw resamplingFailure("statistics.non-finite-result", category: .invalidInput)
+            }
+            jackknife.append(mean)
+        }
+        return (estimate, jackknife)
+    }
+
+    private static func conditionedResamplingSample(
+        _ sample: [Double]
+    ) throws -> (values: [Double], exponent: Int, constant: Double?) {
+        var largest = 0.0
+        let first = sample.first ?? 0
+        var isConstant = true
+        for (index, value) in sample.enumerated() {
+            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
+            largest = max(largest, abs(value))
+            isConstant = isConstant && value == first
+        }
+        // Reserve headroom for rounding in ordered sums at the admitted sample sizes.
+        // The exact max/count bound alone can still overflow after repeated additions.
+        guard largest >= Double.greatestFiniteMagnitude / (2 * Double(sample.count)) else {
+            return (sample, 0, nil)
+        }
+        let exponent = largest.exponent
+        var values: [Double] = []
+        values.reserveCapacity(sample.count)
+        for (index, value) in sample.enumerated() {
+            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
+            let normalized = resamplingScale(value, by: -exponent)
+            guard value == 0 || normalized != 0 else {
+                throw resamplingFailure("statistics.non-finite-result", category: .invalidInput)
+            }
+            values.append(normalized)
+        }
+        return (values, exponent, isConstant ? first : nil)
+    }
+
+    /// Centered coordinates in a common exact power-of-two unit.
+    static func centeredInferenceCoordinates(
+        _ sample: [Double]
+    ) throws -> (values: [Double], exponent: Int) {
+        let anchor = sample.first ?? 0
+        var largest = 0.0
+        var needsInputScaling = false
+        for (index, value) in sample.enumerated() {
+            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
+            largest = max(largest, abs(value))
+            needsInputScaling = needsInputScaling || !(value - anchor).isFinite
+        }
+        let inputExponent = needsInputScaling ? largest.exponent : 0
+        let scaledAnchor = resamplingScale(anchor, by: -inputExponent)
+        func offset(_ value: Double) -> Double {
+            needsInputScaling
+                ? resamplingScale(value, by: -inputExponent) - scaledAnchor : value - anchor
+        }
+        var largestOffset = 0.0
+        for (index, value) in sample.enumerated() {
+            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
+            if needsInputScaling, value != 0,
+                resamplingScale(value, by: -inputExponent) == 0
+            {
+                throw resamplingFailure("statistics.non-finite-result", category: .invalidInput)
+            }
+            largestOffset = max(largestOffset, abs(offset(value)))
+        }
+        guard largestOffset > 0 else { return (Array(repeating: 0, count: sample.count), 0) }
+        let offsetExponent = largestOffset.exponent
+        var values: [Double] = []
+        values.reserveCapacity(sample.count)
+        for (index, value) in sample.enumerated() {
+            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
+            let rawOffset = offset(value)
+            let normalized = resamplingScale(rawOffset, by: -offsetExponent)
+            guard rawOffset == 0 || normalized != 0 else {
+                throw resamplingFailure("statistics.non-finite-result", category: .invalidInput)
+            }
+            values.append(normalized)
+        }
+        return (values, inputExponent + offsetExponent)
     }
 
     /// `C(n,k)` or `nil` on overflow.
@@ -417,6 +564,10 @@ private struct ResamplingObservationProgress {
         let (next, overflow) = completed.addingReportingOverflow(count)
         completed = overflow ? Int.max : next
     }
+}
+
+private func resamplingScale(_ value: Double, by exponent: Int) -> Double {
+    Double(sign: value.sign, exponent: exponent, significand: abs(value))
 }
 
 private func resamplingFailure(

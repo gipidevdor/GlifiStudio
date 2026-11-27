@@ -76,6 +76,43 @@ public struct GlifiQueryEvaluator: Sendable {
         try validation.validate(query.root, depth: 0)
     }
 
+    /// Admits all execution capabilities before source-dependent short-circuiting.
+    ///
+    /// Structural validation stays separate so the codec retains the complete v1 algebra.
+    func validateExecution(
+        _ query: GlifiQueryAST,
+        limits: GlifiQueryLimits = .standard
+    ) throws {
+        try validate(query, limits: limits)
+        var pending = [query.root]
+        while let node = pending.popLast() {
+            try Task.checkCancellation()
+            switch node {
+            case .matchAll:
+                break
+            case let .term(field, _, _), let .phrase(field, _, _), let .regex(field, _, _):
+                try requireTextField(field)
+            case .range, .exists:
+                throw queryExecutionFailure("query.unsupported-field", category: .insufficientData)
+            case let .proximity(left, right, _, _, _):
+                pending.append(right)
+                pending.append(left)
+            case let .not(child):
+                pending.append(child)
+            case let .within(child, scope):
+                switch scope {
+                case .sourceRevision:
+                    pending.append(child)
+                case .project, .corpus:
+                    throw queryExecutionFailure(
+                        "query.unsupported-scope", category: .insufficientData)
+                }
+            case let .and(children), let .or(children):
+                pending.append(contentsOf: children.reversed())
+            }
+        }
+    }
+
     /// Evaluates a query using the positional tokenization of the same source snapshot.
     public func evaluate(
         _ query: GlifiQueryAST,
@@ -83,7 +120,7 @@ public struct GlifiQueryEvaluator: Sendable {
         tokenization: GlifiTokenization,
         limits: GlifiQueryLimits = .standard
     ) throws -> GlifiQueryResult {
-        try validate(query, limits: limits)
+        try validateExecution(query, limits: limits)
         guard tokenization.sourceUTF8Length == importedText.text.utf8.count else {
             throw queryExecutionFailure("query.incompatible-ast", category: .incompatibleVersion)
         }
@@ -195,6 +232,12 @@ private struct QueryValidation {
         guard field.isKnown else {
             throw queryExecutionFailure("query.unknown-field")
         }
+    }
+}
+
+private func requireTextField(_ field: GlifiQueryField) throws {
+    guard field == .form || field == .normalized || field == .text else {
+        throw queryExecutionFailure("query.unsupported-field", category: .insufficientData)
     }
 }
 
@@ -549,11 +592,6 @@ private struct QueryEvaluationContext {
         anchors = merged
     }
 
-    private func requireTextField(_ field: GlifiQueryField) throws {
-        guard field == .form || field == .normalized || field == .text else {
-            throw queryExecutionFailure("query.unsupported-field", category: .insufficientData)
-        }
-    }
 }
 
 private struct QueryEvaluation {
@@ -735,6 +773,14 @@ private struct SafeTokenPattern {
                 members.append(character)
                 index = parsed.nextIndex
             } else {
+                guard characters[index] != "[" else {
+                    throw queryExecutionFailure("query.regex-rejected")
+                }
+                if characters[index] == "-", !members.isEmpty,
+                    index + 1 < characters.count, characters[index + 1] != "]"
+                {
+                    throw queryExecutionFailure("query.regex-rejected")
+                }
                 members.append(characters[index])
                 index += 1
             }
@@ -756,7 +802,10 @@ private struct SafeTokenPattern {
         case "d": return (.digit, start + 2)
         case "w": return (.word, start + 2)
         case "s": return (.whitespace, start + 2)
-        case let escaped: return (.literal(escaped), start + 2)
+        case let escaped where escaped.isASCII && (escaped.isLetter || escaped.isNumber):
+            throw queryExecutionFailure("query.regex-rejected")
+        case let escaped:
+            return (.literal(escaped), start + 2)
         }
     }
 

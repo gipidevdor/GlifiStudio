@@ -2,10 +2,120 @@
 
 import Foundation
 import GlifiKit
+import Synchronization
 import Testing
 
 @MainActor
 struct StudioSelectionConsistencyTests {
+    @Test(arguments: [2, 3], [false, true])
+    func anInterruptedCodingSourceSelectionPreservesItsContextAndAllowsRetry(
+        interruptionAdmission: Int, cancels: Bool
+    ) async throws {
+        let interruption = Mutex((armed: false, admissions: 0))
+        let environment = GlifiStudioRuntimeEnvironment {
+            let admission = interruption.withLock { state in
+                guard state.armed else { return 0 }
+                state.admissions += 1
+                return state.admissions
+            }
+            if admission == interruptionAdmission, cancels {
+                withUnsafeCurrentTask { $0?.cancel() }
+            }
+            return GlifiStudioSystemConditions(
+                isLowPowerModeEnabled: false, thermalCondition: .nominal,
+                memoryPressure: admission == interruptionAdmission && !cancels
+                    ? .critical : .nominal,
+                isApplicationActive: true)
+        }
+        let fixture = try await makeFixture(
+            service: GlifiStudioService(runtimeEnvironment: environment))
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = fixture.model
+        try await prepareCodingSelection(in: fixture)
+        let previousID = model.codingSourceRevisionID
+        let previousSegments = model.codingSegments
+        let previousCharacterCount = model.codingSourceCharacterCount
+        let previousPassage = try #require(model.codingPassage)
+        let previousTexts = model.codingTexts
+        let previousState = model.qualitativeState
+        let previousSnapshot = model.snapshot
+        interruption.withLock { state in
+            state.armed = true
+            state.admissions = 0
+        }
+
+        await model.loadCodingSource(fixture.otherMatch.sourceRevisionID)
+
+        #expect(interruption.withLock { $0.admissions } == interruptionAdmission)
+        #expect(
+            model.lastFailure?.code
+                == (cancels ? "operation.cancelled" : "runtime.admission-denied"))
+        #expect(model.lastFailure?.category == (cancels ? "cancelled" : "insufficientResources"))
+        #expect(!model.isBusy)
+        #expect(model.codingSourceRevisionID == previousID)
+        #expect(model.codingSegments == previousSegments)
+        #expect(model.codingSourceCharacterCount == previousCharacterCount)
+        #expect(model.codingPassage == previousPassage)
+        #expect(model.codingTexts == previousTexts)
+        #expect(model.qualitativeState == previousState)
+        #expect(model.snapshot == previousSnapshot)
+        interruption.withLock { $0.armed = false }
+
+        await model.loadCodingSource(fixture.otherMatch.sourceRevisionID)
+
+        #expect(model.lastFailure == nil)
+        #expect(!model.isBusy)
+        #expect(model.codingSourceRevisionID == fixture.otherMatch.sourceRevisionID)
+        #expect(model.codingSegments.count == 1)
+        #expect(model.codingSegments.first?.text == fixture.otherSource.text)
+        #expect(model.codingSourceCharacterCount == fixture.otherSource.text.count)
+        #expect(model.codingPassage == nil)
+        #expect(Set(model.codingTexts.values) == [fixture.otherSource.text])
+        #expect(model.qualitativeState == previousState)
+        #expect(model.snapshot == previousSnapshot)
+        await model.closeProject()
+    }
+
+    @Test func aRejectedCodingSourceSelectionPreservesItsContextAndAllowsRetry() async throws {
+        let fixture = try await makeFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = fixture.model
+        try await prepareCodingSelection(in: fixture)
+        let previousID = model.codingSourceRevisionID
+        let previousSegments = model.codingSegments
+        let previousCharacterCount = model.codingSourceCharacterCount
+        let previousPassage = model.codingPassage
+        let previousTexts = model.codingTexts
+        let previousState = model.qualitativeState
+        let previousSnapshot = model.snapshot
+        let (gate, opening) = try await beginSuspendedReopening(model)
+        defer {
+            gate.release()
+            opening.cancel()
+        }
+
+        await model.loadCodingSource(fixture.otherMatch.sourceRevisionID)
+
+        #expect(model.isBusy)
+        #expect(model.lastFailure == nil)
+        #expect(model.codingSourceRevisionID == previousID)
+        #expect(model.codingSegments == previousSegments)
+        #expect(model.codingSourceCharacterCount == previousCharacterCount)
+        #expect(model.codingPassage == previousPassage)
+        #expect(model.codingTexts == previousTexts)
+        #expect(model.qualitativeState == previousState)
+        #expect(model.snapshot == previousSnapshot)
+        gate.release()
+        await opening.value
+
+        await model.loadCodingSource(fixture.otherMatch.sourceRevisionID)
+
+        #expect(model.lastFailure == nil)
+        #expect(model.codingSourceRevisionID == fixture.otherMatch.sourceRevisionID)
+        #expect(model.codingSegments.first?.text == fixture.otherSource.text)
+        await model.closeProject()
+    }
+
     @Test func aRejectedQuerySelectionPreservesItsSourceAndAllowsRetry() async throws {
         let fixture = try await makeFixture()
         defer { try? FileManager.default.removeItem(at: fixture.root) }
@@ -193,13 +303,15 @@ struct StudioSelectionConsistencyTests {
         #expect(model.snapshot == previousSnapshot)
     }
 
-    private func makeFixture() async throws -> SelectionConsistencyFixture {
+    private func makeFixture(service: GlifiStudioService = GlifiStudioService()) async throws
+        -> SelectionConsistencyFixture
+    {
         let root = FileManager.default.temporaryDirectory.appending(
             path: "GlifiStudioSelectionTests-\(UUID().uuidString)", directoryHint: .isDirectory)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: false)
         do {
             let projectURL = root.appending(path: "Selection.glifi")
-            let model = StudioHomeModel()
+            let model = StudioHomeModel(service: service)
             await model.attachDocument(at: projectURL, needsPackageInitialization: true)
             try #require(model.lastFailure == nil)
             let texts = ["Fonte breve.", "Un contesto più lungo precede la fonte conclusiva."]
@@ -231,6 +343,26 @@ struct StudioSelectionConsistencyTests {
             try? FileManager.default.removeItem(at: root)
             throw error
         }
+    }
+
+    private func prepareCodingSelection(in fixture: SelectionConsistencyFixture) async throws {
+        let model = fixture.model
+        let previousSourceID = try #require(model.selectedQueryMatch?.sourceRevisionID)
+        await model.registerCodebookRevision(
+            [.init(categoryID: "topic", label: "Tema sintetico", definition: "Campione di prova")],
+            codebookID: "selection-fixture")
+        try #require(model.lastFailure == nil)
+        for sourceID in [fixture.otherMatch.sourceRevisionID, previousSourceID] {
+            await model.loadCodingSource(sourceID)
+            try #require(model.lastFailure == nil)
+            await model.resolvePassage(.sentences(first: 0, last: 0))
+            try #require(model.lastFailure == nil)
+            await model.codeResolvedPassage(categoryID: "topic")
+            try #require(model.lastFailure == nil)
+        }
+        try #require(model.codingSourceRevisionID == previousSourceID)
+        try #require(!model.codingTexts.isEmpty)
+        try #require(model.codingPassage != nil)
     }
 
     private func beginSuspendedReopening(_ model: StudioHomeModel) async throws -> (

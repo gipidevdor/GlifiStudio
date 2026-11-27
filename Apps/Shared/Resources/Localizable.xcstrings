@@ -6833,6 +6833,23 @@
         }
       }
     },
+    "failure.visual-export.source-mismatch" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The view does not match its source result. Regenerate the view before exporting it."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La vista non corrisponde al risultato sorgente. Rigenera la vista prima di esportarla."
+          }
+        }
+      }
+    },
     "failure.visual-export.stale-artifact" : {
       "extractionState" : "manual",
       "localizations" : {

@@ -1080,13 +1080,19 @@ final class StudioHomeModel {
     func loadCodingSource(_ sourceRevisionID: String) async {
         await run(messageKey: "progress.loading-source") { [self] in
             let active = try requireSession()
-            codingPassage = nil
-            codingSegments = try await active.textSegments(sourceRevisionID: sourceRevisionID)
-            codingSourceCharacterCount = try await active.extractedCharacterCount(
+            let segments = try await active.textSegments(sourceRevisionID: sourceRevisionID)
+            let characterCount = try await active.extractedCharacterCount(
                 sourceRevisionID: sourceRevisionID)
+            let state = try await active.qualitativeState()
+            let texts = try await resolveCodingTexts(
+                in: active, sourceRevisionID: sourceRevisionID, state: state)
+            try Task.checkCancellation()
+            codingSegments = segments
+            codingSourceCharacterCount = characterCount
             codingSourceRevisionID = sourceRevisionID
-            qualitativeState = try await active.qualitativeState()
-            try await refreshCodingTexts(active)
+            qualitativeState = state
+            codingTexts = texts
+            codingPassage = nil
         }
     }
 
@@ -1199,21 +1205,26 @@ final class StudioHomeModel {
 
     /// Resolves the passage of every coding of the loaded source, for the review list.
     private func refreshCodingTexts(_ active: GlifiStudioProjectSession) async throws {
-        guard let sourceRevisionID = codingSourceRevisionID else {
-            codingTexts = [:]
-            return
-        }
-        let codings = (qualitativeState?.codings ?? []).filter {
+        codingTexts = try await resolveCodingTexts(
+            in: active, sourceRevisionID: codingSourceRevisionID, state: qualitativeState)
+    }
+
+    /// Resolves coding excerpts without publishing presentation state.
+    private func resolveCodingTexts(
+        in active: GlifiStudioProjectSession, sourceRevisionID: String?,
+        state: GlifiStudioQualitativeState?
+    ) async throws -> [String: String] {
+        try Task.checkCancellation()
+        guard let sourceRevisionID else { return [:] }
+        let codings = (state?.codings ?? []).filter {
             $0.sourceRevisionID == sourceRevisionID
         }
-        guard !codings.isEmpty else {
-            codingTexts = [:]
-            return
-        }
+        guard !codings.isEmpty else { return [:] }
         let resolved = try await active.passages(
             sourceRevisionID: sourceRevisionID,
             selections: codings.map { .bytes(start: $0.startUTF8, end: $0.endUTF8) })
-        codingTexts = Dictionary(
+        try Task.checkCancellation()
+        return Dictionary(
             zip(codings.map(\.eventID), resolved.map(\.text)), uniquingKeysWith: { _, last in last }
         )
     }

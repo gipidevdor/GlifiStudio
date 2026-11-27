@@ -22,6 +22,7 @@ Scripts/check-fixtures.py
 python3 Scripts/check-pdfa-tests.py
 python3 Scripts/check-oracles-tests.py
 python3 Scripts/check-analysis-scenarios.py --self-test
+python3 -B Scripts/check-bdd.py --self-test
 Scripts/check-architecture.sh
 Scripts/check-localization.py
 Scripts/check-failure-taxonomy.py

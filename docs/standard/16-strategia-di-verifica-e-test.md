@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-STD-001-16 |
 | Tipo | Capitolo normativo |
-| Versione | 0.6.0 |
+| Versione | 0.7.0 |
 | Stato | Proposto |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-27 |
 | Approvazione | Non ancora approvato |
 | Documento padre | [GS-STD-001](../standard-di-progetto.md) |
 
@@ -93,3 +93,25 @@ fra interfacce non sostituisce un oracolo indipendente.
 La baseline corrente applica questa verifica ai percorsi condivisi e ai modelli
 macOS. iPadOS e gli audit manuali restano separati; nessun criterio non ancora
 attuato diventa conforme per la sola esistenza della matrice.
+
+## 16.5 Specifiche comportamentali BDD
+
+Le specifiche BDD **DEVONO** descrivere in italiano precondizione, azione e
+risultato osservabile; gli step **DEVONO** esercitare il comportamento reale
+di prodotto con fixture isolate e attese esplicite. Feature, step e inventario
+**DEVONO** essere versionati insieme. Casi nominali, limiti, failure e
+conservazione dello stato **DEVONO** essere distinti dove applicabili, senza
+presentare una suite finita come copertura di ogni input o variante.
+
+[ADR-0046](../adr/0046-bdd-cucumber-swift.md) adotta CucumberSwift soltanto per
+i test; [GS-BDD-001](../testing/01-bdd-cucumber-swift.md) ne definisce struttura,
+comandi, manutenzione e copertura effettiva. La suite **DEVE** rientrare nel
+normale gate macOS e fallire su step mancanti o ambigui, feature non eseguibili,
+asserzioni errate e assenza degli scenari attesi. Un filtro volontario
+**DEVE** restare distinguibile dall'esecuzione completa.
+
+I test BDD **NON DEVONO** sostituire oracoli scientifici, property test,
+verifiche di parità, test UI o audit assistivi. La loro esecuzione headless
+**NON DEVE** essere dichiarata verifica di VoiceOver, usabilità, prestazioni
+o qualifica G4/G5. Il profilo iPadOS resta separato secondo le istruzioni di
+verifica del repository.

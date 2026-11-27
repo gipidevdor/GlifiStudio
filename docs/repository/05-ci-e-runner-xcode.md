@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-REP-005 |
 | Tipo | Descrizione della pipeline |
-| Versione | 1.6.0 |
+| Versione | 1.7.0 |
 | Stato | Eseguito sul runner remoto |
 | Responsabile | Responsabile tecnico, da assegnare |
-| Ultima modifica | 2026-10-03 |
+| Ultima modifica | 2026-11-27 |
 | Approvazione | Baseline operativa richiesta dal promotore |
 
 ## Pipeline
@@ -41,9 +41,16 @@ e deciso da ADR-0020: `make quality` / `make quality-static` non sostituiscono
 
 `actions/checkout` e `actions/cache` sono fissate a commit SHA completi e non
 conservano credenziali. Dependabot controlla settimanalmente soltanto GitHub
-Actions. Non esistono dipendenze Swift esterne; la relativa automazione sarà
-aggiunta solo insieme a una dipendenza approvata e dopo aver verificato il
-supporto corrente del servizio.
+Actions. [ADR-0046](../adr/0046-bdd-cucumber-swift.md) aggiunge CucumberSwift e
+CucumberSwiftExpressions esclusivamente ai test BDD: versione diretta esatta,
+lockfile versionato e licenze inventariate. Gli aggiornamenti SwiftPM sono
+manuali con riesame di pin, transitive, licenze e gate; l'eventuale automazione
+sarà aggiunta dopo aver verificato il supporto corrente del servizio.
+
+La suite BDD viene eseguita dal normale `swift test` incluso nel gate e non
+richiede servizi esterni durante gli scenari. La prima risoluzione può scaricare
+le dipendenze approvate; runner e cache devono poter raggiungere i repository
+prima dei test. Il prodotto mantiene la propria policy senza rete o telemetria.
 
 Tag come `v5` sono leggibili ma mobili e non devono essere usati come riferimento eseguibile. L'annotazione del tag resta accanto allo SHA per consentire manutenzione e revisione.
 

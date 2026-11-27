@@ -79,6 +79,11 @@ dell'app macOS senza firma, secondo la priorità corrente del progetto. Il profi
 di entrambe le piattaforme è esplicito con `make verify-all`; iPadOS è rinviato.
 Gli esiti e gli eventuali controlli saltati vanno registrati per la revisione verificata.
 
+`make test-bdd` esegue gli scenari Gherkin in italiano con CucumberSwift su macOS,
+con verifiche di dominio, persistenza, query, analisi, codifica, esportazione e CLI.
+La suite è inclusa in `make verify`; il report deve attestare tutti gli esempi previsti.
+Comandi e perimetro sono descritti nella [guida BDD](docs/testing/01-bdd-cucumber-swift.md).
+
 Per il feedback rapido usa `make quality`. Profili macOS, preflight App Store e
 criteri di integrazione sono descritti nel
 [loop di sviluppo](docs/loop-di-sviluppo-e-qualita.md) e nella

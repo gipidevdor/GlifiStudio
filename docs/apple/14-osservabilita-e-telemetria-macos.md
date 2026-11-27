@@ -6,11 +6,11 @@
 | --- | --- |
 | Identificatore | GS-APL-014 |
 | Tipo | Standard applicativo Apple |
-| Versione | 1.0.0 |
+| Versione | 1.1.0 |
 | Stato | Approvato |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-15 |
-| Approvazione | ADR-0017 |
+| Ultima modifica | 2026-11-27 |
+| Approvazione | ADR-0017; ADR-0046 per gli strumenti esclusivi dei test |
 
 ## Scopo
 
@@ -36,8 +36,12 @@ La baseline è **senza telemetria gestita dall'app**:
   retention, threat model, aggiornamento delle dichiarazioni e un nuovo ADR.
 
 La proprietà `GlifiTelemetryPolicy` rende interrogabili questi divieti dal codice.
-La allowlist delle dipendenze esterne e dei framework collegati è vuota nella 0.1:
-il quality gate respinge ogni nuovo package remoto, framework binario o gestore di
+La allowlist delle dipendenze esterne collegate ai target di produzione è vuota
+nella 0.1. La sola eccezione di sviluppo è CucumberSwift 6.9.0 con la dipendenza
+transitiva CucumberSwiftExpressions 1.4.2, esclusiva del target BDD e del suo
+generatore secondo [ADR-0046](../adr/0046-bdd-cucumber-swift.md). Non introduce
+telemetria, rete o framework nel prodotto. Il quality gate controlla il pin e i
+consumatori e respinge package remoti ulteriori, framework binari o gestori di
 dipendenze, oltre a `MetricKit` sottoscritto, rete applicativa e logging non
 centralizzato. Un framework Apple o package futuro entra nell'allowlist soltanto
 insieme a requisito, ADR e verifica applicabili; una denylist di vendor è solo

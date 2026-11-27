@@ -94,6 +94,10 @@ quality:
 test:
 	./Scripts/test.sh
 
+.PHONY: test-bdd
+test-bdd:
+	./Scripts/test.sh --bdd
+
 .PHONY: test-macos
 test-macos:
 	./Scripts/test.sh --macos-app

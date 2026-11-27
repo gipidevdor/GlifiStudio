@@ -1,0 +1,170 @@
+{
+  "identifier": "GS-VER-328",
+  "date": "2026-11-27",
+  "baseHEAD": "44dd90f22f1b4b4930f87a6f6e818ccb3efaa5d4",
+  "status": "Targeted RED/GREEN and full composite macOS gate passed",
+  "externalProbe": {
+    "scope": "Exact current product method bodies with stub error types, reentrant system log-gamma and unused chi-square stub; no SwiftPM build or shared scratch",
+    "sourceSHA256": "dd3fefc240807d76b8eaab709c3b10fcc66a2ae9f726f6a2a85834a7d5fbc9e2",
+    "results": [
+      "permutation ordinary p=0.3333333333333333 extreme=2/6 observed=-2.0",
+      "permutation scaled p=1.0 extreme=6/6 observed=-1.9999999999999997e-14",
+      "permutation translated p=0.6666666666666666 extreme=4/6 observed=-2.0",
+      "oneSample large t=0.0 p=1.0 sd=inf, normalized t=1.0 p=0.49999999999999994",
+      "cohen large d=0.0 pooledSD=inf, normalized d=1.414213562373095",
+      "bootstrap constant large estimate=inf lower=nan upper=nan",
+      "quantile p=0.0 value=nan",
+      "quantile p=0.5 value=inf",
+      "quantile p=1.0 value=1e+308"
+    ]
+  },
+  "coreRED": {
+    "reportedBy": "root",
+    "log": "macOS-2026-11-27-semantics/core-red.log",
+    "sha256": "0c20c2eb70859f32c28dffabb4dba7fe2ee5b21b8746ba4379161114092626ba",
+    "totalDefinitions": 16,
+    "totalIssues": 70,
+    "ownDefinitions": 8,
+    "ownParameterizedCases": 10,
+    "ownRecordedIssues": 44,
+    "exit": 1,
+    "compilationPassed": true
+  },
+  "inputSourceSHA256": {
+    "GlifiPairedLocationStatistics.swift": "369e1abaf420bfce4f4b0087c0024a0f50837ceacf3223bed6e2654c97e1ba74",
+    "GlifiResamplingStatistics.swift": "c6f0e13eb7c812ec3587fd0a9303975ab748a76ec31efef5dab88fe75d8d84ce",
+    "GlifiInferenceExtensions.swift": "3b9ac4b5adff83cb0232b868e0f16a7243222db2c3c6ed24c60274a5fc9bd285"
+  },
+  "limits": [
+    "Full composite macOS gate passed; iPadOS, manual GUI/accessibility and signed distribution not verified.",
+    "No exact superaccumulator promised for every binary64 dynamic range; lost nonzero normalized contributions fail explicitly",
+    "No new performance claim; existing Release resampling benchmark available"
+  ],
+  "candidateSHA256": {
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiPairedLocationStatistics.swift": "71f799d657f0d655af7338be506cf573c61dd01f20ae122ac1db2552f71729af",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiResamplingStatistics.swift": "fc135cc59eeef806efe7c87c19d83f2e7fa579f8dee81d7094ada6b4f72dcafd",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiInferenceExtensions.swift": "2219aa49d9946e6d8d5f6c567f94568cfb9bed0a63bbcafd51c6dc9eb469bf3d",
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiDerivedAnalyses.swift": "092845a201f18ef458e7cc0f5473e729e60a5d25814982dba314bca436ab789a",
+    "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiInferenceStabilityTests.swift": "a257e48f2bb3ae42e66d2725171acf7129dc60eebbf88924ffb61a6033fd4169",
+    "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKeynessCacheContractTests.swift": "9889e3b7e02f0ec9124bde372617a5b3943cc161bf6d7c662b0d9b9cb0e71f19"
+  },
+  "formatAndLint": {
+    "targetedSixFiles": true,
+    "diffWhitespace": true,
+    "compileOrTestStartedByChild": false
+  },
+  "selectiveProducerRevisions": {
+    "group-metric-comparison": "3",
+    "group-metric-posthoc": "3",
+    "paired-metric-comparison": "3: admissible near-one relative frequencies reproduce t error above D1 tolerance",
+    "otherFamilies": "unchanged"
+  },
+  "additionalRegressionDefinitions": [
+    "BCa invariance under exact power-of-two scale",
+    "Paired rank overflow rejected before ties",
+    "Cohen d small contrasts over large offset",
+    "Q7 ordinary signed-zero bit pattern",
+    "Paired small spread on admissible relative frequencies",
+    "Bootstrap ordered-sum headroom for constants at (max/n).nextDown, n=100 and n=1000"
+  ],
+  "swiftStage2": {
+    "reportedBy": "root",
+    "coreDefinitions": 779,
+    "issues": 2,
+    "onlyFailure": "GlifiMovingBlockBootstrapOptimizationTests signed-zero bit equality",
+    "newInferenceTestsPassed": true,
+    "rootLog": "macOS-2026-11-27-semantics/core-stage2.log",
+    "rootLogSHA256": "bc271bf399f3c30ed71e252f4b9dc72dc3695f6f2f068d14074a6d358dc27eda",
+    "correction": "Keep original Q7 arithmetic when endpoint difference is finite; shortcut only for overflowing difference; expected values and tolerances unchanged"
+  },
+  "pairedDomainCounterexample": {
+    "sample": "four values 999999/1000000, one value 999998/999999; paired against zero",
+    "oldT": 5000105580119.011,
+    "centeredIndependentT": 5000105610935.903,
+    "relativeDeltaApproximate": 6.16e-09,
+    "additionalRegression": "Closed-form SD and t for four a observations and one a+d"
+  },
+  "cleanup": {
+    "temporaryProbeSourcesAndExecutablesRemovedBytes": 264385,
+    "retainedResultLog": "macOS-2026-11-27-semantics/inference-probe-results.txt",
+    "retainedEvidence": "Original source hashes, common RED log, candidate hashes and versioned regressions"
+  },
+  "swiftStage3": {
+    "reportedBy": "root",
+    "coreDefinitions": 781,
+    "coreIssues": 0,
+    "scope": "Full Core including signed-zero and bounded paired-frequency corrections; two expected Kit admission REDs belong to 331",
+    "rootLog": "macOS-2026-11-27-semantics/core-stage3.log",
+    "rootLogSHA256": "d9c5fb430369bfc05fbfea1b76f472efd1113416bbdc6d6e108696fa9e11dd22"
+  },
+  "headroomReview": {
+    "reviewer": "license_provenance",
+    "counts": [
+      100,
+      1000
+    ],
+    "input": "(Double.greatestFiniteMagnitude / Double(count)).nextDown",
+    "cause": "Ordered summation roundoff can overflow even below a max/count mathematical bound",
+    "regression": "inferenceBootstrapReservesAccumulationHeadroom",
+    "status": "Swift RED confirmed for both counts; conservative max/(2*n) guard passed targeted final GREEN",
+    "red": {
+      "reportedBy": "root",
+      "log": "macOS-2026-11-27-semantics/bootstrap-headroom-red.log",
+      "definitions": 1,
+      "parameterizedCases": 2,
+      "failure": "statistics.non-finite-result in both n=100 and n=1000",
+      "exit": 1,
+      "buildSeconds": 47.41,
+      "testSeconds": 0.002,
+      "sha256": "116bd02ac78cd70c5fc08d7aa8a818e14c1d73b03163ad997fa014c6124185bf"
+    },
+    "correction": "Select power-of-two scaling at max/(2*n), reserving rounding headroom for admitted sample sizes; draw/checkpoint sequence unchanged"
+  },
+  "independentReview": "No other blocker identified in pooled scaling, BCa, Q7, draw/checkpoint preservation or selective revisions. Affine invariance excludes transformed data already collapsed by rounding.",
+  "targetedFinalGREEN": {
+    "reportedBy": "root",
+    "log": "macOS-2026-11-27-semantics/core-green.log",
+    "coreDefinitions": 28,
+    "kitDefinitions": 17,
+    "issues": 0,
+    "buildSeconds": 47.04,
+    "scope": "Headroom, signed-zero, bounded paired-frequency regression and selective producer revisions included",
+    "inputCount": 590,
+    "nonDocumentFingerprint": "5aeefb5d07d002001e9ee143bb9c3728e3aeb6c5e509a918d9b16d8c45b99793",
+    "sha256": "c892aedff2d3ef655745e6156f89683c8b0487f18488340f84f6650251bf7a31"
+  },
+  "finalCompositeVerification": {
+    "reportedBy": "root",
+    "worktree": "isolated composite snapshot on fix/semantic-correctness-verified",
+    "baseHEAD": "44dd90f22f1b4b4930f87a6f6e818ccb3efaa5d4",
+    "command": "make verify",
+    "profile": "macOS",
+    "exit": 0,
+    "seconds": 589.88,
+    "log": "macOS-2026-11-27-semantics/composite-make-verify.log",
+    "logSHA256": "dccda4c30b675a31188afc0dce651a4aaa3d5c56f2a233bb659f9f6da2e6a28a",
+    "summary": "macOS-2026-11-27-semantics/composite-verification-summary.json",
+    "summarySHA256": "162e3533b38ce9414fb798ca4dfdaa6c393a9bb334205f5ec3a44c5b7a57dec2",
+    "controlledInputs": 608,
+    "nonDocumentFingerprint": "36b05ea14bbeafe91150b84edb8ab74a67a240e75b9430f553797f262714d259",
+    "sourceUnchangedAfterVerification": true,
+    "coreDefinitions": 782,
+    "kitDefinitions": 169,
+    "bddDefinitions": 65,
+    "bddFeatures": 8,
+    "bddExpandedScenarios": 122,
+    "bddSteps": 697,
+    "nativeDefinitions": 135,
+    "nativeExecutions": 425,
+    "numericalOracleRows": 248,
+    "independentFractionCases": 64,
+    "conformingPDFAFiles": 2,
+    "compilerEnumeratedCLIOperations": 132,
+    "completeResultParityChecks": 264,
+    "visualExportSourceRejectionChecks": 6,
+    "reviewedAPIDeclarationsAndMembers": 2840,
+    "recoveryCheckpoints": 22,
+    "failures": 0,
+    "scopeNote": "The final composite snapshot includes BDD integration and other semantic lots; historical targeted fingerprints remain separate. BDD does not replace the dedicated numerical regressions."
+  }
+}

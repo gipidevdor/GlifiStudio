@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-LIC-001 |
 | Tipo | Politica di licenza del progetto |
-| Versione | 0.2.0 |
+| Versione | 0.3.1 |
 | Stato | Attivo |
 | Responsabile | Glifi Studio contributors |
-| Ultima modifica | 2026-11-26 |
+| Ultima modifica | 2026-11-27 |
 | Approvazione | Decisione dell'iniziatore del progetto, 2026-09-15 |
 | Licenza | BSD 3-Clause (`BSD-3-Clause`) |
 
@@ -83,3 +83,26 @@ R, i pacchetti degli oracoli, veraPDF, Python e azioni CI rimangono strumenti
 esterni con licenze proprie. Prima di copiarli, collegarli o distribuirli nel
 prodotto serve una nuova valutazione. Una citazione di articolo o manuale non
 è una concessione di licenza sul relativo codice, testo, tabella o dato.
+
+## 8. Dipendenze BDD esclusivamente di sviluppo
+
+[ADR-0046](adr/0046-bdd-cucumber-swift.md) adotta CucumberSwift 6.9.0 e la
+dipendenza transitiva CucumberSwiftExpressions 1.4.2 con licenza MIT. Manifest
+e lockfile identificano versioni e commit; l'inventario registra la verifica
+delle licenze sulle revisioni effettive. Gli
+[avvisi completi](../Config/Licenses/bdd-tools.txt) conservano copyright e
+permesso MIT di entrambe.
+
+La dipendenza diretta dichiara `traits: []` per disabilitare esplicitamente
+i trait predefiniti upstream. Il grafo ammesso non cambia in funzione del
+default `Macros` condizionato da `SPI_BUILD`; ulteriori trait e dipendenze
+richiedono una nuova review. GS-LIC-002 conserva i digest dei LICENSE
+effettivamente esaminati.
+
+Queste librerie sono collegate al bundle dei test e il generatore è eseguito
+durante la loro build. Non sono dipendenze dei target app, GlifiKit, GlifiCore
+o CLI e non vengono copiate nel bundle distribuito. Gli avvisi dei test restano
+separati dagli avvisi applicativi; una futura distribuzione dei test o degli
+strumenti deve conservarne i testi MIT. Aggiornamenti, macro o ulteriori plugin
+richiedono riesame delle nuove revisioni e dipendenze, senza trasferire la
+licenza BSD del progetto al codice esterno.

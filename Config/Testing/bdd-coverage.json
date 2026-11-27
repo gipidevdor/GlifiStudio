@@ -1,0 +1,557 @@
+{
+  "schema": "studio.glifi.bdd-coverage",
+  "schemaVersion": 1,
+  "generator": {
+    "package": "CucumberSwift",
+    "version": "6.9.0",
+    "revision": "5547f9025c0da3f0276a22a3c746bfebc405741f",
+    "source": "Sources/CucumberSwiftTestingGenerator/SwiftTestingSource.swift",
+    "parser": "Sources/CucumberSwiftGherkin/FeatureFile.swift"
+  },
+  "features": [
+    {
+      "file": "AnalyticalMethods.feature",
+      "expandedScenarios": 27,
+      "sourceSHA256": "a66f553e759551ea4b6bcd162f6e7ae43b0baa9c6f2b83b1b27acfc285b38eaf",
+      "scenarios": [
+        {
+          "line": 20,
+          "stepCount": 7
+        },
+        {
+          "line": 21,
+          "stepCount": 7
+        },
+        {
+          "line": 22,
+          "stepCount": 7
+        },
+        {
+          "line": 23,
+          "stepCount": 7
+        },
+        {
+          "line": 24,
+          "stepCount": 7
+        },
+        {
+          "line": 25,
+          "stepCount": 7
+        },
+        {
+          "line": 27,
+          "stepCount": 7
+        },
+        {
+          "line": 39,
+          "stepCount": 7
+        },
+        {
+          "line": 51,
+          "stepCount": 7
+        },
+        {
+          "line": 74,
+          "stepCount": 7
+        },
+        {
+          "line": 75,
+          "stepCount": 7
+        },
+        {
+          "line": 76,
+          "stepCount": 7
+        },
+        {
+          "line": 78,
+          "stepCount": 8
+        },
+        {
+          "line": 91,
+          "stepCount": 6
+        },
+        {
+          "line": 113,
+          "stepCount": 7
+        },
+        {
+          "line": 114,
+          "stepCount": 7
+        },
+        {
+          "line": 116,
+          "stepCount": 7
+        },
+        {
+          "line": 128,
+          "stepCount": 7
+        },
+        {
+          "line": 140,
+          "stepCount": 6
+        },
+        {
+          "line": 151,
+          "stepCount": 7
+        },
+        {
+          "line": 163,
+          "stepCount": 8
+        },
+        {
+          "line": 176,
+          "stepCount": 7
+        },
+        {
+          "line": 188,
+          "stepCount": 6
+        },
+        {
+          "line": 199,
+          "stepCount": 6
+        },
+        {
+          "line": 210,
+          "stepCount": 8
+        },
+        {
+          "line": 230,
+          "stepCount": 3
+        },
+        {
+          "line": 231,
+          "stepCount": 3
+        }
+      ]
+    },
+    {
+      "file": "CLIParity.feature",
+      "expandedScenarios": 20,
+      "sourceSHA256": "daf15bc974ec9bf27a9cf1e135d0ac73dded1dd71edf115108c3588e263e3425",
+      "scenarios": [
+        {
+          "line": 12,
+          "stepCount": 4
+        },
+        {
+          "line": 17,
+          "stepCount": 4
+        },
+        {
+          "line": 31,
+          "stepCount": 6
+        },
+        {
+          "line": 32,
+          "stepCount": 6
+        },
+        {
+          "line": 33,
+          "stepCount": 6
+        },
+        {
+          "line": 34,
+          "stepCount": 6
+        },
+        {
+          "line": 36,
+          "stepCount": 6
+        },
+        {
+          "line": 53,
+          "stepCount": 7
+        },
+        {
+          "line": 54,
+          "stepCount": 7
+        },
+        {
+          "line": 55,
+          "stepCount": 7
+        },
+        {
+          "line": 56,
+          "stepCount": 7
+        },
+        {
+          "line": 57,
+          "stepCount": 7
+        },
+        {
+          "line": 58,
+          "stepCount": 7
+        },
+        {
+          "line": 70,
+          "stepCount": 7
+        },
+        {
+          "line": 71,
+          "stepCount": 7
+        },
+        {
+          "line": 80,
+          "stepCount": 4
+        },
+        {
+          "line": 81,
+          "stepCount": 4
+        },
+        {
+          "line": 82,
+          "stepCount": 4
+        },
+        {
+          "line": 83,
+          "stepCount": 4
+        },
+        {
+          "line": 84,
+          "stepCount": 4
+        }
+      ]
+    },
+    {
+      "file": "CorpusAnalysis.feature",
+      "expandedScenarios": 18,
+      "sourceSHA256": "befe6abc1d6a3dae6648ed1f0c0daf29dce0b3ea758081549dab1ca9067a6a7b",
+      "scenarios": [
+        {
+          "line": 17,
+          "stepCount": 5
+        },
+        {
+          "line": 18,
+          "stepCount": 5
+        },
+        {
+          "line": 19,
+          "stepCount": 5
+        },
+        {
+          "line": 20,
+          "stepCount": 5
+        },
+        {
+          "line": 31,
+          "stepCount": 5
+        },
+        {
+          "line": 32,
+          "stepCount": 5
+        },
+        {
+          "line": 33,
+          "stepCount": 5
+        },
+        {
+          "line": 44,
+          "stepCount": 5
+        },
+        {
+          "line": 45,
+          "stepCount": 5
+        },
+        {
+          "line": 47,
+          "stepCount": 3
+        },
+        {
+          "line": 52,
+          "stepCount": 7
+        },
+        {
+          "line": 61,
+          "stepCount": 6
+        },
+        {
+          "line": 69,
+          "stepCount": 3
+        },
+        {
+          "line": 74,
+          "stepCount": 4
+        },
+        {
+          "line": 80,
+          "stepCount": 4
+        },
+        {
+          "line": 86,
+          "stepCount": 5
+        },
+        {
+          "line": 93,
+          "stepCount": 3
+        },
+        {
+          "line": 98,
+          "stepCount": 4
+        }
+      ]
+    },
+    {
+      "file": "ProjectLifecycle.feature",
+      "expandedScenarios": 11,
+      "sourceSHA256": "e6e893d985d814b50f992679f0aed5554e2eb55741e37360d8fa7fa5d90c6971",
+      "scenarios": [
+        {
+          "line": 11,
+          "stepCount": 2
+        },
+        {
+          "line": 22,
+          "stepCount": 5
+        },
+        {
+          "line": 23,
+          "stepCount": 5
+        },
+        {
+          "line": 24,
+          "stepCount": 5
+        },
+        {
+          "line": 25,
+          "stepCount": 5
+        },
+        {
+          "line": 27,
+          "stepCount": 7
+        },
+        {
+          "line": 41,
+          "stepCount": 3
+        },
+        {
+          "line": 42,
+          "stepCount": 3
+        },
+        {
+          "line": 43,
+          "stepCount": 3
+        },
+        {
+          "line": 54,
+          "stepCount": 6
+        },
+        {
+          "line": 55,
+          "stepCount": 6
+        }
+      ]
+    },
+    {
+      "file": "QualitativeCoding.feature",
+      "expandedScenarios": 10,
+      "sourceSHA256": "5c0205ac253c0825097ad0566c1f75729d2b5ce523ad46f9ccb41636a29cb5e8",
+      "scenarios": [
+        {
+          "line": 18,
+          "stepCount": 4
+        },
+        {
+          "line": 19,
+          "stepCount": 4
+        },
+        {
+          "line": 20,
+          "stepCount": 4
+        },
+        {
+          "line": 30,
+          "stepCount": 6
+        },
+        {
+          "line": 31,
+          "stepCount": 6
+        },
+        {
+          "line": 32,
+          "stepCount": 6
+        },
+        {
+          "line": 33,
+          "stepCount": 6
+        },
+        {
+          "line": 34,
+          "stepCount": 6
+        },
+        {
+          "line": 36,
+          "stepCount": 6
+        },
+        {
+          "line": 42,
+          "stepCount": 8
+        }
+      ]
+    },
+    {
+      "file": "RequestValidation.feature",
+      "expandedScenarios": 11,
+      "sourceSHA256": "c93a867553b9b9f4444c276d9cc76493c13b45a15631b7bb2d16c6147823d01e",
+      "scenarios": [
+        {
+          "line": 21,
+          "stepCount": 6
+        },
+        {
+          "line": 22,
+          "stepCount": 6
+        },
+        {
+          "line": 23,
+          "stepCount": 6
+        },
+        {
+          "line": 24,
+          "stepCount": 6
+        },
+        {
+          "line": 25,
+          "stepCount": 6
+        },
+        {
+          "line": 26,
+          "stepCount": 6
+        },
+        {
+          "line": 27,
+          "stepCount": 6
+        },
+        {
+          "line": 28,
+          "stepCount": 6
+        },
+        {
+          "line": 30,
+          "stepCount": 6
+        },
+        {
+          "line": 37,
+          "stepCount": 6
+        },
+        {
+          "line": 44,
+          "stepCount": 6
+        }
+      ]
+    },
+    {
+      "file": "ScientificExport.feature",
+      "expandedScenarios": 11,
+      "sourceSHA256": "5e5ceec549bf1e67f8850b89f30be04607f9828eb35a51899da59a84484e9958",
+      "scenarios": [
+        {
+          "line": 12,
+          "stepCount": 5
+        },
+        {
+          "line": 24,
+          "stepCount": 5
+        },
+        {
+          "line": 25,
+          "stepCount": 5
+        },
+        {
+          "line": 34,
+          "stepCount": 5
+        },
+        {
+          "line": 35,
+          "stepCount": 5
+        },
+        {
+          "line": 36,
+          "stepCount": 5
+        },
+        {
+          "line": 38,
+          "stepCount": 5
+        },
+        {
+          "line": 50,
+          "stepCount": 5
+        },
+        {
+          "line": 51,
+          "stepCount": 5
+        },
+        {
+          "line": 52,
+          "stepCount": 5
+        },
+        {
+          "line": 54,
+          "stepCount": 5
+        }
+      ]
+    },
+    {
+      "file": "TextQuery.feature",
+      "expandedScenarios": 14,
+      "sourceSHA256": "bf47da7f5142e34f1f0d0665f6ca7ff26aae840a53f301a8949b7f37f453ac26",
+      "scenarios": [
+        {
+          "line": 20,
+          "stepCount": 6
+        },
+        {
+          "line": 21,
+          "stepCount": 6
+        },
+        {
+          "line": 22,
+          "stepCount": 6
+        },
+        {
+          "line": 23,
+          "stepCount": 6
+        },
+        {
+          "line": 24,
+          "stepCount": 6
+        },
+        {
+          "line": 26,
+          "stepCount": 6
+        },
+        {
+          "line": 39,
+          "stepCount": 7
+        },
+        {
+          "line": 40,
+          "stepCount": 7
+        },
+        {
+          "line": 41,
+          "stepCount": 7
+        },
+        {
+          "line": 42,
+          "stepCount": 7
+        },
+        {
+          "line": 43,
+          "stepCount": 7
+        },
+        {
+          "line": 44,
+          "stepCount": 7
+        },
+        {
+          "line": 45,
+          "stepCount": 7
+        },
+        {
+          "line": 46,
+          "stepCount": 7
+        }
+      ]
+    }
+  ]
+}

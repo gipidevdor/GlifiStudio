@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.94.0 |
+| Versione | 0.95.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-26 |
+| Ultima modifica | 2026-11-27 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -759,3 +759,17 @@ GS-VER-324 confronta fasi isolate e binari alternati, GS-VER-325 documenta
 D1 e consumatori, GS-VER-326 conserva risultati negativi e ripristino.
 La nuova griglia verifica bit dei riferimenti R, casi limite, failure e
 propagazione degli intervalli; non promuove soglie prestazionali o G4/G5.
+
+## Specifiche comportamentali BDD
+
+RQ-027/058/060/062/063 collegano CMP-332 a
+[GS-STD-001-16 § 16.5](standard/16-strategia-di-verifica-e-test.md),
+[ADR-0046](adr/0046-bdd-cucumber-swift.md) e
+[GS-DOR-332](pianificazione/dor-bdd-cucumber-swift.md).
+[GS-BDD-001](testing/01-bdd-cucumber-swift.md) descrive feature italiane,
+step Swift, fixture isolate, oracoli osservabili e integrazione nel gate macOS.
+La dipendenza di sviluppo è separata dai target di produzione e inventariata
+con revisioni e licenze. Gli esiti del lotto sono registrati in
+[GS-VER-332](evidenze/GS-VER-332-bdd-cucumber-swift.md);
+l'integrazione non sostituisce oracoli scientifici, parità, audit assistivi o
+verifica iPadOS, né promuove G4/G5.

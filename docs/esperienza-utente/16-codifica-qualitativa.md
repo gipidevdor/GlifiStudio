@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-UX-001-16 |
 | Tipo | Specifica normativa dell'esperienza utente |
-| Versione | 1.2.0 |
+| Versione | 1.2.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-27 |
 | Approvazione | ADR-0029; validazione con utenti non ancora eseguita |
 | Documento padre | [GS-UX-001](README.md) |
 
@@ -60,6 +60,15 @@ Un cambiamento rifiutato non modifica nulla e spiega la causa con la chiave loca
 failure (categoria assente, passaggio non valido, selezione che non individua un passaggio valido,
 storia cambiata nel frattempo). In caso di storia cambiata l'interfaccia ricarica lo stato e invita
 a ripetere. Una storia vuota mostra un invito a creare il codebook.
+
+La scelta della fonte da codificare pubblica insieme revisione selezionata,
+segmenti, numero di caratteri, stato qualitativo e testi delle codifiche, dopo
+il successo di tutte le letture. Soltanto allora azzera il passaggio risolto
+della fonte precedente. Busy, failure o cancellazione **DEVONO** conservare
+l'intero contesto precedente: nessun segmento della fonte B sotto l'identità
+A e nessun elenco B accompagnato dai testi delle codifiche A. Le regressioni
+macOS e i limiti di piattaforma sono registrati in
+[GS-VER-329](../evidenze/GS-VER-329-contesto-fonte-codifica.md).
 
 ## Accessibilità
 
