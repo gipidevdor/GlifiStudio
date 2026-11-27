@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.20.20 |
+| Versione | 1.20.21 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-27 |
@@ -15,6 +15,10 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 - [GS-VER-275 — Parità continua fra GlifiKit e CLI](GS-VER-275-parita-continua-kit-cli.md) — Gate completo superato: 126 operazioni, 252 confronti e inventario pubblico verificato; PDF/A saltato per assenza di veraPDF
 
 ## Indice
+
+- [GS-VER-336 — Catalogo e stato accessibile](GS-VER-336-catalogo-stato-accessibile.md) — Superato macOS e preflight senza firma; limiti del controllo interattivo espliciti
+- [GS-VER-335 — Contesto e stato della ricerca](GS-VER-335-ricerca-contesto.md) — Superato macOS e preflight senza firma; limiti del controllo interattivo espliciti
+- [GS-VER-334 — Sviluppo BDD](GS-VER-334-sviluppo-bdd.md) — Selezioni Cucumber reali, 16 controlli cache e gate/preflight macOS superati
 
 - [GS-VER-332 — Specifiche comportamentali con CucumberSwift](GS-VER-332-bdd-cucumber-swift.md) — Superato macOS: 8 feature, 122 scenari, 697 passaggi; gate composito e licenze verificati
 

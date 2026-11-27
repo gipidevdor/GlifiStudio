@@ -12,6 +12,21 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Sviluppo BDD e interazione macOS
+
+- Cucumber entra nel ciclo RED/GREEN: `make test-bdd-list` elenca le selezioni;
+  `make test-bdd-dev BDD_SELECT='TextQuery.feature:20'` esegue uno scenario o
+  un'intera feature e richiede esattamente gli esiti selezionati. Il gate
+  completo continua a richiedere tutti gli scenari (GS-DOR-334).
+- Ricerca: risultato, espressione, selezione e fonte sono pubblicati insieme;
+  interruzioni conservano il contesto valido. La bozza modificata è distinta
+  dai risultati e i prerequisiti offrono azioni reali di salvataggio,
+  apertura o importazione (GS-DOR-335).
+- Catalogo: Invio apre soltanto un risultato unico tra strumenti e metodi,
+  con conteggio e istruzioni localizzati. Nome e valore degli stati accessibili
+  sono conservati; le nuove failure usano un annuncio di sistema senza
+  spostare il focus (GS-DOR-336).
+
 ### Specifiche comportamentali eseguibili
 
 - CucumberSwift fissato alla versione 6.9.0 nel solo target di test BDD:

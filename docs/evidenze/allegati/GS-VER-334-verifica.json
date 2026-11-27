@@ -1,0 +1,80 @@
+{
+  "schema": "studio.glifi.verification-evidence",
+  "schemaVersion": 1,
+  "evidenceID": "GS-VER-334",
+  "status": "Passed automatic macOS verification and unsigned preflight",
+  "macOSOnly": true,
+  "logs": {
+    "bdd-dev-334-feature.log": "f4d0c5aaf9aa69b524011eabd9610d00f2f1a94bf481446ee03c64d905776190",
+    "bdd-dev-334-focused.log": "e5b9699c500f4cd3966f20188c3d6b733cc22668ae3a897a6937baeb1e24aca2",
+    "bdd-dev-334-make-macro-red.log": "0e42137004045c4e9cf25139a066103f978989bed1bc539236f0fe34a3934181",
+    "bdd-dev-334-value-export.log": "a741ebda20451f64288e2ed8cf514216ede97a31220dee93941c25a5d68af944",
+    "bdd-dev-334-union.log": "a6b8e51200dfd2ad5fafac687968b31cc2dcd6cf2bf318f377c47f955385b4b6",
+    "bdd-dev-334-make-macro-green.log": "8f1e57a9e56f3b83256fef09e8c36f69c08b6ef17e7f52c4e2f277f446aff3a9",
+    "bdd-dev-334-cache-checks.log": "87f2a0057295611f15e6659da9770b54f0fb2082b3687d755f6bf8d49d1d5c77"
+  },
+  "limitations": [
+    "Interactive desktop blocked by locked Mac",
+    "No manual accessibility audit",
+    "No iPadOS run",
+    "No G4/G5 qualification"
+  ],
+  "targetedBDD": [
+    {
+      "selection": "TextQuery.feature:20",
+      "scenarios": 1,
+      "steps": 6,
+      "exit": 0
+    },
+    {
+      "selection": "TextQuery.feature",
+      "scenarios": 14,
+      "steps": 92,
+      "exit": 0
+    },
+    {
+      "selection": "AnalyticalMethods.feature:20,TextQuery.feature:20",
+      "scenarios": 2,
+      "steps": 13,
+      "exit": 0
+    }
+  ],
+  "makeVerifyCheckpoint": {
+    "command": "make verify",
+    "exit": 0,
+    "seconds": 503.55,
+    "sourceFingerprint": "4ca2364b5295b759dacffaa131c37240578fec8a20ea36c34056dfbdba3c2484",
+    "controlledInputs": 609,
+    "sourceUnchangedAtCompletion": true,
+    "log": "make-verify.log",
+    "logSHA256": "9430d074b630a54948fe834bd847fa3ee9a2417268c049a30f41a1e73c1e26a7",
+    "nativeDefinitions": 144,
+    "nativeExecutions": 435,
+    "nativeFailures": 0,
+    "nativeSkipped": 0
+  },
+  "finalPreflight": {
+    "status": "Passed",
+    "command": "make verify-app-store",
+    "exit": 0,
+    "seconds": 810.27,
+    "controlledInputs": 609,
+    "sourceFingerprint": "5ea8f0cc9877bc94349db307cd2279654b50c6e2b9a99d3b4a42ee0627bb4c1a",
+    "sourceUnchangedAtCompletion": true,
+    "log": "make-verify-app-store.log",
+    "logSHA256": "cc6bfe43eceeaf582993ee30b354a969617b17b594b404fb18b144e2bf7f4ebb",
+    "macOSOnly": true,
+    "nativeDefinitions": 144,
+    "nativeExecutions": 435,
+    "nativeFailures": 0,
+    "nativeSkipped": 0,
+    "BDDFeatures": 8,
+    "BDDScenarios": 122,
+    "BDDSteps": 697,
+    "cacheRegressionTests": 16,
+    "signed": false,
+    "manualGUI": "blocked: Mac locked",
+    "iPadOS": "not run"
+  },
+  "cacheRegressionTests": 16
+}

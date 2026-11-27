@@ -59,6 +59,55 @@ richiedono compilare `swift-syntax`. Manifest, lockfile, licenze dirette e
 transitive sono riesaminati insieme secondo
 [ADR-0046](../adr/0046-bdd-cucumber-swift.md).
 
+## Ciclo di sviluppo RED → GREEN → refactor
+
+```sh
+make test-bdd-list
+make test-bdd-dev BDD_SELECT='TextQuery.feature:20'
+make test-bdd-dev BDD_SELECT='TextQuery.feature'
+./Scripts/test.sh --bdd-dev --select 'TextQuery.feature:20,TextQuery.feature:39'
+```
+
+`test-bdd-list`, equivalente a `Scripts/test.sh --bdd-dev --list`, elenca file,
+righe degli scenari espansi e conteggi dall'inventario; non compila, non richiede
+Xcode e non crea o acquisisce cache. Per uno schema si sceglie la riga del
+singolo esempio, non l'intestazione dello schema. Più identificatori separati
+da virgole formano un'unione; il nome del file da solo seleziona tutti i suoi
+scenari. Il selettore usa il nome del file senza cartelle; `:` è riservato
+alla riga e non è ammesso nei nomi dell'inventario. Nomi o righe non
+inventariati e selezioni vuote falliscono prima di
+allocare la cache o invocare Swift.
+
+Il comando di sviluppo trasporta la selezione a `CUCUMBER_SCENARIOS` secondo
+il [contratto della revisione CucumberSwift bloccata](https://github.com/cucumberswift/CucumberSwift/blob/5547f9025c0da3f0276a22a3c746bfebc405741f/Sources/CucumberSwift/Coverage/ScenarioList.swift). Il valore passa come
+dato tramite ambiente, senza valutazione come comando shell o macro Make.
+Il target usa il valore letterale di `BDD_SELECT` e non esporta la variabile
+originale: anche espressioni come `$(shell ...)` restano testo da convalidare. Il comando
+ignora eventuali `CUCUMBER_TAGS` ereditati e sostituisce `CUCUMBER_SCENARIOS`:
+il report deve contenere **esattamente** gli scenari scelti e tutti i loro
+passaggi superati. Scenari aggiuntivi, omessi o duplicati, report mancanti e
+passaggi saltati, indefiniti o falliti producono exit nonzero. L'esito reca
+l'etichetta esplicita «BDD sviluppo» e non costituisce il gate completo.
+Swift Testing può mostrare come saltati i test fuori selezione; uno scenario
+selezionato mancante o un suo passaggio saltato fanno invece fallire il controllo.
+
+Per ogni comportamento nuovo o corretto il ciclo **DEVE** essere:
+
+1. scrivere uno scenario con fixture originale e attese osservabili, aggiornando
+   l'inventario dal generatore upstream per il nuovo sorgente; eseguire la
+   selezione e osservare **RED** per la proprietà attesa o lo step ancora
+   indefinito. Un errore di toolchain o un inventario non allineato non dimostra
+   la regressione del comportamento;
+2. implementare il minimo cambiamento e rieseguire la stessa selezione fino a
+   **GREEN**, conservando attese, failure e oracoli scientifici;
+3. rifattorizzare e rieseguire scenari e feature interessati; prima della
+   consegna eseguire `make test-bdd` e `make verify` nel profilo macOS.
+
+I comandi completi `make test-bdd`, `make test` e `make verify` richiedono
+sempre l'intero inventario: un report verde di sviluppo resta insufficiente.
+La verifica del workflow è tracciata in GS-VER-334; le proprietà scientifiche,
+UI e assistive continuano ad avere le evidenze dedicate.
+
 ## Scrittura e manutenzione
 
 Ogni feature dichiara `# language: it` e l'intestazione SPDX del progetto.
@@ -92,15 +141,6 @@ Un nuovo comportamento richiede nello stesso cambiamento feature, step,
 inventario, documentazione e controlli. Step mancanti o ambigui devono far
 fallire la suite; una feature priva di test eseguiti non è evidenza positiva.
 
-L'inventario `Config/Testing/bdd-coverage.json` conserva `sourceSHA256` per
-ogni feature e le coppie `line`/`stepCount` degli scenari espansi, compresi i
-passaggi del contesto comune. Per aggiornarlo si eseguono il generatore e il
-runner upstream, si leggono posizioni e numero di passaggi dal report
-Cucumber e si riesaminano i cambiamenti insieme alle feature. Il progetto
-non mantiene un secondo parser Gherkin per calcolare le espansioni. Un digest
-nuovo richiede review del sorgente; l'inventario non va adattato per rendere
-positivo un report incompleto o fallito.
-
 Una selezione mirata tramite filtri di `swift test` o `CUCUMBER_TAGS` serve
 allo sviluppo e non sostituisce la verifica completa prima della consegna:
 un'esecuzione parziale non soddisfa il controllo del report di `make test-bdd`,
@@ -113,6 +153,9 @@ e i passaggi già comprensivi del contesto. Non si conta il Gherkin con un
 parser sostitutivo. Dopo la revisione della feature si registrano digest SHA-256,
 righe degli scenari e conteggi dei passaggi; il controllo statico respinge
 file nuovi, rimossi o modificati senza l'aggiornamento corrispondente.
+Un digest nuovo richiede review del sorgente; l'inventario non va adattato
+per rendere positivo un report incompleto o fallito. Il report del runner
+costituisce il riscontro dell'espansione e dei conteggi effettivamente eseguiti.
 
 ## Copertura e confini
 
@@ -130,7 +173,6 @@ le varianti pubbliche delle analisi; la parità permanente resta governata da
 | [TextQuery](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/TextQuery.feature) | 14 | Termini, frasi, prossimità e regex ammesse con intervalli UTF-8 esatti, assenza di risultati, capability e regex rifiutate, failure riservate e stato conservato |
 | [AnalyticalMethods](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/AnalyticalMethods.feature) | 27 | Distanze, z-score, tassi e TF/IDF, associazioni e collocazioni, χ² Pearson/Yates, CA e MDS, linkage, Naive Bayes e LDA, codifica/crosstab, foresta minima e coordinate linguistiche con forme chiuse o conteggi manuali; popolazioni degeneri rifiutate |
 | [CorpusAnalysis](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/CorpusAnalysis.feature) | 18 | Vocabolario e scope, limiti anche a cache calda, riuso dopo riapertura, conteggi manuali, χ² e Jaccard con attese esplicite, cancellazione e planner con dati insufficienti |
-| [AnalyticalMethods](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/AnalyticalMethods.feature) | Sei distanze, z-score, tassi e ponderazioni TF/IDF, associazione e collocazioni, Pearson/Yates, CA e MDS, clustering gerarchico, Naive Bayes e LDA, codifica automatica/crosstab, foresta minima, Unicode e casi degeneri con valori manuali |
 | [QualitativeCoding](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/QualitativeCoding.feature) | 10 | Passaggi con accenti ed emoji, confini Unicode e range rifiutati, codebook, codifiche e memo persistenti |
 | [ScientificExport](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/ScientificExport.feature) | 11 | Bundle, lineage e digest, escaping CSV, file mancanti o inattesi, contenuto alterato e provenienza |
 | [CLIParity](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/CLIParity.feature) | 20 | Esecuzione del binario CLI, protocollo JSON e stato testuale, import e riapertura, profilo e query coerenti con Kit, exit status e guida |

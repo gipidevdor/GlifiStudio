@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-UI-001 |
 | Tipo | Specifica di design dell'interfaccia |
-| Versione | 1.3.0 |
+| Versione | 1.4.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-27 |
 | Approvazione | Baseline proposta; prototipi e studi richiesti |
 | Riferimenti | GS-UX-001; GS-DOM-001; GS-ANA-001; Apple HIG; ADR-0006; ADR-0016; ADR-0034 |
 
@@ -186,6 +186,26 @@ assistive: esiti e limiti del nuovo lotto sono in
 [GS-VER-222](../evidenze/GS-VER-222-riprogettazione-gui.md).
 
 ## Pattern di stato
+
+### Ricerca e catalogo strumenti
+
+Il campo di ricerca è presentato quando esistono progetto e fonti. In assenza
+di questi prerequisiti la UI offre azioni reali di salvataggio, apertura o
+importazione coerenti con lo stato del documento. Non invita a scrivere in un
+campo disabilitato. Il risultato, l'espressione eseguita, la selezione e la fonte
+si pubblicano insieme dopo le letture necessarie; una failure conserva il
+contesto precedente. Una bozza diversa dall'espressione eseguita è segnalata
+esplicitamente, con testo e simbolo, e l'espressione effettiva resta leggibile.
+
+Invio nel catalogo apre soltanto un risultato complessivo unico tra strumenti
+e metodi. Più famiglie con corrispondenze non introducono precedenze implicite.
+Il riepilogo mostra conteggio e istruzione coerente con la selezione possibile.
+
+Nome e valore accessibili della diagnostica e dello stato del motore sono
+distinti. Una nuova failure viene annunciata tramite API di sistema senza
+spostare il focus; il progresso ordinario non genera annunci ripetitivi.
+L'efficacia con tecnologie assistive richiede un audit dedicato, distinto dalla
+verifica del codice e dalla compilazione delle API di accessibilità.
 
 Ogni superficie data-driven implementa gli stati:
 

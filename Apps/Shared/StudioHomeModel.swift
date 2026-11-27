@@ -506,9 +506,16 @@ final class StudioHomeModel {
         messageKey: String,
         category: String
     ) -> LocalizedStringKey {
+        LocalizedStringKey(resolvedFailureMessageKey(messageKey: messageKey, category: category))
+    }
+
+    static func resolvedFailureMessageKey(
+        messageKey: String,
+        category: String
+    ) -> String {
         let absent = "\u{0}assente"
         let localized = Bundle.main.localizedString(forKey: messageKey, value: absent, table: nil)
-        return LocalizedStringKey(localized == absent ? "failure.category.\(category)" : messageKey)
+        return localized == absent ? "failure.category.\(category)" : messageKey
     }
 
     var findings: [GlifiStudioFinding] {
@@ -548,6 +555,12 @@ final class StudioHomeModel {
         }
         return queryResult?.matches.first { $0.id == selectedQueryMatchID }
             ?? queryResult?.matches.first
+    }
+
+    /// Existing results retain their executed expression while the person edits the next search.
+    var isQueryDraftChanged: Bool {
+        guard queryResult != nil, let lastQueryExpression else { return false }
+        return queryDraft.trimmingCharacters(in: .whitespacesAndNewlines) != lastQueryExpression
     }
 
     var canCancelExecution: Bool {
@@ -957,13 +970,19 @@ final class StudioHomeModel {
                 throw presentationFailure(messageKey: "failure.query.empty")
             }
             let result = try await active.query(trimmed)
+            let selectedMatch = result.matches.first
+            let source: GlifiStudioSourceText?
+            if let selectedMatch {
+                source = try await active.sourceText(
+                    sourceRevisionID: selectedMatch.sourceRevisionID)
+            } else {
+                source = nil
+            }
+            try Task.checkCancellation()
             queryResult = result
             lastQueryExpression = trimmed
-            selectedQueryMatchID = result.matches.first?.id
-            sourceText = nil
-            if let match = result.matches.first {
-                sourceText = try await active.sourceText(sourceRevisionID: match.sourceRevisionID)
-            }
+            selectedQueryMatchID = selectedMatch?.id
+            sourceText = source
         }
     }
 

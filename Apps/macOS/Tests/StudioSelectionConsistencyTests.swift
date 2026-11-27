@@ -7,6 +7,208 @@ import Testing
 
 @MainActor
 struct StudioSelectionConsistencyTests {
+    @Test func editingTheQueryDraftKeepsTheExecutedContextAndReportsItsFreshness() async throws {
+        let fixture = try await makeFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = fixture.model
+        let previousResult = model.queryResult
+        let previousExpression = try #require(model.lastQueryExpression)
+        let previousSelection = model.selectedQueryMatchID
+        let previousSource = model.sourceText
+        #expect(!model.isQueryDraftChanged)
+
+        model.queryDraft = "  \(previousExpression)\n"
+        #expect(!model.isQueryDraftChanged)
+        model.queryDraft = "normalized:breve"
+        #expect(model.isQueryDraftChanged)
+        #expect(model.queryResult == previousResult)
+        #expect(model.lastQueryExpression == previousExpression)
+        #expect(model.selectedQueryMatchID == previousSelection)
+        #expect(model.sourceText == previousSource)
+        model.queryDraft = " "
+        #expect(model.isQueryDraftChanged)
+        model.queryDraft = previousExpression
+        #expect(!model.isQueryDraftChanged)
+
+        model.queryDraft = "normalized:assente"
+        await model.runQuery()
+        #expect(model.lastFailure == nil)
+        #expect(!model.isQueryDraftChanged)
+        model.queryDraft = "normalized:breve"
+        #expect(model.isQueryDraftChanged)
+        await model.closeProject()
+        #expect(!model.isQueryDraftChanged)
+    }
+
+    @Test func searchPrerequisitesFollowTheProjectAndItsImportedSources() async throws {
+        let root = FileManager.default.temporaryDirectory.appending(
+            path: "GlifiQueryPrerequisites-\(UUID().uuidString)", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: false)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let model = StudioHomeModel()
+        model.queryDraft = "normalized:fonte"
+        #expect(!model.mustPathHasProject)
+        #expect(!model.mustPathHasSources)
+        #expect(!model.isQueryDraftChanged)
+
+        await model.attachDocument(
+            at: root.appending(path: "Query.glifi"), needsPackageInitialization: true)
+        try #require(model.lastFailure == nil)
+        #expect(model.mustPathHasProject)
+        #expect(!model.mustPathHasSources)
+        #expect(!model.isQueryDraftChanged)
+        let source = root.appending(path: "source.txt")
+        try Data("Una fonte sintetica.".utf8).write(to: source)
+        await model.importSources(at: [source])
+        try #require(model.lastFailure == nil)
+        #expect(model.mustPathHasProject)
+        #expect(model.mustPathHasSources)
+        #expect(!model.isQueryDraftChanged)
+
+        await model.runQuery()
+        #expect(model.lastFailure == nil)
+        #expect(model.queryResult?.matches.count == 1)
+        #expect(!model.isQueryDraftChanged)
+        await model.closeProject()
+        #expect(!model.mustPathHasProject)
+        #expect(!model.mustPathHasSources)
+    }
+
+    @Test(arguments: [false, true])
+    func anInterruptedQueryPreservesItsCompleteContextAndAllowsRetry(cancels: Bool) async throws {
+        let interruption = Mutex((armed: false, admissions: 0))
+        let environment = GlifiStudioRuntimeEnvironment {
+            let admission = interruption.withLock { state in
+                guard state.armed else { return 0 }
+                state.admissions += 1
+                return state.admissions
+            }
+            if admission == 2, cancels { withUnsafeCurrentTask { $0?.cancel() } }
+            return GlifiStudioSystemConditions(
+                isLowPowerModeEnabled: false, thermalCondition: .nominal,
+                memoryPressure: admission == 2 && !cancels ? .critical : .nominal,
+                isApplicationActive: true)
+        }
+        let fixture = try await makeFixture(
+            service: GlifiStudioService(runtimeEnvironment: environment))
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = fixture.model
+        let previousResult = try #require(model.queryResult)
+        let previousExpression = try #require(model.lastQueryExpression)
+        let previousSelection = try #require(model.selectedQueryMatchID)
+        let previousSource = try #require(model.sourceText)
+        let previousSnapshot = model.snapshot
+        let firstWord = try #require(fixture.otherSource.text.split(separator: " ").first)
+        let nextExpression = "form:\(firstWord)"
+        model.queryDraft = "  \(nextExpression)  "
+        interruption.withLock {
+            $0.armed = true
+            $0.admissions = 0
+        }
+
+        await model.runQuery()
+
+        #expect(interruption.withLock { $0.admissions } == 2)
+        #expect(
+            model.lastFailure?.code
+                == (cancels ? "operation.cancelled" : "runtime.admission-denied"))
+        #expect(model.lastFailure?.category == (cancels ? "cancelled" : "insufficientResources"))
+        #expect(!model.isBusy)
+        #expect(model.queryResult == previousResult)
+        #expect(model.lastQueryExpression == previousExpression)
+        #expect(model.selectedQueryMatchID == previousSelection)
+        #expect(model.sourceText == previousSource)
+        #expect(model.snapshot == previousSnapshot)
+        #expect(model.queryDraft == "  \(nextExpression)  ")
+        #expect(model.isQueryDraftChanged)
+        interruption.withLock { $0.armed = false }
+
+        await model.runQuery()
+
+        #expect(model.lastFailure == nil)
+        #expect(model.queryResult?.matches.count == 1)
+        #expect(model.lastQueryExpression == nextExpression)
+        #expect(model.selectedQueryMatch?.sourceRevisionID == fixture.otherMatch.sourceRevisionID)
+        #expect(model.sourceText == fixture.otherSource)
+        #expect(model.snapshot == previousSnapshot)
+        #expect(!model.isQueryDraftChanged)
+        await model.closeProject()
+    }
+
+    @Test func aFailedQueryPreservesTheExecutedExpressionSelectionAndSource() async throws {
+        let fixture = try await makeFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = fixture.model
+        let previousResult = model.queryResult
+        let previousExpression = model.lastQueryExpression
+        let previousSelection = model.selectedQueryMatchID
+        let previousSource = model.sourceText
+        let previousSnapshot = model.snapshot
+        model.queryDraft = "unknown-field:fonte"
+
+        await model.runQuery()
+
+        #expect(model.lastFailure?.code == "query.unknown-field")
+        #expect(model.queryResult == previousResult)
+        #expect(model.lastQueryExpression == previousExpression)
+        #expect(model.selectedQueryMatchID == previousSelection)
+        #expect(model.sourceText == previousSource)
+        #expect(model.snapshot == previousSnapshot)
+        #expect(model.isQueryDraftChanged)
+        await model.closeProject()
+    }
+
+    @Test func aBusyQueryPreservesTheExecutedExpressionSelectionAndSource() async throws {
+        let fixture = try await makeFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = fixture.model
+        let previousResult = model.queryResult
+        let previousExpression = model.lastQueryExpression
+        let previousSelection = model.selectedQueryMatchID
+        let previousSource = model.sourceText
+        let previousSnapshot = model.snapshot
+        let (gate, opening) = try await beginSuspendedReopening(model)
+        defer {
+            gate.release()
+            opening.cancel()
+        }
+        model.queryDraft = "normalized:breve"
+
+        await model.runQuery()
+
+        #expect(model.isBusy)
+        #expect(model.lastFailure == nil)
+        #expect(model.queryResult == previousResult)
+        #expect(model.lastQueryExpression == previousExpression)
+        #expect(model.selectedQueryMatchID == previousSelection)
+        #expect(model.sourceText == previousSource)
+        #expect(model.snapshot == previousSnapshot)
+        #expect(model.isQueryDraftChanged)
+        gate.release()
+        await opening.value
+        await model.closeProject()
+    }
+
+    @Test func aSuccessfulQueryWithoutMatchesClearsItsPreviousSelectionAndSource() async throws {
+        let fixture = try await makeFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = fixture.model
+        let previousSnapshot = model.snapshot
+        model.queryDraft = "  normalized:assente  "
+
+        await model.runQuery()
+
+        #expect(model.lastFailure == nil)
+        #expect(model.queryResult?.matches.isEmpty == true)
+        #expect(model.lastQueryExpression == "normalized:assente")
+        #expect(model.selectedQueryMatchID == nil)
+        #expect(model.selectedQueryMatch == nil)
+        #expect(model.sourceText == nil)
+        #expect(model.snapshot == previousSnapshot)
+        #expect(!model.isQueryDraftChanged)
+        await model.closeProject()
+    }
+
     @Test(arguments: [2, 3], [false, true])
     func anInterruptedCodingSourceSelectionPreservesItsContextAndAllowsRetry(
         interruptionAdmission: Int, cancels: Bool

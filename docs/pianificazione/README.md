@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.38 |
+| Versione | 1.6.39 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-27 |
@@ -28,6 +28,10 @@ distribuisce quattro agenti su query, feedback statico, revisione e integrazione
 preservando i confini del lavoro già in corso nell'altra chat.
 
 ## Indice
+
+- [GS-DOR-336 — Catalogo da tastiera e stato accessibile](dor-catalogo-tastiera.md) — Attivazione univoca, nome/valore e annuncio delle failure
+- [GS-DOR-335 — Contesto e stato della ricerca](dor-ricerca-contesto.md) — Risultato e fonte atomici, bozza esplicita e prerequisiti reali
+- [GS-DOR-334 — Sviluppo guidato dai comportamenti](dor-sviluppo-bdd.md) — RED/GREEN e selezione esatta, gate completo conservato
 
 - [GS-DOR-332 — Specifiche BDD con CucumberSwift](dor-bdd-cucumber-swift.md) — Feature italiane eseguibili, dipendenza di test e gate macOS
 

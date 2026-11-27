@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-STD-001-16 |
 | Tipo | Capitolo normativo |
-| Versione | 0.7.0 |
+| Versione | 0.8.0 |
 | Stato | Proposto |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-27 |
@@ -109,6 +109,15 @@ comandi, manutenzione e copertura effettiva. La suite **DEVE** rientrare nel
 normale gate macOS e fallire su step mancanti o ambigui, feature non eseguibili,
 asserzioni errate e assenza degli scenari attesi. Un filtro volontario
 **DEVE** restare distinguibile dall'esecuzione completa.
+
+Il loop di sviluppo **DEVE** usare le feature prima e durante l'implementazione
+dei comportamenti condivisi: esempio osservabile, RED pertinente, correzione,
+GREEN e refactoring. Il comando mirato **DEVE** richiedere una selezione esplicita
+e verificare il report contro esattamente quel sottoinsieme inventariato; zero
+scenari, omissioni, esecuzioni inattese o passi non superati sono errori anche
+nel profilo di sviluppo. Il gate completo **DEVE** continuare a richiedere
+l'intera collezione. [GS-DEV-002](../loop-di-sviluppo-e-qualita.md) e GS-BDD-001
+definiscono gli ingressi e distinguono questa prova dai test nativi della GUI.
 
 I test BDD **NON DEVONO** sostituire oracoli scientifici, property test,
 verifiche di parità, test UI o audit assistivi. La loro esecuzione headless

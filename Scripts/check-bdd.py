@@ -35,7 +35,7 @@ def validate_inventory(body: object, root: Path) -> dict[str, dict[int, int]]:
             raise ValueError("voce feature non valida")
         name, count = entry.get("file"), entry.get("expandedScenarios")
         if (not isinstance(name, str) or Path(name).name != name
-                or not name.endswith(".feature") or name in expected):
+                or ":" in name or not name.endswith(".feature") or name in expected):
             raise ValueError("nome feature duplicato o non valido")
         if type(count) is not int or count < 1:
             raise ValueError(f"{name}: conteggio esempi non valido")
@@ -72,6 +72,37 @@ def validate_inventory(body: object, root: Path) -> dict[str, dict[int, int]]:
     if actual != set(expected):
         raise ValueError(f"inventario BDD non allineato ai file: {actual ^ set(expected)}")
     return expected
+
+
+def select_inventory(
+        expected: dict[str, dict[int, int]], selection: str) -> dict[str, dict[int, int]]:
+    """Select exact expanded scenario IDs already reviewed in the inventory."""
+    if not selection.strip():
+        raise ValueError("selezione BDD vuota")
+    selected: dict[str, dict[int, int]] = {}
+    for item in selection.split(","):
+        name, separator, line_text = item.strip().partition(":")
+        if name not in expected:
+            raise ValueError(f"feature BDD assente dall'inventario: {name!r}")
+        if separator:
+            if not re.fullmatch(r"[1-9][0-9]*", line_text):
+                raise ValueError(f"riga BDD non valida: {item!r}")
+            line = int(line_text)
+            if line not in expected[name]:
+                raise ValueError(f"scenario espanso BDD non inventariato: {name}:{line}")
+            selected.setdefault(name, {})[line] = expected[name][line]
+        else:
+            selected.setdefault(name, {}).update(expected[name])
+    if not selected:
+        raise ValueError("selezione BDD vuota")
+    return {name: dict(sorted(lines.items())) for name, lines in sorted(selected.items())}
+
+
+def runner_selection(expected: dict[str, dict[int, int]]) -> str:
+    """Use CucumberSwift's scenario-list transport, without parsing Gherkin or tags."""
+    return ",".join(
+        f"Features/{name.replace('%', '%25').replace(',', '%2C')}:{line}"
+        for name, lines in sorted(expected.items()) for line in sorted(lines))
 
 
 def validate_report(body: object, expected: dict[str, dict[int, int]]) -> int:
@@ -119,8 +150,62 @@ def validate_report(body: object, expected: dict[str, dict[int, int]]) -> int:
     return steps
 
 
+def selection_self_test() -> None:
+    """Require the selected scenarios, without accepting omissions or extra execution."""
+    complete = {"Contract.feature": {5: 2, 10: 3}, "Other.feature": {7: 1}}
+    selected = select_inventory(complete, "Contract.feature:10")
+    assert selected == {"Contract.feature": {10: 3}}
+    assert select_inventory(complete, "Contract.feature") == {"Contract.feature": complete["Contract.feature"]}
+    assert select_inventory(complete, "Other.feature:7,Contract.feature:5") == {
+        "Contract.feature": {5: 2}, "Other.feature": {7: 1}}
+    assert select_inventory(complete, "Contract.feature,Contract.feature:5") == {
+        "Contract.feature": complete["Contract.feature"]}
+    assert runner_selection(selected) == "Features/Contract.feature:10"
+    assert runner_selection({"Literal #%?, Name.feature": {5: 2}}) == (
+        "Features/Literal #%25?%2C Name.feature:5")
+    for selection in ("", " ", ",", "Contract.feature,", "Missing.feature", "Contract.feature:0",
+                      "Contract.feature:6", "Contract.feature:-1", "Contract.feature:True",
+                      "Contract.feature:10:5", "../Contract.feature", "/Contract.feature"):
+        try:
+            select_inventory(complete, selection)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(f"selezione BDD non valida accettata: {selection!r}")
+    scenario = {
+        "type": "scenario", "line": 10,
+        "tags": [{"name": "GS-CMP-332"}, {"name": "macos"}],
+        "steps": [{"result": {"status": "passed"}} for _ in range(3)],
+    }
+    report = [{"uri": "Features/Contract.feature", "elements": [scenario]}]
+    assert validate_report(report, selected) == 3
+    extra = copy.deepcopy(report)
+    extra[0]["elements"].append({**scenario, "line": 5})
+    omitted = copy.deepcopy(report)
+    omitted[0]["elements"] = []
+    invalid = [extra, omitted, []]
+    for status in ("failed", "skipped", "undefined", "pending", "ambiguous"):
+        changed = copy.deepcopy(report)
+        changed[0]["elements"][0]["steps"][0]["result"]["status"] = status
+        invalid.append(changed)
+    for changed in invalid:
+        try:
+            validate_report(changed, selected)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("report di sviluppo incompleto o non superato accettato")
+    try:
+        validate_report(report, complete)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("report di sviluppo accettato come gate completo")
+
+
 def self_test() -> None:
     """Exercise the gate against realistic omissions and false success reports."""
+    selection_self_test()
     report = [{"uri": "Features/Contract.feature", "elements": [{
         "type": "scenario", "line": 5,
         "tags": [{"name": "GS-CMP-332"}, {"name": "macos"}],
@@ -195,6 +280,18 @@ def self_test() -> None:
              "sourceSHA256": hashlib.sha256(source).hexdigest(),
              "scenarios": [{"line": 5, "stepCount": 2}]}]}
         assert validate_inventory(inventory, root) == expected
+        unaddressable = feature.with_name("Contract:Example.feature")
+        feature.rename(unaddressable)
+        invalid_name = copy.deepcopy(inventory)
+        invalid_name["features"][0]["file"] = unaddressable.name
+        try:
+            validate_inventory(invalid_name, root)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("nome feature con separatore scenario riservato accettato")
+        finally:
+            unaddressable.rename(feature)
         for field, value in (("sourceSHA256", "0" * 64), ("sourceSHA256", "invalid"),
                              ("expandedScenarios", True), ("expandedScenarios", 2),
                              ("scenarios", [{"line": 5, "stepCount": 0}]),
@@ -239,15 +336,32 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--report", type=Path)
     parser.add_argument("--self-test", action="store_true")
+    parser.add_argument("--select", help="Comma-separated Feature.feature[:expanded-scenario-line] IDs")
+    parser.add_argument("--list", action="store_true", help="List inventoried features and scenario IDs")
+    parser.add_argument("--runner-selection", action="store_true", help="Print CucumberSwift scenario IDs")
     args = parser.parse_args()
     try:
         if args.self_test:
             self_test()
+        if sum((args.list, args.runner_selection, args.report is not None)) > 1:
+            raise ValueError("scegliere un solo output fra lista, selezione runner e report")
         expected = validate_inventory(json.loads((ROOT / INVENTORY).read_text()), ROOT)
-        if args.report:
+        if args.select is not None:
+            expected = select_inventory(expected, args.select)
+        if args.runner_selection:
+            if args.select is None:
+                raise ValueError("la selezione runner richiede --select esplicito")
+            print(runner_selection(expected))
+        elif args.list:
+            for name, scenarios in expected.items():
+                print(f"{name}: {len(scenarios)} scenari, {sum(scenarios.values())} passaggi")
+                print("  " + ", ".join(f"{name}:{line}" for line in scenarios))
+        elif args.report:
             steps = validate_report(json.loads(args.report.read_text()), expected)
             count = sum(len(scenarios) for scenarios in expected.values())
-            print(f"BDD: {len(expected)} feature, {count} scenari, {steps} passaggi superati")
+            label = "BDD sviluppo (selezione esplicita)" if args.select is not None else "BDD"
+            scenario_label = "scenario" if count == 1 else "scenari"
+            print(f"{label}: {len(expected)} feature, {count} {scenario_label}, {steps} passaggi superati")
         else:
             print(f"BDD: inventario di {len(expected)} feature e controlli strutturali superati")
         return 0

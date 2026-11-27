@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import select
+import shlex
 import signal
 import subprocess
 import sys
@@ -318,6 +319,32 @@ class BuildCacheChecks(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(sentinel.read_text(), "preserve me")
+
+    def test_bdd_make_selector_does_not_expand_command_line_macros(self) -> None:
+        tools = self.root / "bin"
+        tools.mkdir()
+        expanded = self.root / "make-expanded-selector"
+        invoked = self.root / "swift-was-invoked"
+        swift = tools / "swift"
+        swift.write_text("#!/bin/sh\n: > \"$GLIFI_CACHE_CHECK_SWIFT_MARKER\"\nexit 99\n")
+        swift.chmod(0o755)
+        selection = f"$(shell touch {shlex.quote(str(expanded))})"
+        result = subprocess.run(
+            ["make", "--no-print-directory", "test-bdd-dev", f"BDD_SELECT={selection}"],
+            cwd=PROJECT,
+            env=self.environment | {
+                "PATH": str(tools) + os.pathsep + os.environ["PATH"],
+                "GLIFI_CACHE_CHECK_SWIFT_MARKER": str(invoked),
+            },
+            capture_output=True, text=True, timeout=10,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(expanded.exists(), "Make evaluated the selector as a command-line macro")
+        self.assertFalse(invoked.exists(), "An invalid selector reached Swift")
+        self.assertIn("feature BDD assente", result.stderr)
+        self.assertIn("$(shell touch", result.stderr)
+        self.assertFalse(self.cache.exists())
+        self.assertFalse(Path(str(self.cache) + ".glifi-lock").exists())
 
     def test_missing_bdd_report_rejects_successful_swift_stub_and_cleans_owned_files(self) -> None:
         tools = self.root / "bin"

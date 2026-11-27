@@ -1,0 +1,127 @@
+{
+  "evidenceIdentifier": "GS-VER-335",
+  "version": "1.0.0",
+  "date": "2026-11-27",
+  "license": "BSD-3-Clause",
+  "status": "passed",
+  "scope": [
+    "Apps/Shared/StudioHomeModel.swift",
+    "Apps/Shared/StudioHomeView.swift",
+    "Apps/macOS/Tests/StudioSelectionConsistencyTests.swift"
+  ],
+  "red": {
+    "runner": "Coordinator native macOS workspace tests",
+    "exitCode": 65,
+    "suiteDefinitions": 11,
+    "suiteExecutions": 15,
+    "failedDefinitions": 1,
+    "passedDefinitions": 10,
+    "failedExecutions": 2,
+    "passedExecutions": 13,
+    "executionCountsSource": "query-red-summary.json devicesAndConfigurations entry: passedTests=13, failedTests=2",
+    "recordedIssues": 7,
+    "otherFailedTests": false,
+    "log": "macOS-2026-11-27-bdd-ux/query-red.log",
+    "logSHA256": "2bd70f448eab2c25e1798e5bba61ad0177cc1cf23ecbb0a04fba1738fe1f3c1e",
+    "summary": "macOS-2026-11-27-bdd-ux/query-red-summary.json"
+  },
+  "contracts": {
+    "publication": "Publish result, executed expression, selection and source together after all reads and a final cancellation check",
+    "failureAndBusy": "Preserve the previous complete context and project snapshot",
+    "draft": "Edits preserve the executed context and expose an explicit freshness warning",
+    "emptySuccess": "Publish the new empty result and expression with nil selection and source",
+    "prerequisites": "Existing Save/New/Open/Reopen or Import/Sources actions precede the editor",
+    "newPublicAPI": false,
+    "persistentSchemaChanged": false,
+    "newTaskOwner": false,
+    "newDependency": false,
+    "newRegressionDefinitions": 6,
+    "newRegressionExecutions": 7
+  },
+  "staticVerification": {
+    "swiftFormatLintExitCode": 0,
+    "swiftFilesChecked": 3,
+    "diffCheckExitCode": 0
+  },
+  "finalSourceSHA256": {
+    "Apps/Shared/StudioHomeModel.swift": "ff8aa4c9034c3b44e0f90eb0f63fbf1388e21ba2e365b5179f548eba427397b7",
+    "Apps/Shared/StudioHomeView.swift": "e8a8b0f74ae398d9b824def051b7094b76b97cb9082cde020ccbddbf5a223985",
+    "Apps/macOS/Tests/StudioSelectionConsistencyTests.swift": "2a34f740b36b98cc32a06cee1cc96d9d017cbf6d553811a24599cda3f02a24b5"
+  },
+  "nativeGreen": {
+    "runner": "Coordinator final targeted native macOS workspace tests",
+    "exitCode": 0,
+    "result": "Passed",
+    "passedDefinitions": 18,
+    "passedExecutions": 22,
+    "failedDefinitions": 0,
+    "failedExecutions": 0,
+    "skippedExecutions": 0,
+    "runtimeWarnings": [],
+    "executionCountsSource": "native-final-green-summary.json devicesAndConfigurations entry: passedTests=22, failedTests=0",
+    "newQueryRegressionExecutionsPassed": 7,
+    "applicationSourcesCompiledWithChanges335And336": true,
+    "log": "macOS-2026-11-27-bdd-ux/native-final-green.log",
+    "logSHA256": "058866dab81dac4aba7b5cc824a81d0bb54f410fce62220215ca34b8cb322d83",
+    "summary": "macOS-2026-11-27-bdd-ux/native-final-green-summary.json"
+  },
+  "finalControlledSource": {
+    "baseHEAD": "9bd9c69",
+    "inputCount": 609,
+    "fingerprint": "5ea8f0cc9877bc94349db307cd2279654b50c6e2b9a99d3b4a42ee0627bb4c1a",
+    "recordedByCoordinator": true,
+    "swiftSources335UnchangedFromTargetedGreen": true,
+    "swiftSourceHashesRecheckedAfterFinalPreflight": true,
+    "differenceFromStandaloneGate": "JSON-equivalent catalog formatting and Make variable transport with its regression check"
+  },
+  "standaloneMacOSGate": {
+    "command": "make verify",
+    "status": "passed",
+    "exitCode": 0,
+    "elapsedSeconds": 503.55,
+    "controlledInputs": 609,
+    "sourceFingerprint": "4ca2364b5295b759dacffaa131c37240578fec8a20ea36c34056dfbdba3c2484",
+    "sourceUnchangedDuringVerification": true,
+    "nativePassedDefinitions": 144,
+    "nativePassedExecutions": 435,
+    "nativeFailedExecutions": 0,
+    "nativeSkippedExecutions": 0,
+    "nativeRuntimeWarnings": [],
+    "nativeSummary": "macOS-2026-11-27-bdd-ux/native-full-gate-summary.json",
+    "log": "macOS-2026-11-27-bdd-ux/make-verify.log",
+    "logSHA256": "9430d074b630a54948fe834bd847fa3ee9a2417268c049a30f41a1e73c1e26a7"
+  },
+  "finalPreflightVerifyComponent": {
+    "status": "passed",
+    "component": "verify within make verify-app-store",
+    "controlledInputs": 609,
+    "sourceFingerprint": "5ea8f0cc9877bc94349db307cd2279654b50c6e2b9a99d3b4a42ee0627bb4c1a",
+    "nativePassedDefinitions": 144,
+    "nativePassedExecutions": 435,
+    "nativeFailedExecutions": 0,
+    "nativeSkippedExecutions": 0,
+    "nativeSummary": "macOS-2026-11-27-bdd-ux/native-final-preflight-summary.json"
+  },
+  "distributionPreflight": {
+    "command": "make verify-app-store",
+    "status": "passed",
+    "exitCode": 0,
+    "elapsedSeconds": 810.27,
+    "controlledInputs": 609,
+    "sourceFingerprint": "5ea8f0cc9877bc94349db307cd2279654b50c6e2b9a99d3b4a42ee0627bb4c1a",
+    "sourceUnchangedDuringVerification": true,
+    "staticAnalysisAndUnsignedArchivesPassed": true,
+    "log": "macOS-2026-11-27-bdd-ux/make-verify-app-store.log",
+    "logSHA256": "cc6bfe43eceeaf582993ee30b354a969617b17b594b404fb18b144e2bf7f4ebb"
+  },
+  "pending": [],
+  "limits": [
+    "Model tests do not attest real keyboard, VoiceOver or Voice Control operation",
+    "No manual contrast, pseudolanguage or RTL audit",
+    "No iPadOS execution",
+    "No signing, App Store submission or App Review approval attested",
+    "Requested manual GUI inspection was unavailable while the macOS session was locked",
+    "Package Cucumber scenarios do not replace native presentation-state regressions",
+    "No performance improvement or G4/G5 claim"
+  ]
+}

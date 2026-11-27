@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.95.0 |
+| Versione | 0.96.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-27 |
@@ -13,6 +13,17 @@
 ## Scopo
 
 La matrice collega le fonti iniziali alle necessità degli stakeholder, ai requisiti software, alle parti dell'architettura e alle evidenze di verifica pianificate. Gli identificatori fanno riferimento a [Requisiti](requisiti.md) e [Architettura](architettura.md).
+
+## Sviluppo BDD e interazione della ricerca
+
+| Requisiti e clausola | Attuazione circoscritta | Verifica |
+| --- | --- | --- |
+| RQ-058/060/062/063; CMP-334 | RED/GREEN con selezione inventariata esatta e gate completo obbligatorio | [GS-DOR-334](pianificazione/dor-sviluppo-bdd.md); [GS-VER-334](evidenze/GS-VER-334-sviluppo-bdd.md) |
+| RQ-058/060/062/063; CMP-335 | Query e fonte pubblicate insieme, bozza distinta, stati vuoti con azioni eseguibili | [GS-DOR-335](pianificazione/dor-ricerca-contesto.md); [GS-VER-335](evidenze/GS-VER-335-ricerca-contesto.md) |
+| RQ-058/060/062/063; CMP-336 | Invio non ambiguo, conteggio dei risultati e semantica dello stato accessibile | [GS-DOR-336](pianificazione/dor-catalogo-tastiera.md); [GS-VER-336](evidenze/GS-VER-336-catalogo-stato-accessibile.md) |
+
+Questi incrementi applicano gli standard esistenti. La presenza di controlli
+nativi e test del modello non promuove G4 né attesta un audit VoiceOver completo.
 
 ## Ownership, precisione dei riferimenti e cancellazione dell'export
 
