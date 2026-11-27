@@ -94,6 +94,19 @@ quality:
 test:
 	./Scripts/test.sh
 
+.PHONY: test-bdd
+test-bdd:
+	./Scripts/test.sh --bdd
+
+.PHONY: test-bdd-dev test-bdd-list
+unexport BDD_SELECT
+test-bdd-dev: export GLIFI_BDD_SELECT := $(value BDD_SELECT)
+test-bdd-dev:
+	./Scripts/test.sh --bdd-dev
+
+test-bdd-list:
+	./Scripts/test.sh --bdd-dev --list
+
 .PHONY: test-macos
 test-macos:
 	./Scripts/test.sh --macos-app

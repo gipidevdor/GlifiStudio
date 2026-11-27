@@ -1,0 +1,100 @@
+{
+  "identifier": "GS-VER-327",
+  "date": "2026-11-27",
+  "baseHEAD": "44dd90f22f1b4b4930f87a6f6e818ccb3efaa5d4",
+  "status": "Passed targeted and integrated automatic macOS verification",
+  "targeted": {
+    "coreDefinitions": 28,
+    "kitDefinitions": 17,
+    "issues": 0,
+    "buildSeconds": 47.04,
+    "log": "core-green.log",
+    "sha256": "c892aedff2d3ef655745e6156f89683c8b0487f18488340f84f6650251bf7a31"
+  },
+  "source": {
+    "controlledInputs": 590,
+    "fingerprint": "5aeefb5d07d002001e9ee143bb9c3728e3aeb6c5e509a918d9b16d8c45b99793",
+    "localManifest": "source-manifest-before.json"
+  },
+  "independentReview": "No concrete blockers after preservation of literal escapes and the full structural codec algebra",
+  "limitations": [
+    "Future capabilities and persistent index not promoted",
+    "Interactive and assistive audits remain open"
+  ],
+  "integratedVerification": {
+    "status": "passed",
+    "baseHEAD": "44dd90f22f1b4b4930f87a6f6e818ccb3efaa5d4",
+    "sourceFingerprint": "36b05ea14bbeafe91150b84edb8ab74a67a240e75b9430f553797f262714d259",
+    "controlledInputs": 608,
+    "sourceUnchangedAfterVerification": true,
+    "macOSOnly": true,
+    "makeVerifyExit": 0,
+    "makeVerifySeconds": 589.88,
+    "log": "composite-make-verify.log",
+    "logSHA256": "dccda4c30b675a31188afc0dce651a4aaa3d5c56f2a233bb659f9f6da2e6a28a",
+    "observedSummaryLines": [
+      "Binary64 Fraction oracle: 64 synthetic cases reproduced without product code",
+      "Oracoli numerici: 248 righe riprodotte; presenza lessicale nei test Swift verificata (non prova dell'uso negli assert)",
+      "Analysis scenarios: 172 operation variants, 5 integration workflows; reviewed baseline and test references valid",
+      "BDD: inventario di 8 feature e controlli strutturali superati",
+      "✔ Test run with 169 tests in 11 suites passed after 9.187 seconds.",
+      "◇ Test \"EPUB canonical byte limits exclude a final structural LF and include real chapter separators\" started.",
+      "✔ Test \"EPUB canonical byte limits exclude a final structural LF and include real chapter separators\" passed after 12.645 seconds.",
+      "✔ Test run with 782 tests in 4 suites passed after 27.550 seconds.",
+      "✔ Test run with 65 tests in 10 suites passed after 8.945 seconds.",
+      "BDD: 8 feature, 122 scenari, 697 passaggi superati",
+      "Validazione PDF/A-2u con veraPDF: 2 PDF conformi",
+      "Text analysis: 63 shared fixtures, 196 CLI checks, native parity within 1e-12",
+      "Kit API: 2840 reviewed public declarations, signatures and DTO members",
+      "Kit/CLI: 132 compiler-enumerated operations, 264 complete-result parity checks",
+      "Visual export source metadata: 6 independent CLI rejection checks",
+      "Kit API: 2840 reviewed public declarations, signatures and DTO members",
+      "Analysis scenarios: 172 operation variants, 5 integration workflows; compiler and test references valid",
+      "Process-kill recovery: 22 commit checkpoints valid",
+      "real 589.88"
+    ],
+    "native": {
+      "title": "Test - GlifiStudio-macOS",
+      "result": "Passed",
+      "totalTestCount": 135,
+      "passedTests": 135,
+      "failedTests": 0,
+      "skippedTests": 0,
+      "expectedFailures": 0,
+      "statistics": [
+        {
+          "subtitle": "316 test runs",
+          "title": "26 tests ran with dynamic parameters"
+        }
+      ],
+      "runtimeWarnings": [],
+      "executions": [
+        {
+          "passedTests": 425,
+          "failedTests": 0,
+          "skippedTests": 0,
+          "expectedFailures": 0
+        }
+      ],
+      "localResultBundleName": "Test-GlifiStudio-macOS-2026.11.27_18-03-10-+0100.xcresult"
+    },
+    "BDD": {
+      "features": 8,
+      "scenarios": 122,
+      "steps": 697,
+      "emptyFilterRejected": true,
+      "targetedReportSHA256": "9255a4080f1fdcae86dcc27e849bbc2b98caf0a74333f4e0639e7db608659a57"
+    },
+    "dependencyGraphSPI_BUILD_1": {
+      "packages": 2,
+      "swiftSyntax": false,
+      "graphSHA256": "320f8d8322537b7d306fdf4f42ff47a47baaff1e86aab7cf4f6e70862b65abb9"
+    },
+    "limitations": [
+      "macOS automatic profile only",
+      "No iPadOS or manual GUI/accessibility audit",
+      "No signed distribution or App Store submission",
+      "Cucumber report and Swift Testing exit status must both succeed"
+    ]
+  }
+}

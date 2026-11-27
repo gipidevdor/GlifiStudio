@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-QRY-001 |
 | Tipo | Specifica di design della ricerca |
-| Versione | 1.4.0 |
+| Versione | 1.4.1 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-27 |
 | Approvazione | Baseline proposta; parser e usability test richiesti |
 | Riferimenti | GS-DOM-001; GS-DAT-001; GS-LNG-001; GS-UX-001-11; ADR-0016 |
 
@@ -105,6 +105,23 @@ sono supportati in v1 per evitare equivalenze sorprendenti.
   arbitraria sull'intero corpus richiede una futura variante con budget proprio.
 - `not` è complemento rispetto allo Scope risolto, non rispetto all'intero progetto.
 - Campi o annotazioni assenti producono `unsupportedField`, non zero risultati.
+
+L'ammissione dell'esecuzione controlla le capability di tutti i rami dell'AST
+prima di leggere le fonti, anche quando un `AND` falso o uno scope diverso
+eviterebbe di visitarli. La disponibilità della query non dipende quindi dai
+dati incontrati. Validazione strutturale e codec conservano l'algebra v1 completa,
+inclusi i nodi riservati a capability future; decodificare un nodo non autorizza
+la sua esecuzione (GS-DOR-327).
+
+Il sottoinsieme regex corrente comprende letterali, `.`, classi esplicite di
+caratteri eventualmente negate, quantificatori `?`, `*`, `+`, ancore `^` e `$`,
+escape `\d`, `\w`, `\s` e gli escape letterali dei caratteri che non sono
+lettere o cifre ASCII. Gli altri escape alfabetici o numerici ASCII,
+intervalli di classe come `[a-z]` e classi
+annidate/POSIX vengono rifiutati con `query.regex-rejected`; non sono
+reinterpretati come letterali. Nelle classi `-` è letterale se iniziale, finale
+o preceduto da backslash. Un'estensione del sottoinsieme richiede semantica e
+verifiche esplicite; nessun rifiuto introduce un motore alternativo.
 
 La normalizzazione Unicode e linguistica è quella della vista indicizzata
 GS-LNG-001. Case e diacritici sono sensibili per default; flag espliciti possono

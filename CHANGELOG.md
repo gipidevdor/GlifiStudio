@@ -12,6 +12,51 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Sviluppo BDD e interazione macOS
+
+- Cucumber entra nel ciclo RED/GREEN: `make test-bdd-list` elenca le selezioni;
+  `make test-bdd-dev BDD_SELECT='TextQuery.feature:20'` esegue uno scenario o
+  un'intera feature e richiede esattamente gli esiti selezionati. Il gate
+  completo continua a richiedere tutti gli scenari (GS-DOR-334).
+- Ricerca: risultato, espressione, selezione e fonte sono pubblicati insieme;
+  interruzioni conservano il contesto valido. La bozza modificata è distinta
+  dai risultati e i prerequisiti offrono azioni reali di salvataggio,
+  apertura o importazione (GS-DOR-335).
+- Catalogo: Invio apre soltanto un risultato unico tra strumenti e metodi,
+  con conteggio e istruzioni localizzati. Nome e valore degli stati accessibili
+  sono conservati; le nuove failure usano un annuncio di sistema senza
+  spostare il focus (GS-DOR-336).
+
+### Specifiche comportamentali eseguibili
+
+- CucumberSwift fissato alla versione 6.9.0 nel solo target di test BDD:
+  feature italiane per progetto, query, corpus, codifica, export e parità CLI,
+  con oracoli espliciti, failure e conservazione dello stato (GS-DOR-332).
+  `make test`, `make test-bdd` e `make verify` richiedono il report completo:
+  8 feature, 122 scenari e 697 passaggi verificati. Il runner CLI termina e
+  raccoglie il processo su timeout o cancellazione. Trait upstream disabilitati
+  esplicitamente; licenze MIT, pin e confine test-only sono verificati.
+
+### Correttezza semantica e conservazione del contesto
+
+- Query: capability verificate sull'intero AST prima delle fonti; regex non
+  implementate rifiutate senza reinterpretazione, con codec v1 conservato
+  (GS-DOR-327).
+- Statistica: correzione delle dipendenze da unità e offset nelle permutazioni
+  e degli overflow/underflow intermedi di inferenza, bootstrap e quantili
+  (GS-DOR-328). Revisione produttore 3 per confronti di gruppi, post-hoc e
+  paired, con storici leggibili e famiglie indipendenti conservate.
+- Codifica: il cambio fonte pubblica insieme identità, segmenti e testi
+  soltanto dopo letture riuscite; failure e cancellazione conservano il
+  contesto precedente e consentono il retry (GS-DOR-329).
+- Corpus: limiti correnti di vocabolario, n-grammi e matrice applicati anche
+  agli Artifact riutilizzati, senza duplicare risultati scientificamente
+  identici (GS-DOR-330).
+- Export delle viste: nodo, analisi e metodo confrontati con la fonte
+  autorevole; metadati contraddittori o payload corrotti impediscono la
+  pubblicazione. Errori di ammissione riferiti all'export, messaggio mirato
+  it/en e scelte lecite degli assi conservate (GS-DOR-331).
+
 ### Prestazioni statistiche con correttezza conservata
 
 - Keyness: quantile dell'intervallo calcolato una sola volta per confronto,

@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.36 |
+| Versione | 1.6.39 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-26 |
+| Ultima modifica | 2026-11-27 |
 | Approvazione | Non applicabile; registro operativo |
 
 Le schede DoR sono gate di ingresso al coding (GS-STD-001-07). Ogni unità di
@@ -28,6 +28,18 @@ distribuisce quattro agenti su query, feedback statico, revisione e integrazione
 preservando i confini del lavoro già in corso nell'altra chat.
 
 ## Indice
+
+- [GS-DOR-336 — Catalogo da tastiera e stato accessibile](dor-catalogo-tastiera.md) — Attivazione univoca, nome/valore e annuncio delle failure
+- [GS-DOR-335 — Contesto e stato della ricerca](dor-ricerca-contesto.md) — Risultato e fonte atomici, bozza esplicita e prerequisiti reali
+- [GS-DOR-334 — Sviluppo guidato dai comportamenti](dor-sviluppo-bdd.md) — RED/GREEN e selezione esatta, gate completo conservato
+
+- [GS-DOR-332 — Specifiche BDD con CucumberSwift](dor-bdd-cucumber-swift.md) — Feature italiane eseguibili, dipendenza di test e gate macOS
+
+- [GS-DOR-331 — Metadati di origine delle viste esportate](dor-metadata-origine-export-viste.md) — Associazione a nodo e metodo autorevoli, con personalizzazioni conservate
+- [GS-DOR-330 — Limiti corpus sul riuso](dor-cache-budget-corpus.md) — Stessi budget a cache fredda e calda, per calcoli diretti e derivati
+- [GS-DOR-329 — Contesto della fonte da codificare](dor-contesto-fonte-codifica.md) — Pubblicazione atomica e conservazione del contesto dopo failure o cancellazione
+- [GS-DOR-328 — Stabilità dell'inferenza](dor-stabilita-inferenza.md) — Invarianti affini, aritmetica finita e casi numerici estremi
+- [GS-DOR-327 — Ammissione semantica delle query](dor-semantica-query.md) — Capability dell'intero AST e rifiuto delle regex non implementate
 
 - [GS-DOR-326 — Valutazione beta/gamma](dor-ottimizzazione-beta-gamma.md) — Confronto e criterio di scarto del candidato
 - [GS-DOR-325 — Quantile normale protetto](dor-quantile-normale-newton.md) — Accelerazione con fallback numerico conservato

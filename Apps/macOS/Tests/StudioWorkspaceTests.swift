@@ -6,6 +6,47 @@ import Testing
 
 @MainActor
 struct StudioWorkspaceTests {
+    @Test func submittingAnAmbiguousToolSearchKeepsTheCatalogOpen() {
+        let method = StudioCoreMethodRoute.corpus(.pca)
+        #expect(
+            StudioToolCatalogDestination.submission(
+                tools: [.themes, .corpusMethods], coreMethods: [method]) == nil)
+        #expect(
+            StudioToolCatalogDestination.submission(
+                tools: [.themes], coreMethods: [method, .corpus(.lsa)]) == nil)
+        #expect(
+            StudioToolCatalogDestination.submission(
+                tools: [.themes], coreMethods: [method]) == nil)
+    }
+
+    @Test func submittingAUniqueOrEmptyToolSearchUsesOnlyTheVisibleResults() {
+        let method = StudioCoreMethodRoute.corpus(.pca)
+        #expect(StudioToolCatalogDestination.submission(tools: [], coreMethods: []) == nil)
+        #expect(
+            StudioToolCatalogDestination.submission(tools: [.query], coreMethods: [])
+                == .tool(.query))
+        #expect(
+            StudioToolCatalogDestination.submission(tools: [], coreMethods: [method])
+                == .core(method))
+        #expect(
+            StudioToolCatalogDestination.submission(tools: [.query, .coding], coreMethods: [])
+                == nil)
+        #expect(
+            StudioToolCatalogDestination.submission(
+                tools: [], coreMethods: [method, .corpus(.lsa)]) == nil)
+    }
+
+    @Test func methodSearchDoesNotPreferItsSingleCoreResultOverMatchingTools() {
+        let locale = Locale(identifier: "it_IT")
+        let tools = StudioToolDestination.allCases.filter { $0.matches("PageRank", locale: locale) }
+        let methods = StudioCoreMethodRoute.allCases.filter {
+            $0.matches("PageRank", locale: locale)
+        }
+        #expect(tools == [.operators])
+        #expect(methods == [.operators(.pageRank)])
+        #expect(StudioToolCatalogDestination.submission(tools: tools, coreMethods: methods) == nil)
+    }
+
     @Test func discoversMethodsByMultipleWordsWithoutChangingTheQueryLanguage() {
         let locale = Locale(identifier: "it_IT")
         let matches = StudioToolDestination.allCases.filter {

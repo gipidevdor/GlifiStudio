@@ -205,6 +205,27 @@ enum StudioToolDestination: String, CaseIterable, Identifiable {
     }
 }
 
+/// A destination may be opened by Return only when search identifies it unambiguously.
+enum StudioToolCatalogDestination: Equatable {
+    case tool(StudioToolDestination)
+    #if os(macOS)
+        case core(StudioCoreMethodRoute)
+
+        static func submission(
+            tools: [StudioToolDestination], coreMethods: [StudioCoreMethodRoute]
+        ) -> Self? {
+            guard tools.count + coreMethods.count == 1 else { return nil }
+            if let method = coreMethods.first {
+                return .core(method)
+            }
+            if let tool = tools.first {
+                return .tool(tool)
+            }
+            return nil
+        }
+    #endif
+}
+
 struct StudioToolCatalogView: View {
     let onSelect: (StudioToolDestination) -> Void
     #if os(macOS)
@@ -240,16 +261,35 @@ struct StudioToolCatalogView: View {
                     .accessibilityLabel("workspace.tools.search")
                     .onSubmit {
                         #if os(macOS)
-                            if filteredCoreMethods.count == 1, let route = filteredCoreMethods.first
+                            switch StudioToolCatalogDestination.submission(
+                                tools: filteredTools, coreMethods: filteredCoreMethods)
                             {
-                                onSelectCore?(route)
-                                return
+                            case let .tool(tool): onSelect(tool)
+                            case let .core(method): onSelectCore?(method)
+                            case nil: break
+                            }
+                        #else
+                            if filteredTools.count == 1, let tool = filteredTools.first {
+                                onSelect(tool)
                             }
                         #endif
-                        if filteredTools.count == 1, let tool = filteredTools.first {
-                            onSelect(tool)
+                    }
+                if !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    VStack(alignment: .leading, spacing: 4) {
+                        LabeledContent("workspace.tools.results-count") {
+                            Text(resultCount, format: .number).monospacedDigit()
+                        }
+                        if resultCount > 0 {
+                            Text(
+                                resultCount == 1
+                                    ? "workspace.tools.return.unique"
+                                    : "workspace.tools.return.choose")
                         }
                     }
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .accessibilityElement(children: .combine)
+                }
             }
             .padding()
             Divider()
@@ -327,6 +367,14 @@ struct StudioToolCatalogView: View {
 
     private var filteredTools: [StudioToolDestination] {
         StudioToolDestination.allCases.filter { $0.matches(searchText, locale: locale) }
+    }
+
+    private var resultCount: Int {
+        #if os(macOS)
+            filteredTools.count + filteredCoreMethods.count
+        #else
+            filteredTools.count
+        #endif
     }
 
     private var hasNoMatches: Bool {

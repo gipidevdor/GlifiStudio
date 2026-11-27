@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-API-003 |
 | Tipo | Contratto normativo della parità delle interfacce |
-| Versione | 1.0.1 |
+| Versione | 1.0.2 |
 | Stato | Implementato; verifiche e limiti registrati in GS-VER-275 |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-27 |
 | Approvazione | Richiesta esplicita di mantenere sempre allineate CLI e Kit; ADR-0036 |
 | Riferimenti | GS-API-001; GS-API-002; GS-DOR-275; ADR-0036 |
 
@@ -196,6 +196,10 @@ Le analisi conservano tutti i parametri delle corrispondenti API di sessione.
 `maximumDistinctNGramCount` e `maximumNonZeroCellCount`. `keynessOptions`
 espone `maximumHypothesisCount`, `lowExpectedCountThreshold` e
 `confidenceLevel`. I membri opzionali omessi usano i default nativi.
+I limiti operativi correnti valgono anche quando il profilo corpus è riutilizzato
+da un Artifact: una cache calda non autorizza un risultato oltre budget.
+Limiti sufficienti conservano l'identità scientifica e il riuso, senza
+duplicare nodi per i soli budget (GS-DOR-330).
 
 `source-text` e `character-count` ricevono `sourceRevisionID`; `passages`
 aggiunge l'array `selections` delle selezioni tipizzate. `prepare-input`
@@ -208,6 +212,13 @@ esplicito assoluto oppure relativo alla directory corrente del processo. Riusa i
 staging, manifest e rifiuto della sovrascrittura di `exportVisualization`.
 La ricevuta conserva conteggio dei file e digest del manifest effettivamente
 scritto.
+L'export della sessione controlla anche la corrispondenza di nodo, analisi e
+metodo dichiarati con l'Artifact autorevole. Una contraddizione produce
+`visual-export.source-mismatch`, categoria `invalidInput`, retry
+`afterCorrection` e stato `unchanged`, senza pubblicare file. Restano
+consentite le scelte di presentazione compatibili, compresi gli assi alternativi;
+la verifica offline del bundle conserva il proprio contratto distinto
+(GS-DOR-331).
 
 ## Verifica continua
 

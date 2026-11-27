@@ -1004,7 +1004,8 @@ public actor GlifiEngine {
                 }
                 try validatePlannedAnalysis(
                     payload.analysis,
-                    sourceRevisionIDs: snapshot.sources.map(\.sourceRevisionID)
+                    sourceRevisionIDs: snapshot.sources.map(\.sourceRevisionID),
+                    options: options
                 )
                 return GlifiProjectCorpusAnalysisResult(
                     projectID: snapshot.projectID,
@@ -1032,7 +1033,8 @@ public actor GlifiEngine {
             }
             try validatePlannedAnalysis(
                 analysis,
-                sourceRevisionIDs: snapshot.sources.map(\.sourceRevisionID)
+                sourceRevisionIDs: snapshot.sources.map(\.sourceRevisionID),
+                options: options
             )
             try Task.checkCancellation()
             let committed = try await project.storeArtifact(
@@ -1405,7 +1407,7 @@ public actor GlifiEngine {
     ) async throws -> GlifiProjectQueryResult {
         do {
             let query = try makeQuery()
-            try GlifiQueryEvaluator().validate(query, limits: limits)
+            try GlifiQueryEvaluator().validateExecution(query, limits: limits)
             let queryDigest = try query.canonicalDigest()
             let snapshot = await project.snapshot()
             guard !snapshot.sources.isEmpty else {
@@ -1637,7 +1639,8 @@ public actor GlifiEngine {
             }
             try validatePlannedAnalysis(
                 payload.analysis,
-                sourceRevisionIDs: records.map(\.sourceRevisionID)
+                sourceRevisionIDs: records.map(\.sourceRevisionID),
+                options: options
             )
             return (payload.analysis, artifact)
         }
@@ -1651,7 +1654,8 @@ public actor GlifiEngine {
         }
         try validatePlannedAnalysis(
             analysis,
-            sourceRevisionIDs: records.map(\.sourceRevisionID)
+            sourceRevisionIDs: records.map(\.sourceRevisionID),
+            options: options
         )
         let committed = try await project.storeArtifact(
             GlifiCorpusAnalysisArtifactPayload(
@@ -1837,7 +1841,8 @@ public actor GlifiEngine {
 
     private func validatePlannedAnalysis(
         _ analysis: GlifiCorpusAnalysis,
-        sourceRevisionIDs: [SourceRevisionID]
+        sourceRevisionIDs: [SourceRevisionID],
+        options: GlifiCorpusAnalysisOptions
     ) throws {
         let expectedIDs = sourceRevisionIDs.sorted {
             $0.canonicalValue < $1.canonicalValue
@@ -1849,6 +1854,15 @@ public actor GlifiEngine {
             analysis.numericPolicyIdentifier == "IEEE-754-binary64-ordered-reduction-v1"
         else {
             throw analysisArtifactFailure("analysis.descriptor-result-mismatch")
+        }
+        guard analysis.terms.count <= options.maximumVocabularySize else {
+            throw analysisFailure("analysis.vocabulary-limit-exceeded")
+        }
+        guard analysis.ngrams.count <= options.maximumDistinctNGramCount else {
+            throw analysisFailure("analysis.ngram-limit-exceeded")
+        }
+        guard analysis.matrix.cells.count <= options.maximumNonZeroCellCount else {
+            throw analysisFailure("analysis.matrix-limit-exceeded")
         }
     }
 

@@ -237,6 +237,114 @@ func queryEvaluatorRejectsUnavailableCapabilities() throws {
     }
 }
 
+@Test("Le capability della query sono verificate anche nei rami non visitati")
+func querySemanticCapabilitiesDoNotDependOnSourceMatches() throws {
+    let source = try imported("una casa")
+    let tokenization = try GlifiItalianTokenizer().tokenize(source.text)
+    let absent = GlifiQueryNode.term(field: .form, value: "assente", matchMode: .exact)
+    let unsupported = GlifiQueryNode.term(field: .lemma, value: "casa", matchMode: .exact)
+    let cases: [(GlifiQueryNode, String)] = [
+        (.and([absent, unsupported]), "query.unsupported-field"),
+        (.and([absent, .exists(field: .form)]), "query.unsupported-field"),
+        (
+            .and([
+                absent,
+                .range(
+                    field: .form,
+                    value: GlifiQueryRange(
+                        lower: "a", upper: "z", includesLower: true, includesUpper: true)),
+            ]),
+            "query.unsupported-field"
+        ),
+        (
+            .and([absent, .within(.matchAll, scope: .project(ProjectID()))]),
+            "query.unsupported-scope"
+        ),
+        (
+            .within(unsupported, scope: .sourceRevision(SourceRevisionID())),
+            "query.unsupported-field"
+        ),
+        (.not(.and([absent, unsupported])), "query.unsupported-field"),
+    ]
+    let evaluator = GlifiQueryEvaluator()
+    for (node, code) in cases {
+        let query = GlifiQueryAST(root: node)
+        // Structural validation and the codec retain the complete versioned algebra.
+        try evaluator.validate(query)
+        #expect(try GlifiQueryAST.decode(query.canonicalData()) == query)
+        do {
+            _ = try evaluator.evaluate(query, in: source, tokenization: tokenization)
+            Issue.record("An unavailable query capability was accepted: \(code)")
+        } catch let failure as GlifiFailure {
+            #expect(failure.code == code)
+            #expect(failure.category == .insufficientData)
+            #expect(failure.operation == .query)
+        }
+    }
+}
+
+@Test("Le regex non reinterpretano escape e classi non implementati")
+func querySemanticRegexRejectsUnsupportedSyntax() throws {
+    let evaluator = GlifiQueryEvaluator()
+    for pattern in [#"a\1"#, #"\bparola\b"#, #"\D+"#, #"\t"#, "[a-z]", "[[:alpha:]]"] {
+        for flags: GlifiRegexFlags in [[], [.caseInsensitive]] {
+            do {
+                try evaluator.validate(
+                    GlifiQueryAST(root: .regex(field: .form, pattern: pattern, flags: flags)))
+                Issue.record("Unsupported regex syntax was accepted")
+            } catch let failure as GlifiFailure {
+                #expect(failure.code == "query.regex-rejected")
+                #expect(failure.category == .invalidInput)
+            }
+        }
+    }
+}
+
+@Test("L'esecuzione ammette le capability prima di leggere le fonti del progetto")
+func querySemanticEngineRejectsUnavailableCapabilitiesBeforeSources() async throws {
+    let root = FileManager.default.temporaryDirectory.appending(
+        path: "GlifiQueryCapabilityTests-\(UUID().uuidString)", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: false)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let project = try GlifiProjectPackage.create(at: root.appending(path: "Empty.glifi"))
+    let engine = GlifiEngine()
+    let text = "assente AND lemma:casa"
+    let data = try GlifiQueryParser().parse(text).canonicalData()
+    let before = await project.snapshot()
+    for canonicalInput in [false, true] {
+        do {
+            if canonicalInput {
+                _ = try await engine.query(canonicalAST: data, in: project)
+            } else {
+                _ = try await engine.query(text, in: project)
+            }
+            Issue.record("An unavailable query capability reached source admission")
+        } catch let failure as GlifiFailure {
+            #expect(failure.code == "query.unsupported-field")
+            #expect(failure.category == .insufficientData)
+        }
+    }
+    #expect(await project.snapshot() == before)
+}
+
+@Test("Il sottoinsieme regex conserva classi esplicite ed escape letterali")
+func querySemanticRegexPreservesSupportedSyntax() throws {
+    let evaluator = GlifiQueryEvaluator()
+    for pattern in [
+        #"\d+"#, #"\w+"#, #"\s?"#, #"\[\]\.\*\+\?\^\$\(\)\{\}\|\/\\"#,
+        "[abc]", "[-a]", "[a-]", #"[a\-z]"#, #"[\]\\]"#, #"\@\_\!\é"#,
+    ] {
+        try evaluator.validate(
+            GlifiQueryAST(root: .regex(field: .form, pattern: pattern, flags: [])))
+    }
+    let source = try imported("a z m 123 Casa")
+    let tokenization = try GlifiItalianTokenizer().tokenize(source.text)
+    let result = try evaluator.evaluate(
+        GlifiQueryParser().parse(#"form:/^[az]$/ OR form:/^\d+$/ OR form:/^casa$/i"#),
+        in: source, tokenization: tokenization)
+    #expect(result.matches.map { $0.range.text(in: source.text) } == ["a", "z", "123", "Casa"])
+}
+
 @Test("Il contesto KWIC estremo resta nei token disponibili senza overflow")
 func queryEvaluatorBoundsExtremeContext() throws {
     let source = try imported("uno due tre quattro")

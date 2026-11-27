@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DEV-002 |
 | Tipo | Guida controllata del loop di sviluppo |
-| Versione | 1.9.0 |
+| Versione | 1.10.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-26 |
+| Ultima modifica | 2026-11-27 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -25,6 +25,9 @@ sostituire il gate completo `make verify`.
 | --- | --- | --- |
 | `make format` | Prima di commitare sorgenti Swift | Riscrive `Apps` e `Packages` secondo `.swift-format` |
 | `make lint` / `make format-check` | Dopo `format` o in revisione | Controlla lo stile senza modificare i file |
+| `make test-bdd-list` | Prima di scegliere un comportamento | Elenca feature e righe degli scenari espansi senza compilare |
+| `make test-bdd-dev BDD_SELECT='TextQuery.feature'` | Iterazione RED/GREEN su una feature o una riga | Esegue e verifica esattamente il sottoinsieme esplicito; non sostituisce il gate completo |
+| `make test-bdd` | Dopo il refactoring dei comportamenti condivisi | Richiede tutta la suite Cucumber e il report completo |
 | `make test-macos` | Iterazione sul ciclo documentale dell'app macOS | Compila app e modello reale dal workspace ed esegue i test Swift Testing senza app host |
 | `make check-analysis-scenarios` | Modifiche a scenari, test o operazioni pubbliche | Controlla matrice, riferimenti e omissioni; quattordici controlli negativi |
 | `make check-swift-dialect` | Sempre nel loop e nel gate | Verifica language mode, concurrency, regole e CI |
@@ -117,6 +120,26 @@ stile vivono in `.swift-format` e nei controlli `check-toolchain` /
 `check-swift-dialect`. Feature upcoming o sperimentali globali richiedono ADR.
 
 ## Sequenza consigliata
+
+Lo sviluppo dei comportamenti condivisi usa Cucumber prima e durante il coding,
+secondo [GS-BDD-001](testing/01-bdd-cucumber-swift.md):
+
+1. chiarire con esempi italiani input, azione, risultato e failure osservabili;
+2. aggiungere o correggere la feature e gli step, con attese indipendenti;
+3. riesaminare e aggiornare l'inventario usando il generatore upstream;
+4. eseguire la selezione mirata e osservare il RED che riproduce il difetto;
+5. correggere l'implementazione, ottenere il GREEN e poi rifattorizzare;
+6. eseguire suite completa, test del componente e gate macOS prima della consegna.
+
+Per esempio, `make test-bdd-list` mostra le righe selezionabili e
+`make test-bdd-dev BDD_SELECT='TextQuery.feature'` consente l'iterazione sulla
+ricerca. Un test già verde può documentare una capacità esistente, ma non prova
+di avere riprodotto il difetto corretto. Non si producono report positivi
+artificiali né si adeguano tolleranze o inventari a un'esecuzione fallita.
+
+Le modifiche di UI hanno inoltre regressioni sul modello e verifiche native
+di interazione e accessibilità. Gherkin descrive il comportamento della persona;
+una suite headless verifica soltanto il confine che esegue realmente.
 
 ```sh
 make bootstrap

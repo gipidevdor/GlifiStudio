@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-ANA-001 |
 | Tipo | Specifica di design del sistema analitico |
-| Versione | 1.7.2 |
+| Versione | 1.7.3 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-27 |
 | Approvazione | Baseline proposta; policy e regole MVP da convalidare |
 | Riferimenti | GS-MET-001; GS-UX-001-03–08; GS-DOM-001; GS-DAT-001; ADR-0013; ADR-0016 |
 
@@ -210,6 +210,12 @@ contenuto, contratto di estrazione e parametri analitici. I limiti predefiniti s
 1.000 documenti, 256 MiB sorgente complessivi, 100.000 type, 100.000 n-grammi
 distinti e 500.000 celle non-zero. Cancellazione e superamento dei limiti producono
 failure tipizzate senza modificare la generazione.
+
+I limiti operativi correnti **DEVONO** valere anche quando il profilo corpus è
+riutilizzato da un Artifact, direttamente o come dipendenza di un'analisi derivata.
+Un risultato entro i limiti resta riutilizzabile senza ricalcolo: i limiti di
+risorse non modificano l'identità scientifica del profilo. Il rifiuto conserva
+codice, categoria e stato persistente del corrispondente percorso a cache fredda.
 
 `keyness-gtest-ha-bh-v1` riceve due gruppi espliciti e disgiunti dalla stessa
 generazione, costruisce due profili compatibili e produce l'intera famiglia di

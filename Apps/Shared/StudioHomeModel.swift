@@ -506,9 +506,16 @@ final class StudioHomeModel {
         messageKey: String,
         category: String
     ) -> LocalizedStringKey {
+        LocalizedStringKey(resolvedFailureMessageKey(messageKey: messageKey, category: category))
+    }
+
+    static func resolvedFailureMessageKey(
+        messageKey: String,
+        category: String
+    ) -> String {
         let absent = "\u{0}assente"
         let localized = Bundle.main.localizedString(forKey: messageKey, value: absent, table: nil)
-        return LocalizedStringKey(localized == absent ? "failure.category.\(category)" : messageKey)
+        return localized == absent ? "failure.category.\(category)" : messageKey
     }
 
     var findings: [GlifiStudioFinding] {
@@ -548,6 +555,12 @@ final class StudioHomeModel {
         }
         return queryResult?.matches.first { $0.id == selectedQueryMatchID }
             ?? queryResult?.matches.first
+    }
+
+    /// Existing results retain their executed expression while the person edits the next search.
+    var isQueryDraftChanged: Bool {
+        guard queryResult != nil, let lastQueryExpression else { return false }
+        return queryDraft.trimmingCharacters(in: .whitespacesAndNewlines) != lastQueryExpression
     }
 
     var canCancelExecution: Bool {
@@ -957,13 +970,19 @@ final class StudioHomeModel {
                 throw presentationFailure(messageKey: "failure.query.empty")
             }
             let result = try await active.query(trimmed)
+            let selectedMatch = result.matches.first
+            let source: GlifiStudioSourceText?
+            if let selectedMatch {
+                source = try await active.sourceText(
+                    sourceRevisionID: selectedMatch.sourceRevisionID)
+            } else {
+                source = nil
+            }
+            try Task.checkCancellation()
             queryResult = result
             lastQueryExpression = trimmed
-            selectedQueryMatchID = result.matches.first?.id
-            sourceText = nil
-            if let match = result.matches.first {
-                sourceText = try await active.sourceText(sourceRevisionID: match.sourceRevisionID)
-            }
+            selectedQueryMatchID = selectedMatch?.id
+            sourceText = source
         }
     }
 
@@ -1080,13 +1099,19 @@ final class StudioHomeModel {
     func loadCodingSource(_ sourceRevisionID: String) async {
         await run(messageKey: "progress.loading-source") { [self] in
             let active = try requireSession()
-            codingPassage = nil
-            codingSegments = try await active.textSegments(sourceRevisionID: sourceRevisionID)
-            codingSourceCharacterCount = try await active.extractedCharacterCount(
+            let segments = try await active.textSegments(sourceRevisionID: sourceRevisionID)
+            let characterCount = try await active.extractedCharacterCount(
                 sourceRevisionID: sourceRevisionID)
+            let state = try await active.qualitativeState()
+            let texts = try await resolveCodingTexts(
+                in: active, sourceRevisionID: sourceRevisionID, state: state)
+            try Task.checkCancellation()
+            codingSegments = segments
+            codingSourceCharacterCount = characterCount
             codingSourceRevisionID = sourceRevisionID
-            qualitativeState = try await active.qualitativeState()
-            try await refreshCodingTexts(active)
+            qualitativeState = state
+            codingTexts = texts
+            codingPassage = nil
         }
     }
 
@@ -1199,21 +1224,26 @@ final class StudioHomeModel {
 
     /// Resolves the passage of every coding of the loaded source, for the review list.
     private func refreshCodingTexts(_ active: GlifiStudioProjectSession) async throws {
-        guard let sourceRevisionID = codingSourceRevisionID else {
-            codingTexts = [:]
-            return
-        }
-        let codings = (qualitativeState?.codings ?? []).filter {
+        codingTexts = try await resolveCodingTexts(
+            in: active, sourceRevisionID: codingSourceRevisionID, state: qualitativeState)
+    }
+
+    /// Resolves coding excerpts without publishing presentation state.
+    private func resolveCodingTexts(
+        in active: GlifiStudioProjectSession, sourceRevisionID: String?,
+        state: GlifiStudioQualitativeState?
+    ) async throws -> [String: String] {
+        try Task.checkCancellation()
+        guard let sourceRevisionID else { return [:] }
+        let codings = (state?.codings ?? []).filter {
             $0.sourceRevisionID == sourceRevisionID
         }
-        guard !codings.isEmpty else {
-            codingTexts = [:]
-            return
-        }
+        guard !codings.isEmpty else { return [:] }
         let resolved = try await active.passages(
             sourceRevisionID: sourceRevisionID,
             selections: codings.map { .bytes(start: $0.startUTF8, end: $0.endUTF8) })
-        codingTexts = Dictionary(
+        try Task.checkCancellation()
+        return Dictionary(
             zip(codings.map(\.eventID), resolved.map(\.text)), uniquingKeysWith: { _, last in last }
         )
     }

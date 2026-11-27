@@ -6,12 +6,12 @@
 | --- | --- |
 | Identificatore | GS-LIC-002 |
 | Tipo | Registro controllato di provenienza |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | Revisione locale con limiti dichiarati |
 | Responsabile | Glifi Studio contributors |
-| Ultima modifica | 2026-11-26 |
+| Ultima modifica | 2026-11-27 |
 | Approvazione | Richiesta esplicita di revisione delle licenze e delle fonti algoritmiche |
-| Riferimenti | GS-LIC-001; GS-STD-001-13; GS-DOR-318; GS-VER-318; GS-VER-319; GS-VER-321 |
+| Riferimenti | GS-LIC-001; GS-STD-001-13; GS-DOR-318; GS-VER-318; GS-VER-319; GS-VER-321; ADR-0046; GS-VER-332 |
 
 ## Regola di attribuzione
 
@@ -134,6 +134,57 @@ con [condizioni proprie](https://verapdf.org/home/). Le azioni CI `checkout` e
 Le versioni effettive di R, pacchetti, Python, veraPDF e SDK **DEVONO** accompagnare
 le prove che li usano: la versione corrente di CRAN non prova quella installata.
 L’inventario non è un lockfile dell’intera macchina di sviluppo.
+
+### Runner BDD e generatore Swift Testing
+
+CucumberSwift 6.9.0 e CucumberSwiftExpressions 1.4.2 sono compilati nel
+confine dei test; non sono oracoli numerici indipendenti né dipendenze dei
+target di produzione. Le revisioni nel lockfile corrispondono ai tag e ai
+checkout puliti esaminati. Le licenze sono MIT, distinte dalla BSD del codice
+originale del progetto:
+
+| Fonte primaria al commit | SHA-256 del LICENSE letto |
+| --- | --- |
+| [CucumberSwift, 5547f902](https://github.com/cucumberswift/CucumberSwift/blob/5547f9025c0da3f0276a22a3c746bfebc405741f/LICENSE) | `fe9f4f27ef428cbca240370cc8a49fa12176947fae195e2e6b45ad6a3ab988bc` |
+| [CucumberSwiftExpressions, ab4c6482](https://github.com/cucumberswift/CucumberSwiftExpressions/blob/ab4c6482d3230d24a13814a961b6fff1d50f830f/LICENSE) | `109631cb84ae9b5d6e72d3e776870f2e824b7d48c8ac8f8c4ceb08131debb9a8` |
+
+Gli [avvisi completi](../Config/Licenses/bdd-tools.txt) conservano copyright,
+permesso e disclaimer di entrambe le fonti. Il confronto dei componenti
+selezionati, compresi parser condiviso e generatore, non ha individuato
+ulteriori licenze dichiarate; non costituisce una certificazione della
+titolarità di tutto il repository upstream. La review del grafo controlla
+che soltanto `GlifiBDDTests` consumi runner e plugin, senza import nei
+sorgenti applicativi. Il generatore scrive nel workdir del plugin; il codice
+generato resta un artefatto della cache. Una redistribuzione del bundle di
+test, del generatore o di codice upstream generato deve conservare gli
+avvisi MIT pertinenti.
+
+I trait sono disabilitati esplicitamente con `traits: []` secondo
+[SwiftPM](https://docs.swift.org/swiftpm/documentation/packagemanagerdocs/addingdependencies/#Packages-with-Traits):
+senza questa scelta il default `Macros` upstream dipenderebbe da `SPI_BUILD`.
+Manifest, lockfile, avvisi e digest revisionati vengono riesaminati insieme.
+
+L'integratore ha verificato la risoluzione anche con `SPI_BUILD=1`: il grafo
+contiene soltanto CucumberSwift 6.9.0 e CucumberSwiftExpressions 1.4.2, senza
+SwiftSyntax. Il lockfile conserva gli stessi commit e lo stesso `originHash`;
+il suo SHA-256 resta
+`d7192d75b75156eb6544d3282fa4043f9ced4e28890da1312d7579981911a59f`.
+Il dossier locale `macOS-2026-11-27-semantics` conserva `bdd-resolve.log`
+(SHA-256 `78e694cfa8e7597590d6936e9bc588686f78110c4ddcf37c6644863deb0c8f85`)
+e `bdd-dependency-graph.json`
+(SHA-256 `320f8d8322537b7d306fdf4f42ff47a47baaff1e86aab7cf4f6e70862b65abb9`).
+Questa prova riguarda la risoluzione, non il risultato dei test BDD o del
+gate integrato, registrati separatamente in GS-VER-332.
+
+Il successivo gate macOS composito è superato: il controllo licenze registra
+25 materiali e 21 digest coerenti. La verifica del bundle Release ispeziona
+17 elementi, conserva LICENSE e THIRD_PARTY_NOTICES identici alle fonti e
+non trova cartelle o estensioni vietate nell'ambito dichiarato, compresi
+`tests` e `.xctest`. È una prova di packaging con filtri dichiarati, non
+un'analisi esaustiva dei simboli binari; la separazione del codice Cucumber
+dai target applicativi è verificata anche sul grafo delle dipendenze.
+Il log composito ha SHA-256
+`dccda4c30b675a31188afc0dce651a4aaa3d5c56f2a233bb659f9f6da2e6a28a`.
 
 ## Testo, immagini e sistema
 

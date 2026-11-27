@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.license-inventory",
   "schemaVersion": 1,
-  "reviewedOn": "2026-11-26",
+  "reviewedOn": "2026-11-27",
   "materials": [
     {
       "id": "glifi-original",
@@ -19,7 +19,7 @@
       "relationship": "original-work",
       "noticeFile": "LICENSE",
       "status": "reviewed",
-      "notes": "Licenza dei contributi originali; le voci specifiche Snowball e SplitMix conservano provenienza e avvisi distinti. Nessuna dipendenza remota SwiftPM dichiarata."
+      "notes": "Licenza dei contributi originali; le voci specifiche Snowball e SplitMix conservano provenienza e avvisi distinti. Le dipendenze remote SwiftPM sono inventariate separatamente come strumenti BDD esclusivi dei test."
     },
     {
       "id": "apple-system-frameworks",
@@ -446,6 +446,46 @@
       "noticeFile": null,
       "status": "reviewed",
       "notes": "Sorgenti R/C++ consultati per schedule/PCA/default e confrontati manualmente con Swift corrente e introduttivo. Il fit nativo riproduce questi comportamenti matematici, con struttura scalare/LAPACK propria, rispetto a TNT/SomParam upstream. Nessuna copia espressiva inequivocabile osservata nel campione; nessuna certificazione clean-room. Il pacchetto non è incorporato o richiamato dagli oracoli, che usano R base."
+    },
+    {
+      "id": "cucumber-swift-bdd",
+      "category": "development-tool",
+      "paths": [
+        "Packages/GlifiCore/Package.swift",
+        "Packages/GlifiCore/Package.resolved",
+        "Config/Licenses/bdd-tools.txt"
+      ],
+      "sourceURLs": [
+        "https://github.com/cucumberswift/CucumberSwift/blob/5547f9025c0da3f0276a22a3c746bfebc405741f/LICENSE",
+        "https://github.com/cucumberswift/CucumberSwift/blob/5547f9025c0da3f0276a22a3c746bfebc405741f/Package.swift"
+      ],
+      "revision": "6.9.0; 5547f9025c0da3f0276a22a3c746bfebc405741f",
+      "licenseExpression": "MIT",
+      "distribution": "external-tool",
+      "relationship": "test-runner-and-build-tool",
+      "noticeFile": "Config/Licenses/bdd-tools.txt",
+      "status": "reviewed",
+      "notes": "Licenza letta sulla revisione risolta. Dipendenza esclusiva di GlifiBDDTests; CucumberSwiftTesting e CucumberSwiftTestingPlugin selezionati con traits: [] esplicito. La risoluzione coordinata con SPI_BUILD=1 conferma soltanto i due package bloccati, senza swift-syntax. Nessun codice/binario upstream vendorizzato o incluso nei target applicativi; il test bundle collega il runner e il build tool genera test nel workdir. Avvisi MIT conservati separatamente; versioni e lockfile da riesaminare insieme secondo ADR-0046."
+    },
+    {
+      "id": "cucumber-swift-expressions-bdd",
+      "category": "development-tool",
+      "paths": [
+        "Packages/GlifiCore/Package.swift",
+        "Packages/GlifiCore/Package.resolved",
+        "Config/Licenses/bdd-tools.txt"
+      ],
+      "sourceURLs": [
+        "https://github.com/cucumberswift/CucumberSwiftExpressions/blob/ab4c6482d3230d24a13814a961b6fff1d50f830f/LICENSE",
+        "https://github.com/cucumberswift/CucumberSwiftExpressions/blob/ab4c6482d3230d24a13814a961b6fff1d50f830f/Package.swift"
+      ],
+      "revision": "1.4.2; ab4c6482d3230d24a13814a961b6fff1d50f830f",
+      "licenseExpression": "MIT",
+      "distribution": "external-tool",
+      "relationship": "test-runner-transitive-dependency",
+      "noticeFile": "Config/Licenses/bdd-tools.txt",
+      "status": "reviewed",
+      "notes": "Licenza letta sulla revisione risolta; dipendenza transitiva del solo runner BDD, collegata al test bundle. Nessun sorgente o binario vendorizzato o distribuito nel bundle app. Avviso MIT completo conservato; l’aggiornamento del lockfile richiede riesame."
     }
   ],
   "reviewedInputs": {
@@ -462,10 +502,12 @@
     "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-32@2x.png": "90ec675eb4ac9121de21930cc9dbf82194561c1a9bc63ca98d675919ac6aae6d",
     "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-512.png": "b54f304ab20fb2c03b0c4729926a6e26fe138fc9d567e457bdc43eababd5e443",
     "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-512@2x.png": "80e0893f803c4dcf30b9ebce534674b60dfb1f73ec248bc2581f90deebfcd337",
+    "Config/Licenses/bdd-tools.txt": "24bad6efce631cfec547ba188d00961b5a7ee4542961b23c76ac819b4e17c702",
     "Design/AppIcon/AppIcon-master-1024.png": "80e0893f803c4dcf30b9ebce534674b60dfb1f73ec248bc2581f90deebfcd337",
     "Fixtures/Linguistics/it-gold-v1/ATTRIBUTION.md": "eadd4b52188de68c2cfe74d3d70071bd4226603c79a3d4ba5efee7022fa5dfe1",
     "LICENSE": "81f47968bba326e331d547c1a4030f240512d62cb6e8c537cec2616da82d7d72",
-    "Packages/GlifiCore/Package.swift": "390130809eefe8840277be50388ad58b63f647e8d34341cf476d80a2249c0600",
+    "Packages/GlifiCore/Package.resolved": "d7192d75b75156eb6544d3282fa4043f9ced4e28890da1312d7579981911a59f",
+    "Packages/GlifiCore/Package.swift": "e9a7dcdebd0e3c66e7bc11440c368c3add2fe3840d09a8ab5d77daa8cb8bbb63",
     "THIRD_PARTY_NOTICES.txt": "dc869382f68d264c0054b209cf7f7c0926e09df5daeef8c9fd9b0895acabf944",
     "docs/assets/glifistudio-hero.png": "672cc4fa464ba426f625ff19bf252bf33019b255de649b4a540cfbc920168f19"
   }

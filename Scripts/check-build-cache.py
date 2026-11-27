@@ -5,9 +5,11 @@
 
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
 import select
+import shlex
 import signal
 import subprocess
 import sys
@@ -290,6 +292,64 @@ class BuildCacheChecks(unittest.TestCase):
         tools = self.root / "bin"
         tools.mkdir()
         swift = tools / "swift"
+        # This test isolates cache ownership, so the Swift stub supplies a complete
+        # synthetic report instead of bypassing the new real BDD report validator.
+        inventory = json.loads((PROJECT / "Config/Testing/bdd-coverage.json").read_text())
+        report = [{
+            "uri": feature["file"],
+            "elements": [{
+                "type": "scenario", "line": scenario["line"],
+                "tags": [{"name": "GS-CMP-332"}, {"name": "macos"}],
+                "steps": [{"result": {"status": "passed"}}] * scenario["stepCount"],
+            } for scenario in feature["scenarios"]],
+        } for feature in inventory["features"]]
+        fixture = self.root / "synthetic-bdd-report.json"
+        fixture.write_text(json.dumps(report), encoding="utf-8")
+        swift.write_text(
+            '#!/bin/sh\ncp "$GLIFI_CACHE_CHECK_BDD_FIXTURE" "$CUCUMBER_REPORT_PATH"\n'
+        )
+        swift.chmod(0o755)
+        result = subprocess.run(
+            [str(PROJECT / "Scripts/test.sh")],
+            env=self.environment | {
+                "PATH": str(tools) + os.pathsep + os.environ["PATH"],
+                "GLIFI_CACHE_CHECK_BDD_FIXTURE": str(fixture),
+            },
+            capture_output=True, text=True, timeout=10,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(sentinel.read_text(), "preserve me")
+
+    def test_bdd_make_selector_does_not_expand_command_line_macros(self) -> None:
+        tools = self.root / "bin"
+        tools.mkdir()
+        expanded = self.root / "make-expanded-selector"
+        invoked = self.root / "swift-was-invoked"
+        swift = tools / "swift"
+        swift.write_text("#!/bin/sh\n: > \"$GLIFI_CACHE_CHECK_SWIFT_MARKER\"\nexit 99\n")
+        swift.chmod(0o755)
+        selection = f"$(shell touch {shlex.quote(str(expanded))})"
+        result = subprocess.run(
+            ["make", "--no-print-directory", "test-bdd-dev", f"BDD_SELECT={selection}"],
+            cwd=PROJECT,
+            env=self.environment | {
+                "PATH": str(tools) + os.pathsep + os.environ["PATH"],
+                "GLIFI_CACHE_CHECK_SWIFT_MARKER": str(invoked),
+            },
+            capture_output=True, text=True, timeout=10,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(expanded.exists(), "Make evaluated the selector as a command-line macro")
+        self.assertFalse(invoked.exists(), "An invalid selector reached Swift")
+        self.assertIn("feature BDD assente", result.stderr)
+        self.assertIn("$(shell touch", result.stderr)
+        self.assertFalse(self.cache.exists())
+        self.assertFalse(Path(str(self.cache) + ".glifi-lock").exists())
+
+    def test_missing_bdd_report_rejects_successful_swift_stub_and_cleans_owned_files(self) -> None:
+        tools = self.root / "bin"
+        tools.mkdir()
+        swift = tools / "swift"
         swift.write_text("#!/bin/sh\nexit 0\n")
         swift.chmod(0o755)
         result = subprocess.run(
@@ -297,8 +357,10 @@ class BuildCacheChecks(unittest.TestCase):
             env=self.environment | {"PATH": str(tools) + os.pathsep + os.environ["PATH"]},
             capture_output=True, text=True, timeout=10,
         )
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(sentinel.read_text(), "preserve me")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Verifica BDD fallita", result.stderr)
+        self.assertFalse(self.cache.exists())
+        self.assertEqual(list(self.root.glob("GlifiStudioBDD.*")), [])
 
     def test_owned_cache_respects_exact_size_cap(self) -> None:
         prepare = 'glifi_prepare_build_cache "$GLIFI_VERIFY_CACHE"; '

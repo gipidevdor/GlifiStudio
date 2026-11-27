@@ -4,15 +4,20 @@
 | --- | --- |
 | Identificatore | GS-APL-007 |
 | Tipo | Standard applicativo Apple |
-| Versione | 0.5.0 |
+| Versione | 0.6.0 |
 | Stato | Approvato |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-15 |
-| Approvazione | ADR-0006 |
+| Ultima modifica | 2026-11-27 |
+| Approvazione | ADR-0006; ADR-0046 per la verifica BDD |
 
 ## Strategia
 
 - Swift Testing **DEVE** coprire dominio e API Swift; XCTest **DEVE** coprire interazioni UI e metriche che lo richiedono.
+- Le feature comportamentali **DEVONO** usare il target Swift Testing
+  `GlifiBDDTests` con CucumberSwift esclusivamente di sviluppo secondo
+  [ADR-0046](../adr/0046-bdd-cucumber-swift.md) e
+  [GS-BDD-001](../testing/01-bdd-cucumber-swift.md); il normale gate macOS
+  **DEVE** includerle senza presentarle come audit UI o accessibilità.
 - I modelli di presentazione **DEVONO** essere testabili senza avviare l'intera app.
 - I flussi principali **DEVONO** essere provati su macOS e su simulatori/dispositivi iPad rappresentativi.
 - Test UI **DEVONO** coprire italiano, inglese, testo lungo, tastiera e almeno un audit di accessibilità.
