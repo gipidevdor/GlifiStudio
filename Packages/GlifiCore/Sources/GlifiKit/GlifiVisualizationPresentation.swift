@@ -689,7 +689,10 @@ public enum GlifiStudioVisualizationBuilder {
     }
 
     private static func csvField(_ value: String) -> String {
-        guard value.contains(where: { $0 == "," || $0 == "\"" || $0 == "\n" || $0 == "\r" })
+        guard
+            value.unicodeScalars.contains(where: {
+                $0 == "," || $0 == "\"" || $0 == "\n" || $0 == "\r"
+            })
         else {
             return value
         }

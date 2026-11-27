@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.39 |
+| Versione | 1.6.40 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-27 |
@@ -28,6 +28,9 @@ distribuisce quattro agenti su query, feedback statico, revisione e integrazione
 preservando i confini del lavoro già in corso nell'altra chat.
 
 ## Indice
+
+- [GS-DOR-338 — CSV con CRLF](dor-csv-crlf.md) — Quoting per scalari, byte conservati e rifiuto delle alterazioni
+- [GS-DOR-337 — Scenari completi](dor-scenari-completi.md) — 172 varianti, tre fasi, fixture originali e fonti web verificate
 
 - [GS-DOR-336 — Catalogo da tastiera e stato accessibile](dor-catalogo-tastiera.md) — Attivazione univoca, nome/valore e annuncio delle failure
 - [GS-DOR-335 — Contesto e stato della ricerca](dor-ricerca-contesto.md) — Risultato e fonte atomici, bozza esplicita e prerequisiti reali

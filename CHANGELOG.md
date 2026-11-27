@@ -12,6 +12,20 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Copertura BDD e CSV
+
+- Tutte le 172 varianti pubbliche sono associate a casi nominali, input non
+  validi e cancellazione preventiva; tutte le 63 fixture testuali originali
+  sono eseguite invariate. Il gate confronta registro, inventario upstream e
+  report: 16 feature, 744 scenari e 3092 passaggi (GS-DOR-337).
+- Cinque gruppi di fonti primarie web sono riesaminati per condizioni e uso:
+  solo fatti e metodi di riferimento, con fixture originali; nessun corpus,
+  codice o suite esterna acquisita (GS-LIC-003).
+- Corretto l'export CSV di campi contenenti CRLF senza altri delimitatori:
+  quoting basato sugli scalari Unicode, byte conservati e verifica fail-closed
+  anche dopo rehash. I bundle storici malformati vengono rifiutati; API e
+  schema restano invariati (GS-DOR-338).
+
 ### Sviluppo BDD e interazione macOS
 
 - Cucumber entra nel ciclo RED/GREEN: `make test-bdd-list` elenca le selezioni;
@@ -32,8 +46,9 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 - CucumberSwift fissato alla versione 6.9.0 nel solo target di test BDD:
   feature italiane per progetto, query, corpus, codifica, export e parità CLI,
   con oracoli espliciti, failure e conservazione dello stato (GS-DOR-332).
-  `make test`, `make test-bdd` e `make verify` richiedono il report completo:
-  8 feature, 122 scenari e 697 passaggi verificati. Il runner CLI termina e
+  `make test`, `make test-bdd` e `make verify` richiedono il report completo.
+  La base iniziale contava 8 feature, 122 scenari e 697 passaggi verificati;
+  la copertura corrente è descritta nell'incremento GS-DOR-337 sopra. Il runner CLI termina e
   raccoglie il processo su timeout o cancellazione. Trait upstream disabilitati
   esplicitamente; licenze MIT, pin e confine test-only sono verificati.
 

@@ -107,6 +107,11 @@ test-bdd-dev:
 test-bdd-list:
 	./Scripts/test.sh --bdd-dev --list
 
+.PHONY: check-bdd-contracts
+check-bdd-contracts:
+	python3 -B Scripts/check-bdd-contracts.py --self-test
+	python3 -B Scripts/check-bdd-contracts.py
+
 .PHONY: test-macos
 test-macos:
 	./Scripts/test.sh --macos-app

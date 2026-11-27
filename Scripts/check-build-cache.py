@@ -295,12 +295,18 @@ class BuildCacheChecks(unittest.TestCase):
         # This test isolates cache ownership, so the Swift stub supplies a complete
         # synthetic report instead of bypassing the new real BDD report validator.
         inventory = json.loads((PROJECT / "Config/Testing/bdd-coverage.json").read_text())
+        contracts = json.loads((PROJECT / "Config/Testing/bdd-contracts.json").read_text())
+        names = {
+            (case["feature"], case["line"]): case["witnesses"]
+            for case in contracts["cases"] + contracts["supplementalCases"]
+        }
         report = [{
             "uri": feature["file"],
             "elements": [{
                 "type": "scenario", "line": scenario["line"],
                 "tags": [{"name": "GS-CMP-332"}, {"name": "macos"}],
-                "steps": [{"result": {"status": "passed"}}] * scenario["stepCount"],
+                "steps": [{"name": name, "result": {"status": "passed"}}
+                          for name in names[(feature["file"], scenario["line"])]],
             } for scenario in feature["scenarios"]],
         } for feature in inventory["features"]]
         fixture = self.root / "synthetic-bdd-report.json"

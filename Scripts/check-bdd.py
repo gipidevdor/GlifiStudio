@@ -346,6 +346,16 @@ def main() -> int:
         if sum((args.list, args.runner_selection, args.report is not None)) > 1:
             raise ValueError("scegliere un solo output fra lista, selezione runner e report")
         expected = validate_inventory(json.loads((ROOT / INVENTORY).read_text()), ROOT)
+        contracts = None
+        contract_checker = None
+        # A developer selection is an iteration, not a claim that every public contract is complete.
+        if args.select is None and not args.list and not args.runner_selection:
+            contract_checker = runpy.run_path(str(ROOT / "Scripts/check-bdd-contracts.py"))
+            contracts = json.loads((ROOT / contract_checker["CONTRACTS"]).read_text())
+            surface = json.loads((ROOT / contract_checker["SURFACE"]).read_text())
+            errors = contract_checker["validate_contracts"](contracts, surface, expected, ROOT)
+            if errors:
+                raise ValueError("; ".join(errors))
         if args.select is not None:
             expected = select_inventory(expected, args.select)
         if args.runner_selection:
@@ -357,7 +367,12 @@ def main() -> int:
                 print(f"{name}: {len(scenarios)} scenari, {sum(scenarios.values())} passaggi")
                 print("  " + ", ".join(f"{name}:{line}" for line in scenarios))
         elif args.report:
-            steps = validate_report(json.loads(args.report.read_text()), expected)
+            report = json.loads(args.report.read_text())
+            steps = validate_report(report, expected)
+            if contracts is not None:
+                errors = contract_checker["validate_contract_report"](contracts, report)
+                if errors:
+                    raise ValueError("; ".join(errors))
             count = sum(len(scenarios) for scenarios in expected.values())
             label = "BDD sviluppo (selezione esplicita)" if args.select is not None else "BDD"
             scenario_label = "scenario" if count == 1 else "scenari"

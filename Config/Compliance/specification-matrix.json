@@ -5781,6 +5781,79 @@
       "gate": "G4",
       "status": "implemented",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-337",
+      "clause": "GS-STD-001-16 § 16.5 — Copertura dichiarata, oracoli e provenienza",
+      "specification": "docs/standard/16-strategia-di-verifica-e-test.md",
+      "requirements": [
+        "RQ-058",
+        "RQ-060",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Scripts/check-bdd-contracts.py",
+        "Scripts/build-bdd-inventory.py",
+        "Scripts/check-bdd.py",
+        "Scripts/verify.sh"
+      ],
+      "tests": [
+        "Scripts/check-bdd-contracts.py",
+        "Scripts/build-bdd-inventory.py",
+        "Scripts/check-build-cache.py",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/GlifiBDDRunner.swift"
+      ],
+      "fixtures": [
+        "Config/Testing/bdd-contracts.json",
+        "Config/Testing/bdd-coverage.json",
+        "Config/Testing/analysis-scenarios.json",
+        "Fixtures/TextAnalysis/v1/cases.json",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/StatisticsMethods.feature",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/CoreOperators.feature",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/TextAnalysisVariants.feature",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/EvaluationVariants.feature",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/ProjectOperationVariants.feature",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/SourceProfiles.feature",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/PlannerContracts.feature",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/InterchangeContracts.feature"
+      ],
+      "evidence": [
+        "docs/pianificazione/dor-scenari-completi.md",
+        "docs/testing/02-provenienza-scenari.md",
+        "docs/evidenze/GS-VER-337-scenari-completi.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-338",
+      "clause": "GS-VIZ-001 § Integrità dell’export — Quoting CSV per CRLF",
+      "specification": "docs/specifiche-di-design/08-visualizzazione-scientifica.md",
+      "requirements": [
+        "RQ-011",
+        "RQ-061",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiVisualizationPresentation.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiVisualExportIntegrityTests.swift",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/GlifiInterchangeSteps.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/InterchangeContracts.feature"
+      ],
+      "evidence": [
+        "docs/pianificazione/dor-csv-crlf.md",
+        "docs/evidenze/GS-VER-338-csv-crlf.md"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }

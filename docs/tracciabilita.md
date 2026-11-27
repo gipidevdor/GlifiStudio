@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.96.0 |
+| Versione | 0.97.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-27 |
@@ -13,6 +13,13 @@
 ## Scopo
 
 La matrice collega le fonti iniziali alle necessità degli stakeholder, ai requisiti software, alle parti dell'architettura e alle evidenze di verifica pianificate. Gli identificatori fanno riferimento a [Requisiti](requisiti.md) e [Architettura](architettura.md).
+
+## Copertura BDD e correttezza CSV
+
+| Requisiti e clausola | Attuazione circoscritta | Verifica |
+| --- | --- | --- |
+| RQ-058/060/062/063; CMP-337 | Tutte le varianti pubbliche nelle tre fasi, tutte le fixture testuali, associazioni e fonti controllate | [GS-DOR-337](pianificazione/dor-scenari-completi.md); [GS-VER-337](evidenze/GS-VER-337-scenari-completi.md) |
+| RQ-011/061/062/063; CMP-338 | Quoting CSV anche per CRLF isolato; rifiuto dei payload incoerenti dopo rehash | [GS-DOR-338](pianificazione/dor-csv-crlf.md); [GS-VER-338](evidenze/GS-VER-338-csv-crlf.md) |
 
 ## Sviluppo BDD e interazione della ricerca
 

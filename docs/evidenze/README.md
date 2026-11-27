@@ -16,6 +16,9 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
+- [GS-VER-338 — CSV con CRLF](GS-VER-338-csv-crlf.md) — RED/GREEN, gate macOS e preflight senza firma superati
+- [GS-VER-337 — Scenari completi e provenienza](GS-VER-337-scenari-completi.md) — 172 varianti, tre fasi e 744 scenari; gate e preflight macOS superati
+
 - [GS-VER-336 — Catalogo e stato accessibile](GS-VER-336-catalogo-stato-accessibile.md) — Superato macOS e preflight senza firma; limiti del controllo interattivo espliciti
 - [GS-VER-335 — Contesto e stato della ricerca](GS-VER-335-ricerca-contesto.md) — Superato macOS e preflight senza firma; limiti del controllo interattivo espliciti
 - [GS-VER-334 — Sviluppo BDD](GS-VER-334-sviluppo-bdd.md) — Selezioni Cucumber reali, 16 controlli cache e gate/preflight macOS superati

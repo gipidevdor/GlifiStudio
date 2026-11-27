@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-STD-001-16 |
 | Tipo | Capitolo normativo |
-| Versione | 0.8.0 |
+| Versione | 0.9.0 |
 | Stato | Proposto |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-27 |
@@ -118,6 +118,15 @@ scenari, omissioni, esecuzioni inattese o passi non superati sono errori anche
 nel profilo di sviluppo. Il gate completo **DEVE** continuare a richiedere
 l'intera collezione. [GS-DEV-002](../loop-di-sviluppo-e-qualita.md) e GS-BDD-001
 definiscono gli ingressi e distinguono questa prova dai test nativi della GUI.
+
+La copertura dichiarata **DEVE** collegare tutte le varianti della matrice
+pubblica alle tre fasi nominale, input non valido e cancellazione preventiva,
+con attese osservabili e provenienza. Le fixture testuali originali **DEVONO**
+restare riconoscibili e invariate nei casi che le dichiarano tali. Il gate
+completo **DEVE** verificare associazioni e report; una stringa descrittiva di
+oracolo non ne prova il valore scientifico. Le fonti web **DEVONO** avere
+condizioni e uso effettivo registrati, distinguendo riferimento e copia.
+GS-BDD-001 e GS-LIC-003 definiscono il controllo attuato e i suoi limiti.
 
 I test BDD **NON DEVONO** sostituire oracoli scientifici, property test,
 verifiche di parità, test UI o audit assistivi. La loro esecuzione headless
