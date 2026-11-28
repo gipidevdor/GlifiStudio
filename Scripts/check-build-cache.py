@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 
-import json
 import os
 from pathlib import Path
 import select
@@ -291,40 +290,27 @@ class BuildCacheChecks(unittest.TestCase):
         os.utime(unrelated, (old, old))
         tools = self.root / "bin"
         tools.mkdir()
-        swift = tools / "swift"
-        # This test isolates cache ownership, so the Swift stub supplies a complete
-        # synthetic report instead of bypassing the new real BDD report validator.
-        inventory = json.loads((PROJECT / "Config/Testing/bdd-coverage.json").read_text())
-        contracts = json.loads((PROJECT / "Config/Testing/bdd-contracts.json").read_text())
-        names = {
-            (case["feature"], case["line"]): case["witnesses"]
-            for case in contracts["cases"] + contracts["supplementalCases"]
-        }
-        report = [{
-            "uri": feature["file"],
-            "elements": [{
-                "type": "scenario", "line": scenario["line"],
-                "tags": [{"name": "GS-CMP-332"}, {"name": "macos"}],
-                "steps": [{"name": name, "result": {"status": "passed"}}
-                          for name in names[(feature["file"], scenario["line"])]],
-            } for scenario in feature["scenarios"]],
-        } for feature in inventory["features"]]
-        fixture = self.root / "synthetic-bdd-report.json"
-        fixture.write_text(json.dumps(report), encoding="utf-8")
-        swift.write_text(
-            '#!/bin/sh\ncp "$GLIFI_CACHE_CHECK_BDD_FIXTURE" "$CUCUMBER_REPORT_PATH"\n'
-        )
-        swift.chmod(0o755)
-        result = subprocess.run(
-            [str(PROJECT / "Scripts/test.sh")],
-            env=self.environment | {
-                "PATH": str(tools) + os.pathsep + os.environ["PATH"],
-                "GLIFI_CACHE_CHECK_BDD_FIXTURE": str(fixture),
-            },
-            capture_output=True, text=True, timeout=10,
-        )
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(sentinel.read_text(), "preserve me")
+        # Exercise cache ownership independently of analytical execution: the successful
+        # macOS branch and failing package branch share the same acquisition and EXIT trap.
+        # The package failure also creates owned BDD temporaries. Do not fabricate a passed
+        # Cucumber report; the separate missing-report test keeps that validator fail-closed.
+        for name, exit_status in (("xcodebuild", 0), ("swift", 77)):
+            tool = tools / name
+            tool.write_text(f"#!/bin/sh\nexit {exit_status}\n")
+            tool.chmod(0o755)
+        for arguments, exit_status in ((("--macos-app",), 0), ((), 77)):
+            with self.subTest(arguments=arguments):
+                result = subprocess.run(
+                    [str(PROJECT / "Scripts/test.sh"), *arguments],
+                    env=self.environment | {
+                        "PATH": str(tools) + os.pathsep + os.environ["PATH"],
+                    },
+                    capture_output=True, text=True, timeout=10,
+                )
+                self.assertEqual(result.returncode, exit_status, result.stderr)
+                self.assertEqual(sentinel.read_text(), "preserve me")
+                self.assertFalse(self.cache.exists(), "Test command left its owned cache behind")
+                self.assertEqual(list(self.root.glob("GlifiStudioBDD.*")), [])
 
     def test_bdd_make_selector_does_not_expand_command_line_macros(self) -> None:
         tools = self.root / "bin"
