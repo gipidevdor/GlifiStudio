@@ -213,7 +213,9 @@ private func registerQueryWorkflowSteps() {
             let source = try await workflowWorld.openedSession().sourceText(
                 sourceRevisionID: item.sourceRevisionID)
             let bytes = Array(source.text.utf8)
-            try #require(item.startUTF8 >= 0 && item.endUTF8 <= bytes.count)
+            try #require(
+                item.startUTF8 >= 0 && item.startUTF8 <= item.endUTF8
+                    && item.endUTF8 <= bytes.count)
             #expect(
                 String(decoding: bytes[item.startUTF8..<item.endUTF8], as: UTF8.self) == item.match)
         }
@@ -403,9 +405,10 @@ private func registerCorpusWorkflowSteps() {
         let input = try #require(workflowWorld.input)
         let values = try #require(workflowWorld.distances)
         try #require(values.count == 2)
+        try #require(input.matrix.count == values.count)
         for (row, cells) in values.enumerated() {
             #expect(abs(cells.reduce(0, +) - 1_000) < 1e-12)
-            #expect(cells.count == input.matrix[row].count)
+            try #require(cells.count == input.matrix[row].count)
             for (column, value) in cells.enumerated() {
                 #expect(abs(value - input.matrix[row][column] * 1_000 / 3) < 1e-12)
             }

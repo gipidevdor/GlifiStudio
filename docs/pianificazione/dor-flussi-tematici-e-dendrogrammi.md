@@ -4,14 +4,14 @@
 
 | Campo | Valore |
 | --- | --- |
-| Identificatore | GS-DOR-335 |
+| Identificatore | GS-DOR-342 |
 | Tipo | Scheda Definition of Ready |
 | Versione | 1.0.0 |
 | Stato | Ready per integrazione e verifica |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-28 |
 | Approvazione | Richiesta esplicita di completare corrispondenze e clustering e di rendere tutti gli algoritmi raggiungibili in flussi GUI tematici |
-| Riferimenti | ADR-0041; ADR-0043; GS-UX-001-17; GS-MET-001-10; GS-MET-001-14; GS-VIZ-001; GS-API-003; RF-033; RF-087; RQ-027; RQ-028; RQ-033; RQ-037; RQ-038; RQ-058; RQ-060; RQ-063; CMP-335 |
+| Riferimenti | ADR-0041; ADR-0043; GS-UX-001-17; GS-MET-001-10; GS-MET-001-14; GS-VIZ-001; GS-API-003; RF-033; RF-087; RQ-027; RQ-028; RQ-033; RQ-037; RQ-038; RQ-058; RQ-060; RQ-063; CMP-342 |
 
 ## Contesto e perimetro autorizzato
 
@@ -42,7 +42,7 @@ nuovo contenitore `.glifi`, backend, dipendenza, entitlement o servizio remoto.
 | esperienza/accessibilità | Componenti SwiftUI di sistema, etichette it/en, tastiera e azioni accessibili; tabella equivalente e lineage selezionabili; audit manuali distinti dai test automatici |
 | prestazioni | Preparazione di tagli, rami e tabelle fuori Main Actor; limiti prima dei buffer; nessuna promessa prestazionale senza misura |
 | verifica | Suite Core/Kit, trasporto CLI e parità; native per inventario/temi, diciannove tag, parametri e lifecycle; regressioni su termini con stessa fonte e identità simili; `make verify` macOS prima della consegna |
-| tracciabilità | GS-VER-335 e CMP-335 con esiti osservati, revisione del sorgente e limiti; nessuna promozione implicita degli stati scientifici o dei gate G4/G5 |
+| tracciabilità | GS-VER-342 e CMP-342 con esiti osservati, revisione del sorgente e limiti; nessuna promozione implicita degli stati scientifici o dei gate G4/G5 |
 | recupero/pulizia | Modifiche concorrenti e file utente conservati; fixture temporanee possedute eliminate; deliverable e prove utili mantenuti |
 
 **Ready** per la verifica integrata del perimetro registrato.

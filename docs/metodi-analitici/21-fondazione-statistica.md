@@ -310,7 +310,7 @@ associazione, correlazione, keyness e altre famiglie conservano le revisioni
 precedenti. Storici e schemi
 rimangono leggibili.
 
-## Contrasti finiti e code di confidenza estreme — GS-VER-334
+## Contrasti finiti e code di confidenza estreme — GS-VER-341
 
 Il percorso ordinario di `OneSampleT-v1`, `PairedT-v1` e `CohenD-pooled-v1`
 conserva ordine aritmetico e bit precedenti. Se il solo contrasto riportato
@@ -351,7 +351,7 @@ Una richiesta corrente ricalcola la sola famiglia con producer modificato;
 non riscrive gli Artifact storici né ne promuove i valori alla nuova revisione.
 Regressioni con valori manuali, riferimenti Decimal per deviazioni subnormali,
 code normali indipendenti e controlli dei bit nominali precedono la verifica
-integrata. [GS-VER-334](../evidenze/GS-VER-334-ingegneria-verificabile.md)
+integrata. [GS-VER-341](../evidenze/GS-VER-341-ingegneria-verificabile.md)
 registra gli esiti effettivi senza ampliare le tolleranze o promuovere i
 ValidationManifest.
 

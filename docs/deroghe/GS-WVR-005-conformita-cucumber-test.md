@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-WVR-005 |
 | Tipo | Deroga controllata al dialetto Swift dei test |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | Attiva nel solo ambito dichiarato |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-27 |
@@ -51,6 +51,8 @@ aggiunta una conformità nel codice di produzione o in un prodotto distribuito.
 ## Mitigazione e verifica compensativa
 
 - Versione diretta esatta e revisioni transitive bloccate nel lockfile.
+- Trait predefiniti disabilitati esplicitamente con `traits: []`, senza
+  dipendere dal valore ambientale di `SPI_BUILD` usato dal manifest upstream.
 - Uso del marcatore Swift 6 `@retroactive`, in un unico target di test.
 - Nessuna modifica alla configurazione globale del formatter o ai gate.
 - Compilazione Swift 6, `format-check`, scenari BDD e `make verify` macOS

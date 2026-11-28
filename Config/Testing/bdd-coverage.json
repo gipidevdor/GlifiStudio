@@ -593,8 +593,8 @@
     },
     {
       "file": "TextQuery.feature",
-      "sourceSHA256": "917327ad6918a7e445e5bc1b35e506560026d54b1c70f1e949b50714804ebc1d",
-      "expandedScenarios": 8,
+      "sourceSHA256": "bf47da7f5142e34f1f0d0665f6ca7ff26aae840a53f301a8949b7f37f453ac26",
+      "expandedScenarios": 14,
       "scenarios": [
         {
           "line": 20,
@@ -635,6 +635,36 @@
           "line": 40,
           "stepCount": 7,
           "stepsSHA256": "b9f64bcbee6fb535ee55601519330b3b9589ff01584e4e4a77220eb903f62b44"
+        },
+        {
+          "line": 41,
+          "stepCount": 7,
+          "stepsSHA256": "dd9ec2123de7ac50dc2133857ddf3d329fc43d54f723419804b995f29fc57c86"
+        },
+        {
+          "line": 42,
+          "stepCount": 7,
+          "stepsSHA256": "e6a8d3a93fc6dbfc012baeddbfe8d1afd26736160a16f9cfb3cd71a779b065fc"
+        },
+        {
+          "line": 43,
+          "stepCount": 7,
+          "stepsSHA256": "ce2e2ffd02f4bf9edaf8c0c4a7eb7fdb62cf84e63ca59f9b8524a551b991ac62"
+        },
+        {
+          "line": 44,
+          "stepCount": 7,
+          "stepsSHA256": "3e8f337fe3af7d1a8c38b08ffd1161394764cecd19e903fe56bef8df1bfc3a43"
+        },
+        {
+          "line": 45,
+          "stepCount": 7,
+          "stepsSHA256": "2c19c46e4406beb23f96a42a542accdfb2338aff0ee23669e28062430eb7cd60"
+        },
+        {
+          "line": 46,
+          "stepCount": 7,
+          "stepsSHA256": "ca557f5c9d637babb815397533cf06b6e342ea495f226809287fab019a2960d5"
         }
       ]
     }

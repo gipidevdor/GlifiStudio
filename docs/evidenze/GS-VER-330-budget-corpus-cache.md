@@ -7,7 +7,7 @@
 | Identificatore | GS-VER-330 |
 | Tipo | Regressione del contratto di cache e ammissione |
 | Versione | 1.0.0 |
-| Stato | RED riprodotto e regressioni GREEN; gate macOS integrato da completare |
+| Stato | RED riprodotto, regressioni GREEN e gate macOS integrato superato |
 | Responsabile | Codex con verifica serializzata dall'integratore |
 | Ultima modifica | 2026-11-27 |
 | Approvazione | Richiesta esplicita di correttezza semantica |
@@ -92,8 +92,20 @@ lo stesso comando copre cancellazione dell'export e correzioni algoritmiche
 correlate. Il relativo digest e il fingerprint dei 590 input runtime
 congelati dall'integratore sono conservati nel rapporto strutturato.
 
-Il gate macOS integrato resta coordinato dall'integratore e non è ancora
-attestato da questa evidenza.
+Il gate composito `make verify` macOS è superato nello snapshot isolato:
+exit 0 in 589,88 secondi, 782 definizioni Core, 169 Kit, 135 native con
+425 esecuzioni e zero failure. Comprende inoltre otto feature BDD, 122
+scenari e 697 passaggi, due PDF/A conformi e 132 operazioni Kit/CLI con
+264 confronti completi e sei rifiuti indipendenti dei metadati di export.
+Il controllo licenze verifica 25 materiali e 21 digest revisionati.
+
+Il fingerprint composito dei 608 input è
+`36b05ea14bbeafe91150b84edb8ab74a67a240e75b9430f553797f262714d259`,
+invariato dopo il gate; resta distinto dal fingerprint storico del GREEN
+mirato. Il rapporto registra log SHA-256
+`dccda4c30b675a31188afc0dce651a4aaa3d5c56f2a233bb659f9f6da2e6a28a`
+e riepilogo composito separato. Le prove riguardano il profilo automatico
+macOS; non attestano iPadOS, firma o verifica manuale della GUI.
 
 Le tre verifiche di cardinalità hanno costo costante sul payload già
 decodificato. Non anticipano la verifica al momento precedente alla lettura

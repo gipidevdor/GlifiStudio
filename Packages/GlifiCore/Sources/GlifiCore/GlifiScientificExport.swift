@@ -1155,7 +1155,7 @@ struct GlifiScientificExporter: Sendable {
         )
         let validationEvidence =
             descriptor.algorithmIdentifier == "saved-analysis-capture-v1"
-            ? ["GS-VER-336"] : ["GS-VER-030", "GS-VER-031", "GS-VER-032"]
+            ? ["GS-VER-343"] : ["GS-VER-030", "GS-VER-031", "GS-VER-032"]
         struct ValidationDeclaration: Encodable {
             let methodIdentifier: String
             let status: String

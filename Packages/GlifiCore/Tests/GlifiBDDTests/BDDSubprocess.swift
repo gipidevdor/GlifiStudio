@@ -2,6 +2,7 @@
 
 import Darwin
 import Foundation
+import Synchronization
 
 struct BDDSubprocessOutput: Sendable {
     let status: Int32
@@ -10,150 +11,107 @@ struct BDDSubprocessOutput: Sendable {
 }
 
 enum BDDSubprocessFailure: Error, Equatable {
-    case cancelled
+    case invalidInput
+    case allocationFailed
+    case systemCall(String, Int32)
     case timedOut
-    case invalidConfiguration
-    case launchFailed
-    case fileIO
     case outputLimitExceeded
-    case terminationFailed
 }
 
+/// Owns one child from spawn through waitpid, including cancellation and forced termination.
 enum BDDSubprocess {
-    /// Owns the child until termination and file closure, including when its caller is cancelled.
     static func run(
         executable: URL, arguments: [String], directory: URL,
-        timeout: Duration = .seconds(20), terminationGrace: Duration = .seconds(1)
-    ) async throws(BDDSubprocessFailure) -> BDDSubprocessOutput {
-        let execution = BDDSubprocessExecution(
-            executable: executable, arguments: arguments, directory: directory,
-            timeout: timeout, terminationGrace: terminationGrace)
-        let result = await withTaskCancellationHandler {
-            await execution.run()
+        timeout: Duration = .seconds(30), terminationGrace: Duration = .milliseconds(250),
+        startsSuspended: Bool = false,
+        onLaunch: @escaping @Sendable (pid_t) -> Void = { _ in }
+    ) async throws -> BDDSubprocessOutput {
+        guard timeout > .zero, terminationGrace >= .zero else {
+            throw BDDSubprocessFailure.invalidInput
+        }
+        try Task.checkCancellation()
+        let control = BDDSubprocessControl()
+        return try await withTaskCancellationHandler {
+            try await Task.detached {
+                try execute(
+                    executable: executable, arguments: arguments, directory: directory,
+                    timeout: timeout, terminationGrace: terminationGrace,
+                    startsSuspended: startsSuspended, onLaunch: onLaunch, control: control)
+            }.value
         } onCancel: {
-            // This bridge owns no process or files. The operation waits for the actor's teardown.
-            Task { await execution.cancel() }
+            control.cancel()
         }
-        return try result.get()
-    }
-}
-
-private actor BDDSubprocessExecution {
-    private let executable: URL
-    private let arguments: [String]
-    private let directory: URL
-    private let timeout: Duration
-    private let terminationGrace: Duration
-    private let stdoutURL: URL
-    private let stderrURL: URL
-    private var process: Process?
-    private var stdout: FileHandle?
-    private var stderr: FileHandle?
-    private var continuation:
-        CheckedContinuation<
-            Result<BDDSubprocessOutput, BDDSubprocessFailure>, Never
-        >?
-    private var stopReason: BDDSubprocessFailure?
-    private var finished = false
-    private var deadlineTask: Task<Void, Never>?
-    private var escalationTask: Task<Void, Never>?
-
-    init(
-        executable: URL, arguments: [String], directory: URL, timeout: Duration,
-        terminationGrace: Duration
-    ) {
-        self.executable = executable
-        self.arguments = arguments
-        self.directory = directory
-        self.timeout = timeout
-        self.terminationGrace = terminationGrace
-        stdoutURL = directory.appending(path: "stdout-\(UUID().uuidString)")
-        stderrURL = directory.appending(path: "stderr-\(UUID().uuidString)")
     }
 
-    func run() async -> Result<BDDSubprocessOutput, BDDSubprocessFailure> {
-        guard timeout > .zero, terminationGrace > .zero else {
-            return .failure(.invalidConfiguration)
+    private static func execute(
+        executable: URL, arguments: [String], directory: URL,
+        timeout: Duration, terminationGrace: Duration, startsSuspended: Bool,
+        onLaunch: @Sendable (pid_t) -> Void, control: BDDSubprocessControl
+    ) throws -> BDDSubprocessOutput {
+        if control.isCancelled { throw CancellationError() }
+        let captureDirectory = directory.appending(
+            path: "capture-\(UUID().uuidString)", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(
+            at: captureDirectory, withIntermediateDirectories: false)
+        defer {
+            try? FileManager.default.removeItem(at: captureDirectory)
         }
-        guard !Task.isCancelled, stopReason == nil else { return .failure(.cancelled) }
-        return await withCheckedContinuation { continuation in
-            self.continuation = continuation
-            do {
-                try Data().write(to: stdoutURL)
-                try Data().write(to: stderrURL)
-                stdout = try FileHandle(forWritingTo: stdoutURL)
-                stderr = try FileHandle(forWritingTo: stderrURL)
-            } catch {
-                finish(.failure(.fileIO))
-                return
-            }
-            let child = Process()
-            child.executableURL = executable
-            child.arguments = arguments
-            child.currentDirectoryURL = directory
-            child.standardInput = FileHandle.nullDevice
-            child.standardOutput = stdout
-            child.standardError = stderr
-            child.terminationHandler = { [weak self] child in
-                // Foundation's completion only forwards an event; the actor owns finalization.
-                Task { await self?.didTerminate(child) }
-            }
-            process = child
-            do { try child.run() } catch {
-                finish(.failure(.launchFailed))
-                return
-            }
-            // Both timer tasks belong to this actor and are cancelled before it resumes the caller.
-            deadlineTask = Task { [weak self, timeout] in
-                do { try await Task.sleep(for: timeout) } catch { return }
-                await self?.stop(.timedOut)
+        let outputURL = captureDirectory.appending(path: "stdout")
+        let errorURL = captureDirectory.appending(path: "stderr")
+        var actions: posix_spawn_file_actions_t?
+        try check(posix_spawn_file_actions_init(&actions), operation: "file-actions-init")
+        defer { posix_spawn_file_actions_destroy(&actions) }
+        try check(
+            posix_spawn_file_actions_addchdir(&actions, directory.path), operation: "chdir")
+        try check(
+            posix_spawn_file_actions_addopen(&actions, STDIN_FILENO, "/dev/null", O_RDONLY, 0),
+            operation: "open-stdin")
+        for (descriptor, url) in [(STDOUT_FILENO, outputURL), (STDERR_FILENO, errorURL)] {
+            try check(
+                posix_spawn_file_actions_addopen(
+                    &actions, descriptor, url.path, O_WRONLY | O_CREAT | O_EXCL, 0o600),
+                operation: "open-output")
+        }
+        var attributes: posix_spawnattr_t?
+        try check(posix_spawnattr_init(&attributes), operation: "attributes-init")
+        defer { posix_spawnattr_destroy(&attributes) }
+        var mask = sigset_t()
+        sigemptyset(&mask)
+        try check(posix_spawnattr_setsigmask(&attributes, &mask), operation: "signal-mask")
+        var defaults = sigset_t()
+        sigemptyset(&defaults)
+        sigaddset(&defaults, SIGTERM)
+        try check(
+            posix_spawnattr_setsigdefault(&attributes, &defaults), operation: "signal-defaults")
+        let flags =
+            POSIX_SPAWN_SETSIGMASK | POSIX_SPAWN_SETSIGDEF | POSIX_SPAWN_CLOEXEC_DEFAULT
+            // A stopped child makes the escalation regression independent of shell startup timing.
+            | (startsSuspended ? POSIX_SPAWN_START_SUSPENDED : 0)
+        try check(posix_spawnattr_setflags(&attributes, Int16(flags)), operation: "spawn-flags")
+        let environment = ProcessInfo.processInfo.environment.sorted { $0.key < $1.key }.map {
+            "\($0.key)=\($0.value)"
+        }
+        var pid: pid_t = 0
+        try withStrings([executable.path] + arguments) { argumentPointers in
+            try withStrings(environment) { environmentPointers in
+                if control.isCancelled { throw CancellationError() }
+                try check(
+                    posix_spawn(
+                        &pid, executable.path, &actions, &attributes,
+                        argumentPointers, environmentPointers), operation: "posix-spawn")
             }
         }
+        onLaunch(pid)
+        let status = try awaitExit(
+            pid, timeout: timeout, terminationGrace: terminationGrace, control: control)
+        // Match Foundation.Process's status for both normal exits and terminating signals.
+        let signal = status & 0x7F
+        return try BDDSubprocessOutput(
+            status: signal == 0 ? (status >> 8) & 0xFF : signal,
+            stdout: readOutput(at: outputURL), stderr: readOutput(at: errorURL))
     }
 
-    func cancel() { stop(.cancelled) }
-
-    private func stop(_ reason: BDDSubprocessFailure) {
-        guard !finished else { return }
-        if let process, !process.isRunning { return }
-        stopReason = stopReason ?? reason
-        guard let process else { return }
-        process.terminate()
-        guard escalationTask == nil else { return }
-        escalationTask = Task { [weak self, terminationGrace] in
-            do { try await Task.sleep(for: terminationGrace) } catch { return }
-            await self?.forceTermination()
-        }
-    }
-
-    private func forceTermination() {
-        guard !finished, let process, process.isRunning else { return }
-        if Darwin.kill(process.processIdentifier, SIGKILL) != 0, errno != ESRCH {
-            // Retain the error, but never release files while an owned child is still alive.
-            stopReason = .terminationFailed
-        }
-    }
-
-    private func didTerminate(_ child: Process) {
-        guard !finished, process === child else { return }
-        child.waitUntilExit()
-        if let stopReason {
-            finish(.failure(stopReason))
-            return
-        }
-        do {
-            let output = try BDDSubprocessOutput(
-                status: child.terminationStatus,
-                stdout: readOutput(at: stdoutURL), stderr: readOutput(at: stderrURL))
-            finish(.success(output))
-        } catch let failure as BDDSubprocessFailure {
-            finish(.failure(failure))
-        } catch {
-            finish(.failure(.fileIO))
-        }
-    }
-
-    private func readOutput(at url: URL) throws -> Data {
+    private static func readOutput(at url: URL) throws -> Data {
         let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize
         guard let size, size <= 1_048_576 else {
             throw BDDSubprocessFailure.outputLimitExceeded
@@ -161,23 +119,88 @@ private actor BDDSubprocessExecution {
         return try Data(contentsOf: url)
     }
 
-    private func finish(_ proposed: Result<BDDSubprocessOutput, BDDSubprocessFailure>) {
-        guard !finished else { return }
-        finished = true
-        deadlineTask?.cancel()
-        escalationTask?.cancel()
-        deadlineTask = nil
-        escalationTask = nil
-        var result = proposed
-        for handle in [stdout, stderr].compactMap({ $0 }) {
-            do { try handle.close() } catch { result = .failure(.fileIO) }
+    private static func awaitExit(
+        _ pid: pid_t, timeout: Duration, terminationGrace: Duration,
+        control: BDDSubprocessControl
+    ) throws -> Int32 {
+        let clock = ContinuousClock()
+        let deadline = clock.now.advanced(by: timeout)
+        var stop: BDDSubprocessStop?
+        var escalation: ContinuousClock.Instant?
+        var didEscalate = false
+        while true {
+            var status: Int32 = 0
+            let observed = waitpid(pid, &status, WNOHANG)
+            if observed == pid {
+                switch stop {
+                case .cancelled: throw CancellationError()
+                case .timedOut: throw BDDSubprocessFailure.timedOut
+                case nil: return status
+                }
+            }
+            if observed == -1 {
+                if errno == EINTR { continue }
+                // Ownership is no longer established; never signal a potentially reused PID.
+                throw BDDSubprocessFailure.systemCall("waitpid", errno)
+            }
+            let now = clock.now
+            if stop == nil {
+                if control.isCancelled {
+                    stop = .cancelled
+                } else if now >= deadline {
+                    stop = .timedOut
+                }
+                if stop != nil {
+                    // The child has not been reaped, so this PID cannot have been recycled.
+                    _ = kill(pid, SIGTERM)
+                    escalation = now.advanced(by: terminationGrace)
+                }
+            }
+            if let escalation, now >= escalation, !didEscalate {
+                _ = kill(pid, SIGKILL)
+                didEscalate = true
+            }
+            // Cancellation wakes the monitor immediately; polling also observes ordinary exit.
+            _ = control.wake.wait(timeout: .now() + .milliseconds(10))
         }
-        stdout = nil
-        stderr = nil
-        process?.terminationHandler = nil
-        process = nil
-        let completion = continuation
-        continuation = nil
-        completion?.resume(returning: result)
+    }
+
+    private static func check(_ result: Int32, operation: String) throws {
+        guard result == 0 else { throw BDDSubprocessFailure.systemCall(operation, result) }
+    }
+
+    private static func withStrings<Result>(
+        _ values: [String], _ body: (UnsafePointer<UnsafeMutablePointer<CChar>?>) throws -> Result
+    ) throws -> Result {
+        guard !values.contains(where: { $0.utf8.contains(0) }) else {
+            throw BDDSubprocessFailure.invalidInput
+        }
+        var pointers = values.map { value in value.withCString { strdup($0) } }
+        defer { for pointer in pointers { free(pointer) } }
+        guard pointers.allSatisfy({ $0 != nil }) else {
+            throw BDDSubprocessFailure.allocationFailed
+        }
+        pointers.append(nil)
+        return try pointers.withUnsafeBufferPointer { buffer in
+            guard let base = buffer.baseAddress else { throw BDDSubprocessFailure.allocationFailed }
+            return try body(base)
+        }
+    }
+}
+
+private enum BDDSubprocessStop {
+    case cancelled
+    case timedOut
+}
+
+private final class BDDSubprocessControl: Sendable {
+    private let cancellation = Mutex(false)
+    let wake = DispatchSemaphore(value: 0)
+
+    var isCancelled: Bool { cancellation.withLock { $0 } }
+
+    func cancel() {
+        cancellation.withLock { $0 = true }
+        wake.signal()
     }
 }

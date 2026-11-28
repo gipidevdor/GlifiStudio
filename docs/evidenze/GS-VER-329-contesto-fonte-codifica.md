@@ -6,8 +6,8 @@
 | --- | --- |
 | Identificatore | GS-VER-329 |
 | Tipo | Verifica correttiva della presentazione |
-| Versione | 0.1.0 |
-| Stato | RED riprodotto; candidato applicato, GREEN e gate integrato pendenti |
+| Versione | 1.0.0 |
+| Stato | RED riprodotto; GREEN nativo e gate integrato macOS superati |
 | Responsabile | Codex con coordinamento delle verifiche native |
 | Ultima modifica | 2026-11-27 |
 | Approvazione | Richiesta di perfezionamento del codice e della semantica |
@@ -21,7 +21,7 @@ Una failure intermedia lasciava segmenti B associati all'identità A. Dopo
 l'aggiornamento dell'identità, una failure nel recupero dei testi delle
 codifiche poteva lasciare invece il nuovo contesto B con il dizionario A.
 
-Il candidato prepara segmenti, numero di caratteri, stato qualitativo e testi
+La correzione prepara segmenti, numero di caratteri, stato qualitativo e testi
 in variabili locali. La funzione privata riceve esplicitamente revisione e stato
 da usare e restituisce un dizionario, senza pubblicare. Dopo l'ultima lettura
 il modello controlla la cancellazione e pubblica tutti i campi sul Main Actor
@@ -52,14 +52,28 @@ B durante busy e verifica l'intero contesto A invariato, quindi rilascia il
 gate e verifica il retry riuscito. Non richiede attese temporali o nuove API
 di fault injection.
 
-## Candidato e verifiche ancora da completare
+## Verifiche completate e limiti
 
 La scheda Ready precede i test e il fix; la produzione resta congelata durante
 il RED. Dopo conferma del RED viene applicata la sola correzione del modello,
 con formattazione, lint mirato sui due file Swift e diff check superati.
-GREEN nativo, composizione macOS e regressioni qualitative sono coordinati
-separatamente e non sono ancora attestati da questa versione dell'evidenza.
-Il [riepilogo strutturato](allegati/GS-VER-329-verifica.json) distingue gli esiti.
+
+Il gate finale `make verify`, eseguito dal coordinatore sullo snapshot
+composito isolato, termina con **exit 0 in 589,88 secondi**. La verifica nativa
+attraverso `GlifiStudio.xcworkspace` comprende **135 definizioni e 425
+esecuzioni superate, zero failure e zero skip**, senza warning runtime.
+Sono GREEN le quattro combinazioni di interruzione, la prova busy con retry
+e le regressioni di selezione e codifica incluse nella composizione macOS.
+
+Il dossier locale `macOS-2026-11-27-semantics` conserva `native-summary.json`,
+`composite-verification-summary.json`, il risultato nativo e il log completo
+`composite-make-verify.log`. Il digest SHA-256 del log è
+`dccda4c30b675a31188afc0dce651a4aaa3d5c56f2a233bb659f9f6da2e6a28a`.
+I **608 input controllati** mantengono prima e dopo il gate il fingerprint
+`36b05ea14bbeafe91150b84edb8ab74a67a240e75b9430f553797f262714d259`:
+la verifica riguarda gli stessi sorgenti congelati. Il
+[riepilogo strutturato](allegati/GS-VER-329-verifica.json) distingue RED,
+GREEN nativo e gate integrato e registra i digest dei due file Swift.
 
 Si tratta di una correzione del modello condiviso verificata attraverso il
 target nativo macOS. Non attesta iPadOS, finestre reali, audit VoiceOver o

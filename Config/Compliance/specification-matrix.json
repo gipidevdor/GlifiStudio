@@ -5683,7 +5683,6 @@
         "Scripts/check-licenses-tests.py"
       ],
       "fixtures": [
-        "Config/Testing/bdd-coverage.json",
         "Packages/GlifiCore/Tests/GlifiBDDTests/Features/AnalyticalMethods.feature",
         "Packages/GlifiCore/Tests/GlifiBDDTests/Features/CLIParity.feature",
         "Packages/GlifiCore/Tests/GlifiBDDTests/Features/CorpusAnalysis.feature",
@@ -5692,20 +5691,107 @@
         "Packages/GlifiCore/Tests/GlifiBDDTests/Features/RequestValidation.feature",
         "Packages/GlifiCore/Tests/GlifiBDDTests/Features/ScientificExport.feature",
         "Packages/GlifiCore/Tests/GlifiBDDTests/Features/TextQuery.feature",
+        "Config/Testing/bdd-coverage.json",
         "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/THIRD_PARTY_NOTICES.txt",
         "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-LICENSE.txt",
         "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-THIRD_PARTY_NOTICES.txt"
       ],
       "evidence": [
+        "docs/pianificazione/dor-bdd-cucumber-swift.md",
         "docs/evidenze/GS-VER-332-bdd-cucumber-swift.md",
         "docs/evidenze/GS-VER-333-licenze-bdd.md"
       ],
       "gate": "G3",
-      "status": "verified",
+      "status": "implemented",
       "blockingReason": null
     },
     {
       "id": "CMP-334",
+      "clause": "GS-STD-001-16 § 16.5 Sviluppo BDD e selezione esatta",
+      "specification": "docs/standard/16-strategia-di-verifica-e-test.md",
+      "requirements": [
+        "RQ-058",
+        "RQ-060",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Makefile",
+        "Scripts/test.sh",
+        "Scripts/check-bdd.py",
+        "AGENTS.md"
+      ],
+      "tests": [
+        "Scripts/check-bdd.py",
+        "Scripts/check-build-cache.py"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/pianificazione/dor-sviluppo-bdd.md",
+        "docs/evidenze/GS-VER-334-sviluppo-bdd.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-335",
+      "clause": "GS-UI-001 § Ricerca e catalogo strumenti — Contesto e precondizioni",
+      "specification": "docs/specifiche-di-design/07-information-architecture-e-interazione.md",
+      "requirements": [
+        "RQ-058",
+        "RQ-060",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/StudioHomeView.swift",
+        "Apps/Shared/Resources/Localizable.xcstrings"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioSelectionConsistencyTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/pianificazione/dor-ricerca-contesto.md",
+        "docs/evidenze/GS-VER-335-ricerca-contesto.md"
+      ],
+      "gate": "G4",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-336",
+      "clause": "GS-UI-001 § Ricerca e catalogo strumenti — Tastiera e stato accessibile",
+      "specification": "docs/specifiche-di-design/07-information-architecture-e-interazione.md",
+      "requirements": [
+        "RQ-058",
+        "RQ-060",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Apps/Shared/StudioWorkspaceNavigation.swift",
+        "Apps/Shared/StudioHomeView.swift",
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/Resources/Localizable.xcstrings"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+        "Scripts/check-localization.py"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/pianificazione/dor-catalogo-tastiera.md",
+        "docs/evidenze/GS-VER-336-catalogo-stato-accessibile.md"
+      ],
+      "gate": "G4",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-341",
       "clause": "GS-STD-001-12 §§ 12.5–12.6; GS-STD-001-16 § 16.5; GS-STD-001-29 § 29.6, revisione con evidenza circoscritta",
       "specification": "docs/pianificazione/dor-ingegneria-verificabile.md",
       "requirements": [
@@ -5743,14 +5829,14 @@
         "Config/Testing/bdd-coverage.json"
       ],
       "evidence": [
-        "docs/evidenze/GS-VER-334-ingegneria-verificabile.md"
+        "docs/evidenze/GS-VER-341-ingegneria-verificabile.md"
       ],
       "gate": "G3",
       "status": "implemented",
       "blockingReason": null
     },
     {
-      "id": "CMP-335",
+      "id": "CMP-342",
       "clause": "GS-UX-001-17 § Flussi di ricerca e completamento dei profili KH; GS-VIZ-001 § Esplorazione del dendrogramma",
       "specification": "docs/esperienza-utente/17-laboratorio-analisi-testuale.md",
       "requirements": [
@@ -5793,16 +5879,16 @@
       ],
       "evidence": [
         "docs/pianificazione/dor-flussi-tematici-e-dendrogrammi.md",
-        "docs/evidenze/GS-VER-335-flussi-tematici-e-dendrogrammi.md",
-        "docs/evidenze/allegati/GS-VER-335-snapshot-isolato.json",
-        "docs/evidenze/allegati/GS-VER-335-verifica.json"
+        "docs/evidenze/GS-VER-342-flussi-tematici-e-dendrogrammi.md",
+        "docs/evidenze/allegati/GS-VER-342-snapshot-isolato.json",
+        "docs/evidenze/allegati/GS-VER-342-verifica.json"
       ],
       "gate": "G2",
       "status": "implemented",
       "blockingReason": null
     },
     {
-      "id": "CMP-336",
+      "id": "CMP-343",
       "clause": "GS-STD-001-11 § 11.8; GS-API-004/005/006; GS-UX-001-17 § Dati di ricerca e risultati salvati",
       "specification": "docs/api/06-lavoro-avanzato-persistente.md",
       "requirements": [
@@ -5843,7 +5929,7 @@
       ],
       "fixtures": [],
       "evidence": [
-        "docs/evidenze/GS-VER-336-flusso-ricerca-persistente.md"
+        "docs/evidenze/GS-VER-343-flusso-ricerca-persistente.md"
       ],
       "gate": "G3",
       "status": "implemented",

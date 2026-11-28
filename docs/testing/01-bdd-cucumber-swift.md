@@ -6,26 +6,30 @@
 | --- | --- |
 | Identificatore | GS-BDD-001 |
 | Tipo | Contratto di verifica comportamentale |
-| Versione | 1.2.0 |
+| Versione | 1.3.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-28 |
 | Approvazione | Richiesta esplicita di integrare BDD con Cucumber Swift |
-| Riferimenti | ADR-0046; GS-STD-001-16 § 16.5; GS-DOR-332; GS-DOR-334; GS-TST-001; GS-API-003; CMP-332; CMP-334; GS-VER-333; GS-VER-334 |
+| Riferimenti | ADR-0046; GS-STD-001-16 § 16.5; GS-DOR-332; GS-DOR-341; GS-TST-001; GS-API-003; CMP-332; CMP-341; GS-VER-333; GS-VER-334; GS-VER-341 |
 
 ## Esecuzione
 
 ```sh
 make test-bdd
+make test
 make verify
 ```
 
-Il primo comando esegue la suite comportamentale mirata. Il secondo include
-la suite nel gate completo macOS, con unit test, oracoli, parità CLI/Kit e
-test applicativi. Il normale `swift test` del package include anch'esso BDD.
+`make test-bdd` esegue la suite comportamentale mirata; `make test` esegue i
+test del package. `make verify` include la suite nel gate completo macOS, con
+unit test, oracoli, parità CLI/Kit e test applicativi. Il normale `swift test`
+del package include anch'esso BDD, ma l'esecuzione diretta non applica il
+controllo di completezza del report descritto sotto.
 Per il lavoro Xcode si usa sempre `GlifiStudio.xcworkspace`.
 
-`make test-bdd` controlla il report Cucumber JSON contro l'inventario e
+`make test-bdd`, `make test` e `make verify` controllano il report Cucumber
+JSON contro l'inventario e
 richiede tutti gli scenari espansi e tutti i passaggi superati. Report vuoto,
 feature omesse, esempi duplicati e passaggi falliti, indefiniti o saltati
 fanno fallire il comando. L'inventario V2 associa digest delle feature,
@@ -34,8 +38,16 @@ numero di passaggi e digest dei metadati ordinati di ciascun passo, compreso
 il contesto comune. Duplicare, sostituire o riordinare passaggi non soddisfa
 il controllo, anche se conteggio ed esiti restano positivi.
 Il report temporaneo viene rimosso alla fine; gli
-esiti da conservare si registrano nell'evidenza del lotto. `make verify`
-applica lo stesso controllo all'esecuzione completa.
+esiti da conservare si registrano nell'evidenza del lotto. L'inventario
+corrente comprende **8 feature, 122 scenari espansi e 697 passaggi**.
+
+La completezza del report e l'exit status di Swift Testing sono entrambi
+obbligatori. Il reporter CucumberSwift 6.9.0 registra gli esiti dei passaggi,
+ma non serializza l'esito complessivo dello scenario: una failure nel cleanup
+`AfterScenario` può lasciare i passaggi JSON superati. Swift Testing registra
+anche quella failure e fa fallire il comando; il solo JSON non costituisce
+prova di successo globale. Ogni comando controllato usa un percorso temporaneo
+nuovo e respinge quindi anche report assenti o selezioni senza scenari.
 
 Il target `GlifiBDDTests` risiede in
 `Packages/GlifiCore/Tests/GlifiBDDTests`. CucumberSwift **6.9.0** fornisce
@@ -57,8 +69,8 @@ ciascun digest: `THIRD_PARTY_NOTICES.txt` con i quattro avvisi MIT BDD,
 `GlifiStudio-LICENSE.txt` con la BSD del progetto e
 `GlifiStudio-THIRD_PARTY_NOTICES.txt` con gli avvisi Core, inclusi Snowball e
 SplitMix. Il test bundle collega anche GlifiKit e GlifiCore e deve conservare
-anche questi testi. Non è uno scenario Gherkin e non aumenta i **116 esempi**
-o i **655 passaggi** dell'inventario BDD. Il verificatore statico confronta
+anche questi testi. Non è uno scenario Gherkin e non aumenta i **122 esempi**
+o i **697 passaggi** dell'inventario BDD. Il verificatore statico confronta
 le tre risorse byte per byte con `Config/Licenses/bdd-tools.txt`, `LICENSE`
 e `THIRD_PARTY_NOTICES.txt` alla radice, rispettivamente.
 
@@ -69,31 +81,80 @@ revisione storica esatta degli adattamenti. Il riesame del sorgente e delle
 attribuzioni rimane distinto dal confronto automatico dei byte; dettagli e
 risultati sono in [GS-VER-333](../evidenze/GS-VER-333-licenze-bdd.md).
 
+## Ciclo di sviluppo RED → GREEN → refactor
+
+```sh
+make test-bdd-list
+make test-bdd-dev BDD_SELECT='TextQuery.feature:20'
+make test-bdd-dev BDD_SELECT='TextQuery.feature'
+./Scripts/test.sh --bdd-dev --select 'TextQuery.feature:20,TextQuery.feature:39'
+```
+
+`test-bdd-list`, equivalente a `Scripts/test.sh --bdd-dev --list`, elenca file,
+righe degli scenari espansi e conteggi dall'inventario; non compila, non richiede
+Xcode e non crea o acquisisce cache. Per uno schema si sceglie la riga del
+singolo esempio, non l'intestazione dello schema. Più identificatori separati
+da virgole formano un'unione; il nome del file da solo seleziona tutti i suoi
+scenari. Il selettore usa il nome del file senza cartelle; `:` è riservato
+alla riga e non è ammesso nei nomi dell'inventario. Nomi o righe non
+inventariati e selezioni vuote falliscono prima di
+allocare la cache o invocare Swift.
+
+Il comando di sviluppo trasporta la selezione a `CUCUMBER_SCENARIOS` secondo
+il [contratto della revisione CucumberSwift bloccata](https://github.com/cucumberswift/CucumberSwift/blob/5547f9025c0da3f0276a22a3c746bfebc405741f/Sources/CucumberSwift/Coverage/ScenarioList.swift). Il valore passa come
+dato tramite ambiente, senza valutazione come comando shell o macro Make.
+Il target usa il valore letterale di `BDD_SELECT` e non esporta la variabile
+originale: anche espressioni come `$(shell ...)` restano testo da convalidare. Il comando
+ignora eventuali `CUCUMBER_TAGS` ereditati e sostituisce `CUCUMBER_SCENARIOS`:
+il report deve contenere **esattamente** gli scenari scelti e tutti i loro
+passaggi superati. Scenari aggiuntivi, omessi o duplicati, report mancanti e
+passaggi saltati, indefiniti o falliti producono exit nonzero. L'esito reca
+l'etichetta esplicita «BDD sviluppo» e non costituisce il gate completo.
+Swift Testing può mostrare come saltati i test fuori selezione; uno scenario
+selezionato mancante o un suo passaggio saltato fanno invece fallire il controllo.
+
+Per ogni comportamento nuovo o corretto il ciclo **DEVE** essere:
+
+1. scrivere uno scenario con fixture originale e attese osservabili, aggiornando
+   l'inventario dal generatore upstream per il nuovo sorgente; eseguire la
+   selezione e osservare **RED** per la proprietà attesa o lo step ancora
+   indefinito. Un errore di toolchain o un inventario non allineato non dimostra
+   la regressione del comportamento;
+2. implementare il minimo cambiamento e rieseguire la stessa selezione fino a
+   **GREEN**, conservando attese, failure e oracoli scientifici;
+3. rifattorizzare e rieseguire scenari e feature interessati; prima della
+   consegna eseguire `make test-bdd` e `make verify` nel profilo macOS.
+
+I comandi completi `make test-bdd`, `make test` e `make verify` richiedono
+sempre l'intero inventario: un report verde di sviluppo resta insufficiente.
+La verifica del workflow è tracciata in GS-VER-334; le proprietà scientifiche,
+UI e assistive continuano ad avere le evidenze dedicate.
+
 ## Ciclo di vita dei subprocessi CLI
 
 Gli step CLI delegano l'esecuzione a `BDDSubprocess`, che possiede il figlio
-diretto, i file di output e i task di scadenza fino al termine. La durata
-predefinita è 20 secondi; alla cancellazione o alla scadenza invia SIGTERM
-e, dopo un secondo di tolleranza, SIGKILL se il figlio è ancora attivo.
-Prima di restituire l'esito attende la terminazione del figlio, chiude i
-file e annulla i task di supervisione. Un errore di avvio restituisce una
-failure tipizzata dopo il rilascio delle risorse. Non viene gestito un albero
-di discendenti arbitrario: il contratto riguarda soltanto il figlio diretto
-avviato dall'adattatore.
+diretto dal `posix_spawn` al `waitpid`, con controllo di cancellazione
+sincronizzato. La durata predefinita è 30 secondi; alla cancellazione o alla
+scadenza invia SIGTERM e, dopo 250 millisecondi di tolleranza, SIGKILL se il
+figlio è ancora attivo. Prima di restituire l'esito raccoglie il figlio e
+rimuove i file di cattura. Non viene gestito un albero di discendenti arbitrario:
+il contratto riguarda soltanto il figlio diretto avviato dall'adattatore.
 
 Stdout e stderr restano separati. Per ciascun file si controlla il limite di
 **1 MiB prima di leggerlo in memoria**, dopo la terminazione del figlio.
 Questo controllo non impone una quota alle scritture su disco durante
-l'esecuzione. Le fixture e i file rimangono nella directory posseduta dallo
-scenario e vengono rimossi dal relativo cleanup.
+l'esecuzione. Le fixture rimangono nella directory posseduta dallo scenario
+e vengono rimosse dal relativo cleanup.
 
 `BDDSubprocessTests` contiene sei prove: flussi ed exit status, cancellazione
-preventiva senza avvio, cancellazione di un figlio che ignora SIGTERM,
-scadenza dello stesso tipo di figlio, avvio fallito e output oltre limite.
-Le prove di terminazione attendono un handshake esplicito del figlio prima
-di provocare l'evento; una pausa del programma sintetico rappresenta il
-carico bloccato e non serve a indovinare quando il figlio sia partito.
-Questi test Swift ordinari sono separati dai 116 esempi Gherkin.
+preventiva senza avvio, cancellazione di un figlio sospeso, scadenza dello
+stesso tipo di figlio con escalation, avvio fallito e output oltre limite.
+Le prove di terminazione ricevono il PID dal callback di avvio e usano
+`POSIX_SPAWN_START_SUSPENDED`, senza dipendere dall'avvio della shell o da
+pause arbitrarie. Verificano che `waitpid` restituisca `ECHILD`, confermando
+la raccolta del figlio. Questi test Swift ordinari sono separati dai 122 esempi
+Gherkin. Il limite di memoria e il controllo V2 dei metadati sono tracciati
+in GS-VER-341; il ciclo di sviluppo resta tracciato in GS-VER-334.
 
 ## Scrittura e manutenzione
 
@@ -153,14 +214,14 @@ del gate coprono questi ingressi ambigui e le alterazioni dei passaggi.
 Una selezione mirata tramite filtri di `swift test` o `CUCUMBER_TAGS` serve
 allo sviluppo e non sostituisce la verifica completa prima della consegna:
 un'esecuzione parziale non soddisfa il controllo del report di `make test-bdd`
-o `make verify`.
+`make test` o `make verify`.
 
 ## Copertura e confini
 
 La collezione attraversa i comportamenti di dominio condivisi e la CLI
 macOS: progetto/fonti, ricerca, analisi, persistenza, codifica ed export.
 L'[inventario versionato](../../Config/Testing/bdd-coverage.json) identifica
-**116 esempi espansi e 655 passaggi** nelle otto feature correnti; l'evidenza
+**122 esempi espansi e 697 passaggi** nelle otto feature correnti; l'evidenza
 del lotto registra gli esiti. La matrice di
 [GS-TST-001](../pianificazione/scenari-di-analisi.md) continua a inventariare
 le varianti pubbliche delle analisi; la parità permanente resta governata da
@@ -181,4 +242,7 @@ BDD non attesta tutte le combinazioni di input, comportamento visivo,
 VoiceOver, Voice Control, tastiera, usabilità, prestazioni o correttezza di
 ogni metodo scientifico. Non esegue né qualifica iPadOS. Questi ambiti restano
 nei test e audit dedicati; nessuna capacità o ValidationManifest viene
-promossa per la sola presenza di una feature.
+promossa per la sola presenza di una feature. Le regressioni numeriche
+GS-VER-328, il modello di selezione macOS GS-VER-329 e il legame fra export e
+sessione aperta GS-VER-331 conservano i propri test dedicati: le feature BDD
+non dichiarano di esercitare questi tre ambiti.

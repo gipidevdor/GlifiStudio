@@ -30,11 +30,17 @@ Funzionalità: Concordanze e rifiuto delle ricerche ambigue
 
   Schema dello scenario: Query non ammesse producono failure tipizzate e riservate
     Quando cerco '<query>'
-    Allora la failure ha codice "<codice>" e categoria "invalidInput"
+    Allora la failure ha codice "<codice>" e categoria "<categoria>"
     E la failure non rivela il contenuto "private-canary" né percorsi locali
     E lo stato completo del progetto è invariato
 
     Esempi:
-      | query                         | codice                |
-      | private-canary:casa           | query.unknown-field   |
-      | form:/(private-canary+)+/     | query.regex-rejected  |
+      | query                                                   | codice                  | categoria       |
+      | private-canary:casa                                      | query.unknown-field     | invalidInput    |
+      | form:/(private-canary+)+/                                 | query.regex-rejected    | invalidInput    |
+      | assente AND lemma:private-canary                         | query.unsupported-field | insufficientData |
+      | NOT (assente AND lemma:private-canary)                   | query.unsupported-field | insufficientData |
+      | assente AND pos:private-canary                           | query.unsupported-field | insufficientData |
+      | assente AND metadata.anno:[private-canary TO z]          | query.unsupported-field | insufficientData |
+      | form:/private-canary\D+/i                                | query.regex-rejected    | invalidInput    |
+      | form:/[a-z]private-canary/i                               | query.regex-rejected    | invalidInput    |

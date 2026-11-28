@@ -7,7 +7,7 @@
 | Identificatore | GS-VER-331 |
 | Tipo | Regressione di provenienza e confine delle failure |
 | Versione | 1.0.0 |
-| Stato | RED riprodotti e GREEN finale mirato; gate macOS integrato da completare |
+| Stato | RED riprodotti, GREEN finale e gate macOS integrato superato |
 | Responsabile | Codex con verifica serializzata dall'integratore |
 | Ultima modifica | 2026-11-27 |
 | Approvazione | Richiesta esplicita di correttezza semantica |
@@ -112,8 +112,21 @@ il fingerprint dei 590 input runtime congelati è registrato separatamente
 dall'integratore. Il secondo agente non ha individuato blocker nuovi nella
 lettura della fonte, nelle fixture o nel contratto del writer.
 
-I sei check negativi permanenti di processo CLI e il gate macOS integrato
-rimangono coordinati dall'integratore e non sono ancora attestati qui.
+Il gate composito `make verify` macOS è ora superato nello snapshot isolato:
+exit 0 in 589,88 secondi. I sei check permanenti di processo CLI rifiutano
+i metadati incompatibili con il contratto completo previsto. Passano
+782 definizioni Core, 169 Kit, 135 native con 425 esecuzioni, otto feature
+BDD con 122 scenari e 697 passaggi, due PDF/A e la parità completa di
+132 operazioni Kit/CLI su 264 confronti. Il controllo licenze verifica
+25 materiali e 21 digest revisionati.
+
+Il fingerprint composito dei 608 input,
+`36b05ea14bbeafe91150b84edb8ab74a67a240e75b9430f553797f262714d259`,
+resta invariato dopo la verifica. Il rapporto conserva questo esito
+separatamente dai GREEN mirati storici, insieme al log SHA-256
+`dccda4c30b675a31188afc0dce651a4aaa3d5c56f2a233bb659f9f6da2e6a28a`
+e al digest del riepilogo composito. Nessun dato grezzo del dossier viene
+copiato nell'evidenza.
 
 Il confronto riguarda i metadati del produttore. Non impone l'uguaglianza
 con una vista standard, non autentica coordinate, valori o trasformazioni

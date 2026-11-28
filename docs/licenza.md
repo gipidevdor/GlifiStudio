@@ -112,6 +112,12 @@ aggiunge come dipendenza né copia i suoi template nel repository; la sua
 citazione non sostituisce gli avvisi sui dati Gherkin effettivamente
 incorporati.
 
+La dipendenza diretta dichiara `traits: []` per disabilitare esplicitamente
+i trait predefiniti upstream. Il grafo ammesso non cambia in funzione del
+default `Macros` condizionato da `SPI_BUILD`; ulteriori trait e dipendenze
+richiedono una nuova review. GS-LIC-002 conserva i digest dei LICENSE
+effettivamente esaminati.
+
 Queste librerie sono collegate al bundle dei test e il generatore è eseguito
 durante la loro build. Non sono dipendenze dei target app, GlifiKit, GlifiCore
 o CLI e non vengono copiate nel bundle applicativo. Il confine test non elimina

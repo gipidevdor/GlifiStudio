@@ -7,7 +7,7 @@
 | Identificatore | GS-VER-328 |
 | Tipo | Evidenza di regressioni scientifiche |
 | Versione | 1.0.0 |
-| Stato | RED/GREEN mirato superato; gate macOS comune pendente |
+| Stato | RED/GREEN mirato e gate macOS composito superati |
 | Responsabile | Codex e agenti |
 | Ultima modifica | 2026-11-27 |
 | Approvazione | Richiesta esplicita di perfezionare codice e semantica |
@@ -91,8 +91,8 @@ il nuovo shortcut Q7 a frazione zero restituiva -0 dove la formula ordinata
 precedente dava +0. La causa viene corretta limitando lo shortcut al ramo
 con differenza in overflow, senza cambiare test o tolleranze. La regressione
 puntuale signed-zero viene aggiunta. Il terzo stage supera 781 definizioni Core,
-incluse queste correzioni, senza failure Core; restano soltanto due RED Kit
-previsti del lotto331 e la chiusura macOS comune.
+incluse queste correzioni, senza failure Core; in quello stage restavano
+soltanto due RED Kit previsti del lotto 331 e la chiusura macOS comune.
 
 La revisione indipendente individua poi un corner del criterio max/n: per
 n pari a 100 o 1.000, una costante appena inferiore a max/n può ancora far
@@ -103,8 +103,8 @@ Soltanto dopo questo RED viene applicato il criterio conservativo max/(2n),
 che riserva margine per gli arrotondamenti ai conteggi ammessi. Il GREEN finale
 mirato `core-green.log` supera 28 definizioni Core e 17 Kit senza issue, incluse
 headroom, zeri con segno, paired bounded e revisioni selettive; compilazione
-47,04 secondi. Il gate macOS comune resta pendente. Non si modificano attese o tolleranze
-preesistenti. Non viene dichiarata un'ottimizzazione; il banco Release resampling
+47,04 secondi. Il successivo gate composito è registrato separatamente sotto.
+Non si modificano attese o tolleranze preesistenti. Non viene dichiarata un'ottimizzazione; il banco Release resampling
 esistente può misurare il costo senza introdurre un nuovo benchmark.
 
 ## Consumatori e revisioni selettive
@@ -140,6 +140,28 @@ oltre il corner headroom registrato: conferma pooling, BCa, Q7, preservazione
 di draw/checkpoint e selettività dei tre produttori. Il suo riscontro chiarisce
 anche che l'invarianza non promette di recuperare dati già collassati durante
 una trasformazione arrotondata.
+
+## Gate macOS composito finale
+
+`make verify` termina con exit zero in 589,88 secondi nello snapshot isolato
+composito, sulla base `44dd90f`. Supera 782 definizioni Core, 169 Kit e 65 BDD;
+il report BDD comprende otto feature, 122 scenari espansi e 697 passaggi.
+I test nativi macOS superano 135 definizioni e 425 esecuzioni, senza failure
+o skip. Le regressioni numeriche del lotto rimangono test dedicati e non
+vengono sostituite dalla copertura BDD aggiuntiva.
+
+Il gate riproduce 248 righe degli oracoli numerici e 64 casi Fraction
+indipendenti; convalida due PDF/A, 132 operazioni CLI e 264 confronti completi
+di parità, sei rifiuti del legame fra export e fonte, 2.840 dichiarazioni o
+membri API e 22 checkpoint di recovery. Il dossier locale conserva
+`composite-verification-summary.json` e `composite-make-verify.log`;
+[il rapporto versionato](allegati/GS-VER-328-verifica.json) ne registra gli hash.
+
+L'impronta dei 608 input controllati è
+`36b05ea14bbeafe91150b84edb8ab74a67a240e75b9430f553797f262714d259`
+e rimane invariata dopo il gate. Questa verifica finale del composito è
+distinta dai fingerprint dei precedenti stage mirati. Il profilo è soltanto
+macOS: non attesta iPadOS, audit manuali GUI/accessibilità o distribuzione firmata.
 
 ## Limiti numerici espliciti
 

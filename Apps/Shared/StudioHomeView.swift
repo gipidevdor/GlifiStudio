@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
+import Accessibility
 import Foundation
 import GlifiKit
 import SwiftUI
@@ -276,6 +277,10 @@ struct StudioHomeView: View {
                 Task.immediate { await model.closeProject() }
             }
         #endif
+        .onChange(of: model.lastFailure) { _, failure in
+            guard let failure else { return }
+            AccessibilityNotification.Announcement(failure.localizedMessage(locale: locale)).post()
+        }
     }
 
     @ViewBuilder private var toolPicker: some View {
@@ -322,7 +327,7 @@ struct StudioHomeView: View {
 
     private func openQueryEditor() {
         showSection(.query)
-        queryFocusRequested = model.snapshot != nil && !model.isBusy
+        queryFocusRequested = model.mustPathHasSources && !model.isBusy
     }
 
     private func showSection(_ section: StudioSection) {
@@ -2288,21 +2293,53 @@ struct StudioHomeView: View {
     }
 
     private var query: some View {
-        VStack(spacing: 0) {
-            queryEditor
-            Divider()
-            GeometryReader { geometry in
-                if geometry.size.width >= 850 && !dynamicTypeSize.isAccessibilitySize {
-                    HStack(spacing: 0) {
-                        queryResults(compact: false)
-                            .frame(minWidth: 300, idealWidth: 380, maxWidth: 460)
-                        Divider()
-                        querySourceDetail
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
-                } else {
-                    NavigationStack {
-                        queryResults(compact: true)
+        Group {
+            if model.snapshot == nil {
+                ContentUnavailableView {
+                    Label(
+                        LocalizedStringKey(
+                            needsInitialDocumentSave
+                                ? "action.save-project" : "workspace.query.needs-project.title"),
+                        systemImage: needsInitialDocumentSave
+                            ? "square.and.arrow.down" : "folder.badge.questionmark")
+                } description: {
+                    Text(
+                        LocalizedStringKey(
+                            needsInitialDocumentSave
+                                ? "workspace.query.needs-save.description"
+                                : "workspace.query.needs-project.description"))
+                } actions: {
+                    overviewActions
+                }
+            } else if !model.mustPathHasSources {
+                ContentUnavailableView {
+                    Label("workspace.query.needs-sources.title", systemImage: "doc.badge.plus")
+                } description: {
+                    Text("workspace.query.needs-sources.description")
+                } actions: {
+                    overviewActions
+                    Button("sidebar.sources", systemImage: "doc.on.doc") { showSection(.sources) }
+                        .buttonStyle(.bordered)
+                        .disabled(model.isBusy)
+                }
+            } else {
+                VStack(spacing: 0) {
+                    queryEditor
+                    Divider()
+                    GeometryReader { geometry in
+                        if geometry.size.width >= 850 && !dynamicTypeSize.isAccessibilitySize {
+                            HStack(spacing: 0) {
+                                queryResults(compact: false)
+                                    .frame(minWidth: 300, idealWidth: 380, maxWidth: 460)
+                                Divider()
+                                querySourceDetail
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            }
+                        } else {
+                            NavigationStack {
+                                queryResults(compact: true)
+                            }
+                        }
                     }
                 }
             }
@@ -2322,6 +2359,12 @@ struct StudioHomeView: View {
                 HStack(spacing: 12) { queryControls }
                 VStack(alignment: .leading, spacing: 12) { queryControls }
             }
+            if model.isQueryDraftChanged {
+                Label("query.draft-changed", systemImage: "info.circle")
+                    .font(.callout)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityElement(children: .combine)
+            }
             DisclosureGroup("workspace.query.syntax") {
                 Text("workspace.query.syntax-help")
                     .font(.callout)
@@ -2338,7 +2381,7 @@ struct StudioHomeView: View {
         TextField("query.placeholder", text: $model.queryDraft)
             .textFieldStyle(.roundedBorder)
             .focused($isQueryFocused)
-            .disabled(model.isBusy || model.snapshot == nil)
+            .disabled(model.isBusy || !model.mustPathHasSources)
             .accessibilityLabel("query.placeholder")
             .onSubmit { if canRunQuery { Task { await model.runQuery() } } }
         Button("action.search", systemImage: "magnifyingglass") {
@@ -2349,7 +2392,7 @@ struct StudioHomeView: View {
     }
 
     private var canRunQuery: Bool {
-        !model.isBusy && model.snapshot != nil
+        !model.isBusy && model.mustPathHasSources
             && !model.queryDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
@@ -2361,6 +2404,11 @@ struct StudioHomeView: View {
             } else {
                 List {
                     Section {
+                        LabeledContent("query.results.expression") {
+                            Text(model.lastQueryExpression ?? "")
+                                .fixedSize(horizontal: false, vertical: true)
+                                .textSelection(.enabled)
+                        }
                         LabeledContent("query.matches") {
                             Text(result.matches.count, format: .number).monospacedDigit()
                         }
@@ -3150,8 +3198,10 @@ struct StudioHomeView: View {
                         LabeledContent("failure.retry", value: failure.retryDisposition)
                         LabeledContent("failure.retained-state", value: failure.retainedState)
                         ForEach(failure.arguments.keys.sorted().prefix(6), id: \.self) { key in
-                            Text("\(key)=\(failure.arguments[key] ?? "")")
+                            let argument = "\(key)=\(failure.arguments[key] ?? "")"
+                            Text(argument)
                                 .accessibilityLabel("failure.arguments")
+                                .accessibilityValue(Text(verbatim: argument))
                         }
                         engineStatus
                     }
@@ -3179,17 +3229,21 @@ struct StudioHomeView: View {
     }
 
     private var engineStatus: some View {
-        Group {
-            switch model.engineState {
-            case .checking:
-                Label("engine.status.checking", systemImage: "hourglass")
-            case .ready:
-                Label("engine.status.ready", systemImage: "checkmark.circle")
-            }
+        let label: LocalizedStringKey
+        let symbol: String
+        switch model.engineState {
+        case .checking:
+            label = "engine.status.checking"
+            symbol = "hourglass"
+        case .ready:
+            label = "engine.status.ready"
+            symbol = "checkmark.circle"
         }
-        .font(.caption)
-        .foregroundStyle(.secondary)
-        .accessibilityLabel("engine.status.accessibility-label")
+        return Label(label, systemImage: symbol)
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .accessibilityLabel("engine.status.accessibility-label")
+            .accessibilityValue(Text(label))
     }
 
     private func metricRow(_ title: LocalizedStringKey, value: Int) -> some View {
@@ -3439,6 +3493,14 @@ private struct StudioDetailsSection<Content: View>: View {
                 content
             }
         }
+    }
+}
+
+private extension GlifiStudioFailure {
+    @MainActor func localizedMessage(locale: Locale) -> String {
+        let key = StudioHomeModel.resolvedFailureMessageKey(
+            messageKey: messageKey, category: category)
+        return String(localized: String.LocalizationValue(key), locale: locale)
     }
 }
 

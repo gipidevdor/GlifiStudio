@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.verification.isolated-source.v1",
   "baselineCommit": "44dd90f22f1b4b4930f87a6f6e818ccb3efaa5d4",
-  "scope": "GS-VER-335",
+  "scope": "GS-VER-342",
   "files": [
     {
       "path": "Apps/Shared/Resources/Localizable.xcstrings",

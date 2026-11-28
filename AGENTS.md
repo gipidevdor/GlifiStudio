@@ -31,6 +31,16 @@ I documenti in `docs/standard/` sono il distillato normativo, le ADR in `docs/ad
 
 ## Metodo di modifica
 
+- Usare Cucumber anche nel ciclo di sviluppo: prima di cambiare un comportamento
+  di dominio condiviso, descrivere il caso osservabile in una feature italiana,
+  verificare il RED pertinente, implementare il minimo necessario e ottenere il
+  GREEN prima del refactoring. Per le correzioni riprodurre il difetto, senza
+  modificare le attese per accettare il comportamento corrente.
+- Usare `make test-bdd-list` e `make test-bdd-dev BDD_SELECT='Feature.feature[:riga]'`
+  per l'iterazione mirata secondo `docs/testing/01-bdd-cucumber-swift.md`.
+  Una selezione parziale non sostituisce `make test-bdd` e `make verify`.
+  Interazione UI e accessibilità richiedono anche test e audit applicativi:
+  una feature headless non attesta comportamento visivo o assistivo.
 - Preservare modifiche preesistenti e non ampliare lo scopo senza necessità.
 - Aggiornare nello stesso cambiamento codice, test, documentazione, tracciabilità e ADR pertinenti.
 - Non inserire segreti, firma Apple, dati personali, corpus reali o materiale di terzi non autorizzato.

@@ -22,19 +22,34 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   nativo senza ricalcolo, variabili derivate e collegamento descrittivo ai rapporti.
 - Trasporto condiviso `research-call` con parità Kit/CLI. Estensione additiva del
   package esistente, senza nuova lingua di analisi o dipendenza di prodotto
-  (ADR-0047; GS-API-004/005/006; verifiche e limiti in GS-VER-336).
+  (ADR-0047; GS-API-004/005/006; verifiche e limiti in GS-VER-343).
 
 ### Analisi per tema, corrispondenze e cluster
 
 - Catalogo macOS organizzato in otto temi di ricerca, con scopo specifico e
   destinazione operativa di ogni metodo; flussi nativi per i diciannove tag
-  KH già presenti in GlifiKit/CLI (GS-DOR-335).
+  KH già presenti in GlifiKit/CLI (GS-DOR-342).
 - Clustering gerarchico delle parole sui profili tra documenti, con fonti
   contributive per termine e parità CLI `multivariate --method hac --unit terms`.
 - Dendrogrammi con zoom, taglio per numero/altezza e compressione dei rami;
   tabella ed export conservano l'albero completo. CA mantiene il grafico e
   i diagnostici scientifici; verifiche automatiche e audit manuali distinti
-  in GS-VER-335.
+  in GS-VER-342.
+
+### Sviluppo BDD e interazione macOS
+
+- Cucumber entra nel ciclo RED/GREEN: `make test-bdd-list` elenca le selezioni;
+  `make test-bdd-dev BDD_SELECT='TextQuery.feature:20'` esegue uno scenario o
+  un'intera feature e richiede esattamente gli esiti selezionati. Il gate
+  completo continua a richiedere tutti gli scenari (GS-DOR-334).
+- Ricerca: risultato, espressione, selezione e fonte sono pubblicati insieme;
+  interruzioni conservano il contesto valido. La bozza modificata è distinta
+  dai risultati e i prerequisiti offrono azioni reali di salvataggio,
+  apertura o importazione (GS-DOR-335).
+- Catalogo: Invio apre soltanto un risultato unico tra strumenti e metodi,
+  con conteggio e istruzioni localizzati. Nome e valore degli stati accessibili
+  sono conservati; le nuove failure usano un annuncio di sistema senza
+  spostare il focus (GS-DOR-336).
 
 ### Specifiche comportamentali eseguibili
 
@@ -48,14 +63,14 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   legale immutabile e integrità delle copie distribuite (GS-VER-333).
 - Runner CLI con cancellazione, deadline e raccolta del processo posseduto;
   report BDD vincolato anche all'identità e all'ordine dei passi, JSON rigoroso
-  e trait delle dipendenze esclusi esplicitamente (GS-DOR-334).
+  e trait delle dipendenze esclusi esplicitamente (GS-DOR-341).
 - Inferenza con contrasti ed errore standard finiti anche quando trabocca un
   intermedio; intervalli definiti per il livello valido immediatamente sotto
   uno e failure tipizzate per output non rappresentabili. Revisione producer 4
-  dei confronti di gruppi, con storici leggibili e parità CLI/Kit (GS-DOR-334).
+  dei confronti di gruppi, con storici leggibili e parità CLI/Kit (GS-DOR-341).
 - Importazione dello stato del classificatore: JSON malformato o incompleto
   produce un errore di input correggibile e conserva lo stato precedente,
-  invece di un errore interno inatteso (GS-VER-334).
+  invece di un errore interno inatteso (GS-VER-341).
 
 ### Correttezza semantica e conservazione del contesto
 
@@ -65,7 +80,7 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 - Statistica: correzione delle dipendenze da unità e offset nelle permutazioni
   e degli overflow/underflow intermedi di inferenza, bootstrap e quantili
   (GS-DOR-328). Revisione produttore 3 per post-hoc e paired; i confronti di
-  gruppi passano a 4 con GS-DOR-334, con storici leggibili e famiglie
+  gruppi passano a 4 con GS-DOR-341, con storici leggibili e famiglie
   indipendenti conservate.
 - Codifica: il cambio fonte pubblica insieme identità, segmenti e testi
   soltanto dopo letture riuscite; failure e cancellazione conservano il

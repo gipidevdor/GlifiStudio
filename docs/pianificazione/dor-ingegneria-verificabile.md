@@ -4,14 +4,14 @@
 
 | Campo | Valore |
 | --- | --- |
-| Identificatore | GS-DOR-334 |
+| Identificatore | GS-DOR-341 |
 | Tipo | Scheda Definition of Ready |
 | Versione | 1.0.0 |
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-28 |
 | Approvazione | Richiesta esplicita di ricontrollare il codice e migliorarne la qualità ingegneristica |
-| Riferimenti | GS-STD-001-12; GS-STD-001-16; GS-STD-001-29 § 29.6; ADR-0031; ADR-0046; GS-BDD-001; GS-MET-001-21; RQ-011; RQ-027; RQ-058; RQ-060; RQ-062; RQ-063; CMP-334 |
+| Riferimenti | GS-STD-001-12; GS-STD-001-16; GS-STD-001-29 § 29.6; ADR-0031; ADR-0046; GS-BDD-001; GS-MET-001-21; RQ-011; RQ-027; RQ-058; RQ-060; RQ-062; RQ-063; CMP-341 |
 
 ## Definition of Ready
 
@@ -35,7 +35,7 @@ privi dell'evidenza richiesta.
 | input del modello macOS | JSON di stato del classificatore malformato o strutturalmente incompleto restituisce una failure di input correggibile; stato precedente conservato, nessuna attestazione di audit UI |
 | verifica | Regressioni nominali e avversarie, sei casi di ciclo di vita del subprocesso, regressioni negative del gate e prove numeriche indipendenti; controlli pertinenti e make verify macOS serializzato dall'integratore |
 | sicurezza/privacy | Solo fixture sintetiche; nessuna rete, entitlement o formato di progetto nuovo; processi e file temporanei dei test restano posseduti e puliti |
-| tracciabilità | GS-DOR-334, GS-VER-334, CMP-334 e documenti dei contratti aggiornati; GS-VER-332 e GS-VER-333 restano evidenze storiche |
+| tracciabilità | GS-DOR-341, GS-VER-341, CMP-341 e documenti dei contratti aggiornati; GS-VER-332 e GS-VER-333 restano evidenze storiche |
 | criteri aperti | UI e accessibilità, sanitizer, DocC e metriche/audit G4 senza prove specifiche restano Da introdurre o nello stato già dichiarato; la revisione non attesta qualità universale |
 | decisioni e recupero | Correzioni che attuano ADR-0031 e ADR-0046, senza nuova scelta architetturale; revert del lotto con conservazione dei reader storici e delle fixture pertinenti |
 

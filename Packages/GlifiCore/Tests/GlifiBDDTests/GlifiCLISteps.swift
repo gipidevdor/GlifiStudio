@@ -30,9 +30,9 @@ private final class BDDCLIWorld {
     }
 
     func run(_ arguments: [String]) async throws {
-        let binary = try locateCLI()
+        output = nil
         output = try await BDDSubprocess.run(
-            executable: binary, arguments: arguments, directory: root)
+            executable: locateCLI(), arguments: arguments, directory: root)
     }
 
     private func locateCLI() throws -> URL {

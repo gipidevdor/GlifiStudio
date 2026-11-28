@@ -223,4 +223,4 @@ conteggio positivo. Il lineage della foglia è contributivo; l'identità del
 termine non **DEVE** essere usata come `SourceRevisionID`. Una fusione unisce
 le fonti dei due rami senza duplicati. Il taglio della vista è distinto dal
 taglio persistito nel risultato, come specificato in GS-VIZ-001.
-[GS-VER-335](../evidenze/GS-VER-335-flussi-tematici-e-dendrogrammi.md).
+[GS-VER-342](../evidenze/GS-VER-342-flussi-tematici-e-dendrogrammi.md).

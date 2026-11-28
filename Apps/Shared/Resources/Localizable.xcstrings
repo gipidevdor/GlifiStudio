@@ -55273,6 +55273,176 @@
           }
         }
       }
+    },
+    "query.draft-changed" : {
+      "extractionState": "manual",
+      "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La ricerca è cambiata. I risultati mostrati si riferiscono all’espressione eseguita qui sotto."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The search changed. The displayed results refer to the executed expression shown below."
+          }
+        }
+      }
+    },
+    "query.results.expression" : {
+      "extractionState": "manual",
+      "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ricerca eseguita"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Executed search"
+          }
+        }
+      }
+    },
+    "workspace.query.needs-project.description" : {
+      "extractionState": "manual",
+      "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La ricerca usa le fonti del progetto. Apri un progetto o creane uno per iniziare."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search uses the project's sources. Open or create a project to begin."
+          }
+        }
+      }
+    },
+    "workspace.query.needs-project.title" : {
+      "extractionState": "manual",
+      "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apri o crea un progetto"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open or create a project"
+          }
+        }
+      }
+    },
+    "workspace.query.needs-save.description" : {
+      "extractionState": "manual",
+      "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salva il progetto per importare le fonti e cercare nel testo."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save the project to import sources and search their text."
+          }
+        }
+      }
+    },
+    "workspace.query.needs-sources.description" : {
+      "extractionState": "manual",
+      "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importa almeno una fonte di testo, Markdown, PDF o EPUB per cercare parole, frasi e concordanze."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import at least one text, Markdown, PDF or EPUB source to search words, phrases and concordances."
+          }
+        }
+      }
+    },
+    "workspace.query.needs-sources.title" : {
+      "extractionState": "manual",
+      "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiungi le fonti da cercare"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add sources to search"
+          }
+        }
+      }
+    },
+    "workspace.tools.results-count" : {
+      "extractionState": "manual",
+      "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Risultati"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Results"
+          }
+        }
+      }
+    },
+    "workspace.tools.return.choose" : {
+      "extractionState": "manual",
+      "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scegli un risultato nell’elenco oppure rendi la ricerca più precisa."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a result in the list or narrow your search."
+          }
+        }
+      }
+    },
+    "workspace.tools.return.unique" : {
+      "extractionState": "manual",
+      "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premi Invio per aprire il risultato."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Press Return to open the result."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

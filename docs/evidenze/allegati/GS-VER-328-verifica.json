@@ -2,7 +2,7 @@
   "identifier": "GS-VER-328",
   "date": "2026-11-27",
   "baseHEAD": "44dd90f22f1b4b4930f87a6f6e818ccb3efaa5d4",
-  "status": "Targeted RED/GREEN passed; full macOS gate pending root",
+  "status": "Targeted RED/GREEN and full composite macOS gate passed",
   "externalProbe": {
     "scope": "Exact current product method bodies with stub error types, reentrant system log-gamma and unused chi-square stub; no SwiftPM build or shared scratch",
     "sourceSHA256": "dd3fefc240807d76b8eaab709c3b10fcc66a2ae9f726f6a2a85834a7d5fbc9e2",
@@ -36,7 +36,7 @@
     "GlifiInferenceExtensions.swift": "3b9ac4b5adff83cb0232b868e0f16a7243222db2c3c6ed24c60274a5fc9bd285"
   },
   "limits": [
-    "Targeted final GREEN passed; full macOS gate pending root.",
+    "Full composite macOS gate passed; iPadOS, manual GUI/accessibility and signed distribution not verified.",
     "No exact superaccumulator promised for every binary64 dynamic range; lost nonzero normalized contributions fail explicitly",
     "No new performance claim; existing Release resampling benchmark available"
   ],
@@ -132,5 +132,39 @@
     "inputCount": 590,
     "nonDocumentFingerprint": "5aeefb5d07d002001e9ee143bb9c3728e3aeb6c5e509a918d9b16d8c45b99793",
     "sha256": "c892aedff2d3ef655745e6156f89683c8b0487f18488340f84f6650251bf7a31"
+  },
+  "finalCompositeVerification": {
+    "reportedBy": "root",
+    "worktree": "isolated composite snapshot on fix/semantic-correctness-verified",
+    "baseHEAD": "44dd90f22f1b4b4930f87a6f6e818ccb3efaa5d4",
+    "command": "make verify",
+    "profile": "macOS",
+    "exit": 0,
+    "seconds": 589.88,
+    "log": "macOS-2026-11-27-semantics/composite-make-verify.log",
+    "logSHA256": "dccda4c30b675a31188afc0dce651a4aaa3d5c56f2a233bb659f9f6da2e6a28a",
+    "summary": "macOS-2026-11-27-semantics/composite-verification-summary.json",
+    "summarySHA256": "162e3533b38ce9414fb798ca4dfdaa6c393a9bb334205f5ec3a44c5b7a57dec2",
+    "controlledInputs": 608,
+    "nonDocumentFingerprint": "36b05ea14bbeafe91150b84edb8ab74a67a240e75b9430f553797f262714d259",
+    "sourceUnchangedAfterVerification": true,
+    "coreDefinitions": 782,
+    "kitDefinitions": 169,
+    "bddDefinitions": 65,
+    "bddFeatures": 8,
+    "bddExpandedScenarios": 122,
+    "bddSteps": 697,
+    "nativeDefinitions": 135,
+    "nativeExecutions": 425,
+    "numericalOracleRows": 248,
+    "independentFractionCases": 64,
+    "conformingPDFAFiles": 2,
+    "compilerEnumeratedCLIOperations": 132,
+    "completeResultParityChecks": 264,
+    "visualExportSourceRejectionChecks": 6,
+    "reviewedAPIDeclarationsAndMembers": 2840,
+    "recoveryCheckpoints": 22,
+    "failures": 0,
+    "scopeNote": "The final composite snapshot includes BDD integration and other semantic lots; historical targeted fingerprints remain separate. BDD does not replace the dedicated numerical regressions."
   }
 }

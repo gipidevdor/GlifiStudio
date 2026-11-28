@@ -39,8 +39,8 @@ e corretta senza indebolire l'oracolo.
 **Ready.** Il lavoro originario riguarda test e documentazione dell'architettura
 esistente. Alla sua registrazione i profili KH senza adattatore GUI erano
 indicati come headless: una prova non inventa una route o una funzione di
-prodotto mancante. Il successivo GS-DOR-335 introduce gli adattatori dei
+prodotto mancante. Il successivo GS-DOR-342 introduce gli adattatori dei
 diciannove profili e i `nativeBindings` operativi. La matrice corrente richiede
 route, dispatch, viste e test coerenti prima di rimuovere un tag dall'insieme
 headless, con inventario esaustivo e disgiunto; i nuovi esiti sono separati
-in GS-VER-335.
+in GS-VER-342.

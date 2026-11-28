@@ -1,10 +1,10 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# GS-VER-336 — Dataset e lavoro di ricerca persistenti
+# GS-VER-343 — Dataset e lavoro di ricerca persistenti
 
 | Campo | Valore |
 | --- | --- |
-| Identificatore | GS-VER-336 |
+| Identificatore | GS-VER-343 |
 | Tipo | Evidenza di integrazione Core, Kit, CLI e GUI macOS |
 | Versione | 1.0.0 |
 | Stato | In verifica |

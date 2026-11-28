@@ -1,205 +1,80 @@
 {
-  "identifier": "GS-VER-334",
-  "date": "2026-11-28",
-  "baseHEAD": "44dd90f22f1b4b4930f87a6f6e818ccb3efaa5d4",
-  "workingTree": true,
-  "status": "partial",
-  "profile": "macOS",
-  "targetedVerification": {
-    "numericalRED": {
-      "exitStatus": 1,
-      "definitions": 4,
-      "expandedCases": 8,
-      "issues": 16,
-      "scope": "Effect-size overflow, truly unrepresentable intervals and adjacent-unit confidence, before the corresponding production fix"
-    },
-    "integratedGREEN": {
-      "exitStatus": 0,
-      "coreDefinitions": 24,
-      "kitDefinitions": 2,
-      "bddDefinitions": 67,
-      "bddSuites": 9,
-      "scope": "Numerical frontiers, selective producer versions, v3/v4 history, JSON transport and subprocess lifecycle"
-    },
-    "subprocessStandalone": {
-      "tests": 6,
-      "passed": 6,
-      "issues": 0,
-      "buildSeconds": 8.09,
-      "testSeconds": 2.136,
-      "cacheRemovedKiB": 66488,
-      "logSHA256": "dc8ea64d42a07cb1514ab5dd0133e8501034bc9df58062d262dd1301cb641d50",
-      "testedSources": {
-        "BDDSubprocess.swift": "29e8fccb85f0897636ea0d346e764d6e0c61ce93f1295dc67ea7237d4ec1adcd",
-        "BDDSubprocessTests.swift": "923b61fb3d13c3b896310572e6838537ee53c3ad8b626a4a788c4cb606686dd2"
-      }
-    },
-    "licenseChecker": {
-      "tests": 23,
-      "exitStatus": 0,
-      "materials": 27
-    },
-    "bddInventory": {
-      "version": 2,
-      "features": 8,
-      "expandedScenarios": 116,
-      "steps": 655,
-      "negativeSelfTestsExitStatus": 0,
-      "orderedMetadataDigest": true,
-      "historicalReportCheck": "GS-VER-332-cucumber.json; original features unchanged"
-    },
-    "dependencyGraph": {
-      "environment": "SPI_BUILD=1",
-      "cucumberTraits": [],
-      "remotePackages": [
-        "CucumberSwift 6.9.0",
-        "CucumberSwiftExpressions 1.4.2"
-      ],
-      "macroOrSwiftSyntaxDependencies": false
-    },
-    "groupMetricCache": {
-      "currentProducer": "4",
-      "historicalProducer": "3",
-      "reopenedReuseAndHistoricalBytes": "passed in the integrated GREEN"
-    }
-  },
-  "integrationAttempts": {
-    "packageSuite": {
-      "kitDefinitionsPassed": 173,
-      "bddDefinitionsPassed": 67,
-      "coreDefinitions": 792,
-      "coreIssues": 1,
-      "cause": "Historical failure expectation for the now-supported adjacent-unit confidence; changed to six truly invalid levels",
-      "latestRetry": "Compilation blocked before tests by concurrent GlifiStudioSavedAnalysis.swift references to unavailable researchState()"
-    },
-    "macOS": {
-      "result": "Failed",
-      "totalTestCount": 150,
-      "passedTests": 149,
-      "failedTests": 1,
-      "skippedTests": 0
-    },
-    "macOSFailure": "New test expected the generic input code for an already typed unknown-field failure; fixture corrected to test wrong field types and preserve the precise unknown-field code separately",
-    "finalClassifierFixture": "Five invalid inputs, awaiting integrated rerun after concurrent compilation is restored"
-  },
-  "finalMakeVerify": {
-    "exitStatus": 2,
-    "blocker": "New concurrent tabular implementation emits failure.tabular.cancelled and failure.tabular.invalid-input without localized messages",
-    "passedBeforeBlock": [
-      "Repository",
-      "23 license-checker tests",
-      "27-material license inventory",
-      "Secrets",
-      "Toolchain",
-      "Build-cache tests",
-      "GitHub configuration",
-      "Documentation",
-      "Compliance matrix",
-      "PDF/A checker tests",
-      "Oracle checker tests",
-      "64 binary64 synthetic oracle cases",
-      "248 independent numerical oracle rows",
-      "Fixtures",
-      "173 analysis variants and 14 negative tests",
-      "BDD inventory and negative tests",
-      "Architecture",
-      "Localization",
-      "Failure taxonomy"
-    ],
-    "notClaimed": [
-      "Full current package suite",
-      "Final classifier fixture",
-      "CLI parity of the final tree",
-      "macOS final Debug/Release gate",
-      "iPadOS",
-      "Remote CI",
-      "Sanitizers",
-      "UI accessibility audits",
-      "DocC",
-      "G4 performance or energy compliance"
-    ]
-  },
-  "reviewedSourceSHA256": {
-    "Packages/GlifiCore/Package.swift": "5c88abeb2515b4a64ebdc6d5eae58b9658ece7035f9bd97bc1890e79841344d5",
-    "Packages/GlifiCore/Package.resolved": "d7192d75b75156eb6544d3282fa4043f9ced4e28890da1312d7579981911a59f",
-    "Packages/GlifiCore/Tests/GlifiBDDTests/BDDSubprocess.swift": "29e8fccb85f0897636ea0d346e764d6e0c61ce93f1295dc67ea7237d4ec1adcd",
-    "Packages/GlifiCore/Tests/GlifiBDDTests/BDDSubprocessTests.swift": "923b61fb3d13c3b896310572e6838537ee53c3ad8b626a4a788c4cb606686dd2",
-    "Packages/GlifiCore/Tests/GlifiBDDTests/GlifiCLISteps.swift": "ea550f5960bee955476ca299ce2df8e4dd34a44e60a21af76e5508bed9b05526",
-    "Packages/GlifiCore/Sources/GlifiCore/GlifiPairedLocationStatistics.swift": "ee6b70f9811f210a4d21fbf75b04e727bf6c5fbcd8d2e1f58b9d7f6110b0d207",
-    "Packages/GlifiCore/Sources/GlifiCore/GlifiEffectSizeStatistics.swift": "8f199b683c5bd895952ea54bae9b4aa617b9e9f8977e1f7907cf4904113cfdfa",
-    "Packages/GlifiCore/Sources/GlifiCore/GlifiDerivedAnalyses.swift": "8f610ded6f52ce33dd090deaf378fddd4d04296777d8702ac5018e4a1a7a7ce9",
-    "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiGroupMetricConfidenceCacheTests.swift": "bb853ad8d2883638398599d0d3a2bd1e16b281a9f5003265e16af100365be1f8",
-    "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiInferenceStabilityTests.swift": "87135945e54458cbaca9064efdaa93f4e26c581162e1895fa4b140d892a86025",
-    "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDistributionOptimizationReferenceTests.swift": "9ebb3a27b477d841aa395caf96556781e168bb18d978809e9b59b2279d716a27",
-    "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStatisticsRangeContractTests.swift": "6c3b174f6c86556a2cb7c051da98a76ff7008d15ae7eef9616b570ab13240525",
-    "Apps/macOS/StudioKHLanguageModel.swift": "d627671442abee88617e38fe22190bd94f7188c8a8ac81f5a1594ae62683b50a",
-    "Apps/macOS/Tests/StudioKHMatrixTests.swift": "f980c7815df24b62bb95f81fa2503df982954373b1b14f026920aaa5592f3522",
-    "Scripts/check-bdd.py": "03c8112d9ae26ed4224c64c5548ef23abbc121dd8ab191cf6370b1dfa86d62cf",
-    "Scripts/check-licenses.py": "a47ef9db7d3a1b320be21ff7605ab654bb0953ebd8212e214f6edd2c46e76363",
-    "Scripts/check-licenses-tests.py": "d624bd3f482f2b458b67059dd0bab5d36753530c69d75d710a6c2df9e4bb25bd",
-    "Scripts/check-apple-baseline.py": "ab98a80ea420344703553badecb83f547bad0b7ee8fe7ad772c0f9a0262acc1c",
-    "Config/Testing/bdd-coverage.json": "49f47541d2002c1844db09cbea4819620e6aa96ba88585949b6b5fbdcd9d669d"
-  },
-  "finalAttemptSource": {
-    "roots": [
-      "Apps",
-      "Packages",
-      "Config",
-      "Scripts",
-      ".github"
-    ],
-    "additionalFiles": [
-      "Makefile",
-      "AGENTS.md",
-      ".swift-format"
-    ],
-    "versionableFilesOnly": true,
-    "count": 566,
-    "fingerprint": "80f62669910bb008a8f3f9d83695cdf7067c02843d4d9557a699dc3fc0b5a48b",
-    "algorithm": "SHA256 of UTF-8 canonical JSON path-to-file-SHA256 mapping, sorted keys and compact separators",
-    "changedDuringAttempt": [
-      "Apps/macOS/StudioAdvancedAnalysisModel.swift",
-      "Apps/macOS/StudioResearchModel.swift",
-      "Apps/macOS/StudioResearchView.swift",
-      "Packages/GlifiCore/Sources/GlifiCore/GlifiResearchState.swift",
-      "Packages/GlifiCore/Sources/GlifiCore/GlifiSavedResearchAnalysis.swift",
-      "Packages/GlifiCore/Sources/GlifiCore/GlifiTabularImport.swift",
-      "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectCommand.swift",
-      "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectTextAnalysis.swift",
-      "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioSavedAnalysis.swift",
-      "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTextAnalytics.swift"
-    ]
-  },
-  "logsSHA256": {
-    "numericalRED": "1ab878694989d0cf36d6bf09efd5889a4ad7a788a3520236aeae798756d7d26d",
-    "targetedGREEN": "646ec01d57289f4c85b4c043130760ebdcad4a2492cbb56aba4c575b3b881c3f",
-    "macOSAttempt": "5c8318f1545c3d0276bd77307c44a323083eb19a78a38f56197d6b32169b90c8",
-    "latestPackageAttempt": "d42b0c3272e8a8205cd92f861b6f310979ca1ce652bf4d35cf95ee49e38faf3d",
-    "finalMakeVerify": "9216438391f81f7e827c6a74836596e6ac5204a9fafd0c062b011c9ac0344458",
-    "postDocumentationStatic": "30e86558d8ff15c840ba882ac5f48649f369550f8e5cdffceb8c0eb99470a73a"
-  },
-  "cleanup": {
-    "status": "completed",
-    "ownedBuildCacheRemovedKiB": 1923940,
-    "ownedBuildCacheMeasuredGiB": 1.835,
-    "standaloneCacheRemovedKiB": 66488,
-    "totalMeasuredGiB": 1.898,
-    "preserved": [
-      "Global SwiftPM repository cache",
-      "Active toolchains and veraPDF",
-      "Other verification caches and active apps",
-      "User files",
-      "Versioned evidence and notices"
-    ]
+  "schema": "studio.glifi.verification-evidence",
+  "schemaVersion": 1,
+  "evidenceID": "GS-VER-334",
+  "status": "Passed automatic macOS verification and unsigned preflight",
+  "macOSOnly": true,
+  "logs": {
+    "bdd-dev-334-feature.log": "f4d0c5aaf9aa69b524011eabd9610d00f2f1a94bf481446ee03c64d905776190",
+    "bdd-dev-334-focused.log": "e5b9699c500f4cd3966f20188c3d6b733cc22668ae3a897a6937baeb1e24aca2",
+    "bdd-dev-334-make-macro-red.log": "0e42137004045c4e9cf25139a066103f978989bed1bc539236f0fe34a3934181",
+    "bdd-dev-334-value-export.log": "a741ebda20451f64288e2ed8cf514216ede97a31220dee93941c25a5d68af944",
+    "bdd-dev-334-union.log": "a6b8e51200dfd2ad5fafac687968b31cc2dcd6cf2bf318f377c47f955385b4b6",
+    "bdd-dev-334-make-macro-green.log": "8f1e57a9e56f3b83256fef09e8c36f69c08b6ef17e7f52c4e2f277f446aff3a9",
+    "bdd-dev-334-cache-checks.log": "87f2a0057295611f15e6659da9770b54f0fb2082b3687d755f6bf8d49d1d5c77"
   },
   "limitations": [
-    "Scope-specific engineering review, no global numerical quality score",
-    "Concurrent research-persistence implementation was not frozen during integration",
-    "The subprocess cap is checked after exit per stream, not a disk quota; only the direct owned child is supervised",
-    "Offline legal checks are structural and do not constitute universal legal certification"
+    "Interactive desktop blocked by locked Mac",
+    "No manual accessibility audit",
+    "No iPadOS run",
+    "No G4/G5 qualification"
   ],
-  "postDocumentationStatic": {
-    "exitStatus": 2,
-    "blocker": "The same two missing tabular localized messages; document validation and git diff --check passed separately"
-  }
+  "targetedBDD": [
+    {
+      "selection": "TextQuery.feature:20",
+      "scenarios": 1,
+      "steps": 6,
+      "exit": 0
+    },
+    {
+      "selection": "TextQuery.feature",
+      "scenarios": 14,
+      "steps": 92,
+      "exit": 0
+    },
+    {
+      "selection": "AnalyticalMethods.feature:20,TextQuery.feature:20",
+      "scenarios": 2,
+      "steps": 13,
+      "exit": 0
+    }
+  ],
+  "makeVerifyCheckpoint": {
+    "command": "make verify",
+    "exit": 0,
+    "seconds": 503.55,
+    "sourceFingerprint": "4ca2364b5295b759dacffaa131c37240578fec8a20ea36c34056dfbdba3c2484",
+    "controlledInputs": 609,
+    "sourceUnchangedAtCompletion": true,
+    "log": "make-verify.log",
+    "logSHA256": "9430d074b630a54948fe834bd847fa3ee9a2417268c049a30f41a1e73c1e26a7",
+    "nativeDefinitions": 144,
+    "nativeExecutions": 435,
+    "nativeFailures": 0,
+    "nativeSkipped": 0
+  },
+  "finalPreflight": {
+    "status": "Passed",
+    "command": "make verify-app-store",
+    "exit": 0,
+    "seconds": 810.27,
+    "controlledInputs": 609,
+    "sourceFingerprint": "5ea8f0cc9877bc94349db307cd2279654b50c6e2b9a99d3b4a42ee0627bb4c1a",
+    "sourceUnchangedAtCompletion": true,
+    "log": "make-verify-app-store.log",
+    "logSHA256": "cc6bfe43eceeaf582993ee30b354a969617b17b594b404fb18b144e2bf7f4ebb",
+    "macOSOnly": true,
+    "nativeDefinitions": 144,
+    "nativeExecutions": 435,
+    "nativeFailures": 0,
+    "nativeSkipped": 0,
+    "BDDFeatures": 8,
+    "BDDScenarios": 122,
+    "BDDSteps": 697,
+    "cacheRegressionTests": 16,
+    "signed": false,
+    "manualGUI": "blocked: Mac locked",
+    "iPadOS": "not run"
+  },
+  "cacheRegressionTests": 16
 }

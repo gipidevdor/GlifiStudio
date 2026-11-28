@@ -432,7 +432,7 @@ lo stato incrementale del classificatore è di sessione.
 L'importazione di uno stato JSON sintatticamente o strutturalmente non valido
 **DEVE** restituire una failure di input correggibile e conservare lo stato
 precedente; non viene presentata come errore interno inatteso. La regressione
-del modello è registrata in [GS-VER-334](../evidenze/GS-VER-334-ingegneria-verificabile.md).
+del modello è registrata in [GS-VER-341](../evidenze/GS-VER-341-ingegneria-verificabile.md).
 
 Nel flusso Temi e strutture, CA **DEVE** rendere visibili coordinate, inerzia,
 contributi e qualità insieme al grafico fattoriale. HAC **DEVE** permettere la
@@ -446,8 +446,8 @@ griglia, topologia, due fasi e inizializzazione PCA o prototipi numerici
 espliciti nell'ordine dichiarato dei termini. I risultati mantengono tutti
 gli avvii MDS e gli stadi dei codebook, con diagnostici e tabelle complete.
 
-[GS-DOR-335](../pianificazione/dor-flussi-tematici-e-dendrogrammi.md) e
-[GS-VER-335](../evidenze/GS-VER-335-flussi-tematici-e-dendrogrammi.md)
+[GS-DOR-342](../pianificazione/dor-flussi-tematici-e-dendrogrammi.md) e
+[GS-VER-342](../evidenze/GS-VER-342-flussi-tematici-e-dendrogrammi.md)
 registrano perimetro, verifiche osservate e audit manuali ancora distinti.
 
 ## Dati di ricerca e risultati salvati

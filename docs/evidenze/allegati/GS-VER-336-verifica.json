@@ -1,0 +1,68 @@
+{
+  "schema": "studio.glifi.verification-evidence",
+  "schemaVersion": 1,
+  "evidenceID": "GS-VER-336",
+  "status": "Passed automatic macOS verification and unsigned preflight",
+  "macOSOnly": true,
+  "logs": {
+    "catalog-final-red.log": "9aec273b017d81f3416326c15063761315cb78b9a728ed725627ce46d79c2e95",
+    "native-final-green.log": "058866dab81dac4aba7b5cc824a81d0bb54f410fce62220215ca34b8cb322d83"
+  },
+  "limitations": [
+    "Interactive desktop blocked by locked Mac",
+    "No manual accessibility audit",
+    "No iPadOS run",
+    "No G4/G5 qualification"
+  ],
+  "nativeRED": {
+    "definitions": 5,
+    "passedDefinitions": 3,
+    "failedDefinitions": 2,
+    "expectedIssues": 4,
+    "exit": 65
+  },
+  "makeVerifyCheckpoint": {
+    "command": "make verify",
+    "exit": 0,
+    "seconds": 503.55,
+    "sourceFingerprint": "4ca2364b5295b759dacffaa131c37240578fec8a20ea36c34056dfbdba3c2484",
+    "controlledInputs": 609,
+    "sourceUnchangedAtCompletion": true,
+    "log": "make-verify.log",
+    "logSHA256": "9430d074b630a54948fe834bd847fa3ee9a2417268c049a30f41a1e73c1e26a7",
+    "nativeDefinitions": 144,
+    "nativeExecutions": 435,
+    "nativeFailures": 0,
+    "nativeSkipped": 0
+  },
+  "finalPreflight": {
+    "status": "Passed",
+    "command": "make verify-app-store",
+    "exit": 0,
+    "seconds": 810.27,
+    "controlledInputs": 609,
+    "sourceFingerprint": "5ea8f0cc9877bc94349db307cd2279654b50c6e2b9a99d3b4a42ee0627bb4c1a",
+    "sourceUnchangedAtCompletion": true,
+    "log": "make-verify-app-store.log",
+    "logSHA256": "cc6bfe43eceeaf582993ee30b354a969617b17b594b404fb18b144e2bf7f4ebb",
+    "macOSOnly": true,
+    "nativeDefinitions": 144,
+    "nativeExecutions": 435,
+    "nativeFailures": 0,
+    "nativeSkipped": 0,
+    "BDDFeatures": 8,
+    "BDDScenarios": 122,
+    "BDDSteps": 697,
+    "cacheRegressionTests": 16,
+    "signed": false,
+    "manualGUI": "blocked: Mac locked",
+    "iPadOS": "not run"
+  },
+  "nativeGREEN": {
+    "definitions": 18,
+    "executions": 22,
+    "failures": 0,
+    "skipped": 0,
+    "exit": 0
+  }
+}

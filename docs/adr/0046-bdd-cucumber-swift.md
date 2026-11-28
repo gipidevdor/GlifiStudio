@@ -28,7 +28,13 @@ dipendenza SwiftPM esclusivamente dei test: versione esatta **6.9.0**, commit
 `5547f9025c0da3f0276a22a3c746bfebc405741f`. Il target `GlifiBDDTests` del package
 `Packages/GlifiCore` usa `CucumberSwiftTesting` con Swift Testing e il build tool
 `CucumberSwiftTestingPlugin`, che genera test dalle feature nel proprio workdir.
-Il trait `Macros` resta disabilitato e non si compila `swift-syntax`.
+La dipendenza dichiara esplicitamente `traits: []`: i trait predefiniti,
+incluso `Macros`, restano disabilitati e non si compila `swift-syntax`.
+L’omissione di `traits` non è equivalente: il manifest upstream abilita
+`Macros` quando l’ambiente contiene `SPI_BUILD`. La scelta esplicita impedisce
+che quel default ambientale cambi il grafo adottato. La semantica dell’insieme
+vuoto è definita dalla
+[documentazione SwiftPM](https://docs.swift.org/swiftpm/documentation/packagemanagerdocs/addingdependencies/#Packages-with-Traits).
 Le revisioni transitive sono registrate nel lockfile versionato;
 licenze e provenienza rientrano nell'inventario controllato. Il responsabile
 interno della dipendenza è l'iniziatore del progetto.

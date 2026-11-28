@@ -1,7 +1,8 @@
 {
   "evidenceIdentifier": "GS-VER-329",
   "date": "2026-11-27",
-  "status": "RED reproduced; candidate applied; native GREEN pending",
+  "license": "BSD-3-Clause",
+  "status": "RED reproduced; native GREEN and integrated macOS gate passed",
   "scope": [
     "Apps/Shared/StudioHomeModel.swift",
     "Apps/macOS/Tests/StudioSelectionConsistencyTests.swift"
@@ -34,13 +35,41 @@
     "swiftFilesChecked": 2,
     "diffCheckExitCode": 0
   },
-  "pending": [
-    "Native GREEN tests and qualitative regressions",
-    "Coordinator integrated macOS gate"
-  ],
+  "finalSourceSHA256": {
+    "Apps/Shared/StudioHomeModel.swift": "b6441503fc457e49d362ea4b9360f9050b4cae872fac49917e37f07ccb890e96",
+    "Apps/macOS/Tests/StudioSelectionConsistencyTests.swift": "2637cb2083e5f60a5adfae220d22d3dbde54b50caf64d826d767b926b937e7ce"
+  },
+  "finalNativeGreen": {
+    "runner": "Coordinator macOS workspace tests in the isolated composite snapshot",
+    "summary": "macOS-2026-11-27-semantics/native-summary.json",
+    "summarySHA256": "737a8fbe5c5d77c14165c469c0c42b48018425fb92cd14bda50e0a71877a55ab",
+    "result": "Passed",
+    "testDefinitions": 135,
+    "testExecutions": 425,
+    "failedExecutions": 0,
+    "skippedExecutions": 0,
+    "expectedFailures": 0,
+    "runtimeWarnings": [],
+    "interruptedSelectionExecutionsPassed": 4,
+    "busyRejectionAndRetryPassed": true,
+    "selectionAndQualitativeRegressionsPassed": true
+  },
+  "integratedGate": {
+    "command": "make verify",
+    "profile": "macOS",
+    "exitCode": 0,
+    "elapsedSeconds": 589.88,
+    "summary": "macOS-2026-11-27-semantics/composite-verification-summary.json",
+    "log": "macOS-2026-11-27-semantics/composite-make-verify.log",
+    "logSHA256": "dccda4c30b675a31188afc0dce651a4aaa3d5c56f2a233bb659f9f6da2e6a28a",
+    "controlledInputs": 608,
+    "sourceFingerprint": "36b05ea14bbeafe91150b84edb8ab74a67a240e75b9430f553797f262714d259",
+    "sourceUnchangedAfterVerification": true
+  },
+  "pending": [],
   "limits": [
     "No iPadOS execution",
     "No real-window, VoiceOver or other manual accessibility audit",
-    "No performance improvement claimed"
+    "No performance improvement or G4/G5 claim"
   ]
 }

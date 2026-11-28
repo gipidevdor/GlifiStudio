@@ -2,7 +2,7 @@
   "evidenceIdentifier": "GS-VER-331",
   "date": "2026-11-27",
   "license": "BSD-3-Clause",
-  "status": "RED reproduced including admission; final targeted regressions GREEN; integrated gate pending",
+  "status": "RED reproduced including admission; final targeted regressions and composite macOS gate passed",
   "scope": [
     "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
     "Packages/GlifiCore/Tests/GlifiKitTests/GlifiVisualExportSourceTests.swift",
@@ -83,10 +83,34 @@
     "coordinatorRuntimeInputCount": 590,
     "coordinatorRuntimeInputSHA256": "5aeefb5d07d002001e9ee143bb9c3728e3aeb6c5e509a918d9b16d8c45b99793"
   },
-  "pending": [
-    "Six permanent independent CLI process checks",
-    "Coordinator integrated macOS gate"
-  ],
+  "compositeVerification": {
+    "runner": "Coordinator make verify macOS automatic profile",
+    "summary": "macOS-2026-11-27-semantics/composite-verification-summary.json",
+    "summarySHA256": "162e3533b38ce9414fb798ca4dfdaa6c393a9bb334205f5ec3a44c5b7a57dec2",
+    "log": "macOS-2026-11-27-semantics/composite-make-verify.log",
+    "logSHA256": "dccda4c30b675a31188afc0dce651a4aaa3d5c56f2a233bb659f9f6da2e6a28a",
+    "exitCode": 0,
+    "elapsedSeconds": 589.88,
+    "macOSOnly": true,
+    "controlledInputs": 608,
+    "sourceFingerprint": "36b05ea14bbeafe91150b84edb8ab74a67a240e75b9430f553797f262714d259",
+    "sourceUnchangedAfterVerification": true,
+    "coreTestDefinitions": 782,
+    "kitTestDefinitions": 169,
+    "nativeTestDefinitions": 135,
+    "nativeTestExecutions": 425,
+    "bddFeatures": 8,
+    "bddScenarios": 122,
+    "bddSteps": 697,
+    "conformingPDFAFiles": 2,
+    "cliOperations": 132,
+    "completeCLIParityComparisons": 264,
+    "independentVisualSourceRejections": 6,
+    "licenseMaterials": 25,
+    "reviewedLicenseInputDigests": 21,
+    "recordedFailures": 0
+  },
+  "pending": [],
   "limits": [
     "Producer metadata validation does not authenticate caller-modified coordinates, values or view transformations",
     "Presentation choices are not replaced by equality with a standard view",

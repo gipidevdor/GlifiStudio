@@ -125,7 +125,7 @@ grafico. La preparazione della partizione e dei rami avviene fuori Main Actor;
 richieste superate, cambio della vista e scomparsa del componente invalidano
 la pubblicazione tardiva. La verifica automatica non sostituisce gli audit
 assistivi manuali registrati separatamente in
-[GS-VER-335](../evidenze/GS-VER-335-flussi-tematici-e-dendrogrammi.md).
+[GS-VER-342](../evidenze/GS-VER-342-flussi-tematici-e-dendrogrammi.md).
 ## Dataset grandi
 
 Virtualizzazione, tiling, level-of-detail e aggregazione sono ammessi soltanto con

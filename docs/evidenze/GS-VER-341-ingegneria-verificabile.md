@@ -1,17 +1,17 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# GS-VER-334 — Affidabilità verificabile dei test BDD e dell'inferenza
+# GS-VER-341 — Affidabilità verificabile dei test BDD e dell'inferenza
 
 | Campo | Valore |
 | --- | --- |
-| Identificatore | GS-VER-334 |
+| Identificatore | GS-VER-341 |
 | Tipo | Revisione ingegneristica con regressioni di lifecycle, gate e inferenza |
 | Versione | 1.0.0 |
 | Stato | Parziale; regressioni mirate superate, integrazione finale bloccata dal checkout concorrente |
 | Responsabile | Codex, con verifica serializzata dall'integratore |
 | Ultima modifica | 2026-11-28 |
 | Approvazione | Richiesta esplicita di ricontrollare il codice e migliorarne la qualità ingegneristica |
-| Riferimenti | GS-DOR-334; GS-STD-001-12; GS-STD-001-16; GS-STD-001-29 § 29.6; ADR-0031; ADR-0046; GS-BDD-001; GS-MET-001-21; CMP-334; RQ-011; RQ-027; RQ-058; RQ-060; RQ-062; RQ-063 |
+| Riferimenti | GS-DOR-341; GS-STD-001-12; GS-STD-001-16; GS-STD-001-29 § 29.6; ADR-0031; ADR-0046; GS-BDD-001; GS-MET-001-21; CMP-341; RQ-011; RQ-027; RQ-058; RQ-060; RQ-062; RQ-063 |
 
 ## Problemi confermati dalla revisione
 
@@ -110,7 +110,7 @@ specifica evidenza.
 
 ## Stato della verifica
 
-L'[allegato di verifica](allegati/GS-VER-334-verifica.json) conserva comandi,
+L'[allegato di verifica](allegati/GS-VER-341-verifica.json) conserva comandi,
 conteggi, hash dei log, sorgenti revisionati e limiti. Le prove osservate sono:
 
 - RED degli intervalli dell'effetto: quattro definizioni, otto casi espansi,
@@ -145,7 +145,7 @@ modificati e completati i metadati richiesti di ADR-0047 senza cambiarne la
 decisione. Le modifiche concorrenti restano conservate. I risultati storici
 GS-VER-332 e GS-VER-333 non vengono aggiornati retroattivamente.
 
-CMP-334 resta `implemented`: questa evidenza non promuove il gate completo,
+CMP-341 resta `implemented`: questa evidenza non promuove il gate completo,
 la revisione finale del test del classificatore o i criteri generali di
 qualità. Non è attribuito un voto 10/10 al repository. Per chiudere il lotto
 servono compilazione del nuovo flusso, messaggi tabellari e riesecuzione di

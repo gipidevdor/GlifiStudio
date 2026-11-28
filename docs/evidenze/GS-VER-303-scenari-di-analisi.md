@@ -129,7 +129,7 @@ restano separati. Test dei modelli e build non sono UI automation o audit
 VoiceOver, Voice Control, contrasto, pseudo-lingua, RTL o usabilità.
 Nella fotografia dei sorgenti di questo checkpoint, le 19 estensioni KH
 successive rimanevano Core/Kit/CLI, senza adattatore GUI dedicato. Il
-successivo [GS-VER-335](GS-VER-335-flussi-tematici-e-dendrogrammi.md) registra
+successivo [GS-VER-342](GS-VER-342-flussi-tematici-e-dendrogrammi.md) registra
 l'introduzione dei diciannove adattatori, il nuovo inventario e i loro esiti,
 senza estendere retroattivamente queste prove. Nessuna promozione di manifest
 scientifici, G4/G5, prestazioni o

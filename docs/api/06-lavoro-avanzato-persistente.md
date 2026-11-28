@@ -109,7 +109,7 @@ Disponibilità e comportamento sono controllati sulle API Apple
 [entità esterne never](https://developer.apple.com/documentation/foundation/xmlparser/externalentityresolvingpolicy-swift.enum/never)
 e [NLTagger](https://developer.apple.com/documentation/naturallanguage/nltagger).
 Nessun asset è scaricato e ogni annotazione possiede il proprio tagger.
-Build e verifiche macOS sono registrate separatamente in GS-VER-336.
+Build e verifiche macOS sono registrate separatamente in GS-VER-343.
 
 ## Compatibilità del lettore
 

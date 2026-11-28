@@ -14,6 +14,17 @@
 
 La matrice collega le fonti iniziali alle necessità degli stakeholder, ai requisiti software, alle parti dell'architettura e alle evidenze di verifica pianificate. Gli identificatori fanno riferimento a [Requisiti](requisiti.md) e [Architettura](architettura.md).
 
+## Sviluppo BDD e interazione della ricerca
+
+| Requisiti e clausola | Attuazione circoscritta | Verifica |
+| --- | --- | --- |
+| RQ-058/060/062/063; CMP-334 | RED/GREEN con selezione inventariata esatta e gate completo obbligatorio | [GS-DOR-334](pianificazione/dor-sviluppo-bdd.md); [GS-VER-334](evidenze/GS-VER-334-sviluppo-bdd.md) |
+| RQ-058/060/062/063; CMP-335 | Query e fonte pubblicate insieme, bozza distinta, stati vuoti con azioni eseguibili | [GS-DOR-335](pianificazione/dor-ricerca-contesto.md); [GS-VER-335](evidenze/GS-VER-335-ricerca-contesto.md) |
+| RQ-058/060/062/063; CMP-336 | Invio non ambiguo, conteggio dei risultati e semantica dello stato accessibile | [GS-DOR-336](pianificazione/dor-catalogo-tastiera.md); [GS-VER-336](evidenze/GS-VER-336-catalogo-stato-accessibile.md) |
+
+Questi incrementi applicano gli standard esistenti. La presenza di controlli
+nativi e test del modello non promuove G4 né attesta un audit VoiceOver completo.
+
 ## Ownership, precisione dei riferimenti e cancellazione dell'export
 
 | Requisiti e clausola | Attuazione circoscritta | Verifica |
@@ -789,8 +800,8 @@ lotto resta esplicitata in GS-VER-333 senza certificazioni legali universali.
 
 ## Affidabilità verificabile dei test e dell'inferenza
 
-RQ-011/027/058/060/062/063 collegano CMP-334 a
-[GS-DOR-334](pianificazione/dor-ingegneria-verificabile.md),
+RQ-011/027/058/060/062/063 collegano CMP-341 a
+[GS-DOR-341](pianificazione/dor-ingegneria-verificabile.md),
 [GS-BDD-001](testing/01-bdd-cucumber-swift.md) e
 [GS-MET-001-21](metodi-analitici/21-fondazione-statistica.md).
 L'incremento rende posseduto e cancellabile il figlio CLI dei test, vincola
@@ -800,7 +811,7 @@ inoltre intermedi numerici traboccati con risultati finali finiti e conserva
 le code di confidenza estreme; il producer passa a `4` soltanto per
 `group-metric-comparison`, con storici 1–3 leggibili.
 
-[GS-VER-334](evidenze/GS-VER-334-ingegneria-verificabile.md) registra la
+[GS-VER-341](evidenze/GS-VER-341-ingegneria-verificabile.md) registra la
 checklist GS-STD-001-29 § 29.6, le regressioni e gli esiti effettivi. Le
 evidenze GS-VER-332/333 restano storiche. UI e accessibilità, sanitizer, DocC
 e metriche/audit G4 senza prove specifiche non sono promossi dalla presenza
@@ -808,7 +819,7 @@ dei test o da un giudizio numerico complessivo sul repository.
 
 ## Flussi tematici e dendrogrammi esplorabili
 
-RF-033/RF-087 e RQ-027/028/033/037/038/058/060/063 collegano CMP-335 alla
+RF-033/RF-087 e RQ-027/028/033/037/038/058/060/063 collegano CMP-342 alla
 copertura operativa macOS di tutti i metodi del catalogo, ai diciannove tag
 KH e al completamento delle viste CA/HAC. Il clustering delle parole usa
 unità e fonti contributive distinte; API e CLI condividono `hierarchicalTerms`.
@@ -816,11 +827,11 @@ Il taglio nativo ha il binding `project-call`/`recut-visualization` per numero
 o altezza, con risultato completo e failure uguali. Taglio, zoom e compressione del dendrogramma rimangono proiezioni dell'albero
 completo, senza ricalcolo del corpus o sostituzione del risultato persistito.
 
-[GS-DOR-335](pianificazione/dor-flussi-tematici-e-dendrogrammi.md) consolida il
-perimetro autorizzato; [GS-VER-335](evidenze/GS-VER-335-flussi-tematici-e-dendrogrammi.md)
+[GS-DOR-342](pianificazione/dor-flussi-tematici-e-dendrogrammi.md) consolida il
+perimetro autorizzato; [GS-VER-342](evidenze/GS-VER-342-flussi-tematici-e-dendrogrammi.md)
 registra 928 test Core/Kit, 451 esecuzioni native e parità CLI superati sullo
 snapshot isolato con manifesto dei digest; il gate del checkout condiviso
-rimane non attestato. CMP-335 resta `implemented`. Gli audit assistivi/manuali
+rimane non attestato. CMP-342 resta `implemented`. Gli audit assistivi/manuali
 non sono eseguiti e gli stati scientifici dei profili KH o G4/G5 non vengono
 promossi.
 
@@ -828,4 +839,4 @@ promossi.
 
 | Evidenza | Requisiti | Realizzazione e verifica |
 | --- | --- | --- |
-| [GS-VER-336](evidenze/GS-VER-336-flusso-ricerca-persistente.md) | RF-006; RF-008; RF-011; RF-013; RF-015; RF-016; RF-040; RF-087; RQ-058; RQ-060; RQ-063 | Import CSV/XLSX, metadati tipizzati, sottoinsiemi, preparazione condivisa, acquisizione/ripristino ed export avanzato; contratti GS-API-004/005/006, ADR-0047; esiti finali distinti dagli intermedi |
+| [GS-VER-343](evidenze/GS-VER-343-flusso-ricerca-persistente.md) | RF-006; RF-008; RF-011; RF-013; RF-015; RF-016; RF-040; RF-087; RQ-058; RQ-060; RQ-063 | Import CSV/XLSX, metadati tipizzati, sottoinsiemi, preparazione condivisa, acquisizione/ripristino ed export avanzato; contratti GS-API-004/005/006, ADR-0047; esiti finali distinti dagli intermedi |

@@ -274,7 +274,7 @@ L'operazione non modifica il progetto e non riesegue il corpus. Non è
 esclusa dalla parità perché modifica la presentazione: richiesta, risultato
 e failure attraversano il trasporto e le fixture di confronto.
 La specifica risultante usa l'export esistente, con le verifiche autorevoli
-del produttore quando si scrive tramite la sessione. GS-VER-335 registra le
+del produttore quando si scrive tramite la sessione. GS-VER-342 registra le
 nuove prove di parità e i loro esiti.
 
 ## Verifica continua

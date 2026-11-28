@@ -1,127 +1,127 @@
 {
   "identifier": "GS-VER-332",
   "date": "2026-11-27",
+  "status": "Passed automatic macOS verification",
   "baseHEAD": "44dd90f22f1b4b4930f87a6f6e818ccb3efaa5d4",
-  "workingTree": true,
-  "status": "passed",
-  "profile": "macOS",
-  "environment": {
-    "macOS": "27.2.1",
-    "xcode": "27.2 (27B52)",
-    "swift": "6.4.2",
-    "python": "3.12.14",
-    "veraPDF": "1.30.4"
-  },
-  "bdd": {
-    "features": 8,
-    "expandedScenarios": 116,
-    "steps": 655,
-    "swiftTestingDefinitions": 60,
-    "serialExitStatus": 0,
-    "parallelExitStatus": 0,
-    "report": "GS-VER-332-cucumber.json",
-    "reportSHA256": "5ad3fe2352df46c6b32351ef0cd2f4ad042b1ae97867a6bb262f21307d7ca915",
-    "inventorySHA256": "9e20417bb54ee1535f145223c24c097cd53733e461020f9bb1c76c60fd37277f",
-    "featureResults": [
-      {
-        "file": "AnalyticalMethods.feature",
-        "scenarios": 27,
-        "steps": 180
-      },
-      {
-        "file": "CLIParity.feature",
-        "scenarios": 20,
-        "steps": 114
-      },
-      {
-        "file": "CorpusAnalysis.feature",
-        "scenarios": 18,
-        "steps": 84
-      },
-      {
-        "file": "ProjectLifecycle.feature",
-        "scenarios": 11,
-        "steps": 50
-      },
-      {
-        "file": "QualitativeCoding.feature",
-        "scenarios": 10,
-        "steps": 56
-      },
-      {
-        "file": "RequestValidation.feature",
-        "scenarios": 11,
-        "steps": 66
-      },
-      {
-        "file": "ScientificExport.feature",
-        "scenarios": 11,
-        "steps": 55
-      },
-      {
-        "file": "TextQuery.feature",
-        "scenarios": 8,
-        "steps": 50
-      }
+  "integratedVerification": {
+    "status": "passed",
+    "baseHEAD": "44dd90f22f1b4b4930f87a6f6e818ccb3efaa5d4",
+    "sourceFingerprint": "36b05ea14bbeafe91150b84edb8ab74a67a240e75b9430f553797f262714d259",
+    "controlledInputs": 608,
+    "sourceUnchangedAfterVerification": true,
+    "macOSOnly": true,
+    "makeVerifyExit": 0,
+    "makeVerifySeconds": 589.88,
+    "log": "composite-make-verify.log",
+    "logSHA256": "dccda4c30b675a31188afc0dce651a4aaa3d5c56f2a233bb659f9f6da2e6a28a",
+    "observedSummaryLines": [
+      "Binary64 Fraction oracle: 64 synthetic cases reproduced without product code",
+      "Oracoli numerici: 248 righe riprodotte; presenza lessicale nei test Swift verificata (non prova dell'uso negli assert)",
+      "Analysis scenarios: 172 operation variants, 5 integration workflows; reviewed baseline and test references valid",
+      "BDD: inventario di 8 feature e controlli strutturali superati",
+      "✔ Test run with 169 tests in 11 suites passed after 9.187 seconds.",
+      "◇ Test \"EPUB canonical byte limits exclude a final structural LF and include real chapter separators\" started.",
+      "✔ Test \"EPUB canonical byte limits exclude a final structural LF and include real chapter separators\" passed after 12.645 seconds.",
+      "✔ Test run with 782 tests in 4 suites passed after 27.550 seconds.",
+      "✔ Test run with 65 tests in 10 suites passed after 8.945 seconds.",
+      "BDD: 8 feature, 122 scenari, 697 passaggi superati",
+      "Validazione PDF/A-2u con veraPDF: 2 PDF conformi",
+      "Text analysis: 63 shared fixtures, 196 CLI checks, native parity within 1e-12",
+      "Kit API: 2840 reviewed public declarations, signatures and DTO members",
+      "Kit/CLI: 132 compiler-enumerated operations, 264 complete-result parity checks",
+      "Visual export source metadata: 6 independent CLI rejection checks",
+      "Kit API: 2840 reviewed public declarations, signatures and DTO members",
+      "Analysis scenarios: 172 operation variants, 5 integration workflows; compiler and test references valid",
+      "Process-kill recovery: 22 commit checkpoints valid",
+      "real 589.88"
+    ],
+    "native": {
+      "title": "Test - GlifiStudio-macOS",
+      "result": "Passed",
+      "totalTestCount": 135,
+      "passedTests": 135,
+      "failedTests": 0,
+      "skippedTests": 0,
+      "expectedFailures": 0,
+      "statistics": [
+        {
+          "subtitle": "316 test runs",
+          "title": "26 tests ran with dynamic parameters"
+        }
+      ],
+      "runtimeWarnings": [],
+      "executions": [
+        {
+          "passedTests": 425,
+          "failedTests": 0,
+          "skippedTests": 0,
+          "expectedFailures": 0
+        }
+      ],
+      "localResultBundleName": "Test-GlifiStudio-macOS-2026.11.27_18-03-10-+0100.xcresult"
+    },
+    "BDD": {
+      "features": 8,
+      "scenarios": 122,
+      "steps": 697,
+      "emptyFilterRejected": true,
+      "targetedReportSHA256": "9255a4080f1fdcae86dcc27e849bbc2b98caf0a74333f4e0639e7db608659a57"
+    },
+    "dependencyGraphSPI_BUILD_1": {
+      "packages": 2,
+      "swiftSyntax": false,
+      "graphSHA256": "320f8d8322537b7d306fdf4f42ff47a47baaff1e86aab7cf4f6e70862b65abb9"
+    },
+    "limitations": [
+      "macOS automatic profile only",
+      "No iPadOS or manual GUI/accessibility audit",
+      "No signed distribution or App Store submission",
+      "Cucumber report and Swift Testing exit status must both succeed"
     ]
   },
-  "macOSTests": {
-    "result": "Passed",
-    "totalTestCount": 135,
-    "passedTests": 135,
-    "failedTests": 0,
-    "skippedTests": 0,
-    "expectedFailures": 0
+  "targetedBDD": {
+    "features": 8,
+    "scenarios": 122,
+    "steps": 697,
+    "subprocessHelperTests": 5,
+    "logSHA256": "ed4c810b732285a50f796f9538a414d68dd8821e8fe29ac5456238917f1c657a",
+    "reportSHA256": "9255a4080f1fdcae86dcc27e849bbc2b98caf0a74333f4e0639e7db608659a57"
   },
-  "verify": {
-    "command": "make verify",
-    "exitStatus": 0,
-    "pythonFromMise": true,
-    "veraPDFConfigured": true,
-    "pdfA2uConformantFiles": 2,
-    "kitCLIOperations": 132,
-    "kitCLICompleteResultChecks": 264,
-    "recoveryCheckpoints": 22,
-    "appBuildConfigurations": [
-      "Debug",
-      "Release"
-    ],
-    "logSHA256": "d9e887bc1cfab4b9380a32d12c325bdc65b8798bff40ff2a678f258df5d9ce03"
+  "negativeFilter": {
+    "command": "CUCUMBER_TAGS=@__glifi_no_scenario_expected__ make test",
+    "expectedNonzero": true,
+    "observedNonzero": true,
+    "reason": "Swift Testing succeeds with filtered scenarios; the required BDD validator rejects the empty report",
+    "logSHA256": "a488821783fca94d36ec291920bee8ea7af1e53ed32eb717998a43feb9ed2949"
   },
-  "bundle": {
-    "noCucumberBundleEntries": true,
-    "noCucumberDynamicLinks": true
+  "inventory": {
+    "path": "Config/Testing/bdd-coverage.json",
+    "sha256": "c22ef3b3cfd07584f58a3cbbeb5cca0981daccd92abb9322736ee57a1f51ad4a",
+    "source": "Pinned upstream Gherkin generator; review of 8 feature files"
   },
-  "source": {
-    "roots": [
-      "Apps",
-      "Packages",
-      "Config",
-      "Scripts",
-      ".github"
-    ],
-    "fileCount": 536,
-    "fingerprint": "638bbbe6cdb1e641e72f9c6578943d2f9248fb58089617b55482f6d3399fc3c4",
-    "algorithm": "SHA256 of UTF-8 canonical JSON mapping rg --files paths to SHA256, sorted keys and compact separators"
-  },
-  "limitations": [
-    "Headless BDD; no UI or assistive audit",
-    "iPadOS deferred",
-    "No exhaustive claim for all analytical input combinations",
-    "Local verification; no remote CI run triggered"
-  ],
-  "postDocumentationStaticExitStatus": 0,
-  "cleanup": {
-    "measuredKiB": {
-      "buildCache": 2340868,
-      "reviewCheckout": 50888
+  "packages": [
+    {
+      "name": "CucumberSwift",
+      "version": "6.9.0",
+      "revision": "5547f9025c0da3f0276a22a3c746bfebc405741f",
+      "license": "MIT"
     },
-    "measuredGiB": 2.281,
-    "kept": [
-      "Versioned Cucumber report and verification summary",
-      "Active Python, R, veraPDF and Xcode toolchains",
-      "Global SwiftPM dependency cache"
-    ],
-    "status": "completed"
-  }
+    {
+      "name": "CucumberSwiftExpressions",
+      "version": "1.4.2",
+      "revision": "ab4c6482d3230d24a13814a961b6fff1d50f830f",
+      "license": "MIT"
+    }
+  ],
+  "traits": {
+    "explicitlyDisabled": true,
+    "testedWithSPI_BUILD": true,
+    "swiftSyntaxResolved": false
+  },
+  "cacheHarnessTests": 15,
+  "limits": [
+    "Swift Testing exit status and report validation are both required",
+    "The subprocess helper owns one child, not arbitrary descendant trees",
+    "Headless BDD does not qualify UI, accessibility, iPadOS, every numerical input or G4/G5"
+  ]
 }

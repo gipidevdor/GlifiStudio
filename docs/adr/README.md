@@ -81,4 +81,4 @@ Ogni ADR deve contenere titolo, stato, contesto, decisione, conseguenze e, quand
 
 - [ADR-0046 — Specifiche comportamentali eseguibili con CucumberSwift](0046-bdd-cucumber-swift.md) — Accettato; dipendenza di test, feature italiane e integrazione nel gate macOS
 
-- [ADR-0047 — Dataset, preparazione e lavoro di ricerca persistenti](0047-flusso-di-ricerca-persistente.md) — Accettata nel perimetro richiesto; compatibilità additiva e verifica GS-VER-336
+- [ADR-0047 — Dataset, preparazione e lavoro di ricerca persistenti](0047-flusso-di-ricerca-persistente.md) — Accettata nel perimetro richiesto; compatibilità additiva e verifica GS-VER-343

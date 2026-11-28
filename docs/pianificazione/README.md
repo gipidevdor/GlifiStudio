@@ -29,7 +29,10 @@ preservando i confini del lavoro già in corso nell'altra chat.
 
 ## Indice
 
-- [GS-DOR-334 — Affidabilità verificabile dei test BDD e dell'inferenza](dor-ingegneria-verificabile.md) — Ownership del subprocesso, inventario V2, JSON rigoroso e fallback numerici selettivi
+- [GS-DOR-341 — Affidabilità verificabile dei test BDD e dell'inferenza](dor-ingegneria-verificabile.md) — Ownership del subprocesso, inventario V2, JSON rigoroso e fallback numerici selettivi
+- [GS-DOR-336 — Catalogo da tastiera e stato accessibile](dor-catalogo-tastiera.md) — Attivazione univoca, nome/valore e annuncio delle failure
+- [GS-DOR-335 — Contesto e stato della ricerca](dor-ricerca-contesto.md) — Risultato e fonte atomici, bozza esplicita e prerequisiti reali
+- [GS-DOR-334 — Sviluppo guidato dai comportamenti](dor-sviluppo-bdd.md) — RED/GREEN e selezione esatta, gate completo conservato
 
 - [GS-DOR-332 — Specifiche BDD con CucumberSwift](dor-bdd-cucumber-swift.md) — Feature italiane eseguibili, dipendenza di test e gate macOS
 
@@ -193,4 +196,4 @@ preservando i confini del lavoro già in corso nell'altra chat.
 
 - [GS-DOR-286 — Operatori tipizzati e failure coese](dor-operatori-tipizzati-e-failure-coese.md) — Ready; invarianti del parser, policy Kit e checkpoint MDS/SOM deterministici
 
-- [GS-DOR-335 — Flussi tematici e dendrogrammi esplorabili](dor-flussi-tematici-e-dendrogrammi.md) — Ready per integrazione e verifica; diciannove tag KH nella GUI macOS
+- [GS-DOR-342 — Flussi tematici e dendrogrammi esplorabili](dor-flussi-tematici-e-dendrogrammi.md) — Ready per integrazione e verifica; diciannove tag KH nella GUI macOS

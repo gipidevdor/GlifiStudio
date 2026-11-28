@@ -7,7 +7,7 @@
 | Identificatore | GS-VER-332 |
 | Tipo | Integrazione di verifica BDD e dipendenza di sviluppo |
 | Versione | 1.0.0 |
-| Stato | Superato localmente: BDD seriale/parallelo e gate completo macOS |
+| Stato | Superato nel profilo automatico macOS |
 | Responsabile | Codex, con verifica serializzata dall'integratore |
 | Ultima modifica | 2026-11-27 |
 | Approvazione | Richiesta esplicita di integrare BDD con Cucumber Swift e scenari completi |
@@ -19,8 +19,9 @@ Il manifest SwiftPM dichiara CucumberSwift **6.9.0** esatto. Il lockfile risolve
 soltanto CucumberSwift, commit `5547f9025c0da3f0276a22a3c746bfebc405741f`, e
 CucumberSwiftExpressions **1.4.2**, commit
 `ab4c6482d3230d24a13814a961b6fff1d50f830f`. Il target `GlifiBDDTests` usa
-`CucumberSwiftTesting` e `CucumberSwiftTestingPlugin`; il trait `Macros` non è
-abilitato e `swift-syntax` non compare nel lockfile.
+`CucumberSwiftTesting` e `CucumberSwiftTestingPlugin`. `traits: []` disabilita
+esplicitamente i default upstream: anche una risoluzione con `SPI_BUILD=1`
+produce soltanto i due package previsti, senza `swift-syntax`.
 
 Il generatore upstream trasforma le feature italiane in test Swift Testing.
 Gli step chiamano API reali e, per gli scenari CLI, il binario headless.
@@ -46,54 +47,32 @@ piano di rientro.
 | Comando | Esito e ambito |
 | --- | --- |
 | `python3 -B Scripts/check-docs.py` | Superato dopo l'introduzione di ADR, DoR, guida BDD, deroga e aggiornamenti dei documenti controllati |
-| `python3 -B Scripts/check-compliance.py` | Superato con CMP-332 verificata e collegata alle evidenze runtime |
+| `python3 -B Scripts/check-compliance.py` | Superato con CMP-332 in stato `implemented`; l'esistenza della riga non attesta il superamento runtime |
 | `python3 -B Scripts/check-licenses.py` | Superato: 25 materiali inventariati, incluse le due dipendenze di sviluppo |
 | `python3 -B Scripts/check-licenses-tests.py` | Superati 9 test del verificatore di licenze |
-| `make test-bdd` | Exit 0: 8 feature, 116 scenari espansi, 655 passaggi superati |
-| `CUCUMBER_PARALLEL_TESTING=YES make test-bdd` | Exit 0: stessi scenari e passaggi, con stato isolato per scenario |
-| `Scripts/check-bdd.py --self-test --report` | Inventario e report allineati; regressioni negative del gate superate |
-| `make verify` con profilo macOS | Exit 0: statici, oracoli, test SwiftPM, parità CLI/Kit, recovery, test app e build Debug/Release superati |
 
-Il gate completo ha riconfermato formattazione strict, documenti, compliance,
-licenze e inventario sul codice finale. Gli esiti strutturati sono conservati
-nell'[allegato di verifica](allegati/GS-VER-332-verifica.json).
+Questi risultati precedevano la chiusura della suite finale. Il gate completo
+li ha riconfermati insieme alla formattazione rigorosa, senza sopprimere
+controlli o allargare le tolleranze.
 
 ## Prima esecuzione e correzione delle feature
 
-Nel primo run l'integratore ha osservato il superamento dei 58 esempi di
-workflow allora presenti e 14 issue negli scenari CLI. Le issue hanno
-rilevato placeholder come `<testo>` e `<richiesta>` rimasti letterali nelle
+Lo snapshot iniziale riportava un run parziale con 58 esempi di
+workflow e 14 issue negli scenari CLI. Le note di quel run descrivevano
+placeholder come `<testo>` e `<richiesta>` rimasti letterali nelle
 DocString degli schemi di scenario generati da CucumberSwift 6.9.0.
 L'integrazione corregge le feature passando i parametri nel testo dei passi;
 il JSON raw mantiene gli escape attraverso un matching esplicito. Le
 DocString restano per input completi di scenari singoli.
 
 La correzione riguarda le fixture e il loro adattatore, senza fork o
-modifiche dei test upstream. Il run iniziale resta una prova parziale;
-l'esecuzione completa successiva include anche le famiglie analitiche
-aggiuntive e la correzione CLI.
-
-## Esecuzione BDD completa osservata
-
-L'integratore ha osservato il superamento di **116 esempi espansi**, in
-**8 feature**, con **655 passaggi**. Swift Testing riporta 60 test, inclusi
-quelli parametrizzati dagli schemi di scenario; questo conteggio differisce
-dagli esempi espansi nel report Cucumber. Il controllo
-`Scripts/check-bdd.py --self-test --report` ha superato sia le regressioni
-negative del verificatore sia il confronto del report con l'inventario.
-Il [report Cucumber conservato](allegati/GS-VER-332-cucumber.json) contiene
-scenari e passaggi effettivi, con percorsi delle feature normalizzati.
-
-Il report upstream rappresenta i tag senza il prefisso `@`; il verificatore
-rispetta quel formato conservando nelle feature la sintassi Gherkin completa.
-Le ripetizioni tramite `make test-bdd`, sia in sequenza sia con
-`CUCUMBER_PARALLEL_TESTING=YES`, hanno superato gli stessi 116 esempi e
-655 passaggi, con controllo del report ed exit status zero. Il gate macOS
-ha riconfermato lo stesso inventario senza passaggi saltati.
+modifiche dei test upstream. Quel resoconto è conservato come provenienza,
+non come evidenza positiva di questa consegna: la composizione seguente è
+stata rieseguita integralmente nella worktree isolata.
 
 ## Inventario e manutenzione della copertura
 
-L'[inventario](../../Config/Testing/bdd-coverage.json) associa a ogni feature il digest
+Il file `Config/Testing/bdd-coverage.json` associa a ogni feature il digest
 `sourceSHA256` e, per ogni scenario espanso, la posizione `line` e il numero
 esatto di passaggi `stepCount`, compreso il contesto comune. Le posizioni e
 cardinalità provengono dal report prodotto dal parser/runner upstream; non
@@ -105,25 +84,58 @@ lotto. Non si aggiorna l'inventario al solo scopo di accettare un report
 incompleto o fallito. La guida GS-BDD-001 descrive famiglie e limiti; il report
 finale determina conteggi ed esiti effettivamente dichiarabili.
 
-## Verifica finale macOS
+## Correzioni del runner e controlli negativi
 
-`make verify` è terminato con exit status zero su macOS 27.2.1, Xcode 27.2
-(27B52), Apple Swift 6.4.2 e Python 3.12.14. È stato selezionato il Python
-mise già installato, come previsto da GS-DEV-001, e il validatore veraPDF
-1.30.4 già presente nella cache degli strumenti. Il Python 3.9 di sistema
-non soddisfa i prerequisiti del gate generale; non è stato modificato.
+Il runner CLI precedente attendeva `Process.waitUntilExit` in una task detached
+senza terminazione su cancellazione: un processo bloccato poteva impedire anche
+il cleanup. Il nuovo helper test-only possiede il PID fino a `waitpid`, applica
+timeout e cancellazione con escalation TERM/KILL e raccoglie il figlio prima
+di rimuovere le catture. I file sono privati e non si usano pipe soggette a
+deadlock. Cinque test sintetici verificano output, avvio fallito,
+pre-cancellazione, cancellazione attiva e timeout; i casi di escalation usano
+un figlio inizialmente sospeso per evitare una race di avvio. Il contratto
+riguarda il singolo processo CLI, non un albero arbitrario di discendenti.
 
-Sono superati anche i 135 test dell'app macOS, senza fallimenti o test
-saltati, la validazione di due PDF/A-2u, i 264 confronti Kit/CLI per 132
-operazioni e i 22 checkpoint di recovery. Il controllo del bundle Release
-ha verificato risorse, licenze e assenza dei payload di sviluppo previsti
-dal proprio contratto. Un'ispezione aggiuntiva non trova elementi Cucumber
-nel bundle o collegamenti dinamici a Cucumber nel binario dell'app.
+Le precondizioni prima dell'indicizzazione di intervalli UTF-8 e matrici usano
+`#require`: un risultato malformato genera una failure del test e consente
+il cleanup, invece di provocare un trap.
 
-La verifica comprende il working tree corrente, incluse le modifiche
-preesistenti conservate. L'allegato identifica HEAD, impronta dei sorgenti,
-inventario e report; gli artefatti rigenerabili di build e i download
-ridondanti vengono rimossi dopo l'estrazione delle evidenze utili.
+Anche il ramo ordinario di `make test` ora verifica il report. Con
+`CUCUMBER_TAGS=@__glifi_no_scenario_expected__`, Swift Testing termina con
+successo e scenari filtrati, ma `make test` viene correttamente respinto per
+report vuoto. Il test della cache che sostituisce Swift con uno stub produce
+ora un report sintetico completo: il verificatore reale resta obbligatorio.
+Una regressione aggiuntiva richiede il rifiuto dello stub senza report e il
+cleanup delle sole risorse possedute; tutti i 15 test della cache passano.
+
+Il JSON upstream da solo non certifica hook e asserzioni: è obbligatorio
+anche l'exit status positivo di Swift Testing. `set -e` conserva tale vincolo
+nel runner mirato, nel test ordinario e nel gate completo.
+
+## Verifica finale osservata
+
+| Verifica | Esito |
+| --- | --- |
+| Generatore upstream pinned | 8 feature, 122 scenari espansi, 697 passaggi; inventario derivato senza un secondo parser Gherkin |
+| Suite mirata BDD e helper | Superata; tutte le 122 esecuzioni BDD e i cinque test del subprocesso sono verdi |
+| Report effettivo | 8 feature / 122 scenari / 697 passaggi superati; nessun passo skipped, undefined o ambiguo ammesso |
+| Filtro che elimina gli scenari | Rifiuto atteso di `make test`, dopo successo Swift; nessun falso verde |
+| Licenze e dipendenze | 25 materiali, 21 digest verificati, avvisi MIT completi e grafo di due package anche con `SPI_BUILD=1` |
+| `make verify` macOS | Exit 0 in 589,88 s: 782 test Core, 169 Kit, 135 definizioni native / 425 esecuzioni, due PDF/A-2u, 248 righe di oracoli e 64 casi Fraction |
+| Parità e recovery | 132 operazioni / 264 confronti completi, sei rifiuti CLI dei metadati delle viste, 2.840 dichiarazioni pubbliche, 22 checkpoint |
+| Bundle Release | Risorse e testi legali verificati; 17 elementi ispezionati, nessun nome/cartella/estensione di test vietati |
+
+Gli input controllati sono **608**, con fingerprint finale SHA-256
+`36b05ea14bbeafe91150b84edb8ab74a67a240e75b9430f553797f262714d259`,
+immutato dopo l'esecuzione. Il log locale `composite-make-verify.log` ha SHA-256
+`dccda4c30b675a31188afc0dce651a4aaa3d5c56f2a233bb659f9f6da2e6a28a`.
+L'[allegato controllato](allegati/GS-VER-332-verifica.json) conserva riepilogo,
+pin, hash e limiti. I report raw, i manifest degli input e il risultato nativo
+rimangono nel dossier locale `macOS-2026-11-27-semantics`.
+
+I cambiamenti concorrenti della copia originaria sono stati preservati.
+La verifica finale è stata eseguita sulla composizione isolata autorizzata,
+comprensiva di BDD e dei lotti semantici 327–331.
 
 BDD headless non qualifica UI, VoiceOver, Voice Control, tastiera, usabilità,
 prestazioni, iPadOS, tutte le combinazioni numeriche o G4/G5. Oracoli

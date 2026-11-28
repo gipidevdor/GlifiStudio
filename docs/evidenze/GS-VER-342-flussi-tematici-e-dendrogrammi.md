@@ -1,17 +1,17 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 
-# GS-VER-335 — Flussi tematici, corrispondenze e dendrogrammi
+# GS-VER-342 — Flussi tematici, corrispondenze e dendrogrammi
 
 | Campo | Valore |
 | --- | --- |
-| Identificatore | GS-VER-335 |
+| Identificatore | GS-VER-342 |
 | Tipo | Evidenza di integrazione applicativa, rappresentazione e parità |
 | Versione | 1.0.0 |
 | Stato | Superato nello snapshot isolato; gate condiviso non attestato |
 | Responsabile | Codex, integrazione coordinata nel checkout condiviso |
 | Ultima modifica | 2026-11-28 |
 | Approvazione | Richieste esplicite di completamento CA/HAC e di tutti gli accessi GUI per tema di ricerca |
-| Riferimenti | GS-DOR-335; ADR-0041; ADR-0043; GS-UX-001-17; GS-MET-001-14; GS-VIZ-001; GS-API-003; CMP-335 |
+| Riferimenti | GS-DOR-342; ADR-0041; ADR-0043; GS-UX-001-17; GS-MET-001-14; GS-VIZ-001; GS-API-003; CMP-342 |
 
 ## Cosa cambia
 
@@ -78,7 +78,7 @@ della mappa resta distinto dall'esecuzione nativa descritta sotto.
 
 ## Piano di verifica ed esiti osservati
 
-Il [rapporto strutturato finale](allegati/GS-VER-335-verifica.json) conserva
+Il [rapporto strutturato finale](allegati/GS-VER-342-verifica.json) conserva
 conteggi, exit status, digest di sorgenti/artefatti/log, ultimo blocco del gate
 condiviso e misure della pulizia. Il successo descritto qui è limitato allo
 snapshot isolato identificato dal relativo manifesto.
@@ -131,12 +131,12 @@ Soltanto nella copia isolata di `StudioHomeView` vengono rimossi quattro
 inserimenti concorrenti del nuovo workspace di ricerca: stato, azione toolbar,
 sheet e azione sulla fonte. Il checkout condiviso resta intatto.
 
-Il [manifesto dello snapshot isolato](allegati/GS-VER-335-snapshot-isolato.json)
+Il [manifesto dello snapshot isolato](allegati/GS-VER-342-snapshot-isolato.json)
 conserva la baseline completa `44dd90f22f1b4b4930f87a6f6e818ccb3efaa5d4`, i
 41 percorsi e SHA-256, l'eccezione della sola copia di `StudioHomeView` e dieci
 file nel frattempo divergenti nel checkout condiviso. Tali divergenze sono
 esplicite e impediscono di equiparare il sorgente verificato al WIP corrente.
-CMP-335 resta `implemented`: il successo isolato non promuove il gate della
+CMP-342 resta `implemented`: il successo isolato non promuove il gate della
 composizione condivisa a `verified`.
 
 Le suite complete SwiftPM e macOS usano directory di build isolate.
@@ -290,7 +290,7 @@ le prove utili non vengono rimossi.
 ### Archivio delle prove e pulizia misurata
 
 L'integratore conserva l'archivio locale
-`~/Library/Caches/GlifiStudio/evidence/GS-VER-335/run-20261128-GNIEvW`.
+`~/Library/Caches/GlifiStudio/evidence/GS-VER-342/run-20261128-GNIEvW`.
 Comprende i 41 sorgenti dello snapshot, tutti i log intermedi/finali,
 le fixture CLI complete con i PDF sintetici e il risultato Xcode finale
 `NativeFinal.xcresult`. Il rapporto strutturato elenca i digest degli archivi,

@@ -7,11 +7,11 @@
 | Identificatore | GS-TST-001 |
 | Tipo | Piano controllato degli scenari di verifica |
 | Versione | 1.0.3 |
-| Stato | Implementato; esiti storici in GS-VER-303, completamento GUI verificato nello snapshot isolato di GS-VER-335; gate condiviso non attestato |
+| Stato | Implementato; esiti storici in GS-VER-303, completamento GUI verificato nello snapshot isolato di GS-VER-342; gate condiviso non attestato |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-28 |
 | Approvazione | Richiesta esplicita di realizzare i test degli scenari di analisi e aggiornare la documentazione |
-| Riferimenti | GS-STD-001-16; GS-API-003; GS-UX-001-17; GS-DOR-303; GS-DOR-335; GS-VER-335 |
+| Riferimenti | GS-STD-001-16; GS-API-003; GS-UX-001-17; GS-DOR-303; GS-DOR-342; GS-VER-342 |
 
 ## Perimetro e inventario
 
@@ -36,7 +36,7 @@ invariato e usa il binding operativo condiviso con la funzione GlifiKit.
 Le diciannove estensioni KH hanno ora `nativeBindings` espliciti: nove flussi
 matriciali, sei linguistici/classificazione/codifica e quattro esplorativi.
 Per questi profili `headlessOnly` è vuoto. Gli esiti runtime della nuova
-integrazione sono registrati separatamente in GS-VER-335; la dichiarazione
+integrazione sono registrati separatamente in GS-VER-342; la dichiarazione
 statica non ne anticipa il superamento. Conteggi e prove dei checkpoint
 storici GS-VER-300/303 non vengono riscritti con il nuovo inventario.
 
@@ -115,7 +115,7 @@ pseudo-lingua, RTL, usabilità o misure prestazionali su hardware di riferimento
 La priorità attuale è macOS; iPadOS è rinviato e si esegue soltanto su richiesta
 esplicita. Esiti osservati, identità dei sorgenti e diagnostici sono in
 [GS-VER-303](../evidenze/GS-VER-303-scenari-di-analisi.md) per il checkpoint
-originario e in [GS-VER-335](../evidenze/GS-VER-335-flussi-tematici-e-dendrogrammi.md)
+originario e in [GS-VER-342](../evidenze/GS-VER-342-flussi-tematici-e-dendrogrammi.md)
 per il completamento dei flussi tematici e dei diciannove adattatori KH.
 
 
@@ -143,4 +143,4 @@ l'inventario complessivo a 188 varianti. GS-SCN-013 registra il percorso dataset
 metadati, preparazione, ripristino e rapporto. Queste sono operazioni di
 persistenza e presentazione: non introducono nuovi kernel numerici o prove
 scientifiche implicite. I test di contratto e i riferimenti normativi sono nella
-matrice; gli esiti realmente osservati sono registrati in GS-VER-336.
+matrice; gli esiti realmente osservati sono registrati in GS-VER-343.
