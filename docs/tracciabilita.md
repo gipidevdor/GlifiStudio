@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.98.0 |
+| Versione | 0.98.1 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-28 |
@@ -873,3 +873,11 @@ e GS-UX-001-18. La lettura privilegia il contenuto; il taccuino collega conclusi
 personali a estratti della revisione originale verificata. La nuova annotazione
 manuale non viene promossa a Evidence scientifica. GS-VER-344 registra gli esiti
 osservati di Core/Kit/CLI/macOS; usabilità con utenti e audit assistivi sono distinti.
+
+Il seguito [GS-VER-345](evidenze/GS-VER-345-scorrimento-studio.md) applica
+GS-APL-002/003 alle dimensioni della finestra, allo scorrimento e ai comandi.
+Il test `studyNativeReaderScrollsLongDocumentsAndPreservesSelectionOnResize`
+verifica la geometria del lettore e la selezione su un testo lungo; composizione
+Home/inspector e finestra documento reale hanno prove separate. I controlli
+automatici non qualificano un audit completo VoiceOver, Voice Control, Full
+Keyboard Access, contrasto, pseudo-lingua o destra-sinistra.

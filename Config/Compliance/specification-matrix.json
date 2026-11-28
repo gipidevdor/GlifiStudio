@@ -6098,13 +6098,17 @@
         "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift",
         "Apps/macOS/StudioStudyModel.swift",
         "Apps/macOS/StudioStudyView.swift",
-        "Apps/macOS/StudioStudyNativeReaders.swift"
+        "Apps/macOS/StudioStudyNativeReaders.swift",
+        "Apps/Shared/StudioHomeModel.swift",
+        "Apps/Shared/StudioHomeView.swift",
+        "Apps/Shared/StudioWorkspaceCommands.swift"
       ],
       "tests": [
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiStudyTests.swift",
         "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudyCommandTests.swift",
         "Packages/GlifiCore/Tests/GlifiBDDTests/GlifiStudySteps.swift",
-        "Apps/macOS/Tests/StudioStudyTests.swift"
+        "Apps/macOS/Tests/StudioStudyTests.swift",
+        "Apps/macOS/Tests/StudioWorkspaceTests.swift"
       ],
       "fixtures": [
         "Packages/GlifiCore/Tests/GlifiBDDTests/Features/StudyWorkflow.feature",
@@ -6112,7 +6116,8 @@
         "Config/Testing/bdd-coverage.json"
       ],
       "evidence": [
-        "docs/evidenze/GS-VER-344-studio-documentale.md"
+        "docs/evidenze/GS-VER-344-studio-documentale.md",
+        "docs/evidenze/GS-VER-345-scorrimento-studio.md"
       ],
       "gate": "G3",
       "status": "implemented",

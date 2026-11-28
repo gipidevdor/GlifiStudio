@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-VER-344 |
 | Tipo | Evidenza di integrazione Core, Kit, CLI e GUI macOS |
-| Versione | 1.4.0 |
+| Versione | 1.4.1 |
 | Stato | Gate automatico e preflight macOS superati dopo il riesame UI; verifica visiva parziale |
 | Responsabile | Codex, coordinamento della copia condivisa |
 | Ultima modifica | 2026-11-28 |
@@ -112,6 +112,13 @@ con il limite di due di GS-API-007. Gli altri riferimenti pendenti rimangono rif
 non viene etichettata `unchanged` per rendere positiva un'attesa.
 
 ## Prova interattiva e limiti manuali
+
+Questa sezione descrive il checkpoint `4799dc8`. Dopo lo sblocco, il riesame ha
+completato il salvataggio e la riapertura delle conclusioni, ma ha anche
+dimostrato che il precedente layout verticale lasciava difetti di composizione
+e di misura della finestra. Correzioni, RED/GREEN e nuove prove sono registrati
+separatamente in [GS-VER-345](GS-VER-345-scorrimento-studio.md); i gate di questo
+checkpoint non attestano quelle modifiche successive.
 
 Sul Mac è stato osservato un percorso reale in italiano con una fonte TXT:
 selezione nativa → anteprima → titolo → raccolta della citazione. Il taccuino è stato

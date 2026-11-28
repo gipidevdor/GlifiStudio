@@ -10,6 +10,13 @@ import PDFKit
 nonisolated enum StudioStudyReaderSlot: String, CaseIterable, Identifiable, Sendable {
     case first, second
     var id: Self { self }
+
+    static func commandTarget(
+        isComparing: Bool, isCompact: Bool, activeSlot: Self, compactSlot: Self
+    ) -> Self {
+        guard isComparing else { return .first }
+        return isCompact ? compactSlot : activeSlot
+    }
 }
 
 nonisolated enum StudioStudyEditor: Identifiable {
@@ -347,6 +354,9 @@ nonisolated struct StudioStudyEditorDraft: Equatable {
         guard reading(slot)?.sourceRevisionID == sourceID else { return }
         nativeSelections[slot] = range
     }
+
+    /// Restores the current native selection when the same reading gets a new view.
+    func nativeSelection(_ slot: StudioStudyReaderSlot) -> NSRange? { nativeSelections[slot] }
 
     func hasNativeSelection(_ slot: StudioStudyReaderSlot) -> Bool {
         guard let range = nativeSelections[slot] else { return false }

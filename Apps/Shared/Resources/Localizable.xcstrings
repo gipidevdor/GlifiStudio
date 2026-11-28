@@ -3231,6 +3231,23 @@
         }
       }
     },
+    "common.method" : {
+      "extractionState": "manual",
+      "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Metodo e provenienza"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Method and provenance"
+          }
+        }
+      }
+    },
     "common.ok" : {
       "extractionState": "manual",
       "localizations": {

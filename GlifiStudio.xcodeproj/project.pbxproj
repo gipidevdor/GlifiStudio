@@ -67,6 +67,7 @@
 		B7000000000000000000000A /* StudioEvaluationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000007 /* StudioEvaluationModel.swift */; };
 		B7000000000000000000000B /* StudioEvaluationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000007 /* StudioEvaluationModel.swift */; };
 		B7000000000000000000000C /* StudioEvaluationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000008 /* StudioEvaluationView.swift */; };
+		B9C400000000000000000003 /* StudioEvaluationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000008 /* StudioEvaluationView.swift */; };
 		B7000000000000000000000D /* StudioCoreMethodRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000009 /* StudioCoreMethodRoute.swift */; };
 		B7000000000000000000000E /* StudioCoreMethodRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000009 /* StudioCoreMethodRoute.swift */; };
 		B7000000000000000000000F /* StudioVisualExportPreparation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7000000000000000000000A /* StudioVisualExportPreparation.swift */; };
@@ -81,6 +82,7 @@
 		B8A200000000000000000003 /* StudioPlotSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A200000000000000000001 /* StudioPlotSeries.swift */; };
 		B8A100000000000000000004 /* StudioWorkspaceCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A100000000000000000002 /* StudioWorkspaceCommands.swift */; };
 		B8A100000000000000000005 /* StudioWorkspaceCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A100000000000000000002 /* StudioWorkspaceCommands.swift */; };
+		B9C400000000000000000004 /* StudioWorkspaceCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A100000000000000000002 /* StudioWorkspaceCommands.swift */; };
 		B8A100000000000000000006 /* StudioFactorAudioGraphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A100000000000000000003 /* StudioFactorAudioGraphTests.swift */; };
 		B71000000000000000000001 /* StudioCorpusMethodsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71000000000000000000001 /* StudioCorpusMethodsTests.swift */; };
 		B71000000000000000000002 /* StudioStatisticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71000000000000000000002 /* StudioStatisticsTests.swift */; };
@@ -777,6 +779,8 @@
 				0559B4DC1E129DB6CA338C5E /* StudioResearchModel.swift in Sources */,
 				B72000000000000000000004 /* StudioLinguisticTests.swift in Sources */,
 				B71000000000000000000003 /* StudioEvaluationTests.swift in Sources */,
+				B9C400000000000000000003 /* StudioEvaluationView.swift in Sources */,
+				B9C400000000000000000004 /* StudioWorkspaceCommands.swift in Sources */,
 				B71000000000000000000002 /* StudioStatisticsTests.swift in Sources */,
 				B71000000000000000000001 /* StudioCorpusMethodsTests.swift in Sources */,
 				B64000000000000000000001 /* StudioCorpusPresentationTests.swift in Sources */,

@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.20.23 |
+| Versione | 1.20.24 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-28 |
@@ -16,6 +16,7 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
+- [GS-VER-345 — Scorrimento e dimensioni dello Studio](GS-VER-345-scorrimento-studio.md) — Riesame della finestra reale e regressioni di layout in corso; esiti finali da registrare
 - [GS-VER-344 — Studio documentale, passaggi e conclusioni](GS-VER-344-studio-documentale.md) — Gate automatico e preflight macOS superati; regressioni, parità, pulizia e limiti della prova visiva registrati
 - [GS-VER-341 — Affidabilità verificabile dei test BDD e dell'inferenza](GS-VER-341-ingegneria-verificabile.md) — Regressioni mirate superate; gate integrato bloccato dai nuovi messaggi tabellari e dal flusso persistente concorrente
 - [GS-VER-333 — Attribuzioni e avvisi degli strumenti BDD](GS-VER-333-licenze-bdd.md) — Superato: avvisi diretti e incorporati, tre copie legali compilate, 19 regressioni e gate macOS
