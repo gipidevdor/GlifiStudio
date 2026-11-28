@@ -17,8 +17,12 @@ fonti, metodi e passaggi di analisi, per risalire dal risultato al testo origina
 
 Il laboratorio macOS aggiunge riassunti estrattivi, ricerca BM25, frequenze,
 diversità lessicale, ponderazione dei termini e distribuzioni di Zipf e Heaps.
-Il laboratorio avanzato offre dodici operazioni sui documenti del progetto,
-con risultati di sessione ed esportazione delle richieste e degli esiti.
+Il catalogo raggruppa i metodi per otto temi di ricerca e mostra lo scopo di
+ogni strumento. L'analisi delle corrispondenze offre il grafico fattoriale;
+il clustering gerarchico lavora su documenti o parole e mostra un dendrogramma
+con zoom, taglio e rami comprimibili. I flussi nativi includono le diciannove
+operazioni KH già disponibili in GlifiKit e CLI, con risultati di sessione
+ed esportazione delle richieste e degli esiti.
 I laboratori dedicati aggiungono selezione LDA, MDS con più avvii, SOM avanzata,
 comunità e layout dei grafi, foreste minime e pipeline linguistica nativa, oltre
 alle analisi dirette del corpus, alla statistica su dati
@@ -27,6 +31,12 @@ ricerca i singoli metodi e conserva l’identità dei risultati di sessione.
 La disponibilità dei metodi nel
 motore, nella riga di comando e nelle app è distinta nella
 [matrice di tracciabilità](docs/tracciabilita.md).
+
+Il percorso **Dati di ricerca** aggiunge anteprima e mapping CSV/Excel XLSX,
+variabili tipizzate e gruppi riutilizzabili, preparazione italiana condivisa e
+analisi avanzate salvate con ripristino delle impostazioni. Formule Excel e il
+formato binario XLS sono rifiutati esplicitamente. Contratti e limiti sono in
+[GS-API-004/005/006](docs/api/06-lavoro-avanzato-persistente.md).
 
 ## Stato del progetto
 
@@ -39,6 +49,11 @@ di rilascio restano aperti. Le verifiche riguardano revisioni precise, registrat
 nelle [evidenze](docs/evidenze/README.md). La
 [baseline di prodotto](docs/specifiche-di-design/10-product-baseline-mvp.md)
 definisce il perimetro della versione 0.1.
+
+La suite [BDD](docs/testing/01-bdd-cucumber-swift.md) associa tutte le 188 varianti
+pubbliche a tre fasi e verifica 795 scenari espansi. Le fonti web consultate e
+le condizioni del loro uso sono nel [registro di provenienza](docs/testing/02-provenienza-scenari.md).
+La copertura dichiarata resta distinta dagli audit interattivi e assistivi.
 
 ## Avvio rapido
 

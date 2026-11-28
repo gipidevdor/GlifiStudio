@@ -115,6 +115,14 @@ struct StudioCorpusMethodsTests {
         #expect(direct.axisValues == result.axisValues)
         #expect(direct.termSelectionIdentifier != nil)
         #expect(direct.corpusDigest != nil)
+        let plot = try #require(previous.visualizations.first)
+        let expectedPlot = try GlifiStudioVisualizationBuilder.factorPlot(direct)
+        #expect(plot == expectedPlot)
+        #expect(plot.artifactID == result.lineage.artifactID)
+        let mark = try #require(plot.marks.first)
+        let selectedSource = model.selectVisualMark(mark, visualizationID: plot.id)
+        #expect(selectedSource == mark.sourceRevisionIDs.first)
+        #expect(model.selectedVisualMarkID == mark.id)
         #expect(try await fixture.session.snapshot().generation == snapshot.generation)
         model.draft.maximumTerms = 0
         do {
@@ -127,6 +135,64 @@ struct StudioCorpusMethodsTests {
         }
         #expect(model.output?.encodedResult == previous.encodedResult)
         #expect(model.output?.completedAt == previous.completedAt)
+        #expect(model.output?.visualizations == previous.visualizations)
+        #expect(model.selectedVisualMarkID == mark.id)
+        await fixture.session.close()
+    }
+
+    @Test(arguments: StudioCorpusClusterUnit.allCases)
+    func hierarchicalViewsUseTheDeclaredUnitsAndThePersistedArtifact(
+        unit: StudioCorpusClusterUnit
+    ) async throws {
+        let fixture = try await makeFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = configuredModel(.hierarchical, ids: fixture.ids)
+        model.draft.clusterUnit = unit
+        let snapshot = try await model.execute(
+            session: fixture.session, sourceRevisionIDs: fixture.ids,
+            sourceNumbers: fixture.numbers, locale: Locale(identifier: "it_IT"))
+        let output = try #require(model.output)
+        guard case let .multivariate(result) = output.payload else {
+            Issue.record("Expected a multivariate result")
+            return
+        }
+        let expectedUnits = unit == .terms ? result.terms : result.sourceRevisionIDs
+        #expect(result.clusterUnitKindIdentifier == unit.rawValue)
+        #expect(result.clusterUnitIdentifiers == expectedUnits)
+        #expect(result.clusterAssignments?.count == expectedUnits.count)
+        let tree = try #require(output.visualizations.first)
+        #expect(tree.family == .dendrogram)
+        let expectedTree = try GlifiStudioVisualizationBuilder.dendrogram(result)
+        #expect(tree == expectedTree)
+        #expect(tree.artifactID == result.lineage.artifactID)
+        #expect(tree.visibleObservationCount == expectedUnits.count)
+        #expect(tree.totalObservationCount == expectedUnits.count)
+        let leaves = tree.marks.filter { $0.kind == .point }
+        #expect(Set(leaves.map(\.label)) == Set(expectedUnits))
+        #expect(leaves.allSatisfy { Set($0.sourceRevisionIDs).isSubset(of: Set(fixture.ids)) })
+        let assignments = try #require(model.tables.first { $0.id == "clusterAssignments" })
+        #expect(assignments.rows.count == expectedUnits.count)
+        if unit == .terms {
+            #expect(assignments.rows.map { $0.values[0] } == result.terms)
+            #expect(assignments.rows.allSatisfy { $0.sourceRevisionID == nil })
+        } else {
+            #expect(assignments.rows.compactMap(\.sourceRevisionID) == result.sourceRevisionIDs)
+        }
+        let leaf = try #require(leaves.first)
+        #expect(model.selectVisualMark(leaf, visualizationID: "stale-view") == nil)
+        #expect(model.selectedVisualMarkID == nil)
+        #expect(
+            model.selectVisualMark(leaf, visualizationID: tree.id)
+                == leaf.sourceRevisionIDs.first)
+        #expect(model.selectedVisualMarkID == leaf.id)
+        #expect(try await fixture.session.snapshot() == snapshot)
+        model.draft.clusterUnit = unit == .terms ? .documents : .terms
+        #expect(model.output?.draft.clusterUnit == unit)
+        #expect(model.output?.visualizations == output.visualizations)
+        model.reset()
+        #expect(model.output == nil)
+        #expect(model.selectedVisualMarkID == nil)
+        #expect(model.selectVisualMark(leaf, visualizationID: tree.id) == nil)
         await fixture.session.close()
     }
 
@@ -164,6 +230,217 @@ struct StudioCorpusMethodsTests {
         #expect(model.output == nil)
         #expect(model.tables.isEmpty)
         #expect(model.draft == StudioCorpusMethodsDraft())
+        await fixture.session.close()
+    }
+
+    @Test func nativeTermEditorsPreserveExplicitCandidatesAndSourceAnnotations() async throws {
+        let fixture = try await makeFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = StudioKHLanguageModel()
+        model.draft.candidates[0].components = "lingua testo"
+        model.draft.candidates[0].frequency = 3
+        model.draft.preprocessingIdentifier = "test.explicit-components.v1"
+        try await model.execute(
+            session: fixture.session, sourceRevisionIDs: fixture.ids,
+            sourceNumbers: fixture.numbers, locale: Locale(identifier: "it_IT"))
+        let scores = try #require(model.output)
+        guard case let .termScores(candidates, provenance, _, _) = scores.request else {
+            Issue.record("Expected explicit term candidates")
+            return
+        }
+        #expect(
+            candidates == [GlifiStudioTermCandidate(components: ["lingua", "testo"], frequency: 3)])
+        #expect(provenance == "test.explicit-components.v1")
+        model.tool = .termExtraction
+        model.draft.annotationSourceID = try #require(fixture.ids.first)
+        try await model.loadAnnotationSource(session: fixture.session)
+        let source = try #require(model.annotationSource)
+        #expect(source.text.hasPrefix("lingua testo"))
+        var first = StudioKHTermTokenDraft()
+        first.surface = "lingua"
+        first.base = "lingua"
+        first.partOfSpeech = "NOUN"
+        first.endUTF8 = 6
+        var second = StudioKHTermTokenDraft()
+        second.surface = "testo"
+        second.base = "testo"
+        second.partOfSpeech = "NOUN"
+        second.startUTF8 = 7
+        second.endUTF8 = 12
+        model.draft.tokens = [first, second]
+        model.draft.linguisticContract = "test.manual-annotations.v1"
+        model.draft.ruleIdentifier = "test.noun-compounds.v1"
+        model.draft.allowedPartsOfSpeech = "NOUN"
+        try await model.execute(
+            session: fixture.session, sourceRevisionIDs: fixture.ids,
+            sourceNumbers: fixture.numbers, locale: Locale(identifier: "it_IT"))
+        let extraction = try #require(model.output)
+        let extractionResult = try #require(extraction.result)
+        guard case let .advanced(.kh(.termExtraction(value))) = extractionResult.payload else {
+            Issue.record("Expected source-bound term extraction")
+            return
+        }
+        #expect(value.occurrences.count == 1)
+        #expect(value.occurrences.first?.documentID == source.sourceRevisionID)
+        #expect(value.occurrences.first?.startUTF8 == 0)
+        #expect(value.occurrences.first?.endUTF8 == 12)
+        #expect(extraction.sourceRevisionIDs == [source.sourceRevisionID])
+        #expect(extraction.eligibleSourceRevisionIDs == fixture.ids)
+        #expect(extraction.annotatedSource == source)
+        let snapshot = try await fixture.session.snapshot()
+        #expect(extraction.projectID == snapshot.projectID)
+        #expect(extraction.generation == snapshot.generation)
+        #expect(
+            extraction.contentDigests[source.sourceRevisionID]
+                == snapshot.sources.first {
+                    $0.sourceRevisionID == source.sourceRevisionID
+                }?.contentDigest)
+        model.draft.tokens[0].partOfSpeech = ""
+        await #expect(throws: GlifiStudioFailure.self) {
+            try await model.execute(
+                session: fixture.session, sourceRevisionIDs: fixture.ids,
+                sourceNumbers: fixture.numbers, locale: Locale(identifier: "it_IT"))
+        }
+        #expect(model.output?.encodedResult == extraction.encodedResult)
+        model.reset()
+        #expect(model.output == nil)
+        #expect(model.annotationSource == nil)
+        #expect(model.classifierState == nil)
+        await fixture.session.close()
+    }
+
+    @Test func nativeClassifierContinuationUsesSufficientStatisticsAndExportsCanonicalResults()
+        async throws
+    {
+        let fixture = try await makeFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = StudioKHLanguageModel()
+        model.tool = .incrementalClassifier
+        let ids = Array(fixture.ids.prefix(5))
+        for (index, id) in ids.prefix(4).enumerated() {
+            model.draft.labels[id] = index < 2 ? "A" : "B"
+        }
+        try await model.execute(
+            session: fixture.session, sourceRevisionIDs: ids,
+            sourceNumbers: fixture.numbers, locale: Locale(identifier: "it_IT"))
+        let trained = try #require(model.classifierState)
+        #expect(trained.documentCounts.reduce(0, +) == 4)
+        model.tool = .continueClassifier
+        try await model.execute(
+            session: fixture.session, sourceRevisionIDs: ids,
+            sourceNumbers: fixture.numbers, locale: Locale(identifier: "it_IT"))
+        let continued = try #require(model.output)
+        #expect(continued.sourceRevisionIDs == ids)
+        #expect(continued.sourceNumbers == fixture.numbers.filter { ids.contains($0.key) })
+        #expect(Set(continued.contentDigests.keys) == Set(ids))
+        #expect(
+            continued.encodedRequest
+                == (try GlifiStudioTextAnalysisRequest.advanced(.kh(continued.request))
+                    .canonicalData()))
+        guard
+            case let .continueClassifier(state, documents, labels, predictions) = continued.request
+        else {
+            Issue.record("Expected a continuation request")
+            return
+        }
+        #expect(state == trained)
+        #expect(documents.count == 4)
+        #expect(labels.count == 4)
+        #expect(predictions.count == 1)
+        #expect(continued.state?.documentCounts.reduce(0, +) == 8)
+        let canonical = try await GlifiStudioKHAnalysis.execute(continued.request)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        #expect(continued.encodedResult == (try encoder.encode(canonical)))
+        let stateURL = fixture.root.appending(path: "classifier-state.json")
+        try JSONEncoder().encode(trained).write(to: stateURL)
+        let restored = StudioKHLanguageModel()
+        try await restored.importClassifierState(from: stateURL)
+        #expect(restored.classifierState == trained)
+        let invalidState = GlifiStudioNaiveBayesTrainingState(
+            classes: trained.classes, vocabulary: trained.vocabulary,
+            documentCounts: trained.documentCounts, tokenCounts: trained.tokenCounts, smoothing: 0)
+        try JSONEncoder().encode(invalidState).write(to: stateURL)
+        await #expect(throws: GlifiStudioFailure.self) {
+            try await restored.importClassifierState(from: stateURL)
+        }
+        #expect(restored.classifierState == trained)
+        for (malformedJSON, expectedCode) in [
+            ("{\"unknown\":true}", "text-analysis.unknown-field"),
+            ("not JSON", "ui.kh-language.invalid-input"),
+        ] {
+            try Data(malformedJSON.utf8).write(to: stateURL)
+            do {
+                try await restored.importClassifierState(from: stateURL)
+                Issue.record("Malformed serialized state must be rejected before publication")
+            } catch let failure as GlifiStudioFailure {
+                #expect(failure.code == expectedCode)
+                #expect(failure.category == "invalidInput")
+                #expect(failure.retryDisposition == "afterCorrection")
+            }
+            #expect(restored.classifierState == trained)
+        }
+        model.reset()
+        #expect(model.classifierState == nil)
+        await fixture.session.close()
+    }
+
+    @Test func nativeAgreementAndCodingFlowsKeepLabelsGroupsAndCorrectionsExplicit() async throws {
+        let fixture = try await makeFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = StudioKHLanguageModel()
+        for (index, id) in fixture.ids.enumerated() {
+            model.draft.labels[id] = index < 4 ? "A" : "B"
+        }
+        model.tool = .validateClassifierWithAgreement
+        try await model.execute(
+            session: fixture.session, sourceRevisionIDs: fixture.ids,
+            sourceNumbers: fixture.numbers, locale: Locale(identifier: "it_IT"))
+        let validation = try #require(model.output)
+        #expect(validation.metrics.contains { $0.key == "kappa" })
+        #expect(validation.tables.contains { $0.id == "confusion" })
+        model.tool = .codeCrosstabSignificance
+        model.draft.rules = "*Mare\nmare"
+        model.draft.correction = .none
+        model.draft.labels[fixture.ids[0]] = ""
+        try await model.execute(
+            session: fixture.session, sourceRevisionIDs: fixture.ids,
+            sourceNumbers: fixture.numbers, locale: Locale(identifier: "it_IT"))
+        let coding = try #require(model.output)
+        guard case let .codeCrosstabSignificance(units, rules, groups, correction) = coding.request
+        else {
+            Issue.record("Expected coding significance")
+            return
+        }
+        #expect(units.count == fixture.ids.count)
+        #expect(rules == "*Mare\nmare")
+        #expect(groups.filter { $0 == nil }.count == 1)
+        #expect(correction == .none)
+        #expect(coding.metrics.first { $0.key == "excluded-documents" }?.value == "1")
+        await fixture.session.close()
+    }
+
+    @Test func resettingLanguageWorkflowInvalidatesAResultWithoutCancellingTheCaller() async throws
+    {
+        let fixture = try await makeFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = StudioKHLanguageModel()
+        model.draft.candidates[0].components = "lingua testo"
+        model.draft.preprocessingIdentifier = "test.manual-segmentation.v1"
+        var entered = false
+        let operation = Task.immediate { @MainActor in
+            entered = true
+            try await model.execute(
+                session: fixture.session, sourceRevisionIDs: fixture.ids,
+                sourceNumbers: fixture.numbers, locale: Locale(identifier: "it_IT"))
+        }
+        #expect(entered)
+        model.reset()
+        await #expect(throws: GlifiStudioFailure.self) { try await operation.value }
+        #expect(!operation.isCancelled)
+        #expect(model.output == nil)
+        #expect(model.classifierState == nil)
+        #expect(model.annotationSource == nil)
         await fixture.session.close()
     }
 

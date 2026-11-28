@@ -67,7 +67,7 @@ nonisolated enum StudioStatisticsPresentation {
     }
 }
 
-nonisolated private struct StudioStatisticsDraft: Equatable, Sendable {
+nonisolated private struct StudioStatisticsDraft: Codable, Equatable, Sendable {
     let operation: GlifiStudioStatisticsOperation
     let input: String
     let contrasts: String
@@ -87,6 +87,7 @@ nonisolated private struct StudioStatisticsDraft: Equatable, Sendable {
     var pane: StudioStatisticsPane = .configuration
     var search = "" { didSet { scheduleFilter() } }
     private(set) var result: GlifiStudioStatisticsResult?
+    private(set) var completedAt: Date?
     private(set) var page = 0
     private(set) var matchingRowCount = 0
     private(set) var visibleRows: [StudioStatisticsRow] = []
@@ -137,6 +138,7 @@ nonisolated private struct StudioStatisticsDraft: Equatable, Sendable {
         parameters = .init()
         pane = .configuration
         result = nil
+        completedAt = nil
         capturedDraft = nil
         search = ""
         page = 0
@@ -181,6 +183,7 @@ nonisolated private struct StudioStatisticsDraft: Equatable, Sendable {
         filterTask?.cancel()
         filterRevision = UUID()
         result = next
+        completedAt = .now
         capturedDraft = submittedDraft
         capturedInputRows = capturedRows
         inputPage = 0
@@ -188,6 +191,79 @@ nonisolated private struct StudioStatisticsDraft: Equatable, Sendable {
         filteredIndices = Array(next.rows.indices)
         matchingRowCount = next.rows.count
         page = 0
+        refreshVisibleRows()
+        pane = .results
+    }
+
+    nonisolated private struct Archive: Codable, Sendable {
+        let client: String
+        let version: Int
+        let draft: StudioStatisticsDraft
+        let result: GlifiStudioStatisticsResult
+        let completedAt: Date
+    }
+
+    func archiveData() async throws -> Data {
+        let expected = revision
+        guard let result, let capturedDraft, let completedAt else {
+            throw StudioWorkbenchArchiveCodec.failure()
+        }
+        let bytes = try await StudioWorkbenchArchiveCodec.encode(
+            Archive(
+                client: "statistics", version: 1, draft: capturedDraft, result: result,
+                completedAt: completedAt))
+        try Task.checkCancellation()
+        guard revision == expected else { throw CancellationError() }
+        return bytes
+    }
+
+    func saveArchive(session: GlifiStudioProjectSession, title: String) async throws
+        -> GlifiStudioSavedAnalysis
+    {
+        guard let result, let completedAt else { throw StudioWorkbenchArchiveCodec.failure() }
+        let presentation = try await archiveData()
+        return try await session.captureWorkbenchAnalysis(
+            command: "statistics", requestJSON: StudioWorkbenchArchiveCodec.encode(result.request),
+            resultJSON: StudioWorkbenchArchiveCodec.encode(result),
+            methodIdentifier: result.methodIdentifier,
+            title: title, presentationJSON: presentation,
+            createdAtUnixMilliseconds: Int64(completedAt.timeIntervalSince1970 * 1_000))
+    }
+
+    @concurrent private static func decodeArchive(_ data: Data, saved: GlifiStudioSavedAnalysis)
+        async throws -> (Archive, [StudioStatisticsRow])
+    {
+        try Task.checkCancellation()
+        guard data.count <= 8 * 1_048_576 else { throw StudioWorkbenchArchiveCodec.failure() }
+        let archive = try JSONDecoder().decode(Archive.self, from: data)
+        guard archive.client == "statistics", archive.version == 1,
+            archive.result.rows.count <= 100_000,
+            archive.result.rows.allSatisfy({ $0.count == archive.result.columns.count })
+        else { throw StudioWorkbenchArchiveCodec.failure() }
+        try StudioWorkbenchArchiveCodec.validate(
+            saved: saved, command: "statistics", request: archive.result.request,
+            result: archive.result, method: archive.result.methodIdentifier)
+        return (archive, try await captureInput(archive.result.request))
+    }
+
+    func restoreArchive(_ data: Data, saved: GlifiStudioSavedAnalysis) async throws {
+        let expected = UUID()
+        revision = expected
+        let (archive, capturedRows) = try await Self.decodeArchive(data, saved: saved)
+        try Task.checkCancellation()
+        guard revision == expected else { throw CancellationError() }
+        reset()
+        operation = archive.draft.operation
+        input = archive.draft.input
+        contrastsDraft = archive.draft.contrasts
+        probabilitiesDraft = archive.draft.probabilities
+        parameters = archive.draft.parameters
+        capturedDraft = archive.draft
+        result = archive.result
+        completedAt = archive.completedAt
+        capturedInputRows = capturedRows
+        filteredIndices = Array(archive.result.rows.indices)
+        matchingRowCount = archive.result.rows.count
         refreshVisibleRows()
         pane = .results
     }

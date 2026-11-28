@@ -8,7 +8,7 @@ import GlifiCore
 /// The vocabulary is selected by decreasing corpus frequency, with lexical ties,
 /// then stored lexicographically. Documents retain their complete lexical tokens;
 /// the term cap applies only to the dense exploratory matrix.
-public struct GlifiStudioProjectTextAnalysisInput: Equatable, Sendable {
+public struct GlifiStudioProjectTextAnalysisInput: Codable, Equatable, Sendable {
     /// Project that owns the immutable revisions.
     public let projectID: String
     /// Project generation captured before reading the selected revisions.
@@ -29,6 +29,10 @@ public struct GlifiStudioProjectTextAnalysisInput: Equatable, Sendable {
     public let matrix: [[Double]]
     /// Complete lexical token count across the selected revisions.
     public let lexicalTokenCount: Int
+    /// Canonical identity of the shared preparation captured before tokenization.
+    public let preparationDigest: String
+    /// Resolved dictionary and linguistic settings captured for later restoration.
+    public let preparation: GlifiStudioCorpusPreparation
 }
 
 extension GlifiStudioTextAnalytics {
@@ -53,6 +57,7 @@ extension GlifiStudioTextAnalytics {
         allowsEmptyLexicon: Bool = false
     ) async throws(GlifiStudioFailure) -> GlifiStudioProjectTextAnalysisInput {
         do {
+            try await session.ensureOpen(operation: .analyze)
             let snapshot = try await session.snapshot()
             let selected = Set(sourceRevisionIDs)
             guard !selected.isEmpty, selected.count == sourceRevisionIDs.count,
@@ -70,6 +75,9 @@ extension GlifiStudioTextAnalytics {
                 byteCount += source.byteCount
             }
 
+            let research = try await GlifiStudioResearchState(session.project.researchState())
+            let preparation = try research.preparation.core()
+            let preparationDigest = try research.preparation.digest()
             var documents: [[String]] = []
             var units: [GlifiStudioAutomaticCodingUnit] = []
             var frequencies: [String: Int] = [:]
@@ -87,8 +95,9 @@ extension GlifiStudioTextAnalytics {
                 guard imported.contentDigest == source.contentDigest else {
                     throw projectInputFailure()
                 }
-                let document = try GlifiCodingDocument(
-                    id: source.sourceRevisionID, text: imported.text)
+                let variables = research.codingVariables(sourceRevisionID: source.sourceRevisionID)
+                let document = try preparation.prepare(
+                    text: imported.text, id: source.sourceRevisionID, variables: variables)
                 guard document.tokens.count <= projectLaboratoryMaximumTokens - tokenCount else {
                     throw projectInputFailure(resource: true)
                 }
@@ -96,7 +105,8 @@ extension GlifiStudioTextAnalytics {
                 let tokens = document.tokens.map(\.base)
                 documents.append(tokens)
                 units.append(
-                    GlifiStudioAutomaticCodingUnit(id: source.sourceRevisionID, text: imported.text)
+                    GlifiStudioAutomaticCodingUnit(
+                        id: source.sourceRevisionID, text: imported.text, variables: variables)
                 )
                 for token in tokens { frequencies[token, default: 0] += 1 }
             }
@@ -120,20 +130,27 @@ extension GlifiStudioTextAnalytics {
                 sourceRevisionIDs: sources.map(\.sourceRevisionID),
                 contentDigests: sources.map(\.contentDigest), documents: documents,
                 codingUnits: units, terms: terms, vocabularySize: frequencies.count,
-                matrix: matrix, lexicalTokenCount: tokenCount)
+                matrix: matrix, lexicalTokenCount: tokenCount,
+                preparationDigest: preparationDigest, preparation: research.preparation)
         } catch let failure as GlifiStudioFailure {
+            if failure.category == "cancelled" { throw projectInputCancellation() }
             throw failure
         } catch let failure as GlifiFailure {
+            if failure.category == .cancelled { throw projectInputCancellation() }
             throw GlifiStudioFailure(failure)
         } catch is CancellationError {
-            throw GlifiStudioFailure(
-                code: "operation.cancelled", category: "cancelled", operation: "analyze",
-                retryDisposition: "newRequest", retainedState: "unchanged",
-                messageKey: "failure.category.cancelled")
+            throw projectInputCancellation()
         } catch {
             throw projectInputFailure()
         }
     }
+}
+
+private func projectInputCancellation() -> GlifiStudioFailure {
+    GlifiStudioFailure(
+        code: "operation.cancelled", category: "cancelled", operation: "analyze",
+        retryDisposition: "newRequest", retainedState: "unchanged",
+        messageKey: "failure.category.cancelled")
 }
 
 private func projectInputFailure(resource: Bool = false) -> GlifiStudioFailure {

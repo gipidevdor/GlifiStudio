@@ -7,8 +7,8 @@ import GlifiCore
 public actor GlifiStudioProjectSession {
     private static let maximumActiveAnalysisExecutionCount = 1
 
-    private let engine: GlifiEngine
-    private let project: GlifiProjectPackage
+    package let engine: GlifiEngine
+    package let project: GlifiProjectPackage
     private let runtimeEnvironment: GlifiStudioRuntimeEnvironment
     private let activityProvider: GlifiStudioActivityProvider
     private var isClosed = false
@@ -936,7 +936,7 @@ public actor GlifiStudioProjectSession {
     }
 
     /// Applies the common session admission and failure boundary to one operation.
-    private func performOperation<Result>(
+    package func performOperation<Result>(
         _ operation: GlifiOperationKind,
         _ body: () async throws -> Result
     ) async throws -> Result {
@@ -988,7 +988,7 @@ public actor GlifiStudioProjectSession {
         activeAnalysisExecutions[operationID] = nil
     }
 
-    private func ensureOpen(operation: GlifiOperationKind? = nil) throws {
+    package func ensureOpen(operation: GlifiOperationKind? = nil) throws {
         guard !isClosed else {
             throw GlifiStudioFailure(
                 GlifiFailure(

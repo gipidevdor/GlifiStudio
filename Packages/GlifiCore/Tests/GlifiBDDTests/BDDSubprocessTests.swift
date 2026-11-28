@@ -35,6 +35,19 @@ struct BDDSubprocessTests {
         }
     }
 
+    @Test("Output beyond the byte budget is rejected before reading into memory")
+    func rejectsOversizedOutput() async throws {
+        try await withSubprocessDirectory { directory in
+            await #expect(throws: BDDSubprocessFailure.outputLimitExceeded) {
+                try await BDDSubprocess.run(
+                    executable: URL(filePath: "/bin/dd"),
+                    arguments: ["if=/dev/zero", "bs=1048577", "count=1"], directory: directory)
+            }
+            let remainingFiles = try FileManager.default.contentsOfDirectory(atPath: directory.path)
+            #expect(remainingFiles.isEmpty)
+        }
+    }
+
     @Test("Preventive cancellation never launches a child")
     func preventsLaunch() async throws {
         try await withSubprocessDirectory { directory in

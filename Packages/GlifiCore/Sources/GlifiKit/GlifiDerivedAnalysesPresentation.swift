@@ -1674,17 +1674,13 @@ public enum GlifiStudioMultivariateMethod: Equatable, Sendable {
     case nonNegativeFactorization(rank: Int, seed: UInt64, restarts: Int)
     /// Agglomerative clustering with linkage `single`, `complete`, `average` or `ward`.
     case hierarchical(linkage: String, clusterCount: Int)
+    /// Agglomerative clustering of unit-sum term profiles across documents.
+    case hierarchicalTerms(linkage: String, clusterCount: Int)
     /// K-means with k-means++ initialization.
     case kMeans(clusterCount: Int, seed: UInt64, restarts: Int)
 
     func coreValue() throws -> GlifiMultivariateMethod {
-        switch self {
-        case .correspondence: return .correspondence
-        case let .principalComponents(scaled): return .principalComponents(scaled: scaled)
-        case let .latentSemantic(rank): return .latentSemantic(rank: rank)
-        case let .nonNegativeFactorization(rank, seed, restarts):
-            return .nonNegativeFactorization(rank: rank, seed: seed, restarts: restarts)
-        case let .hierarchical(linkage, clusterCount):
+        func parsedLinkage(_ linkage: String) throws -> GlifiLinkage {
             guard let value = GlifiLinkage(rawValue: linkage) else {
                 throw GlifiFailure(
                     code: "multivariate.invalid-linkage",
@@ -1695,7 +1691,19 @@ public enum GlifiStudioMultivariateMethod: Equatable, Sendable {
                     messageKey: "failure.multivariate.invalid-linkage"
                 )
             }
-            return .hierarchical(linkage: value, clusterCount: clusterCount)
+            return value
+        }
+        switch self {
+        case .correspondence: return .correspondence
+        case let .principalComponents(scaled): return .principalComponents(scaled: scaled)
+        case let .latentSemantic(rank): return .latentSemantic(rank: rank)
+        case let .nonNegativeFactorization(rank, seed, restarts):
+            return .nonNegativeFactorization(rank: rank, seed: seed, restarts: restarts)
+        case let .hierarchical(linkage, clusterCount):
+            return try .hierarchical(linkage: parsedLinkage(linkage), clusterCount: clusterCount)
+        case let .hierarchicalTerms(linkage, clusterCount):
+            return try .hierarchicalTerms(
+                linkage: parsedLinkage(linkage), clusterCount: clusterCount)
         case let .kMeans(clusterCount, seed, restarts):
             return .kMeans(clusterCount: clusterCount, seed: seed, restarts: restarts)
         }
@@ -1704,7 +1712,7 @@ public enum GlifiStudioMultivariateMethod: Equatable, Sendable {
 
 /// One merge of an agglomerative tree.
 public struct GlifiStudioMerge: Codable, Equatable, Sendable {
-    /// First child: `0..<n` documents, `n+s` the cluster of step `s`.
+    /// First child: `0..<n` clustered units, `n+s` the cluster of step `s`.
     public let first: Int
     /// Second child.
     public let second: Int
@@ -1752,8 +1760,18 @@ public struct GlifiStudioMultivariateResult: Codable, Equatable, Sendable {
     public let excludedSourceRevisionIDs: [String]
     /// Terms excluded for zero mass or constant value.
     public let excludedTerms: [String]
-    /// Cluster per document (HAC cut, k-means).
+    /// Cluster per declared unit (HAC cut, k-means).
     public let clusterAssignments: [Int]?
+    /// Contributing documents aligned with term cluster units; absent for document methods.
+    public let clusterUnitSourceRevisionIDs: [[String]]?
+    /// Stable kind of clustered units: `terms` or `documents`.
+    public var clusterUnitKindIdentifier: String {
+        representationIdentifier == "term-document-relative-frequency-v1" ? "terms" : "documents"
+    }
+    /// Stable clustered unit order used by assignments and merge child identities.
+    public var clusterUnitIdentifiers: [String] {
+        clusterUnitKindIdentifier == "terms" ? terms : sourceRevisionIDs
+    }
     /// Merge tree (HAC).
     public let merges: [GlifiStudioMerge]?
     /// Final objective (NMF, k-means).
@@ -1781,6 +1799,7 @@ public struct GlifiStudioMultivariateResult: Codable, Equatable, Sendable {
         sourceRevisionIDs = value.sourceRevisionIDs
         terms = value.terms
         clusterAssignments = value.clusterAssignments
+        clusterUnitSourceRevisionIDs = value.termSourceRevisionIDs
         var axisValues: [Double] = []
         var axisShares: [Double] = []
         var rows: [[Double]] = []

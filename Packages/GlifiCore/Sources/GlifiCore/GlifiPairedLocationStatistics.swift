@@ -238,11 +238,23 @@ extension GlifiStatisticalFoundation {
             ? locationScale(anchorDifference, by: -scaleExponent)
             : locationScale(first.anchor, by: -scaleExponent)
                 - locationScale(second.anchor, by: -scaleExponent)
+        let firstMeanOffset = locationScale(
+            first.meanOffset, by: first.scaleExponent - scaleExponent)
+        let secondMeanOffset = locationScale(
+            second.meanOffset, by: second.scaleExponent - scaleExponent)
         let normalizedDifference =
-            normalizedAnchorDifference
-            + locationScale(first.meanOffset, by: first.scaleExponent - scaleExponent)
-            - locationScale(second.meanOffset, by: second.scaleExponent - scaleExponent)
-        let d = normalizedDifference / normalizedDeviation
+            normalizedAnchorDifference + firstMeanOffset - secondMeanOffset
+        let d: Double
+        if normalizedAnchorDifference.isInfinite, anchorDifference.isFinite {
+            // Division before power-of-two restoration avoids an overflowing intermediate.
+            // Keep the normalized denominator: the reported physical SD can be subnormal.
+            d =
+                locationScale(
+                    anchorDifference / normalizedDeviation, by: -scaleExponent)
+                + (firstMeanOffset - secondMeanOffset) / normalizedDeviation
+        } else {
+            d = normalizedDifference / normalizedDeviation
+        }
         guard pooled.isFinite, pooled > 0, d.isFinite else {
             throw pairedStatisticsFailure("statistics.non-finite-result", category: .invalidInput)
         }
@@ -290,9 +302,18 @@ extension GlifiStatisticalFoundation {
             ? locationScale(anchorDifference, by: -values.scaleExponent)
             : locationScale(values.anchor, by: -values.scaleExponent)
                 - locationScale(hypothesizedMean, by: -values.scaleExponent)
-        let statistic =
-            (normalizedAnchorDifference + values.meanOffset)
-            / (normalizedDeviation / Double(sample.count).squareRoot())
+        let normalizedStandardError = normalizedDeviation / Double(sample.count).squareRoot()
+        let statistic: Double
+        if normalizedAnchorDifference.isInfinite, anchorDifference.isFinite {
+            // A finite contrast can overflow while changing units, before the final division.
+            statistic =
+                locationScale(
+                    anchorDifference / normalizedStandardError, by: -values.scaleExponent)
+                + values.meanOffset / normalizedStandardError
+        } else {
+            statistic =
+                (normalizedAnchorDifference + values.meanOffset) / normalizedStandardError
+        }
         guard deviation.isFinite, deviation > 0, statistic.isFinite else {
             throw pairedStatisticsFailure("statistics.non-finite-result", category: .invalidInput)
         }

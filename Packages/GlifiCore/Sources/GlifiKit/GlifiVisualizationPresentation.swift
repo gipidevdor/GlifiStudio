@@ -131,6 +131,18 @@ public struct GlifiStudioVisualArgument: Codable, Equatable, Sendable {
     public let value: GlifiStudioVisualCell
 }
 
+/// Complete topology retained for view-only cuts and branch expansion.
+public struct GlifiStudioDendrogramTree: Codable, Equatable, Sendable {
+    /// Canonical unit order, independent from drawing order.
+    public let leafIdentifiers: [String]
+    /// Contributing sources aligned with the units.
+    public let leafSourceRevisionIDs: [[String]]
+    /// `documents` or `terms`.
+    public let unitKindIdentifier: String
+    /// Complete merge tree, including branches hidden by the client.
+    public let merges: [GlifiStudioMerge]
+}
+
 /// Serializable view specification of one persisted Artifact.
 public struct GlifiStudioVisualization: Codable, Equatable, Identifiable, Sendable {
     /// Stable identity: specification and source Artifact.
@@ -175,6 +187,8 @@ public struct GlifiStudioVisualization: Codable, Equatable, Identifiable, Sendab
     public let summaryKey: String
     /// Arguments of the accessible summary.
     public let summaryArguments: [GlifiStudioVisualArgument]
+    /// Optional topology; absent in view JSON written before interactive cuts.
+    public var dendrogramTree: GlifiStudioDendrogramTree? = nil
 
     /// Resolves each selectable table row to the mark that carries its source lineage.
     public var tableSelectionMarks: [String: GlifiStudioVisualMark] {
@@ -394,19 +408,24 @@ public enum GlifiStudioVisualizationBuilder {
         guard let merges = result.merges else {
             return nil
         }
-        let leaves = result.sourceRevisionIDs
+        let leaves = result.clusterUnitIdentifiers
+        let unitKind = result.clusterUnitKindIdentifier
+        let leafSources: [[String]]
+        if let sources = result.clusterUnitSourceRevisionIDs {
+            leafSources = sources
+        } else if unitKind == "documents" {
+            leafSources = leaves.map { [$0] }
+        } else {
+            throw visualizationFailure("visualization.merge-shape-mismatch")
+        }
         let leafCount = leaves.count
         guard leafCount >= 2, merges.count == leafCount - 1 else {
             throw visualizationFailure("visualization.merge-shape-mismatch")
         }
-        for (step, merge) in merges.enumerated() {
-            let limit = leafCount + step
-            guard merge.first >= 0, merge.first < limit, merge.second >= 0,
-                merge.second < limit, merge.first != merge.second
-            else {
-                throw visualizationFailure("visualization.merge-shape-mismatch")
-            }
-        }
+        let tree = GlifiStudioDendrogramTree(
+            leafIdentifiers: leaves, leafSourceRevisionIDs: leafSources,
+            unitKindIdentifier: unitKind, merges: merges)
+        try validateDendrogram(tree)
         let order = leafOrder(merges: merges, leafCount: leafCount)
         var position = [Int: Double]()
         for (index, leaf) in order.enumerated() {
@@ -434,7 +453,7 @@ public enum GlifiStudioVisualizationBuilder {
             descendants[node] = members
             position[node] = (firstX + secondX) / 2
             height[node] = merge.height
-            let sources = members.map { leaves[$0] }
+            let sources = Array(Set(members.flatMap { leafSources[$0] })).sorted()
             let geometry: [(String, Double, Double, Double, Double)] = [
                 ("first", firstX, firstY, firstX, merge.height),
                 ("second", secondX, secondY, secondX, merge.height),
@@ -485,8 +504,8 @@ public enum GlifiStudioVisualizationBuilder {
                     y2: nil,
                     magnitude: nil,
                     isEmphasized: true,
-                    lineageClass: .exact,
-                    sourceRevisionIDs: [leaves[leaf]]
+                    lineageClass: unitKind == "terms" ? .contributive : .exact,
+                    sourceRevisionIDs: leafSources[leaf]
                 )
             )
         }
@@ -510,13 +529,13 @@ public enum GlifiStudioVisualizationBuilder {
                     series: "cut",
                     label: "\(clusterCount)",
                     x: 0,
-                    y: (lower + upper) / 2,
+                    y: lower + (upper - lower) / 2,
                     x2: Double(leafCount - 1),
-                    y2: (lower + upper) / 2,
+                    y2: lower + (upper - lower) / 2,
                     magnitude: nil,
                     isEmphasized: true,
                     lineageClass: .derivational,
-                    sourceRevisionIDs: leaves
+                    sourceRevisionIDs: Array(Set(leafSources.flatMap { $0 })).sorted()
                 )
             )
         }
@@ -567,13 +586,215 @@ public enum GlifiStudioVisualizationBuilder {
             emphasisIdentifier: nil,
             excludedLabels: [],
             caveatKeys: caveats,
-            summaryKey: "visual.summary.dendrogram",
+            summaryKey: unitKind == "terms"
+                ? "visual.summary.dendrogram-terms" : "visual.summary.dendrogram",
             summaryArguments: [
                 GlifiStudioVisualArgument(name: "documents", value: .integer(leafCount)),
                 GlifiStudioVisualArgument(name: "clusters", value: .integer(clusterCount)),
                 GlifiStudioVisualArgument(name: "height", value: .decimal(maximumHeight)),
-            ]
+            ],
+            dendrogramTree: tree
         )
+    }
+
+    /// Changes only the displayed partition of an existing complete dendrogram.
+    ///
+    /// Exactly one cut is required; height cuts include every merge at that height.
+    public static func recutDendrogram(
+        _ visualization: GlifiStudioVisualization,
+        clusterCount: Int? = nil, height: Double? = nil
+    ) throws(GlifiStudioFailure) -> GlifiStudioVisualization {
+        guard visualization.family == .dendrogram, let tree = visualization.dendrogramTree else {
+            throw visualizationInputFailure("visualization.merge-shape-mismatch")
+        }
+        guard (clusterCount == nil) != (height == nil) else {
+            throw visualizationInputFailure("visualization.invalid-cut")
+        }
+        do {
+            try validateDendrogram(tree)
+            try validateDendrogramView(visualization, tree: tree)
+        } catch {
+            throw visualizationInputFailure(error.code)
+        }
+        let count = tree.leafIdentifiers.count
+        let retained: Int
+        if let clusterCount {
+            guard (1...count).contains(clusterCount) else {
+                throw visualizationInputFailure("visualization.invalid-cut")
+            }
+            retained = count - clusterCount
+        } else if let height, height.isFinite, height >= 0 {
+            retained = tree.merges.prefix { $0.height <= height }.count
+        } else {
+            throw visualizationInputFailure("visualization.invalid-cut")
+        }
+        var parent = Array(0..<(2 * count - 1))
+        func root(_ index: Int) -> Int {
+            var value = index
+            while parent[value] != value { value = parent[value] }
+            return value
+        }
+        for (step, merge) in tree.merges.prefix(retained).enumerated() {
+            parent[root(merge.first)] = count + step
+            parent[root(merge.second)] = count + step
+        }
+        var labels: [Int: Int] = [:]
+        let assignments = (0..<count).map { index in
+            let identity = root(index)
+            if let label = labels[identity] { return label }
+            let label = labels.count
+            labels[identity] = label
+            return label
+        }
+        let indices = Dictionary(
+            uniqueKeysWithValues: tree.leafIdentifiers.enumerated().map {
+                ("leaf:\($0.element)", $0.offset)
+            })
+        var marks = visualization.marks.filter { $0.kind != .rule }.map { mark in
+            guard let index = indices[mark.id] else { return mark }
+            return GlifiStudioVisualMark(
+                id: mark.id, kind: mark.kind, series: "cluster.\(assignments[index] + 1)",
+                label: mark.label, x: mark.x, y: mark.y, x2: mark.x2, y2: mark.y2,
+                magnitude: mark.magnitude, isEmphasized: mark.isEmphasized,
+                lineageClass: mark.lineageClass, sourceRevisionIDs: mark.sourceRevisionIDs)
+        }
+        var caveats = visualization.caveatKeys.filter { $0 != "caveat.visual.tied-cut-height" }
+        let cutHeight: Double?
+        if let height {
+            cutHeight = height
+        } else if retained > 0, retained < tree.merges.count {
+            let lower = tree.merges[retained - 1].height
+            let upper = tree.merges[retained].height
+            cutHeight = lower + (upper - lower) / 2
+            if lower == upper { caveats.append("caveat.visual.tied-cut-height") }
+        } else {
+            cutHeight = nil
+        }
+        if let cutHeight {
+            marks.append(
+                GlifiStudioVisualMark(
+                    id: "cut:\(labels.count)", kind: .rule, series: "cut", label: "\(labels.count)",
+                    x: 0, y: cutHeight, x2: Double(count - 1), y2: cutHeight, magnitude: nil,
+                    isEmphasized: true, lineageClass: .derivational,
+                    sourceRevisionIDs: Array(Set(tree.leafSourceRevisionIDs.flatMap { $0 }))
+                        .sorted()))
+        }
+        let axes = visualization.axes.map { axis in
+            GlifiStudioVisualAxis(
+                fieldIdentifier: axis.fieldIdentifier, labelKey: axis.labelKey,
+                ordinal: axis.ordinal, share: axis.share, unitIdentifier: axis.unitIdentifier,
+                scaleIdentifier: axis.scaleIdentifier, lowerBound: axis.lowerBound,
+                upperBound: axis.fieldIdentifier == "merge-height"
+                    ? max(tree.merges.last?.height ?? 0, cutHeight ?? 0) : axis.upperBound)
+        }
+        return GlifiStudioVisualization(
+            specificationIdentifier: visualization.specificationIdentifier,
+            family: visualization.family, titleKey: visualization.titleKey,
+            artifactID: visualization.artifactID, analysisNodeID: visualization.analysisNodeID,
+            analysisIdentifier: visualization.analysisIdentifier,
+            methodIdentifier: visualization.methodIdentifier, axes: axes,
+            requiresEqualAspect: visualization.requiresEqualAspect, marks: marks,
+            table: visualization.table, totalObservationCount: visualization.totalObservationCount,
+            visibleObservationCount: visualization.visibleObservationCount,
+            reductionIdentifier: visualization.reductionIdentifier,
+            layoutIdentifier: visualization.layoutIdentifier,
+            emphasisIdentifier: visualization.emphasisIdentifier,
+            excludedLabels: visualization.excludedLabels, caveatKeys: caveats,
+            summaryKey: visualization.summaryKey,
+            summaryArguments: visualization.summaryArguments.map { argument in
+                argument.name == "clusters"
+                    ? GlifiStudioVisualArgument(name: "clusters", value: .integer(labels.count))
+                    : argument
+            }, dendrogramTree: tree)
+    }
+
+    private static func validateDendrogram(
+        _ tree: GlifiStudioDendrogramTree
+    ) throws(GlifiStudioFailure) {
+        let count = tree.leafIdentifiers.count
+        guard (2...2_000).contains(count), tree.merges.count == count - 1,
+            tree.leafSourceRevisionIDs.count == count,
+            Set(tree.leafIdentifiers).count == count,
+            tree.leafIdentifiers.allSatisfy({ !$0.isEmpty }),
+            tree.leafSourceRevisionIDs.allSatisfy({
+                !$0.isEmpty && $0.allSatisfy({ !$0.isEmpty })
+            }),
+            tree.unitKindIdentifier == "documents" || tree.unitKindIdentifier == "terms"
+        else { throw visualizationFailure("visualization.merge-shape-mismatch") }
+        var sizes = [Int](repeating: 1, count: 2 * count - 1)
+        var active = Set(0..<count)
+        var previousHeight = 0.0
+        for (step, merge) in tree.merges.enumerated() {
+            guard merge.first != merge.second, active.contains(merge.first),
+                active.contains(merge.second), merge.height.isFinite,
+                merge.height >= previousHeight,
+                merge.size == sizes[merge.first] + sizes[merge.second]
+            else { throw visualizationFailure("visualization.merge-shape-mismatch") }
+            sizes[count + step] = merge.size
+            active.remove(merge.first)
+            active.remove(merge.second)
+            active.insert(count + step)
+            previousHeight = merge.height
+        }
+    }
+
+    private static func validateDendrogramView(
+        _ view: GlifiStudioVisualization, tree: GlifiStudioDendrogramTree
+    ) throws(GlifiStudioFailure) {
+        let count = tree.leafIdentifiers.count
+        let byID = Dictionary(
+            view.marks.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        guard byID.count == view.marks.count,
+            view.marks.filter({ $0.kind == .point }).count == count,
+            view.marks.filter({ $0.kind == .segment }).count == tree.merges.count * 3,
+            view.table.rows.count == tree.merges.count
+        else { throw visualizationFailure("visualization.merge-shape-mismatch") }
+        var x = [Double](repeating: 0, count: 2 * count - 1)
+        var y = x
+        var sources = [[String]](repeating: [], count: x.count)
+        for index in 0..<count {
+            guard let point = byID["leaf:\(tree.leafIdentifiers[index])"], point.kind == .point,
+                point.label == tree.leafIdentifiers[index], point.x.isFinite, point.y == 0,
+                point.sourceRevisionIDs == tree.leafSourceRevisionIDs[index]
+            else { throw visualizationFailure("visualization.merge-shape-mismatch") }
+            x[index] = point.x
+            sources[index] = point.sourceRevisionIDs
+        }
+        guard Set(x.prefix(count)) == Set((0..<count).map(Double.init)) else {
+            throw visualizationFailure("visualization.merge-shape-mismatch")
+        }
+        for (position, leaf) in leafOrder(merges: tree.merges, leafCount: count).enumerated() {
+            guard x[leaf] == Double(position) else {
+                throw visualizationFailure("visualization.merge-shape-mismatch")
+            }
+        }
+        for (step, merge) in tree.merges.enumerated() {
+            let a = merge.first
+            let b = merge.second
+            let descendants = Array(Set(sources[a] + sources[b])).sorted()
+            let row = view.table.rows[step]
+            guard row.id == "merge:\(step + 1)",
+                row.cells == [
+                    .integer(step + 1), .text(nodeLabel(a, leaves: tree.leafIdentifiers)),
+                    .text(nodeLabel(b, leaves: tree.leafIdentifiers)), .decimal(merge.height),
+                    .integer(merge.size),
+                ]
+            else { throw visualizationFailure("visualization.merge-shape-mismatch") }
+            for (part, startX, startY, endX, endY) in [
+                ("first", x[a], y[a], x[a], merge.height),
+                ("second", x[b], y[b], x[b], merge.height),
+                ("bridge", x[a], merge.height, x[b], merge.height),
+            ] {
+                guard let mark = byID["merge:\(step + 1):\(part)"], mark.kind == .segment,
+                    mark.x == startX, mark.y == startY, mark.x2 == endX, mark.y2 == endY,
+                    mark.sourceRevisionIDs == descendants
+                else { throw visualizationFailure("visualization.merge-shape-mismatch") }
+            }
+            let node = count + step
+            x[node] = (x[a] + x[b]) / 2
+            y[node] = merge.height
+            sources[node] = descendants
+        }
     }
 
     /// Network of a token-window graph with a deterministic circular layout.
@@ -689,7 +910,10 @@ public enum GlifiStudioVisualizationBuilder {
     }
 
     private static func csvField(_ value: String) -> String {
-        guard value.contains(where: { $0 == "," || $0 == "\"" || $0 == "\n" || $0 == "\r" })
+        guard
+            value.unicodeScalars.contains(where: {
+                $0 == "," || $0 == "\"" || $0 == "\n" || $0 == "\r"
+            })
         else {
             return value
         }
@@ -875,5 +1099,12 @@ public enum GlifiStudioVisualizationBuilder {
                 messageKey: "failure.\(code)"
             )
         )
+    }
+
+    private static func visualizationInputFailure(_ code: String) -> GlifiStudioFailure {
+        GlifiStudioFailure(
+            code: code, category: "invalidInput", operation: "analyze",
+            retryDisposition: "afterCorrection", retainedState: "unchanged",
+            messageKey: "failure.category.invalidInput")
     }
 }

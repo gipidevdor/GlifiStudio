@@ -188,7 +188,7 @@ private extension GlifiScientificExportRenderer {
                 values += report.findings.enumerated().map { index, finding in
                     PDFBlock(
                         text:
-                            "\(index + 1). \(finding.messageKey)\n\(displayIdentifier(finding.id.canonicalValue))",
+                            "\(index + 1). \(GlifiSavedResearchReport.findingText(finding, italian: italian))\n\(displayIdentifier(finding.id.canonicalValue))",
                         style: .listItem,
                         tag: .listItem
                     )
@@ -220,7 +220,7 @@ private extension GlifiScientificExportRenderer {
                 values += caveats.map { caveat in
                     PDFBlock(
                         text:
-                            "\(caveat.identifier) | \(caveat.scope.rawValue) | \(caveat.severity.rawValue)\n"
+                            "\(GlifiSavedResearchReport.caveatText(caveat, italian: italian)) | \(caveat.scope.rawValue) | \(caveat.severity.rawValue)\n"
                             + "\(italian ? "Origine" : "Origin"): \(displayIdentifier(caveat.originIdentifier))",
                         style: .listItem,
                         tag: .listItem

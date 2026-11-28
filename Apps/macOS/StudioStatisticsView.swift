@@ -25,10 +25,10 @@ struct StudioStatisticsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            Divider()
-            GeometryReader { geometry in
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                header
+                Divider()
                 if geometry.size.width >= 900 && !dynamicTypeSize.isAccessibilitySize {
                     HSplitView {
                         configuration.frame(minWidth: 300, idealWidth: 360, maxWidth: 460)
@@ -91,9 +91,10 @@ struct StudioStatisticsView: View {
     private var configuration: some View {
         Form {
             Section("statistics.method") {
+                StudioAnalysisRoleView(route: .statistics(statistics.operation))
                 Picker("statistics.operation", selection: $statistics.operation) {
                     ForEach(GlifiStudioStatisticsOperation.allCases) { operation in
-                        Text(LocalizedStringKey("statistics.operation.\(operation.rawValue)"))
+                        Text(StudioLocalization.key("statistics.operation.\(operation.rawValue)"))
                             .tag(operation)
                     }
                 }
@@ -103,7 +104,7 @@ struct StudioStatisticsView: View {
             if statistics.operation.inputKind != .scalar {
                 Section("statistics.input") {
                     Text(
-                        LocalizedStringKey(
+                        StudioLocalization.key(
                             "statistics.input.\(statistics.operation.inputKind.rawValue)")
                     )
                     .font(.callout).foregroundStyle(.secondary)
@@ -148,8 +149,10 @@ struct StudioStatisticsView: View {
                 Picker("statistics.alternative", selection: $statistics.parameters.alternative) {
                     ForEach(GlifiStudioStatisticsAlternative.allCases, id: \.rawValue) {
                         alternative in
-                        Text(LocalizedStringKey("statistics.alternative.\(alternative.rawValue)"))
-                            .tag(alternative)
+                        Text(
+                            StudioLocalization.key("statistics.alternative.\(alternative.rawValue)")
+                        )
+                        .tag(alternative)
                     }
                 }
                 if statistics.operation == .oneSampleT || statistics.operation == .pairedT {
@@ -214,7 +217,7 @@ struct StudioStatisticsView: View {
                     selection: $statistics.parameters.measurementLevel
                 ) {
                     ForEach(["nominal", "ordinal", "interval", "ratio"], id: \.self) { level in
-                        Text(LocalizedStringKey("statistics.level.\(level)")).tag(level)
+                        Text(StudioLocalization.key("statistics.level.\(level)")).tag(level)
                     }
                 }
                 Text("statistics.agreement-help").font(.caption).foregroundStyle(.secondary)
@@ -284,7 +287,7 @@ struct StudioStatisticsView: View {
             if let result = statistics.result {
                 Section("statistics.results") {
                     Text(
-                        LocalizedStringKey(
+                        StudioLocalization.key(
                             "statistics.operation.\(result.request.operation.rawValue)")
                     )
                     .font(.headline)
@@ -422,7 +425,7 @@ struct StudioStatisticsView: View {
                 "statistics.alternative",
                 .text(
                     String(
-                        localized: String.LocalizationValue(
+                        localized: StudioLocalization.value(
                             "statistics.alternative.\(parameters.alternative.rawValue)"),
                         locale: locale))
             ),
@@ -464,7 +467,7 @@ struct StudioStatisticsView: View {
                 "statistics.measurement-level",
                 .text(
                     String(
-                        localized: String.LocalizationValue(
+                        localized: StudioLocalization.value(
                             "statistics.level.\(parameters.measurementLevel)"), locale: locale))
             ),
             ("statistics.statistic", .number(parameters.statistic)),

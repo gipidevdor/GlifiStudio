@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-21 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.1.7 |
+| Versione | 1.1.8 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-27 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -290,16 +290,18 @@ Q7 conserva il percorso aritmetico ordinario, inclusi i bit degli zeri con
 segno. Per estremi finiti opposti, se la sottrazione trabocca, conserva gli
 endpoint e usa la combinazione convessa della definizione invece di
 materializzare una differenza infinita. I controlli quantitativi e le
-tolleranze precedenti rimangono attivi. Intermedi non rappresentabili nella
-normalizzazione, inclusa la perdita di un contributo non nullo per underflow,
-e output finali non rappresentabili falliscono con `statistics.non-finite-result`;
-non vengono sostituiti con zero, clamp o risultati parzialmente NaN.
+tolleranze precedenti rimangono attivi. Una perdita di un contributo non nullo
+nella normalizzazione e output finali non rappresentabili falliscono con
+`statistics.non-finite-result` quando non esiste il recupero numericamente
+valido descritto sotto. Il solo overflow di un intermedio del contrasto non
+giustifica il rifiuto di t o d finiti e calcolabili. Nessun valore viene
+sostituito con zero, clamp o risultati parzialmente NaN.
 
 I nuovi passaggi lineari verificano la cancellazione almeno ogni 1.024 valori,
 dopo le validazioni applicabili. Lo stream casuale e i checkpoint diagnostici
 del ricampionamento a 4.096 osservazioni restano quelli dichiarati sopra.
-Nessun formato persistente cambia. La revisione produttore passa a `3` soltanto
-per `group-metric-comparison`, `group-metric-posthoc` e
+Nessun formato persistente cambia. Nel lotto GS-VER-328 la revisione
+produttore è passata a `3` soltanto per `group-metric-comparison`, `group-metric-posthoc` e
 `paired-metric-comparison`, che possono riusare permutazioni, d o t errati.
 Anche frequenze relative ammissibili vicine a uno possono avere spread tanto
 piccoli che la media arrotondata altera sensibilmente il t: il dominio bounded
@@ -307,6 +309,51 @@ non giustifica il riuso della revisione paired precedente. Accordo bootstrap,
 associazione, correlazione, keyness e altre famiglie conservano le revisioni
 precedenti. Storici e schemi
 rimangono leggibili.
+
+## Contrasti finiti e code di confidenza estreme — GS-VER-341
+
+Il percorso ordinario di `OneSampleT-v1`, `PairedT-v1` e `CohenD-pooled-v1`
+conserva ordine aritmetico e bit precedenti. Se il solo contrasto riportato
+nelle coordinate normalizzate trabocca, mentre la differenza nelle unità
+originarie è finita, il fallback calcola il rapporto senza materializzare
+quell'intermedio infinito. Il denominatore resta nelle coordinate normalizzate:
+usare soltanto la deviazione riportata, eventualmente subnormale e arrotondata,
+potrebbe alterare un rapporto finale ancora rappresentabile. Scambio dei gruppi,
+segno del contrasto e riscalamenti esatti in potenze di due conservano il
+contratto della statistica. Un t o d finale non rappresentabile continua a
+fallire con `statistics.non-finite-result`, categoria `invalidInput`.
+
+Per l'intervallo normale dell'effetto standardizzato, la formula resta
+`SE=sqrt[(n₁+n₂)/(n₁n₂)+d²/(2(n₁+n₂))]`. Quando `d²` è finito si conserva il
+percorso precedente. Soltanto se quel quadrato trabocca si valuta la norma
+equivalente con `hypot`, evitando il quadrato esplicito; errore standard,
+correzione di Hedges e limiti devono comunque essere finiti. Un intervallo
+realmente non rappresentabile non diventa un successo contenente infiniti.
+
+Gli intervalli dell'effetto standardizzato e Fisher per Pearson conservano
+la valutazione nominale del quantile normale in `(1+CL)/2`. Se questa
+probabilità arrotonda a 1 pur con `0<CL<1`, si ricava la stessa magnitudine
+dalla coda inferiore positiva `(1-CL)/2` e dalla simmetria della normale.
+Si preservano così il livello richiesto e una probabilità di coda
+rappresentabile, senza clamp a un livello diverso. L'estensione riguarda
+questi due intervalli e non attesta ogni possibile consumatore di quantili.
+
+Le formule scientifiche e gli schemi dei payload non cambiano. La revisione
+produttore corrente è selettiva:
+
+| Famiglia persistente | Revisione corrente | Motivo e compatibilità |
+| --- | --- | --- |
+| `group-metric-comparison` | `4` | Gli intervalli dell'effetto corretti non riusano risultati precedenti con limiti indisponibili o derivati da intermedi traboccati; storici producer 1–3 leggibili |
+| `group-metric-posthoc`, `paired-metric-comparison` | `3` | Nessuna ulteriore revisione rispetto a GS-VER-328 |
+| `metric-correlation`, `corpus-association` | `2` | Nessuna ulteriore revisione nel lotto corrente |
+
+Una richiesta corrente ricalcola la sola famiglia con producer modificato;
+non riscrive gli Artifact storici né ne promuove i valori alla nuova revisione.
+Regressioni con valori manuali, riferimenti Decimal per deviazioni subnormali,
+code normali indipendenti e controlli dei bit nominali precedono la verifica
+integrata. [GS-VER-341](../evidenze/GS-VER-341-ingegneria-verificabile.md)
+registra gli esiti effettivi senza ampliare le tolleranze o promuovere i
+ValidationManifest.
 
 ## Verifica
 

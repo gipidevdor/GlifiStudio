@@ -91,7 +91,7 @@ struct StudioEvaluationView: View {
             }
             .pickerStyle(.menu)
             .disabled(model.isBusy)
-            Text(LocalizedStringKey(analysis.tool.descriptionKey))
+            StudioAnalysisRoleView(route: .evaluation(analysis.tool))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             Label("evaluation.session-only", systemImage: "clock")

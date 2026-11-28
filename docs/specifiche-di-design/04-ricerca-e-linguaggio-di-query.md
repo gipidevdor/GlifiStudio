@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-QRY-001 |
 | Tipo | Specifica di design della ricerca |
-| Versione | 1.4.1 |
+| Versione | 1.5.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-27 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Baseline proposta; parser e usability test richiesti |
 | Riferimenti | GS-DOM-001; GS-DAT-001; GS-LNG-001; GS-UX-001-11; ADR-0016 |
 
@@ -25,7 +25,16 @@ concordanze KWIC con offset UTF-8. GlifiKit e GlifiCLI usano lo stesso percorso.
 La slice esegue uno scan bounded delle fonti TXT e Markdown incorporate; per
 Markdown ogni match espone coordinate `extractedUTF8` e intervalli `sourceBytes`
 risolti da `md-extract-v1`. Non costituisce
-l'indice persistente target. Lemmi, POS, entità, metadati, range tipizzati, scope
+l'indice persistente target. La preparazione persistente di
+[GS-API-005](../api/05-stato-di-ricerca.md), su ADR-0047, rende `normalized`
+coerente con la base lessicale scelta e conserva gli intervalli del testo
+osservato. `lemma` e `pos` diventano eseguibili soltanto quando la preparazione
+selezionata dichiara il relativo backend italiano disponibile; le annotazioni
+richieste ma ignote falliscono esplicitamente. Le query scritte non perdono
+termini a causa delle stoplist: una frase esatta non viene allargata rimuovendo
+le parole escluse. La selezione combinata con metadati tipizzati e sottoinsiemi
+riutilizzabili passa da `selectResearchSources`, con predicato testuale completo
+per fonte. I campi `metadata.*` nell'AST, le entità, i range tipizzati, gli scope
 Project/Corpus, cursor firmati, ranking e spiegazioni estese restano fail-closed.
 L'ordine provvisorio è SourceRevisionID/offset finché il modello DocumentID non è
 persistito. Fuzz corpus, benchmark avversari e usability test restano necessari

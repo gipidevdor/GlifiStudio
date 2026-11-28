@@ -176,13 +176,25 @@ private struct QuerySyntaxParser {
                     ? try make(.matchAll, at: token)
                     : try make(.exists(field: field), at: token)
             }
-            return try make(.term(field: field, value: value, matchMode: .exact), at: token)
+            var resolvedValue = value
+            if field == .normalized, let prepared = tokenizer as? GlifiPreparedCorpusTokenizer {
+                let values = try prepared.queryTokenization(value, field: field).tokens
+                if values.count == 1 { resolvedValue = values[0].analysisForm ?? value }
+            }
+            return try make(.term(field: field, value: resolvedValue, matchMode: .exact), at: token)
         case let .phrase(value):
             index += 1
-            let tokenization = try tokenizer.tokenize(value)
+            let tokenization: GlifiTokenization
+            if let prepared = tokenizer as? GlifiPreparedCorpusTokenizer {
+                tokenization = try prepared.queryTokenization(value, field: field)
+            } else {
+                tokenization = try tokenizer.tokenize(value)
+            }
             let values = tokenization.tokens.compactMap { surfaceToken -> String? in
                 guard surfaceToken.kind.contributesToLexicalStatistics else { return nil }
-                return surfaceToken.range.text(in: value)
+                return field == .normalized
+                    ? surfaceToken.analysisForm ?? surfaceToken.range.text(in: value)
+                    : surfaceToken.range.text(in: value)
             }
             guard !values.isEmpty else {
                 throw failure("query.empty-phrase", at: token)

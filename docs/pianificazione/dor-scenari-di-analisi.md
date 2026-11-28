@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DOR-303 |
 | Tipo | Scheda Definition of Ready |
-| Versione | 1.0.0 |
+| Versione | 1.0.1 |
 | Stato | Ready |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Richiesta esplicita di realizzare tutti i test degli scenari di analisi e aggiornare la documentazione |
 | Riferimenti | GS-STD-001-16; GS-TST-001; GS-API-003; GS-UX-001-17; RQ-058; RQ-063 |
 
@@ -36,6 +36,11 @@ e corretta senza indebolire l'oracolo.
 | Conservazione | Worktree isolato con overlay stabile del WIP; trasferimento guardato dei soli contributi del lotto |
 | Esclusioni | Nessuna promessa per ogni input, audit UI/assistivo, prestazione, iPadOS o chiusura G4/G5 |
 
-**Ready.** Il lavoro riguarda test e documentazione dell'architettura esistente. I profili
-KH senza adattatore GUI rimangono indicati come headless: il test non inventa
-una route o una funzione di prodotto mancante.
+**Ready.** Il lavoro originario riguarda test e documentazione dell'architettura
+esistente. Alla sua registrazione i profili KH senza adattatore GUI erano
+indicati come headless: una prova non inventa una route o una funzione di
+prodotto mancante. Il successivo GS-DOR-342 introduce gli adattatori dei
+diciannove profili e i `nativeBindings` operativi. La matrice corrente richiede
+route, dispatch, viste e test coerenti prima di rimuovere un tag dall'insieme
+headless, con inventario esaustivo e disgiunto; i nuovi esiti sono separati
+in GS-VER-342.

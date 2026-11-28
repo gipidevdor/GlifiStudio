@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VIZ-001 |
 | Tipo | Specifica di design delle visualizzazioni |
-| Versione | 1.1.3 |
+| Versione | 1.1.4 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-27 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Baseline proposta; prototipi percettivi e accessibili richiesti |
 | Riferimenti | GS-MET-001-22; GS-UX-001-09; GS-UI-001; GS-DAT-001; ADR-0016 |
 
@@ -90,6 +90,42 @@ dei valori singolari per LSA. Per tutti e tre i metodi l'avviso di quota bassa
 si attiva quando gli assi rappresentati spiegano insieme meno del 50%.
 [GS-VER-270](../evidenze/GS-VER-270-grafici-comandi-neural-engine.md)
 
+### Esplorazione del dendrogramma
+
+Una specifica di dendrogramma può conservare `dendrogramTree`, metadato
+opzionale con identità ordinate delle unità, fonti contributive allineate,
+tipo di unità e albero completo delle fusioni. L'assenza del campo nei JSON
+precedenti rimane ammessa; il client non inventa la topologia mancante.
+La topologia **DEVE** essere validata prima di applicare un nuovo taglio.
+Identità attive, cardinalità, dimensioni, altezze finite/monotone e fonti
+allineate impediscono di seguire un albero incoerente.
+
+Il taglio a numero cambia le appartenenze della sola vista. Il taglio ad
+altezza include tutte le fusioni alla soglia, comprese le parità; non viene
+presentato come equivalente a un taglio a numero quando le altezze sono
+uguali. Si conservano identità, metodo, Artifact, albero e lineage originali;
+si aggiornano serie dei gruppi, riferimento di taglio e sintesi. Non viene
+rieseguita l'analisi del corpus e non si modifica il risultato persistito.
+La medesima operazione è disponibile tramite `project-call`, tag
+`recut-visualization`, con `visualization` ed esattamente uno tra
+`clusterCount` e `maximumHeight`. Il trasporto conserva risultato e failure
+della funzione nativa e lascia il progetto invariato (GS-API-003).
+
+Zoom e scorrimento **DEVONO** conservare la cardinalità dichiarata. La
+compressione di un ramo segue i figli dell'albero e rende esplicita la
+numerosità delle foglie comprese; non viene inferita dalla somiglianza dei
+nomi o dalla coincidenza delle fonti contributive. Nel profilo corrente la
+compressione riguarda il grafico: tabella ed export mantengono l'albero
+completo e il taglio della vista. L'interfaccia **DEVE** dichiararlo accanto
+ai controlli. Espandi ripristina i segni originali senza ricalcolo analitico.
+
+Controlli di sistema per zoom, taglio e ramo selezionato, insieme alla tabella
+completa, offrono l'alternativa da tastiera e accessibile alle selezioni nel
+grafico. La preparazione della partizione e dei rami avviene fuori Main Actor;
+richieste superate, cambio della vista e scomparsa del componente invalidano
+la pubblicazione tardiva. La verifica automatica non sostituisce gli audit
+assistivi manuali registrati separatamente in
+[GS-VER-342](../evidenze/GS-VER-342-flussi-tematici-e-dendrogrammi.md).
 ## Dataset grandi
 
 Virtualizzazione, tiling, level-of-detail e aggregazione sono ammessi soltanto con
@@ -185,6 +221,12 @@ escape RFC 4180, separatore virgola, terminatori CRLF anche sull'ultima riga,
 valori numerici indipendenti dal locale e reali che conservano il round-trip
 binary64; una cella mancante resta un campo vuoto. Aggiornare soltanto digest e
 dimensione di un CSV alterato non ne ripristina la coerenza semantica.
+Qualunque campo contenente virgola, virgolette, CR o LF **DEVE** essere quotato,
+anche se CRLF costituisce un solo `Character` Swift: il writer controlla gli
+scalari e conserva esattamente i byte del contenuto. Il verificatore rifiuta
+anche export storici malformati con CRLF non quotato e digest ricalcolato
+(GS-VER-338). API, schema e versione del writer non cambiano: viene corretto
+l'escaping già richiesto dal contratto.
 I payload JSON e il manifest possono usare spaziatura e ordine dei campi
 diversi da quelli prodotti dal writer, purché siano decodificabili, coerenti
 e accompagnati dai digest dei byte effettivamente presenti.

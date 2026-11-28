@@ -14,6 +14,8 @@ public enum GlifiMultivariateMethod: Codable, Equatable, Sendable {
     case nonNegativeFactorization(rank: Int, seed: UInt64, restarts: Int)
     /// `HAC-v1` on relative frequencies with a cut into `k` clusters.
     case hierarchical(linkage: GlifiLinkage, clusterCount: Int)
+    /// `HAC-v1` on unit-sum term profiles across documents, with a cut into `k` clusters.
+    case hierarchicalTerms(linkage: GlifiLinkage, clusterCount: Int)
     /// `KMeans-Lloyd-v1` on relative frequencies.
     case kMeans(clusterCount: Int, seed: UInt64, restarts: Int)
 
@@ -24,7 +26,7 @@ public enum GlifiMultivariateMethod: Codable, Equatable, Sendable {
         case .principalComponents: GlifiPrincipalComponentsResult.identifier
         case .latentSemantic: GlifiLatentSemanticResult.identifier
         case .nonNegativeFactorization: GlifiNonNegativeFactorization.identifier
-        case .hierarchical: GlifiHierarchicalClustering.identifier
+        case .hierarchical, .hierarchicalTerms: GlifiHierarchicalClustering.identifier
         case .kMeans: GlifiKMeansResult.identifier
         }
     }
@@ -35,6 +37,7 @@ public enum GlifiMultivariateMethod: Codable, Equatable, Sendable {
         case .correspondence, .nonNegativeFactorization: "document-term-raw-count-v1"
         case .latentSemantic: "tfidf-raw-log-v1"
         case .principalComponents, .hierarchical, .kMeans: "document-term-relative-frequency-v1"
+        case .hierarchicalTerms: "term-document-relative-frequency-v1"
         }
     }
 
@@ -55,6 +58,10 @@ public enum GlifiMultivariateMethod: Codable, Equatable, Sendable {
         case let .hierarchical(linkage, clusterCount):
             values["linkage"] = .text(linkage.rawValue)
             values["clusterCount"] = .integer(Int64(clusterCount))
+        case let .hierarchicalTerms(linkage, clusterCount):
+            values["linkage"] = .text(linkage.rawValue)
+            values["clusterCount"] = .integer(Int64(clusterCount))
+            values["clusterUnit"] = .text("terms")
         case let .kMeans(clusterCount, seed, restarts):
             values["clusterCount"] = .integer(Int64(clusterCount))
             values["seed"] = .text(String(seed))
@@ -95,8 +102,10 @@ public struct GlifiCorpusMultivariateAnalysis: GlifiDerivedAnalysisResult {
     public let nonNegativeFactorization: GlifiNonNegativeFactorization?
     /// `HAC-v1` tree.
     public let hierarchical: GlifiHierarchicalClustering?
-    /// Cluster per document for HAC (cut) or k-means.
+    /// Cluster per document or selected term, according to the declared method.
     public let clusterAssignments: [Int]?
+    /// Contributing documents per selected term for term HAC; absent in older artifacts.
+    public let termSourceRevisionIDs: [[String]]?
     /// `KMeans-Lloyd-v1` result.
     public let kMeans: GlifiKMeansResult?
     /// Average silhouette width of the cluster assignments (Rousseeuw 1987), when defined.
@@ -160,6 +169,7 @@ public struct GlifiCorpusMultivariateAnalyzer: Sendable {
         var factorization: GlifiNonNegativeFactorization?
         var hierarchical: GlifiHierarchicalClustering?
         var clusters: [Int]?
+        var termSources: [[String]]?
         var kMeans: GlifiKMeansResult?
         var silhouetteSource: [[Double]]?
         switch method {
@@ -194,6 +204,26 @@ public struct GlifiCorpusMultivariateAnalyzer: Sendable {
                 pointCount: points.count,
                 clusterCount: clusterCount
             )
+        case let .hierarchicalTerms(linkage, clusterCount):
+            let points = try selected.indices.map { column in
+                try Task.checkCancellation()
+                let values = raw.map { $0[column] }
+                let total = values.reduce(0, +)
+                guard total.isFinite, total > 0 else {
+                    throw derivedAnalysisFailure(
+                        "multivariate.insufficient-terms", category: .insufficientData)
+                }
+                return values.map { $0 / total }
+            }
+            let tree = try GlifiMultivariateMethods.hierarchicalClustering(points, linkage: linkage)
+            hierarchical = tree
+            silhouetteSource = points
+            clusters = try GlifiMultivariateMethods.cut(
+                tree, pointCount: points.count, clusterCount: clusterCount)
+            termSources = selected.indices.map { column in
+                raw.indices.filter { raw[$0][column] > 0 }
+                    .map { counts.documentIDs[$0].canonicalValue }
+            }
         case let .kMeans(clusterCount, seed, restarts):
             let points = try relative()
             silhouetteSource = points
@@ -232,6 +262,7 @@ public struct GlifiCorpusMultivariateAnalyzer: Sendable {
             nonNegativeFactorization: factorization,
             hierarchical: hierarchical,
             clusterAssignments: clusters,
+            termSourceRevisionIDs: termSources,
             kMeans: kMeans,
             averageSilhouette: silhouette
         )

@@ -4,15 +4,39 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.96.0 |
+| Versione | 0.98.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-27 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
 
 La matrice collega le fonti iniziali alle necessità degli stakeholder, ai requisiti software, alle parti dell'architettura e alle evidenze di verifica pianificate. Gli identificatori fanno riferimento a [Requisiti](requisiti.md) e [Architettura](architettura.md).
+
+## Dimensionamento nativo del laboratorio
+
+| Requisiti e clausola | Attuazione circoscritta | Verifica |
+| --- | --- | --- |
+| RQ-012/062/063; CMP-340 | Intestazione e pannelli misurati nel viewport reale; split e tab nativi scorrevoli conservati | [GS-DOR-340](pianificazione/dor-altezza-laboratorio.md); [GS-VER-340](evidenze/GS-VER-340-altezza-laboratorio.md) |
+
+Il RED e il GREEN sono osservati nella finestra documento reale con API
+pubbliche e interazioni CUA. I probe hostless non riproducono il difetto e
+restano fuori dal gate; la clausola resta implemented, senza promozione G4
+né attestazione di audit assistivo completo.
+
+## Correttezza delle etichette localizzate
+
+| Requisiti e clausola | Attuazione circoscritta | Verifica |
+| --- | --- | --- |
+| RQ-058/060/062/063; CMP-339 | Identità complete delle chiavi SwiftUI/Foundation, argomenti testuali conservati e osservazione GUI | [GS-DOR-339](pianificazione/dor-chiavi-localizzazione-dinamiche.md); [GS-VER-339](evidenze/GS-VER-339-localizzazione-interattiva.md) |
+
+## Copertura BDD e correttezza CSV
+
+| Requisiti e clausola | Attuazione circoscritta | Verifica |
+| --- | --- | --- |
+| RQ-058/060/062/063; CMP-337 | Tutte le varianti pubbliche nelle tre fasi, tutte le fixture testuali, associazioni e fonti controllate | [GS-DOR-337](pianificazione/dor-scenari-completi.md); [GS-VER-337](evidenze/GS-VER-337-scenari-completi.md) |
+| RQ-011/061/062/063; CMP-338 | Quoting CSV anche per CRLF isolato; rifiuto dei payload incoerenti dopo rehash | [GS-DOR-338](pianificazione/dor-csv-crlf.md); [GS-VER-338](evidenze/GS-VER-338-csv-crlf.md) |
 
 ## Sviluppo BDD e interazione della ricerca
 
@@ -784,3 +808,59 @@ con revisioni e licenze. Gli esiti del lotto sono registrati in
 [GS-VER-332](evidenze/GS-VER-332-bdd-cucumber-swift.md);
 l'integrazione non sostituisce oracoli scientifici, parità, audit assistivi o
 verifica iPadOS, né promuove G4/G5.
+
+Il successivo riesame RQ-062/063 in
+[GS-VER-333](evidenze/GS-VER-333-licenze-bdd.md) completa gli avvisi dei
+materiali Cucumber/Gherkin e Cucumber Expressions incorporati, oltre ai due
+pin SwiftPM. [GS-LIC-001 § 8](licenza.md) e ADR-0046 versione 1.1.0
+distinguono le revisioni risolte delle dipendenze dagli snapshot di revisione
+delle licenze indirette, che non attestano l'origine storica esatta degli
+adattamenti. Avvisi sorgente, risorsa byte-identica del test bundle e relativo
+test Swift sono verifiche separate dai 116 esempi comportamentali.
+La copertura automatica dei pin richiede una voce revisionata e fonte
+immutabile per ogni dipendenza remota; la review dei materiali senza pin
+rimane necessaria. GS-VER-332 conserva gli esiti storici; la verifica del nuovo
+lotto resta esplicitata in GS-VER-333 senza certificazioni legali universali.
+
+## Affidabilità verificabile dei test e dell'inferenza
+
+RQ-011/027/058/060/062/063 collegano CMP-341 a
+[GS-DOR-341](pianificazione/dor-ingegneria-verificabile.md),
+[GS-BDD-001](testing/01-bdd-cucumber-swift.md) e
+[GS-MET-001-21](metodi-analitici/21-fondazione-statistica.md).
+L'incremento rende posseduto e cancellabile il figlio CLI dei test, vincola
+l'ordine dei passaggi nel report con l'inventario V2, rifiuta JSON ambiguo e
+disabilita esplicitamente i trait opzionali della dipendenza. Corregge
+inoltre intermedi numerici traboccati con risultati finali finiti e conserva
+le code di confidenza estreme; il producer passa a `4` soltanto per
+`group-metric-comparison`, con storici 1–3 leggibili.
+
+[GS-VER-341](evidenze/GS-VER-341-ingegneria-verificabile.md) registra la
+checklist GS-STD-001-29 § 29.6, le regressioni e gli esiti effettivi. Le
+evidenze GS-VER-332/333 restano storiche. UI e accessibilità, sanitizer, DocC
+e metriche/audit G4 senza prove specifiche non sono promossi dalla presenza
+dei test o da un giudizio numerico complessivo sul repository.
+
+## Flussi tematici e dendrogrammi esplorabili
+
+RF-033/RF-087 e RQ-027/028/033/037/038/058/060/063 collegano CMP-342 alla
+copertura operativa macOS di tutti i metodi del catalogo, ai diciannove tag
+KH e al completamento delle viste CA/HAC. Il clustering delle parole usa
+unità e fonti contributive distinte; API e CLI condividono `hierarchicalTerms`.
+Il taglio nativo ha il binding `project-call`/`recut-visualization` per numero
+o altezza, con risultato completo e failure uguali. Taglio, zoom e compressione del dendrogramma rimangono proiezioni dell'albero
+completo, senza ricalcolo del corpus o sostituzione del risultato persistito.
+
+[GS-DOR-342](pianificazione/dor-flussi-tematici-e-dendrogrammi.md) consolida il
+perimetro autorizzato; [GS-VER-342](evidenze/GS-VER-342-flussi-tematici-e-dendrogrammi.md)
+registra 928 test Core/Kit, 451 esecuzioni native e parità CLI superati sullo
+snapshot isolato con manifesto dei digest; il gate del checkout condiviso
+rimane non attestato. CMP-342 resta `implemented`. Gli audit assistivi/manuali
+non sono eseguiti e gli stati scientifici dei profili KH o G4/G5 non vengono
+promossi.
+
+## Flusso di ricerca persistente
+
+| Evidenza | Requisiti | Realizzazione e verifica |
+| --- | --- | --- |
+| [GS-VER-343](evidenze/GS-VER-343-flusso-ricerca-persistente.md) | RF-006; RF-008; RF-011; RF-013; RF-015; RF-016; RF-040; RF-087; RQ-058; RQ-060; RQ-063 | Import CSV/XLSX, metadati tipizzati, sottoinsiemi, preparazione condivisa, acquisizione/ripristino ed export avanzato; contratti GS-API-004/005/006, ADR-0047; esiti finali distinti dagli intermedi |

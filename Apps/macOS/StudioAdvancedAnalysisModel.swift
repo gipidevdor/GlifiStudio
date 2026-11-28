@@ -4,10 +4,11 @@ import Foundation
 import GlifiKit
 import Observation
 
-nonisolated enum StudioAdvancedTool: String, CaseIterable, Identifiable, Sendable {
+nonisolated enum StudioAdvancedTool: String, Codable, CaseIterable, Identifiable, Sendable {
     case mds, som, clara, topics, classification, classifierValidation
     case coding, codeCrosstab, distances, correspondence, hierarchical, network
     case mdsSearch, somAdvanced, topicSelection
+    case mdsOrdinal, mdsOrdinalSearch, somPCAInitialization, somKH
 
     var id: Self { self }
     var titleKey: String { "advanced.tool.\(rawValue).title" }
@@ -19,7 +20,8 @@ nonisolated enum StudioAdvancedTool: String, CaseIterable, Identifiable, Sendabl
     var needsRules: Bool { self == .coding || self == .codeCrosstab }
     var usesDenseMatrix: Bool {
         switch self {
-        case .mds, .mdsSearch, .som, .somAdvanced, .clara, .distances, .correspondence,
+        case .mds, .mdsSearch, .mdsOrdinal, .mdsOrdinalSearch, .som, .somAdvanced,
+            .somPCAInitialization, .somKH, .clara, .distances, .correspondence,
             .hierarchical, .network:
             true
         case .topics, .topicSelection, .classification, .classifierValidation, .coding,
@@ -29,14 +31,14 @@ nonisolated enum StudioAdvancedTool: String, CaseIterable, Identifiable, Sendabl
     }
 }
 
-nonisolated struct StudioAdvancedRow: Identifiable, Sendable {
+nonisolated struct StudioAdvancedRow: Codable, Identifiable, Sendable {
     let id: Int
     let values: [String]
     let sourceRevisionID: String?
     var searchText: String { values.joined(separator: " ") }
 }
 
-nonisolated struct StudioAdvancedPoint: Identifiable, Sendable {
+nonisolated struct StudioAdvancedPoint: Codable, Identifiable, Sendable {
     let id: Int
     let x: Double
     let y: Double
@@ -44,7 +46,22 @@ nonisolated struct StudioAdvancedPoint: Identifiable, Sendable {
     let sourceNumber: Int
 }
 
-nonisolated struct StudioAdvancedTable: Identifiable, Sendable {
+nonisolated struct StudioAdvancedFactorPoint: Codable, Identifiable, Sendable {
+    let id: String
+    let label: String
+    let seriesKey: String
+    let x: Double
+    let y: Double
+}
+
+nonisolated struct StudioAdvancedTreeVertex: Codable, Identifiable, Sendable {
+    let id: String
+    let segment: String
+    let x: Double
+    let y: Double
+}
+
+nonisolated struct StudioAdvancedTable: Codable, Identifiable, Sendable {
     let id: String
     let titleKey: String
     let columns: [String]
@@ -60,25 +77,41 @@ nonisolated struct StudioAdvancedOutput: Sendable {
     let request: GlifiStudioTextAnalysisRequest
     let canonicalRequest: Data
     let encodedResult: Data
+    let typedResult: GlifiStudioTextAnalysisResult?
     let parameters: [(key: String, value: String)]
     let columns: [String]
     let rows: [StudioAdvancedRow]
     let points: [StudioAdvancedPoint]
+    let factorPoints: [StudioAdvancedFactorPoint]
+    let treeVertices: [StudioAdvancedTreeVertex]
+    let treeLeafLabels: [String]
     let diagnostics: [(key: String, value: String)]
     let tables: [StudioAdvancedTable]
     let completedAt: Date
     let sourceLabels: [String]
     let sourceNumbers: [Int]
 
+    var factorDomain: ClosedRange<Double> {
+        let radius = max(1e-12, factorPoints.reduce(0) { max($0, max(abs($1.x), abs($1.y))) })
+        return -radius...radius
+    }
+
     var isOneDimensional: Bool {
         if case let .mds(_, dimensions, _, _, _) = request { return dimensions == 1 }
         if case let .advanced(.mdsSearch(_, dimensions, _, _, _, _, _)) = request {
+            return dimensions == 1
+        }
+        if case let .advanced(.kh(.ordinalMDS(_, dimensions, _, _, _, _))) = request {
+            return dimensions == 1
+        }
+        if case let .advanced(.kh(.ordinalMDSSearch(_, dimensions, _, _, _, _, _))) = request {
             return dimensions == 1
         }
         return false
     }
 
     var isOrdinalMDS: Bool {
+        if tool == .mdsOrdinal || tool == .mdsOrdinalSearch { return true }
         if case let .mds(_, _, method, _, _) = request { return method == .ordinal }
         if case let .advanced(.mdsSearch(_, _, method, _, _, _, _)) = request {
             return method == .ordinal
@@ -103,6 +136,7 @@ nonisolated struct StudioAdvancedOutput: Sendable {
     var mdsSearchMethod: GlifiStudioMDSMethod = .ordinal
     var mdsStarts = 10
     var mdsTolerance = 1e-8
+    var ordinalTies: GlifiStudioMDSOrdinalTies = .primary
     var dimensions = 2
     var maximumIterations = 300
     var gridWidth = 3
@@ -114,6 +148,16 @@ nonisolated struct StudioAdvancedOutput: Sendable {
     var somTolerance = 1e-8
     var clustersSOMCodebooks = false
     var somCodebookClusterCount = 2
+    var somKHUsesCustomPhases = false
+    var somKHFirstSteps = 1_000
+    var somKHSecondSteps = 4_500
+    var somKHFirstLearningRate = 0.05
+    var somKHSecondLearningRate = 0.02
+    var somKHFirstRadius = 3.0
+    var somKHSecondRadius = 1.0
+    var somKHUsesExplicitCodebooks = false
+    var somKHInitialCodebooks = ""
+
     var clusterCount = 2
     var sampleSize = 100
     var topicCount = 2
@@ -174,6 +218,7 @@ nonisolated struct StudioAdvancedOutput: Sendable {
         tableIndex = 0
         labels = [:]
         rules = ""
+        somKHInitialCodebooks = ""
         search = ""
         page = 0
         matchingRowCount = 0
@@ -281,7 +326,7 @@ nonisolated struct StudioAdvancedOutput: Sendable {
         }
     }
 
-    private struct Specification: Equatable, Sendable {
+    nonisolated private struct Specification: Codable, Equatable, Sendable {
         let tool: StudioAdvancedTool
         let maximumTerms: Int
         let seed: UInt64
@@ -290,6 +335,7 @@ nonisolated struct StudioAdvancedOutput: Sendable {
         let mdsSearchMethod: GlifiStudioMDSMethod
         let mdsStarts: Int
         let mdsTolerance: Double
+        let ordinalTies: GlifiStudioMDSOrdinalTies
         let dimensions: Int
         let maximumIterations: Int
         let gridWidth: Int
@@ -301,6 +347,15 @@ nonisolated struct StudioAdvancedOutput: Sendable {
         let somTolerance: Double
         let clustersSOMCodebooks: Bool
         let somCodebookClusterCount: Int
+        let somKHUsesCustomPhases: Bool
+        let somKHFirstSteps: Int
+        let somKHSecondSteps: Int
+        let somKHFirstLearningRate: Double
+        let somKHSecondLearningRate: Double
+        let somKHFirstRadius: Double
+        let somKHSecondRadius: Double
+        let somKHUsesExplicitCodebooks: Bool
+        let somKHInitialCodebooks: String
         let clusterCount: Int
         let sampleSize: Int
         let topicCount: Int
@@ -329,6 +384,7 @@ nonisolated struct StudioAdvancedOutput: Sendable {
             mdsSearchMethod = model.mdsSearchMethod
             mdsStarts = model.mdsStarts
             mdsTolerance = model.mdsTolerance
+            ordinalTies = model.ordinalTies
             dimensions = model.dimensions
             maximumIterations = model.maximumIterations
             gridWidth = model.gridWidth
@@ -340,6 +396,15 @@ nonisolated struct StudioAdvancedOutput: Sendable {
             somTolerance = model.somTolerance
             clustersSOMCodebooks = model.clustersSOMCodebooks
             somCodebookClusterCount = model.somCodebookClusterCount
+            somKHUsesCustomPhases = model.somKHUsesCustomPhases
+            somKHFirstSteps = model.somKHFirstSteps
+            somKHSecondSteps = model.somKHSecondSteps
+            somKHFirstLearningRate = model.somKHFirstLearningRate
+            somKHSecondLearningRate = model.somKHSecondLearningRate
+            somKHFirstRadius = model.somKHFirstRadius
+            somKHSecondRadius = model.somKHSecondRadius
+            somKHUsesExplicitCodebooks = model.somKHUsesExplicitCodebooks
+            somKHInitialCodebooks = model.somKHInitialCodebooks
             clusterCount = model.clusterCount
             sampleSize = model.sampleSize
             topicCount = model.topicCount
@@ -361,6 +426,178 @@ nonisolated struct StudioAdvancedOutput: Sendable {
         }
     }
 
+    nonisolated private struct ArchivePair: Codable, Sendable {
+        let key: String
+        let value: String
+    }
+    nonisolated private struct Archive: Codable, Sendable {
+        let client: String
+        let version: Int
+        let specification: Specification
+        let parameters: [ArchivePair]
+        let diagnostics: [ArchivePair]
+        let tool: StudioAdvancedTool
+        let input: GlifiStudioProjectTextAnalysisInput
+        let methodIdentifier: String
+        let validationStatus: String
+        let requestDigest: String
+        let canonicalRequest: Data
+        let encodedResult: Data
+        let columns: [String]
+        let rows: [StudioAdvancedRow]
+        let points: [StudioAdvancedPoint]
+        let factorPoints: [StudioAdvancedFactorPoint]
+        let treeVertices: [StudioAdvancedTreeVertex]
+        let treeLeafLabels: [String]
+        let tables: [StudioAdvancedTable]
+        let completedAt: Date
+        let sourceLabels: [String]
+        let sourceNumbers: [Int]
+    }
+
+    /// Captures native presentation and draft settings without recomputing statistics.
+    func archiveData() async throws -> Data {
+        let expected = executionRevision
+        guard let output, let specification = capturedSpecification else {
+            throw Self.invalidInput()
+        }
+        let archive = Archive(
+            client: "advanced", version: 1, specification: specification,
+            parameters: output.parameters.map { ArchivePair(key: $0.key, value: $0.value) },
+            diagnostics: output.diagnostics.map { ArchivePair(key: $0.key, value: $0.value) },
+            tool: output.tool,
+            input: output.input,
+            methodIdentifier: output.methodIdentifier,
+            validationStatus: output.validationStatus,
+            requestDigest: output.requestDigest,
+            canonicalRequest: output.canonicalRequest,
+            encodedResult: output.encodedResult,
+            columns: output.columns,
+            rows: output.rows,
+            points: output.points,
+            factorPoints: output.factorPoints,
+            treeVertices: output.treeVertices,
+            treeLeafLabels: output.treeLeafLabels,
+            tables: output.tables,
+            completedAt: output.completedAt,
+            sourceLabels: output.sourceLabels,
+            sourceNumbers: output.sourceNumbers)
+
+        let bytes = try await Self.encodeArchive(archive)
+        try Task.checkCancellation()
+        guard executionRevision == expected else { throw CancellationError() }
+        return bytes
+    }
+
+    @concurrent private static func encodeArchive(_ archive: Archive) async throws -> Data {
+        try Task.checkCancellation()
+        let bytes = try JSONEncoder().encode(archive)
+        guard bytes.count <= 8 * 1_048_576 else { throw Self.resourceLimit() }
+        try Task.checkCancellation()
+        return bytes
+    }
+
+    /// Restores the captured view and its settings.
+    ///
+    /// The scientific dispatcher is never invoked.
+    @concurrent private static func decodeArchive(
+        _ data: Data, saved: GlifiStudioSavedAnalysis
+    ) async throws -> (archive: Archive, request: GlifiStudioTextAnalysisRequest) {
+        try Task.checkCancellation()
+        guard data.count <= 8 * 1_048_576 else { throw Self.resourceLimit() }
+        let archive = try JSONDecoder().decode(Archive.self, from: data)
+        guard archive.client == "advanced", archive.version == 1,
+            archive.canonicalRequest == saved.requestJSON,
+            archive.input.sourceRevisionIDs == saved.sourceRevisionIDs,
+            archive.input.preparationDigest == saved.preparationDigest,
+            archive.rows.count <= 100_000,
+            archive.tables.reduce(0, { $0 + $1.rows.count }) <= 100_000,
+            archive.sourceNumbers.count == archive.input.sourceRevisionIDs.count,
+            archive.input.matrix.count == archive.input.documents.count,
+            archive.input.matrix.allSatisfy({ $0.count == archive.input.terms.count })
+        else { throw Self.invalidInput() }
+        let storedJSON =
+            try JSONSerialization.jsonObject(with: archive.encodedResult) as? NSDictionary
+        let scientificJSON =
+            try JSONSerialization.jsonObject(with: saved.resultJSON) as? NSDictionary
+        guard storedJSON == scientificJSON else { throw Self.invalidInput() }
+        let request = try GlifiStudioTextAnalysisRequest.decode(archive.canonicalRequest)
+        try Task.checkCancellation()
+        return (archive, request)
+    }
+
+    func restoreArchive(_ data: Data, saved: GlifiStudioSavedAnalysis) async throws {
+        let expected = UUID()
+        executionRevision = expected
+        let decoded = try await Self.decodeArchive(data, saved: saved)
+        let archive = decoded.archive
+        try Task.checkCancellation()
+        guard executionRevision == expected else { throw CancellationError() }
+        reset()
+        let spec = archive.specification
+        tool = spec.tool
+        maximumTerms = spec.maximumTerms
+        seed = spec.seed
+        distance = spec.distance
+        mdsMethod = spec.mdsMethod
+        mdsSearchMethod = spec.mdsSearchMethod
+        mdsStarts = spec.mdsStarts
+        mdsTolerance = spec.mdsTolerance
+        ordinalTies = spec.ordinalTies
+        dimensions = spec.dimensions
+        maximumIterations = spec.maximumIterations
+        gridWidth = spec.gridWidth
+        gridHeight = spec.gridHeight
+        epochs = spec.epochs
+        somTopology = spec.somTopology
+        somInitialRadius = spec.somInitialRadius
+        somFinalRadius = spec.somFinalRadius
+        somTolerance = spec.somTolerance
+        clustersSOMCodebooks = spec.clustersSOMCodebooks
+        somCodebookClusterCount = spec.somCodebookClusterCount
+        somKHUsesCustomPhases = spec.somKHUsesCustomPhases
+        somKHFirstSteps = spec.somKHFirstSteps
+        somKHSecondSteps = spec.somKHSecondSteps
+        somKHFirstLearningRate = spec.somKHFirstLearningRate
+        somKHSecondLearningRate = spec.somKHSecondLearningRate
+        somKHFirstRadius = spec.somKHFirstRadius
+        somKHSecondRadius = spec.somKHSecondRadius
+        somKHUsesExplicitCodebooks = spec.somKHUsesExplicitCodebooks
+        somKHInitialCodebooks = spec.somKHInitialCodebooks
+        clusterCount = spec.clusterCount
+        sampleSize = spec.sampleSize
+        topicCount = spec.topicCount
+        topicCandidatesDraft = spec.topicCandidatesDraft
+        topicCriterion = spec.topicCriterion
+        alpha = spec.alpha
+        beta = spec.beta
+        burnIn = spec.burnIn
+        posteriorSamples = spec.posteriorSamples
+        thinning = spec.thinning
+        topicTermsShown = spec.topicTermsShown
+        smoothing = spec.smoothing
+        folds = spec.folds
+        rules = spec.rules
+        labels = spec.labels
+        linkage = spec.linkage
+        minimumJaccard = spec.minimumJaccard
+        maximumEdges = spec.maximumEdges
+        output = StudioAdvancedOutput(
+            tool: archive.tool, input: archive.input, methodIdentifier: archive.methodIdentifier,
+            validationStatus: archive.validationStatus, requestDigest: archive.requestDigest,
+            request: decoded.request,
+            canonicalRequest: archive.canonicalRequest, encodedResult: archive.encodedResult,
+            typedResult: nil, parameters: archive.parameters.map { ($0.key, $0.value) },
+            columns: archive.columns, rows: archive.rows, points: archive.points,
+            factorPoints: archive.factorPoints, treeVertices: archive.treeVertices,
+            treeLeafLabels: archive.treeLeafLabels,
+            diagnostics: archive.diagnostics.map { ($0.key, $0.value) }, tables: archive.tables,
+            completedAt: archive.completedAt, sourceLabels: archive.sourceLabels,
+            sourceNumbers: archive.sourceNumbers)
+        capturedSpecification = spec
+        scheduleFilter()
+    }
+
     @concurrent private static func calculate(
         _ spec: Specification, session: GlifiStudioProjectSession, ids: [String],
         sourceNumbers: [String: Int], locale: Locale
@@ -371,7 +608,9 @@ nonisolated struct StudioAdvancedOutput: Sendable {
         let sourceLabels = input.sourceRevisionIDs.map {
             spec.labels[$0, default: ""].trimmingCharacters(in: .whitespacesAndNewlines)
         }
-        if [.mds, .mdsSearch].contains(spec.tool), !(1...2).contains(spec.dimensions) {
+        if [.mds, .mdsSearch, .mdsOrdinal, .mdsOrdinalSearch].contains(spec.tool),
+            !(1...2).contains(spec.dimensions)
+        {
             throw invalidInput()
         }
         let request: GlifiStudioTextAnalysisRequest
@@ -383,7 +622,8 @@ nonisolated struct StudioAdvancedOutput: Sendable {
             parameters.append(("advanced.maximum-terms", String(spec.maximumTerms)))
         }
         if [
-            .mds, .mdsSearch, .som, .somAdvanced, .clara, .topics, .topicSelection,
+            .mds, .mdsSearch, .mdsOrdinal, .mdsOrdinalSearch, .som, .somAdvanced, .clara,
+            .topics, .topicSelection,
             .classifierValidation,
         ].contains(spec.tool) {
             parameters.append(("advanced.seed", String(spec.seed)))
@@ -417,6 +657,120 @@ nonisolated struct StudioAdvancedOutput: Sendable {
                 ("advanced.iterations", String(spec.maximumIterations)),
                 ("advanced.starts", String(spec.mdsStarts)),
                 ("advanced.tolerance", String(spec.mdsTolerance)),
+            ]
+        case .mdsOrdinal, .mdsOrdinalSearch:
+            guard spec.tool != .mdsOrdinalSearch || (1...32).contains(spec.mdsStarts) else {
+                throw invalidInput()
+            }
+            let distances = try await GlifiStudioTextAnalytics.dissimilarities(
+                input.matrix, metric: spec.distance)
+            let operation: GlifiStudioKHAnalysisRequest
+            if spec.tool == .mdsOrdinalSearch {
+                operation = .ordinalMDSSearch(
+                    matrix: distances, dimensions: spec.dimensions, ties: spec.ordinalTies,
+                    starts: spec.mdsStarts, seed: spec.seed,
+                    maximumIterations: spec.maximumIterations, tolerance: spec.mdsTolerance)
+                parameters.append(("advanced.starts", String(spec.mdsStarts)))
+            } else {
+                operation = .ordinalMDS(
+                    matrix: distances, dimensions: spec.dimensions, ties: spec.ordinalTies,
+                    seed: spec.seed, maximumIterations: spec.maximumIterations,
+                    tolerance: spec.mdsTolerance)
+            }
+            request = .advanced(.kh(operation))
+            parameters += [
+                ("advanced.distance", localized("advanced.distance.\(spec.distance.rawValue)")),
+                (
+                    "advanced.ordinal-ties",
+                    localized("advanced.ordinal-ties.\(spec.ordinalTies.rawValue)")
+                ),
+                ("advanced.dimensions", String(spec.dimensions)),
+                ("advanced.iterations", String(spec.maximumIterations)),
+                ("advanced.tolerance", String(spec.mdsTolerance)),
+            ]
+        case .somPCAInitialization, .somKH:
+            guard spec.gridWidth > 0, spec.gridHeight > 0 else { throw invalidInput() }
+            let units = spec.gridWidth.multipliedReportingOverflow(by: spec.gridHeight)
+            guard !units.overflow, units.partialValue <= 256,
+                units.partialValue <= 30_000 / max(1, input.terms.count)
+            else { throw resourceLimit() }
+            if spec.tool == .somPCAInitialization {
+                request = .advanced(
+                    .kh(
+                        .somPCAInitialization(
+                            matrix: input.matrix, width: spec.gridWidth, height: spec.gridHeight)))
+            } else {
+                let initial: [[Double]]?
+                if spec.somKHUsesExplicitCodebooks {
+                    guard spec.somKHInitialCodebooks.utf8.count <= 1_048_576 else {
+                        throw resourceLimit()
+                    }
+                    let lines = spec.somKHInitialCodebooks.split(whereSeparator: \.isNewline)
+                    guard lines.count == units.partialValue else { throw invalidInput() }
+                    initial = try lines.map { line in
+                        let tokens = line.split(whereSeparator: \.isWhitespace)
+                        guard tokens.count == input.terms.count else { throw invalidInput() }
+                        return try tokens.map { token in
+                            guard
+                                token.range(
+                                    of:
+                                        #"^[+-]?(?:[0-9]+(?:[.,][0-9]*)?|[.,][0-9]+)(?:[eE][+-]?[0-9]+)?$"#,
+                                    options: .regularExpression) != nil,
+                                !(token.contains(".") && token.contains(",")),
+                                let value = Double(token.replacingOccurrences(of: ",", with: ".")),
+                                value.isFinite
+                            else { throw invalidInput() }
+                            return value
+                        }
+                    }
+                    guard initial?.allSatisfy({ $0.count == input.terms.count }) == true else {
+                        throw invalidInput()
+                    }
+                } else {
+                    initial = nil
+                }
+                request = .advanced(
+                    .kh(
+                        .somKH(
+                            matrix: input.matrix, width: spec.gridWidth, height: spec.gridHeight,
+                            firstPhase: spec.somKHUsesCustomPhases
+                                ? .init(
+                                    steps: spec.somKHFirstSteps,
+                                    initialLearningRate: spec.somKHFirstLearningRate,
+                                    initialRadius: spec.somKHFirstRadius) : nil,
+                            secondPhase: spec.somKHUsesCustomPhases
+                                ? .init(
+                                    steps: spec.somKHSecondSteps,
+                                    initialLearningRate: spec.somKHSecondLearningRate,
+                                    initialRadius: spec.somKHSecondRadius) : nil,
+                            topology: spec.somTopology, initialCodebooks: initial,
+                            codebookClusterCount: spec.clustersSOMCodebooks
+                                ? spec.somCodebookClusterCount : nil)))
+                parameters += [
+                    (
+                        "advanced.som-topology",
+                        localized("advanced.som-topology.\(spec.somTopology.rawValue)")
+                    ),
+                    (
+                        "advanced.som-initialization",
+                        localized(
+                            spec.somKHUsesExplicitCodebooks
+                                ? "advanced.som-initialization.explicit"
+                                : "advanced.som-initialization.pca")
+                    ),
+                    (
+                        "advanced.som-codebooks",
+                        localized(spec.clustersSOMCodebooks ? "common.yes" : "common.no")
+                    ),
+                ]
+                if spec.clustersSOMCodebooks {
+                    parameters.append(
+                        ("advanced.codebook-clusters", String(spec.somCodebookClusterCount)))
+                }
+            }
+            parameters += [
+                ("advanced.width", String(spec.gridWidth)),
+                ("advanced.height", String(spec.gridHeight)),
             ]
         case .som:
             request = .som(
@@ -560,10 +914,15 @@ nonisolated struct StudioAdvancedOutput: Sendable {
                 ("advanced.maximum-edges", String(spec.maximumEdges)),
             ]
         }
-        let result = try await GlifiStudioTextAnalytics.executeTextAnalysis(request)
+        let canonicalRequest = try request.canonicalData()
+        let effectiveRequest = try GlifiStudioTextAnalysisRequest.decode(canonicalRequest)
+        let result = try await GlifiStudioTextAnalytics.executeTextAnalysis(effectiveRequest)
         var rows: [StudioAdvancedRow] = []
         var columns: [String] = []
         var points: [StudioAdvancedPoint] = []
+        var factorPoints: [StudioAdvancedFactorPoint] = []
+        var treeVertices: [StudioAdvancedTreeVertex] = []
+        var treeLeafLabels: [String] = []
         var diagnostics: [(key: String, value: String)] = []
         var extraTables: [StudioAdvancedTable] = []
         func number(_ value: Double) -> String {
@@ -666,6 +1025,132 @@ nonisolated struct StudioAdvancedOutput: Sendable {
                     value.converged ? "advanced.converged" : "advanced.limit-reached"
                 ),
             ]
+        }
+        func mdsSearchResults(_ value: GlifiStudioMDSSearchResult) throws {
+            guard value.runs.indices.contains(value.chosenRun) else {
+                throw unexpectedPayload()
+            }
+            try mdsCoordinates(value.best)
+            diagnostics += [
+                ("advanced.chosen-run", String(value.chosenRun + 1)),
+                ("advanced.completed-runs", String(value.runs.count)),
+            ]
+            extraTables.append(
+                table(
+                    "advanced.table.mds-runs",
+                    columns: [
+                        "advanced.run-index", "advanced.seed", "advanced.stress",
+                        "advanced.completed-iterations", "advanced.convergence",
+                    ],
+                    values: value.runs.enumerated().map { index, run in
+                        [
+                            String(index + 1), String(run.seed), number(run.stress),
+                            String(run.iterations),
+                            localized(
+                                run.converged ? "advanced.converged" : "advanced.limit-reached"),
+                        ]
+                    }))
+            var coordinates: [[String]] = []
+            var sourceIndices: [Int?] = []
+            for (run, result) in value.runs.enumerated() {
+                guard result.coordinates.count == input.sourceRevisionIDs.count,
+                    result.coordinates.allSatisfy({ $0.count == spec.dimensions })
+                else { throw unexpectedPayload() }
+                for (source, point) in result.coordinates.enumerated() {
+                    coordinates.append([
+                        String(run + 1), sourceNumber(source), number(point[0]),
+                        point.count > 1 ? number(point[1]) : "—",
+                    ])
+                    sourceIndices.append(source)
+                }
+            }
+            extraTables.append(
+                table(
+                    "advanced.table.mds-all-coordinates",
+                    columns: [
+                        "advanced.run-index", "summary.source.label", "advanced.axis-one",
+                        "advanced.axis-two",
+                    ],
+                    values: coordinates, sourceIndices: sourceIndices))
+            mdsDetails(value.runs)
+        }
+        func somDetails(
+            width: Int, prototypes: [[Double]], uMatrix: [Double],
+            clustering: GlifiStudioSOMCodebookClustering?, topology: GlifiStudioSOMTopology
+        ) throws {
+            let units = prototypes.count
+            guard uMatrix.count == units,
+                prototypes.allSatisfy({ $0.count == input.terms.count }),
+                clustering.map({ $0.assignments.count == units }) ?? true
+            else { throw unexpectedPayload() }
+            diagnostics.append(
+                (
+                    "advanced.som-topology",
+                    localized("advanced.som-topology.\(topology.rawValue)")
+                ))
+            extraTables.append(
+                table(
+                    "advanced.table.som-prototypes",
+                    columns: [
+                        "advanced.unit", "advanced.grid-column", "advanced.grid-row",
+                        "advanced.term", "advanced.value",
+                    ],
+                    values: prototypes.enumerated().flatMap { unit, prototype in
+                        prototype.enumerated().map { term, weight in
+                            [
+                                String(unit + 1), String(unit % width + 1),
+                                String(unit / width + 1), input.terms[term],
+                                number(weight),
+                            ]
+                        }
+                    }))
+            extraTables.append(
+                table(
+                    "advanced.table.som-u-matrix",
+                    columns: [
+                        "advanced.unit", "advanced.grid-column", "advanced.grid-row",
+                        "advanced.u-value", "advanced.cluster",
+                    ],
+                    values: uMatrix.enumerated().map { unit, distance in
+                        [
+                            String(unit + 1), String(unit % width + 1),
+                            String(unit / width + 1),
+                            number(distance),
+                            clustering.map { String($0.assignments[unit] + 1) }
+                                ?? "—",
+                        ]
+                    }))
+            if let clustering = clustering {
+                guard clustering.children.count == clustering.heights.count,
+                    clustering.children.count == clustering.wardIncrements.count,
+                    clustering.children.count == clustering.sizes.count,
+                    clustering.children.allSatisfy({ $0.count == 2 })
+                else { throw unexpectedPayload() }
+                func nodeName(_ node: Int) -> String {
+                    let key = node < units ? "advanced.node.unit" : "advanced.node.cluster"
+                    return localized(key).replacingOccurrences(
+                        of: "{number}",
+                        with: String(node < units ? node + 1 : node - units + 1))
+                }
+                extraTables.append(
+                    table(
+                        "advanced.table.som-ward",
+                        columns: [
+                            "advanced.merge", "advanced.first-node", "advanced.second-node",
+                            "advanced.merge-height", "advanced.ward-increment",
+                            "advanced.cluster-size",
+                        ],
+                        values: clustering.children.enumerated().map { index, children in
+                            [
+                                String(index + 1), nodeName(children[0]), nodeName(children[1]),
+                                number(clustering.heights[index]),
+                                clustering.wardIncrements[index].map(number)
+                                    ?? localized("advanced.undefined"),
+                                String(clustering.sizes[index]),
+                            ]
+                        }))
+                diagnostics.append(("advanced.codebook-method", clustering.methodIdentifier))
+            }
         }
         func topicRows(_ value: GlifiStudioLDAResult) throws {
             guard !value.topicTerms.isEmpty,
@@ -790,6 +1275,11 @@ nonisolated struct StudioAdvancedOutput: Sendable {
             for (row, coordinates) in value.rowCoordinates.enumerated()
             where value.includedRows.indices.contains(row) {
                 let source = value.includedRows[row]
+                factorPoints.append(
+                    StudioAdvancedFactorPoint(
+                        id: "source:\(source)", label: sourceNumber(source),
+                        seriesKey: "visual.series.documents", x: coordinates.first ?? 0,
+                        y: coordinates.count > 1 ? coordinates[1] : 0))
                 add(
                     [
                         sourceNumber(source), "—", coordinates.first.map(number) ?? "—",
@@ -800,6 +1290,11 @@ nonisolated struct StudioAdvancedOutput: Sendable {
             where value.includedColumns.indices.contains(row) {
                 let column = value.includedColumns[row]
                 guard input.terms.indices.contains(column) else { continue }
+                factorPoints.append(
+                    StudioAdvancedFactorPoint(
+                        id: "term:\(column)", label: input.terms[column],
+                        seriesKey: "visual.series.terms", x: coordinates.first ?? 0,
+                        y: coordinates.count > 1 ? coordinates[1] : 0))
                 add([
                     "—", input.terms[column], coordinates.first.map(number) ?? "—",
                     coordinates.count > 1 ? number(coordinates[1]) : "—",
@@ -814,6 +1309,9 @@ nonisolated struct StudioAdvancedOutput: Sendable {
                 ),
             ]
         case let .hierarchical(value):
+            let tree = try Self.treeVertices(value, leafCount: input.sourceRevisionIDs.count)
+            treeVertices = tree.vertices
+            treeLeafLabels = tree.order.map(sourceNumber)
             columns = [
                 "advanced.merge", "advanced.first-node", "advanced.second-node",
                 "advanced.merge-height",
@@ -854,127 +1352,13 @@ nonisolated struct StudioAdvancedOutput: Sendable {
         case let .advanced(payload):
             switch payload {
             case let .mdsSearch(value):
-                guard value.runs.indices.contains(value.chosenRun) else {
-                    throw unexpectedPayload()
-                }
-                try mdsCoordinates(value.best)
-                diagnostics += [
-                    ("advanced.chosen-run", String(value.chosenRun + 1)),
-                    ("advanced.completed-runs", String(value.runs.count)),
-                ]
-                extraTables.append(
-                    table(
-                        "advanced.table.mds-runs",
-                        columns: [
-                            "advanced.run-index", "advanced.seed", "advanced.stress",
-                            "advanced.completed-iterations", "advanced.convergence",
-                        ],
-                        values: value.runs.enumerated().map { index, run in
-                            [
-                                String(index + 1), String(run.seed), number(run.stress),
-                                String(run.iterations),
-                                localized(
-                                    run.converged ? "advanced.converged" : "advanced.limit-reached"),
-                            ]
-                        }))
-                var coordinates: [[String]] = []
-                var sourceIndices: [Int?] = []
-                for (run, result) in value.runs.enumerated() {
-                    guard result.coordinates.count == input.sourceRevisionIDs.count,
-                        result.coordinates.allSatisfy({ $0.count == spec.dimensions })
-                    else { throw unexpectedPayload() }
-                    for (source, point) in result.coordinates.enumerated() {
-                        coordinates.append([
-                            String(run + 1), sourceNumber(source), number(point[0]),
-                            point.count > 1 ? number(point[1]) : "—",
-                        ])
-                        sourceIndices.append(source)
-                    }
-                }
-                extraTables.append(
-                    table(
-                        "advanced.table.mds-all-coordinates",
-                        columns: [
-                            "advanced.run-index", "summary.source.label", "advanced.axis-one",
-                            "advanced.axis-two",
-                        ],
-                        values: coordinates, sourceIndices: sourceIndices))
-                mdsDetails(value.runs)
+                try mdsSearchResults(value)
             case let .somAdvanced(value):
                 try somAssignments(value.map)
-                let units = value.map.prototypes.count
-                guard value.uMatrix.count == units,
-                    value.map.prototypes.allSatisfy({ $0.count == input.terms.count }),
-                    value.codebookClustering.map({ $0.assignments.count == units }) ?? true
-                else { throw unexpectedPayload() }
-                diagnostics.append(
-                    (
-                        "advanced.som-topology",
-                        localized("advanced.som-topology.\(value.topology.rawValue)")
-                    ))
-                extraTables.append(
-                    table(
-                        "advanced.table.som-prototypes",
-                        columns: [
-                            "advanced.unit", "advanced.grid-column", "advanced.grid-row",
-                            "advanced.term", "advanced.value",
-                        ],
-                        values: value.map.prototypes.enumerated().flatMap { unit, prototype in
-                            prototype.enumerated().map { term, weight in
-                                [
-                                    String(unit + 1), String(unit % value.map.width + 1),
-                                    String(unit / value.map.width + 1), input.terms[term],
-                                    number(weight),
-                                ]
-                            }
-                        }))
-                extraTables.append(
-                    table(
-                        "advanced.table.som-u-matrix",
-                        columns: [
-                            "advanced.unit", "advanced.grid-column", "advanced.grid-row",
-                            "advanced.u-value", "advanced.cluster",
-                        ],
-                        values: value.uMatrix.enumerated().map { unit, distance in
-                            [
-                                String(unit + 1), String(unit % value.map.width + 1),
-                                String(unit / value.map.width + 1),
-                                number(distance),
-                                value.codebookClustering.map { String($0.assignments[unit] + 1) }
-                                    ?? "—",
-                            ]
-                        }))
-                if let clustering = value.codebookClustering {
-                    guard clustering.children.count == clustering.heights.count,
-                        clustering.children.count == clustering.wardIncrements.count,
-                        clustering.children.count == clustering.sizes.count,
-                        clustering.children.allSatisfy({ $0.count == 2 })
-                    else { throw unexpectedPayload() }
-                    func nodeName(_ node: Int) -> String {
-                        let key = node < units ? "advanced.node.unit" : "advanced.node.cluster"
-                        return localized(key).replacingOccurrences(
-                            of: "{number}",
-                            with: String(node < units ? node + 1 : node - units + 1))
-                    }
-                    extraTables.append(
-                        table(
-                            "advanced.table.som-ward",
-                            columns: [
-                                "advanced.merge", "advanced.first-node", "advanced.second-node",
-                                "advanced.merge-height", "advanced.ward-increment",
-                                "advanced.cluster-size",
-                            ],
-                            values: clustering.children.enumerated().map { index, children in
-                                [
-                                    String(index + 1), nodeName(children[0]), nodeName(children[1]),
-                                    number(clustering.heights[index]),
-                                    clustering.wardIncrements[index].map(number)
-                                        ?? localized("advanced.undefined"),
-                                    String(clustering.sizes[index]),
-                                ]
-                            }))
-                    diagnostics.append(("advanced.codebook-method", clustering.methodIdentifier))
-                }
+                try somDetails(
+                    width: value.map.width, prototypes: value.map.prototypes,
+                    uMatrix: value.uMatrix,
+                    clustering: value.codebookClustering, topology: value.topology)
             case let .ldaSelection(value):
                 try topicRows(value.selectedModel)
                 diagnostics += [
@@ -1048,8 +1432,93 @@ nonisolated struct StudioAdvancedOutput: Sendable {
                             },
                             sourceIndices: value.foldAssignments.indices.map { Optional($0) }))
                 }
+            case let .kh(value):
+                switch value {
+                case let .mds(value):
+                    try mdsCoordinates(value)
+                    mdsDetails([value])
+                case let .mdsSearch(value):
+                    try mdsSearchResults(value)
+                case let .matrix(value):
+                    guard spec.tool == .somPCAInitialization,
+                        value.count == spec.gridWidth * spec.gridHeight,
+                        value.allSatisfy({ $0.count == input.terms.count })
+                    else { throw unexpectedPayload() }
+                    columns = [
+                        "advanced.unit", "advanced.grid-column", "advanced.grid-row",
+                        "advanced.term", "advanced.value",
+                    ]
+                    for (unit, codebook) in value.enumerated() {
+                        for (term, weight) in codebook.enumerated() {
+                            add([
+                                String(unit + 1), String(unit % spec.gridWidth + 1),
+                                String(unit / spec.gridWidth + 1), input.terms[term],
+                                number(weight),
+                            ])
+                        }
+                    }
+                case let .som(value):
+                    guard value.assignments.count == input.sourceRevisionIDs.count, value.width > 0,
+                        value.assignments.allSatisfy({ value.prototypes.indices.contains($0) })
+                    else { throw unexpectedPayload() }
+                    columns = ["summary.source.label", "advanced.grid-column", "advanced.grid-row"]
+                    for (index, unit) in value.assignments.enumerated() {
+                        add(
+                            [
+                                sourceNumber(index), String(unit % value.width + 1),
+                                String(unit / value.width + 1),
+                            ], source: index)
+                    }
+                    diagnostics += [
+                        ("advanced.quantization-error", number(value.quantizationError)),
+                        ("advanced.topographic-error", number(value.topographicError)),
+                        ("advanced.neighborhood-distortion", number(value.neighborhoodDistortion)),
+                        ("advanced.completed-steps", String(value.completedSteps)),
+                    ]
+                    let phases = [value.firstPhase, value.secondPhase]
+                    for (index, phase) in phases.enumerated() {
+                        parameters += [
+                            (index == 0 ? "advanced.som-phase-one" : "advanced.som-phase-two", ""),
+                            ("advanced.som-phase-steps", String(phase.steps)),
+                            ("advanced.som-learning-rate", number(phase.initialLearningRate)),
+                            ("advanced.som-phase-radius", number(phase.initialRadius)),
+                        ]
+                    }
+                    for (key, codebooks) in [
+                        ("advanced.table.som-initial-codebooks", value.initialCodebooks),
+                        ("advanced.table.som-phase-one-codebooks", value.firstPhaseCodebooks),
+                    ] {
+                        guard codebooks.count == value.prototypes.count,
+                            codebooks.allSatisfy({ $0.count == input.terms.count })
+                        else { throw unexpectedPayload() }
+                        extraTables.append(
+                            table(
+                                key,
+                                columns: [
+                                    "advanced.unit", "advanced.grid-column", "advanced.grid-row",
+                                    "advanced.term", "advanced.value",
+                                ],
+                                values: codebooks.enumerated().flatMap { unit, codebook in
+                                    codebook.enumerated().map { term, weight in
+                                        [
+                                            String(unit + 1), String(unit % value.width + 1),
+                                            String(unit / value.width + 1), input.terms[term],
+                                            number(weight),
+                                        ]
+                                    }
+                                }))
+                    }
+                    try somDetails(
+                        width: value.width, prototypes: value.prototypes, uMatrix: value.uMatrix,
+                        clustering: value.codebookClustering, topology: value.topology)
+                case .wordContext, .correspondence, .collocation, .wordAssociation, .documentScores,
+                    .legacyClustering, .chiSquare, .codeCrosstabSignificance, .termScores,
+                    .termExtraction,
+                    .incrementalClassifier, .classifierAgreement:
+                    throw unexpectedPayload()
+                }
             case .communities, .graphLayout, .minimumSpanningForest, .linguistic,
-                .linguisticAvailability, .linguisticCoding, .kh:
+                .linguisticAvailability, .linguisticCoding:
                 throw unexpectedPayload()
             }
         }
@@ -1067,14 +1536,66 @@ nonisolated struct StudioAdvancedOutput: Sendable {
         return StudioAdvancedOutput(
             tool: spec.tool, input: input, methodIdentifier: result.methodIdentifier,
             validationStatus: result.validationStatus, requestDigest: result.requestDigest,
-            request: request, canonicalRequest: try request.canonicalData(),
-            encodedResult: try encoder.encode(result),
+            request: effectiveRequest, canonicalRequest: canonicalRequest,
+            encodedResult: try encoder.encode(result), typedResult: result,
             parameters: parameters, columns: columns, rows: rows, points: points,
+            factorPoints: factorPoints, treeVertices: treeVertices, treeLeafLabels: treeLeafLabels,
             diagnostics: diagnostics, tables: tables, completedAt: Date(),
             sourceLabels: sourceLabels,
             sourceNumbers: input.sourceRevisionIDs.enumerated().map {
                 sourceNumbers[$0.element] ?? $0.offset + 1
             })
+    }
+
+    nonisolated private static func treeVertices(
+        _ value: GlifiStudioMatrixClustering, leafCount: Int
+    ) throws -> (vertices: [StudioAdvancedTreeVertex], order: [Int]) {
+        guard leafCount >= 2, value.children.count == leafCount - 1,
+            value.heights.count == value.children.count
+        else { throw unexpectedPayload() }
+        var stack = [2 * leafCount - 2]
+        var order: [Int] = []
+        while let node = stack.popLast() {
+            if node < leafCount {
+                guard node >= 0 else { throw unexpectedPayload() }
+                order.append(node)
+            } else {
+                let step = node - leafCount
+                guard value.children.indices.contains(step), value.children[step].count == 2,
+                    value.children[step].allSatisfy({ $0 >= 0 && $0 < node })
+                else { throw unexpectedPayload() }
+                stack.append(value.children[step][1])
+                stack.append(value.children[step][0])
+            }
+            guard stack.count + order.count <= leafCount else { throw unexpectedPayload() }
+        }
+        guard Set(order).count == leafCount else { throw unexpectedPayload() }
+        var x = [Double](repeating: 0, count: 2 * leafCount - 1)
+        var y = x
+        for (position, leaf) in order.enumerated() { x[leaf] = Double(position + 1) }
+        var vertices: [StudioAdvancedTreeVertex] = []
+        for (step, children) in value.children.enumerated() {
+            let node = leafCount + step
+            let height = value.heights[step]
+            guard children.count == 2, children.allSatisfy({ $0 >= 0 && $0 < node }),
+                height.isFinite, height >= 0
+            else { throw unexpectedPayload() }
+            let a = children[0]
+            let b = children[1]
+            for (part, startX, startY, endX, endY) in [
+                ("first", x[a], y[a], x[a], height),
+                ("second", x[b], y[b], x[b], height),
+                ("bridge", x[a], height, x[b], height),
+            ] {
+                let segment = "merge:\(step + 1):\(part)"
+                vertices.append(
+                    .init(id: segment + ":start", segment: segment, x: startX, y: startY))
+                vertices.append(.init(id: segment + ":end", segment: segment, x: endX, y: endY))
+            }
+            x[node] = (x[a] + x[b]) / 2
+            y[node] = height
+        }
+        return (vertices, order)
     }
 
     nonisolated private static func invalidInput() -> GlifiStudioFailure {

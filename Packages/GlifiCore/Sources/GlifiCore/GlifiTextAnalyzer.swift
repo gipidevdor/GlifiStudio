@@ -96,7 +96,9 @@ public struct GlifiTextAnalyzer: Sendable {
             }
 
             lexicalTokenCount += 1
-            let normalized = surface.precomposedStringWithCanonicalMapping.lowercased(with: locale)
+            let normalized =
+                token.analysisForm
+                ?? surface.precomposedStringWithCanonicalMapping.lowercased(with: locale)
             counts[normalized, default: 0] += 1
         }
 

@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.39 |
+| Versione | 1.6.42 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-27 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Non applicabile; registro operativo |
 
 Le schede DoR sono gate di ingresso al coding (GS-STD-001-07). Ogni unità di
@@ -28,6 +28,15 @@ distribuisce quattro agenti su query, feedback statico, revisione e integrazione
 preservando i confini del lavoro già in corso nell'altra chat.
 
 ## Indice
+
+- [GS-DOR-341 — Affidabilità verificabile dei test BDD e dell'inferenza](dor-ingegneria-verificabile.md) — Ownership del subprocesso, inventario V2, JSON rigoroso e fallback numerici selettivi
+
+- [GS-DOR-340 — Altezza del laboratorio](dor-altezza-laboratorio.md) — RED/GREEN nella finestra documento reale e layout adattivo circoscritto
+
+- [GS-DOR-339 — Chiavi localizzate dinamiche](dor-chiavi-localizzazione-dinamiche.md) — Identificatori completi distinti dagli argomenti localizzati
+
+- [GS-DOR-338 — CSV con CRLF](dor-csv-crlf.md) — Quoting per scalari, byte conservati e rifiuto delle alterazioni
+- [GS-DOR-337 — Scenari completi](dor-scenari-completi.md) — 172 varianti, tre fasi, fixture originali e fonti web verificate
 
 - [GS-DOR-336 — Catalogo da tastiera e stato accessibile](dor-catalogo-tastiera.md) — Attivazione univoca, nome/valore e annuncio delle failure
 - [GS-DOR-335 — Contesto e stato della ricerca](dor-ricerca-contesto.md) — Risultato e fonte atomici, bozza esplicita e prerequisiti reali
@@ -194,3 +203,5 @@ preservando i confini del lavoro già in corso nell'altra chat.
 - [GS-DOR-311 — Disponibilità e failure OCR native](dor-disponibilita-e-failure-ocr.md) — Ready; diagnosi remota e tassonomia
 
 - [GS-DOR-286 — Operatori tipizzati e failure coese](dor-operatori-tipizzati-e-failure-coese.md) — Ready; invarianti del parser, policy Kit e checkpoint MDS/SOM deterministici
+
+- [GS-DOR-342 — Flussi tematici e dendrogrammi esplorabili](dor-flussi-tematici-e-dendrogrammi.md) — Ready per integrazione e verifica; diciannove tag KH nella GUI macOS

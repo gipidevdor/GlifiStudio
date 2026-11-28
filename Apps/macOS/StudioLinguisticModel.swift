@@ -4,27 +4,27 @@ import Foundation
 import GlifiKit
 import Observation
 
-nonisolated enum StudioLinguisticTool: String, CaseIterable, Identifiable, Sendable {
+nonisolated enum StudioLinguisticTool: String, Codable, CaseIterable, Identifiable, Sendable {
     case availability, annotation, coding
     var id: Self { self }
     var titleKey: String { "linguistic.tool.\(rawValue).title" }
     var descriptionKey: String { "linguistic.tool.\(rawValue).description" }
 }
 
-nonisolated struct StudioLinguisticVariable: Identifiable, Equatable, Sendable {
-    let id = UUID()
+nonisolated struct StudioLinguisticVariable: Codable, Identifiable, Equatable, Sendable {
+    var id = UUID()
     var key = ""
     var value = ""
 }
 
-nonisolated struct StudioLinguisticUnit: Identifiable, Equatable, Sendable {
-    let id = UUID()
+nonisolated struct StudioLinguisticUnit: Codable, Identifiable, Equatable, Sendable {
+    var id = UUID()
     var identifier = ""
     var text = ""
     var variables: [StudioLinguisticVariable] = []
 }
 
-nonisolated struct StudioLinguisticOrigin: Equatable, Sendable {
+nonisolated struct StudioLinguisticOrigin: Codable, Equatable, Sendable {
     let projectID: String
     let generation: Int
     let sourceRevisionIDs: [String]
@@ -32,7 +32,7 @@ nonisolated struct StudioLinguisticOrigin: Equatable, Sendable {
     let units: [StudioLinguisticUnit]
 }
 
-nonisolated struct StudioLinguisticInput: Equatable, Sendable {
+nonisolated struct StudioLinguisticInput: Codable, Equatable, Sendable {
     let tool: StudioLinguisticTool
     let languageTag: String
     let base: GlifiStudioLinguisticBase
@@ -52,18 +52,18 @@ nonisolated struct StudioLinguisticInput: Equatable, Sendable {
     }
 }
 
-nonisolated enum StudioLinguisticCell: Sendable {
+nonisolated enum StudioLinguisticCell: Codable, Sendable {
     case text(String)
     case integer(Int)
     case semantic(String)
 }
 
-nonisolated struct StudioLinguisticRow: Identifiable, Sendable {
+nonisolated struct StudioLinguisticRow: Codable, Identifiable, Sendable {
     let id: Int
     let values: [StudioLinguisticCell]
 }
 
-nonisolated struct StudioLinguisticTable: Identifiable, Sendable {
+nonisolated struct StudioLinguisticTable: Codable, Identifiable, Sendable {
     let id: String
     let columns: [String]
     let rows: [StudioLinguisticRow]
@@ -73,12 +73,14 @@ nonisolated enum StudioLinguisticPayload: Sendable {
     case availability(GlifiStudioLinguisticAvailability)
     case annotation(GlifiStudioLinguisticAnnotation)
     case coding(GlifiStudioAnnotatedCodingResult)
+    case restoredCoding([GlifiStudioLinguisticProvenance])
 
     var provenances: [GlifiStudioLinguisticProvenance] {
         switch self {
         case .availability: []
         case let .annotation(value): [value.provenance]
         case let .coding(value): value.provenanceByUnit
+        case let .restoredCoding(provenance): provenance
         }
     }
 }
@@ -94,6 +96,7 @@ nonisolated struct StudioLinguisticOutput: Sendable {
     let validationStatus: String
     let payload: StudioLinguisticPayload
     let tables: [StudioLinguisticTable]
+    let completedAt: Date
 }
 
 /// Session-only native linguistic tools; computations and canonical transport remain in GlifiKit.
@@ -143,6 +146,112 @@ nonisolated struct StudioLinguisticOutput: Sendable {
         output = nil
         selectedTable = 0
         page = 0
+    }
+
+    nonisolated private enum ArchivePayload: Codable, Sendable {
+        case availability(GlifiStudioLinguisticAvailability)
+        case annotation(GlifiStudioLinguisticAnnotation)
+        case coding([GlifiStudioLinguisticProvenance])
+    }
+
+    nonisolated private struct Archive: Codable, Sendable {
+        let client: String
+        let version: Int
+        let input: StudioLinguisticInput
+        let requestJSON: Data
+        let resultJSON: Data
+        let methodIdentifier: String
+        let requestDigest: String
+        let validationStatus: String
+        let payload: ArchivePayload
+        let tables: [StudioLinguisticTable]
+        let completedAt: Date
+    }
+
+    func archiveData() async throws -> Data {
+        let expected = lifecycleID
+        guard let output else { throw StudioWorkbenchArchiveCodec.failure() }
+        let payload: ArchivePayload
+        switch output.payload {
+        case let .availability(value): payload = .availability(value)
+        case let .annotation(value): payload = .annotation(value)
+        case let .coding(value): payload = .coding(value.provenanceByUnit)
+        case let .restoredCoding(provenance): payload = .coding(provenance)
+        }
+        let bytes = try await StudioWorkbenchArchiveCodec.encode(
+            Archive(
+                client: "linguistic", version: 1, input: output.input,
+                requestJSON: output.canonicalRequest, resultJSON: output.encodedResult,
+                methodIdentifier: output.methodIdentifier, requestDigest: output.requestDigest,
+                validationStatus: output.validationStatus, payload: payload, tables: output.tables,
+                completedAt: output.completedAt))
+        try Task.checkCancellation()
+        guard lifecycleID == expected else { throw CancellationError() }
+        return bytes
+    }
+
+    func saveArchive(session: GlifiStudioProjectSession, title: String) async throws
+        -> GlifiStudioSavedAnalysis
+    {
+        guard let output else { throw StudioWorkbenchArchiveCodec.failure() }
+        let presentation = try await archiveData()
+        let ids =
+            output.input.tool == .availability ? [] : output.input.origin?.sourceRevisionIDs ?? []
+        return try await session.captureSavedAnalysis(
+            requestJSON: output.canonicalRequest, resultJSON: output.encodedResult,
+            title: title, sourceRevisionIDs: ids, presentationJSON: presentation,
+            preparation: .init(),
+            createdAtUnixMilliseconds: Int64(output.completedAt.timeIntervalSince1970 * 1_000))
+    }
+
+    @concurrent private static func decodeArchive(_ data: Data, saved: GlifiStudioSavedAnalysis)
+        async throws -> (Archive, GlifiStudioTextAnalysisRequest)
+    {
+        try Task.checkCancellation()
+        guard data.count <= 8 * 1_048_576 else { throw StudioWorkbenchArchiveCodec.failure() }
+        let archive = try JSONDecoder().decode(Archive.self, from: data)
+        let ids =
+            archive.input.tool == .availability ? [] : archive.input.origin?.sourceRevisionIDs ?? []
+        guard archive.client == "linguistic", archive.version == 1,
+            ids == saved.sourceRevisionIDs,
+            archive.methodIdentifier == saved.methodIdentifier,
+            try StudioWorkbenchArchiveCodec.sameJSON(archive.requestJSON, saved.requestJSON),
+            try StudioWorkbenchArchiveCodec.sameJSON(archive.resultJSON, saved.resultJSON),
+            archive.tables.reduce(0, { $0 + $1.rows.count }) <= 100_000,
+            archive.tables.allSatisfy({ table in
+                table.rows.allSatisfy { $0.values.count == table.columns.count }
+            })
+        else { throw StudioWorkbenchArchiveCodec.failure() }
+        return (archive, try GlifiStudioTextAnalysisRequest.decode(archive.requestJSON))
+    }
+
+    func restoreArchive(_ data: Data, saved: GlifiStudioSavedAnalysis) async throws {
+        let expected = UUID()
+        lifecycleID = expected
+        let (archive, request) = try await Self.decodeArchive(data, saved: saved)
+        try Task.checkCancellation()
+        guard lifecycleID == expected else { throw CancellationError() }
+        let payload: StudioLinguisticPayload
+        switch archive.payload {
+        case let .availability(value): payload = .availability(value)
+        case let .annotation(value): payload = .annotation(value)
+        case let .coding(provenance): payload = .restoredCoding(provenance)
+        }
+        reset()
+        tool = archive.input.tool
+        languageTag = archive.input.languageTag
+        base = archive.input.base
+        includesPartOfSpeech = archive.input.includesPartOfSpeech
+        text = archive.input.text
+        units = archive.input.units
+        rules = archive.input.rules
+        origin = archive.input.origin
+        output = StudioLinguisticOutput(
+            id: UUID(), input: archive.input, request: request,
+            canonicalRequest: archive.requestJSON, encodedResult: archive.resultJSON,
+            methodIdentifier: archive.methodIdentifier, requestDigest: archive.requestDigest,
+            validationStatus: archive.validationStatus, payload: payload,
+            tables: archive.tables, completedAt: archive.completedAt)
     }
 
     func showPage(_ proposed: Int) {
@@ -271,7 +380,7 @@ nonisolated struct StudioLinguisticOutput: Sendable {
                 canonicalRequest: canonical, encodedResult: encoded,
                 methodIdentifier: result.methodIdentifier,
                 requestDigest: result.requestDigest, validationStatus: result.validationStatus,
-                payload: payload, tables: tables)
+                payload: payload, tables: tables, completedAt: .now)
         } catch let failure as GlifiStudioFailure { throw failure } catch is CancellationError {
             throw cancelled()
         } catch { throw invalidInput() }
@@ -391,6 +500,7 @@ nonisolated struct StudioLinguisticOutput: Sendable {
                         zip(matrix.codes, matrix.frequencies).map { [.text($0), .integer($1)] })),
                 .init(id: "evidence", columns: ["unit", "code", "start", "end"], rows: evidence),
             ]
+        case .restoredCoding: throw invalidInput()
         }
     }
 

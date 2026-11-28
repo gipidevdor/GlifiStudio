@@ -371,16 +371,28 @@ public struct GlifiSurfaceToken: Codable, Equatable, Sendable {
     public let kind: GlifiTokenKind
     /// Optional, ordered linguistic components within the token.
     public let components: [GlifiTokenComponent]
+    /// Explicit prepared lexical representation; absent for the historical surface tokenizer.
+    public let analysisForm: String?
+    /// Resolved Italian lemma, only when that preparation was explicitly selected.
+    public let lemma: String?
+    /// Resolved raw Apple grammatical class, only when explicitly requested.
+    public let partOfSpeech: String?
 
     /// Creates a surface token from validated positional data.
     public init(
         range: GlifiUTF8Range,
         kind: GlifiTokenKind,
-        components: [GlifiTokenComponent] = []
+        components: [GlifiTokenComponent] = [],
+        analysisForm: String? = nil,
+        lemma: String? = nil,
+        partOfSpeech: String? = nil
     ) {
         self.range = range
         self.kind = kind
         self.components = components
+        self.analysisForm = analysisForm
+        self.lemma = lemma
+        self.partOfSpeech = partOfSpeech
     }
 }
 
@@ -407,6 +419,8 @@ public struct GlifiTokenization: Equatable, Sendable {
     public let tokens: [GlifiSurfaceToken]
     /// Ordered, non-overlapping sentence intervals.
     public let sentences: [GlifiSentence]
+    /// Linguistic query fields explicitly available under this preparation contract.
+    public let availableQueryFields: [GlifiQueryField]
 
     /// Creates an immutable tokenization result.
     public init(
@@ -414,13 +428,15 @@ public struct GlifiTokenization: Equatable, Sendable {
         languageConfiguration: GlifiLanguageConfiguration,
         sourceUTF8Length: Int,
         tokens: [GlifiSurfaceToken],
-        sentences: [GlifiSentence]
+        sentences: [GlifiSentence],
+        availableQueryFields: [GlifiQueryField] = []
     ) {
         self.contractIdentifier = contractIdentifier
         self.languageConfiguration = languageConfiguration
         self.sourceUTF8Length = sourceUTF8Length
         self.tokens = tokens
         self.sentences = sentences
+        self.availableQueryFields = availableQueryFields
     }
 }
 
@@ -428,6 +444,13 @@ public struct GlifiTokenization: Equatable, Sendable {
 public protocol GlifiTokenizing: Sendable {
     /// Stable contract identity used to plan reusable analytical nodes.
     var tokenizationContractIdentifier: String { get }
+    /// Additional query fields resolved by this lexical backend.
+    var availableQueryFields: [GlifiQueryField] { get }
     /// Tokenizes a valid Swift string while preserving exact UTF-8 source offsets.
     func tokenize(_ text: String) throws -> GlifiTokenization
+}
+
+extension GlifiTokenizing {
+    /// Historical tokenizers expose observed form and normalized text only.
+    public var availableQueryFields: [GlifiQueryField] { [] }
 }

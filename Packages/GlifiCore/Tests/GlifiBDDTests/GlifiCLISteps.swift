@@ -32,25 +32,7 @@ private final class BDDCLIWorld {
     func run(_ arguments: [String]) async throws {
         output = nil
         output = try await BDDSubprocess.run(
-            executable: locateCLI(), arguments: arguments, directory: root)
-    }
-
-    private func locateCLI() throws -> URL {
-        let starts =
-            [URL(fileURLWithPath: CommandLine.arguments[0]), Bundle.main.bundleURL]
-            + Bundle.allBundles.map(\.bundleURL)
-        for start in starts {
-            var candidate = start
-            for _ in 0..<7 {
-                candidate.deleteLastPathComponent()
-                let executable = candidate.appending(path: "GlifiCLI")
-                if FileManager.default.isExecutableFile(atPath: executable.path) {
-                    return executable
-                }
-            }
-        }
-        Issue.record("GlifiCLI must be built alongside the SwiftPM test bundle")
-        throw BDDCLISetupFailure.binaryUnavailable
+            executable: locateBDDCLI(), arguments: arguments, directory: root)
     }
 
     func json(fromError: Bool = false) throws -> [String: Any] {
@@ -71,10 +53,6 @@ private final class BDDCLIWorld {
             throw error
         }
     }
-}
-
-private enum BDDCLISetupFailure: Error {
-    case binaryUnavailable
 }
 
 @MainActor

@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VER-303 |
 | Tipo | Evidenza di verifica degli scenari applicativi |
-| Versione | 1.1.0 |
+| Versione | 1.1.1 |
 | Stato | Superato nel profilo macOS; audit manuali separati |
 | Responsabile | Codex, esecuzione automatizzata interna |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Richiesta esplicita; GS-DOR-303 |
 
 ## Perimetro e risultato
@@ -127,8 +127,12 @@ Il checker attesta inventario e riferimenti: non dimostra da solo l'esecuzione
 né la correttezza della mappatura variante/test. Le prove runtime e gli oracoli
 restano separati. Test dei modelli e build non sono UI automation o audit
 VoiceOver, Voice Control, contrasto, pseudo-lingua, RTL o usabilità.
-Le 19 estensioni KH successive rimangono Core/Kit/CLI, senza adattatore GUI
-dedicato. Nessuna promozione di manifest scientifici, G4/G5, prestazioni o
+Nella fotografia dei sorgenti di questo checkpoint, le 19 estensioni KH
+successive rimanevano Core/Kit/CLI, senza adattatore GUI dedicato. Il
+successivo [GS-VER-342](GS-VER-342-flussi-tematici-e-dendrogrammi.md) registra
+l'introduzione dei diciannove adattatori, il nuovo inventario e i loro esiti,
+senza estendere retroattivamente queste prove. Nessuna promozione di manifest
+scientifici, G4/G5, prestazioni o
 copertura di ogni possibile input/combinazione è dedotta da questo incremento.
 
 

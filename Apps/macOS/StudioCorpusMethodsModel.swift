@@ -50,6 +50,12 @@ nonisolated enum StudioCorpusMetricKind: String, CaseIterable, Identifiable, Sen
     }
 }
 
+nonisolated enum StudioCorpusClusterUnit: String, CaseIterable, Identifiable, Sendable {
+    case documents, terms
+    var id: Self { self }
+    var titleKey: String { "cm.cluster-unit.\(rawValue)" }
+}
+
 nonisolated struct StudioCorpusMethodsDraft: Equatable, Sendable {
     var tool: StudioCorpusMethod = .association
     var groupLabels: [String: String] = [:]
@@ -71,6 +77,7 @@ nonisolated struct StudioCorpusMethodsDraft: Equatable, Sendable {
     var scaledPCA = false
     var rank = 2
     var clusterCount = 2
+    var clusterUnit: StudioCorpusClusterUnit = .documents
     var linkage = "average"
     var seed: UInt64 = 0
     var restarts = 5
@@ -204,8 +211,21 @@ nonisolated struct StudioCorpusMethodsOutput: Sendable {
     let draft: StudioCorpusMethodsDraft
     let payload: StudioCorpusPayload
     let encodedResult: Data
+    let visualizations: [GlifiStudioVisualization]
     let parameters: [StudioCorpusField]
     let completedAt: Date
+
+    var visualizationLineage: GlifiStudioDerivedLineage? {
+        switch payload {
+        case let .multivariate(value): value.lineage
+        case let .windowNetwork(value): value.lineage
+        case let .windowCollocations(value): value.lineage
+        case let .lexicalNetwork(value): value.lineage
+        case .association, .dispersion, .similarity, .collocations,
+            .groupMetrics, .postHoc, .correlation, .paired:
+            nil
+        }
+    }
 }
 
 /// Coordinates existing persisted methods and keeps the last valid result independent of drafts.
@@ -219,6 +239,7 @@ nonisolated struct StudioCorpusMethodsOutput: Sendable {
     private(set) var tables: [StudioCorpusMethodTable] = []
     private(set) var summary: [StudioCorpusField] = []
     private(set) var methodDetails: [StudioCorpusField] = []
+    private(set) var selectedVisualMarkID: String?
     private(set) var axisCount = 1
     var axis = 1 {
         didSet {
@@ -263,6 +284,7 @@ nonisolated struct StudioCorpusMethodsOutput: Sendable {
         defer { isPublishing = false }
         draft = StudioCorpusMethodsDraft()
         output = nil
+        selectedVisualMarkID = nil
         tables = []
         summary = []
         methodDetails = []
@@ -313,6 +335,8 @@ nonisolated struct StudioCorpusMethodsOutput: Sendable {
         try validateExecution(executionNonce)
         let encoded = try await Self.encode(payload)
         try validateExecution(executionNonce)
+        let visualizations = try await Self.buildVisualizations(payload)
+        try validateExecution(executionNonce)
         let usedGroups: [(name: String, ids: [String])]
         let effectiveIDs: [String]
         if case let .similarity(value) = payload {
@@ -334,6 +358,7 @@ nonisolated struct StudioCorpusMethodsOutput: Sendable {
             eligibleSourceRevisionIDs: ids, sourceNumbers: sourceNumbers,
             groupNames: usedGroups.map(\.name), groups: usedGroups.map(\.ids),
             draft: specification, payload: payload, encodedResult: encoded,
+            visualizations: visualizations,
             parameters: Self.requestedParameters(specification, locale: locale), completedAt: Date()
         )
         let projection = try await Self.project(next, axis: 1, locale: locale)
@@ -342,9 +367,23 @@ nonisolated struct StudioCorpusMethodsOutput: Sendable {
         try validateExecution(executionNonce)
         cancelPresentation()
         output = next
+        selectedVisualMarkID = nil
         presentationLocale = locale
         applyProjection(projection, selectedAxis: 1, resetsControls: true)
         return snapshot
+    }
+
+    /// Selects only marks from the current output and returns a source in its effective scope.
+    func selectVisualMark(
+        _ mark: GlifiStudioVisualMark, visualizationID: String
+    ) -> String? {
+        guard let output,
+            let visualization = output.visualizations.first(where: { $0.id == visualizationID }),
+            let stored = visualization.marks.first(where: { $0.id == mark.id }),
+            stored.sourceRevisionIDs == mark.sourceRevisionIDs
+        else { return nil }
+        selectedVisualMarkID = mark.id
+        return stored.sourceRevisionIDs.first { output.sourceRevisionIDs.contains($0) }
     }
 
     private func validateExecution(_ nonce: UUID) throws {
@@ -502,6 +541,34 @@ nonisolated struct StudioCorpusMethodsOutput: Sendable {
         return try payload.encoded()
     }
 
+    /// Projects persisted results off the Main Actor without recomputing their statistics.
+    @concurrent private static func buildVisualizations(
+        _ payload: StudioCorpusPayload
+    ) async throws -> [GlifiStudioVisualization] {
+        try checkCancellation()
+        switch payload {
+        case let .multivariate(value):
+            var views: [GlifiStudioVisualization] = []
+            if let plot = try GlifiStudioVisualizationBuilder.factorPlot(value) {
+                views.append(plot)
+            }
+            try checkCancellation()
+            if let tree = try GlifiStudioVisualizationBuilder.dendrogram(value) {
+                views.append(tree)
+            }
+            return views
+        case let .windowNetwork(value):
+            return [GlifiStudioVisualizationBuilder.network(value)]
+        case let .lexicalNetwork(value):
+            return [GlifiStudioVisualizationBuilder.network(value)]
+        case let .windowCollocations(value):
+            return [GlifiStudioVisualizationBuilder.collocationTable(value)]
+        case .association, .dispersion, .similarity, .collocations,
+            .groupMetrics, .postHoc, .correlation, .paired:
+            return []
+        }
+    }
+
     @concurrent private static func matching(_ rows: [StudioCorpusMethodRow], query: String) async
         -> [Int]
     {
@@ -573,7 +640,13 @@ nonisolated struct StudioCorpusMethodsOutput: Sendable {
                 method = .nonNegativeFactorization(
                     rank: draft.rank, seed: draft.seed, restarts: draft.restarts)
             case .hierarchical:
-                method = .hierarchical(linkage: draft.linkage, clusterCount: draft.clusterCount)
+                switch draft.clusterUnit {
+                case .documents:
+                    method = .hierarchical(linkage: draft.linkage, clusterCount: draft.clusterCount)
+                case .terms:
+                    method = .hierarchicalTerms(
+                        linkage: draft.linkage, clusterCount: draft.clusterCount)
+                }
             case .kmeans:
                 method = .kMeans(
                     clusterCount: draft.clusterCount, seed: draft.seed, restarts: draft.restarts)
@@ -676,11 +749,14 @@ nonisolated struct StudioCorpusMethodsOutput: Sendable {
                 tables.append(StudioCorpusMethodTable(id: key, columns: columns, rows: rows))
             } else if let array = value as? [Any], !array.isEmpty {
                 let sourceIDs = matrixSourceIDs(key: key, output: output)
+                let rowLabels = matrixLabels(key: key, output: output)
                 let rows = array.enumerated().map { index, item in
                     let sourceID = sourceIDs.indices.contains(index) ? sourceIDs[index] : nil
                     let label =
-                        sourceID.flatMap { output.sourceNumbers[$0].map(String.init) }
-                        ?? sourceID ?? String(index + 1)
+                        rowLabels.indices.contains(index)
+                        ? rowLabels[index]
+                        : (sourceID.flatMap { output.sourceNumbers[$0].map(String.init) }
+                            ?? sourceID ?? String(index + 1))
                     return StudioCorpusMethodRow(
                         id: index, values: [label, display(item, locale: locale)],
                         details: allFields(item, prefix: key, locale: locale),
@@ -693,7 +769,11 @@ nonisolated struct StudioCorpusMethodsOutput: Sendable {
                 tables.append(
                     StudioCorpusMethodTable(
                         id: key,
-                        columns: [sourceIDs.isEmpty ? "index" : "sourceRevisionID", "value"],
+                        columns: [
+                            sourceIDs.isEmpty
+                                ? (rowLabels.isEmpty ? "index" : "label")
+                                : "sourceRevisionID", "value",
+                        ],
                         rows: rows))
             } else if !(value is [Any]) {
                 let fields = allFields(value, prefix: key, locale: locale)
@@ -715,6 +795,12 @@ nonisolated struct StudioCorpusMethodsOutput: Sendable {
     {
         guard case let .multivariate(value) = output.payload else { return [] }
         switch key {
+        case "clusterAssignments":
+            return value.clusterUnitIdentifiers.map { id in
+                value.clusterUnitKindIdentifier == "terms"
+                    ? id
+                    : (output.sourceNumbers[id].map(String.init) ?? id)
+            }
         case "rowCoordinates", "rowContributions", "rowCosines":
             let excluded = Set(value.excludedSourceRevisionIDs)
             return value.sourceRevisionIDs.filter { !excluded.contains($0) }.map { id in
@@ -734,6 +820,7 @@ nonisolated struct StudioCorpusMethodsOutput: Sendable {
         guard case let .multivariate(value) = output.payload,
             ["rowCoordinates", "rowContributions", "rowCosines", "clusterAssignments"].contains(key)
         else { return [] }
+        if key == "clusterAssignments", value.clusterUnitKindIdentifier == "terms" { return [] }
         let excluded = Set(value.excludedSourceRevisionIDs)
         return value.sourceRevisionIDs.filter { !excluded.contains($0) }
     }
@@ -860,7 +947,10 @@ nonisolated struct StudioCorpusMethodsOutput: Sendable {
         if draft.tool == .hierarchical || draft.tool == .kmeans {
             values.append(field("clusterCount", String(draft.clusterCount)))
         }
-        if draft.tool == .hierarchical { values.append(field("linkage", draft.linkage)) }
+        if draft.tool == .hierarchical {
+            values.append(field("linkage", draft.linkage))
+            values.append(field("clusterUnitKindIdentifier", draft.clusterUnit.rawValue))
+        }
         if draft.tool == .nmf || draft.tool == .kmeans || draft.tool == .groupMetrics {
             values.append(field("seed", String(draft.seed)))
         }

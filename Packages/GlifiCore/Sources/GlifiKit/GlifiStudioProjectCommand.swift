@@ -16,6 +16,7 @@ public enum GlifiStudioProjectOperation: String, Codable, CaseIterable, Sendable
     case passages
     case characterCount = "character-count"
     case exportVisualization = "export-visualization"
+    case recutVisualization = "recut-visualization"
     case prepareInput = "prepare-input"
     case temporal
 }
@@ -196,6 +197,11 @@ public enum GlifiStudioProjectCommand {
                 return try await GlifiStudioCommandResult(
                     session.exportVisualization(
                         p.visualization, to: URL(fileURLWithPath: p.destinationPath)))
+            case .recutVisualization:
+                let p = try parameters(ProjectRecutVisualizationParameters.self, json)
+                return try GlifiStudioCommandResult(
+                    GlifiStudioVisualizationBuilder.recutDendrogram(
+                        p.visualization, clusterCount: p.clusterCount, height: p.maximumHeight))
             case .prepareInput:
                 let p = try parameters(ProjectInputParameters.self, json)
                 return try await GlifiStudioCommandResult(
@@ -417,6 +423,12 @@ private struct ProjectVisualExportParameters: Codable {
     let destinationPath: String
 }
 
+private struct ProjectRecutVisualizationParameters: Codable {
+    let visualization: GlifiStudioVisualization
+    let clusterCount: Int?
+    let maximumHeight: Double?
+}
+
 private struct ProjectInputParameters: Codable {
     let sourceRevisionIDs: [String]
     let maximumTermCount: Int?
@@ -457,6 +469,7 @@ private enum ProjectMultivariateMethod: Codable {
     case latentSemantic(rank: Int)
     case nonNegativeFactorization(rank: Int, seed: UInt64, restarts: Int)
     case hierarchical(linkage: String, clusterCount: Int)
+    case hierarchicalTerms(linkage: String, clusterCount: Int)
     case kMeans(clusterCount: Int, seed: UInt64, restarts: Int)
 
     var value: GlifiStudioMultivariateMethod {
@@ -468,6 +481,8 @@ private enum ProjectMultivariateMethod: Codable {
             .nonNegativeFactorization(rank: rank, seed: seed, restarts: restarts)
         case let .hierarchical(linkage, clusterCount):
             .hierarchical(linkage: linkage, clusterCount: clusterCount)
+        case let .hierarchicalTerms(linkage, clusterCount):
+            .hierarchicalTerms(linkage: linkage, clusterCount: clusterCount)
         case let .kMeans(clusterCount, seed, restarts):
             .kMeans(clusterCount: clusterCount, seed: seed, restarts: restarts)
         }
@@ -508,6 +523,8 @@ extension GlifiStudioMultivariateMethod: Codable {
             wire = .nonNegativeFactorization(rank: rank, seed: seed, restarts: restarts)
         case let .hierarchical(linkage, clusterCount):
             wire = .hierarchical(linkage: linkage, clusterCount: clusterCount)
+        case let .hierarchicalTerms(linkage, clusterCount):
+            wire = .hierarchicalTerms(linkage: linkage, clusterCount: clusterCount)
         case let .kMeans(clusterCount, seed, restarts):
             wire = .kMeans(clusterCount: clusterCount, seed: seed, restarts: restarts)
         }
@@ -528,31 +545,10 @@ extension GlifiStudioSourceText: Encodable {
     }
 }
 
-extension GlifiStudioProjectTextAnalysisInput: Encodable {
-    private enum CodingKeys: String, CodingKey {
-        case projectID, generation, sourceRevisionIDs, contentDigests, documents, codingUnits
-        case terms, vocabularySize, matrix, lexicalTokenCount
-    }
-
-    /// Encodes every frozen project input without regenerating tokens or matrix cells.
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(projectID, forKey: .projectID)
-        try container.encode(generation, forKey: .generation)
-        try container.encode(sourceRevisionIDs, forKey: .sourceRevisionIDs)
-        try container.encode(contentDigests, forKey: .contentDigests)
-        try container.encode(documents, forKey: .documents)
-        try container.encode(codingUnits, forKey: .codingUnits)
-        try container.encode(terms, forKey: .terms)
-        try container.encode(vocabularySize, forKey: .vocabularySize)
-        try container.encode(matrix, forKey: .matrix)
-        try container.encode(lexicalTokenCount, forKey: .lexicalTokenCount)
-    }
-}
-
 extension GlifiStudioProjectTemporalEvaluation: Encodable {
     private enum CodingKeys: String, CodingKey {
-        case projectID, generation, documents, contentDigests, selectedTerms, result
+        case projectID, generation, documents, contentDigests, selectedTerms, result, preparation,
+            preparationDigest
     }
 
     /// Encodes the calendar result together with its exact source and annotation snapshot.
@@ -564,5 +560,7 @@ extension GlifiStudioProjectTemporalEvaluation: Encodable {
         try container.encode(contentDigests, forKey: .contentDigests)
         try container.encode(selectedTerms, forKey: .selectedTerms)
         try container.encode(result, forKey: .result)
+        try container.encode(preparation, forKey: .preparation)
+        try container.encode(preparationDigest, forKey: .preparationDigest)
     }
 }

@@ -221,7 +221,7 @@ func distributionDescriptorRevisionsAreSelective() async throws {
         (
             descriptor(
                 GlifiGroupMetricComparison.self, "studio.glifi.artifact.group-metric-comparison"),
-            "3"
+            "4"
         ),
         (descriptor(GlifiPostHocAnalysis.self, "studio.glifi.artifact.group-metric-posthoc"), "3"),
         (
@@ -240,7 +240,7 @@ func distributionDescriptorRevisionsAreSelective() async throws {
         #expect(current.algorithmVersion == expectedVersion)
         #expect(previous.algorithmVersion == "1")
         let previousTwo = try distributionLegacyDescriptor(current, algorithmVersion: "2")
-        if expectedVersion == "3" {
+        if expectedVersion == "3" || expectedVersion == "4" {
             #expect(try current.nodeID() != previousTwo.nodeID())
         } else {
             #expect(current == previousTwo)
@@ -252,6 +252,16 @@ func distributionDescriptorRevisionsAreSelective() async throws {
         #expect(
             try JSONDecoder().decode(
                 GlifiAnalysisDescriptor.self, from: JSONEncoder().encode(previous)) == previous)
+        let previousThree = try distributionLegacyDescriptor(current, algorithmVersion: "3")
+        if expectedVersion == "4" {
+            #expect(try current.nodeID() != previousThree.nodeID())
+            #expect(
+                try JSONDecoder().decode(
+                    GlifiAnalysisDescriptor.self, from: JSONEncoder().encode(previousThree))
+                    == previousThree)
+        } else if expectedVersion == "3" {
+            #expect(current == previousThree)
+        }
     }
     let unaffected = try [
         descriptor(GlifiCorpusDispersionAnalysis.self, "studio.glifi.artifact.corpus-dispersion"),

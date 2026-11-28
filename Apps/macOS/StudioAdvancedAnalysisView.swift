@@ -139,6 +139,7 @@ struct StudioAdvancedAnalysisView: View {
     private func configuration(_ snapshot: GlifiStudioProjectSnapshot) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 8) {
+                StudioAnalysisRoleView(route: .advanced(analysis.tool))
                 Label("advanced.title", systemImage: "chart.xyaxis.line").font(.title2.bold())
                 Text("advanced.introduction").foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -173,8 +174,10 @@ struct StudioAdvancedAnalysisView: View {
                                 Text("advanced.full-token-policy").font(.caption).foregroundStyle(
                                     .secondary)
                             }
-                            TextField("advanced.seed", value: $analysis.seed, format: .number)
-                                .textFieldStyle(.roundedBorder)
+                            if analysis.tool != .somPCAInitialization && analysis.tool != .somKH {
+                                TextField("advanced.seed", value: $analysis.seed, format: .number)
+                                    .textFieldStyle(.roundedBorder)
+                            }
                             Text("advanced.limits").font(.caption).foregroundStyle(.secondary)
                             Text("advanced.completion-limits").font(.caption).foregroundStyle(
                                 .secondary)
@@ -284,6 +287,57 @@ struct StudioAdvancedAnalysisView: View {
             mdsParameters(search: false)
         case .mdsSearch:
             mdsParameters(search: true)
+        case .mdsOrdinal, .mdsOrdinalSearch:
+            distancePicker
+            Stepper("advanced.dimensions", value: $analysis.dimensions, in: 1...2)
+            Text(analysis.dimensions, format: .number).foregroundStyle(.secondary)
+            Picker("advanced.ordinal-ties", selection: $analysis.ordinalTies) {
+                ForEach([GlifiStudioMDSOrdinalTies.primary, .secondary], id: \.self) { ties in
+                    Text(StudioLocalization.key("advanced.ordinal-ties.\(ties.rawValue)")).tag(ties)
+                }
+            }
+            integerField("advanced.iterations", value: $analysis.maximumIterations)
+            decimalField("advanced.tolerance", value: $analysis.mdsTolerance)
+            if analysis.tool == .mdsOrdinalSearch {
+                integerField("advanced.starts", value: $analysis.mdsStarts)
+            }
+        case .somPCAInitialization:
+            integerField("advanced.width", value: $analysis.gridWidth)
+            integerField("advanced.height", value: $analysis.gridHeight)
+        case .somKH:
+            integerField("advanced.width", value: $analysis.gridWidth)
+            integerField("advanced.height", value: $analysis.gridHeight)
+            Picker("advanced.som-topology", selection: $analysis.somTopology) {
+                ForEach([GlifiStudioSOMTopology.rectangular, .hexagonal], id: \.self) { topology in
+                    Text(StudioLocalization.key("advanced.som-topology.\(topology.rawValue)")).tag(
+                        topology)
+                }
+            }
+            Toggle("advanced.som-custom-phases", isOn: $analysis.somKHUsesCustomPhases)
+            if analysis.somKHUsesCustomPhases {
+                DisclosureGroup("advanced.som-phase-one") { somKHPhaseFields(first: true) }
+                DisclosureGroup("advanced.som-phase-two") { somKHPhaseFields(first: false) }
+            } else {
+                Text("advanced.som-default-phases").font(.caption).foregroundStyle(.secondary)
+            }
+            Toggle("advanced.som-explicit-codebooks", isOn: $analysis.somKHUsesExplicitCodebooks)
+            if analysis.somKHUsesExplicitCodebooks {
+                Text("advanced.som-codebook-input-help").font(.caption).foregroundStyle(.secondary)
+                TextEditor(text: $analysis.somKHInitialCodebooks)
+                    .font(.body.monospaced())
+                    .frame(minHeight: 120)
+                    .accessibilityLabel("advanced.som-initial-codebooks")
+                if let output = analysis.output, output.tool.usesDenseMatrix {
+                    DisclosureGroup("advanced.matrix-vocabulary") {
+                        Text(output.input.terms.joined(separator: " · "))
+                            .font(.caption).textSelection(.enabled)
+                    }
+                }
+            }
+            Toggle("advanced.som-codebooks", isOn: $analysis.clustersSOMCodebooks)
+            if analysis.clustersSOMCodebooks {
+                integerField("advanced.codebook-clusters", value: $analysis.somCodebookClusterCount)
+            }
         case .som:
             integerField("advanced.width", value: $analysis.gridWidth)
             integerField("advanced.height", value: $analysis.gridHeight)
@@ -294,7 +348,7 @@ struct StudioAdvancedAnalysisView: View {
             integerField("advanced.epochs", value: $analysis.epochs)
             Picker("advanced.som-topology", selection: $analysis.somTopology) {
                 ForEach([GlifiStudioSOMTopology.rectangular, .hexagonal], id: \.self) { topology in
-                    Text(LocalizedStringKey("advanced.som-topology.\(topology.rawValue)")).tag(
+                    Text(StudioLocalization.key("advanced.som-topology.\(topology.rawValue)")).tag(
                         topology)
                 }
             }
@@ -325,7 +379,8 @@ struct StudioAdvancedAnalysisView: View {
                         ], id: \.self
                     ) { criterion in
                         Text(
-                            LocalizedStringKey("advanced.selection-criterion.\(criterion.rawValue)")
+                            StudioLocalization.key(
+                                "advanced.selection-criterion.\(criterion.rawValue)")
                         ).tag(criterion)
                     }
                 }
@@ -357,13 +412,28 @@ struct StudioAdvancedAnalysisView: View {
             distancePicker
             Picker("advanced.linkage", selection: $analysis.linkage) {
                 ForEach(["single", "complete", "average"], id: \.self) { linkage in
-                    Text(LocalizedStringKey("advanced.linkage.\(linkage)")).tag(linkage)
+                    Text(StudioLocalization.key("advanced.linkage.\(linkage)")).tag(linkage)
                 }
             }
         case .network:
             decimalField("advanced.minimum-jaccard", value: $analysis.minimumJaccard)
             integerField("advanced.maximum-edges", value: $analysis.maximumEdges)
         }
+    }
+
+    @ViewBuilder private func somKHPhaseFields(first: Bool) -> some View {
+        integerField(
+            "advanced.som-phase-steps",
+            value:
+                first ? $analysis.somKHFirstSteps : $analysis.somKHSecondSteps)
+        decimalField(
+            "advanced.som-learning-rate",
+            value:
+                first ? $analysis.somKHFirstLearningRate : $analysis.somKHSecondLearningRate)
+        decimalField(
+            "advanced.som-phase-radius",
+            value:
+                first ? $analysis.somKHFirstRadius : $analysis.somKHSecondRadius)
     }
 
     @ViewBuilder private func mdsParameters(search: Bool) -> some View {
@@ -377,7 +447,7 @@ struct StudioAdvancedAnalysisView: View {
                     ? [GlifiStudioMDSMethod.metric, .kruskal, .sammon, .ordinal]
                     : [.classical, .metric, .kruskal, .sammon, .ordinal], id: \.self
             ) { method in
-                Text(LocalizedStringKey("advanced.mds.\(method.rawValue)")).tag(method)
+                Text(StudioLocalization.key("advanced.mds.\(method.rawValue)")).tag(method)
             }
         }
         Stepper("advanced.dimensions", value: $analysis.dimensions, in: 1...2)
@@ -402,7 +472,7 @@ struct StudioAdvancedAnalysisView: View {
                 ],
                 id: \.self
             ) { distance in
-                Text(LocalizedStringKey("advanced.distance.\(distance.rawValue)")).tag(distance)
+                Text(StudioLocalization.key("advanced.distance.\(distance.rawValue)")).tag(distance)
             }
         }
     }
@@ -489,9 +559,15 @@ struct StudioAdvancedAnalysisView: View {
                     }
                     .disabled(model.isBusy)
                 }
-                Label("advanced.session-only", systemImage: "clock")
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+                Label(
+                    LocalizedStringKey(
+                        output.typedResult == nil
+                            ? "research.saved.restored" : "research.saved.session-copy"),
+                    systemImage: output.typedResult == nil
+                        ? "externaldrive.badge.checkmark" : "clock"
+                )
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
                 if analysis.isDraftChanged {
                     Label("advanced.draft-changed", systemImage: "info.circle")
                         .fixedSize(horizontal: false, vertical: true)
@@ -524,6 +600,59 @@ struct StudioAdvancedAnalysisView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 scopeSummary(output)
+                if !output.factorPoints.isEmpty {
+                    Chart(output.factorPoints) { point in
+                        PointMark(
+                            x: .value(String(localized: "advanced.axis-one"), point.x),
+                            y: .value(String(localized: "advanced.axis-two"), point.y)
+                        )
+                        .foregroundStyle(
+                            by: .value(
+                                "series",
+                                String(
+                                    localized:
+                                        String.LocalizationValue(point.seriesKey), locale: locale))
+                        )
+                        .symbol(
+                            by: .value(
+                                "series",
+                                String(
+                                    localized:
+                                        String.LocalizationValue(point.seriesKey), locale: locale))
+                        )
+                        .accessibilityLabel(point.label)
+                        .accessibilityValue(
+                            Text("\(point.x, format: .number), \(point.y, format: .number)"))
+                    }
+                    .chartXScale(domain: output.factorDomain)
+                    .chartYScale(domain: output.factorDomain)
+                    .chartPlotStyle { plot in plot.aspectRatio(1, contentMode: .fit) }
+                    .frame(height: 300)
+                    Text("caveat.visual.symmetric-map").font(.caption).foregroundStyle(.secondary)
+                }
+                if !output.treeVertices.isEmpty {
+                    Chart(output.treeVertices) { vertex in
+                        LineMark(
+                            x: .value(String(localized: "visual.axis.leaf-order"), vertex.x),
+                            y: .value(String(localized: "advanced.merge-height"), vertex.y),
+                            series: .value("merge", vertex.segment)
+                        )
+                        .foregroundStyle(.secondary)
+                    }
+                    .chartXAxis {
+                        AxisMarks(values: Array(1...output.treeLeafLabels.count)) { axis in
+                            AxisValueLabel {
+                                if let value = axis.as(Int.self),
+                                    output.treeLeafLabels.indices.contains(value - 1)
+                                {
+                                    Text(output.treeLeafLabels[value - 1])
+                                }
+                            }
+                        }
+                    }
+                    .frame(height: 300)
+                    Text("advanced.tree-table-help").font(.caption).foregroundStyle(.secondary)
+                }
                 if !output.points.isEmpty {
                     Chart(output.points) { point in
                         PointMark(
@@ -703,7 +832,7 @@ struct StudioAdvancedAnalysisView: View {
                     Text(output.methodIdentifier).textSelection(.enabled)
                 }
                 LabeledContent("advanced.validation") {
-                    Text(LocalizedStringKey("advanced.validation.\(output.validationStatus)"))
+                    Text(StudioLocalization.key("advanced.validation.\(output.validationStatus)"))
                 }
                 Text("advanced.validation-help").font(.caption).foregroundStyle(.secondary)
                 ForEach(Array(output.parameters.enumerated()), id: \.offset) { _, parameter in
@@ -794,11 +923,20 @@ struct StudioAdvancedAnalysisView: View {
         guard ids.count <= GlifiStudioTextAnalytics.projectLaboratoryMaximumSources else {
             return "advanced.scope-limit"
         }
-        if [.mds, .mdsSearch].contains(analysis.tool), ids.count <= analysis.dimensions {
+        if [.mds, .mdsSearch, .mdsOrdinal, .mdsOrdinalSearch].contains(analysis.tool),
+            ids.count <= analysis.dimensions
+        {
             return "advanced.needs-mds-dimensions"
         }
-        if analysis.tool == .mdsSearch, !(1...32).contains(analysis.mdsStarts) {
+        if [.mdsSearch, .mdsOrdinalSearch].contains(analysis.tool),
+            !(1...32).contains(analysis.mdsStarts)
+        {
             return "advanced.needs-starts"
+        }
+        if analysis.tool == .somKH && analysis.somKHUsesExplicitCodebooks,
+            analysis.somKHInitialCodebooks.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        {
+            return "advanced.needs-codebooks"
         }
         if analysis.tool == .topicSelection {
             if analysis.folds != 0 && (analysis.folds < 2 || analysis.folds > ids.count) {

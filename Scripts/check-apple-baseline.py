@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import json
+import math
 import plistlib
 import re
 import sys
@@ -20,14 +21,34 @@ def read(relative_path: str) -> str:
     return (PROJECT_DIRECTORY / relative_path).read_text(encoding="utf-8")
 
 
+def read_json(relative_path: str) -> object:
+    """Reject duplicate keys and non-JSON constants before checking package policy."""
+    def unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("JSON della baseline con chiave duplicata")
+            result[key] = value
+        return result
+
+    def reject_constant(_: str) -> object:
+        raise ValueError("costante non JSON nella baseline")
+
+    def finite_float(value: str) -> float:
+        number = float(value)
+        if not math.isfinite(number):
+            raise ValueError("numero non rappresentabile nella baseline")
+        return number
+
+    return json.loads(read(relative_path), object_pairs_hook=unique_object,
+                      parse_constant=reject_constant, parse_float=finite_float)
+
+
 def validate_test_dependencies(manifest: str, lock: object) -> list[str]:
     """Allow only the ADR-0046 test tooling, with no production consumer."""
     errors = []
     compact = re.sub(r"\s+", "", manifest)
-    dependency = (
-        '.package(url:"https://github.com/cucumberswift/CucumberSwift.git",'
-        'exact:"6.9.0",traits:[])'
-    )
+    dependency = '.package(url:"https://github.com/cucumberswift/CucumberSwift.git",exact:"6.9.0",traits:[])'
     target = '''.testTarget(
         name: "GlifiBDDTests",
         dependencies: [
@@ -35,6 +56,7 @@ def validate_test_dependencies(manifest: str, lock: object) -> list[str]:
             .product(name: "CucumberSwiftTesting", package: "CucumberSwift"),
         ],
         exclude: ["Features"],
+        resources: [.copy("Licenses")],
         plugins: [.plugin(name: "CucumberSwiftTestingPlugin", package: "CucumberSwift")]
     )'''
     allowed_target = re.sub(r"\s+", "", target)
@@ -372,7 +394,7 @@ def main() -> int:
 
     # ADR-0046 adds only pinned BDD test tooling. The application allowlist stays empty.
     try:
-        lock = json.loads(read("Packages/GlifiCore/Package.resolved"))
+        lock = read_json("Packages/GlifiCore/Package.resolved")
         errors.extend(validate_test_dependencies(package_manifest, lock))
     except (OSError, ValueError) as error:
         errors.append(f"Package.resolved BDD non leggibile: {error}")

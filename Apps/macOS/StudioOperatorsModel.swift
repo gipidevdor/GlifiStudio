@@ -31,6 +31,7 @@ nonisolated struct StudioOperatorGraphPreview: Sendable {
 @MainActor @Observable final class StudioOperatorsModel {
     var request = GlifiStudioCoreOperatorRequest()
     private(set) var result: GlifiStudioCoreOperatorResult?
+    private(set) var completedAt: Date?
     private(set) var graphPreview: StudioOperatorGraphPreview?
     var selectedTable = 0
     var page = 0
@@ -61,6 +62,7 @@ nonisolated struct StudioOperatorGraphPreview: Sendable {
                 messageKey: "failure.category.cancelled")
         }
         result = next
+        completedAt = .now
         graphPreview = preview
         selectedTable = 0
         page = 0
@@ -70,9 +72,70 @@ nonisolated struct StudioOperatorGraphPreview: Sendable {
         revision = UUID()
         request = GlifiStudioCoreOperatorRequest()
         result = nil
+        completedAt = nil
         graphPreview = nil
         selectedTable = 0
         page = 0
+    }
+
+    nonisolated private struct Archive: Codable, Sendable {
+        let client: String
+        let version: Int
+        let result: GlifiStudioCoreOperatorResult
+        let completedAt: Date
+    }
+
+    func archiveData() async throws -> Data {
+        let expected = revision
+        guard let result, let completedAt else { throw StudioWorkbenchArchiveCodec.failure() }
+        let bytes = try await StudioWorkbenchArchiveCodec.encode(
+            Archive(
+                client: "operators", version: 1, result: result, completedAt: completedAt))
+        try Task.checkCancellation()
+        guard revision == expected else { throw CancellationError() }
+        return bytes
+    }
+
+    func saveArchive(session: GlifiStudioProjectSession, title: String) async throws
+        -> GlifiStudioSavedAnalysis
+    {
+        guard let result, let completedAt else { throw StudioWorkbenchArchiveCodec.failure() }
+        let presentation = try await archiveData()
+        return try await session.captureWorkbenchAnalysis(
+            command: "operator", requestJSON: StudioWorkbenchArchiveCodec.encode(result.request),
+            resultJSON: StudioWorkbenchArchiveCodec.encode(result),
+            methodIdentifier: result.methodIdentifiers.joined(separator: " + "), title: title,
+            presentationJSON: presentation,
+            createdAtUnixMilliseconds: Int64(completedAt.timeIntervalSince1970 * 1_000))
+    }
+
+    @concurrent private static func decodeArchive(_ data: Data, saved: GlifiStudioSavedAnalysis)
+        async throws -> (Archive, StudioOperatorGraphPreview?)
+    {
+        try Task.checkCancellation()
+        guard data.count <= 8 * 1_048_576 else { throw StudioWorkbenchArchiveCodec.failure() }
+        let archive = try JSONDecoder().decode(Archive.self, from: data)
+        guard archive.client == "operators", archive.version == 1 else {
+            throw StudioWorkbenchArchiveCodec.failure()
+        }
+        try StudioWorkbenchArchiveCodec.validate(
+            saved: saved, command: "operator", request: archive.result.request,
+            result: archive.result,
+            method: archive.result.methodIdentifiers.joined(separator: " + "))
+        return (archive, await projectGraph(archive.result))
+    }
+
+    func restoreArchive(_ data: Data, saved: GlifiStudioSavedAnalysis) async throws {
+        let expected = UUID()
+        revision = expected
+        let (archive, preview) = try await Self.decodeArchive(data, saved: saved)
+        try Task.checkCancellation()
+        guard revision == expected else { throw CancellationError() }
+        reset()
+        request = archive.result.request
+        result = archive.result
+        completedAt = archive.completedAt
+        graphPreview = preview
     }
 
     func showPage(_ value: Int) {

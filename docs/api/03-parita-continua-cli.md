@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-API-003 |
 | Tipo | Contratto normativo della parità delle interfacce |
-| Versione | 1.0.2 |
+| Versione | 1.0.3 |
 | Stato | Implementato; verifiche e limiti registrati in GS-VER-275 |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-27 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Richiesta esplicita di mantenere sempre allineate CLI e Kit; ADR-0036 |
 | Riferimenti | GS-API-001; GS-API-002; GS-DOR-275; ADR-0036 |
 
@@ -186,7 +186,7 @@ glifi --format json project-call progetto.glifi --request richiesta-corpus.json
 
 I tag correnti sono `corpus`, `keyness`, `similarity`, `association`,
 `dispersion`, `group-metric`, `posthoc`, `collocations`, `correlate`, `paired`,
-`multivariate`, `weighting`, `diversity`, `laws`, `summarize`, `ngrams`, `bm25`,
+`multivariate`, `recut-visualization`, `weighting`, `diversity`, `laws`, `summarize`, `ngrams`, `bm25`,
 `window-collocations`, `window-network`, `network`, `source-text`, `passages`,
 `character-count`, `export-visualization`, `prepare-input` e `temporal`.
 
@@ -219,6 +219,63 @@ metodo dichiarati con l'Artifact autorevole. Una contraddizione produce
 consentite le scelte di presentazione compatibili, compresi gli assi alternativi;
 la verifica offline del bundle conserva il proprio contratto distinto
 (GS-DOR-331).
+
+## Unità del clustering gerarchico
+
+`GlifiStudioMultivariateMethod.hierarchicalTerms(linkage:clusterCount:)`
+seleziona il profilo `term-document-relative-frequency-v1`; la variante
+`hierarchical` mantiene le unità documentali e i propri default. Entrambe
+attraversano la medesima operazione `multivariate` di `project-call`.
+Nel campo `method` il nuovo caso conserva il Codable completo:
+
+```json
+{"hierarchicalTerms":{"linkage":"ward","clusterCount":2}}
+```
+
+L'alias diretto equivalente è:
+
+```sh
+glifi --format json multivariate progetto.glifi --sources ID1,ID2 --method hac --unit terms --linkage ward --clusters 2
+```
+
+`--unit documents` è esplicito e equivalente al default preesistente.
+`--unit` con altri valori o con un metodo diverso da `hac` è rifiutato.
+Il risultato trasporta identità delle unità, appartenenze, fusioni e
+`clusterUnitSourceRevisionIDs` per le foglie termine, senza sostituire
+l'elenco documentale `sourceRevisionIDs`.
+
+### Taglio del dendrogramma tramite lo stesso trasporto
+
+Il metodo pubblico `GlifiStudioVisualizationBuilder.recutDendrogram`
+ha il binding operativo `recut-visualization` di `project-call`
+(caso Swift `recutVisualization`). Il parametro `visualization` contiene
+la specifica visuale completa con `dendrogramTree`; il chiamante **DEVE**
+fornire esattamente uno tra `clusterCount` e `maximumHeight`. Il secondo
+campo corrisponde all'argomento Swift `height`. Fornire entrambi, nessuno,
+un numero di gruppi fuori dominio o un'altezza non finita/negativa produce
+la stessa failure del metodo nativo.
+
+| Parametro di `project-call` | Argomento nativo | Effetto |
+| --- | --- | --- |
+| `visualization` | Primo argomento di `recutDendrogram` | Albero e specifica completi da validare |
+| `clusterCount` | `clusterCount` | Partizione per numero di gruppi |
+| `maximumHeight` | `height` | Include tutte le fusioni alla soglia, comprese le parità |
+
+Una richiesta con schema `studio.glifi.project-command-request`, versione
+1, operazione `recut-visualization` e questi parametri viene eseguita con:
+
+```sh
+glifi --format json project-call progetto.glifi --request taglio-dendrogramma.json
+```
+
+Il risultato è la stessa `GlifiStudioVisualization` ottenuta dalla chiamata
+nativa: serie e sintesi aggiornate, albero, identità e lineage conservati.
+L'operazione non modifica il progetto e non riesegue il corpus. Non è
+esclusa dalla parità perché modifica la presentazione: richiesta, risultato
+e failure attraversano il trasporto e le fixture di confronto.
+La specifica risultante usa l'export esistente, con le verifiche autorevoli
+del produttore quando si scrive tramite la sessione. GS-VER-342 registra le
+nuove prove di parità e i loro esiti.
 
 ## Verifica continua
 
@@ -259,3 +316,12 @@ sensibili nella diagnostica. Il superamento dimostra la parità dei contratti
 e dei casi verificati; non costituisce una prova per ogni possibile input né
 una nuova approvazione scientifica. Gli esiti osservati sono registrati in
 [GS-VER-275](../evidenze/GS-VER-275-parita-continua-kit-cli.md).
+
+## Flusso di ricerca persistente
+
+`research-call` trasporta il catalogo `GlifiStudioResearchOperation` con gli
+stessi DTO e failure delle API native: dataset, stato tipizzato, selezioni,
+acquisizione, ripristino, variabili derivate e indagini descrittive. Il contratto
+completo è [GS-API-006](06-lavoro-avanzato-persistente.md). L'inventario compilato
+e le fixture native sono inclusi nello stesso gate permanente, senza escludere
+le nuove operazioni dal controllo.

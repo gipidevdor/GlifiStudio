@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B33900000000000000000001 /* StudioLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33900000000000000000001 /* StudioLocalization.swift */; };
+		B33900000000000000000002 /* StudioLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33900000000000000000001 /* StudioLocalization.swift */; };
+		B33900000000000000000003 /* StudioLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33900000000000000000001 /* StudioLocalization.swift */; };
 		B32100000000000000000001 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = A3060000000000000000000A /* LICENSE */; };
 		B32100000000000000000002 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = A3060000000000000000000A /* LICENSE */; };
 		B32100000000000000000003 /* THIRD_PARTY_NOTICES.txt in Resources */ = {isa = PBXBuildFile; fileRef = A32100000000000000000001 /* THIRD_PARTY_NOTICES.txt */; };
@@ -82,6 +85,19 @@
 		B72000000000000000000004 /* StudioLinguisticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72000000000000000000003 /* StudioLinguisticTests.swift */; };
 		B30600000000000000000001 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A30600000000000000000013 /* InfoPlist.xcstrings */; };
 		B30600000000000000000002 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A30600000000000000000013 /* InfoPlist.xcstrings */; };
+		B8B100000000000000000001 /* StudioKHMatrixModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B100000000000000000001 /* StudioKHMatrixModel.swift */; };
+		B8B200000000000000000001 /* StudioKHMatrixModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B100000000000000000001 /* StudioKHMatrixModel.swift */; };
+		B8B100000000000000000002 /* StudioKHMatrixView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B100000000000000000002 /* StudioKHMatrixView.swift */; };
+		B8B100000000000000000003 /* StudioKHLanguageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B100000000000000000003 /* StudioKHLanguageModel.swift */; };
+		B8B200000000000000000003 /* StudioKHLanguageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B100000000000000000003 /* StudioKHLanguageModel.swift */; };
+		B8B100000000000000000004 /* StudioKHLanguageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B100000000000000000004 /* StudioKHLanguageView.swift */; };
+		B8B200000000000000000005 /* StudioKHMatrixTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B100000000000000000005 /* StudioKHMatrixTests.swift */; };
+		3F65311347624B98ABF9C72B /* StudioResearchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784EDA015B9346045B8A3735 /* StudioResearchModel.swift */; };
+		0559B4DC1E129DB6CA338C5E /* StudioResearchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 784EDA015B9346045B8A3735 /* StudioResearchModel.swift */; };
+		418F78EC5DAADE0F73C50AD0 /* StudioResearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F3875650B661FFFC0B9AE83 /* StudioResearchView.swift */; };
+		2C6A6B8926C51BD326910BD6 /* StudioResearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76469CB026F454FB1A5484E1 /* StudioResearchTests.swift */; };
+		37C44CCFFEE6040849173AC2 /* StudioResearchArchiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6AE1FF0F075EC51E646DEC /* StudioResearchArchiveTests.swift */; };
+		A1462682734475474ACDE372 /* StudioWorkbenchArchiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6BE74E3E4B338917CB502C /* StudioWorkbenchArchiveTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildFile section for macOS tests */
@@ -99,6 +115,7 @@
 /* End PBXBuildFile section for macOS tests */
 
 /* Begin PBXFileReference section */
+		A33900000000000000000001 /* StudioLocalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioLocalization.swift; sourceTree = "<group>"; };
 		A32100000000000000000001 /* THIRD_PARTY_NOTICES.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = THIRD_PARTY_NOTICES.txt; sourceTree = SOURCE_ROOT; };
 		A10000000000000000000001 /* StudioHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioHomeView.swift; sourceTree = "<group>"; };
 		A10000000000000000000020 /* StudioVisualizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioVisualizationView.swift; sourceTree = "<group>"; };
@@ -172,6 +189,16 @@
 		A30600000000000000000011 /* macOS-Tests-Common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "macOS-Tests-Common.xcconfig"; sourceTree = "<group>"; };
 		A30600000000000000000012 /* macOS-Tests-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "macOS-Tests-Release.xcconfig"; sourceTree = "<group>"; };
 		A30600000000000000000013 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = "InfoPlist.xcstrings"; sourceTree = "<group>"; };
+		A8B100000000000000000001 /* StudioKHMatrixModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioKHMatrixModel.swift; sourceTree = "<group>"; };
+		A8B100000000000000000002 /* StudioKHMatrixView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioKHMatrixView.swift; sourceTree = "<group>"; };
+		A8B100000000000000000003 /* StudioKHLanguageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioKHLanguageModel.swift; sourceTree = "<group>"; };
+		A8B100000000000000000004 /* StudioKHLanguageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioKHLanguageView.swift; sourceTree = "<group>"; };
+		A8B100000000000000000005 /* StudioKHMatrixTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioKHMatrixTests.swift; sourceTree = "<group>"; };
+		784EDA015B9346045B8A3735 /* StudioResearchModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioResearchModel.swift; sourceTree = "<group>"; };
+		6F3875650B661FFFC0B9AE83 /* StudioResearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioResearchView.swift; sourceTree = "<group>"; };
+		76469CB026F454FB1A5484E1 /* StudioResearchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioResearchTests.swift; sourceTree = "<group>"; };
+		9B6AE1FF0F075EC51E646DEC /* StudioResearchArchiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioResearchArchiveTests.swift; sourceTree = "<group>"; };
+		9E6BE74E3E4B338917CB502C /* StudioWorkbenchArchiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioWorkbenchArchiveTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileReference section for macOS tests */
@@ -342,6 +369,7 @@
 			children = (
 				A7000000000000000000000A /* StudioVisualExportPreparation.swift */,
 				A60000000000000000000001 /* StudioWorkspaceNavigation.swift */,
+				A33900000000000000000001 /* StudioLocalization.swift */,
 				A10000000000000000000001 /* StudioHomeView.swift */,
 				A8A100000000000000000001 /* StudioFactorAudioGraph.swift */,
 				A8A200000000000000000001 /* StudioPlotSeries.swift */,
@@ -359,6 +387,12 @@
 			isa = PBXGroup;
 			children = (
 				A72000000000000000000001 /* StudioLinguisticModel.swift */,
+				A8B100000000000000000001 /* StudioKHMatrixModel.swift */,
+				6F3875650B661FFFC0B9AE83 /* StudioResearchView.swift */,
+				784EDA015B9346045B8A3735 /* StudioResearchModel.swift */,
+				A8B100000000000000000002 /* StudioKHMatrixView.swift */,
+				A8B100000000000000000003 /* StudioKHLanguageModel.swift */,
+				A8B100000000000000000004 /* StudioKHLanguageView.swift */,
 				A72000000000000000000002 /* StudioLinguisticView.swift */,
 				A70000000000000000000001 /* StudioOperatorsModel.swift */,
 				A70000000000000000000002 /* StudioOperatorsView.swift */,
@@ -479,6 +513,10 @@
 				A50000000000000000000002 /* StudioKeynessTests.swift */,
 				A50000000000000000000003 /* StudioKeynessValidationTests.swift */,
 				A72000000000000000000003 /* StudioLinguisticTests.swift */,
+				A8B100000000000000000005 /* StudioKHMatrixTests.swift */,
+				9E6BE74E3E4B338917CB502C /* StudioWorkbenchArchiveTests.swift */,
+				9B6AE1FF0F075EC51E646DEC /* StudioResearchArchiveTests.swift */,
+				76469CB026F454FB1A5484E1 /* StudioResearchTests.swift */,
 				A30000000000000000000002 /* StudioMacRuntimeMonitorTests.swift */,
 				A7000000000000000000000B /* StudioOperatorsTests.swift */,
 				A63000000000000000000001 /* StudioSelectionConsistencyTests.swift */,
@@ -643,6 +681,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				B72000000000000000000001 /* StudioLinguisticModel.swift in Sources */,
+				B8B100000000000000000001 /* StudioKHMatrixModel.swift in Sources */,
+				418F78EC5DAADE0F73C50AD0 /* StudioResearchView.swift in Sources */,
+				3F65311347624B98ABF9C72B /* StudioResearchModel.swift in Sources */,
+				B8B100000000000000000002 /* StudioKHMatrixView.swift in Sources */,
+				B8B100000000000000000003 /* StudioKHLanguageModel.swift in Sources */,
+				B8B100000000000000000004 /* StudioKHLanguageView.swift in Sources */,
 				B72000000000000000000003 /* StudioLinguisticView.swift in Sources */,
 				B70000000000000000000001 /* StudioOperatorsModel.swift in Sources */,
 				B70000000000000000000003 /* StudioOperatorsView.swift in Sources */,
@@ -655,6 +699,7 @@
 				B7000000000000000000000D /* StudioCoreMethodRoute.swift in Sources */,
 				B7000000000000000000000F /* StudioVisualExportPreparation.swift in Sources */,
 				B60000000000000000000001 /* StudioWorkspaceNavigation.swift in Sources */,
+				B33900000000000000000001 /* StudioLocalization.swift in Sources */,
 				B60000000000000000000004 /* StudioAdvancedAnalysisModel.swift in Sources */,
 				B60000000000000000000006 /* StudioAdvancedAnalysisView.swift in Sources */,
 				B60000000000000000000007 /* StudioLexicalLawsView.swift in Sources */,
@@ -680,6 +725,7 @@
 			files = (
 				B70000000000000000000010 /* StudioVisualExportPreparation.swift in Sources */,
 				B60000000000000000000002 /* StudioWorkspaceNavigation.swift in Sources */,
+				B33900000000000000000002 /* StudioLocalization.swift in Sources */,
 				B10000000000000000000003 /* StudioHomeView.swift in Sources */,
 				B8A100000000000000000002 /* StudioFactorAudioGraph.swift in Sources */,
 				B8A200000000000000000002 /* StudioPlotSeries.swift in Sources */,
@@ -700,6 +746,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				B72000000000000000000002 /* StudioLinguisticModel.swift in Sources */,
+				B8B200000000000000000001 /* StudioKHMatrixModel.swift in Sources */,
+				B8B200000000000000000003 /* StudioKHLanguageModel.swift in Sources */,
+				B8B200000000000000000005 /* StudioKHMatrixTests.swift in Sources */,
+				A1462682734475474ACDE372 /* StudioWorkbenchArchiveTests.swift in Sources */,
+				37C44CCFFEE6040849173AC2 /* StudioResearchArchiveTests.swift in Sources */,
+				2C6A6B8926C51BD326910BD6 /* StudioResearchTests.swift in Sources */,
+				0559B4DC1E129DB6CA338C5E /* StudioResearchModel.swift in Sources */,
 				B72000000000000000000004 /* StudioLinguisticTests.swift in Sources */,
 				B71000000000000000000003 /* StudioEvaluationTests.swift in Sources */,
 				B71000000000000000000002 /* StudioStatisticsTests.swift in Sources */,
@@ -714,6 +767,7 @@
 				B70000000000000000000012 /* StudioOperatorsTests.swift in Sources */,
 				B60000000000000000000009 /* StudioAdvancedAnalysisTests.swift in Sources */,
 				B60000000000000000000003 /* StudioWorkspaceNavigation.swift in Sources */,
+				B33900000000000000000003 /* StudioLocalization.swift in Sources */,
 				B60000000000000000000005 /* StudioAdvancedAnalysisModel.swift in Sources */,
 				B8A100000000000000000003 /* StudioFactorAudioGraph.swift in Sources */,
 				B8A200000000000000000003 /* StudioPlotSeries.swift in Sources */,

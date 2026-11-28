@@ -34,6 +34,7 @@ struct StudioHomeView: View {
     @FocusState private var isQueryFocused: Bool
     #if os(macOS)
         @State private var selectedTextTool: StudioTextTool = .summary
+        @State private var isResearchWorkspacePresented = false
         @SceneStorage("workspace.specialized-laboratories") private
             var showsSpecializedLaboratories = false
     #endif
@@ -72,6 +73,8 @@ struct StudioHomeView: View {
                             sidebarRow(.evaluation)
                             sidebarRow(.operators)
                             sidebarRow(.linguistics)
+                            sidebarRow(.khMatrix)
+                            sidebarRow(.khLanguage)
                         }
                     #endif
                 }
@@ -129,6 +132,10 @@ struct StudioHomeView: View {
                         StudioOperatorsView(model: model)
                     case .linguistics:
                         StudioLinguisticView(model: model)
+                    case .khMatrix:
+                        StudioKHMatrixView(model: model)
+                    case .khLanguage:
+                        StudioKHLanguageView(model: model)
                 #endif
                 case .investigation: investigation
                 case .query: query
@@ -147,7 +154,7 @@ struct StudioHomeView: View {
             #if os(macOS)
                 if section == .corpusMethods || section == .advancedAnalysis
                     || section == .statistics || section == .evaluation || section == .operators
-                    || section == .linguistics
+                    || section == .linguistics || section == .khMatrix || section == .khLanguage
                 {
                     showsSpecializedLaboratories = true
                 }
@@ -167,6 +174,12 @@ struct StudioHomeView: View {
                     .help("action.import")
                 }
                 Menu("sidebar.project", systemImage: "folder") {
+                    #if os(macOS)
+                        Button("research.title", systemImage: "tablecells") {
+                            isResearchWorkspacePresented = true
+                        }
+                        .disabled(model.snapshot == nil)
+                    #endif
                     Button("action.new-project", systemImage: "folder.badge.plus") {
                         selection = .project
                         createProjectDocument()
@@ -199,6 +212,23 @@ struct StudioHomeView: View {
         .sheet(isPresented: $isSourcePreviewPresented) {
             sourcePreview
         }
+        #if os(macOS)
+            .sheet(isPresented: $isResearchWorkspacePresented) {
+                StudioResearchView(home: model) { client in
+                    switch client {
+                    case "khMatrix": showSection(.khMatrix)
+                    case "khLanguage": showSection(.khLanguage)
+                    case "evaluation": showSection(.evaluation)
+                    case "statistics": showSection(.statistics)
+                    case "operators": showSection(.operators)
+                    case "linguistic": showSection(.linguistics)
+                    case "corpusMethods": showSection(.corpusMethods)
+                    case "report": showSection(.export)
+                    default: showSection(.advancedAnalysis)
+                    }
+                }
+            }
+        #endif
         .focusedSceneValue(\.studioWorkspaceActions, sceneActions)
         .fileImporter(
             isPresented: $isSourceImporterPresented,
@@ -410,11 +440,11 @@ struct StudioHomeView: View {
                 model.advancedAnalysis.tool = .distances
                 selection = .advancedAnalysis
             case .correspondence:
-                model.advancedAnalysis.tool = .correspondence
-                selection = .advancedAnalysis
+                model.corpusMethods.tool = .correspondence
+                selection = .corpusMethods
             case .hierarchical:
-                model.advancedAnalysis.tool = .hierarchical
-                selection = .advancedAnalysis
+                model.corpusMethods.tool = .hierarchical
+                selection = .corpusMethods
             case .network:
                 model.advancedAnalysis.tool = .network
                 selection = .advancedAnalysis
@@ -776,6 +806,12 @@ struct StudioHomeView: View {
                         isSourceImporterPresented = true
                     }
                     .disabled(model.isBusy)
+                    #if os(macOS)
+                        Button("research.title", systemImage: "tablecells") {
+                            isResearchWorkspacePresented = true
+                        }
+                        .disabled(model.isBusy)
+                    #endif
                     Button("action.analyze-corpus") {
                         Task { await model.analyzeCorpusNow() }
                     }
@@ -1615,7 +1651,7 @@ struct StudioHomeView: View {
             if let plan = model.planResult {
                 Section("plan.title") {
                     LabeledContent("plan.status") {
-                        Text(LocalizedStringKey("plan.status.\(plan.plan.status)"))
+                        Text(StudioLocalization.key("plan.status.\(plan.plan.status)"))
                     }
                     LabeledContent("plan.project-id") {
                         Text(shortID(plan.projectID))
@@ -1781,7 +1817,7 @@ struct StudioHomeView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             LabeledContent(decision.capabilityIdentifier) {
                                 Text(
-                                    LocalizedStringKey(
+                                    StudioLocalization.key(
                                         "plan.applicability.\(decision.applicability)")
                                 )
                                 .font(.caption)
@@ -1905,7 +1941,7 @@ struct StudioHomeView: View {
                             .textSelection(.enabled)
                     }
                     LabeledContent("execution.plan-status") {
-                        Text(LocalizedStringKey("plan.status.\(execution.planStatus)"))
+                        Text(StudioLocalization.key("plan.status.\(execution.planStatus)"))
                     }
                     LabeledContent("execution.operating-profile") {
                         Text(execution.operatingProfile)
@@ -2756,7 +2792,7 @@ struct StudioHomeView: View {
                             }
                             LabeledContent("finding.evidence.disposition") {
                                 Text(
-                                    LocalizedStringKey(
+                                    StudioLocalization.key(
                                         "evidence.disposition.\(reference.disposition)")
                                 )
                                 .font(.caption)
@@ -2788,8 +2824,11 @@ struct StudioHomeView: View {
                                 .textSelection(.enabled)
                             if let disposition = model.evidenceDisposition(for: evidence.id) {
                                 LabeledContent("finding.evidence.disposition") {
-                                    Text(LocalizedStringKey("evidence.disposition.\(disposition)"))
-                                        .font(.caption)
+                                    Text(
+                                        StudioLocalization.key(
+                                            "evidence.disposition.\(disposition)")
+                                    )
+                                    .font(.caption)
                                 }
                             }
                             if let reason = model.evidenceDispositionReason(for: evidence.id) {
@@ -3042,7 +3081,7 @@ struct StudioHomeView: View {
                 ForEach(["json", "markdown", "csv", "pdf"], id: \.self) { format in
                     Label(format, systemImage: "doc")
                         .font(.caption.monospaced())
-                        .accessibilityLabel(Text("export.format.\(format)"))
+                        .accessibilityLabel(Text(StudioLocalization.key("export.format.\(format)")))
                 }
                 Button("action.export") {
                     isExportFolderPresented = true
@@ -3344,7 +3383,7 @@ struct StudioHomeView: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(LocalizedStringKey(caveat.identifier))
             LabeledContent("finding.caveat.severity") {
-                Text(LocalizedStringKey("caveat.severity.\(caveat.severity)"))
+                Text(StudioLocalization.key("caveat.severity.\(caveat.severity)"))
                     .font(.caption)
             }
             LabeledContent("finding.caveat.scope") {

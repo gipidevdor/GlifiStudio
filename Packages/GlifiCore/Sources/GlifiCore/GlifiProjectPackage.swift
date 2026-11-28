@@ -4,6 +4,28 @@ import CryptoKit
 import Darwin
 import Foundation
 
+/// Additional immutable objects included in the same research import transaction.
+package struct GlifiProjectArtifactAttachment: Sendable {
+    package let descriptor: GlifiAnalysisDescriptor
+    package let data: Data
+
+    package init<Payload: GlifiAnalysisArtifactPayload>(
+        payload: Payload, descriptor: GlifiAnalysisDescriptor
+    ) throws {
+        guard descriptor.outputSchemaIdentifier == Payload.outputSchemaIdentifier,
+            !GlifiDocumentExtractionPersistence.isReserved(descriptor)
+        else { throw savedResearchFailure("research.invalid-attachment") }
+        self.descriptor = descriptor
+        data = try GlifiArtifactCanonicalJSON.encode(payload)
+        guard data.count <= GlifiProjectPackage.maximumArtifactByteCount else {
+            throw GlifiFailure(
+                code: "research.attachment-byte-limit", category: .insufficientResources,
+                operation: .persistProject, retryDisposition: .afterConditionsChange,
+                retainedState: .unchanged, messageKey: "failure.category.insufficientResources")
+        }
+    }
+}
+
 /// One immutable source revision reachable from a project generation.
 public struct GlifiProjectSourceRecord: Codable, Equatable, Sendable {
     /// Logical identity of the source.
@@ -204,8 +226,8 @@ public struct GlifiProjectManifest: Codable, Equatable, Sendable {
         "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     /// Current package format major.
     public static let formatVersion = 1
-    /// Current reader capability, including captured rich-document representations.
-    public static let readerVersion = 2
+    /// Current reader capability, including authoritative research settings and saved results.
+    public static let readerVersion = 3
 
     /// Stable schema identifier encoded in the document.
     public let schema: String
@@ -253,7 +275,8 @@ public struct GlifiProjectManifest: Codable, Equatable, Sendable {
         investigationEventCount: Int,
         qualitativeRootDigest: String = GlifiProjectManifest.emptyQualitativeRootDigest,
         qualitativeEventCount: Int = 0,
-        containsRichDocuments: Bool = false
+        containsRichDocuments: Bool = false,
+        containsResearchData: Bool = false
     ) {
         schema = Self.schema
         schemaVersion =
@@ -262,7 +285,10 @@ public struct GlifiProjectManifest: Codable, Equatable, Sendable {
         self.qualitativeRootDigest = qualitativeEventCount > 0 ? qualitativeRootDigest : nil
         self.qualitativeEventCount = qualitativeEventCount > 0 ? qualitativeEventCount : nil
         formatVersion = Self.formatVersion
-        minimumReaderVersion = containsRichDocuments ? Self.readerVersion : Self.formatVersion
+        minimumReaderVersion =
+            containsResearchData
+            ? 3
+            : (containsRichDocuments ? 2 : Self.formatVersion)
         self.projectID = projectID
         self.generation = generation
         self.baseGeneration = baseGeneration
@@ -680,12 +706,25 @@ public actor GlifiProjectPackage {
         return result
     }
 
+    /// Commits derived tabular sources and their authoritative metadata in one generation.
+    @discardableResult
+    package func storeArtifact<Payload: GlifiAnalysisArtifactPayload>(
+        _ payload: Payload, descriptor: GlifiAnalysisDescriptor,
+        importedTexts: [GlifiImportedText], attachments: [GlifiProjectArtifactAttachment] = []
+    ) throws -> GlifiProjectSnapshot {
+        try storeArtifact(
+            payload, descriptor: descriptor, interruption: nil,
+            importedTexts: importedTexts, attachments: attachments)
+    }
+
     @discardableResult
     func storeArtifact<Payload: GlifiAnalysisArtifactPayload>(
         _ payload: Payload,
         descriptor: GlifiAnalysisDescriptor,
         interruption: GlifiProjectCommitInterruption?,
-        interruptionBehavior: GlifiProjectCommitInterruptionBehavior = .throwFailure
+        interruptionBehavior: GlifiProjectCommitInterruptionBehavior = .throwFailure,
+        importedTexts: [GlifiImportedText] = [],
+        attachments: [GlifiProjectArtifactAttachment] = []
     ) throws -> GlifiProjectSnapshot {
         guard !GlifiDocumentExtractionPersistence.isReserved(descriptor) else {
             throw GlifiFailure(
@@ -733,7 +772,8 @@ public actor GlifiProjectPackage {
                     at: coordinatedURL,
                     expectedSnapshot: expectedSnapshot,
                     interruption: interruption,
-                    interruptionBehavior: interruptionBehavior
+                    interruptionBehavior: interruptionBehavior,
+                    importedTexts: importedTexts, attachments: attachments
                 )
             } catch {
                 coordinatedError = error
@@ -1025,6 +1065,10 @@ private enum GlifiProjectPackageIO {
             let artifacts = try storedArtifacts.map {
                 try validatedArtifactRecord(for: $0, in: packageURL)
             }
+            guard
+                manifest.minimumReaderVersion >= 3
+                    || !artifacts.contains(where: requiresResearchReader)
+            else { throw corruption("project.research-reader-version-mismatch") }
             guard artifacts.count == manifest.artifactCount,
                 try artifactRootDigest(artifacts) == manifest.artifactRootDigest
             else {
@@ -1401,6 +1445,13 @@ private enum GlifiProjectPackageIO {
             directory: transactionDirectory, targetGeneration: targetGeneration)
     }
 
+    private static func requiresResearchReader(_ artifact: GlifiProjectArtifactRecord) -> Bool {
+        let family = artifact.node.descriptor.artifactTypeIdentifier
+        return family == "studio.glifi.artifact.research-state"
+            || family == "studio.glifi.artifact.tabular-source"
+            || family == "studio.glifi.artifact.saved-research-analysis"
+    }
+
     /// Builds the manifest and its generation digest from one set of roots, without I/O.
     private static func makeCandidateManifest(
         after snapshot: GlifiProjectSnapshot,
@@ -1409,7 +1460,8 @@ private enum GlifiProjectPackageIO {
         artifactRoot: GenerationRoot? = nil,
         investigationRoot: GenerationRoot? = nil,
         qualitativeRoot: GenerationRoot? = nil,
-        containsNewRichDocument: Bool = false
+        containsNewRichDocument: Bool = false,
+        containsResearchData: Bool = false
     ) throws -> GlifiProjectManifest {
         let sourceRoot =
             sourceRoot
@@ -1456,7 +1508,9 @@ private enum GlifiProjectPackageIO {
             containsRichDocuments: containsNewRichDocument
                 || snapshot.sources.contains {
                     GlifiDocumentExtractionPersistence.isRich($0.format)
-                }
+                },
+            containsResearchData: containsResearchData
+                || snapshot.artifacts.contains(where: requiresResearchReader)
         )
     }
 
@@ -1606,7 +1660,9 @@ private enum GlifiProjectPackageIO {
         at packageURL: URL,
         expectedSnapshot: GlifiProjectSnapshot,
         interruption: GlifiProjectCommitInterruption?,
-        interruptionBehavior: GlifiProjectCommitInterruptionBehavior
+        interruptionBehavior: GlifiProjectCommitInterruptionBehavior,
+        importedTexts: [GlifiImportedText] = [],
+        attachments: [GlifiProjectArtifactAttachment] = []
     ) throws -> GlifiProjectSnapshot {
         let writerLease = try GlifiProjectWriterLease.acquire(in: packageURL)
         defer { writerLease.release() }
@@ -1627,11 +1683,32 @@ private enum GlifiProjectPackageIO {
                 messageKey: "failure.project.stale-generation"
             )
         }
+        guard importedTexts.count <= 10_000,
+            importedTexts.allSatisfy({ $0.format == .plainText }),
+            Set(importedTexts.map(\.sourceRevisionID)).count == importedTexts.count,
+            importedTexts.allSatisfy({ item in
+                !observedSnapshot.sources.contains { $0.sourceRevisionID == item.sourceRevisionID }
+            })
+        else { throw savedResearchFailure("research.invalid-import-batch") }
+        let additions = try importedTexts.map { item in
+            GlifiProjectSourceRecord(
+                sourceID: try SourceID(
+                    canonicalValue:
+                        item.sourceRevisionID.canonicalValue.replacingOccurrences(
+                            of: "source-revision:", with: "source:")),
+                sourceRevisionID: item.sourceRevisionID,
+                format: item.format, contentDigest: item.contentDigest,
+                byteCount: item.bytes.count, objectPath: try objectPath(for: item.contentDigest))
+        }
+        let combinedSources = (observedSnapshot.sources + additions).sorted {
+            $0.sourceRevisionID.canonicalValue < $1.sourceRevisionID.canonicalValue
+        }
+        let combinedRoot = try sourceRootDigest(combinedSources)
         guard
             try artifactMatchesCorpus(
                 descriptor,
-                sources: observedSnapshot.sources,
-                rootDigest: observedSnapshot.sourceRootDigest)
+                sources: combinedSources,
+                rootDigest: combinedRoot)
         else {
             throw GlifiFailure(
                 code: "project.artifact-corpus-mismatch",
@@ -1677,17 +1754,42 @@ private enum GlifiProjectPackageIO {
             byteCount: data.count,
             objectPath: try artifactObjectPath(for: contentDigest)
         )
-        if observedSnapshot.artifacts.contains(artifact) {
+        if importedTexts.isEmpty, attachments.isEmpty,
+            observedSnapshot.artifacts.contains(artifact)
+        {
             return observedSnapshot
         }
 
-        var artifacts = observedSnapshot.artifacts
+        var artifacts = try retainedArtifacts(
+            observedSnapshot.artifacts, sources: combinedSources, rootDigest: combinedRoot)
         if artifacts.contains(where: { $0.node.id == node.id }) {
             let graph = try GlifiAnalysisGraph(artifacts.map(\.node))
             let invalidated = Set(try graph.invalidatedNodeIDs(changing: [node.id]))
             artifacts.removeAll { invalidated.contains($0.node.id) }
         }
         artifacts.append(artifact)
+        guard attachments.count <= 16 else {
+            throw savedResearchFailure("research.invalid-attachment")
+        }
+        let extraRecords = try attachments.map { attachment in
+            guard
+                try artifactMatchesCorpus(
+                    attachment.descriptor, sources: combinedSources,
+                    rootDigest: combinedRoot)
+            else { throw savedResearchFailure("research.invalid-attachment") }
+            return try attachmentRecord(attachment)
+        }
+        for extra in extraRecords {
+            guard extra.node.id != node.id else {
+                throw savedResearchFailure("research.invalid-attachment")
+            }
+            if !artifacts.contains(extra) {
+                guard !artifacts.contains(where: { $0.node.id == extra.node.id }) else {
+                    throw savedResearchFailure("research.invalid-attachment")
+                }
+                artifacts.append(extra)
+            }
+        }
         artifacts.sort { $0.node.id.canonicalValue < $1.node.id.canonicalValue }
         guard artifacts.count <= GlifiAnalysisGraphLimits.standard.maximumNodeCount else {
             throw GlifiFailure(
@@ -1717,6 +1819,14 @@ private enum GlifiProjectPackageIO {
         let transaction = try stageTransaction(
             in: packageURL, baseGeneration: observedSnapshot.generation)
         try interruptIfRequested(.staged, interruption, behavior: interruptionBehavior)
+        for (index, item) in importedTexts.enumerated() {
+            try Task.checkCancellation()
+            let stagedName = "research-source-\(index)"
+            try transaction.directory.writeFile(item.bytes, named: stagedName)
+            try promoteObject(
+                stagedName, from: transaction.directory,
+                source: additions[index], in: transaction.packageDirectory)
+        }
 
         try transaction.directory.writeFile(descriptorData, named: "descriptor-object")
         try promoteArtifactObject(
@@ -1736,25 +1846,57 @@ private enum GlifiProjectPackageIO {
             maximumByteCount: GlifiProjectPackage.maximumArtifactByteCount,
             in: transaction.packageDirectory
         )
+        for (index, attachment) in attachments.enumerated() {
+            try Task.checkCancellation()
+            let extra = extraRecords[index]
+            let descriptorName = "research-descriptor-\(index)"
+            let payloadName = "research-payload-\(index)"
+            try transaction.directory.writeFile(
+                GlifiCanonicalJSON.encode(attachment.descriptor), named: descriptorName)
+            try promoteArtifactObject(
+                descriptorName, from: transaction.directory,
+                relativePath: extra.descriptorObjectPath, expectedDigest: extra.descriptorDigest,
+                expectedByteCount: extra.descriptorByteCount,
+                maximumByteCount: GlifiProjectPackage.maximumDescriptorByteCount,
+                in: transaction.packageDirectory)
+            try transaction.directory.writeFile(attachment.data, named: payloadName)
+            try promoteArtifactObject(
+                payloadName, from: transaction.directory,
+                relativePath: extra.objectPath, expectedDigest: extra.contentDigest,
+                expectedByteCount: extra.byteCount,
+                maximumByteCount: GlifiProjectPackage.maximumArtifactByteCount,
+                in: transaction.packageDirectory)
+        }
         try interruptIfRequested(.objectPromoted, interruption, behavior: interruptionBehavior)
 
         let artifactRootDigest = try artifactRootDigest(artifacts)
         let investigationRootDigest = observedSnapshot.investigationRootDigest
         let manifest = try makeCandidateManifest(
             after: observedSnapshot, generation: transaction.targetGeneration,
-            artifactRoot: .init(digest: artifactRootDigest, count: artifacts.count)
+            sourceRoot: .init(digest: combinedRoot, count: combinedSources.count),
+            artifactRoot: .init(digest: artifactRootDigest, count: artifacts.count),
+            containsResearchData: artifacts.contains(where: requiresResearchReader)
         )
         let database = try GlifiSQLiteProjectStore.open(at: databaseURL(in: packageURL))
         try database.discardGenerations(after: observedSnapshot.generation)
-        try database.prepareArtifactGeneration(
-            generation: transaction.targetGeneration,
-            baseGeneration: observedSnapshot.generation,
-            recordDigest: manifest.generationRecordDigest,
-            sourceRootDigest: observedSnapshot.sourceRootDigest,
-            artifactRootDigest: artifactRootDigest,
-            artifacts: artifacts.map(storedRecord),
-            investigationRootDigest: investigationRootDigest
-        )
+        if let first = additions.first {
+            try database.prepareSourceGeneration(
+                generation: transaction.targetGeneration,
+                baseGeneration: observedSnapshot.generation,
+                recordDigest: manifest.generationRecordDigest, sourceRootDigest: combinedRoot,
+                artifactRootDigest: artifactRootDigest, artifacts: artifacts.map(storedRecord),
+                investigationRootDigest: investigationRootDigest, source: first,
+                additionalSources: Array(additions.dropFirst()))
+        } else {
+            try database.prepareArtifactGeneration(
+                generation: transaction.targetGeneration,
+                baseGeneration: observedSnapshot.generation,
+                recordDigest: manifest.generationRecordDigest,
+                sourceRootDigest: observedSnapshot.sourceRootDigest,
+                artifactRootDigest: artifactRootDigest,
+                artifacts: artifacts.map(storedRecord),
+                investigationRootDigest: investigationRootDigest)
+        }
         try interruptIfRequested(.databasePrepared, interruption, behavior: interruptionBehavior)
 
         let candidateURL = transaction.url.appending(path: "manifest.json")
@@ -1769,6 +1911,24 @@ private enum GlifiProjectPackageIO {
 
         try? fileManager.removeItem(at: transaction.url)
         return try openVerified(at: packageURL)
+    }
+
+    private static func attachmentRecord(_ attachment: GlifiProjectArtifactAttachment) throws
+        -> GlifiProjectArtifactRecord
+    {
+        let descriptorData = try GlifiCanonicalJSON.encode(attachment.descriptor)
+        guard descriptorData.count <= GlifiProjectPackage.maximumDescriptorByteCount else {
+            throw savedResearchFailure("research.invalid-attachment")
+        }
+        let descriptorDigest = digest(descriptorData)
+        let contentDigest = digest(attachment.data)
+        return GlifiProjectArtifactRecord(
+            artifactID: try ArtifactID(digest: contentDigest),
+            node: try GlifiAnalysisNode(descriptor: attachment.descriptor),
+            descriptorDigest: descriptorDigest, descriptorByteCount: descriptorData.count,
+            descriptorObjectPath: try descriptorObjectPath(for: descriptorDigest),
+            contentDigest: contentDigest, byteCount: attachment.data.count,
+            objectPath: try artifactObjectPath(for: contentDigest))
     }
 
     /// Appends one event to the linear qualitative history in a new generation.

@@ -1,0 +1,189 @@
+{
+  "schema": "studio.glifi.verification.isolated-source.v1",
+  "baselineCommit": "44dd90f22f1b4b4930f87a6f6e818ccb3efaa5d4",
+  "scope": "GS-VER-342",
+  "files": [
+    {
+      "path": "Apps/Shared/Resources/Localizable.xcstrings",
+      "sha256": "sha256:af94dd2aa325bc36bd469c744fd85c9f4de6b32d879a7e709db7e8cb92c4eb20"
+    },
+    {
+      "path": "Apps/Shared/StudioHomeModel.swift",
+      "sha256": "sha256:85bd39d0d5ef9181f5152650251dee0a3c1476c570d1d36fc00bd31af432087e"
+    },
+    {
+      "path": "Apps/Shared/StudioHomeView.swift",
+      "sha256": "sha256:a83bb2454c09c6f3b5e93eb50528c83493944dcf045b65cf1490f978be1d4fbc"
+    },
+    {
+      "path": "Apps/Shared/StudioPlotSeries.swift",
+      "sha256": "sha256:72593e4782a9de76edc91ada14ad707c40871eff9c9156425d4a0575ec17da8b"
+    },
+    {
+      "path": "Apps/Shared/StudioVisualizationView.swift",
+      "sha256": "sha256:8777a0f403bd6fe41113112c33cc074eda63db52f82db1e4b6fe7d149f06a4eb"
+    },
+    {
+      "path": "Apps/Shared/StudioWorkspaceNavigation.swift",
+      "sha256": "sha256:dc28e9652b7ae15a8d401c0ede6fdac37ca2e9fbae98193cce127bbf5df93049"
+    },
+    {
+      "path": "Apps/macOS/StudioAdvancedAnalysisModel.swift",
+      "sha256": "sha256:56a97fd2fac62b827d4a4ff6a172e11fea5f76af408b63c2fd18f4be96563499"
+    },
+    {
+      "path": "Apps/macOS/StudioAdvancedAnalysisView.swift",
+      "sha256": "sha256:d461a5667b7aa16653b9cec748ce2e94fa88f633a35259b69f8d4f9f56417244"
+    },
+    {
+      "path": "Apps/macOS/StudioCoreMethodRoute.swift",
+      "sha256": "sha256:cf88eb8ffa1066854521716048440f9066b95e098cdc49f56bcbf4d14d81dcf0"
+    },
+    {
+      "path": "Apps/macOS/StudioCorpusMethodsModel.swift",
+      "sha256": "sha256:65cf23d2a172c38f6da7fe04a10b6befc9a6e38d62721b09fc3e0b5a31e05c10"
+    },
+    {
+      "path": "Apps/macOS/StudioCorpusMethodsView.swift",
+      "sha256": "sha256:a89f6eb59018823af0de8b7f19854ee1643ada68eac0ec97ee572984b8de2811"
+    },
+    {
+      "path": "Apps/macOS/StudioEvaluationView.swift",
+      "sha256": "sha256:b3827108ef236795ecdd066afbdd1e06635fc5dd964ce930aad12de25428aa0f"
+    },
+    {
+      "path": "Apps/macOS/StudioKHLanguageModel.swift",
+      "sha256": "sha256:d627671442abee88617e38fe22190bd94f7188c8a8ac81f5a1594ae62683b50a"
+    },
+    {
+      "path": "Apps/macOS/StudioKHLanguageView.swift",
+      "sha256": "sha256:f8e59ee08e2565e729b78f40a083595337e678464ff97ea12f2d9079bf15235a"
+    },
+    {
+      "path": "Apps/macOS/StudioKHMatrixModel.swift",
+      "sha256": "sha256:6ae8a6a8ab09d3b9cf3a6973140d10a3530daadf263267368b33858ab0d2276c"
+    },
+    {
+      "path": "Apps/macOS/StudioKHMatrixView.swift",
+      "sha256": "sha256:3e6832e929c22dd17f5b6f2e3c86cad929567dc89703fc6af0e929b961a200cd"
+    },
+    {
+      "path": "Apps/macOS/StudioLinguisticView.swift",
+      "sha256": "sha256:08f4b73f807aa59b37e14c27609c5a2240be507c0efb6ff142637fb8d8aaa859"
+    },
+    {
+      "path": "Apps/macOS/StudioOperatorsView.swift",
+      "sha256": "sha256:43f7ff3c14869ac493f11798dc9ba24103bf5d8bdac50e3782c48b85aa9b5630"
+    },
+    {
+      "path": "Apps/macOS/StudioStatisticsView.swift",
+      "sha256": "sha256:871855478b9fd108c829ebf350489bf776e12e2b2c488559c485c0f7b2311992"
+    },
+    {
+      "path": "Apps/macOS/Tests/StudioAdvancedAnalysisTests.swift",
+      "sha256": "sha256:38d1c8897cb6564a1471312e861541a8c56b397b279d1100ef81e2b11bc75fef"
+    },
+    {
+      "path": "Apps/macOS/Tests/StudioCorpusMethodsTests.swift",
+      "sha256": "sha256:fcbb03da307f443392bd3466596b86e8dd77c0f4df7d21c7fbdaaca3211d43ff"
+    },
+    {
+      "path": "Apps/macOS/Tests/StudioFactorAudioGraphTests.swift",
+      "sha256": "sha256:b8db86def35b8b371dcc06ba0facd6e647b044471d721e32a9aaff8175b58c8c"
+    },
+    {
+      "path": "Apps/macOS/Tests/StudioKHMatrixTests.swift",
+      "sha256": "sha256:f980c7815df24b62bb95f81fa2503df982954373b1b14f026920aaa5592f3522"
+    },
+    {
+      "path": "Apps/macOS/Tests/StudioOperatorsTests.swift",
+      "sha256": "sha256:1421c7dca7e596c276930b503aad98519fa22ecc14311449fc12f4324fc494ca"
+    },
+    {
+      "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+      "sha256": "sha256:134908391f8958e3b1f2dc60751b936019613bf344de106c4124af754096eb24"
+    },
+    {
+      "path": "Config/CLI/kit-api-baseline.json",
+      "sha256": "sha256:75355d42a54b3eb9f3aa756e496e26eca364b7e93820f4ac2269bf8d996b2154"
+    },
+    {
+      "path": "Config/Testing/analysis-scenarios.json",
+      "sha256": "sha256:d3b0170a300cabfa69a16458e444d2493d74e234e23305f094546ce79515e22a"
+    },
+    {
+      "path": "GlifiStudio.xcodeproj/project.pbxproj",
+      "sha256": "sha256:c832a6ee74f4901d5eac252f27047322ddadecb7fc8739f643e63ec0aa7f4120"
+    },
+    {
+      "path": "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift",
+      "sha256": "sha256:612503374a4a230a584ac74418169bd3ddc7bb3d794d481af95a7aa5f56c0bd1"
+    },
+    {
+      "path": "Packages/GlifiCore/Sources/GlifiCore/GlifiCorpusMultivariateAnalysis.swift",
+      "sha256": "sha256:a78e49eda1abc673fd1128d88f2cc08edabb0255e0722e557f24e5f9e89f23a7"
+    },
+    {
+      "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiDerivedAnalysesPresentation.swift",
+      "sha256": "sha256:a3172cbed3a807d751871016982ce90535664018d729bb7976d6981426fc69bd"
+    },
+    {
+      "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectCommand.swift",
+      "sha256": "sha256:6e4d79e4b032efe7402cb3c9c579fe15c245bd4e25bfbe1e0ca0e298404c7068"
+    },
+    {
+      "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+      "sha256": "sha256:df7cad2424ad7bdb4ffdcdcf3643bbc7da3e89eccb12e8b94eacc5b1f34756c0"
+    },
+    {
+      "path": "Packages/GlifiCore/Sources/GlifiKit/GlifiVisualizationPresentation.swift",
+      "sha256": "sha256:71f84b985604304969270a92d72a75a664941680ea6a7e7264d1043ea75d7868"
+    },
+    {
+      "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTermClusteringTests.swift",
+      "sha256": "sha256:bf6fc0376ea7b173d24872d20b5b9a3af0805e8661f78238e3c799b40ded2b69"
+    },
+    {
+      "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiKitCLIParitySupport.swift",
+      "sha256": "sha256:b47e5e38f7ae23bba51b0e2d6ef38d05b7ae72ddd09b07707c192ffec6b29708"
+    },
+    {
+      "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiProjectCommandTests.swift",
+      "sha256": "sha256:f3ed6ccdbb65c1496afdf03e65377ac3deaea8bb4d72931b8c24ac6ca5cae921"
+    },
+    {
+      "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiVisualizationTests.swift",
+      "sha256": "sha256:402e04e89d5b0379209609caafec6cae26e7235dbe5d74bd8965ee6e5322f356"
+    },
+    {
+      "path": "Scripts/check-analysis-scenarios.py",
+      "sha256": "sha256:c2dbcea0d5e81b560d89010d60bc53e00b3e786034e42818ba8883fe7c2a710f"
+    },
+    {
+      "path": "Scripts/check-kit-cli-parity.py",
+      "sha256": "sha256:83cdddd7b0aa6cd37ce002711e3aa11fe9c8c05c499653f0a240f68e50e2d06d"
+    },
+    {
+      "path": "Scripts/check-xcode-project.py",
+      "sha256": "sha256:174c205f74fb0dac0b4dc5928af64b29e85bfba3fa4477e0b97130b6a91e03d7"
+    }
+  ],
+  "exceptions": [
+    {
+      "path": "Apps/Shared/StudioHomeView.swift",
+      "reason": "Only in isolated verification: removed four unrelated in-progress Research additions (state, toolbar action, sheet and source action); task routes unchanged. Shared checkout untouched."
+    }
+  ],
+  "sharedDifferences": [
+    "Apps/Shared/StudioHomeModel.swift",
+    "Apps/Shared/StudioHomeView.swift",
+    "Apps/Shared/Resources/Localizable.xcstrings",
+    "Apps/macOS/StudioAdvancedAnalysisModel.swift",
+    "Apps/macOS/StudioKHMatrixModel.swift",
+    "Apps/macOS/StudioKHLanguageModel.swift",
+    "Apps/macOS/StudioKHLanguageView.swift",
+    "GlifiStudio.xcodeproj/project.pbxproj",
+    "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectCommand.swift",
+    "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
+  ]
+}

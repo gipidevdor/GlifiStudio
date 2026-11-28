@@ -191,7 +191,7 @@ public struct GlifiStudioTemporalDocument: Codable, Equatable, Sendable {
 }
 
 /// Revision-level provenance for a temporal observation.
-public struct GlifiStudioTemporalLineage: Encodable, Equatable, Sendable {
+public struct GlifiStudioTemporalLineage: Codable, Equatable, Sendable {
     /// Exact immutable source revision identity.
     public let sourceRevisionID: String
     /// Caller-supplied provenance of the observed temporal metadata.
@@ -204,7 +204,7 @@ public struct GlifiStudioTemporalLineage: Encodable, Equatable, Sendable {
 }
 
 /// Counts and descriptive rates retain their denominators and contributors.
-public struct GlifiStudioTemporalTermFrequency: Encodable, Equatable, Sendable {
+public struct GlifiStudioTemporalTermFrequency: Codable, Equatable, Sendable {
     /// Term identity preserved without implicit normalization.
     public let term: String
     /// Exact observed count in this aggregate.
@@ -226,7 +226,7 @@ public struct GlifiStudioTemporalTermFrequency: Encodable, Equatable, Sendable {
 }
 
 /// Aggregate values are observed counts; an absent rate is never replaced with zero.
-public struct GlifiStudioTemporalAggregate: Encodable, Equatable, Sendable {
+public struct GlifiStudioTemporalAggregate: Codable, Equatable, Sendable {
     /// Number of documents assigned to this aggregate.
     public let documentCount: Int
     /// Observed token exposure, including terms not selected for output.
@@ -245,7 +245,7 @@ public struct GlifiStudioTemporalAggregate: Encodable, Equatable, Sendable {
 }
 
 /// A bucket boundary keeps its type through presentation and encoding.
-public enum GlifiStudioTemporalBoundary: Encodable, Equatable, Sendable {
+public enum GlifiStudioTemporalBoundary: Codable, Equatable, Sendable {
     case civilDate(GlifiStudioCivilDate)
     case instant(Date)
 
@@ -258,7 +258,7 @@ public enum GlifiStudioTemporalBoundary: Encodable, Equatable, Sendable {
 }
 
 /// Inclusive lower and exclusive upper boundary with source-level lineage.
-public struct GlifiStudioTemporalBucket: Encodable, Equatable, Sendable {
+public struct GlifiStudioTemporalBucket: Codable, Equatable, Sendable {
     /// Inclusive lower bucket boundary, preserving its temporal type.
     public let start: GlifiStudioTemporalBoundary
     /// Exclusive upper bucket boundary, preserving its temporal type.
@@ -268,7 +268,7 @@ public struct GlifiStudioTemporalBucket: Encodable, Equatable, Sendable {
 }
 
 /// An observation excluded under the selected missing/outside policy.
-public struct GlifiStudioTemporalExclusion: Encodable, Equatable, Sendable {
+public struct GlifiStudioTemporalExclusion: Codable, Equatable, Sendable {
     /// Source revisions and observed metadata provenance in canonical identity order.
     public let lineage: GlifiStudioTemporalLineage
     /// Machine-readable reason for excluding the observed document.
@@ -276,7 +276,7 @@ public struct GlifiStudioTemporalExclusion: Encodable, Equatable, Sendable {
 }
 
 /// Chronologically ordered, descriptive temporal series.
-public struct GlifiStudioTemporalResult: Encodable, Equatable, Sendable {
+public struct GlifiStudioTemporalResult: Codable, Equatable, Sendable {
     /// Candidate headless contract; no service-quality or external scientific approval is implied.
     public static let validationStatus = "candidate"
     /// Versioned headless calendar aggregation identity.

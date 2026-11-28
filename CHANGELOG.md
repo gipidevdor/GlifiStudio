@@ -12,6 +12,62 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Dataset e lavoro di ricerca persistenti
+
+- Importazione CSV/Excel XLSX con anteprima, mapping, tipi e provenienza delle celle;
+  originali, fonti derivate e metadati pubblicati nello stesso commit.
+- Variabili tipizzate, gruppi riutilizzabili e preparazione italiana condivisa;
+  configurazioni revisionate e digest distinti per riuso coerente delle analisi.
+- Analisi KH avanzate salvabili con impostazioni e risultati completi, ripristino
+  nativo senza ricalcolo, variabili derivate e collegamento descrittivo ai rapporti.
+- Trasporto condiviso `research-call` con parità Kit/CLI e ingressi da file per
+  tabelle e metadati oltre il budget dell’envelope. Estensione additiva del
+  package esistente, senza nuova lingua di analisi o dipendenza di prodotto
+  (ADR-0047; GS-API-004/005/006; verifiche e limiti in GS-VER-343).
+
+### Analisi per tema, corrispondenze e cluster
+
+- Catalogo macOS organizzato in otto temi di ricerca, con scopo specifico e
+  destinazione operativa di ogni metodo; flussi nativi per i diciannove tag
+  KH già presenti in GlifiKit/CLI (GS-DOR-342).
+- Clustering gerarchico delle parole sui profili tra documenti, con fonti
+  contributive per termine e parità CLI `multivariate --method hac --unit terms`.
+- Dendrogrammi con zoom, taglio per numero/altezza e compressione dei rami;
+  tabella ed export conservano l'albero completo. CA mantiene il grafico e
+  i diagnostici scientifici; verifiche automatiche e audit manuali distinti
+  in GS-VER-342.
+
+### Etichette localizzate macOS
+
+- Corretti 39 identificatori dinamici di statistiche, operatori, analisi
+  avanzate, corpus, linguistica, piani, evidenze ed etichette accessibili
+  dei formati di export: il ponte costruisce la
+  chiave completa prima del lookup. I messaggi con argomenti conservano
+  l'interpolazione localizzabile. Verifica GUI e regressioni native it/en
+  accompagnano il controllo statico (GS-DOR-339).
+
+### Dimensionamento del laboratorio macOS
+
+- Corretto il minimo verticale della finestra Welch, che poteva raggiungere
+  2265 punti su uno schermo con 1179 disponibili. Intestazione e pannelli
+  ricevono ora il viewport reale; split, tab e scorrimento nativi restano
+  disponibili. RED/GREEN nella finestra documento, apertura dei dettagli,
+  Calcola ed Export verificati anche nel layout compatto (GS-DOR-340).
+
+### Copertura BDD e CSV
+
+- Tutte le 172 varianti pubbliche sono associate a casi nominali, input non
+  validi e cancellazione preventiva; tutte le 63 fixture testuali originali
+  sono eseguite invariate. Il gate confronta registro, inventario upstream e
+  report: 16 feature, 744 scenari e 3092 passaggi (GS-DOR-337).
+- Cinque gruppi di fonti primarie web sono riesaminati per condizioni e uso:
+  solo fatti e metodi di riferimento, con fixture originali; nessun corpus,
+  codice o suite esterna acquisita (GS-LIC-003).
+- Corretto l'export CSV di campi contenenti CRLF senza altri delimitatori:
+  quoting basato sugli scalari Unicode, byte conservati e verifica fail-closed
+  anche dopo rehash. I bundle storici malformati vengono rifiutati; API e
+  schema restano invariati (GS-DOR-338).
+
 ### Sviluppo BDD e interazione macOS
 
 - Cucumber entra nel ciclo RED/GREEN: `make test-bdd-list` elenca le selezioni;
@@ -32,10 +88,21 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 - CucumberSwift fissato alla versione 6.9.0 nel solo target di test BDD:
   feature italiane per progetto, query, corpus, codifica, export e parità CLI,
   con oracoli espliciti, failure e conservazione dello stato (GS-DOR-332).
-  `make test`, `make test-bdd` e `make verify` richiedono il report completo:
-  8 feature, 122 scenari e 697 passaggi verificati. Il runner CLI termina e
-  raccoglie il processo su timeout o cancellazione. Trait upstream disabilitati
-  esplicitamente; licenze MIT, pin e confine test-only sono verificati.
+  `make test`, `make test-bdd` e `make verify` richiedono il report completo degli esempi
+  inventariati; licenze, dipendenze e decisione tecnica sono tracciate.
+- Attribuzioni Gherkin e Cucumber Expressions conservate integralmente con le
+  licenze BSD/Core nel bundle dei test; controllo di ogni pin risolto, fonte
+  legale immutabile e integrità delle copie distribuite (GS-VER-333).
+- Runner CLI con cancellazione, deadline e raccolta del processo posseduto;
+  report BDD vincolato anche all'identità e all'ordine dei passi, JSON rigoroso
+  e trait delle dipendenze esclusi esplicitamente (GS-DOR-341).
+- Inferenza con contrasti ed errore standard finiti anche quando trabocca un
+  intermedio; intervalli definiti per il livello valido immediatamente sotto
+  uno e failure tipizzate per output non rappresentabili. Revisione producer 4
+  dei confronti di gruppi, con storici leggibili e parità CLI/Kit (GS-DOR-341).
+- Importazione dello stato del classificatore: JSON malformato o incompleto
+  produce un errore di input correggibile e conserva lo stato precedente,
+  invece di un errore interno inatteso (GS-VER-341).
 
 ### Correttezza semantica e conservazione del contesto
 
@@ -44,8 +111,9 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   (GS-DOR-327).
 - Statistica: correzione delle dipendenze da unità e offset nelle permutazioni
   e degli overflow/underflow intermedi di inferenza, bootstrap e quantili
-  (GS-DOR-328). Revisione produttore 3 per confronti di gruppi, post-hoc e
-  paired, con storici leggibili e famiglie indipendenti conservate.
+  (GS-DOR-328). Revisione produttore 3 per post-hoc e paired; i confronti di
+  gruppi passano a 4 con GS-DOR-341, con storici leggibili e famiglie
+  indipendenti conservate.
 - Codifica: il cambio fonte pubblica insieme identità, segmenti e testi
   soltanto dopo letture riuscite; failure e cancellazione conservano il
   contesto precedente e consentono il retry (GS-DOR-329).

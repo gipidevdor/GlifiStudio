@@ -305,3 +305,103 @@ func visualizationExportCarriesVerifiableProvenance() async throws {
     }
     await session.close()
 }
+
+@Test("Il dendrogramma dei termini conserva fonti, albero e Artifact durante i tagli")
+func termDendrogramCutsPreserveArtifactAndContributingSources() async throws {
+    let root = FileManager.default.temporaryDirectory.appending(
+        path: "GlifiTermDendrogram-\(UUID().uuidString)", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: false)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let session = try await GlifiStudioService().createProject(
+        at: root.appending(path: "Terms.glifi", directoryHint: .isDirectory))
+    let texts = ["mare porto mare", "mare porto", "neve monte neve", "neve monte"]
+    var textBySource: [String: String] = [:]
+    for (index, text) in texts.enumerated() {
+        let url = root.appending(path: "source-\(index).txt")
+        try Data(text.utf8).write(to: url)
+        _ = try await session.importText(at: url, format: .plainText)
+    }
+    let sources = try await session.snapshot().sources.map(\.sourceRevisionID).sorted()
+    for id in sources { textBySource[id] = try await session.sourceText(sourceRevisionID: id).text }
+    let result = try await session.analyzeMultivariate(
+        sourceRevisionIDs: sources,
+        method: .hierarchicalTerms(linkage: "average", clusterCount: 2), maximumTermCount: 20)
+    let countBefore = try await session.snapshot().artifactCount
+    let proposedView = try GlifiStudioVisualizationBuilder.dendrogram(result)
+    let view = try #require(proposedView)
+    let topology = try #require(view.dendrogramTree)
+    #expect(topology.unitKindIdentifier == "terms")
+    #expect(topology.leafIdentifiers == result.terms)
+    #expect(view.visibleObservationCount == result.terms.count)
+    for mark in view.marks where mark.kind == .point {
+        let expected = sources.filter {
+            textBySource[$0]?.split(separator: " ").contains(Substring(mark.label)) == true
+        }
+        #expect(mark.lineageClass == .contributive)
+        #expect(mark.sourceRevisionIDs == expected)
+    }
+    for count in 1...result.terms.count {
+        let cut = try GlifiStudioVisualizationBuilder.recutDendrogram(view, clusterCount: count)
+        #expect(Set(cut.marks.filter { $0.kind == .point }.map(\.series)).count == count)
+        #expect(cut.dendrogramTree == topology && cut.table == view.table)
+        #expect(cut.artifactID == view.artifactID && cut.analysisNodeID == view.analysisNodeID)
+        #expect(
+            cut.marks.filter { $0.kind == .segment } == view.marks.filter { $0.kind == .segment })
+    }
+    let firstHeight = try #require(topology.merges.first?.height)
+    let cut = try GlifiStudioVisualizationBuilder.recutDendrogram(view, height: firstHeight)
+    let expectedCount =
+        result.terms.count - topology.merges.prefix { $0.height <= firstHeight }.count
+    #expect(Set(cut.marks.filter { $0.kind == .point }.map(\.series)).count == expectedCount)
+    #expect(cut.marks.first { $0.kind == .rule }?.y == firstHeight)
+    let expanded = try GlifiStudioVisualizationBuilder.recutDendrogram(view, height: 1e100)
+    let restored = try GlifiStudioVisualizationBuilder.recutDendrogram(expanded, height: 0)
+    #expect(restored.axes.last?.upperBound == topology.merges.last?.height)
+    var largeResult = try #require(
+        JSONSerialization.jsonObject(with: JSONEncoder().encode(result)) as? [String: Any])
+    var largeMerges = try #require(largeResult["merges"] as? [[String: Any]])
+    for index in largeMerges.indices { largeMerges[index]["height"] = Double(index + 1) * 5e307 }
+    largeResult["merges"] = largeMerges
+    let large = try JSONDecoder().decode(
+        GlifiStudioMultivariateResult.self,
+        from: JSONSerialization.data(withJSONObject: largeResult))
+    let proposedLargeView = try GlifiStudioVisualizationBuilder.dendrogram(large)
+    let largeView = try #require(proposedLargeView)
+    #expect(largeView.marks.allSatisfy { $0.y.isFinite && ($0.y2?.isFinite ?? true) })
+    let bundle = try GlifiStudioVisualExport.bundle(
+        cut, projectID: result.lineage.projectID, generation: result.lineage.generation,
+        createdAt: Date(timeIntervalSince1970: 0))
+    #expect(try GlifiStudioVisualExport.verify(bundle).artifactID == result.lineage.artifactID)
+    #expect(try await session.snapshot().artifactCount == countBefore)
+    for invalid in [0, result.terms.count + 1] {
+        #expect(throws: GlifiStudioFailure.self) {
+            try GlifiStudioVisualizationBuilder.recutDendrogram(view, clusterCount: invalid)
+        }
+    }
+    #expect(throws: GlifiStudioFailure.self) {
+        try GlifiStudioVisualizationBuilder.recutDendrogram(view, height: .nan)
+    }
+    #expect(throws: GlifiStudioFailure.self) {
+        try GlifiStudioVisualizationBuilder.recutDendrogram(view, clusterCount: 2, height: 0)
+    }
+    var invalidTree = view
+    let badMerges =
+        [GlifiStudioMerge(first: 0, second: 1, height: 0, size: 2)]
+        + topology.merges.dropFirst().map {
+            GlifiStudioMerge(first: 0, second: $0.second, height: $0.height, size: $0.size)
+        }
+    invalidTree.dendrogramTree = GlifiStudioDendrogramTree(
+        leafIdentifiers: topology.leafIdentifiers,
+        leafSourceRevisionIDs: topology.leafSourceRevisionIDs,
+        unitKindIdentifier: "terms", merges: badMerges)
+    #expect(throws: GlifiStudioFailure.self) {
+        try GlifiStudioVisualizationBuilder.recutDendrogram(invalidTree, clusterCount: 2)
+    }
+    var legacy = try #require(
+        JSONSerialization.jsonObject(with: JSONEncoder().encode(view)) as? [String: Any])
+    legacy.removeValue(forKey: "dendrogramTree")
+    let decoded = try JSONDecoder().decode(
+        GlifiStudioVisualization.self, from: JSONSerialization.data(withJSONObject: legacy))
+    #expect(decoded.dendrogramTree == nil && decoded.marks == view.marks)
+    await session.close()
+}

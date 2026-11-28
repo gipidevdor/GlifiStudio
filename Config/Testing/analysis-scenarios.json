@@ -254,6 +254,7 @@
         "passages",
         "postHoc",
         "prepareInput",
+        "recutVisualization",
         "similarity",
         "sourceText",
         "summarize",
@@ -287,6 +288,14 @@
         {
           "path": "Apps/macOS/Tests/StudioCorpusMethodsTests.swift",
           "symbol": "executesEveryPersistedCorpusMethod"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiProjectCommandTests.swift",
+          "symbol": "termClusteringPreservesUnitsAndProjectTransport"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiProjectCommandTests.swift",
+          "symbol": "recutVisualizationSupportsInclusiveHeightAndRejectsInvalidCuts"
         }
       ],
       "scientificReferences": [
@@ -294,9 +303,11 @@
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCorpusDerivedAnalysesTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKeynessCacheContractTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiSummarySourceMappingTests.swift",
-        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiScientificExportTests.swift"
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiScientificExportTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTermClusteringTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiVisualizationTests.swift"
       ],
-      "nativeScope": "Percorsi di progetto esistenti e 17 analisi corpus; non un unico picker di 26 comandi.",
+      "nativeScope": "Percorsi di progetto e analisi corpus, inclusi clustering dei termini e taglio del dendrogramma su albero completo senza ricalcolo.",
       "headlessOnly": []
     },
     {
@@ -411,6 +422,30 @@
         {
           "path": "Scripts/check-text-analysis-cli.py",
           "symbol": "main"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioKHMatrixTests.swift",
+          "symbol": "everyTypedProfileMatchesTheKitRequest"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+          "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioCorpusMethodsTests.swift",
+          "symbol": "nativeTermEditorsPreserveExplicitCandidatesAndSourceAnnotations"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioCorpusMethodsTests.swift",
+          "symbol": "nativeClassifierContinuationUsesSufficientStatisticsAndExportsCanonicalResults"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioCorpusMethodsTests.swift",
+          "symbol": "nativeAgreementAndCodingFlowsKeepLabelsGroupsAndCorrectionsExplicit"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioAdvancedAnalysisTests.swift",
+          "symbol": "executesEveryProjectDrivenOperator"
         }
       ],
       "scientificReferences": [
@@ -423,28 +458,419 @@
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiLinguisticPipelineTests.swift",
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiExternalOracleTests.swift"
       ],
-      "nativeScope": "Le 12 famiglie iniziali e le 9 avanzate hanno gli adattatori GUI esistenti. Le 19 estensioni KH successive sono Core/Kit/CLI, senza route GUI dedicata.",
-      "headlessOnly": [
-        "code-crosstab-significance",
-        "continue-classifier",
-        "correspondence-scaled",
-        "document-scores",
-        "incremental-classifier",
-        "kh-chi-square",
-        "kh-collocation",
-        "kh-hierarchical-ward-d2",
-        "matrix-per-thousand",
-        "matrix-zscore",
-        "mds-ordinal",
-        "mds-ordinal-search",
-        "som-kh",
-        "som-pca-initialization",
-        "term-extraction",
-        "term-scores",
-        "validate-classifier-kappa",
-        "word-association",
-        "word-context"
+      "nativeScope": "Tutti i 19 profili KH hanno route tematiche, controlli nativi tipizzati e test operativi: 9 matriciali, 6 linguistici e 4 MDS/SOM avanzati. La copertura non costituisce approvazione scientifica oltre i relativi stati.",
+      "headlessOnly": [],
+      "nativeBindings": [
+        {
+          "operation": "code-crosstab-significance",
+          "requestCase": "codeCrosstabSignificance",
+          "toolEnum": "StudioKHLanguageTool",
+          "toolCase": "codeCrosstabSignificance",
+          "routeCase": "khLanguage",
+          "model": "Apps/macOS/StudioKHLanguageModel.swift",
+          "view": "Apps/macOS/StudioKHLanguageView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioCorpusMethodsTests.swift",
+              "symbol": "nativeAgreementAndCodingFlowsKeepLabelsGroupsAndCorrectionsExplicit"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "continue-classifier",
+          "requestCase": "continueClassifier",
+          "toolEnum": "StudioKHLanguageTool",
+          "toolCase": "continueClassifier",
+          "routeCase": "khLanguage",
+          "model": "Apps/macOS/StudioKHLanguageModel.swift",
+          "view": "Apps/macOS/StudioKHLanguageView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioCorpusMethodsTests.swift",
+              "symbol": "nativeClassifierContinuationUsesSufficientStatisticsAndExportsCanonicalResults"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "correspondence-scaled",
+          "requestCase": "correspondenceScaled",
+          "toolEnum": "StudioKHMatrixTool",
+          "toolCase": "correspondenceScaled",
+          "routeCase": "khMatrix",
+          "model": "Apps/macOS/StudioKHMatrixModel.swift",
+          "view": "Apps/macOS/StudioKHMatrixView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioKHMatrixTests.swift",
+              "symbol": "everyTypedProfileMatchesTheKitRequest"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "document-scores",
+          "requestCase": "documentScores",
+          "toolEnum": "StudioKHMatrixTool",
+          "toolCase": "documentScores",
+          "routeCase": "khMatrix",
+          "model": "Apps/macOS/StudioKHMatrixModel.swift",
+          "view": "Apps/macOS/StudioKHMatrixView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioKHMatrixTests.swift",
+              "symbol": "everyTypedProfileMatchesTheKitRequest"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "incremental-classifier",
+          "requestCase": "incrementalClassifier",
+          "toolEnum": "StudioKHLanguageTool",
+          "toolCase": "incrementalClassifier",
+          "routeCase": "khLanguage",
+          "model": "Apps/macOS/StudioKHLanguageModel.swift",
+          "view": "Apps/macOS/StudioKHLanguageView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioCorpusMethodsTests.swift",
+              "symbol": "nativeClassifierContinuationUsesSufficientStatisticsAndExportsCanonicalResults"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "kh-chi-square",
+          "requestCase": "chiSquare",
+          "toolEnum": "StudioKHMatrixTool",
+          "toolCase": "chiSquare",
+          "routeCase": "khMatrix",
+          "model": "Apps/macOS/StudioKHMatrixModel.swift",
+          "view": "Apps/macOS/StudioKHMatrixView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioKHMatrixTests.swift",
+              "symbol": "everyTypedProfileMatchesTheKitRequest"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "kh-collocation",
+          "requestCase": "collocationScores",
+          "toolEnum": "StudioKHMatrixTool",
+          "toolCase": "collocationScores",
+          "routeCase": "khMatrix",
+          "model": "Apps/macOS/StudioKHMatrixModel.swift",
+          "view": "Apps/macOS/StudioKHMatrixView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioKHMatrixTests.swift",
+              "symbol": "everyTypedProfileMatchesTheKitRequest"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "kh-hierarchical-ward-d2",
+          "requestCase": "hierarchicalWardD2",
+          "toolEnum": "StudioKHMatrixTool",
+          "toolCase": "hierarchicalWardD2",
+          "routeCase": "khMatrix",
+          "model": "Apps/macOS/StudioKHMatrixModel.swift",
+          "view": "Apps/macOS/StudioKHMatrixView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioKHMatrixTests.swift",
+              "symbol": "everyTypedProfileMatchesTheKitRequest"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "matrix-per-thousand",
+          "requestCase": "perThousand",
+          "toolEnum": "StudioKHMatrixTool",
+          "toolCase": "perThousand",
+          "routeCase": "khMatrix",
+          "model": "Apps/macOS/StudioKHMatrixModel.swift",
+          "view": "Apps/macOS/StudioKHMatrixView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioKHMatrixTests.swift",
+              "symbol": "everyTypedProfileMatchesTheKitRequest"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "matrix-zscore",
+          "requestCase": "sampleZScores",
+          "toolEnum": "StudioKHMatrixTool",
+          "toolCase": "sampleZScores",
+          "routeCase": "khMatrix",
+          "model": "Apps/macOS/StudioKHMatrixModel.swift",
+          "view": "Apps/macOS/StudioKHMatrixView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioKHMatrixTests.swift",
+              "symbol": "everyTypedProfileMatchesTheKitRequest"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "mds-ordinal",
+          "requestCase": "ordinalMDS",
+          "toolEnum": "StudioAdvancedTool",
+          "toolCase": "mdsOrdinal",
+          "routeCase": "advanced",
+          "model": "Apps/macOS/StudioAdvancedAnalysisModel.swift",
+          "view": "Apps/macOS/StudioAdvancedAnalysisView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioAdvancedAnalysisTests.swift",
+              "symbol": "executesEveryProjectDrivenOperator"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "mds-ordinal-search",
+          "requestCase": "ordinalMDSSearch",
+          "toolEnum": "StudioAdvancedTool",
+          "toolCase": "mdsOrdinalSearch",
+          "routeCase": "advanced",
+          "model": "Apps/macOS/StudioAdvancedAnalysisModel.swift",
+          "view": "Apps/macOS/StudioAdvancedAnalysisView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioAdvancedAnalysisTests.swift",
+              "symbol": "executesEveryProjectDrivenOperator"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "som-kh",
+          "requestCase": "somKH",
+          "toolEnum": "StudioAdvancedTool",
+          "toolCase": "somKH",
+          "routeCase": "advanced",
+          "model": "Apps/macOS/StudioAdvancedAnalysisModel.swift",
+          "view": "Apps/macOS/StudioAdvancedAnalysisView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioAdvancedAnalysisTests.swift",
+              "symbol": "executesEveryProjectDrivenOperator"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "som-pca-initialization",
+          "requestCase": "somPCAInitialization",
+          "toolEnum": "StudioAdvancedTool",
+          "toolCase": "somPCAInitialization",
+          "routeCase": "advanced",
+          "model": "Apps/macOS/StudioAdvancedAnalysisModel.swift",
+          "view": "Apps/macOS/StudioAdvancedAnalysisView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioAdvancedAnalysisTests.swift",
+              "symbol": "executesEveryProjectDrivenOperator"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "term-extraction",
+          "requestCase": "termExtraction",
+          "toolEnum": "StudioKHLanguageTool",
+          "toolCase": "termExtraction",
+          "routeCase": "khLanguage",
+          "model": "Apps/macOS/StudioKHLanguageModel.swift",
+          "view": "Apps/macOS/StudioKHLanguageView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioCorpusMethodsTests.swift",
+              "symbol": "nativeTermEditorsPreserveExplicitCandidatesAndSourceAnnotations"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "term-scores",
+          "requestCase": "termScores",
+          "toolEnum": "StudioKHLanguageTool",
+          "toolCase": "termScores",
+          "routeCase": "khLanguage",
+          "model": "Apps/macOS/StudioKHLanguageModel.swift",
+          "view": "Apps/macOS/StudioKHLanguageView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioCorpusMethodsTests.swift",
+              "symbol": "nativeTermEditorsPreserveExplicitCandidatesAndSourceAnnotations"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "validate-classifier-kappa",
+          "requestCase": "validateClassifierWithAgreement",
+          "toolEnum": "StudioKHLanguageTool",
+          "toolCase": "validateClassifierWithAgreement",
+          "routeCase": "khLanguage",
+          "model": "Apps/macOS/StudioKHLanguageModel.swift",
+          "view": "Apps/macOS/StudioKHLanguageView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioCorpusMethodsTests.swift",
+              "symbol": "nativeAgreementAndCodingFlowsKeepLabelsGroupsAndCorrectionsExplicit"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "word-association",
+          "requestCase": "wordAssociation",
+          "toolEnum": "StudioKHMatrixTool",
+          "toolCase": "wordAssociation",
+          "routeCase": "khMatrix",
+          "model": "Apps/macOS/StudioKHMatrixModel.swift",
+          "view": "Apps/macOS/StudioKHMatrixView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioKHMatrixTests.swift",
+              "symbol": "everyTypedProfileMatchesTheKitRequest"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        },
+        {
+          "operation": "word-context",
+          "requestCase": "wordContext",
+          "toolEnum": "StudioKHMatrixTool",
+          "toolCase": "wordContext",
+          "routeCase": "khMatrix",
+          "model": "Apps/macOS/StudioKHMatrixModel.swift",
+          "view": "Apps/macOS/StudioKHMatrixView.swift",
+          "tests": [
+            {
+              "path": "Apps/macOS/Tests/StudioKHMatrixTests.swift",
+              "symbol": "everyTypedProfileMatchesTheKitRequest"
+            },
+            {
+              "path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+              "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"
+            }
+          ]
+        }
       ]
+    },
+    {
+      "id": "GS-SCN-012",
+      "command": "research-call",
+      "variants": [
+        "capture",
+        "deriveVariable",
+        "saveState",
+        "savedExport",
+        "savedInvestigation",
+        "savedList",
+        "savedRead",
+        "savedRun",
+        "select",
+        "state",
+        "tabularImport",
+        "tabularMap",
+        "tabularPreview",
+        "tabularSource",
+        "workbenchCapture"
+      ],
+      "contracts": [
+        "Anteprima e mapping preservano le celle originali, con limiti e policy espliciti.",
+        "Metadati, preparazione e sottoinsiemi hanno storia verificata e controllo di revisione.",
+        "Richiesta, esito e configurazione catturati sono ripristinati senza ricalcolo e con parità CLI.",
+        "Le regole di acquisizione sono descrittive e non promuovono la validazione scientifica del metodo."
+      ],
+      "tests": [
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiResearchCommandTests.swift",
+          "symbol": "researchOperationsHaveNativeParity"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiResearchCommandTests.swift",
+          "symbol": "rejectedResearchRequestsPreserveState"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioResearchArchiveTests.swift",
+          "symbol": "matrixArchiveRestoresTheEffectiveSettingsAfterReopening"
+        }
+      ],
+      "scientificReferences": [
+        "docs/api/04-importazione-tabellare.md",
+        "docs/api/05-stato-di-ricerca.md",
+        "docs/api/06-lavoro-avanzato-persistente.md"
+      ],
+      "nativeScope": "Editor nativi macOS per dataset, variabili, preparazione e risultati salvati; i kernel restano quelli già inventariati.",
+      "headlessOnly": []
     }
   ],
   "workflows": [
@@ -609,6 +1035,32 @@
       ],
       "limitations": [
         "Lo stato supported di un metodo non è promosso dalla sola esecuzione."
+      ]
+    },
+    {
+      "id": "GS-SCN-013",
+      "description": "Dataset, metadati e preparazione fino al ripristino e al rapporto",
+      "contracts": [
+        "Originale, fonti derivate e variabili diventano raggiungibili nello stesso commit.",
+        "L’albero salvato può essere tagliato e conservato come variabile con provenienza.",
+        "Il rapporto include solo gli output acquisiti selezionati e i relativi caveat."
+      ],
+      "tests": [
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiResearchCommandTests.swift",
+          "symbol": "savedHierarchyBecomesADerivedVariable"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiSavedInvestigationTests.swift",
+          "symbol": "captureExportRoundTripAndTampering"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioResearchTests.swift",
+          "symbol": "metadataFeedsTheExistingClassAndTemporalEditors"
+        }
+      ],
+      "limitations": [
+        "Gli audit manuali assistivi e le validazioni scientifiche esterne restano distinti dai test automatici."
       ]
     }
   ],

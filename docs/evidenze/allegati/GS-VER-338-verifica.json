@@ -1,0 +1,117 @@
+{
+  "schema": "studio.glifi.verification-evidence",
+  "schemaVersion": 1,
+  "status": "Passed automatic macOS verification and unsigned preflight",
+  "macOSOnly": true,
+  "sourceFingerprint": "91ee8fd56ca04b8f0a00aacc20b11d430ea031743e8469f2ef15d59aa78db1d4",
+  "controlledInputs": 629,
+  "sourceUnchangedAtCompletion": true,
+  "dossier": "macOS-2026-11-27-bdd-complete",
+  "logsAndReports": {
+    "make-verify.log": "5d369451f72a939b043e0b1ad06ba36b6ad65a1068c0e1102e73e27a97c812bb",
+    "packaging-macos.log": "a1998c0c8c5b080109a491cb7e35a52cfabc60df317d8b1e5627a9e562e290dc",
+    "bdd-full-report.json": "0e6b016a580fec46503cf72ce87dde68468d0f9ca2e49d07591400a46ac580dc",
+    "bdd-targeted-5.log": "9677683dcfd39b4663709719d1199f4f101182602dc4db2c6424303376030542",
+    "bdd-targeted-5-report.json": "1255d449a82f19fcc9b2094c91ec7edd5f8115b76f63c854fa409aadd8f8912e",
+    "csv-338-red.log": "f8d429ad1f306a08227feceb48715febe98e7f50122f61d2063cce0d4a569fa6",
+    "native-summary.json": "c66272f682d18ae9ad7b0d268686e126822d7f99e6da86e143789ccc787395de",
+    "source-manifest-before.json": "f38150930be6d880cb594c61e64ad7cb94f38cd27079112b50606428d01a9519",
+    "source-manifest-after-preflight.json": "f38150930be6d880cb594c61e64ad7cb94f38cd27079112b50606428d01a9519",
+    "desktop-check.json": "b638928fd497a2bed40edb934b25eb7befc4164db204aabd5dd5bc4202de861c",
+    "cleanup.json": "bab81cabf8ccd5ffbd3e964e4352f6011a23594aeb1a4ff92b33d4bbdfc71251"
+  },
+  "makeVerify": {
+    "command": "make verify",
+    "exit": 0,
+    "seconds": 624.14,
+    "definitions": {
+      "Core": 782,
+      "Kit": 171,
+      "BDD": 107
+    },
+    "Cucumber": {
+      "features": 16,
+      "expandedScenarios": 744,
+      "steps": 3092
+    },
+    "native": {
+      "definitions": 144,
+      "executions": 435,
+      "failures": 0,
+      "skipped": 0
+    },
+    "oracles": {
+      "rows": 248,
+      "fractionCases": 64,
+      "conformingPDFA": 2
+    },
+    "parity": {
+      "publicOperations": 132,
+      "completeComparisons": 264,
+      "textFixtures": 63,
+      "textCLIChecks": 196,
+      "recoveryCheckpoints": 22
+    },
+    "logSHA256": "5d369451f72a939b043e0b1ad06ba36b6ad65a1068c0e1102e73e27a97c812bb"
+  },
+  "packaging": {
+    "command": "Scripts/check-app-store-packaging.sh --macos-only",
+    "exit": 0,
+    "seconds": 451.6,
+    "signed": false,
+    "relationship": "The two components of Scripts/verify-app-store.sh ran separately on the same immutable controlled input set; the full gate was not repeated."
+  },
+  "limitations": [
+    "Native model and headless tests do not establish interactive usability or accessibility conformance.",
+    "Current native desktop check found the Mac locked; manual GUI and assistive audit could not run.",
+    "No iPadOS execution, App Store submission, G4 or G5 qualification.",
+    "Coverage refers to declared variants and dimensions, not all possible inputs."
+  ],
+  "evidenceID": "GS-VER-338",
+  "regression": {
+    "red": {
+      "exit": 1,
+      "testDefinitions": 2,
+      "issues": 2,
+      "seconds": 48.07,
+      "cause": "The Character scan did not recognize CRLF as separate CR or LF delimiters."
+    },
+    "green": {
+      "exit": 0,
+      "KitDefinitions": 2,
+      "BDDScenarios": 325,
+      "seconds": 71.63
+    },
+    "fix": "Inspect Unicode scalars, preserving field bytes and quote escaping.",
+    "compatibility": "Malformed historical CSV with unquoted CRLF is rejected even after rehash; API and writer v1 schema unchanged."
+  },
+  "cleanup": {
+    "beforeKiB": 3489328,
+    "remainingDependencyCacheKiB": 110604,
+    "retainedAppAndNativeEvidenceKiB": 43748,
+    "removedGeneratedKiB": 3334976,
+    "previewApp": "/Users/gpicchiarelli/Library/Caches/GlifiStudio/Previews/91ee8fd5/GlifiStudio.app",
+    "generatedSwiftSHA256": "c5a91fc55c07e0e03f3dcad581b2bdd8d9ac31484c23263c2f43e26b57cbbd1c",
+    "removedPaths": [
+      "macOS",
+      "Archive-macOS",
+      "BundleVerifierModuleCache",
+      "Analyze-macOS",
+      "SwiftPM/manifest.pif",
+      "SwiftPM/.lock",
+      "SwiftPM/out",
+      "SwiftPM/plugins",
+      "SwiftPM/CACHEDIR.TAG",
+      "SwiftPM/.buildSystem_debug",
+      "SwiftPM/debug"
+    ],
+    "kept": [
+      "Pinned SwiftPM source checkouts and repositories",
+      "Final Release app",
+      "Native xcresult and summary",
+      "Compressed upstream generated scenarios",
+      "Logs, reports, PDFs, reviewed maps and source manifests",
+      "Installed verification tools and active toolchains"
+    ]
+  }
+}

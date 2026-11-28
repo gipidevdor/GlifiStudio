@@ -1,0 +1,115 @@
+{
+  "identifier": "GS-VER-333",
+  "date": "2026-11-27",
+  "baseHEAD": "44dd90f22f1b4b4930f87a6f6e818ccb3efaa5d4",
+  "workingTree": true,
+  "status": "passed",
+  "profile": "macOS",
+  "legalFiles": [
+    {
+      "source": "Config/Licenses/bdd-tools.txt",
+      "resource": "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/THIRD_PARTY_NOTICES.txt",
+      "sha256": "4031f3de35638d2d3bd578ab448b46929cc946157c3cc4420c178a410b755679",
+      "bytes": 5363,
+      "builtCopies": [
+        "GlifiCore_GlifiBDDTests.bundle/Contents/Resources/Licenses/THIRD_PARTY_NOTICES.txt",
+        "GlifiBDDTests.xctest/Contents/Resources/GlifiCore_GlifiBDDTests.bundle/Contents/Resources/Licenses/THIRD_PARTY_NOTICES.txt"
+      ],
+      "byteIdentical": true
+    },
+    {
+      "source": "LICENSE",
+      "resource": "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-LICENSE.txt",
+      "sha256": "81f47968bba326e331d547c1a4030f240512d62cb6e8c537cec2616da82d7d72",
+      "bytes": 1507,
+      "builtCopies": [
+        "GlifiCore_GlifiBDDTests.bundle/Contents/Resources/Licenses/GlifiStudio-LICENSE.txt",
+        "GlifiBDDTests.xctest/Contents/Resources/GlifiCore_GlifiBDDTests.bundle/Contents/Resources/Licenses/GlifiStudio-LICENSE.txt"
+      ],
+      "byteIdentical": true
+    },
+    {
+      "source": "THIRD_PARTY_NOTICES.txt",
+      "resource": "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-THIRD_PARTY_NOTICES.txt",
+      "sha256": "dc869382f68d264c0054b209cf7f7c0926e09df5daeef8c9fd9b0895acabf944",
+      "bytes": 4961,
+      "builtCopies": [
+        "GlifiCore_GlifiBDDTests.bundle/Contents/Resources/Licenses/GlifiStudio-THIRD_PARTY_NOTICES.txt",
+        "GlifiBDDTests.xctest/Contents/Resources/GlifiCore_GlifiBDDTests.bundle/Contents/Resources/Licenses/GlifiStudio-THIRD_PARTY_NOTICES.txt"
+      ],
+      "byteIdentical": true
+    }
+  ],
+  "licenseInventoryMaterials": 27,
+  "licenseCheckerTests": 19,
+  "bdd": {
+    "swiftTestingDefinitions": 61,
+    "expandedScenarios": 116,
+    "steps": 655,
+    "finalTargetedExitStatus": 0
+  },
+  "verificationSequence": [
+    {
+      "check": "make verify",
+      "exitStatus": 0,
+      "scope": "macOS complete gate, followed by the final targeted resource test"
+    },
+    {
+      "check": "make test-bdd",
+      "exitStatus": 0,
+      "scope": "Final three packaged legal files plus all BDD scenarios"
+    }
+  ],
+  "productionSwiftFilesChangedDuringGate": false,
+  "macOSTests": {
+    "result": "Passed",
+    "totalTestCount": 135,
+    "passedTests": 135,
+    "failedTests": 0,
+    "skippedTests": 0
+  },
+  "logsSHA256": {
+    "makeVerify": "ea6369104c646983e178736c5eef8cc6213f91006797d2659055f4bd9772b72d",
+    "finalBDD": "a78667994f6ef5f5497b314a30abaad6ecb3a4d61a75edbe9e4a938e2fa4f08d"
+  },
+  "source": {
+    "roots": [
+      "Apps",
+      "Packages",
+      "Config",
+      "Scripts",
+      ".github"
+    ],
+    "additionalFiles": [
+      "Makefile",
+      "AGENTS.md",
+      ".swift-format"
+    ],
+    "count": 543,
+    "fingerprint": "46bcc34d970513b3e029f2abf017be405dc97b842a1b1dc41ed7f6160cd046e4",
+    "algorithm": "SHA256 of UTF-8 canonical JSON path-to-file-SHA256 mapping, sorted keys and compact separators"
+  },
+  "primaryLicenseReviewSnapshots": {
+    "gherkin": "81ef221bd9e1f0d41b62e3986c5dd61439641117",
+    "cucumber-expressions": "eb1ad273949ad8bfd20632f73f1959bae6135a45"
+  },
+  "limitations": [
+    "License review snapshots are not exact historical origins of Swift adaptations",
+    "Offline inventory checks are not universal legal certification",
+    "No new app, network, corpus or third-party code distribution",
+    "No iPadOS or remote CI run"
+  ],
+  "postDocumentationStaticExitStatus": 0,
+  "cleanup": {
+    "ownedBuildCacheKiB": 2346128,
+    "measuredGiB": 2.237,
+    "independentAuditCheckoutRemovedKiB": 51524,
+    "status": "completed",
+    "preserved": [
+      "Active toolchains",
+      "Global SwiftPM repository cache",
+      "Other active verification caches",
+      "Versioned notices and evidence"
+    ]
+  }
+}

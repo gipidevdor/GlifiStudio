@@ -15,6 +15,7 @@ enum BDDSubprocessFailure: Error, Equatable {
     case allocationFailed
     case systemCall(String, Int32)
     case timedOut
+    case outputLimitExceeded
 }
 
 /// Owns one child from spawn through waitpid, including cancellation and forced termination.
@@ -107,7 +108,15 @@ enum BDDSubprocess {
         let signal = status & 0x7F
         return try BDDSubprocessOutput(
             status: signal == 0 ? (status >> 8) & 0xFF : signal,
-            stdout: Data(contentsOf: outputURL), stderr: Data(contentsOf: errorURL))
+            stdout: readOutput(at: outputURL), stderr: readOutput(at: errorURL))
+    }
+
+    private static func readOutput(at url: URL) throws -> Data {
+        let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize
+        guard let size, size <= 1_048_576 else {
+            throw BDDSubprocessFailure.outputLimitExceeded
+        }
+        return try Data(contentsOf: url)
     }
 
     private static func awaitExit(

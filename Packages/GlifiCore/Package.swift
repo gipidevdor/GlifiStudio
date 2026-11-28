@@ -45,6 +45,7 @@ let package = Package(
                 .product(name: "CucumberSwiftTesting", package: "CucumberSwift"),
             ],
             exclude: ["Features"],
+            resources: [.copy("Licenses")],
             plugins: [
                 .plugin(name: "CucumberSwiftTestingPlugin", package: "CucumberSwift")
             ]

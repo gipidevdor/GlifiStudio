@@ -642,7 +642,9 @@ public struct GlifiExportManifest: Codable, Equatable, Sendable {
         case "report.pdf":
             contract = ("application/pdf", "studio.glifi.report-pdf-a2u.v1")
         default:
-            contract = nil
+            contract =
+                GlifiSavedResearchReport.isFileName(file.path)
+                ? ("application/json", GlifiSavedResearchAnalysis.outputSchemaIdentifier) : nil
         }
         return contract?.mediaType == file.mediaType && contract?.schema == file.schema
     }
@@ -779,6 +781,7 @@ struct GlifiScientificExporter: Sendable {
         interpretation: GlifiAnalysisInterpretation,
         request: GlifiScientificExportRequest,
         to destinationURL: URL,
+        capturedResearchPayloads: [ArtifactID: Data] = [:],
         environment: GlifiExportEnvironment = .current,
         exportID: UUID = UUID(),
         createdAt: Date = Date(),
@@ -843,6 +846,8 @@ struct GlifiScientificExporter: Sendable {
                     )
                 }
             }
+            payloads += try GlifiSavedResearchReport.payloads(
+                report: report, captured: capturedResearchPayloads)
             for payload in payloads {
                 try Task.checkCancellation()
                 guard payload.data.count <= Self.maximumFileByteCount else {
@@ -974,6 +979,7 @@ struct GlifiScientificExporter: Sendable {
         }
         var verifiedReport: GlifiReportRevision?
         var csvDataByPath: [String: Data] = [:]
+        var capturedIDs = Set<ArtifactID>()
         for record in manifest.files {
             try Task.checkCancellation()
             let fileData = try readFile(
@@ -1003,9 +1009,21 @@ struct GlifiScientificExporter: Sendable {
                 try GlifiScientificExportRenderer.validatePDF(fileData)
             } else if record.path.hasSuffix(".csv") {
                 csvDataByPath[record.path] = fileData
+            } else if GlifiSavedResearchReport.isFileName(record.path) {
+                let artifactID = try GlifiSavedResearchReport.verify(
+                    data: fileData, path: record.path)
+                guard manifest.provenance.inputs.contains(artifactID.canonicalValue),
+                    capturedIDs.insert(artifactID).inserted
+                else {
+                    throw exportFailure("export.captured-output-mismatch", category: .corruption)
+                }
             }
         }
         if let verifiedReport {
+            guard capturedIDs == GlifiSavedResearchReport.selectedArtifactIDs(in: verifiedReport)
+            else {
+                throw exportFailure("export.captured-output-mismatch", category: .corruption)
+            }
             for payload in try GlifiScientificExportRenderer.csvPayloads(verifiedReport)
             where expectedNames.contains(payload.path) {
                 try Task.checkCancellation()
@@ -1135,7 +1153,9 @@ struct GlifiScientificExporter: Sendable {
                 )
             )
         )
-        let validationEvidence = ["GS-VER-030", "GS-VER-031", "GS-VER-032"]
+        let validationEvidence =
+            descriptor.algorithmIdentifier == "saved-analysis-capture-v1"
+            ? ["GS-VER-343"] : ["GS-VER-030", "GS-VER-031", "GS-VER-032"]
         struct ValidationDeclaration: Encodable {
             let methodIdentifier: String
             let status: String
@@ -1258,8 +1278,13 @@ struct GlifiScientificExporter: Sendable {
             lines.append(noFindings)
         } else {
             for finding in report.findings {
+                let description =
+                    finding.messageKey == "finding.saved-analysis.captured"
+                    ? escapeMarkdown(
+                        GlifiSavedResearchReport.findingText(finding, italian: italian))
+                    : "`\(finding.messageKey)`"
                 lines.append(
-                    "- `\(finding.id.canonicalValue)` — `\(finding.messageKey)`"
+                    "- `\(finding.id.canonicalValue)` — \(description)"
                 )
             }
         }
@@ -1277,7 +1302,11 @@ struct GlifiScientificExporter: Sendable {
             lines.append("—")
         } else {
             for caveat in reportCaveats {
-                lines.append("- `\(caveat.identifier)` (\(caveat.severity.rawValue))")
+                let description =
+                    caveat.identifier.hasPrefix("saved-analysis.")
+                    ? escapeMarkdown(GlifiSavedResearchReport.caveatText(caveat, italian: italian))
+                    : "`\(caveat.identifier)`"
+                lines.append("- \(description) (\(caveat.severity.rawValue))")
             }
         }
         lines += [

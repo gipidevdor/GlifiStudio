@@ -269,7 +269,8 @@ public struct GlifiCorpusAnalyzer: Sendable {
                     continue
                 }
                 let normalized =
-                    surface.precomposedStringWithCanonicalMapping.lowercased(with: locale)
+                    token.analysisForm
+                    ?? surface.precomposedStringWithCanonicalMapping.lowercased(with: locale)
                 terms.append(normalized)
                 vocabulary.insert(normalized)
                 guard vocabulary.count <= options.maximumVocabularySize else {

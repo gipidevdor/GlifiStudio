@@ -64,17 +64,36 @@ extension GlifiStatisticalFoundation {
         let factor = exp(
             logGamma(degrees / 2) - log((degrees / 2).squareRoot()) - logGamma((degrees - 1) / 2)
         )
-        let standardError =
-            ((first + second) / (first * second) + d * d / (2 * (first + second))).squareRoot()
-        let z = try GlifiDistributionFunctions.normalQuantile((1 + confidenceLevel) / 2)
+        let squaredEffect = d * d
+        let standardError: Double
+        if squaredEffect.isFinite {
+            // Preserve the ordered arithmetic of already representable results.
+            standardError =
+                ((first + second) / (first * second) + squaredEffect / (2 * (first + second)))
+                .squareRoot()
+        } else {
+            // This is the same Euclidean norm without forming the overflowing square.
+            standardError = hypot(
+                ((first + second) / (first * second)).squareRoot(),
+                d / (2 * (first + second)).squareRoot())
+        }
+        let z = try effectSizeNormalCriticalValue(confidenceLevel)
+        let corrected = factor * d
+        let lower = d - z * standardError
+        let upper = d + z * standardError
+        guard factor.isFinite, corrected.isFinite, standardError.isFinite,
+            lower.isFinite, upper.isFinite
+        else {
+            throw effectSizeFailure("statistics.non-finite-result", category: .invalidInput)
+        }
         return GlifiStandardizedDifference(
             cohenD: d,
             correctionFactor: factor,
-            hedgesG: factor * d,
+            hedgesG: corrected,
             standardError: standardError,
             confidenceLevel: confidenceLevel,
-            lower: d - z * standardError,
-            upper: d + z * standardError
+            lower: lower,
+            upper: upper
         )
     }
 
@@ -103,7 +122,7 @@ extension GlifiStatisticalFoundation {
         guard confidenceLevel > 0, confidenceLevel < 1 else {
             throw effectSizeFailure("statistics.invalid-confidence-level", category: .invalidInput)
         }
-        let z = try GlifiDistributionFunctions.normalQuantile((1 + confidenceLevel) / 2)
+        let z = try effectSizeNormalCriticalValue(confidenceLevel)
         let center = atanh(coefficient)
         let halfWidth = z / Double(sampleCount - 3).squareRoot()
         return GlifiCorrelationInterval(
@@ -179,6 +198,16 @@ extension GlifiStatisticalFoundation {
         case .twoSided: return min(1, 2 * min(greater, less))
         }
     }
+}
+
+private func effectSizeNormalCriticalValue(_ confidenceLevel: Double) throws -> Double {
+    let upperProbability = (1 + confidenceLevel) / 2
+    if upperProbability < 1 {
+        return try GlifiDistributionFunctions.normalQuantile(upperProbability)
+    }
+    // The upper probability can round to one even though the requested level is below one.
+    let lowerQuantile = try GlifiDistributionFunctions.normalQuantile((1 - confidenceLevel) / 2)
+    return -lowerQuantile
 }
 
 private func effectSizeFailure(

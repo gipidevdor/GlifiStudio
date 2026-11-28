@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.license-inventory",
   "schemaVersion": 1,
-  "reviewedOn": "2026-11-27",
+  "reviewedOn": "2026-11-28",
   "materials": [
     {
       "id": "glifi-original",
@@ -10,7 +10,8 @@
         "LICENSE",
         "Packages/GlifiCore/Package.swift",
         "Packages/GlifiCore/Sources/**/*.swift",
-        "Apps/**/*.swift"
+        "Apps/**/*.swift",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-LICENSE.txt"
       ],
       "sourceURLs": [],
       "revision": "Repository revision recorded by verification",
@@ -82,7 +83,8 @@
       "id": "snowball-italian",
       "category": "algorithm-specification",
       "paths": [
-        "Packages/GlifiCore/Sources/GlifiCore/GlifiItalianStemmer.swift"
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiItalianStemmer.swift",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-THIRD_PARTY_NOTICES.txt"
       ],
       "sourceURLs": [
         "https://snowballstem.org/algorithms/italian/stemmer.html",
@@ -102,7 +104,8 @@
       "category": "algorithm-specification",
       "paths": [
         "Packages/GlifiCore/Sources/GlifiCore/GlifiResamplingStatistics.swift",
-        "Packages/GlifiCore/Tests/Oracles/Python/splitmix64.py"
+        "Packages/GlifiCore/Tests/Oracles/Python/splitmix64.py",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-THIRD_PARTY_NOTICES.txt"
       ],
       "sourceURLs": [
         "https://prng.di.unimi.it/splitmix.c"
@@ -453,7 +456,8 @@
       "paths": [
         "Packages/GlifiCore/Package.swift",
         "Packages/GlifiCore/Package.resolved",
-        "Config/Licenses/bdd-tools.txt"
+        "Config/Licenses/bdd-tools.txt",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/THIRD_PARTY_NOTICES.txt"
       ],
       "sourceURLs": [
         "https://github.com/cucumberswift/CucumberSwift/blob/5547f9025c0da3f0276a22a3c746bfebc405741f/LICENSE",
@@ -465,7 +469,7 @@
       "relationship": "test-runner-and-build-tool",
       "noticeFile": "Config/Licenses/bdd-tools.txt",
       "status": "reviewed",
-      "notes": "Licenza letta sulla revisione risolta. Dipendenza esclusiva di GlifiBDDTests; CucumberSwiftTesting e CucumberSwiftTestingPlugin selezionati con traits: [] esplicito. La risoluzione coordinata con SPI_BUILD=1 conferma soltanto i due package bloccati, senza swift-syntax. Nessun codice/binario upstream vendorizzato o incluso nei target applicativi; il test bundle collega il runner e il build tool genera test nel workdir. Avvisi MIT conservati separatamente; versioni e lockfile da riesaminare insieme secondo ADR-0046."
+      "notes": "Licenza letta sulla revisione risolta. Dipendenza esclusiva di GlifiBDDTests; CucumberSwiftTesting e CucumberSwiftTestingPlugin selezionati senza trait Macros, nessun swift-syntax risolto o compilato. Nessun codice/binario upstream vendorizzato o incluso nei target applicativi; il test bundle collega il runner e il build tool genera test nel workdir. Avvisi MIT conservati separatamente; versioni e lockfile da riesaminare insieme secondo ADR-0046. Gli avvisi integrali sono inclusi come risorsa del bundle dei test, con confronto byte a byte con il testo canonico e test del digest confezionato. Le attribuzioni indirette sono registrate in voci distinte. La dichiarazione traits: [] disabilita esplicitamente i default upstream, inclusa l’attivazione condizionale Macros tramite SPI_BUILD; il grafo resta limitato alle due revisioni approvate."
     },
     {
       "id": "cucumber-swift-expressions-bdd",
@@ -473,7 +477,8 @@
       "paths": [
         "Packages/GlifiCore/Package.swift",
         "Packages/GlifiCore/Package.resolved",
-        "Config/Licenses/bdd-tools.txt"
+        "Config/Licenses/bdd-tools.txt",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/THIRD_PARTY_NOTICES.txt"
       ],
       "sourceURLs": [
         "https://github.com/cucumberswift/CucumberSwiftExpressions/blob/ab4c6482d3230d24a13814a961b6fff1d50f830f/LICENSE",
@@ -485,7 +490,147 @@
       "relationship": "test-runner-transitive-dependency",
       "noticeFile": "Config/Licenses/bdd-tools.txt",
       "status": "reviewed",
-      "notes": "Licenza letta sulla revisione risolta; dipendenza transitiva del solo runner BDD, collegata al test bundle. Nessun sorgente o binario vendorizzato o distribuito nel bundle app. Avviso MIT completo conservato; l’aggiornamento del lockfile richiede riesame."
+      "notes": "Licenza letta sulla revisione risolta; dipendenza transitiva del solo runner BDD, collegata al test bundle. Nessun sorgente o binario vendorizzato o distribuito nel bundle app. Avviso MIT completo conservato; l’aggiornamento del lockfile richiede riesame. Gli avvisi integrali sono inclusi come risorsa del bundle dei test, con confronto byte a byte con il testo canonico e test del digest confezionato. Le attribuzioni indirette sono registrate in voci distinte."
+    },
+    {
+      "id": "cucumber-gherkin-embedded-dialects",
+      "category": "development-tool",
+      "paths": [
+        "Config/Licenses/bdd-tools.txt",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/THIRD_PARTY_NOTICES.txt"
+      ],
+      "sourceURLs": [
+        "https://github.com/cucumberswift/CucumberSwift/blob/5547f9025c0da3f0276a22a3c746bfebc405741f/Sources/CucumberSwift/Gherkin/Core/Languages.swift",
+        "https://github.com/cucumberswift/CucumberSwift/blob/5547f9025c0da3f0276a22a3c746bfebc405741f/Sources/CucumberSwiftTesting/LocalizedStepTypes.swift",
+        "https://github.com/cucumberswift/CucumberSwift/blob/5547f9025c0da3f0276a22a3c746bfebc405741f/README.md#attributions",
+        "https://github.com/cucumber/gherkin/blob/81ef221bd9e1f0d41b62e3986c5dd61439641117/LICENSE"
+      ],
+      "revision": "Embedded in CucumberSwift 6.9.0, 5547f9025c0da3f0276a22a3c746bfebc405741f; primary license review snapshot 81ef221bd9e1f0d41b62e3986c5dd61439641117",
+      "licenseExpression": "MIT",
+      "distribution": "external-tool",
+      "relationship": "embedded-dialect-data",
+      "noticeFile": "Config/Licenses/bdd-tools.txt",
+      "status": "reviewed",
+      "notes": "Il parser Gherkin selezionato incorpora dati dei dialetti e dichiarazioni localizzate attribuiti da upstream a cucumber/gherkin. Conservati copyright Cucumber Ltd e contributori, permesso e disclaimer MIT completi anche nel bundle test. Lo snapshot della licenza primaria è una revisione di review, non una dichiarazione dell’esatta origine storica dei dati adattati. Il corpus di test upstream non è copiato nelle fixture del progetto."
+    },
+    {
+      "id": "cucumber-expressions-embedded-diagnostics",
+      "category": "development-tool",
+      "paths": [
+        "Config/Licenses/bdd-tools.txt",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/THIRD_PARTY_NOTICES.txt"
+      ],
+      "sourceURLs": [
+        "https://github.com/cucumberswift/CucumberSwiftExpressions/blob/ab4c6482d3230d24a13814a961b6fff1d50f830f/Sources/CucumberSwiftExpressions/SyntaxError.swift",
+        "https://github.com/cucumberswift/CucumberSwiftExpressions/blob/ab4c6482d3230d24a13814a961b6fff1d50f830f/README.md#attributions",
+        "https://github.com/cucumber/cucumber-expressions/blob/eb1ad273949ad8bfd20632f73f1959bae6135a45/LICENSE",
+        "https://github.com/cucumberswift/CucumberSwiftExpressions/blob/ab4c6482d3230d24a13814a961b6fff1d50f830f/Sources/CucumberSwiftExpressions/SyntaxParser.swift",
+        "https://github.com/cucumber/cucumber-expressions/blob/eb1ad273949ad8bfd20632f73f1959bae6135a45/java/src/main/java/io/cucumber/cucumberexpressions/CucumberExpressionException.java"
+      ],
+      "revision": "Embedded in CucumberSwiftExpressions 1.4.2, ab4c6482d3230d24a13814a961b6fff1d50f830f; primary license review snapshot eb1ad273949ad8bfd20632f73f1959bae6135a45",
+      "licenseExpression": "MIT",
+      "distribution": "external-tool",
+      "relationship": "adapted-expression-diagnostics",
+      "noticeFile": "Config/Licenses/bdd-tools.txt",
+      "status": "reviewed",
+      "notes": "SyntaxError.swift dichiara la riproduzione letterale dei messaggi e la dipendenza attribuisce grammatica/informazioni implementative a cucumber/cucumber-expressions. Conservati copyright Cucumber Ltd e contributori, permesso e disclaimer MIT completi anche nel bundle test. Lo snapshot primario identifica la licenza riesaminata; non identifica l’esatta revisione storica adattata dal port Swift."
+    },
+    {
+      "id": "gherkin-scenario-reference",
+      "category": "algorithm-specification",
+      "paths": [
+        "docs/testing/02-provenienza-scenari.md"
+      ],
+      "sourceURLs": [
+        "https://github.com/cucumber/gherkin/blob/e21434718037092b4cd1127b8b4049e545bda71b/gherkin.berp",
+        "https://github.com/cucumber/gherkin/blob/e21434718037092b4cd1127b8b4049e545bda71b/gherkin-languages.json",
+        "https://raw.githubusercontent.com/cucumber/gherkin/e21434718037092b4cd1127b8b4049e545bda71b/LICENSE"
+      ],
+      "revision": "Gherkin v41.0.0; commit e21434718037092b4cd1127b8b4049e545bda71b",
+      "licenseExpression": "MIT",
+      "distribution": "external-reference",
+      "relationship": "reference-only-original-scenarios",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Grammatica e dialetti consultati come riferimento per casi originali. Nessun parser, dizionario, esempio o suite copiato; la versione del runner Swift resta quella del lockfile, non quella di questa fonte. LICENSE MIT letto al commit; digest e risoluzione del tag annotato in GS-LIC-003. Una futura copia di parti sostanziali deve conservare gli avvisi MIT."
+    },
+    {
+      "id": "nist-handbook-scenario-reference",
+      "category": "algorithm-specification",
+      "paths": [
+        "docs/testing/02-provenienza-scenari.md"
+      ],
+      "sourceURLs": [
+        "https://www.itl.nist.gov/div898/handbook/eda/section3/eda353.htm",
+        "https://www.itl.nist.gov/div898/handbook/eda/section3/eda35f.htm",
+        "https://www.nist.gov/copyrights-disclaimers",
+        "https://www.nist.gov/open/copyright-fair-use-and-licensing-statements-srd-data-software-and-technical-series-publications"
+      ],
+      "revision": "NIST/SEMATECH Handbook sections 1.3.5.3 and 1.3.5.15; accessed 2026-11-27; no immutable page revision exposed",
+      "licenseExpression": "LicenseRef-NIST-Handbook-Reference",
+      "distribution": "external-reference",
+      "relationship": "reference-only-original-scenarios",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Solo riferimento a fatti e formule per test t e goodness-of-fit. Nessun dato AUTO83B, tabella, testo, codice o esempio numerico del manuale acquisito. Le condizioni NIST distinguono SRD, opere di dipendenti, terzi e diritti esteri: non si dichiara pubblico dominio universale. La fonte non è un oracolo dei risultati Glifi; attese e fixture rimangono originali."
+    },
+    {
+      "id": "unicode-scenario-reference",
+      "category": "algorithm-specification",
+      "paths": [
+        "docs/testing/02-provenienza-scenari.md"
+      ],
+      "sourceURLs": [
+        "https://www.unicode.org/reports/tr29/tr29-47.html",
+        "https://www.unicode.org/Public/17.0.0/ucd/auxiliary/WordBreakTest.txt",
+        "https://www.unicode.org/copyright.html",
+        "https://www.unicode.org/license.txt"
+      ],
+      "revision": "UAX29 revision 47, Unicode 17.0.0, 2025-08-17; WordBreakTest17.0.0 dated 2025-03-24; terms accessed 2026-11-27",
+      "licenseExpression": "LicenseRef-Unicode-Publication-Terms AND Unicode-3.0",
+      "distribution": "external-reference",
+      "relationship": "reference-only-original-scenarios",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Solo riferimento per categorie di casi con stringhe originali. Nessuna riga della suite UCD né testo, tabelle o regole UAX copiati. Unicode License V3 riguarda dati/software; la pubblicazione UAX ha condizioni distinte. Le coordinate e la segmentazione sono verificate secondo il contratto Glifi e il sistema registrato, senza dichiarare conformità UAX completa. Digest del file versione17 e del testo V3 consultato in GS-LIC-003."
+    },
+    {
+      "id": "json-rfc8259-scenario-reference",
+      "category": "algorithm-specification",
+      "paths": [
+        "docs/testing/02-provenienza-scenari.md"
+      ],
+      "sourceURLs": [
+        "https://www.rfc-editor.org/rfc/rfc8259.html",
+        "https://www.rfc-editor.org/rfc/rfc8259.txt",
+        "https://trustee.ietf.org/documents/trust-legal-provisions/tlp-5/"
+      ],
+      "revision": "RFC8259, December2017; IETF TLP5 effective2015-03-25, corrected2021",
+      "licenseExpression": "LicenseRef-IETF-RFC8259-Reference",
+      "distribution": "external-reference",
+      "relationship": "reference-only-original-scenarios",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Riferimento alle regole di interoperabilità JSON per envelope e dati originali. Nessun esempio, testo, ABNF o Code Component estratto; i termini BSD dei soli componenti di codice non sono applicati all’intero RFC. Aspettative per duplicati, limiti e Unicode malformato devono corrispondere al contratto Glifi effettivo. Versione e digest in GS-LIC-003."
+    },
+    {
+      "id": "csv-rfc4180-scenario-reference",
+      "category": "algorithm-specification",
+      "paths": [
+        "docs/testing/02-provenienza-scenari.md"
+      ],
+      "sourceURLs": [
+        "https://www.rfc-editor.org/rfc/rfc4180.html",
+        "https://www.rfc-editor.org/rfc/rfc4180.txt",
+        "https://www.rfc-editor.org/rfc/rfc3978.html"
+      ],
+      "revision": "RFC4180, October2005; BCP78 historical RFC3978, March2005",
+      "licenseExpression": "LicenseRef-IETF-RFC4180-Reference",
+      "distribution": "external-reference",
+      "relationship": "reference-only-original-scenarios",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Riferimento Informational a quoting, campi e righe CSV con record inventati. Nessun esempio, ABNF, testo o tabella copiati; nessuna attribuzione BSD all’intero RFC né applicazione retroattiva del TLP corrente. Si verifica solo il formato esposto dal prodotto, senza introdurre nuovi ingressi. Versione e digest in GS-LIC-003."
     }
   ],
   "reviewedInputs": {
@@ -502,13 +647,16 @@
     "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-32@2x.png": "90ec675eb4ac9121de21930cc9dbf82194561c1a9bc63ca98d675919ac6aae6d",
     "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-512.png": "b54f304ab20fb2c03b0c4729926a6e26fe138fc9d567e457bdc43eababd5e443",
     "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-512@2x.png": "80e0893f803c4dcf30b9ebce534674b60dfb1f73ec248bc2581f90deebfcd337",
-    "Config/Licenses/bdd-tools.txt": "24bad6efce631cfec547ba188d00961b5a7ee4542961b23c76ac819b4e17c702",
+    "Config/Licenses/bdd-tools.txt": "4031f3de35638d2d3bd578ab448b46929cc946157c3cc4420c178a410b755679",
     "Design/AppIcon/AppIcon-master-1024.png": "80e0893f803c4dcf30b9ebce534674b60dfb1f73ec248bc2581f90deebfcd337",
     "Fixtures/Linguistics/it-gold-v1/ATTRIBUTION.md": "eadd4b52188de68c2cfe74d3d70071bd4226603c79a3d4ba5efee7022fa5dfe1",
     "LICENSE": "81f47968bba326e331d547c1a4030f240512d62cb6e8c537cec2616da82d7d72",
     "Packages/GlifiCore/Package.resolved": "d7192d75b75156eb6544d3282fa4043f9ced4e28890da1312d7579981911a59f",
-    "Packages/GlifiCore/Package.swift": "e9a7dcdebd0e3c66e7bc11440c368c3add2fe3840d09a8ab5d77daa8cb8bbb63",
+    "Packages/GlifiCore/Package.swift": "5c88abeb2515b4a64ebdc6d5eae58b9658ece7035f9bd97bc1890e79841344d5",
     "THIRD_PARTY_NOTICES.txt": "dc869382f68d264c0054b209cf7f7c0926e09df5daeef8c9fd9b0895acabf944",
-    "docs/assets/glifistudio-hero.png": "672cc4fa464ba426f625ff19bf252bf33019b255de649b4a540cfbc920168f19"
+    "docs/assets/glifistudio-hero.png": "672cc4fa464ba426f625ff19bf252bf33019b255de649b4a540cfbc920168f19",
+    "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/THIRD_PARTY_NOTICES.txt": "4031f3de35638d2d3bd578ab448b46929cc946157c3cc4420c178a410b755679",
+    "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-LICENSE.txt": "81f47968bba326e331d547c1a4030f240512d62cb6e8c537cec2616da82d7d72",
+    "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-THIRD_PARTY_NOTICES.txt": "dc869382f68d264c0054b209cf7f7c0926e09df5daeef8c9fd9b0895acabf944"
   }
 }

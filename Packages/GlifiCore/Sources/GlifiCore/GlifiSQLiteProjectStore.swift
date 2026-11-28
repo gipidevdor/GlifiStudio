@@ -448,11 +448,13 @@ final class GlifiSQLiteProjectStore {
         artifactRootDigest: String,
         artifacts: [GlifiStoredProjectArtifactRecord],
         investigationRootDigest: String,
-        source: GlifiProjectSourceRecord
+        source: GlifiProjectSourceRecord,
+        additionalSources: [GlifiProjectSourceRecord] = []
     ) throws {
+        let insertedSources = [source] + additionalSources
         try transaction {
             try withRichImportCancellation(
-                enabled: GlifiDocumentExtractionPersistence.isRich(source.format)
+                enabled: true
             ) {
                 if GlifiDocumentExtractionPersistence.isRich(source.format) {
                     try enableRichSourceFormats()
@@ -464,7 +466,7 @@ final class GlifiSQLiteProjectStore {
                         artifact_root_digest, artifact_count, investigation_root_digest,
                         investigation_event_count, qualitative_root_digest, qualitative_event_count
                     )
-                    SELECT ?, ?, 'prepared', ?, ?, source_count + 1, ?, ?, ?,
+                    SELECT ?, ?, 'prepared', ?, ?, source_count + \(insertedSources.count), ?, ?, ?,
                            investigation_event_count, qualitative_root_digest, qualitative_event_count
                     FROM generations
                     WHERE generation = ? AND state IN ('prepared', 'committed')
@@ -508,14 +510,19 @@ final class GlifiSQLiteProjectStore {
                     ) VALUES(?, ?, ?, ?, ?, ?, ?)
                     """
                 ) { statement in
-                    try bind(generation, at: 1, to: statement)
-                    try bind(source.sourceID.canonicalValue, at: 2, to: statement)
-                    try bind(source.sourceRevisionID.canonicalValue, at: 3, to: statement)
-                    try bind(source.format.rawValue, at: 4, to: statement)
-                    try bind(source.contentDigest, at: 5, to: statement)
-                    try bind(source.byteCount, at: 6, to: statement)
-                    try bind(source.objectPath, at: 7, to: statement)
-                    try expectDone(statement)
+                    for source in insertedSources {
+                        try Task.checkCancellation()
+                        sqlite3_reset(statement)
+                        sqlite3_clear_bindings(statement)
+                        try bind(generation, at: 1, to: statement)
+                        try bind(source.sourceID.canonicalValue, at: 2, to: statement)
+                        try bind(source.sourceRevisionID.canonicalValue, at: 3, to: statement)
+                        try bind(source.format.rawValue, at: 4, to: statement)
+                        try bind(source.contentDigest, at: 5, to: statement)
+                        try bind(source.byteCount, at: 6, to: statement)
+                        try bind(source.objectPath, at: 7, to: statement)
+                        try expectDone(statement)
+                    }
                 }
             }
         }

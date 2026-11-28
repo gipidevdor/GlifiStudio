@@ -6,12 +6,12 @@
 | --- | --- |
 | Identificatore | GS-BDD-001 |
 | Tipo | Contratto di verifica comportamentale |
-| Versione | 1.0.0 |
+| Versione | 1.4.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-27 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Richiesta esplicita di integrare BDD con Cucumber Swift |
-| Riferimenti | ADR-0046; GS-STD-001-16 § 16.5; GS-DOR-332; GS-TST-001; GS-API-003; CMP-332 |
+| Riferimenti | ADR-0046; GS-STD-001-16 § 16.5; GS-DOR-332; GS-DOR-341; GS-TST-001; GS-API-003; CMP-332; CMP-341; CMP-337; GS-LIC-003; GS-VER-333; GS-VER-334; GS-VER-341 |
 
 ## Esecuzione
 
@@ -32,12 +32,29 @@ Per il lavoro Xcode si usa sempre `GlifiStudio.xcworkspace`.
 JSON contro l'[inventario versionato](../../Config/Testing/bdd-coverage.json)
 e richiedono tutti gli scenari espansi e tutti i passaggi superati. Report vuoto,
 feature omesse, esempi duplicati e passaggi falliti, indefiniti o saltati
-fanno fallire il comando. L'inventario associa digest delle feature, posizioni
-degli scenari espansi e numero esatto di passaggi, compreso il contesto comune.
+fanno fallire il comando. L'inventario V2 associa digest delle feature,
+identità della feature e posizione esatta e univoca di ogni scenario espanso,
+numero di passaggi e digest dei metadati ordinati di ciascun passo, compreso
+il contesto comune. Duplicare, sostituire o riordinare passaggi non soddisfa
+il controllo, anche se conteggio ed esiti restano positivi.
 Il report temporaneo viene rimosso alla fine; gli
 esiti da conservare si registrano nell'evidenza del lotto. L'inventario
-corrente comprende **8 feature, 122 scenari espansi e 697 passaggi**, incluso
-il contesto comune di ciascuno scenario.
+corrente comprende **17 feature, 795 scenari espansi e 3264 passaggi**.
+
+Il [registro dei contratti](../../Config/Testing/bdd-contracts.json) associa
+ogni scenario a variante, fase, oracolo e provenienza. Il gate completo richiede
+**188 varianti pubbliche × tre fasi** (nominale, input non valido e cancellazione
+preventiva), tutte le **63 fixture testuali originali invariate** e i sei
+workflow dichiarati, distinguendo il modello nativo dalla GUI. Le esecuzioni
+nominali aggiuntive portano a 613 casi pubblici; altri 182 scenari riguardano
+workflow, planner, trasporti e regressioni. Hash di matrice, feature e righe,
+indirizzi esatti e nomi ordinati dei passi nel report impediscono associazioni
+obsolete o omissioni. Il controllo verifica le dichiarazioni revisionate;
+la correttezza matematica delle attese richiede la review e gli oracoli dedicati.
+`make check-bdd-contracts` esegue controlli positivi/negativi e valida il registro.
+Il profilo di sviluppo conserva la selezione esatta e permette di lavorare su
+feature nuove prima di completare le associazioni globali; il gate completo
+richiede anche queste ultime.
 
 La completezza del report e l'exit status di Swift Testing sono entrambi
 obbligatori. Il reporter CucumberSwift 6.9.0 registra gli esiti dei passaggi,
@@ -54,10 +71,30 @@ Testing per scenario, compresi gli esempi degli schemi di scenario. Le feature
 sono sorgenti versionati; il codice generato è un artefatto rigenerabile della
 cache di build. Non è richiesto aggiungere una classe XCTest per ogni feature.
 
-Il trait `Macros` è disabilitato: gli step usano la DSL ordinaria e non
-richiedono compilare `swift-syntax`. Manifest, lockfile, licenze dirette e
+La dipendenza dichiara esplicitamente `traits: []`: gli step usano la DSL
+ordinaria e non richiedono compilare `swift-syntax`. L'opt-out impedisce che
+il default upstream abiliti `Macros` quando l'ambiente contiene `SPI_BUILD`.
+Manifest, lockfile, licenze dirette e
 transitive sono riesaminati insieme secondo
 [ADR-0046](../adr/0046-bdd-cucumber-swift.md).
+
+Il target contiene inoltre `GlifiBDDLicenseTests`, un test Swift ordinario
+che legge tre file da `Bundle.module`, nella risorsa `Licenses`, e verifica
+ciascun digest: `THIRD_PARTY_NOTICES.txt` con i quattro avvisi MIT BDD,
+`GlifiStudio-LICENSE.txt` con la BSD del progetto e
+`GlifiStudio-THIRD_PARTY_NOTICES.txt` con gli avvisi Core, inclusi Snowball e
+SplitMix. Il test bundle collega anche GlifiKit e GlifiCore e deve conservare
+anche questi testi. Non è uno scenario Gherkin e non aumenta i **795 esempi**
+o i **3264 passaggi** dell'inventario BDD. Il verificatore statico confronta
+le tre risorse byte per byte con `Config/Licenses/bdd-tools.txt`, `LICENSE`
+e `THIRD_PARTY_NOTICES.txt` alla radice, rispettivamente.
+
+Le copie dei test, degli strumenti e degli artefatti CI distribuiti devono
+conservare questi avvisi. Gli snapshot immutabili delle licenze Gherkin e
+Cucumber Expressions documentano il testo primario riesaminato e non la
+revisione storica esatta degli adattamenti. Il riesame del sorgente e delle
+attribuzioni rimane distinto dal confronto automatico dei byte; dettagli e
+risultati sono in [GS-VER-333](../evidenze/GS-VER-333-licenze-bdd.md).
 
 ## Ciclo di sviluppo RED → GREEN → refactor
 
@@ -108,6 +145,32 @@ sempre l'intero inventario: un report verde di sviluppo resta insufficiente.
 La verifica del workflow è tracciata in GS-VER-334; le proprietà scientifiche,
 UI e assistive continuano ad avere le evidenze dedicate.
 
+## Ciclo di vita dei subprocessi CLI
+
+Gli step CLI delegano l'esecuzione a `BDDSubprocess`, che possiede il figlio
+diretto dal `posix_spawn` al `waitpid`, con controllo di cancellazione
+sincronizzato. La durata predefinita è 30 secondi; alla cancellazione o alla
+scadenza invia SIGTERM e, dopo 250 millisecondi di tolleranza, SIGKILL se il
+figlio è ancora attivo. Prima di restituire l'esito raccoglie il figlio e
+rimuove i file di cattura. Non viene gestito un albero di discendenti arbitrario:
+il contratto riguarda soltanto il figlio diretto avviato dall'adattatore.
+
+Stdout e stderr restano separati. Per ciascun file si controlla il limite di
+**1 MiB prima di leggerlo in memoria**, dopo la terminazione del figlio.
+Questo controllo non impone una quota alle scritture su disco durante
+l'esecuzione. Le fixture rimangono nella directory posseduta dallo scenario
+e vengono rimosse dal relativo cleanup.
+
+`BDDSubprocessTests` contiene sei prove: flussi ed exit status, cancellazione
+preventiva senza avvio, cancellazione di un figlio sospeso, scadenza dello
+stesso tipo di figlio con escalation, avvio fallito e output oltre limite.
+Le prove di terminazione ricevono il PID dal callback di avvio e usano
+`POSIX_SPAWN_START_SUSPENDED`, senza dipendere dall'avvio della shell o da
+pause arbitrarie. Verificano che `waitpid` restituisca `ECHILD`, confermando
+la raccolta del figlio. Questi test Swift ordinari sono separati dai 795 esempi
+Gherkin. Il limite di memoria e il controllo V2 dei metadati sono tracciati
+in GS-VER-341; il ciclo di sviluppo resta tracciato in GS-VER-334.
+
 ## Scrittura e manutenzione
 
 Ogni feature dichiara `# language: it` e l'intestazione SPDX del progetto.
@@ -129,7 +192,10 @@ sostituzione dei placeholder dentro le DocString degli schemi di scenario.
 I parametri degli esempi vanno quindi scritti nel testo del passo; una
 DocString contiene soltanto input completi di scenari singoli. I passi che
 ricevono JSON raw preservano gli escape con un matching esplicito, senza
-decodifica intermedia come stringa Cucumber. La suite verifica l'input
+decodifica intermedia come stringa Cucumber. Nelle celle Gherkin gli escape
+JSON attraversano anche l'escape della tabella: controllare i byte ricevuti.
+Le DocString contenenti JSON si leggono tramite `rawLiteral`, poi si
+decodificano una sola volta con JSONDecoder. La suite verifica l'input
 effettivamente ricevuto; non modifica né sostituisce il parser upstream.
 
 Ogni scenario possiede fixture sintetiche e un eventuale progetto temporaneo,
@@ -141,17 +207,48 @@ Un nuovo comportamento richiede nello stesso cambiamento feature, step,
 inventario, documentazione e controlli. Step mancanti o ambigui devono far
 fallire la suite; una feature priva di test eseguiti non è evidenza positiva.
 
+L'inventario `Config/Testing/bdd-coverage.json`, schema
+`studio.glifi.bdd-coverage` versione **2**, conserva `sourceSHA256` per ogni
+feature e `line`, `stepCount`, `stepsSHA256` per ogni scenario espanso.
+`stepsSHA256` è il digest SHA-256 della sequenza ordinata di oggetti con
+`line`, `keyword` e `name` di ciascun passo, compresi i passi del contesto
+comune. La serializzazione canonica è JSON UTF-8, senza escape ASCII
+aggiuntivi, con chiavi ordinate e separatori compatti. Il confronto verifica
+posizioni e identità dei passi, oltre alla loro cardinalità e all'esito.
+
+Per aggiornarlo si eseguono il generatore e il runner upstream, si leggono
+gli scenari e i metadati dei passi dal report Cucumber e si usa la funzione
+`step_metadata_digest` del verificatore per calcolare il digest. Il progetto
+non mantiene un secondo parser Gherkin per calcolare le espansioni. Un digest
+nuovo richiede review del sorgente e delle attese; l'inventario non va adattato
+per rendere positivo un report incompleto o fallito.
+
+Inventario e report vengono letti come JSON rigoroso: chiavi duplicate,
+`NaN`, `Infinity`, `-Infinity` e letterali che traboccano a valori floating
+non finiti vengono rifiutati prima della validazione semantica. La verifica
+dei tipi non tratta booleani come contatori interi. Le regressioni negative
+del gate coprono questi ingressi ambigui e le alterazioni dei passaggi.
+
 Una selezione mirata tramite filtri di `swift test` o `CUCUMBER_TAGS` serve
 allo sviluppo e non sostituisce la verifica completa prima della consegna:
-un'esecuzione parziale non soddisfa il controllo del report di `make test-bdd`,
+un'esecuzione parziale non soddisfa il controllo del report di `make test-bdd`
 `make test` o `make verify`.
 
 L'inventario si aggiorna dal sorgente Swift emesso da
 `CucumberSwiftTestingGenerator` della revisione bloccata: ciascun
 `GherkinScenario` contiene la posizione dello scenario o dell'esempio espanso
 e i passaggi già comprensivi del contesto. Non si conta il Gherkin con un
-parser sostitutivo. Dopo la revisione della feature si registrano digest SHA-256,
-righe degli scenari e conteggi dei passaggi; il controllo statico respinge
+parser sostitutivo. Il comando originale del progetto
+`Scripts/build-bdd-inventory.py --generated-source <CucumberFeatures.swift>
+--output Config/Testing/bdd-coverage.json --cases-output <casi-espansi.json>`
+legge soltanto il formato Swift della revisione upstream bloccata e respinge
+problemi Gherkin, feature mancanti, indirizzi duplicati ed escape estranei.
+Prima di usarlo occorre rigenerare le feature modificate con il generatore
+upstream già compilato o tramite il plugin SwiftPM. L'output dei casi
+espansi è evidenza rigenerabile utile alla review dei nomi dei passi; il
+registro dei contratti resta un'associazione revisionata, non una deduzione
+automatica dal testo dello scenario. Dopo la revisione della feature si registrano digest SHA-256,
+righe degli scenari, conteggi e digest ordinati dei metadati dei passaggi; il controllo statico respinge
 file nuovi, rimossi o modificati senza l'aggiornamento corrispondente.
 Un digest nuovo richiede review del sorgente; l'inventario non va adattato
 per rendere positivo un report incompleto o fallito. Il report del runner
@@ -161,8 +258,9 @@ costituisce il riscontro dell'espansione e dei conteggi effettivamente eseguiti.
 
 La collezione attraversa i comportamenti di dominio condivisi e la CLI
 macOS: progetto/fonti, ricerca, analisi, persistenza, codifica ed export.
-L'inventario versionato della suite e l'evidenza del lotto identificano
-scenari, varianti effettive ed esiti. La matrice di
+L'[inventario versionato](../../Config/Testing/bdd-coverage.json) identifica
+**795 esempi espansi e 3264 passaggi** nelle feature correnti; l'evidenza
+del lotto registra gli esiti. La matrice di
 [GS-TST-001](../pianificazione/scenari-di-analisi.md) continua a inventariare
 le varianti pubbliche delle analisi; la parità permanente resta governata da
 [GS-API-003](../api/03-parita-continua-cli.md).
@@ -177,6 +275,15 @@ le varianti pubbliche delle analisi; la parità permanente resta governata da
 | [ScientificExport](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/ScientificExport.feature) | 11 | Bundle, lineage e digest, escaping CSV, file mancanti o inattesi, contenuto alterato e provenienza |
 | [CLIParity](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/CLIParity.feature) | 20 | Esecuzione del binario CLI, protocollo JSON e stato testuale, import e riapertura, profilo e query coerenti con Kit, exit status e guida |
 | [RequestValidation](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/RequestValidation.feature) | 11 | JSON ambiguo o fuori contratto, UTF-8, profondità e dimensione, failure tipizzate senza contenuti sensibili |
+| [StatisticsMethods](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/StatisticsMethods.feature) | 142 | Tutte le 44 varianti statistiche nelle tre fasi; forme chiuse, conteggi e invarianti, più precondizioni di dominio |
+| [CoreOperators](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/CoreOperators.feature) | 141 | Tutti i 45 operatori nelle tre fasi; matrici, grafi, partizioni e valori indipendenti; KL e Jensen–Shannon in bit |
+| [TextAnalysisVariants](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/TextAnalysisVariants.feature) | 148 | Tutte le 40 varianti, tutte le 63 richieste originali, alias modificati espliciti e confini UTF-8 |
+| [EvaluationVariants](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/EvaluationVariants.feature) | 41 | Tutte le 13 varianti, conteggi e proprietà, failure tipizzate e cancellazione |
+| [ProjectOperationVariants](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/ProjectOperationVariants.feature) | 84 | Tutte le 27 operazioni, stato, riuso e riapertura dove applicabili, tre vincoli di provenienza export |
+| [SourceProfiles](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/SourceProfiles.feature) | 20 | TXT, Markdown, PDF ed EPUB nelle tre fasi, import automatico CLI e riapertura |
+| [PlannerContracts](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/PlannerContracts.feature) | 13 | Tutti gli undici intenti, input invalido e cancellazione |
+| [InterchangeContracts](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/InterchangeContracts.feature) | 36 | JSON, coordinate Unicode e CSV con attese sintetiche originali; fonti e condizioni in GS-LIC-003 |
+| [ResearchWorkflow](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/ResearchWorkflow.feature) | 48 | Tutte le 15 operazioni di ricerca nelle tre fasi, CSV e celle originali, metadati e preparazione italiana, CLARA e HAC con variabili derivate, ripristino e rapporto descrittivo con byte conservati, DTO sopra 1 MiB tramite file bounded e cancellazione della lettura nativa senza mutazioni |
 
 BDD non attesta tutte le combinazioni di input, comportamento visivo,
 VoiceOver, Voice Control, tastiera, usabilità, prestazioni o correttezza di
@@ -185,4 +292,6 @@ nei test e audit dedicati; nessuna capacità o ValidationManifest viene
 promossa per la sola presenza di una feature. Le regressioni numeriche
 GS-VER-328, il modello di selezione macOS GS-VER-329 e il legame fra export e
 sessione aperta GS-VER-331 conservano i propri test dedicati: le feature BDD
-non dichiarano di esercitare questi tre ambiti.
+non sostituiscono i controlli dedicati di questi tre ambiti. La provenienza
+delle nuove classi di casi è registrata in [GS-LIC-003](02-provenienza-scenari.md);
+gli esiti osservati e la regressione CRLF sono in GS-VER-337 e GS-VER-338.

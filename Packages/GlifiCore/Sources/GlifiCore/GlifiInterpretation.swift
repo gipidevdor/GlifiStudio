@@ -1738,6 +1738,99 @@ private func validRank(_ value: GlifiEditorialRankFactors) -> Bool {
         && value.nonRedundancy.isFinite && value.nonRedundancy >= 0
 }
 
+extension GlifiInterpretationEngine {
+    /// Describes the verified existence of a captured output, never its scientific validity.
+    ///
+    /// The linked plan supplies an explicit review scope; its executable steps are not claimed
+    /// to have produced this independently captured output.
+    package static func describeSavedResearchCapture(
+        planArtifactID: ArtifactID, planAnalysisNodeID: AnalysisNodeID,
+        savedRecord: GlifiProjectArtifactRecord, saved: GlifiSavedResearchAnalysis,
+        sourceReferences: [GlifiSourceReference]
+    ) throws -> GlifiAnalysisInterpretation {
+        try saved.validate()
+        guard !sourceReferences.isEmpty, savedRecord.node.id == saved.analysisNodeID else {
+            throw savedResearchFailure("research.capture-sources-required")
+        }
+        let rule = "saved-analysis-capture-v1"
+        let limitations = [
+            caveat(
+                "saved-analysis.declared-source-association", severity: .warning, scope: .artifact,
+                cause: "source-association-declared-by-caller",
+                consequence: "no-input-equivalence-claim",
+                action: "review-captured-request", origin: rule),
+            caveat(
+                "saved-analysis.no-method-validation", severity: .warning, scope: .finding,
+                cause: "output-captured-without-scientific-reexecution",
+                consequence: "no-inferential-or-validation-claim",
+                action: "inspect-method-diagnostics",
+                origin: rule),
+            caveat(
+                "saved-analysis.separate-plan-execution", severity: .information, scope: .finding,
+                cause: "plan-links-review-scope", consequence: "no-plan-step-execution-claim",
+                action: nil, origin: rule),
+        ]
+        let evidence = try makeEvidence(
+            kindIdentifier: "saved-analysis-capture", artifactIDs: [savedRecord.artifactID],
+            analysisNodeID: saved.analysisNodeID, descriptorDigest: savedRecord.descriptorDigest,
+            methodIdentifiers: [rule, saved.methodIdentifier],
+            measures: [
+                measure("captured.method", .text(saved.methodIdentifier), nil),
+                measure("captured.request-digest", .text("sha256:" + saved.requestDigest), nil),
+                measure(
+                    "captured.result-digest",
+                    .text(
+                        "sha256:"
+                            + SHA256.hash(data: saved.resultJSON)
+                            .map { String(format: "%02x", $0) }.joined()), nil),
+                measure(
+                    "captured.source-count", .integer(Int64(sourceReferences.count)),
+                    "source-revision"),
+            ], uncertaintyIdentifiers: [], effectSizeIdentifiers: [],
+            sourceReferences: sourceReferences,
+            epistemicCategory: .observed, validity: .limited, caveats: limitations)
+        let assessment = GlifiEvidenceAssessment(
+            policyIdentifier: rule, supportClass: .descriptive,
+            dimensions: [
+                GlifiEvidenceAssessmentDimension(
+                    identifier: "capture-integrity", value: .boolean(true),
+                    outcomeIdentifier: "artifact-and-request-digests-verified")
+            ],
+            rationaleIdentifiers: ["captured-output-exists-no-scientific-conclusion"])
+        let finding = try makeFinding(
+            familyIdentifier: "saved-analysis-capture", typeIdentifier: "captured-output",
+            subjectIdentifier: savedRecord.artifactID.canonicalValue,
+            predicateIdentifier: "has-verified-captured-output",
+            objectIdentifier: saved.methodIdentifier,
+            scopeIdentifier: savedRecord.node.descriptor.corpusVersionDigest,
+            directionIdentifier: nil,
+            state: .supported,
+            evidenceReferences: [
+                GlifiFindingEvidenceReference(
+                    evidenceID: evidence.id, disposition: .supporting, reasonIdentifier: nil)
+            ],
+            assessment: assessment, caveats: limitations, ruleSetIdentifier: rule,
+            messageKey: "finding.saved-analysis.captured",
+            messageArguments: [
+                "methodIdentifier": saved.methodIdentifier,
+                "sourceCount": String(sourceReferences.count),
+            ],
+            rankFactors: GlifiEditorialRankFactors(
+                rankingIdentifier: rankingIdentifier, intentRelevance: 1,
+                supportClass: .descriptive,
+                effectMagnitude: nil, coverage: nil, stability: nil, novelty: nil,
+                nonRedundancy: 1, hasCompleteLineage: true))
+        let interpretation = GlifiAnalysisInterpretation(
+            ruleCatalogIdentifier: ruleCatalogIdentifier, rankingIdentifier: rankingIdentifier,
+            intent: .understandCollection, planArtifactID: planArtifactID,
+            planAnalysisNodeID: planAnalysisNodeID, sourceArtifactIDs: [savedRecord.artifactID],
+            evidence: [evidence], findings: [finding], suppressionSummaries: [],
+            insufficientEvidence: nil)
+        try validateInterpretation(interpretation)
+        return interpretation
+    }
+}
+
 private func interpretationFailure(
     _ code: String,
     category: GlifiFailureCategory = .invariantViolation

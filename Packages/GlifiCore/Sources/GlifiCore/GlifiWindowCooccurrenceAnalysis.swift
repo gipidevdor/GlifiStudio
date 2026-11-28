@@ -345,7 +345,9 @@ public struct GlifiWindowCollocationAnalyzer: Sendable {
             {
                 sentence += 1
             }
-            terms.append(surface.precomposedStringWithCanonicalMapping.lowercased(with: locale))
+            terms.append(
+                token.analysisForm
+                    ?? surface.precomposedStringWithCanonicalMapping.lowercased(with: locale))
             sentenceIndexes.append(sentence)
             ranges.append(token.range)
         }

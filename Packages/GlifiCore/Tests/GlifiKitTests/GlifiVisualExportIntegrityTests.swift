@@ -215,7 +215,40 @@ func visualExportIntegrityPreservesOpaqueLegacyMetadata() throws {
     }
 }
 
-private func visualExportIntegrityFixture() throws -> [String: Data] {
+@Test("Il CSV quota CRLF anche senza virgole o virgolette nel campo")
+func visualExportCSVQuotesLineBreaksWithoutOtherDelimiters() throws {
+    let cases = [
+        ("prima\r\nseconda", "\"pair:prima\r\nseconda|porto\"", "\"prima\r\nseconda\""),
+        ("prima\rseconda", "\"pair:prima\rseconda|porto\"", "\"prima\rseconda\""),
+        ("prima\nseconda", "\"pair:prima\nseconda|porto\"", "\"prima\nseconda\""),
+        ("semplice", "pair:semplice|porto", "semplice"),
+    ]
+    for (label, identifier, field) in cases {
+        let bundle = try visualExportIntegrityFixture(nodeTerm: label)
+        let bytes = try #require(bundle["view.csv"])
+        let csv = try #require(String(data: bytes, encoding: .utf8))
+        #expect(
+            csv.contains(identifier + "," + field + ",porto,"),
+            Comment(rawValue: label.debugDescription))
+        _ = try GlifiStudioVisualExport.verify(bundle)
+    }
+}
+
+@Test("Un CSV con CRLF non quotato resta invalido dopo il rehash")
+func visualExportIntegrityRejectsUnquotedCRLFAfterRehash() throws {
+    let original = try visualExportIntegrityFixture(nodeTerm: "prima\r\nseconda")
+    let bytes = try #require(original["view.csv"])
+    let csv = try #require(String(data: bytes, encoding: .utf8))
+    let quoted = "\"prima\r\nseconda\""
+    try #require(csv.contains(quoted))
+    let invalid = Data(csv.replacingOccurrences(of: quoted, with: "prima\r\nseconda").utf8)
+    let changed = try visualExportReplacingPayload(original, path: "view.csv", data: invalid)
+    expectVisualExportIntegrityFailure(changed, mutation: "unquoted CRLF with matching digest")
+}
+
+private func visualExportIntegrityFixture(
+    nodeTerm: String = "mare, \"calmo\"\r\nβ"
+) throws -> [String: Data] {
     let options = try GlifiStudioWindowCooccurrenceOptions(
         leftSpan: 2, rightSpan: 2, crossesSentences: false, includesSelfPairs: false,
         minimumJointCount: 1, maximumPairCount: 2)
@@ -233,7 +266,7 @@ private func visualExportIntegrityFixture() throws -> [String: Data] {
         "distinctPairCount": 3, "isTruncated": true,
         "pairs": [
             [
-                "nodeTerm": "mare, \"calmo\"\r\nβ", "collocateTerm": "porto",
+                "nodeTerm": nodeTerm, "collocateTerm": "porto",
                 "jointCount": 3, "nodeOnlyCount": 4, "collocateOnlyCount": 5, "neitherCount": 8,
                 "meanDistance": 1.25, "weightedJointCount": 3,
                 "occurrences": [], "occurrencesTruncated": false,

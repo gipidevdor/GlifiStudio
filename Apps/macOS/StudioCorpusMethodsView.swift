@@ -77,6 +77,9 @@ struct StudioCorpusMethodsView: View {
         }
         .navigationTitle("cm.title")
         .onChange(of: analysis.output?.completedAt) { _, value in
+            selectedRow = nil
+            source = nil
+            showsSource = false
             if value != nil { showsResults = true }
         }
         .onChange(of: analysis.tool) { _, _ in showsResults = false }
@@ -151,6 +154,7 @@ struct StudioCorpusMethodsView: View {
             Text(LocalizedStringKey(analysis.tool.descriptionKey))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
+            StudioAnalysisRoleView(route: .corpus(analysis.tool))
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -310,9 +314,14 @@ struct StudioCorpusMethodsView: View {
                     integer("cm.cluster-count", value: $analysis.draft.clusterCount)
                 }
                 if analysis.tool == .hierarchical {
+                    Picker("cm.cluster-unit", selection: $analysis.draft.clusterUnit) {
+                        ForEach(StudioCorpusClusterUnit.allCases) { unit in
+                            Text(LocalizedStringKey(unit.titleKey)).tag(unit)
+                        }
+                    }
                     Picker("cm.linkage", selection: $analysis.draft.linkage) {
                         ForEach(["single", "complete", "average", "ward"], id: \.self) { value in
-                            Text(LocalizedStringKey("cm.linkage.\(value)")).tag(value)
+                            Text(StudioLocalization.key("cm.linkage.\(value)")).tag(value)
                         }
                     }
                 }
@@ -430,6 +439,19 @@ struct StudioCorpusMethodsView: View {
                             LabeledContent(fieldLabel(field.key), value: field.value).textSelection(
                                 .enabled)
                         }
+                    }
+                }
+                ForEach(output.visualizations) { visualization in
+                    Section(LocalizedStringKey(visualization.titleKey)) {
+                        StudioVisualizationView(
+                            visualization: visualization,
+                            selectedMarkID: analysis.selectedVisualMarkID,
+                            projectID: output.visualizationLineage?.projectID,
+                            generation: output.visualizationLineage?.generation
+                        ) { mark in
+                            openVisualMark(mark, visualizationID: visualization.id)
+                        }
+                        .id(visualization.id)
                     }
                 }
                 if !analysis.tables.isEmpty {
@@ -609,6 +631,26 @@ struct StudioCorpusMethodsView: View {
             await model.runCorpusAnalysis { active in
                 let text = try await active.sourceText(sourceRevisionID: id)
                 let snapshot = try await active.snapshot()
+                source = text
+                showsSource = true
+                return snapshot
+            }
+        }
+    }
+
+    private func openVisualMark(_ mark: GlifiStudioVisualMark, visualizationID: String) {
+        source = nil
+        showsSource = false
+        guard let output = analysis.output,
+            let id = analysis.selectVisualMark(mark, visualizationID: visualizationID)
+        else { return }
+        Task {
+            await model.runCorpusAnalysis { active in
+                let text = try await active.sourceText(sourceRevisionID: id)
+                let snapshot = try await active.snapshot()
+                guard analysis.output?.completedAt == output.completedAt,
+                    analysis.selectedVisualMarkID == mark.id
+                else { return snapshot }
                 source = text
                 showsSource = true
                 return snapshot

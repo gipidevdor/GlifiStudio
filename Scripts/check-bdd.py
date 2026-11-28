@@ -9,29 +9,102 @@ import argparse
 import copy
 import hashlib
 import json
+import math
 import re
 import runpy
 import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import NamedTuple
 
 
 ROOT = Path(__file__).resolve().parent.parent
 INVENTORY = "Config/Testing/bdd-coverage.json"
 FEATURES = "Packages/GlifiCore/Tests/GlifiBDDTests/Features"
+NOTICE_SOURCE = "Config/Licenses/bdd-tools.txt"
+NOTICE_RESOURCE = "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/THIRD_PARTY_NOTICES.txt"
+NOTICE_COPIES = (
+    (NOTICE_SOURCE, NOTICE_RESOURCE),
+    ("LICENSE", "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-LICENSE.txt"),
+    ("THIRD_PARTY_NOTICES.txt",
+     "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-THIRD_PARTY_NOTICES.txt"),
+)
+INVENTORY_SCHEMA = "studio.glifi.bdd-coverage"
+INVENTORY_VERSION = 2
 
 
-def validate_inventory(body: object, root: Path) -> dict[str, dict[int, int]]:
+class ScenarioExpectation(NamedTuple):
+    """Reviewed scenario cardinality and ordered step identity."""
+
+    step_count: int
+    steps_sha256: str
+
+
+def read_json(path: Path) -> object:
+    """Reject ambiguous object members and non-finite numbers in gate inputs."""
+    def unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("chiave JSON duplicata nell'input BDD")
+            result[key] = value
+        return result
+
+    def finite_number(token: str) -> float:
+        value = float(token)
+        if not math.isfinite(value):
+            raise ValueError("numero JSON non finito nell'input BDD")
+        return value
+
+    def invalid_constant(_: str) -> object:
+        raise ValueError("costante non JSON nell'input BDD")
+
+    return json.loads(
+        path.read_text(encoding="utf-8"), object_pairs_hook=unique_object,
+        parse_float=finite_number, parse_constant=invalid_constant)
+
+
+def step_metadata_digest(steps: object) -> str:
+    """Hash the ordered upstream metadata without parsing Gherkin again."""
+    if not isinstance(steps, list) or not steps:
+        raise ValueError("elenco dei passaggi vuoto o non valido")
+    metadata = []
+    for index, step in enumerate(steps, 1):
+        if not isinstance(step, dict):
+            raise ValueError(f"metadati del passaggio {index} non validi")
+        line, keyword, name = step.get("line"), step.get("keyword"), step.get("name")
+        if (type(line) is not int or line < 1
+                or not isinstance(keyword, str) or not keyword.strip()
+                or not isinstance(name, str) or not name.strip()):
+            raise ValueError(f"metadati del passaggio {index} non validi")
+        metadata.append({"line": line, "keyword": keyword, "name": name})
+    canonical = json.dumps(
+        metadata, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(canonical).hexdigest()
+
+
+def validate_notices(root: Path) -> None:
+    """Keep the reviewed notices intact in the test product's resource bundle."""
+    for source_path, resource_path in NOTICE_COPIES:
+        source = (root / source_path).read_bytes()
+        if not source.strip() or (root / resource_path).read_bytes() != source:
+            raise ValueError(f"avvisi assenti o differenti nel bundle dei test: {resource_path}")
+
+
+def validate_inventory(body: object, root: Path) -> dict[str, dict[int, ScenarioExpectation]]:
     """Validate exact feature coverage without reimplementing the Gherkin parser."""
-    if (not isinstance(body, dict) or type(body.get("schemaVersion")) is not int
-            or body["schemaVersion"] != 1):
+    if (not isinstance(body, dict) or set(body) != {"schema", "schemaVersion", "features"}
+            or body.get("schema") != INVENTORY_SCHEMA
+            or type(body.get("schemaVersion")) is not int
+            or body["schemaVersion"] != INVENTORY_VERSION):
         raise ValueError("schema inventario BDD non valido")
     features = body.get("features")
     if not isinstance(features, list) or not features:
         raise ValueError("inventario BDD vuoto")
     expected = {}
     for entry in features:
-        if not isinstance(entry, dict):
+        if (not isinstance(entry, dict)
+                or set(entry) != {"file", "expandedScenarios", "sourceSHA256", "scenarios"}):
             raise ValueError("voce feature non valida")
         name, count = entry.get("file"), entry.get("expandedScenarios")
         if (not isinstance(name, str) or Path(name).name != name
@@ -56,14 +129,18 @@ def validate_inventory(body: object, root: Path) -> dict[str, dict[int, int]]:
             raise ValueError(f"{name}: inventario scenari espansi non allineato")
         scenario_steps = {}
         for scenario in scenarios:
-            if not isinstance(scenario, dict):
+            if (not isinstance(scenario, dict)
+                    or set(scenario) != {"line", "stepCount", "stepsSHA256"}):
                 raise ValueError(f"{name}: posizione scenario non valida")
             line, step_count = scenario.get("line"), scenario.get("stepCount")
             if type(line) is not int or line < 1 or line in scenario_steps:
                 raise ValueError(f"{name}: posizione scenario duplicata o non valida")
             if type(step_count) is not int or step_count < 1:
                 raise ValueError(f"{name}:{line}: conteggio passaggi non valido")
-            scenario_steps[line] = step_count
+            steps_digest = scenario.get("stepsSHA256")
+            if not isinstance(steps_digest, str) or not re.fullmatch(r"[0-9a-f]{64}", steps_digest):
+                raise ValueError(f"{name}:{line}: digest dei passaggi non valido")
+            scenario_steps[line] = ScenarioExpectation(step_count, steps_digest)
         expected[name] = scenario_steps
     files = list((root / FEATURES).rglob("*.feature"))
     if any(path.parent != root / FEATURES for path in files):
@@ -75,11 +152,11 @@ def validate_inventory(body: object, root: Path) -> dict[str, dict[int, int]]:
 
 
 def select_inventory(
-        expected: dict[str, dict[int, int]], selection: str) -> dict[str, dict[int, int]]:
+        expected: dict[str, dict[int, ScenarioExpectation]], selection: str) -> dict[str, dict[int, ScenarioExpectation]]:
     """Select exact expanded scenario IDs already reviewed in the inventory."""
     if not selection.strip():
         raise ValueError("selezione BDD vuota")
-    selected: dict[str, dict[int, int]] = {}
+    selected: dict[str, dict[int, ScenarioExpectation]] = {}
     for item in selection.split(","):
         name, separator, line_text = item.strip().partition(":")
         if name not in expected:
@@ -98,14 +175,14 @@ def select_inventory(
     return {name: dict(sorted(lines.items())) for name, lines in sorted(selected.items())}
 
 
-def runner_selection(expected: dict[str, dict[int, int]]) -> str:
+def runner_selection(expected: dict[str, dict[int, ScenarioExpectation]]) -> str:
     """Use CucumberSwift's scenario-list transport, without parsing Gherkin or tags."""
     return ",".join(
         f"Features/{name.replace('%', '%25').replace(',', '%2C')}:{line}"
         for name, lines in sorted(expected.items()) for line in sorted(lines))
 
 
-def validate_report(body: object, expected: dict[str, dict[int, int]]) -> int:
+def validate_report(body: object, expected: dict[str, dict[int, ScenarioExpectation]]) -> int:
     """Reject omitted features, duplicate examples, empty steps and non-passed results."""
     if not isinstance(body, list) or not body:
         raise ValueError("report Cucumber vuoto o non valido")
@@ -136,8 +213,14 @@ def validate_report(body: object, expected: dict[str, dict[int, int]]) -> int:
                 raise ValueError(f"{name}:{line}: tracciabilità BDD mancante")
             scenario_steps = scenario.get("steps")
             if (not isinstance(scenario_steps, list)
-                    or len(scenario_steps) != expected[name][line]):
+                    or len(scenario_steps) != expected[name][line].step_count):
                 raise ValueError(f"{name}:{line}: passaggi omessi o inattesi")
+            try:
+                digest = step_metadata_digest(scenario_steps)
+            except ValueError as error:
+                raise ValueError(f"{name}:{line}: {error}") from error
+            if digest != expected[name][line].steps_sha256:
+                raise ValueError(f"{name}:{line}: identità o ordine dei passaggi differenti dalla revisione")
             for step in scenario_steps:
                 if (not isinstance(step, dict) or not isinstance(step.get("result"), dict)
                         or step["result"].get("status") != "passed"):
@@ -152,12 +235,20 @@ def validate_report(body: object, expected: dict[str, dict[int, int]]) -> int:
 
 def selection_self_test() -> None:
     """Require the selected scenarios, without accepting omissions or extra execution."""
-    complete = {"Contract.feature": {5: 2, 10: 3}, "Other.feature": {7: 1}}
+    metadata = [
+        {"line": 2, "keyword": "Dato", "name": "una città"},
+        {"line": 3, "keyword": "Quando", "name": "cerco un termine"},
+        {"line": 4, "keyword": "Allora", "name": "il conteggio è 1"},
+    ]
+    def expectation(count: int) -> ScenarioExpectation:
+        return ScenarioExpectation(count, step_metadata_digest(metadata[:count]))
+    complete = {"Contract.feature": {5: expectation(2), 10: expectation(3)},
+                "Other.feature": {7: expectation(1)}}
     selected = select_inventory(complete, "Contract.feature:10")
-    assert selected == {"Contract.feature": {10: 3}}
+    assert selected == {"Contract.feature": {10: expectation(3)}}
     assert select_inventory(complete, "Contract.feature") == {"Contract.feature": complete["Contract.feature"]}
     assert select_inventory(complete, "Other.feature:7,Contract.feature:5") == {
-        "Contract.feature": {5: 2}, "Other.feature": {7: 1}}
+        "Contract.feature": {5: expectation(2)}, "Other.feature": {7: expectation(1)}}
     assert select_inventory(complete, "Contract.feature,Contract.feature:5") == {
         "Contract.feature": complete["Contract.feature"]}
     assert runner_selection(selected) == "Features/Contract.feature:10"
@@ -175,7 +266,7 @@ def selection_self_test() -> None:
     scenario = {
         "type": "scenario", "line": 10,
         "tags": [{"name": "GS-CMP-332"}, {"name": "macos"}],
-        "steps": [{"result": {"status": "passed"}} for _ in range(3)],
+        "steps": [{**step, "result": {"status": "passed"}} for step in metadata],
     }
     report = [{"uri": "Features/Contract.feature", "elements": [scenario]}]
     assert validate_report(report, selected) == 3
@@ -206,13 +297,67 @@ def selection_self_test() -> None:
 def self_test() -> None:
     """Exercise the gate against realistic omissions and false success reports."""
     selection_self_test()
+    with TemporaryDirectory(prefix="GlifiBDDNotices-") as directory:
+        root = Path(directory)
+        for name in {name for pair in NOTICE_COPIES for name in pair}:
+            path = root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(b"synthetic reviewed notices\n")
+        validate_notices(root)
+        for _, resource_path in NOTICE_COPIES:
+            for value in (b"", b"notice with missing copyright\n"):
+                (root / resource_path).write_bytes(value)
+                try:
+                    validate_notices(root)
+                except ValueError:
+                    pass
+                else:
+                    raise AssertionError("avviso BDD incompleto accettato")
+            (root / resource_path).write_bytes(b"synthetic reviewed notices\n")
+        (root / NOTICE_RESOURCE).unlink()
+        try:
+            validate_notices(root)
+        except OSError:
+            pass
+        else:
+            raise AssertionError("risorsa legale BDD mancante accettata")
     report = [{"uri": "Features/Contract.feature", "elements": [{
         "type": "scenario", "line": 5,
         "tags": [{"name": "GS-CMP-332"}, {"name": "macos"}],
-        "steps": [{"result": {"status": "passed"}}, {"result": {"status": "passed"}}],
+        "steps": [
+            {"line": 2, "keyword": "Dato", "name": "una città", "result": {"status": "passed"}},
+            {"line": 4, "keyword": "Allora", "name": "il conteggio è 1",
+             "result": {"status": "passed"}},
+        ],
     }]}]
-    expected = {"Contract.feature": {5: 2}}
+    canonical_steps = (
+        '[{"keyword":"Dato","line":2,"name":"una città"},'
+        '{"keyword":"Allora","line":4,"name":"il conteggio è 1"}]').encode("utf-8")
+    digest = hashlib.sha256(canonical_steps).hexdigest()
+    assert step_metadata_digest(report[0]["elements"][0]["steps"]) == digest
+    expectation = ScenarioExpectation(2, digest)
+    expected = {"Contract.feature": {5: expectation}}
     assert validate_report(report, expected) == 2
+    with TemporaryDirectory(prefix="GlifiBDDJSON-") as directory:
+        path = Path(directory) / "report.json"
+        text = json.dumps(report, ensure_ascii=False)
+        path.write_text(text, encoding="utf-8")
+        assert validate_report(read_json(path), expected) == 2
+        duplicated_status = text.replace(
+            '"status": "passed"', '"status": "failed", "status": "passed"', 1)
+        assert duplicated_status != text
+        for raw in (
+            duplicated_status,
+            '{"duration": NaN}', '{"duration": Infinity}', '{"duration": -Infinity}',
+            '{"duration": 1e999}', '{"duration": -1e999}',
+        ):
+            path.write_text(raw, encoding="utf-8")
+            try:
+                read_json(path)
+            except ValueError:
+                pass
+            else:
+                raise AssertionError("report JSON ambiguo o non finito accettato")
     rejected = [[], {}, report + report, [{"uri": "Other.feature"}],
                 [{"uri": "Contract.feature", "elements": []}]]
     for status in ("failed", "skipped", "pending", "undefined", "ambiguous", None):
@@ -220,10 +365,29 @@ def self_test() -> None:
         changed[0]["elements"][0]["steps"][0]["result"]["status"] = status
         rejected.append(changed)
     for key, value in (("steps", []), ("tags", []), ("line", 0), ("line", 99),
-                       ("line", True), ("steps", [{"result": {"status": "passed"}}])):
+                       ("line", True), ("steps", [report[0]["elements"][0]["steps"][0]])):
         changed = copy.deepcopy(report)
         changed[0]["elements"][0][key] = value
         rejected.append(changed)
+    duplicated_step = copy.deepcopy(report)
+    duplicated_step[0]["elements"][0]["steps"][1] = copy.deepcopy(
+        duplicated_step[0]["elements"][0]["steps"][0])
+    rejected.append(duplicated_step)
+    swapped_steps = copy.deepcopy(report)
+    swapped_steps[0]["elements"][0]["steps"].reverse()
+    rejected.append(swapped_steps)
+    for key, value in (
+        ("line", None), ("line", True), ("line", 0), ("line", "2"), ("line", 99),
+        ("keyword", None), ("keyword", True), ("keyword", ""), ("keyword", "  "),
+        ("keyword", "Quando"), ("name", None), ("name", True), ("name", ""),
+        ("name", "  "), ("name", "una città diversa"),
+    ):
+        changed = copy.deepcopy(report)
+        changed[0]["elements"][0]["steps"][0][key] = value
+        rejected.append(changed)
+    missing_metadata = copy.deepcopy(report)
+    del missing_metadata[0]["elements"][0]["steps"][0]["name"]
+    rejected.append(missing_metadata)
     for invalid in rejected:
         try:
             validate_report(invalid, expected)
@@ -231,7 +395,7 @@ def self_test() -> None:
             continue
         raise AssertionError(f"report invalido accettato: {invalid}")
     try:
-        validate_report(report, {**expected, "Missing.feature": {5: 2}})
+        validate_report(report, {**expected, "Missing.feature": {5: expectation}})
     except ValueError:
         pass
     else:
@@ -239,7 +403,7 @@ def self_test() -> None:
     duplicate = copy.deepcopy(report)
     duplicate[0]["elements"] *= 2
     try:
-        validate_report(duplicate, {"Contract.feature": {5: 2, 10: 2}})
+        validate_report(duplicate, {"Contract.feature": {5: expectation, 10: expectation}})
     except ValueError:
         pass
     else:
@@ -247,7 +411,7 @@ def self_test() -> None:
     dependency_check = runpy.run_path(str(ROOT / "Scripts/check-apple-baseline.py"))[
         "validate_test_dependencies"]
     manifest = (ROOT / "Packages/GlifiCore/Package.swift").read_text()
-    lock = json.loads((ROOT / "Packages/GlifiCore/Package.resolved").read_text())
+    lock = read_json(ROOT / "Packages/GlifiCore/Package.resolved")
     assert not dependency_check(manifest, lock)
     for changed in (
         manifest.replace('exact: "6.9.0"', 'from: "6.9.0"'),
@@ -275,27 +439,53 @@ def self_test() -> None:
         source = b"# language: it\n"
         feature = root / FEATURES / "Contract.feature"
         feature.write_bytes(source)
-        inventory = {"schemaVersion": 1, "features": [
+        inventory = {"schema": INVENTORY_SCHEMA, "schemaVersion": INVENTORY_VERSION, "features": [
             {"file": "Contract.feature", "expandedScenarios": 1,
              "sourceSHA256": hashlib.sha256(source).hexdigest(),
-             "scenarios": [{"line": 5, "stepCount": 2}]}]}
+             "scenarios": [{"line": 5, "stepCount": 2, "stepsSHA256": digest}]}]}
         assert validate_inventory(inventory, root) == expected
-        unaddressable = feature.with_name("Contract:Example.feature")
-        feature.rename(unaddressable)
-        invalid_name = copy.deepcopy(inventory)
-        invalid_name["features"][0]["file"] = unaddressable.name
+        inventory_path = root / "inventory.json"
+        inventory_text = json.dumps(inventory, ensure_ascii=False)
+        inventory_path.write_text(inventory_text, encoding="utf-8")
+        assert validate_inventory(read_json(inventory_path), root) == expected
+        duplicate_version = inventory_text.replace(
+            '"schemaVersion": 2', '"schemaVersion": 1, "schemaVersion": 2', 1)
+        assert duplicate_version != inventory_text
+        inventory_path.write_text(duplicate_version, encoding="utf-8")
         try:
-            validate_inventory(invalid_name, root)
+            read_json(inventory_path)
         except ValueError:
             pass
         else:
-            raise AssertionError("nome feature con separatore scenario riservato accettato")
-        finally:
-            unaddressable.rename(feature)
+            raise AssertionError("inventario JSON con versione duplicata accettato")
+        for field, value in (("schema", None), ("schema", "other-schema"),
+                             ("schemaVersion", True), ("schemaVersion", 1),
+                             ("schemaVersion", "2"), ("schemaVersion", 3)):
+            invalid = copy.deepcopy(inventory)
+            invalid[field] = value
+            try:
+                validate_inventory(invalid, root)
+            except ValueError:
+                pass
+            else:
+                raise AssertionError(f"schema inventario invalido accettato: {invalid}")
+        for missing in ("schema", "schemaVersion", "features"):
+            invalid = copy.deepcopy(inventory)
+            del invalid[missing]
+            try:
+                validate_inventory(invalid, root)
+            except ValueError:
+                pass
+            else:
+                raise AssertionError(f"schema inventario incompleto accettato: {missing}")
         for field, value in (("sourceSHA256", "0" * 64), ("sourceSHA256", "invalid"),
                              ("expandedScenarios", True), ("expandedScenarios", 2),
-                             ("scenarios", [{"line": 5, "stepCount": 0}]),
-                             ("scenarios", [{"line": True, "stepCount": 2}])):
+                             ("scenarios", [{"line": 5, "stepCount": 0, "stepsSHA256": digest}]),
+                             ("scenarios", [{"line": True, "stepCount": 2, "stepsSHA256": digest}]),
+                             ("scenarios", [{"line": 5, "stepCount": True, "stepsSHA256": digest}]),
+                             ("scenarios", [{"line": 5, "stepCount": 2}]),
+                             ("scenarios", [{"line": 5, "stepCount": 2, "stepsSHA256": True}]),
+                             ("scenarios", [{"line": 5, "stepCount": 2, "stepsSHA256": "invalid"}])):
             invalid = copy.deepcopy(inventory)
             invalid["features"][0][field] = value
             try:
@@ -345,7 +535,18 @@ def main() -> int:
             self_test()
         if sum((args.list, args.runner_selection, args.report is not None)) > 1:
             raise ValueError("scegliere un solo output fra lista, selezione runner e report")
-        expected = validate_inventory(json.loads((ROOT / INVENTORY).read_text()), ROOT)
+        validate_notices(ROOT)
+        expected = validate_inventory(read_json(ROOT / INVENTORY), ROOT)
+        contracts = None
+        contract_checker = None
+        # A developer selection is an iteration, not a claim that every public contract is complete.
+        if args.select is None and not args.list and not args.runner_selection:
+            contract_checker = runpy.run_path(str(ROOT / "Scripts/check-bdd-contracts.py"))
+            contracts = read_json(ROOT / contract_checker["CONTRACTS"])
+            surface = read_json(ROOT / contract_checker["SURFACE"])
+            errors = contract_checker["validate_contracts"](contracts, surface, expected, ROOT)
+            if errors:
+                raise ValueError("; ".join(errors))
         if args.select is not None:
             expected = select_inventory(expected, args.select)
         if args.runner_selection:
@@ -354,10 +555,15 @@ def main() -> int:
             print(runner_selection(expected))
         elif args.list:
             for name, scenarios in expected.items():
-                print(f"{name}: {len(scenarios)} scenari, {sum(scenarios.values())} passaggi")
+                print(f"{name}: {len(scenarios)} scenari, {sum(s.step_count for s in scenarios.values())} passaggi")
                 print("  " + ", ".join(f"{name}:{line}" for line in scenarios))
         elif args.report:
-            steps = validate_report(json.loads(args.report.read_text()), expected)
+            report = read_json(args.report)
+            steps = validate_report(report, expected)
+            if contracts is not None:
+                errors = contract_checker["validate_contract_report"](contracts, report)
+                if errors:
+                    raise ValueError("; ".join(errors))
             count = sum(len(scenarios) for scenarios in expected.values())
             label = "BDD sviluppo (selezione esplicita)" if args.select is not None else "BDD"
             scenario_label = "scenario" if count == 1 else "scenari"

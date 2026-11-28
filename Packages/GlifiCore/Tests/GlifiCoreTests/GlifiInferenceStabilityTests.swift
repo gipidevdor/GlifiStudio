@@ -210,6 +210,156 @@ func inferenceBootstrapReservesAccumulationHeadroom(count: Int) throws {
     }
 }
 
+@Test(
+    "Cohen d retains finite extreme contrasts when normalization alone overflows",
+    arguments: [0, -100], [1.0, -1.0])
+func inferenceCohenDContrastNormalizationRetainsFiniteRatio(
+    unitExponent: Int, direction: Double
+) throws {
+    let unit = Double(sign: .plus, exponent: unitExponent, significand: 1)
+    let first = Array(repeating: direction * 1e308 * unit, count: 2)
+    let second = [0.0, 0.9 * unit, -0.9 * unit]
+    // The groups have sums of squares 0 and 2*(0.9*unit)^2, with 3 pooled df.
+    let expectedDeviation = 0.9 * (2.0 / 3).squareRoot() * unit
+    let expectedD = direction * 1e308 / (0.9 * (2.0 / 3).squareRoot())
+    let forward = try GlifiStatisticalFoundation.cohenDPooled(first, second)
+    let reversed = try GlifiStatisticalFoundation.cohenDPooled(second, first)
+    #expect(inferenceStabilityClose(forward.pooledStandardDeviation, expectedDeviation))
+    #expect(inferenceStabilityClose(reversed.pooledStandardDeviation, expectedDeviation))
+    #expect(inferenceStabilityClose(forward.d, expectedD))
+    #expect(inferenceStabilityClose(reversed.d, -expectedD))
+}
+
+@Test(
+    "Location t retains finite extreme hypotheses when normalization alone overflows",
+    arguments: [0, -100], [1.0, -1.0])
+func inferenceLocationTContrastNormalizationRetainsFiniteRatio(
+    unitExponent: Int, direction: Double
+) throws {
+    let unit = Double(sign: .plus, exponent: unitExponent, significand: 1)
+    let sample = [0.0, 0.99 * unit, -0.99 * unit]
+    let hypothesis = direction * 1e308 * unit
+    // Mean 0 and sample SD 0.99*unit give t=-hypothesis*sqrt(3)/(0.99*unit).
+    let expectedT = -direction * 1e308 / (0.99 / 3.0.squareRoot())
+    let oneSample = try GlifiStatisticalFoundation.oneSampleTTest(
+        sample, hypothesizedMean: hypothesis)
+    let paired = try GlifiStatisticalFoundation.pairedTTest(
+        sample, Array(repeating: 0, count: 3), hypothesizedDifference: hypothesis)
+    for result in [oneSample, paired] {
+        #expect(result.mean == 0)
+        #expect(inferenceStabilityClose(result.standardDeviation, 0.99 * unit))
+        #expect(inferenceStabilityClose(result.statistic, expectedT))
+        #expect(result.degreesOfFreedom == 2)
+        #expect(result.pValue == 0)
+    }
+}
+
+@Test("Finite extreme contrast ratios retain subnormal reported deviations")
+func inferenceContrastRatiosRetainSubnormalDeviations() throws {
+    let minimum = Double.leastNonzeroMagnitude
+    let cohen = try GlifiStatisticalFoundation.cohenDPooled(
+        [2e-15, 2e-15], [0, 3 * minimum, -3 * minimum])
+    // Decimal at 100 digits, using the exact binary64 input values:
+    // d=Double(2e-15)/(sqrt(6)*Double.leastNonzeroMagnitude).
+    #expect(cohen.pooledStandardDeviation == 2 * minimum)
+    #expect(inferenceStabilityClose(cohen.d, 1.6526074779748667e308))
+
+    let location = try GlifiStatisticalFoundation.oneSampleTTest(
+        [0, 7 * minimum, -7 * minimum], hypothesizedMean: 3.56e-15)
+    // Decimal at 100 digits: t=-Double(3.56e-15)*sqrt(3)/(7*minimum).
+    #expect(location.standardDeviation == 7 * minimum)
+    #expect(inferenceStabilityClose(location.statistic, -1.782903873155841e308))
+    #expect(location.pValue == 0)
+}
+
+@Test("Genuinely unrepresentable final contrast ratios retain typed failures")
+func inferenceUnrepresentableFinalContrastStillFails() {
+    let operations: [() throws -> Void] = [
+        {
+            _ = try GlifiStatisticalFoundation.cohenDPooled(
+                [1.6e308, 1.6e308], [0, 0.9, -0.9])
+        },
+        {
+            _ = try GlifiStatisticalFoundation.oneSampleTTest(
+                [0, 0.9, -0.9], hypothesizedMean: 1e308)
+        },
+    ]
+    for operation in operations {
+        do {
+            try operation()
+            Issue.record("A nonrepresentable final contrast must retain its typed failure.")
+        } catch let failure as GlifiFailure {
+            #expect(failure.code == "statistics.non-finite-result")
+            #expect(failure.category == .invalidInput)
+        } catch {
+            Issue.record(error)
+        }
+    }
+}
+
+@Test(
+    "Standardized effects retain finite uncertainty when only the squared effect overflows",
+    arguments: [0, -100], [1.0, -1.0])
+func inferenceStandardizedDifferenceAvoidsSquaredEffectOverflow(
+    unitExponent: Int, direction: Double
+) throws {
+    let unit = Double(sign: .plus, exponent: unitExponent, significand: 1)
+    let result = try GlifiStatisticalFoundation.standardizedDifference(
+        Array(repeating: direction * 1e200 * unit, count: 2),
+        [0, 0.9 * unit, -0.9 * unit])
+    // With df=3, J=sqrt(pi/6), g=direction*1e200*sqrt(pi)/1.8.
+    // The additive 5/6 in SE^2 is below binary64 resolution relative to d^2/10.
+    let expectedD = direction * 1e200 / (0.9 * (2.0 / 3).squareRoot())
+    let expectedG = direction * 1e200 * Double.pi.squareRoot() / 1.8
+    let expectedError = 1e200 / 5.4.squareRoot()
+    let expectedMargin = 1.959963984540054 * expectedError
+    #expect(inferenceStabilityClose(result.cohenD, expectedD))
+    #expect(inferenceStabilityClose(result.correctionFactor, (Double.pi / 6).squareRoot()))
+    #expect(inferenceStabilityClose(result.hedgesG, expectedG))
+    #expect(inferenceStabilityClose(result.standardError, expectedError))
+    #expect(inferenceStabilityClose(result.lower, expectedD - expectedMargin))
+    #expect(inferenceStabilityClose(result.upper, expectedD + expectedMargin))
+}
+
+@Test(
+    "A genuinely unrepresentable standardized-effect interval retains a typed failure",
+    arguments: [1.0, -1.0])
+func inferenceStandardizedDifferenceRejectsUnrepresentableInterval(direction: Double) {
+    do {
+        _ = try GlifiStatisticalFoundation.standardizedDifference(
+            Array(repeating: direction * 1e308, count: 2), [0, 0.9, -0.9])
+        Issue.record("An unrepresentable interval must not return a non-finite result.")
+    } catch let failure as GlifiFailure {
+        #expect(failure.code == "statistics.non-finite-result")
+        #expect(failure.category == .invalidInput)
+    } catch {
+        Issue.record(error)
+    }
+}
+
+@Test("Standardized-effect confidence remains defined immediately below one")
+func inferenceStandardizedDifferenceRetainsAdjacentUnitConfidence() throws {
+    let level = 1.0.nextDown
+    let result = try GlifiStatisticalFoundation.standardizedDifference(
+        [1, 2, 3], [2, 3, 4], confidenceLevel: level)
+    // Python NormalDist lower-tail oracle: z=-qnorm(2^-54), with no rounded upper tail.
+    #expect(result.confidenceLevel == level)
+    #expect(inferenceStabilityClose(result.cohenD, -1))
+    #expect(inferenceStabilityClose(result.standardError, 0.75.squareRoot()))
+    #expect(inferenceStabilityClose(result.lower, -8.181395349007829))
+    #expect(inferenceStabilityClose(result.upper, 6.18139534900783))
+}
+
+@Test("Fisher confidence remains defined immediately below one")
+func inferenceFisherIntervalRetainsAdjacentUnitConfidence() throws {
+    let level = 1.0.nextDown
+    let result = try GlifiStatisticalFoundation.pearsonFisherInterval(
+        coefficient: 0.5, sampleCount: 10, confidenceLevel: level)
+    #expect(result.confidenceLevel == level)
+    #expect(inferenceStabilityClose(result.lower, -0.9886931412605833))
+    #expect(inferenceStabilityClose(result.upper, 0.9987373371398001))
+}
+
 private func inferenceStabilityClose(_ actual: Double, _ expected: Double) -> Bool {
     guard actual.isFinite, expected.isFinite else { return false }
     if expected == 0 { return actual == 0 }
