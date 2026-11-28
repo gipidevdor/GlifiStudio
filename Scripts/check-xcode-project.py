@@ -42,6 +42,7 @@ NATIVE_FOLDERS = {
 # This is the reviewed hostless support contract from d368285 / capture fdda8209.
 # App sources and actual test files are derived independently from the filesystem.
 TEST_SUPPORT = {
+    "Apps/Shared/StudioWorkspaceCommands.swift",
     "Apps/Shared/StudioHomeModel.swift", "Apps/Shared/StudioWorkspaceNavigation.swift",
     "Apps/Shared/StudioLocalization.swift",
     "Apps/Shared/StudioVisualExportPreparation.swift", "Apps/Shared/StudioFactorAudioGraph.swift",
@@ -50,7 +51,10 @@ TEST_SUPPORT = {
     "Apps/macOS/StudioKHMatrixModel.swift", "Apps/macOS/StudioKHLanguageModel.swift",
     "Apps/macOS/StudioResearchModel.swift",
     "Apps/macOS/StudioStudyModel.swift",
+    # The hosted SwiftUI startup regression uses the actual reader composition.
+    "Apps/macOS/StudioStudyView.swift", "Apps/macOS/StudioStudyNativeReaders.swift",
     "Apps/macOS/StudioStatisticsModel.swift", "Apps/macOS/StudioEvaluationModel.swift",
+    "Apps/macOS/StudioEvaluationView.swift",
     "Apps/macOS/StudioCoreMethodRoute.swift", "Apps/macOS/StudioAdvancedAnalysisModel.swift",
     "Apps/macOS/StudioSourceLookup.swift", "Apps/macOS/StudioMacRuntimeMonitor.swift",
 }

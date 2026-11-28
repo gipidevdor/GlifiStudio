@@ -6,8 +6,8 @@
 | --- | --- |
 | Identificatore | GS-VER-344 |
 | Tipo | Evidenza di integrazione Core, Kit, CLI e GUI macOS |
-| Versione | 1.2.0 |
-| Stato | Gate automatico e preflight macOS superati; verifica visiva parziale |
+| Versione | 1.4.1 |
+| Stato | Gate automatico e preflight macOS superati dopo il riesame UI; verifica visiva parziale |
 | Responsabile | Codex, coordinamento della copia condivisa |
 | Ultima modifica | 2026-11-28 |
 | Approvazione | Richiesta esplicita di procedere, mantenendo stile Glifi Studio e priorità a contenuto e conclusioni |
@@ -34,22 +34,31 @@ L'ambito è implementazione e integrazione G3. Non si promuovono G4/G5 né una q
 assistiva completa. Lavagna spaziale, Pencil/scrittura a mano, cloud e iPadOS sono
 rinviati e non rientrano in questa attestazione.
 
-## Identità della verifica finale
+## Identità della verifica dopo il riesame UI
+
+Le correzioni di inizializzazione e recupero dell'editor hanno superato il RED/GREEN
+mirato sotto descritto e il gate completo sul seguente snapshot.
 
 | Campo | Identità |
 | --- | --- |
-| Checkpoint del codice | `c0e3431b9d6ce02aafff5e6363ffde96f4f1c61e` |
+| Checkpoint del codice | `4799dc8d503374c833f7292772260616a3188dc0` |
 | Input controllati | 1.037 file, secondo il [manifest degli input](allegati/GS-VER-344-inputs.json) |
-| Fingerprint SHA-256 | `f79ec88368cc1e2ad9a39a11491c08bd8532ae899e5fbf5bf75c7792cd92a6dc` |
+| Fingerprint SHA-256 | `eaa7a295b05a99e5a413448993af7b979be65b866b7431adf4a35e36c8336223` |
 | Profilo | macOS; Xcode 27.2, Apple Swift 6.4.2 |
-| Gate finale | `make verify`, cache gestita `study-344-note-retry`; exit 0, 728,16 s |
-| Preflight finale | Analisi statica e archivio macOS senza firma superati; exit 0, 546,54 s |
+| Gate finale | `make verify` macOS, cache gestita `study-344-review`; exit 0, 729,51 s |
+| Preflight finale | Analisi statica e archivio macOS senza firma superati; exit 0, 549,24 s |
 
 Questa evidenza e la relativa voce nell'indice sono escluse dal fingerprint degli
 input. La loro compilazione durante il gate non modifica il codice sotto verifica.
-Il [riepilogo macchina finale](allegati/GS-VER-344-verifica.json) registra gli esiti
-e i digest delle prove conservate. Nessun risultato del checkpoint precedente
-sostituisce la verifica del codice sopra indicato.
+Il [riepilogo macchina](allegati/GS-VER-344-verifica.json) registra gli esiti finali,
+i digest delle prove e il precedente checkpoint `c0e3431`, superato in 728,16 s più
+546,54 s di preflight con 186 definizioni native. Nessun risultato precedente
+sostituisce la verifica del nuovo codice.
+
+La PR #51 è stata integrata sul remoto durante il riesame. Il suo squash
+`8171c3c` ha lo stesso albero di `56dff03`; il commit `0eaa435` ne registra
+l'ascendenza senza cambiare l'albero di input `4799dc8`. La PR #52 contiene il
+successivo recupero UI. I 1.037 input sono rimasti identici durante gate e preflight.
 
 ## Prove osservate
 
@@ -58,16 +67,16 @@ sostituisce la verifica del codice sopra indicato.
 | Studio Core/Kit/compatibilità | 11 test mirati superati; originali, storia, reader, Markdown/PDF e rifiuto di scritture non valide |
 | BDD Study | 25 scenari, 83 passaggi superati; sei operazioni nelle tre fasi, workflow, integrità, conflitti e cancellazione |
 | Trasporto di grandi DTO | `statePath` di 1.400.261 byte eseguito due volte nella CLI reale; output completo di 1.400.341 byte identico al DTO nativo |
-| Nativi dopo le correzioni finali | 10 definizioni, 12 esecuzioni mirate superate, più build applicativa; non è il conteggio della suite nativa globale finale |
+| Nativi prima del riesame UI | 10 definizioni, 12 esecuzioni mirate superate, più build applicativa; non è il conteggio della suite nativa globale finale |
 | Gate globale intermedio | `make verify` su `1e5ced4`: superato in 679,11 s; 823 definizioni Core, 205 Kit, 129 BDD; 820 scenari e 3.347 passaggi; 3.224 dichiarazioni API, 165 fixture e 330 confronti CLI; 22 prove kill/recovery e 2 PDF/A |
 | Nativi nel gate intermedio | 184 definizioni, zero failure, skip e runtime warning nel riepilogo del runner |
 | Preflight intermedio | Interrotto intenzionalmente dopo il rilievo sul retry delle note: exit 130, 187,67 s; **non è un preflight superato** |
-| Gate globale finale | `make verify` macOS superato in 728,16 s: Core 823, Kit 205, BDD 129 definizioni; 820 scenari e 3.347 passaggi; 194 varianti pubbliche e 7 workflow |
+| Gate globale finale | `make verify` macOS superato in 729,51 s: Core 823, Kit 205, BDD 129 definizioni; 820 scenari e 3.347 passaggi; 194 varianti pubbliche e 7 workflow |
 | API/CLI finali | 3.224 dichiarazioni pubbliche revisionate, 90 aggiunte e nessuna firma preesistente cambiata; 165 fixture native, 330 confronti di risultato completi |
 | Recupero e riferimenti finali | 22 checkpoint con terminazione del processo, 248 righe di oracoli numerici e 64 casi Fraction superati; nessuna promozione scientifica implicita |
-| Nativi globali finali | 186 definizioni, tutte superate; zero failure, skip e runtime warning del prodotto nel riepilogo `.xcresult` |
+| Nativi globali finali | 189 definizioni, 503 esecuzioni incluse quelle parametrizzate, tutte superate; zero failure, skip e runtime warning del prodotto nel riepilogo `.xcresult` |
 | PDF/A finale | I medesimi 2 PDF del gate conformi a PDF/A-2u con veraPDF 1.30.4, disponibile nell'ambiente della verifica |
-| Preflight finale | `Scripts/check-app-store-packaging.sh --macos-only` superato in 546,54 s sul medesimo fingerprint: analisi statica e archivio senza firma; nessuna submission |
+| Preflight finale | `Scripts/check-app-store-packaging.sh --macos-only` superato in 549,24 s sul medesimo fingerprint: analisi statica e archivio senza firma; nessuna submission |
 
 I conteggi di definizioni Swift Testing, esecuzioni parametrizzate e scenari Gherkin
 espansi descrivono unità diverse. Non vengono sommati per dichiarare una copertura
@@ -88,6 +97,14 @@ Le attese su citazioni, confini Unicode e conservazione del lavoro sono rimaste 
 | Ricaricamento da un'altra finestra | Sei test nativi verdi e una failure: gruppo salvato da una sessione indipendente assente dopo il vecchio reload | Apertura e verifica di una sessione candidata prima dell'adozione; bozza e lettura conservate; GREEN nativo |
 | Retry della nuova conclusione | Regressione nativa: due note invece di una dopo errore e nuova pressione di Salva | UUID stabile per intenzione di editor; correzione della bozza e retry non duplicano la conclusione; GREEN |
 | Annullamento dopo errore | Tre casi parametrizzati, nota/estratto/ripristino: proposte annullate potevano entrare in un commit successivo | Ripristino esplicito della proposta precedente; GREEN nei tre casi |
+| Apertura mentre il progetto è occupato | Vista SwiftUI reale: `hasLoaded` rimaneva falso dopo il termine dell'operazione | Inizializzazione ripresa quando il modello torna libero, senza sostituire una lettura già aperta; GREEN |
+| Collegamenti eliminati durante la scrittura | Seconda sessione reale: supporti e gruppo rimossi restavano nella bozza e impedivano Salva | Proiezione riconciliata usata da controlli e Salva, avviso visibile e titolo/testo conservati; selezione e pin obsoleti rimossi; GREEN |
+| Estratto eliminato durante la modifica | Salva sull'ID assente non generava l'errore atteso | Failure tipizzata `study.unknown-excerpt`, nessun falso successo, titolo conservato e generazione invariata; GREEN |
+
+Il riesame UI ha eseguito 20 definizioni e 24 esecuzioni native: RED con 17
+definizioni superate e tre fallite; GREEN con tutte e 20 superate, zero failure,
+skip e runtime warning del prodotto. Un primo tentativo fermato in compilazione
+per la view non inclusa nel target test non è contato come RED funzionale.
 
 Il rifiuto di tre pin usa `study.resource-limit`/`insufficientResources`, coerentemente
 con il limite di due di GS-API-007. Gli altri riferimenti pendenti rimangono rifiuti
@@ -95,6 +112,13 @@ con il limite di due di GS-API-007. Gli altri riferimenti pendenti rimangono rif
 non viene etichettata `unchanged` per rendere positiva un'attesa.
 
 ## Prova interattiva e limiti manuali
+
+Questa sezione descrive il checkpoint `4799dc8`. Dopo lo sblocco, il riesame ha
+completato il salvataggio e la riapertura delle conclusioni, ma ha anche
+dimostrato che il precedente layout verticale lasciava difetti di composizione
+e di misura della finestra. Correzioni, RED/GREEN e nuove prove sono registrati
+separatamente in [GS-VER-345](GS-VER-345-scorrimento-studio.md); i gate di questo
+checkpoint non attestano quelle modifiche successive.
 
 Sul Mac è stato osservato un percorso reale in italiano con una fonte TXT:
 selezione nativa → anteprima → titolo → raccolta della citazione. Il taccuino è stato
@@ -140,19 +164,23 @@ risultati `.xcresult` prima di pulire i soli artefatti della sessione. Origini l
 `glifi-study-note-retry-red2.log`, `glifi-study-note-retry-green.log`,
 `glifi-study-cancel-red.log`, `glifi-study-cancel-green.log`,
 `glifi-study-344-verify.log` e `glifi-study-344-packaging.log`.
-Il run finale usa `glifi-study-344-final-verify.log` e
-`glifi-study-344-final-packaging.log`.
+Il checkpoint `c0e3431` usa `glifi-study-344-final-verify.log` e
+`glifi-study-344-final-packaging.log`; quello finale `4799dc8` usa
+`glifi-study-review-verify.log` e `glifi-study-review-packaging.log`.
+Il riesame UI conserva `glifi-study-review-red2` e `glifi-study-review-green`,
+con log, riepiloghi e risultati `.xcresult`.
 Questi nomi identificano le prove di origine; `/tmp` non è l'archivio permanente.
 
 ## Pulizia della sessione
 
 Le prove utili sono conservate nella cache locale delle evidenze GS-VER-344:
 manifest, riepiloghi, log, report Cucumber, PDF conformi e risultati `.xcresult`.
-La cache gestita finale è stata rimossa mediante `make clean-cache` dopo averne
-conservato le prove: 3.884.180 KiB allocati. Della cache intermedia interrotta sono
-stati rimossi 2.911.604 KiB di prodotti rigenerabili, con ownership e inattività
-verificate, conservando l'app della prova grafica ancora aperta e i suoi file.
-Il risparmio misurato sulle due cache è 6.795.784 KiB, circa 6,48 GiB.
+Le cache gestite completate sono state rimosse mediante `make clean-cache` dopo
+averne conservato le prove: 3.884.180 KiB prima del riesame e 3.896.524 KiB dopo.
+Della cache intermedia interrotta sono stati rimossi 2.911.604 KiB di prodotti
+rigenerabili, con ownership e inattività verificate, conservando l'app della prova
+grafica ancora aperta e i suoi file. Le rimozioni misurate sulle tre cache sono
+10.692.308 KiB allocati, circa 10,20 GiB, oltre ai temporanei headless.
 
 I file temporanei dei test, gli input sintetici headless e le copie temporanee delle
 prove archiviate sono stati rimossi. Restano l'app della prova grafica e il suo

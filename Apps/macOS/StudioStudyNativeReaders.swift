@@ -11,12 +11,23 @@ struct StudioStudyTextReader: NSViewRepresentable {
     ).pointSize
     let reading: StudioStudyReading
     let accessibilityTitle: String
+    let initialSelection: NSRange?
     let onSelection: (NSRange) -> Void
+
+    init(
+        reading: StudioStudyReading, accessibilityTitle: String,
+        initialSelection: NSRange? = nil, onSelection: @escaping (NSRange) -> Void
+    ) {
+        self.reading = reading
+        self.accessibilityTitle = accessibilityTitle
+        self.initialSelection = initialSelection
+        self.onSelection = onSelection
+    }
 
     func makeCoordinator() -> Coordinator { Coordinator(onSelection: onSelection) }
 
     func makeNSView(context: Context) -> NSScrollView {
-        let scroll = NSTextView.scrollableTextView()
+        let scroll = NSTextView.scrollablePlainDocumentContentTextView()
         scroll.hasVerticalScroller = true
         scroll.autohidesScrollers = true
         guard let text = scroll.documentView as? NSTextView else { return scroll }
@@ -47,14 +58,21 @@ struct StudioStudyTextReader: NSViewRepresentable {
         context.coordinator.isUpdating = true
         text.string = reading.text
         context.coordinator.navigationID = reading.navigationID
-        if let range = reading.highlight, NSMaxRange(range) <= (reading.text as NSString).length {
-            text.setSelectedRange(range)
-            text.scrollRangeToVisible(range)
-        } else {
-            text.setSelectedRange(NSRange(location: 0, length: 0))
-            text.scrollRangeToVisible(NSRange(location: 0, length: 0))
-        }
+        let length = (reading.text as NSString).length
+        let range =
+            validRange(initialSelection, length: length)
+            ?? validRange(reading.highlight, length: length)
+            ?? NSRange(location: 0, length: 0)
+        text.setSelectedRange(range)
+        text.scrollRangeToVisible(range)
         context.coordinator.isUpdating = false
+    }
+
+    private func validRange(_ range: NSRange?, length: Int) -> NSRange? {
+        guard let range, range.location >= 0, range.length >= 0,
+            range.location <= length, range.length <= length - range.location
+        else { return nil }
+        return range
     }
 
     static func dismantleNSView(_ scroll: NSScrollView, coordinator: Coordinator) {

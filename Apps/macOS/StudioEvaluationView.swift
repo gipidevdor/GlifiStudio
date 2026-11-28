@@ -5,14 +5,25 @@ import GlifiKit
 import SwiftUI
 import UniformTypeIdentifiers
 
+private enum StudioEvaluationResultPane: Hashable {
+    case results, method
+}
+
+nonisolated private enum StudioEvaluationCoordinateSpace: Hashable, Sendable {
+    case workspace
+}
+
 struct StudioEvaluationView: View {
     @Bindable var model: StudioHomeModel
     @Bindable private var analysis: StudioEvaluationModel
     var onImportSources: (() -> Void)?
     var onOpenProject: (() -> Void)?
+    // Observes the rendered control without changing its frame or action.
+    var onExportGeometryChange: ((CGRect) -> Void)?
     @Environment(\.locale) private var locale
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var showsResults = false
+    @State private var resultPane: StudioEvaluationResultPane = .results
     @State private var editorPage = 0
     @State private var sourcePage = 0
     @State private var exportData: Data?
@@ -21,19 +32,21 @@ struct StudioEvaluationView: View {
 
     init(
         model: StudioHomeModel,
-        onImportSources: (() -> Void)? = nil, onOpenProject: (() -> Void)? = nil
+        onImportSources: (() -> Void)? = nil, onOpenProject: (() -> Void)? = nil,
+        onExportGeometryChange: ((CGRect) -> Void)? = nil
     ) {
         self.model = model
         analysis = model.evaluation
         self.onImportSources = onImportSources
         self.onOpenProject = onOpenProject
+        self.onExportGeometryChange = onExportGeometryChange
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            Divider()
-            GeometryReader { geometry in
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                header
+                Divider()
                 if geometry.size.width >= 920 && !dynamicTypeSize.isAccessibilitySize {
                     HSplitView {
                         configuration.frame(minWidth: 320, idealWidth: 390, maxWidth: 480)
@@ -57,12 +70,19 @@ struct StudioEvaluationView: View {
                 }
             }
         }
+        .coordinateSpace(name: StudioEvaluationCoordinateSpace.workspace)
         .navigationTitle("evaluation.title")
         .onChange(of: analysis.tool) { _, _ in
             showsResults = false
+            resultPane = .results
             editorPage = 0
         }
-        .onChange(of: analysis.output?.id) { _, id in if id != nil { showsResults = true } }
+        .onChange(of: analysis.output?.id) { _, id in
+            if id != nil {
+                showsResults = true
+                resultPane = .results
+            }
+        }
         .onChange(of: model.snapshot?.projectID) { _, _ in
             editorPage = 0
             sourcePage = 0
@@ -594,55 +614,24 @@ struct StudioEvaluationView: View {
     @ViewBuilder
     private var results: some View {
         if let output = analysis.output {
-            VStack(alignment: .leading, spacing: 12) {
-                Text(LocalizedStringKey(output.input.tool.titleKey)).font(.title2.bold())
-                    .accessibilityAddTraits(.isHeader)
-                Label("evaluation.candidate", systemImage: "info.circle")
-                    .fixedSize(horizontal: false, vertical: true)
-                if output.temporal != nil {
-                    Text("evaluation.temporal.caveat").foregroundStyle(.secondary)
-                }
-                if let temporal = output.temporal, !temporal.result.excluded.isEmpty {
-                    DisclosureGroup {
-                        ScrollView {
-                            LazyVStack(alignment: .leading, spacing: 10) {
-                                ForEach(Array(temporal.result.excluded.enumerated()), id: \.offset)
-                                { _, exclusion in
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(exclusion.lineage.sourceRevisionID).font(
-                                            .caption.monospaced()
-                                        ).textSelection(.enabled)
-                                        Text(exclusionReason(exclusion.reasonIdentifier))
-                                        Text(exclusion.lineage.metadataProvenance).font(.caption)
-                                            .textSelection(.enabled)
-                                    }
-                                }
-                            }
-                        }
-                        .frame(maxHeight: 180)
+            VStack(spacing: 12) {
+                resultHeader(output)
+                TabView(selection: $resultPane) {
+                    Tab(value: StudioEvaluationResultPane.results) {
+                        resultValues(output)
                     } label: {
-                        Label {
-                            Text("evaluation.excluded.count \(temporal.result.excluded.count)")
-                        } icon: {
-                            Image(systemName: "exclamationmark.circle")
+                        Text("evaluation.results")
+                    }
+                    Tab(value: StudioEvaluationResultPane.method) {
+                        ScrollView {
+                            methodDetails(output)
+                                .padding()
                         }
+                    } label: {
+                        Text("common.method")
                     }
                 }
-                Text("evaluation.effective-result").font(.caption).foregroundStyle(.secondary)
-                if output.input.tool == .classification {
-                    Text("evaluation.confusion.help").font(.caption).foregroundStyle(.secondary)
-                }
-                if analysis.isDraftChanged {
-                    Label("operators.draft-changed", systemImage: "exclamationmark.circle")
-                }
-                resultTable(output)
-                pager(
-                    page: analysis.page, count: analysis.pageCount,
-                    previous: {
-                        Task { await analysis.showPage(analysis.page - 1, locale: locale) }
-                    },
-                    next: { Task { await analysis.showPage(analysis.page + 1, locale: locale) } })
-                methodDetails(output)
+                .tabViewStyle(.grouped)
             }
             .padding()
         } else {
@@ -650,6 +639,67 @@ struct StudioEvaluationView: View {
                 "evaluation.result.empty", systemImage: "checkmark.seal",
                 description: Text("evaluation.result.empty.description"))
         }
+    }
+
+    private func resultHeader(_ output: StudioEvaluationOutput) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline) {
+                resultTitle(output)
+                Spacer(minLength: 12)
+                resultExport(output)
+            }
+            .fixedSize(horizontal: false, vertical: true)
+            Label("evaluation.candidate", systemImage: "info.circle")
+                .font(.caption).fixedSize(horizontal: false, vertical: true)
+            if analysis.isDraftChanged {
+                Label("operators.draft-changed", systemImage: "exclamationmark.circle")
+                    .font(.caption).fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .contain)
+    }
+
+    private func resultTitle(_ output: StudioEvaluationOutput) -> some View {
+        Text(LocalizedStringKey(output.input.tool.titleKey))
+            .font(.headline).accessibilityAddTraits(.isHeader)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    @ViewBuilder
+    private func resultExport(_ output: StudioEvaluationOutput) -> some View {
+        if let data = output.encodedLinguisticResult {
+            Button("evaluation.export", systemImage: "square.and.arrow.up") {
+                exportData = data
+            }
+            .labelStyle(.iconOnly)
+            .help("evaluation.export")
+            .onGeometryChange(for: CGRect.self) { geometry in
+                geometry.frame(in: .named(StudioEvaluationCoordinateSpace.workspace))
+            } action: { frame in
+                onExportGeometryChange?(frame)
+            }
+        }
+    }
+
+    private func resultValues(_ output: StudioEvaluationOutput) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("evaluation.effective-result").font(.caption).foregroundStyle(.secondary)
+            if output.temporal != nil {
+                Text("evaluation.temporal.caveat").font(.caption).foregroundStyle(.secondary)
+            }
+            if output.input.tool == .classification {
+                Text("evaluation.confusion.help").font(.caption).foregroundStyle(.secondary)
+            }
+            resultTable(output)
+            pager(
+                page: analysis.page, count: analysis.pageCount,
+                previous: { Task { await analysis.showPage(analysis.page - 1, locale: locale) } },
+                next: { Task { await analysis.showPage(analysis.page + 1, locale: locale) } }
+            )
+            .labelStyle(.iconOnly)
+        }
+        .padding()
     }
 
     @ViewBuilder
@@ -666,14 +716,14 @@ struct StudioEvaluationView: View {
                 TableColumn("evaluation.column.df") { cell($0, 7) }
                 TableColumn("evaluation.column.rate") { cell($0, 8) }
             }
-            .frame(minHeight: 260)
+            .frame(minHeight: 0, maxHeight: .infinity)
         } else {
             Table(analysis.rows) {
                 TableColumn("evaluation.column.group") { cell($0, 0) }
                 TableColumn("evaluation.column.metric") { cell($0, 1) }
                 TableColumn("evaluation.column.value") { cell($0, 2) }
             }
-            .frame(minHeight: 260)
+            .frame(minHeight: 0, maxHeight: .infinity)
         }
         Text("evaluation.result.rows \(output.rowCount)")
             .font(.caption).foregroundStyle(.secondary)
@@ -685,119 +735,138 @@ struct StudioEvaluationView: View {
     }
 
     private func methodDetails(_ output: StudioEvaluationOutput) -> some View {
-        DisclosureGroup("common.method") {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 10) {
-                    Text(output.methodIdentifier).font(.caption.monospaced()).textSelection(
-                        .enabled)
-                    if let temporal = output.temporal {
-                        LabeledContent("project.id", value: temporal.projectID)
-                        LabeledContent("project.generation") {
-                            Text(temporal.generation, format: .number)
+        VStack(alignment: .leading, spacing: 10) {
+            excludedSources(output)
+            Text(output.methodIdentifier).font(.caption.monospaced()).textSelection(
+                .enabled)
+            if let temporal = output.temporal {
+                LabeledContent("project.id", value: temporal.projectID)
+                LabeledContent("project.generation") {
+                    Text(temporal.generation, format: .number)
+                }
+                LabeledContent("evaluation.granularity") {
+                    Text(LocalizedStringKey(granularityTitleKey(output.input.granularity)))
+                }
+                Text(
+                    "evaluation.partition.effective \(output.input.originYear) \(output.input.originMonth) \(output.input.originDay) \(output.input.bucketWidth) \(output.input.bucketCount)"
+                )
+                LabeledContent("evaluation.missing-policy") {
+                    Text(
+                        LocalizedStringKey(
+                            missingPolicyTitleKey(output.input.missingPolicy)))
+                }
+                LabeledContent("evaluation.outside-policy") {
+                    Text(
+                        LocalizedStringKey(
+                            outsidePolicyTitleKey(output.input.outsidePolicy)))
+                }
+                if output.input.instantBasis {
+                    LabeledContent(
+                        "evaluation.time-zone", value: output.input.timeZoneIdentifier)
+                }
+                ForEach(
+                    Array(temporal.documents.enumerated()), id: \.element.sourceRevisionID
+                ) { index, document in
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(document.sourceRevisionID).textSelection(.enabled)
+                        Text(document.metadataProvenance).textSelection(.enabled)
+                        Text(temporal.contentDigests[index]).font(.caption.monospaced())
+                            .textSelection(.enabled)
+                        LabeledContent("evaluation.column.tokens") {
+                            Text(document.tokenCount, format: .number)
                         }
-                        LabeledContent("evaluation.granularity") {
-                            Text(LocalizedStringKey(granularityTitleKey(output.input.granularity)))
-                        }
-                        Text(
-                            "evaluation.partition.effective \(output.input.originYear) \(output.input.originMonth) \(output.input.originDay) \(output.input.bucketWidth) \(output.input.bucketCount)"
-                        )
-                        LabeledContent("evaluation.missing-policy") {
-                            Text(
-                                LocalizedStringKey(
-                                    missingPolicyTitleKey(output.input.missingPolicy)))
-                        }
-                        LabeledContent("evaluation.outside-policy") {
-                            Text(
-                                LocalizedStringKey(
-                                    outsidePolicyTitleKey(output.input.outsidePolicy)))
-                        }
-                        if output.input.instantBasis {
+                        Text(temporalValueText(document.value)).textSelection(.enabled)
+                    }
+                }
+            } else {
+                LabeledContent("evaluation.zero-policy") {
+                    Text(LocalizedStringKey(zeroPolicyTitleKey(output.input.zeroPolicy)))
+                }
+                Text("evaluation.no-backend").foregroundStyle(.secondary)
+                ForEach(Array(output.input.observations.enumerated()), id: \.element.id) {
+                    index, observation in
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("evaluation.observation.number \(index + 1)").font(.headline)
+                            .accessibilityAddTraits(.isHeader)
+                        if output.input.tool == .morphology {
+                            Text("evaluation.gold").font(.caption)
+                            ForEach(observation.goldFeatures) { feature in
+                                Text("\(feature.attribute) = \(feature.value)")
+                            }
+                            Text("evaluation.predicted").font(.caption)
+                            ForEach(observation.predictedFeatures) { feature in
+                                Text("\(feature.attribute) = \(feature.value)")
+                            }
+                        } else {
+                            LabeledContent("evaluation.gold", value: observation.gold)
                             LabeledContent(
-                                "evaluation.time-zone", value: output.input.timeZoneIdentifier)
-                        }
-                        ForEach(
-                            Array(temporal.documents.enumerated()), id: \.element.sourceRevisionID
-                        ) { index, document in
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(document.sourceRevisionID).textSelection(.enabled)
-                                Text(document.metadataProvenance).textSelection(.enabled)
-                                Text(temporal.contentDigests[index]).font(.caption.monospaced())
-                                    .textSelection(.enabled)
-                                LabeledContent("evaluation.column.tokens") {
-                                    Text(document.tokenCount, format: .number)
-                                }
-                                Text(temporalValueText(document.value)).textSelection(.enabled)
+                                "evaluation.predicted", value: observation.predicted)
+                            if output.input.includesForms {
+                                LabeledContent("evaluation.form", value: observation.form)
                             }
-                        }
-                    } else {
-                        LabeledContent("evaluation.zero-policy") {
-                            Text(LocalizedStringKey(zeroPolicyTitleKey(output.input.zeroPolicy)))
-                        }
-                        Text("evaluation.no-backend").foregroundStyle(.secondary)
-                        ForEach(Array(output.input.observations.enumerated()), id: \.element.id) {
-                            index, observation in
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("evaluation.observation.number \(index + 1)").font(.headline)
-                                if output.input.tool == .morphology {
-                                    Text("evaluation.gold").font(.caption)
-                                    ForEach(observation.goldFeatures) { feature in
-                                        Text("\(feature.attribute) = \(feature.value)")
-                                    }
-                                    Text("evaluation.predicted").font(.caption)
-                                    ForEach(observation.predictedFeatures) { feature in
-                                        Text("\(feature.attribute) = \(feature.value)")
-                                    }
-                                } else {
-                                    LabeledContent("evaluation.gold", value: observation.gold)
-                                    LabeledContent(
-                                        "evaluation.predicted", value: observation.predicted)
-                                    if output.input.includesForms {
-                                        LabeledContent("evaluation.form", value: observation.form)
-                                    }
-                                    if output.input.includesPartsOfSpeech {
-                                        LabeledContent(
-                                            "evaluation.pos", value: observation.partOfSpeech)
-                                    }
-                                }
-                            }
-                        }
-                        ForEach(Array(output.input.documents.enumerated()), id: \.element.id) {
-                            index, document in
-                            DisclosureGroup {
-                                Text(document.text).textSelection(.enabled)
-                                if output.input.tool == .boundaries {
-                                    LabeledContent(
-                                        "evaluation.gold-boundaries", value: document.goldBoundaries
-                                    )
-                                    LabeledContent(
-                                        "evaluation.predicted-boundaries",
-                                        value: document.predictedBoundaries)
-                                } else {
-                                    Text("evaluation.gold").font(.caption)
-                                    ForEach(document.goldEntities) { entity in
-                                        Text("\(entity.start)–\(entity.end): \(entity.type)")
-                                    }
-                                    Text("evaluation.predicted").font(.caption)
-                                    ForEach(document.predictedEntities) { entity in
-                                        Text("\(entity.start)–\(entity.end): \(entity.type)")
-                                    }
-                                }
-                            } label: {
-                                Text("evaluation.document.number \(index + 1)")
-                            }
-                        }
-                        if let data = output.encodedLinguisticResult {
-                            Button("evaluation.export", systemImage: "square.and.arrow.up") {
-                                exportData = data
+                            if output.input.includesPartsOfSpeech {
+                                LabeledContent(
+                                    "evaluation.pos", value: observation.partOfSpeech)
                             }
                         }
                     }
+                    .accessibilityElement(children: .contain)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .textSelection(.enabled)
-                .padding(.vertical, 8)
+                ForEach(Array(output.input.documents.enumerated()), id: \.element.id) {
+                    index, document in
+                    DisclosureGroup {
+                        Text(document.text).textSelection(.enabled)
+                        if output.input.tool == .boundaries {
+                            LabeledContent(
+                                "evaluation.gold-boundaries", value: document.goldBoundaries
+                            )
+                            LabeledContent(
+                                "evaluation.predicted-boundaries",
+                                value: document.predictedBoundaries)
+                        } else {
+                            Text("evaluation.gold").font(.caption)
+                            ForEach(document.goldEntities) { entity in
+                                Text("\(entity.start)–\(entity.end): \(entity.type)")
+                            }
+                            Text("evaluation.predicted").font(.caption)
+                            ForEach(document.predictedEntities) { entity in
+                                Text("\(entity.start)–\(entity.end): \(entity.type)")
+                            }
+                        }
+                    } label: {
+                        Text("evaluation.document.number \(index + 1)")
+                    }
+                }
             }
-            .frame(maxHeight: 280)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .textSelection(.enabled)
+        .padding(.vertical, 8)
+    }
+
+    @ViewBuilder
+    private func excludedSources(_ output: StudioEvaluationOutput) -> some View {
+        if let temporal = output.temporal, !temporal.result.excluded.isEmpty {
+            DisclosureGroup {
+                LazyVStack(alignment: .leading, spacing: 10) {
+                    ForEach(Array(temporal.result.excluded.enumerated()), id: \.offset) {
+                        _, exclusion in
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(exclusion.lineage.sourceRevisionID).font(.caption.monospaced())
+                                .textSelection(.enabled)
+                            Text(exclusionReason(exclusion.reasonIdentifier))
+                            Text(exclusion.lineage.metadataProvenance).font(.caption)
+                                .textSelection(.enabled)
+                        }
+                    }
+                }
+            } label: {
+                Label {
+                    Text("evaluation.excluded.count \(temporal.result.excluded.count)")
+                } icon: {
+                    Image(systemName: "exclamationmark.circle")
+                }
+            }
         }
     }
 
@@ -923,6 +992,7 @@ struct StudioEvaluationView: View {
                 pageControls(page: page, count: count, previous: previous, next: next)
             }
         }
+        .fixedSize(horizontal: false, vertical: true)
     }
 
     @ViewBuilder

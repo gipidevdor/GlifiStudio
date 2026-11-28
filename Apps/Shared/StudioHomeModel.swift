@@ -361,6 +361,23 @@ final class StudioHomeModel {
     var selectedTargetRevisionIDs: Set<String> = []
     var selectedReferenceRevisionIDs: Set<String> = []
 
+    private var studyNavigationProtectionOwner: UUID?
+    var isWorkspaceNavigationProtected: Bool { studyNavigationProtectionOwner != nil }
+
+    func setStudyNavigationProtection(_ isPresented: Bool, owner: UUID) {
+        if isPresented {
+            if studyNavigationProtectionOwner != owner { studyNavigationProtectionOwner = owner }
+        } else if studyNavigationProtectionOwner == owner {
+            studyNavigationProtectionOwner = nil
+        }
+    }
+
+    /// Centralizes application navigation admission for the focused document.
+    func performWorkspaceNavigation(_ transition: () -> Void) {
+        guard !isWorkspaceNavigationProtected else { return }
+        transition()
+    }
+
     #if os(macOS)
         let study = StudioStudyModel()
         let advancedAnalysis = StudioAdvancedAnalysisModel()
@@ -2188,6 +2205,7 @@ final class StudioHomeModel {
     }
 
     private func clearAnalysisState() {
+        studyNavigationProtectionOwner = nil
         #if os(macOS)
             study.reset()
             advancedAnalysis.reset()

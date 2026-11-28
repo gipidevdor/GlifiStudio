@@ -6,10 +6,12 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 /// Content comes first: one reader, with comparison and the notebook requested explicitly.
-struct StudioStudyView: View {
+struct StudioStudyView<WorkspaceContext: View>: View {
     @Bindable var home: StudioHomeModel
     let onImportSources: () -> Void
     let onOpenProject: () -> Void
+    private let workspaceContext: WorkspaceContext
+    private let onCommandActionsChanged: ((StudioStudyActions?) -> Void)?
     @Bindable private var study: StudioStudyModel
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.locale) private var locale
@@ -21,50 +23,46 @@ struct StudioStudyView: View {
     @State private var exportType = UTType.json
     @State private var exportFailed = false
     @State private var showsRestoreImporter = false
-    @State private var headerWidth: CGFloat = 900
+    @State private var headerWidth: CGFloat = 0
+    @State private var accessibleSelectionSlot: StudioStudyReaderSlot?
+    @State private var activeReaderSlot: StudioStudyReaderSlot = .first
+    @State private var navigationProtectionOwner = UUID()
 
     init(
         home: StudioHomeModel, onImportSources: @escaping () -> Void,
-        onOpenProject: @escaping () -> Void
+        onOpenProject: @escaping () -> Void,
+        onCommandActionsChanged: ((StudioStudyActions?) -> Void)? = nil,
+        @ViewBuilder workspaceContext: () -> WorkspaceContext
     ) {
         self.home = home
         self.onImportSources = onImportSources
         self.onOpenProject = onOpenProject
+        self.workspaceContext = workspaceContext()
+        self.onCommandActionsChanged = onCommandActionsChanged
         study = home.study
     }
 
     var body: some View {
-        Group {
-            if home.snapshot == nil {
-                ContentUnavailableView {
-                    Label("study.empty.project", systemImage: "book.closed")
-                } description: {
-                    Text("study.empty.project-help")
-                } actions: {
-                    Button("action.open-project", systemImage: "folder") { onOpenProject() }
-                }
-            } else if home.snapshot?.sources.isEmpty != false {
-                ContentUnavailableView {
-                    Label("study.empty.sources", systemImage: "doc.badge.plus")
-                } description: {
-                    Text("study.empty.sources-help")
-                } actions: {
-                    Button("action.import", systemImage: "doc.badge.plus") { onImportSources() }
-                        .disabled(home.isBusy)
-                }
-            } else {
-                VStack(spacing: 0) {
-                    header
-                    Divider()
-                    readingWorkspace
-                    Divider()
-                    status
-                }
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                workspaceContext
+                studyContent(width: geometry.size.width)
             }
         }
         .navigationTitle("study.title")
         .inspector(isPresented: $study.showsNotebook) {
             notebook.inspectorColumnWidth(min: 280, ideal: 340, max: 460)
+        }
+        .focusedSceneValue(\.studioStudyActions, studySceneActions)
+        .onChange(of: commandAvailability, initial: true) { _, _ in
+            onCommandActionsChanged?(studySceneActions)
+        }
+        .onChange(of: protectsWorkspaceNavigation, initial: true) { _, isPresented in
+            home.setStudyNavigationProtection(isPresented, owner: navigationProtectionOwner)
+        }
+        .onDisappear {
+            home.setStudyNavigationProtection(false, owner: navigationProtectionOwner)
+            onCommandActionsChanged?(nil)
         }
         .sheet(item: $editor) { editing in
             StudioStudyObjectEditor(
@@ -77,7 +75,7 @@ struct StudioStudyView: View {
                         try await study.commitEditorChange(session: session) {
                             switch editing {
                             case let .excerpt(id):
-                                study.updateExcerpt(id: id, title: title, groupID: group)
+                                try study.updateExcerpt(id: id, title: title, groupID: group)
                             case let .note(id):
                                 study.saveNote(
                                     id: id, title: title, text: text, groupID: group,
@@ -133,55 +131,78 @@ struct StudioStudyView: View {
             Button("common.ok", role: .cancel) {}
         }
         .task(id: home.snapshot?.projectID) {
-            guard home.snapshot != nil, !study.hasLoaded else { return }
-            await home.runAdvancedAnalysis { session in
-                try await study.load(session: session)
-                if let first = study.state.comparisonExcerptIDs.first {
-                    try await study.openExcerpt(session: session, excerptID: first, slot: .first)
-                    if let second = study.state.comparisonExcerptIDs.dropFirst().first {
-                        try await study.openExcerpt(
-                            session: session, excerptID: second, slot: .second)
-                    }
-                } else if let source = home.snapshot?.sources.first {
-                    try await study.readSource(
-                        session: session, sourceID: source.sourceRevisionID, slot: .first)
-                }
-            }
+            await initializeNotebookIfNeeded()
         }
         .onChange(of: home.snapshot?.sources.map(\.sourceRevisionID)) { _, _ in
             openFirstAvailableSource()
         }
+        .onChange(of: compactSlot) { _, slot in activeReaderSlot = slot }
         .onChange(of: home.isBusy) { _, busy in
-            if !busy { openFirstAvailableSource() }
+            guard !busy else { return }
+            if !study.hasLoaded, home.lastFailure == nil {
+                Task { await initializeNotebookIfNeeded() }
+            } else {
+                openFirstAvailableSource()
+            }
         }
     }
 
-    private var readingWorkspace: some View {
-        GeometryReader { geometry in
-            if study.showsComparison {
-                if geometry.size.width >= 880 && !dynamicTypeSize.isAccessibilitySize {
-                    HSplitView {
-                        reader(.first).frame(minWidth: 320)
-                        reader(.second).frame(minWidth: 320)
-                    }
-                } else {
-                    compactReadings
+    @ViewBuilder private func studyContent(width: CGFloat) -> some View {
+        if home.snapshot == nil {
+            ContentUnavailableView {
+                Label("study.empty.project", systemImage: "book.closed")
+            } description: {
+                Text("study.empty.project-help")
+            } actions: {
+                Button("action.open-project", systemImage: "folder") { onOpenProject() }
+            }
+        } else if home.snapshot?.sources.isEmpty != false {
+            ContentUnavailableView {
+                Label("study.empty.sources", systemImage: "doc.badge.plus")
+            } description: {
+                Text("study.empty.sources-help")
+            } actions: {
+                Button("action.import", systemImage: "doc.badge.plus") { onImportSources() }
+                    .disabled(home.isBusy)
+            }
+        } else {
+            VStack(spacing: 0) {
+                header
+                Divider()
+                readingWorkspace(width: width)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                Divider()
+                status
+            }
+        }
+    }
+
+    @ViewBuilder private func readingWorkspace(width: CGFloat) -> some View {
+        if study.showsComparison {
+            if width >= 880 && !dynamicTypeSize.isAccessibilitySize {
+                HSplitView {
+                    reader(.first, compactControls: true).frame(minWidth: 320)
+                    reader(.second, compactControls: true).frame(minWidth: 320)
                 }
             } else {
-                reader(.first)
+                compactReadings
             }
+        } else {
+            reader(
+                .first,
+                compactControls: width < 640 || dynamicTypeSize.isAccessibilitySize)
         }
     }
 
     private var compactReadings: some View {
         TabView(selection: $compactSlot) {
             Tab(value: StudioStudyReaderSlot.first) {
-                reader(.first)
+                reader(.first, compactControls: true)
             } label: {
                 Text("study.reading.first")
             }
             Tab(value: StudioStudyReaderSlot.second) {
-                reader(.second)
+                reader(.second, compactControls: true)
             } label: {
                 Text("study.reading.second")
             }
@@ -224,12 +245,76 @@ struct StudioStudyView: View {
         Button("study.conclusion.new", systemImage: "square.and.pencil") {
             editor = .newConclusion()
         }
+        .accessibilityIdentifier("study.conclusion.new")
         .disabled(home.isBusy || !study.hasLoaded)
     }
 
-    private func reader(_ slot: StudioStudyReaderSlot) -> some View {
-        VStack(spacing: 0) {
-            HStack {
+    private var allowsStudyCommands: Bool {
+        study.hasLoaded && home.snapshot != nil && !protectsWorkspaceNavigation
+    }
+
+    private var commandAvailability: [Bool] {
+        [
+            allowsStudyCommands, canCollectFromCommand, canCompareFromCommand,
+            study.showsNotebook, study.showsComparison,
+        ]
+    }
+
+    private var protectsWorkspaceNavigation: Bool {
+        home.snapshot != nil
+            && (home.isBusy || editor != nil || showsOrganization || exportData != nil
+                || exportFailed || showsRestoreImporter || study.proposedRestore != nil
+                || study.pendingPassage != nil || accessibleSelectionSlot != nil)
+    }
+
+    private var commandReaderSlot: StudioStudyReaderSlot {
+        StudioStudyReaderSlot.commandTarget(
+            isComparing: study.showsComparison,
+            isCompact: headerWidth < 880 || dynamicTypeSize.isAccessibilitySize,
+            activeSlot: activeReaderSlot, compactSlot: compactSlot)
+    }
+
+    private var canCollectFromCommand: Bool {
+        let slot = commandReaderSlot
+        guard allowsStudyCommands, let reading = study.reading(slot) else { return false }
+        return study.hasNativeSelection(slot) && (reading.pdf == nil || !pdfSlots.contains(slot))
+    }
+
+    private var canCompareFromCommand: Bool {
+        allowsStudyCommands && home.snapshot?.sources.isEmpty == false
+    }
+
+    private var studySceneActions: StudioStudyActions? {
+        guard allowsStudyCommands else { return nil }
+        return StudioStudyActions(
+            collectPassage: {
+                guard canCollectFromCommand else { return }
+                previewSelection(commandReaderSlot)
+            },
+            newConclusion: {
+                guard allowsStudyCommands else { return }
+                editor = .newConclusion()
+            },
+            toggleNotebook: {
+                guard allowsStudyCommands else { return }
+                study.showsNotebook.toggle()
+            },
+            toggleComparison: {
+                guard canCompareFromCommand else { return }
+                toggleComparison()
+            },
+            canCollectPassage: canCollectFromCommand, canCreateConclusion: true,
+            canToggleNotebook: true, canToggleComparison: canCompareFromCommand,
+            showsNotebook: study.showsNotebook, showsComparison: study.showsComparison)
+    }
+
+    private func reader(_ slot: StudioStudyReaderSlot, compactControls: Bool) -> some View {
+        let controlsLayout =
+            compactControls
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+            : AnyLayout(HStackLayout(spacing: 12))
+        return VStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: 8) {
                 if study.showsComparison {
                     Text(
                         LocalizedStringKey(
@@ -237,27 +322,10 @@ struct StudioStudyView: View {
                     )
                     .font(.headline)
                 }
-                Picker(
-                    "study.source",
-                    selection: Binding(
-                        get: { study.reading(slot)?.sourceRevisionID ?? "" },
-                        set: { id in readSource(id, slot: slot) })
-                ) {
-                    Text("study.source.choose").tag("")
-                    ForEach(Array((home.snapshot?.sources ?? []).enumerated()), id: \.element.id) {
-                        index, source in
-                        Group {
-                            if let title = study.sourceTitles[source.sourceRevisionID],
-                                !title.isEmpty
-                            {
-                                Text(title)
-                            } else {
-                                Text("workspace.source.ordinal \(index + 1)")
-                            }
-                        }.tag(source.sourceRevisionID)
-                    }
+                controlsLayout {
+                    sourcePicker(slot).frame(maxWidth: .infinity, alignment: .leading)
+                    readingActions(slot).fixedSize(horizontal: false, vertical: true)
                 }
-                .disabled(home.isBusy)
                 if study.reading(slot)?.pdf != nil {
                     Picker("study.reading.format", selection: pdfBinding(slot)) {
                         Text("study.reading.pdf").tag(true)
@@ -267,53 +335,106 @@ struct StudioStudyView: View {
                 }
             }
             .padding()
+            .fixedSize(horizontal: false, vertical: true)
             if let reading = study.reading(slot) {
-                if !reading.title.isEmpty {
-                    Text(reading.title).font(.title2).frame(
-                        maxWidth: .infinity, alignment: .leading
-                    )
-                    .padding(.horizontal).padding(.bottom, 8)
-                }
                 if let document = reading.pdf, pdfSlots.contains(slot) {
                     StudioStudyPDFReader(
                         document: document, pageNumber: reading.pageNumber,
                         navigationID: reading.navigationID,
                         accessibilityTitle: localized("study.reading.pdf"))
-                    HStack {
-                        Text("study.pdf.collection-help").font(.callout).foregroundStyle(.secondary)
-                        Spacer()
-                        Button("study.reading.show-text") { pdfSlots.remove(slot) }
-                    }
-                    .padding()
                 } else {
                     StudioStudyTextReader(
-                        reading: reading, accessibilityTitle: localized("study.reading.text")
+                        reading: reading, accessibilityTitle: localized("study.reading.text"),
+                        initialSelection: study.nativeSelection(slot)
                     ) { range in
                         study.setNativeSelection(
                             range, sourceID: reading.sourceRevisionID, slot: slot)
+                        activeReaderSlot = slot
                     }
-                    VStack(alignment: .leading, spacing: 8) {
-                        Button("study.collect", systemImage: "text.badge.plus") {
-                            previewSelection(slot)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .disabled(home.isBusy || !study.hasNativeSelection(slot))
-                        StudioStudyAccessibleSelection(reading: reading, disabled: home.isBusy) {
-                            selection in
-                            Task {
-                                await home.runAdvancedAnalysis { session in
-                                    try await study.previewPassage(
-                                        session: session, slot: slot, selection: selection)
-                                }
-                            }
-                        }
-                    }
-                    .padding()
                 }
             } else {
                 ContentUnavailableView(
                     "study.source.choose", systemImage: "doc.text",
                     description: Text("study.source.choose-help"))
+            }
+        }
+    }
+
+    private func sourcePicker(_ slot: StudioStudyReaderSlot) -> some View {
+        Picker(
+            "study.source",
+            selection: Binding(
+                get: { study.reading(slot)?.sourceRevisionID ?? "" },
+                set: { id in readSource(id, slot: slot) })
+        ) {
+            Text("study.source.choose").tag("")
+            ForEach(Array((home.snapshot?.sources ?? []).enumerated()), id: \.element.id) {
+                index, source in
+                Group {
+                    if let title = study.sourceTitles[source.sourceRevisionID], !title.isEmpty {
+                        Text(title)
+                    } else {
+                        Text("workspace.source.ordinal \(index + 1)")
+                    }
+                }.tag(source.sourceRevisionID)
+            }
+        }
+        .disabled(home.isBusy)
+    }
+
+    @ViewBuilder private func readingActions(_ slot: StudioStudyReaderSlot) -> some View {
+        if let reading = study.reading(slot) {
+            if reading.pdf != nil, pdfSlots.contains(slot) {
+                Button("study.reading.show-text", systemImage: "text.badge.plus") {
+                    pdfSlots.remove(slot)
+                }
+                .help("study.pdf.collection-help")
+                .disabled(home.isBusy)
+            } else {
+                HStack {
+                    Button("study.collect", systemImage: "text.badge.plus") {
+                        previewSelection(slot)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .accessibilityIdentifier("study.collect")
+                    .disabled(home.isBusy || !study.hasNativeSelection(slot))
+                    Button("study.selection.accessible", systemImage: "text.cursor") {
+                        accessibleSelectionSlot = slot
+                    }
+                    .labelStyle(.iconOnly)
+                    .accessibilityIdentifier("study.selection.accessible")
+                    .help("study.selection.accessible")
+                    .disabled(home.isBusy)
+                    .popover(
+                        isPresented: Binding(
+                            get: { accessibleSelectionSlot == slot },
+                            set: { if !$0 { accessibleSelectionSlot = nil } })
+                    ) {
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 12) {
+                                StudioStudyAccessibleSelection(
+                                    reading: reading, disabled: home.isBusy
+                                ) { selection in
+                                    Task {
+                                        await home.runAdvancedAnalysis { session in
+                                            try await study.previewPassage(
+                                                session: session, slot: slot, selection: selection)
+                                        }
+                                        if home.lastFailure == nil {
+                                            accessibleSelectionSlot = nil
+                                        }
+                                    }
+                                }
+                                .id(reading.navigationID)
+                                if let message = home.failureMessage {
+                                    Text(message).foregroundStyle(.secondary)
+                                }
+                            }
+                            .padding()
+                        }
+                        .frame(idealWidth: 360, idealHeight: 300, maxHeight: 420)
+                    }
+                }
             }
         }
     }
@@ -567,11 +688,28 @@ struct StudioStudyView: View {
 
     private func readSource(_ id: String, slot: StudioStudyReaderSlot) {
         guard !id.isEmpty else { return }
+        accessibleSelectionSlot = nil
         Task {
             await home.runAdvancedAnalysis { session in
                 try await study.readSource(session: session, sourceID: id, slot: slot)
                 study.setComparison([])
                 try await study.save(session: session)
+            }
+        }
+    }
+
+    private func initializeNotebookIfNeeded() async {
+        guard home.snapshot != nil, !home.isBusy, !study.hasLoaded else { return }
+        await home.runAdvancedAnalysis { session in
+            try await study.load(session: session)
+            if let first = study.state.comparisonExcerptIDs.first {
+                try await study.openExcerpt(session: session, excerptID: first, slot: .first)
+                if let second = study.state.comparisonExcerptIDs.dropFirst().first {
+                    try await study.openExcerpt(session: session, excerptID: second, slot: .second)
+                }
+            } else if let source = home.snapshot?.sources.first {
+                try await study.readSource(
+                    session: session, sourceID: source.sourceRevisionID, slot: .first)
             }
         }
     }
@@ -664,6 +802,17 @@ struct StudioStudyView: View {
     }
 }
 
+extension StudioStudyView where WorkspaceContext == EmptyView {
+    init(
+        home: StudioHomeModel, onImportSources: @escaping () -> Void,
+        onOpenProject: @escaping () -> Void
+    ) {
+        self.init(
+            home: home, onImportSources: onImportSources, onOpenProject: onOpenProject,
+            workspaceContext: { EmptyView() })
+    }
+}
+
 private struct StudioStudyAccessibleSelection: View {
     let reading: StudioStudyReading
     let disabled: Bool
@@ -675,41 +824,40 @@ private struct StudioStudyAccessibleSelection: View {
     @State private var end = 1
 
     var body: some View {
-        DisclosureGroup("study.selection.accessible") {
-            VStack(alignment: .leading, spacing: 10) {
-                Toggle("study.selection.characters", isOn: $usesCharacters)
-                if usesCharacters {
-                    Text("study.selection.characters-help").font(.caption).foregroundStyle(
-                        .secondary)
-                    HStack {
-                        TextField("study.selection.start", value: $start, format: .number)
-                        TextField("study.selection.end", value: $end, format: .number)
-                    }
-                    LabeledContent("study.selection.character-count") {
-                        Text(reading.characterCount, format: .number)
-                    }
-                } else {
-                    Picker("study.selection.first-sentence", selection: $first) {
-                        ForEach(Array(reading.segments.enumerated()), id: \.offset) {
-                            index, segment in
-                            Text(segment.text).lineLimit(1).tag(index)
-                        }
-                    }
-                    Picker("study.selection.last-sentence", selection: $last) {
-                        ForEach(Array(reading.segments.enumerated()), id: \.offset) {
-                            index, segment in
-                            Text(segment.text).lineLimit(1).tag(index)
-                        }
+        VStack(alignment: .leading, spacing: 10) {
+            Text("study.selection.accessible").font(.headline).accessibilityAddTraits(.isHeader)
+            Toggle("study.selection.characters", isOn: $usesCharacters)
+            if usesCharacters {
+                Text("study.selection.characters-help").font(.caption).foregroundStyle(
+                    .secondary)
+                HStack {
+                    TextField("study.selection.start", value: $start, format: .number)
+                    TextField("study.selection.end", value: $end, format: .number)
+                }
+                LabeledContent("study.selection.character-count") {
+                    Text(reading.characterCount, format: .number)
+                }
+            } else {
+                Picker("study.selection.first-sentence", selection: $first) {
+                    ForEach(Array(reading.segments.enumerated()), id: \.offset) {
+                        index, segment in
+                        Text(segment.text).lineLimit(1).tag(index)
                     }
                 }
-                Button("study.collect.preview") {
-                    onPreview(
-                        usesCharacters
-                            ? .characters(start: start, end: end)
-                            : .sentences(first: first, last: last))
+                Picker("study.selection.last-sentence", selection: $last) {
+                    ForEach(Array(reading.segments.enumerated()), id: \.offset) {
+                        index, segment in
+                        Text(segment.text).lineLimit(1).tag(index)
+                    }
                 }
-                .disabled(disabled || (!usesCharacters && reading.segments.isEmpty))
             }
+            Button("study.collect.preview") {
+                onPreview(
+                    usesCharacters
+                        ? .characters(start: start, end: end)
+                        : .sentences(first: first, last: last))
+            }
+            .disabled(disabled || (!usesCharacters && reading.segments.isEmpty))
         }
         .onChange(of: reading.navigationID) { _, _ in
             first = 0
@@ -728,25 +876,46 @@ private struct StudioStudyObjectEditor: View {
     let onReload: () -> Void
     let onSave: (String, String, String?, [String]) -> Void
     @Environment(\.dismiss) private var dismiss
-    @State private var title = ""
-    @State private var text = ""
-    @State private var groupID = ""
-    @State private var support: Set<String> = []
+    @State private var draft = StudioStudyEditorDraft()
     @State private var initial = ""
 
     private var isNote: Bool { if case .note = editing { true } else { false } }
     private var fingerprint: String {
-        "\(title)\u{0}\(text)\u{0}\(groupID)\u{0}\(support.sorted())"
+        "\(draft.title)\u{0}\(draft.text)\u{0}\(draft.groupID)\u{0}\(draft.support.sorted())"
+    }
+
+    private var reconciledDraft: StudioStudyEditorDraft {
+        var current = draft
+        current.reconcile(with: study.state)
+        return current
+    }
+
+    private var excerptIsUnavailable: Bool {
+        guard case let .excerpt(id) = editing else { return false }
+        return !study.state.excerpts.contains { $0.id == id }
     }
 
     var body: some View {
+        let reconciled = reconciledDraft
         NavigationStack {
             Form {
+                if reconciled != draft {
+                    Label("study.editor.references-updated", systemImage: "info.circle")
+                        .font(.callout).foregroundStyle(.secondary)
+                }
+                if excerptIsUnavailable {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("study.editor.excerpt-unavailable", systemImage: "info.circle")
+                            .foregroundStyle(.secondary)
+                        Button("study.reload") { onReload() }
+                    }
+                }
                 Section {
-                    TextField("study.object.title", text: $title)
+                    TextField("study.object.title", text: $draft.title)
+                        .accessibilityIdentifier("study.object.title")
                     if isNote {
                         Text("study.conclusion.prompt").foregroundStyle(.secondary)
-                        TextEditor(text: $text).frame(minHeight: 180)
+                        TextEditor(text: $draft.text).frame(minHeight: 180)
                             .accessibilityLabel("study.conclusion.text")
                         Text("study.conclusions.personal").font(.caption).foregroundStyle(
                             .secondary)
@@ -757,12 +926,12 @@ private struct StudioStudyObjectEditor: View {
                         ForEach(study.orderedExcerpts) { excerpt in
                             Toggle(
                                 isOn: Binding(
-                                    get: { support.contains(excerpt.id) },
+                                    get: { reconciled.support.contains(excerpt.id) },
                                     set: {
                                         if $0 {
-                                            support.insert(excerpt.id)
+                                            draft.support.insert(excerpt.id)
                                         } else {
-                                            support.remove(excerpt.id)
+                                            draft.support.remove(excerpt.id)
                                         }
                                     })
                             ) {
@@ -776,7 +945,10 @@ private struct StudioStudyObjectEditor: View {
                     }
                 }
                 DisclosureGroup("study.organize") {
-                    Picker("study.group", selection: $groupID) {
+                    Picker(
+                        "study.group",
+                        selection: Binding(get: { reconciled.groupID }, set: { draft.groupID = $0 })
+                    ) {
                         Text("study.group.none").tag("")
                         ForEach(study.state.groups) { group in Text(group.title).tag(group.id) }
                     }
@@ -792,7 +964,7 @@ private struct StudioStudyObjectEditor: View {
                 }
                 if let failureMessage {
                     Text(failureMessage).foregroundStyle(.secondary)
-                    Button("study.reload") { onReload() }
+                    if !excerptIsUnavailable { Button("study.reload") { onReload() } }
                 }
             }
             .formStyle(.grouped)
@@ -806,13 +978,17 @@ private struct StudioStudyObjectEditor: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("study.save") {
-                        onSave(title, text, groupID.isEmpty ? nil : groupID, support.sorted())
+                        let saving = reconciledDraft
+                        onSave(
+                            saving.title, saving.text,
+                            saving.groupID.isEmpty ? nil : saving.groupID, saving.support.sorted())
                     }
                     .keyboardShortcut(.defaultAction)
                     .disabled(
-                        title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                             || (isNote
-                                && text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                                && draft.text.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    .isEmpty)
                     )
                 }
             }
@@ -824,17 +1000,17 @@ private struct StudioStudyObjectEditor: View {
             switch editing {
             case let .excerpt(id):
                 if let value = study.state.excerpts.first(where: { $0.id == id }) {
-                    title = value.title
-                    groupID = value.groupID ?? ""
+                    draft.title = value.title
+                    draft.groupID = value.groupID ?? ""
                 }
             case let .note(id):
                 if let value = study.state.notes.first(where: { $0.id == id }) {
-                    title = value.title
-                    text = value.text
-                    groupID = value.groupID ?? ""
-                    support = Set(value.excerptIDs)
+                    draft.title = value.title
+                    draft.text = value.text
+                    draft.groupID = value.groupID ?? ""
+                    draft.support = Set(value.excerptIDs)
                 } else if let selected = study.selectedExcerptID {
-                    support = [selected]
+                    draft.support = [selected]
                 }
             }
             initial = fingerprint

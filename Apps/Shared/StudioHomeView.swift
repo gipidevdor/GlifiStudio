@@ -51,7 +51,7 @@ struct StudioHomeView: View {
 
     var body: some View {
         NavigationSplitView(preferredCompactColumn: $preferredCompactColumn) {
-            List(selection: $selection) {
+            List(selection: protectedWorkspaceSelection) {
                 Section("workspace.sidebar.project") {
                     ForEach([StudioSection.overview, .sources]) {
                         section in
@@ -90,13 +90,11 @@ struct StudioHomeView: View {
                 }
             }
             .listStyle(.sidebar)
+            .disabled(model.isWorkspaceNavigationProtected)
             .navigationTitle("app.name")
             .navigationSplitViewColumnWidth(min: 210, ideal: 235, max: 320)
         } detail: {
             VStack(spacing: 0) {
-                if let snapshot = model.snapshot {
-                    workspaceContext(snapshot)
-                }
                 switch selection ?? .overview {
                 case .overview: overview
                 case .project: project
@@ -112,7 +110,12 @@ struct StudioHomeView: View {
                         StudioStudyView(
                             home: model,
                             onImportSources: { isSourceImporterPresented = true },
-                            onOpenProject: { isProjectImporterPresented = true })
+                            onOpenProject: { isProjectImporterPresented = true }
+                        ) {
+                            if let snapshot = model.snapshot {
+                                workspaceContext(snapshot)
+                            }
+                        }
                     case .textAnalysis:
                         StudioTextAnalysisView(
                             model: model,
@@ -152,6 +155,11 @@ struct StudioHomeView: View {
                 case .export: export
                 }
             }
+            .safeAreaInset(edge: .top, spacing: 0) {
+                if showsWorkspaceContextOutsideStudy, let snapshot = model.snapshot {
+                    workspaceContext(snapshot)
+                }
+            }
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 if model.isBusy || model.lastFailure != nil {
                     statusBar
@@ -171,37 +179,42 @@ struct StudioHomeView: View {
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 Button("workspace.tools.find", systemImage: "square.grid.2x2") {
-                    isToolPickerPresented = true
+                    model.performWorkspaceNavigation { isToolPickerPresented = true }
                 }
+                .disabled(model.isWorkspaceNavigationProtected)
                 .help("workspace.tools.find")
                 if model.snapshot != nil {
                     Button("action.import", systemImage: "plus") {
-                        isSourceImporterPresented = true
+                        model.performWorkspaceNavigation { isSourceImporterPresented = true }
                     }
-                    .disabled(model.isBusy)
+                    .disabled(model.isBusy || model.isWorkspaceNavigationProtected)
                     .help("action.import")
                 }
                 Menu("sidebar.project", systemImage: "folder") {
                     #if os(macOS)
                         Button("research.title", systemImage: "tablecells") {
-                            isResearchWorkspacePresented = true
+                            model.performWorkspaceNavigation { isResearchWorkspacePresented = true }
                         }
                         .disabled(model.snapshot == nil)
                     #endif
                     Button("action.new-project", systemImage: "folder.badge.plus") {
-                        selection = .project
-                        createProjectDocument()
+                        model.performWorkspaceNavigation {
+                            selection = .project
+                            createProjectDocument()
+                        }
                     }
                     Button("action.open-project", systemImage: "folder") {
-                        isProjectImporterPresented = true
+                        model.performWorkspaceNavigation { isProjectImporterPresented = true }
                     }
                     Button("action.reopen-project", systemImage: "arrow.uturn.backward") {
-                        selection = .project
-                        reopenProjectDocument()
+                        model.performWorkspaceNavigation {
+                            selection = .project
+                            reopenProjectDocument()
+                        }
                     }
                     .disabled(model.lastProjectBookmark == nil)
                 }
-                .disabled(model.isBusy)
+                .disabled(model.isBusy || model.isWorkspaceNavigationProtected)
                 .help("sidebar.project")
             }
         }
@@ -317,12 +330,14 @@ struct StudioHomeView: View {
 
     #if os(macOS)
         private func openCoreMethod(_ route: StudioCoreMethodRoute) {
+            guard !model.isWorkspaceNavigationProtected else { return }
             showSection(route.activate(on: model))
         }
     #endif
 
     private var sceneActions: StudioWorkspaceActions? {
-        guard !isToolPickerPresented, !isSourcePreviewPresented, !isSourceImporterPresented,
+        guard !model.isWorkspaceNavigationProtected,
+            !isToolPickerPresented, !isSourcePreviewPresented, !isSourceImporterPresented,
             !isProjectImporterPresented, !isExportFolderPresented
         else { return nil }
         return StudioWorkspaceActions(
@@ -333,25 +348,53 @@ struct StudioHomeView: View {
             showFindings: { showSection(.findings) },
             showCoding: { showSection(.coding) },
             showExport: { showSection(.export) },
-            findTool: { isToolPickerPresented = true },
-            importSources: { isSourceImporterPresented = true },
+            showStudy: {
+                #if os(macOS)
+                    showSection(.study)
+                #endif
+            },
+            findTool: {
+                model.performWorkspaceNavigation { isToolPickerPresented = true }
+            },
+            importSources: {
+                model.performWorkspaceNavigation { isSourceImporterPresented = true }
+            },
             canImport: model.snapshot != nil && !model.isBusy)
     }
 
     private func openQueryEditor() {
+        guard !model.isWorkspaceNavigationProtected else { return }
         showSection(.query)
         queryFocusRequested = model.mustPathHasSources && !model.isBusy
     }
 
     private func showSection(_ section: StudioSection) {
-        selection = section
-        preferredCompactColumn = .detail
+        model.performWorkspaceNavigation {
+            selection = section
+            preferredCompactColumn = .detail
+        }
+    }
+
+    private var protectedWorkspaceSelection: Binding<StudioSection?> {
+        Binding(
+            get: { selection },
+            set: { section in
+                model.performWorkspaceNavigation { selection = section }
+            })
     }
 
     private func sidebarRow(_ section: StudioSection) -> some View {
         NavigationLink(value: section) {
             Label(section.titleKey, systemImage: section.systemImage)
         }
+    }
+
+    private var showsWorkspaceContextOutsideStudy: Bool {
+        #if os(macOS)
+            selection != .study
+        #else
+            true
+        #endif
     }
 
     private func workspaceContext(_ snapshot: GlifiStudioProjectSnapshot) -> some View {
@@ -376,6 +419,7 @@ struct StudioHomeView: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 10)
+        .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.bar)
         .accessibilityElement(children: .combine)
@@ -387,6 +431,7 @@ struct StudioHomeView: View {
     }
 
     private func openTool(_ tool: StudioToolDestination) {
+        guard !model.isWorkspaceNavigationProtected else { return }
         preferredCompactColumn = .detail
         switch tool {
         case .corpus: selection = .sources
@@ -3279,7 +3324,7 @@ struct StudioHomeView: View {
         section: StudioSection
     ) -> some View {
         Button {
-            selection = section
+            showSection(section)
         } label: {
             Label {
                 Text(title)

@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-UX-001-18 |
 | Tipo | Specifica dell'esperienza di studio documentale |
-| Versione | 1.0.0 |
+| Versione | 1.2.0 |
 | Stato | Definito; usabilità con utenti da validare |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-28 |
@@ -29,6 +29,20 @@ una conclusione può rimandare a più passaggi. Il confronto si attiva su richie
 con due letture identificate e chiusura chiara. Su spazio ridotto il contenuto
 si riorganizza senza comprimere il testo a dimensioni illeggibili.
 
+L'area di studio riceve le dimensioni effettive della finestra prima di misurare
+contesto, intestazione e lettore. Aprire il taccuino o cambiare destinazione non
+deve ingrandire la finestra oltre lo spazio disponibile. La barra del progetto
+appartiene allo stesso contenitore della lettura e dell'inspector, senza coprire
+la guida o i comandi. «Raccogli passaggio» resta accanto alla scelta della fonte,
+prima del documento: non richiede di raggiungere il fondo della lettura.
+Il gruppo della fonte passa da riga a colonna conservando il lettore e la selezione.
+Nel confronto compatto i comandi di raccolta si riferiscono alla lettura visibile;
+la selezione conservata nell'altra scheda non cambia il destinatario dell'azione.
+Se il cambio di layout ricrea il lettore nativo, la selezione corrente viene
+nuovamente mostrata nel documento; «Raccogli» non deve usare un intervallo
+invisibile. Un aggiornamento ordinario non riapplica la selezione iniziale né
+riporta la lettura all'inizio. Una fonte diversa mantiene una nuova navigazione.
+
 ## Dettagli progressivi e fiducia
 
 Gruppi, riordino, provenienza tecnica e associazione all'indagine sono controlli
@@ -46,6 +60,13 @@ Non si perdono bozze in modo silenzioso cambiando fonte o
 vista. Una failure non sostituisce la lettura valida con un risultato parziale;
 risposte tardive da una fonte precedente non cambiano il contesto corrente.
 
+Se Studio viene aperto durante un'altra operazione, inizializza il taccuino e la
+lettura quando il progetto torna disponibile. Ricaricare dopo modifiche di
+un'altra finestra conserva titolo e testo dell'editor, riconcilia i passaggi e i
+gruppi ancora disponibili e segnala i collegamenti rimossi. Un estratto eliminato
+non può risultare salvato tramite un'operazione vuota: l'editor conserva la bozza
+e spiega come copiare il titolo o recuperare il passaggio.
+
 ## Accessibilità e verifica
 
 La selezione con mouse ha un'alternativa accessibile per frasi o caratteri,
@@ -54,6 +75,13 @@ accesso da tastiera, focus comprensibile e colori di sistema. Confronto e fonte
 restano riconoscibili senza affidarsi al solo colore. Il testo conserva copia,
 selezione e navigazione native. La configurazione linguistica di analisi resta
 italiana; l'internazionalizzazione dell'interfaccia non aggiunge altre lingue.
+
+Il dettaglio per frasi o caratteri usa un popover con un solo scorrimento verticale;
+un'anteprima rifiutata conserva i valori per la correzione. I comandi frequenti
+sono disponibili anche nel menu dell'area di lavoro e tramite tastiera, riferiti
+alla finestra attiva e disabilitati durante un'operazione o una decisione modale.
+Sidebar, navigazione e ricerca degli strumenti rispettano la stessa protezione:
+cambiare destinazione non deve distruggere la bozza del foglio ancora aperto.
 
 Test di modello, selezione Unicode, build e audit visivo sono prove distinte.
 VoiceOver, Voice Control, tastiera completa, contrasto, pseudo-lingua e

@@ -10,6 +10,13 @@ import PDFKit
 nonisolated enum StudioStudyReaderSlot: String, CaseIterable, Identifiable, Sendable {
     case first, second
     var id: Self { self }
+
+    static func commandTarget(
+        isComparing: Bool, isCompact: Bool, activeSlot: Self, compactSlot: Self
+    ) -> Self {
+        guard isComparing else { return .first }
+        return isCompact ? compactSlot : activeSlot
+    }
 }
 
 nonisolated enum StudioStudyEditor: Identifiable {
@@ -23,6 +30,20 @@ nonisolated enum StudioStudyEditor: Identifiable {
         switch self {
         case let .excerpt(id): "excerpt:\(id)"
         case let .note(id): "note:\(id ?? "new")"
+        }
+    }
+}
+
+nonisolated struct StudioStudyEditorDraft: Equatable {
+    var title = ""
+    var text = ""
+    var groupID = ""
+    var support: Set<String> = []
+
+    mutating func reconcile(with state: GlifiStudioStudyState) {
+        support.formIntersection(Set(state.excerpts.map(\.id)))
+        if !groupID.isEmpty, !state.groups.contains(where: { $0.id == groupID }) {
+            groupID = ""
         }
     }
 }
@@ -121,7 +142,7 @@ nonisolated enum StudioStudyEditor: Identifiable {
     }
 
     func commitEditorChange(
-        session: GlifiStudioProjectSession, mutation: @MainActor () -> Void
+        session: GlifiStudioProjectSession, mutation: @MainActor () throws -> Void
     ) async throws {
         let owner = lifecycle
         let before = state
@@ -131,15 +152,17 @@ nonisolated enum StudioStudyEditor: Identifiable {
         let redoHistory = following
         let recovery = recoveryDraft
         let notebookWasVisible = showsNotebook
-        mutation()
-        let proposed = state
+        var proposed: GlifiStudioStudyState?
         do {
+            try mutation()
+            proposed = state
             try await save(session: session)
         } catch {
             // A failed modal must not leak its proposal into a later unrelated commit.
             // The editor retains its local fields; a newer project or publication is never undone.
             if lifecycle == owner, committed.revision == committedRevision,
-                committed.projectID == committedProjectID, state == proposed
+                committed.projectID == committedProjectID,
+                proposed.map({ state == $0 }) ?? true
             {
                 state = before
                 previous = undoHistory
@@ -165,6 +188,11 @@ nonisolated enum StudioStudyEditor: Identifiable {
         state = next
         committed = next
         hasLoaded = true
+        let currentExcerpts = Set(next.excerpts.map(\.id))
+        if let selectedExcerptID, !currentExcerpts.contains(selectedExcerptID) {
+            self.selectedExcerptID = nil
+        }
+        readingExcerptIDs = readingExcerptIDs.filter { currentExcerpts.contains($0.value) }
         previous = []
         following = []
         updateHistory()
@@ -252,9 +280,15 @@ nonisolated enum StudioStudyEditor: Identifiable {
         }
     }
 
-    func updateExcerpt(id: String, title: String, groupID: String?) {
+    func updateExcerpt(id: String, title: String, groupID: String?) throws {
+        guard let index = state.excerpts.firstIndex(where: { $0.id == id }) else {
+            throw GlifiStudioFailure(
+                code: "study.unknown-excerpt", category: "invalidInput",
+                operation: "persistProject",
+                retryDisposition: "afterCorrection", retainedState: "unchanged",
+                messageKey: "failure.category.invalidInput")
+        }
         change { next in
-            guard let index = next.excerpts.firstIndex(where: { $0.id == id }) else { return }
             next.excerpts[index].title = title
             next.excerpts[index].groupID = groupID
         }
@@ -320,6 +354,9 @@ nonisolated enum StudioStudyEditor: Identifiable {
         guard reading(slot)?.sourceRevisionID == sourceID else { return }
         nativeSelections[slot] = range
     }
+
+    /// Restores the current native selection when the same reading gets a new view.
+    func nativeSelection(_ slot: StudioStudyReaderSlot) -> NSRange? { nativeSelections[slot] }
 
     func hasNativeSelection(_ slot: StudioStudyReaderSlot) -> Bool {
         guard let range = nativeSelections[slot] else { return false }

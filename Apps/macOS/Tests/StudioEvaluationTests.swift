@@ -1,11 +1,181 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
+import AppKit
 import Foundation
 import GlifiKit
+import SwiftUI
 import Testing
 
 @MainActor
 struct StudioEvaluationTests {
+    private final class BundleAnchor {}
+
+    private final class ExportGeometry {
+        var frame: CGRect?
+    }
+
+    @Test("Risultati metodo e export restano raggiungibili in una finestra bassa")
+    func evaluationResultsAndMethodRemainReachableInAShortWindow() async throws {
+        let home = StudioHomeModel()
+        let model = home.evaluation
+        model.tool = .classification
+        model.loadSyntheticExample()
+        let example = model.observations
+        try #require(!example.isEmpty)
+        model.observations = (0..<200).map { index in
+            let item = example[index % example.count]
+            return .init(gold: item.gold, predicted: item.predicted)
+        }
+        try await model.executeLinguistic(locale: .init(identifier: "it_IT"))
+        let outputID = try #require(model.output).id
+        let exportGeometry = ExportGeometry()
+        let screenOrigin = NSScreen.main?.visibleFrame.origin ?? .zero
+        let window = NSWindow(
+            contentRect: NSRect(
+                x: screenOrigin.x + 20, y: screenOrigin.y + 20, width: 1_000, height: 420),
+            styleMask: [.borderless], backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        let host = NSHostingView(rootView: AnyView(EmptyView()))
+        host.sizingOptions = []
+        host.setFrameSize(window.contentLayoutRect.size)
+        window.contentView = host
+        host.rootView = AnyView(
+            StudioEvaluationView(model: home, onExportGeometryChange: { exportGeometry.frame = $0 })
+                .environment(\.locale, Locale(identifier: "it_IT")))
+        window.orderBack(nil)
+        defer {
+            window.contentView = nil
+            window.close()
+        }
+        host.layoutSubtreeIfNeeded()
+        host.displayIfNeeded()
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(abs(host.bounds.height - 420) <= 1)
+        let table = try #require(tableViews(in: host).first { $0.numberOfRows > 0 })
+        let tableViewport = try #require(table.enclosingScrollView?.contentView)
+        let tableFrame = window.convertToScreen(
+            tableViewport.convert(tableViewport.bounds, to: nil))
+        let workspaceFrame = window.convertToScreen(host.convert(host.bounds, to: nil))
+        #expect(tableViewport.bounds.height > 0)
+        #expect(
+            workspaceFrame.insetBy(dx: -1, dy: -1).contains(tableFrame),
+            "Table viewport \(tableFrame) must fit inside workspace \(workspaceFrame)")
+
+        // Operate on the real view's accessibility controls, whether Method is a disclosure or tab.
+        let method = try #require(
+            try await reachableElement(
+                labels: localizedLabels("common.method"), requiresAction: true,
+                host: host, window: window),
+            "The method control must be reachable through the actual evaluation workspace")
+        // AppKit's segment proxy can return false after changing the selection: verify the effect.
+        _ = method.accessibilityPerformPress()
+        host.layoutSubtreeIfNeeded()
+        try await Task.sleep(for: .milliseconds(100))
+        if method.accessibilityRole() == .radioButton {
+            #expect((method.accessibilityValue() as? NSNumber)?.boolValue == true)
+        }
+        let lastObservation = Set(
+            localizedLabels("evaluation.observation.number %lld").map {
+                String(
+                    format: $0, locale: Locale(identifier: "it_IT"), Int64(model.observations.count)
+                )
+            })
+        _ = try #require(
+            try await reachableElement(
+                labels: lastObservation, requiresAction: false, host: host, window: window),
+            "Scrolling must reach the final captured observation rather than only the results table"
+        )
+        // SwiftUI's virtual button is observed passively; its action is exercised in the app.
+        let exportFrame = try #require(exportGeometry.frame)
+        #expect(!exportFrame.isEmpty)
+        #expect(
+            host.bounds.insetBy(dx: -1, dy: -1).contains(exportFrame),
+            "Export control \(exportFrame) must fit inside workspace \(host.bounds)")
+        #expect(model.output?.id == outputID)
+        #expect(model.observations.count == 200)
+        #expect(home.lastFailure == nil)
+    }
+
+    private func localizedLabels(_ key: String) -> Set<String> {
+        let bundle = Bundle(for: BundleAnchor.self)
+        var values: Set<String> = [
+            key, bundle.localizedString(forKey: key, value: key, table: nil),
+        ]
+        for language in ["it", "en"] {
+            if let path = bundle.path(forResource: language, ofType: "lproj"),
+                let localized = Bundle(path: path)
+            {
+                values.insert(localized.localizedString(forKey: key, value: key, table: nil))
+            }
+        }
+        return values
+    }
+
+    private func reachableElement(
+        labels: Set<String>, requiresAction: Bool, host: NSView, window: NSWindow
+    ) async throws -> (any NSAccessibilityProtocol)? {
+        for _ in 0..<8 {
+            host.layoutSubtreeIfNeeded()
+            let viewport = window.convertToScreen(host.convert(host.bounds, to: nil))
+            if let found = accessibilityElements(in: host).first(where: { element in
+                let names = [
+                    element.accessibilityLabel(), element.accessibilityTitle(),
+                    element.accessibilityValue() as? String,
+                ].compactMap { $0 }
+                let role = element.accessibilityRole()
+                let isControl =
+                    role == .button || role == .radioButton || role == .disclosureTriangle
+                let frame = element.accessibilityFrame()
+                return names.contains(where: labels.contains)
+                    && (!requiresAction || isControl)
+                    && !frame.isEmpty && viewport.insetBy(dx: -1, dy: -1).contains(frame)
+            }) {
+                return found
+            }
+            for scroll in scrollViews(in: host) {
+                guard let document = scroll.documentView,
+                    document.bounds.height > scroll.contentView.bounds.height + 1
+                else { continue }
+                let bottom =
+                    document.isFlipped
+                    ? max(
+                        document.bounds.minY,
+                        document.bounds.maxY - scroll.contentView.bounds.height)
+                    : document.bounds.minY
+                scroll.contentView.scroll(to: NSPoint(x: scroll.contentView.bounds.minX, y: bottom))
+                scroll.reflectScrolledClipView(scroll.contentView)
+            }
+            try await Task.sleep(for: .milliseconds(50))
+        }
+        return nil
+    }
+
+    private func accessibilityElements(in root: NSView) -> [any NSAccessibilityProtocol] {
+        var result: [any NSAccessibilityProtocol] = []
+        var pending: [Any] = [root]
+        var visited: Set<ObjectIdentifier> = []
+        while let next = pending.popLast() {
+            let object = next as AnyObject
+            guard visited.insert(ObjectIdentifier(object)).inserted else { continue }
+            if let view = next as? NSView {
+                pending.append(contentsOf: view.subviews)
+            }
+            if let full = next as? any NSAccessibilityProtocol {
+                pending.append(contentsOf: full.accessibilityChildren() ?? [])
+                result.append(full)
+            }
+        }
+        return result
+    }
+
+    private func scrollViews(in root: NSView) -> [NSScrollView] {
+        (root as? NSScrollView).map { [$0] } ?? root.subviews.flatMap { scrollViews(in: $0) }
+    }
+
+    private func tableViews(in root: NSView) -> [NSTableView] {
+        (root as? NSTableView).map { [$0] } ?? root.subviews.flatMap { tableViews(in: $0) }
+    }
+
     @Test func draftChangesTrackFrozenInputAndParameters() async throws {
         let model = StudioEvaluationModel()
         model.tool = .classification
