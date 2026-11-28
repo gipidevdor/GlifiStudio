@@ -3,10 +3,10 @@
   "schemaVersion": 1,
   "evidenceID": "GS-VER-344",
   "status": "passed-automatic-macos",
-  "testedCommit": "c0e3431b9d6ce02aafff5e6363ffde96f4f1c61e",
+  "testedCommit": "4799dc8d503374c833f7292772260616a3188dc0",
   "inputs": {
     "count": 1037,
-    "fingerprint": "f79ec88368cc1e2ad9a39a11491c08bd8532ae899e5fbf5bf75c7792cd92a6dc",
+    "fingerprint": "eaa7a295b05a99e5a413448993af7b979be65b866b7431adf4a35e36c8336223",
     "manifest": "GS-VER-344-inputs.json",
     "unchangedBetweenVerificationAndPackaging": true
   },
@@ -24,20 +24,20 @@
   "makeVerify": {
     "command": "make verify",
     "profile": "macOS",
-    "commit": "c0e3431b9d6ce02aafff5e6363ffde96f4f1c61e",
-    "inputFingerprint": "f79ec88368cc1e2ad9a39a11491c08bd8532ae899e5fbf5bf75c7792cd92a6dc",
+    "commit": "4799dc8d503374c833f7292772260616a3188dc0",
+    "inputFingerprint": "eaa7a295b05a99e5a413448993af7b979be65b866b7431adf4a35e36c8336223",
     "inputCount": 1037,
-    "elapsedSeconds": 728.16,
+    "elapsedSeconds": 729.51,
     "exitCode": 0
   },
   "packaging": {
     "command": "Scripts/check-app-store-packaging.sh --macos-only",
     "profile": "macOS",
-    "commit": "c0e3431b9d6ce02aafff5e6363ffde96f4f1c61e",
-    "inputFingerprint": "f79ec88368cc1e2ad9a39a11491c08bd8532ae899e5fbf5bf75c7792cd92a6dc",
+    "commit": "4799dc8d503374c833f7292772260616a3188dc0",
+    "inputFingerprint": "eaa7a295b05a99e5a413448993af7b979be65b866b7431adf4a35e36c8336223",
     "inputCount": 1037,
     "inputUnchanged": true,
-    "elapsedSeconds": 546.54,
+    "elapsedSeconds": 549.24,
     "exitCode": 0,
     "scope": [
       "static-analysis",
@@ -57,12 +57,12 @@
     "steps": 3347,
     "operationVariants": 194,
     "integrationWorkflows": 7,
-    "reportSHA256": "88aebf614bf967e8454781c676edcf53ecc50604263afab3e8badd30e2bf3f5c"
+    "reportSHA256": "ea654972678a5fe8698d716c308db2af363578499ee5a0b20db336eef3ed62ba"
   },
   "native": {
     "result": "Passed",
-    "definitions": 186,
-    "executions": 500,
+    "definitions": 189,
+    "executions": 503,
     "failed": 0,
     "skipped": 0,
     "runtimeWarnings": 0,
@@ -104,10 +104,31 @@
     "independentSessionReload": "6 passed, 1 failed before fresh candidate-session adoption; GREEN",
     "conclusionRetry": "8 passed, 1 failed; stable editor-intent identity prevents duplicate conclusions",
     "canceledModalProposal": "9 passed, 3 failed executions for note/excerpt/restore; transactional rollback GREEN",
-    "finalTargetedNative": {
+    "preReviewTargetedNative": {
       "definitions": 10,
       "executions": 12,
       "failures": 0
+    },
+    "recoveryReviewNative": {
+      "red": {
+        "definitions": 20,
+        "passed": 17,
+        "failed": 3,
+        "skipped": 0
+      },
+      "green": {
+        "definitions": 20,
+        "executions": 24,
+        "failed": 0,
+        "skipped": 0,
+        "runtimeWarnings": 0
+      },
+      "cases": [
+        "Hosted Studio initializes after an active operation ends without replacing an existing reading",
+        "Independent session removes support and group; conclusion text is retained and saves after reconciliation",
+        "Removed excerpt editing raises study.unknown-excerpt and preserves draft title and project generation"
+      ],
+      "compileFailureNotCountedAsRED": true
     }
   },
   "toolchainDiagnostics": [
@@ -118,29 +139,35 @@
   "logs": {
     "verify": {
       "file": "verify.log",
-      "rawSHA256": "f6c514b049c075cbb55ad1011165e025144eceae10fbceb8293e2c5ae5f67ef6",
-      "sanitizedSHA256": "8c63c3e4abc17dcda5b403e24e62f52c9d7f98b5fee50e15a6a74b9432bd0ea2",
-      "byteCount": 496882
+      "rawSHA256": "4f9b8482f0ae9dd141c5ddc17f31fd78926f2c382b1546939b69ba0ba2518708",
+      "sanitizedSHA256": "7bf8acf6130d5fa5c4e4cff17e13eb6a4072d6f38b7be2deac1d3ab9744d356a",
+      "byteCount": 497018
     },
     "packaging": {
       "file": "packaging.log",
-      "rawSHA256": "ed75828461750c5123c9bcce5631ae1182496a4c5fd55fd88d3ee8826bfa1979",
-      "sanitizedSHA256": "d2e023aed88c5b062e1ab522722c2f52143f7fc8522473bf01f3297ddffa635d",
-      "byteCount": 2286
+      "rawSHA256": "e4791550bfe671249393f2d9e28e55ed4c87e824e3a458e0d51d1815f50912df",
+      "sanitizedSHA256": "8838a3f3280d90430bc46c12260a0ea853587a2b62bb83ca1768783378cb4a7b",
+      "byteCount": 2282
     }
   },
   "cleanup": {
-    "temporaryPathsRemoved": 39,
-    "temporaryAllocatedKiBRemoved": 235236,
-    "finalManagedCacheAllocatedKiB": 3884180,
-    "intermediateCacheAllocatedKiBRemoved": 2911604,
-    "intermediateLiveAppAllocatedKiBRetained": 174244,
-    "cacheSavingsAllocatedKiB": 6795784,
+    "managedCacheAllocatedKiBBeforeRemoval": 3896524,
+    "priorCacheSavingsAllocatedKiB": 6795784,
+    "totalCacheSavingsAllocatedKiB": 10692308,
     "managedFinalCacheRemoved": true,
+    "reviewTemporaryPathsRemoved": 15,
+    "reviewTemporaryAllocatedKiBRemoved": 77376,
+    "previousTemporaryAllocatedKiBRemoved": 235236,
+    "intermediateLiveAppAllocatedKiBRetained": 174244,
     "activeUIFixtureRetained": true,
-    "externalLocksPreserved": true
+    "externalLocksPreserved": true,
+    "preserved": [
+      "Prove utili, manifest, report Cucumber, PDF e xcresult",
+      "App e progetto sintetico della prova grafica ancora aperta",
+      "Cache preesistenti, toolchain, dipendenze, file utente e worktree con modifiche uniche"
+    ]
   },
-  "localEvidence": "$HOME/Library/Caches/GlifiStudio/evidence/GS-VER-344/run-20261128-c0e3431",
+  "localEvidence": "$HOME/Library/Caches/GlifiStudio/evidence/GS-VER-344/run-20261128-4799dc8",
   "limitations": [
     "Analisi italiana; nessun nuovo supporto multilingua",
     "CUA intermedia: selezione, anteprima, raccolta e conservazione bozza con Cmd-W osservate; salvataggio conclusione interrotto dal blocco del Mac",
@@ -148,5 +175,19 @@
     "Lavagna spaziale, scrittura a mano, cloud e iPadOS fuori da questo incremento",
     "Firma, notarizzazione, submission, CI remota e qualificazione G4/G5 non attestati da questi comandi",
     "App e progetto sintetico della prova grafica ancora aperta conservati per non perdere la bozza"
-  ]
+  ],
+  "previousCheckpoint": {
+    "commit": "c0e3431b9d6ce02aafff5e6363ffde96f4f1c61e",
+    "inputFingerprint": "f79ec88368cc1e2ad9a39a11491c08bd8532ae899e5fbf5bf75c7792cd92a6dc",
+    "makeVerifyElapsedSeconds": 728.16,
+    "packagingElapsedSeconds": 546.54,
+    "nativeDefinitions": 186
+  },
+  "integrationAncestryCommit": "0eaa435c9488755daf6226871d3849914b656955",
+  "integratedPreviousPR": {
+    "number": 51,
+    "squashCommit": "8171c3c37a8d1c7033868f19292d591205b8561a",
+    "treeMatchesPreviousHead": "56dff03c66c824664a9b05b19cf41188ebd83aa1",
+    "inputTreeUnchangedByAncestryMerge": true
+  }
 }
