@@ -1,0 +1,213 @@
+{
+  "schema": "studio.glifi.verification-evidence",
+  "schemaVersion": 1,
+  "evidenceID": "GS-VER-343",
+  "status": "passed-automatic-macos",
+  "testedCommit": "4b30f9cb38671b2ebada38cb592a39b7a40bff72",
+  "inputs": {
+    "count": 1020,
+    "fingerprint": "245206c391bba588882f00a377df8ea0e594b3afecbed1830ab640253b214d3a",
+    "manifest": "GS-VER-343-inputs.json",
+    "unchangedBetweenVerificationAndPackaging": true
+  },
+  "environment": {
+    "xcode": "27.2",
+    "swift": "6.4.2",
+    "swiftTools": "6.4",
+    "swiftLanguageMode": "6",
+    "python": "3.14.10",
+    "veraPDF": "1.30.4",
+    "macOS": "27.2.1",
+    "macOSBuild": "26B131",
+    "architecture": "arm64"
+  },
+  "makeVerify": {
+    "command": "make verify",
+    "profile": "macOS",
+    "commit": "4b30f9cb38671b2ebada38cb592a39b7a40bff72",
+    "inputFingerprint": "245206c391bba588882f00a377df8ea0e594b3afecbed1830ab640253b214d3a",
+    "inputCount": 1020,
+    "startedUTC": "2026-11-28T01:07:57.640800+00:00",
+    "elapsedSeconds": 693.429,
+    "exitCode": 0
+  },
+  "packaging": {
+    "command": "Scripts/check-app-store-packaging.sh --macos-only",
+    "profile": "macOS",
+    "commit": "4b30f9cb38671b2ebada38cb592a39b7a40bff72",
+    "inputFingerprint": "245206c391bba588882f00a377df8ea0e594b3afecbed1830ab640253b214d3a",
+    "inputCount": 1020,
+    "inputUnchanged": true,
+    "changedInputs": [],
+    "startedUTC": "2026-11-28T01:19:53.450020+00:00",
+    "elapsedSeconds": 533.271,
+    "exitCode": 0
+  },
+  "swiftTesting": {
+    "core": 818,
+    "kit": 202,
+    "bdd": 118,
+    "failures": 0
+  },
+  "cucumber": {
+    "features": 17,
+    "scenarios": 795,
+    "steps": 3264,
+    "operationVariants": 188,
+    "integrationWorkflows": 6,
+    "reportSHA256": "cf1a028372b4e2f435d97a355e29f66e76749a7878b8fb4d6d0c97952a03bd44"
+  },
+  "native": {
+    "result": "Passed",
+    "definitions": 176,
+    "executions": 488,
+    "failed": 0,
+    "skipped": 0,
+    "runtimeWarnings": 0,
+    "architecture": "arm64",
+    "macOS": "27.2.1",
+    "macOSBuild": "26B131"
+  },
+  "parity": {
+    "operations": 158,
+    "completeResultComparisons": 316,
+    "publicDeclarations": 3134,
+    "textAnalysisChecks": 196,
+    "sharedTextFixtures": 63,
+    "typedCommandRejections": 51,
+    "boundedProjectFileRejections": 64,
+    "independentVisualSourceRejections": 6
+  },
+  "numericalReferences": {
+    "independentRowsReproduced": 248,
+    "fractionCases": 64,
+    "qualificationChanged": false
+  },
+  "recovery": {
+    "processKillCheckpoints": 22
+  },
+  "pdfa": {
+    "command": "VERAPDF=<strumento esistente>/1.30.4/verapdf python3 Scripts/check-pdfa.py --require --directory <PDFA della stessa esecuzione>",
+    "exitCode": 0,
+    "conformingPDFs": 2,
+    "automaticDetectionInMakeVerify": "skipped: VERAPDF non impostato; verifica integrativa obbligatoria sui medesimi due file superata"
+  },
+  "developmentRegressionEvidence": {
+    "largeDTOFiles": {
+      "red": "command.unknown-field per statePath e tablePath",
+      "green": "1 scenario, 3 passaggi; API native, CLI reale e riapertura"
+    },
+    "readOnlyCancellation": {
+      "red": "lastCommittedGeneration invece di unchanged",
+      "green": "1 scenario, 3 passaggi e unit preesistente 1/1; attese originali immutate"
+    },
+    "cacheIsolation": "16 test; successo macOS e fallimento package con cleanup isolato, senza simulare un report BDD positivo"
+  },
+  "toolchainDiagnostics": [
+    "Diagnostica interna IDELaunchSession sul completion handler durante avvio test Xcode",
+    "Placeholder Any Mac privo di operatingSystemVersion durante build/analyze/archive; comandi superati"
+  ],
+  "logs": {
+    "verify": {
+      "file": "verify.log",
+      "rawSHA256": "a9a1421f68128a1b15d7a5b55e20048fd13b263d0fdf0bd125b38140b2ccebf9",
+      "sanitizedSHA256": "115c8883d8d1aad6ca4659a50e7c0fe4f0798918b5198ebff5932787a8d2d3ce",
+      "byteCount": 482276
+    },
+    "pdfa": {
+      "file": "pdfa.log",
+      "rawSHA256": "38a16365861e06f2fa4241f2c05c0f4be519b8f8fa5bbf4d401573876a563667",
+      "sanitizedSHA256": "38a16365861e06f2fa4241f2c05c0f4be519b8f8fa5bbf4d401573876a563667",
+      "byteCount": 49
+    },
+    "bdd-integrated": {
+      "file": "bdd-integrated.log",
+      "rawSHA256": "20af1f8447d6b9ac90236f5a5e593874eabf68e231098cf9e205c489729929e9",
+      "sanitizedSHA256": "13ce9bf4a02e40c865a5650f0aab9e3044245e754c3bf634239db70cfcb1dd40",
+      "byteCount": 36424
+    },
+    "large-dto-red": {
+      "file": "large-dto-red.log",
+      "rawSHA256": "72683cd984d3be069656dfc13d509373dfb89d080ab2dc11147fc8658db41908",
+      "sanitizedSHA256": "f5b60eb46bd8b5f87fae91bb26abd2a649404099c621ea1a47a7840e8baf9779",
+      "byteCount": 18358
+    },
+    "large-dto-green": {
+      "file": "large-dto-green.log",
+      "rawSHA256": "735c1f85f53ff610ca43c797fc923f5885f5227e59cca37a891af7af52bf54bc",
+      "sanitizedSHA256": "7c4a21b0e04be3f162d3b14db6e9c0b085414eb3e8a5b33bee677851d6e6df0f",
+      "byteCount": 15647
+    },
+    "dto-command-tests": {
+      "file": "dto-command-tests.log",
+      "rawSHA256": "310ccc9dee939a19990993a978210923dad94a28e58fb7484163de5710d69ce2",
+      "sanitizedSHA256": "310ccc9dee939a19990993a978210923dad94a28e58fb7484163de5710d69ce2",
+      "byteCount": 1899
+    },
+    "native-cancellation-red": {
+      "file": "native-cancellation-red.log",
+      "rawSHA256": "dbff38ee181c1ede5fe1264067b5d141fbbbd7c20deb03bc840aa8de1711ab2b",
+      "sanitizedSHA256": "9ea9a4eeedd244dee7568e015e858a4f25a0b3b174ff20ce29fba2c9618d239b",
+      "byteCount": 16412
+    },
+    "native-cancellation-green": {
+      "file": "native-cancellation-green.log",
+      "rawSHA256": "fbe84d3470012b5076ddc21193d29f1ee59f5a2e852311838bbbd053d688e18e",
+      "sanitizedSHA256": "4fa42488b01d5d7e8a054ee13454d05b3f693ae0d2efc7187ce4eec6231e2fa7",
+      "byteCount": 17598
+    },
+    "native-cancellation-unit": {
+      "file": "native-cancellation-unit.log",
+      "rawSHA256": "b6f64927d448eef3e8735e16565edf3a7b394b5ec442256c1d2751e49ac52942",
+      "sanitizedSHA256": "b6f64927d448eef3e8735e16565edf3a7b394b5ec442256c1d2751e49ac52942",
+      "byteCount": 493
+    },
+    "groups-tests": {
+      "file": "groups-tests.log",
+      "rawSHA256": "e04d77ebaae78d47f045395bc3c973b572de4c8988a709cd01d8a725184d8b2d",
+      "sanitizedSHA256": "e04d77ebaae78d47f045395bc3c973b572de4c8988a709cd01d8a725184d8b2d",
+      "byteCount": 1071
+    },
+    "verify-first": {
+      "file": "verify-first.log",
+      "rawSHA256": "0d8350825b2805a1ce7133bf0315ea253ce23adeabdb6ed1efc5af0830249dd9",
+      "sanitizedSHA256": "d4b7e035ee4c133e00ac488d260d5e4872ee6ec18a9ad210c791c6bdf23e39c2",
+      "byteCount": 1460
+    },
+    "verify-cancellation": {
+      "file": "verify-cancellation.log",
+      "rawSHA256": "5bae5475485858a5dd13e69088f4b10eb0846d4a3e8c83c9584234b88d5b8bfd",
+      "sanitizedSHA256": "1d8ea5ae8bfd2a931db58c9c7b84402706a7d72cbd678ea34ac903c34212c3ec",
+      "byteCount": 478357
+    },
+    "packaging": {
+      "file": "packaging.log",
+      "rawSHA256": "9c7d943f71903bd4b3bb0d690457d00a827ec34593139315a0aaa2eaac76bec7",
+      "sanitizedSHA256": "a5c8b5924de96a0443818c2493bdc768e0354c6959ceb87b735500d9f9adca30",
+      "byteCount": 2241
+    }
+  },
+  "cleanup": {
+    "managedCacheAllocatedKiBBeforeRemoval": 3762732,
+    "managedCacheRemoved": true,
+    "localBuildMarkersAllocatedKiB": 8,
+    "duplicateWorktreeRemovedKiB": 25148,
+    "generatorTemporaryLogicalBytes": 8312923,
+    "preserved": [
+      "Xcresult finale, report Cucumber, PDF conformi, log sanitizzati e manifesti di verifica",
+      "Cache di verifica preesistenti e dipendenze globali",
+      "Toolchain attive, file utente e worktree storici distinti",
+      "Modifiche non committate uniche nel worktree detached degli scenari"
+    ]
+  },
+  "localEvidence": "$HOME/Library/Caches/GlifiStudio/evidence/GS-VER-343/run-20261128-4b30f9c",
+  "limitations": [
+    "Analisi in italiano; nessun nuovo supporto multilingua",
+    "Profilo Excel XLSX bounded: XLS binario, formule, macro, celle unite e relazioni esterne rifiutati",
+    "Selezione per query, sottoinsieme statico e una uguaglianza tipizzata; nessun editor booleano completo dei metadati",
+    "Lemma/POS dipendono dalle capacità Apple disponibili localmente, senza download o fallback silenzioso",
+    "Audit interattivo completo finale VoiceOver, Voice Control, contrasto, testo grande, pseudo-lingua e RTL non attestato",
+    "CUA del flusso importazione/MDS/salvataggio/ripristino eseguito sullo snapshot intermedio; non promosso ad audit finale",
+    "iPadOS, firma, submission, CI remota e qualificazione G4/G5 non attestati da questi comandi"
+  ]
+}

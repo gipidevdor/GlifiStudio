@@ -346,4 +346,4 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 
 - [GS-VER-342 — Flussi tematici, corrispondenze e dendrogrammi](GS-VER-342-flussi-tematici-e-dendrogrammi.md) — Superato nello snapshot isolato: 928 Core/Kit, 451 esecuzioni native e parità CLI; gate condiviso non attestato
 
-- [GS-VER-343 — Dataset e lavoro di ricerca persistenti](GS-VER-343-flusso-ricerca-persistente.md) — In verifica; import, stato, preparazione e risultati salvati
+- [GS-VER-343 — Dataset e lavoro di ricerca persistenti](GS-VER-343-flusso-ricerca-persistente.md) — Superato macOS: 795 scenari BDD, 488 esecuzioni native, parità CLI e preflight senza firma; limiti manuali espliciti
