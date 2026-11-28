@@ -294,7 +294,7 @@ struct StudioAdvancedAnalysisView: View {
             integerField("advanced.epochs", value: $analysis.epochs)
             Picker("advanced.som-topology", selection: $analysis.somTopology) {
                 ForEach([GlifiStudioSOMTopology.rectangular, .hexagonal], id: \.self) { topology in
-                    Text(LocalizedStringKey("advanced.som-topology.\(topology.rawValue)")).tag(
+                    Text(StudioLocalization.key("advanced.som-topology.\(topology.rawValue)")).tag(
                         topology)
                 }
             }
@@ -325,7 +325,8 @@ struct StudioAdvancedAnalysisView: View {
                         ], id: \.self
                     ) { criterion in
                         Text(
-                            LocalizedStringKey("advanced.selection-criterion.\(criterion.rawValue)")
+                            StudioLocalization.key(
+                                "advanced.selection-criterion.\(criterion.rawValue)")
                         ).tag(criterion)
                     }
                 }
@@ -357,7 +358,7 @@ struct StudioAdvancedAnalysisView: View {
             distancePicker
             Picker("advanced.linkage", selection: $analysis.linkage) {
                 ForEach(["single", "complete", "average"], id: \.self) { linkage in
-                    Text(LocalizedStringKey("advanced.linkage.\(linkage)")).tag(linkage)
+                    Text(StudioLocalization.key("advanced.linkage.\(linkage)")).tag(linkage)
                 }
             }
         case .network:
@@ -377,7 +378,7 @@ struct StudioAdvancedAnalysisView: View {
                     ? [GlifiStudioMDSMethod.metric, .kruskal, .sammon, .ordinal]
                     : [.classical, .metric, .kruskal, .sammon, .ordinal], id: \.self
             ) { method in
-                Text(LocalizedStringKey("advanced.mds.\(method.rawValue)")).tag(method)
+                Text(StudioLocalization.key("advanced.mds.\(method.rawValue)")).tag(method)
             }
         }
         Stepper("advanced.dimensions", value: $analysis.dimensions, in: 1...2)
@@ -402,7 +403,7 @@ struct StudioAdvancedAnalysisView: View {
                 ],
                 id: \.self
             ) { distance in
-                Text(LocalizedStringKey("advanced.distance.\(distance.rawValue)")).tag(distance)
+                Text(StudioLocalization.key("advanced.distance.\(distance.rawValue)")).tag(distance)
             }
         }
     }
@@ -703,7 +704,7 @@ struct StudioAdvancedAnalysisView: View {
                     Text(output.methodIdentifier).textSelection(.enabled)
                 }
                 LabeledContent("advanced.validation") {
-                    Text(LocalizedStringKey("advanced.validation.\(output.validationStatus)"))
+                    Text(StudioLocalization.key("advanced.validation.\(output.validationStatus)"))
                 }
                 Text("advanced.validation-help").font(.caption).foregroundStyle(.secondary)
                 ForEach(Array(output.parameters.enumerated()), id: \.offset) { _, parameter in

@@ -1,0 +1,328 @@
+{
+  "schema": "studio.glifi.verification-evidence",
+  "schemaVersion": 1,
+  "evidenceID": "GS-VER-340",
+  "language": "it",
+  "scope": "Laboratorio statistiche, finestra documento reale macOS",
+  "status": "GREEN interattivo circoscritto nella finestra documento reale",
+  "productSource": {
+    "file": "Apps/macOS/StudioStatisticsView.swift",
+    "sha256": "33d7a048a27ecc1abe384c799c93464c15638fd7f06f079a6d0dd90f8bf33524",
+    "sameSHA256InPrimaryAndDiagnosticClone": true
+  },
+  "fixtureProvenance": {
+    "origin": "original-synthetic",
+    "description": "Documento ed esempi statistici sintetici originali usati dal coordinatore nel percorso Welch; nessun corpus reale o materiale di terzi acquisito per questa verifica.",
+    "attestation": "coordinatore del workflow manuale"
+  },
+  "runs": [
+    {
+      "phase": "before",
+      "result": "RED",
+      "rawLog": {
+        "file": "window-diagnostic-340-before.jsonl",
+        "sha256": "4e010d2bdcc060e44e5c71048e30c32f855c09377f95de873d547df69b455b6c"
+      },
+      "sanitizedSummary": {
+        "file": "GS-VER-340-before-sanitized.json",
+        "sha256": "476f4abe680b1211d3bdcbf2baf21a3143317015270418eb3b2eac1cc3586905"
+      },
+      "viewSource": {
+        "file": "window-diagnostic-340-Statistics-before.swift",
+        "sha256": "617dc4fc0c29cb2572a0ac82e4b33b66896f89da62d114283d1898d5424a6bee"
+      },
+      "measurements": {
+        "eventSequences": [
+          42,
+          44
+        ],
+        "framePoints": {
+          "x": 480,
+          "y": -1035,
+          "width": 1280,
+          "height": 2265
+        },
+        "contentMinimumHeightPoints": 2265,
+        "visibleScreenPoints": {
+          "width": 2240,
+          "height": 1179
+        },
+        "backingScaleFactor": 2,
+        "windowRasterPixels": {
+          "width": 2560,
+          "height": 4530
+        },
+        "heightExcessOverVisibleScreenPoints": 1086
+      }
+    },
+    {
+      "phase": "candidate-1",
+      "result": "RED",
+      "rawLog": {
+        "file": "window-diagnostic-340-candidate-1.jsonl",
+        "sha256": "f422d5d41aecc0a4b977e2aa41dc7713d910114eec952577dbb4748a753efbb1"
+      },
+      "viewSource": {
+        "file": "window-diagnostic-340-candidate-1-Statistics.swift",
+        "sha256": "c1d1a28b91f9aacdf620a8ef03065f98d8a1bbdf789d84dfd26c44db12026479"
+      },
+      "patch": {
+        "file": "window-diagnostic-340-candidate-1.patch",
+        "sha256": "75c13355e33a36e5bcbe6ca19cbc695e5513290d70d55a2fb4217fa872c74b76"
+      },
+      "measurements": {
+        "redEventSequences": [
+          42,
+          44
+        ],
+        "framePoints": {
+          "x": 480,
+          "y": -1035,
+          "width": 1280,
+          "height": 2265
+        },
+        "contentMinimumHeightPoints": 2265,
+        "visibleScreenHeightPoints": 1179,
+        "windowRasterPixels": {
+          "width": 2560,
+          "height": 4530
+        }
+      },
+      "conclusion": "Il primo tentativo non corregge la riproduzione nella finestra reale.",
+      "geometrySamples": [
+        {
+          "sequence": 42,
+          "framePoints": {
+            "height": 2265,
+            "width": 1280,
+            "x": 480,
+            "y": -1035
+          },
+          "contentLayoutRectPoints": {
+            "height": 2213,
+            "width": 1280,
+            "x": 0,
+            "y": 0
+          },
+          "contentMinimumHeightPoints": 2265,
+          "visibleScreenHeightPoints": 1179,
+          "backingScaleFactor": 2
+        },
+        {
+          "sequence": 44,
+          "framePoints": {
+            "height": 2265,
+            "width": 1280,
+            "x": 480,
+            "y": -1035
+          },
+          "contentLayoutRectPoints": {
+            "height": 2213,
+            "width": 1280,
+            "x": 0,
+            "y": 0
+          },
+          "contentMinimumHeightPoints": 2265,
+          "visibleScreenHeightPoints": 1179,
+          "backingScaleFactor": 2
+        }
+      ]
+    },
+    {
+      "phase": "candidate-2",
+      "result": "GREEN mirato",
+      "rawLog": {
+        "file": "window-diagnostic-340-candidate-2.jsonl",
+        "sha256": "666367dfd80fcc1890f1c8f7f543aaad8f30aaee2a02ac32f970c17285870450"
+      },
+      "sanitizedSummary": {
+        "file": "GS-VER-340-after-sanitized.json",
+        "sha256": "fca32b55809af4b719784439e744dcc06255550541c776d2bc85ffa6b0d75ed3"
+      },
+      "viewSource": {
+        "file": "window-diagnostic-340-candidate-2-Statistics.swift",
+        "sha256": "33d7a048a27ecc1abe384c799c93464c15638fd7f06f079a6d0dd90f8bf33524"
+      },
+      "patch": {
+        "file": "window-diagnostic-340-candidate-2.patch",
+        "sha256": "879d90481ed0288e494b44c8dcede117e2149da604c22c881ef71eda062c90dd"
+      },
+      "measurements": {
+        "geometryEventCount": 11,
+        "eventSequences": [
+          21,
+          22,
+          36,
+          47,
+          49,
+          52,
+          55,
+          58,
+          61,
+          62,
+          70
+        ],
+        "allObservedFramesContainedInVisibleScreen": true,
+        "maximumObservedFrameHeightPoints": 1179,
+        "stableWideEventSequences": [
+          36,
+          47,
+          49
+        ],
+        "stableCompactEventSequences": [
+          62,
+          70
+        ],
+        "stableContentMinimumHeightPoints": 128,
+        "wideWindowRasterSizePixels": {
+          "width": 2560,
+          "height": 1600
+        },
+        "compactWindowRasterSizePixels": {
+          "width": 2240,
+          "height": 2358
+        },
+        "rasterDerivation": "larghezza e altezza frame moltiplicate per backingScaleFactor 2",
+        "intermediateResizeEventsRetainedInLocalSummary": true
+      },
+      "conclusion": "La finestra resta entro lo schermo visibile nelle notifiche osservate, sia larga sia affiancata compatta.",
+      "geometrySamples": [
+        {
+          "sequence": 36,
+          "framePoints": {
+            "height": 800,
+            "width": 1280,
+            "x": 480,
+            "y": 240
+          },
+          "contentLayoutRectPoints": {
+            "height": 748,
+            "width": 1280,
+            "x": 0,
+            "y": 0
+          },
+          "contentMinimumHeightPoints": 128,
+          "visibleScreenHeightPoints": 1179,
+          "backingScaleFactor": 2
+        },
+        {
+          "sequence": 47,
+          "framePoints": {
+            "height": 800,
+            "width": 1280,
+            "x": 480,
+            "y": 240
+          },
+          "contentLayoutRectPoints": {
+            "height": 748,
+            "width": 1280,
+            "x": 0,
+            "y": 0
+          },
+          "contentMinimumHeightPoints": 128,
+          "visibleScreenHeightPoints": 1179,
+          "backingScaleFactor": 2
+        },
+        {
+          "sequence": 62,
+          "framePoints": {
+            "height": 1179,
+            "width": 1120,
+            "x": 0,
+            "y": 51
+          },
+          "contentLayoutRectPoints": {
+            "height": 1127,
+            "width": 1120,
+            "x": 0,
+            "y": 0
+          },
+          "contentMinimumHeightPoints": 128,
+          "visibleScreenHeightPoints": 1179,
+          "backingScaleFactor": 2
+        },
+        {
+          "sequence": 70,
+          "framePoints": {
+            "height": 1179,
+            "width": 1120,
+            "x": 0,
+            "y": 51
+          },
+          "contentLayoutRectPoints": {
+            "height": 1127,
+            "width": 1120,
+            "x": 0,
+            "y": 0
+          },
+          "contentMinimumHeightPoints": 128,
+          "visibleScreenHeightPoints": 1179,
+          "backingScaleFactor": 2
+        }
+      ]
+    }
+  ],
+  "manualWorkflow": {
+    "evidenceKind": "osservazioni GUI comunicate dal coordinatore; non dedotte dai soli log geometrici",
+    "observations": [
+      {
+        "action": "Selezionare Welch, calcolare e aprire i dettagli nella finestra larga",
+        "result": "Finestra 1280×800 punti; dimensioni JPEG osservate 2560×1600."
+      },
+      {
+        "action": "Aprire i dettagli con click sul triangolo di disclosure",
+        "result": "Stato dettagli aperto osservato sullo screenshot. Il click al centro AX non aziona il triangolo; tale differenza riguarda il bersaglio dello strumento e non prova un difetto del prodotto."
+      },
+      {
+        "action": "Scorrere configurazione e risultati",
+        "result": "Un controllo manuale di scorrimento in configurazione e uno nei risultati, entrambi riusciti."
+      },
+      {
+        "action": "Affiancare la finestra in modalità compatta",
+        "result": "Finestra 1120×1179 punti entro area visibile alta 1179; dimensioni JPEG osservate 2240×2358."
+      },
+      {
+        "action": "Aprire Esporta nelle configurazioni larga e compatta, poi annullare",
+        "result": "Pannello di salvataggio aperto in entrambe; annullamento senza scrittura di file, secondo il controllo del coordinatore."
+      },
+      {
+        "action": "Usare Comando-Invio nella configurazione compatta",
+        "result": "Calcolo eseguito e passaggio a Risultati; confronto dei medesimi tre valori e digest invariato, secondo il coordinatore."
+      }
+    ],
+    "numericComparison": {
+      "valuesCompared": 3,
+      "displayedValues": [
+        "0,593390829097",
+        "5,74363843524",
+        "0,575523078328"
+      ],
+      "valuesUnchanged": true,
+      "requestDigest": "23e77fae2b418886875596520ecc34f6b379100c00a860aa0a7a868d3334f90c",
+      "digestComparedAndUnchanged": true,
+      "method": "Confronto manuale prima/dopo, distinto dagli oracoli automatici del core."
+    }
+  },
+  "diagnosticInstrumentation": {
+    "patch": {
+      "file": "window-diagnostic-340-instrumentation.patch",
+      "sha256": "5fbfc58e72311b6c767b012f2b34d946f4886b4f768d227c8e0743ef4e50fd18"
+    },
+    "source": {
+      "file": "window-diagnostic-340-MacApp.swift",
+      "sha256": "c62fc38de3e91938958db090c041c3e16110a72c668e73042b2a391bc8349b3d"
+    },
+    "readOnlyReview": "API pubbliche NSWindow e monitor mouse locale passivo che restituisce lo stesso evento; nessuna modifica di geometria da parte della strumentazione rilevata nella review.",
+    "limits": "Snapshot Debug con I/O sincrono e visita limitata dell’albero delle viste: non è un benchmark o un audit completo dell’albero accessibile."
+  },
+  "limits": [
+    "GREEN limitato al difetto reale riprodotto e al workflow manuale descritto; non equivale al superamento del gate completo.",
+    "Nessun claim di copertura completa VoiceOver, Voice Control, tastiera, contrasto, pseudo-lingua, destra-sinistra, iPadOS o G4/G5.",
+    "I campioni hostless precedenti non riproducevano la crescita reale; non sono utilizzati come prova GREEN del difetto.",
+    "I file JPEG non sono allegati né sottoposti a hash in questo allegato; le dimensioni osservate dal coordinatore coincidono con quelle derivate da frame e scala.",
+    "I valori statistici e il digest sono confronti manuali riferiti dal coordinatore; questo allegato non costituisce un nuovo oracolo numerico.",
+    "Le sorgenti JSONL locali contengono metadati identificativi esclusi dalle copie sanificate; non pubblicare i log grezzi al posto di queste ultime.",
+    "Testo grande, viewport inferiori e altre lingue non sono qualificati da questa prova interattiva italiana."
+  ],
+  "integratedVerification": "GS-VER-339-verifica.json"
+}

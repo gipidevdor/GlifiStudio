@@ -138,9 +138,65 @@ def visualization_keys() -> set[str]:
     return keys
 
 
+def interpolated_semantic_keys(source: str) -> list[int]:
+    """Flag semantic identifiers interpolated as messages instead of built as String.
+
+    This is a narrow source guard, not a replacement Swift parser. Localized
+    sentences with typed arguments remain valid, as do complete String keys.
+    """
+    patterns = (
+        re.compile(r'\b(?:LocalizedStringKey|String\.LocalizationValue)\s*\(\s*"[A-Za-z][A-Za-z0-9_.-]*\\\('),
+        re.compile(r'\bText\s*\(\s*"[A-Za-z][A-Za-z0-9_.-]*\.\\\('),
+    )
+    return sorted({
+        source.count("\n", 0, match.start()) + 1
+        for pattern in patterns for match in pattern.finditer(source)
+    })
+
+
+def check_dynamic_key_guard() -> None:
+    """Keep the specific constructor regression distinct from valid text arguments."""
+    invalid = [
+        r'Text(LocalizedStringKey("statistics.operation.\(operation.rawValue)"))',
+        'Text(LocalizedStringKey(\n    "operators.family.\\(family).help"))',
+        r'Text(LocalizedStringKey("caveat.severity.\(severity)"))',
+        r'.accessibilityLabel(Text("export.format.\(format)"))',
+        'Text(\n    "export.format.\\(format)")',
+    ]
+    invalid.append(r'String.LocalizationValue("statistics.level.\(level)")')
+    valid = [
+        'String.LocalizationValue(key)',
+        r'String.LocalizationValue("Count \(count)")',
+        'Text(LocalizedStringKey(key))',
+        r'Text(StudioLocalization.key("statistics.operation.\(operation.rawValue)"))',
+        r'Text("statistics.table.count \(count)")',
+        r'Text(LocalizedStringKey("Count \(count)"))',
+        'Text(LocalizedStringKey("statistics.title"))',
+        r'Text(StudioLocalization.key("export.format.\(format)"))',
+        r'Text("workspace.context.sources \(count)")',
+        r'Text("Count\(count)")',
+        r'Text(verbatim: "export.format.\(format)")',
+        'Text("export.format.pdf")',
+    ]
+    for source in invalid:
+        if not interpolated_semantic_keys(source):
+            raise ValueError("Interpolated semantic identifier was accepted by the source guard")
+    for source in valid:
+        if interpolated_semantic_keys(source):
+            raise ValueError("Valid localized text or complete identifier was rejected")
+
+
 def main() -> int:
     """Run localization consistency checks."""
+    check_dynamic_key_guard()
     errors: list[str] = []
+    for path in sorted((PROJECT_DIRECTORY / "Apps").rglob("*.swift")):
+        if "Tests" in path.parts:
+            continue
+        for line in interpolated_semantic_keys(path.read_text(encoding="utf-8")):
+            errors.append(
+                f"{path.relative_to(PROJECT_DIRECTORY)}:{line}: chiave semantica interpolata "
+                "come messaggio localizzabile; costruire prima l'identificatore String completo.")
     catalog = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
     project = PROJECT_PATH.read_text(encoding="utf-8")
     base_configuration = BASE_CONFIGURATION_PATH.read_text(encoding="utf-8")
@@ -206,7 +262,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Localization: Italian source language, semantic keys, and it/en catalogs valid")
+    print("Localization: Italian source language, complete dynamic semantic keys, and it/en catalogs valid")
     return 0
 
 

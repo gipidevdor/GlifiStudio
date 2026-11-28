@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.specification-compliance-matrix",
   "schemaVersion": 1,
-  "updatedAt": "2026-11-27",
+  "updatedAt": "2026-11-28",
   "requiredRequirementCoverage": [
     "RQ-057",
     "RQ-058",
@@ -5852,6 +5852,62 @@
         "docs/evidenze/GS-VER-338-csv-crlf.md"
       ],
       "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-339",
+      "clause": "GS-I18N-002 § Identificatori dinamici e argomenti delle frasi",
+      "specification": "docs/internazionalizzazione-interfaccia.md",
+      "requirements": [
+        "RQ-058",
+        "RQ-060",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Apps/Shared/StudioLocalization.swift",
+        "Apps/Shared/StudioHomeView.swift",
+        "Apps/macOS/StudioStatisticsView.swift",
+        "Apps/macOS/StudioOperatorsView.swift",
+        "Apps/macOS/StudioAdvancedAnalysisView.swift",
+        "Apps/macOS/StudioCorpusMethodsView.swift",
+        "Apps/macOS/StudioLinguisticView.swift"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+        "Scripts/check-localization.py"
+      ],
+      "fixtures": [
+        "Apps/Shared/Resources/Localizable.xcstrings"
+      ],
+      "evidence": [
+        "docs/pianificazione/dor-chiavi-localizzazione-dinamiche.md",
+        "docs/evidenze/GS-VER-339-localizzazione-interattiva.md"
+      ],
+      "gate": "G4",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-340",
+      "clause": "GS-APL-002 § macOS — raggiungibilità del laboratorio statistico",
+      "specification": "docs/apple/02-interfaccia-adattiva.md",
+      "requirements": [
+        "RQ-012",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Apps/macOS/StudioStatisticsView.swift"
+      ],
+      "tests": [],
+      "fixtures": [],
+      "evidence": [
+        "docs/pianificazione/dor-altezza-laboratorio.md",
+        "docs/evidenze/GS-VER-340-altezza-laboratorio.md"
+      ],
+      "gate": "G4",
       "status": "implemented",
       "blockingReason": null
     }

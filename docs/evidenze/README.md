@@ -16,6 +16,10 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
+- [GS-VER-340 — Misure del laboratorio](GS-VER-340-altezza-laboratorio.md) — RED/GREEN della finestra documento reale; dettagli e azioni raggiungibili nei layout ampio e compatto
+
+- [GS-VER-339 — Localizzazione interattiva](GS-VER-339-localizzazione-interattiva.md) — RED/GREEN GUI e rendering it/en; esiti finali nell'allegato
+
 - [GS-VER-338 — CSV con CRLF](GS-VER-338-csv-crlf.md) — RED/GREEN, gate macOS e preflight senza firma superati
 - [GS-VER-337 — Scenari completi e provenienza](GS-VER-337-scenari-completi.md) — 172 varianti, tre fasi e 744 scenari; gate e preflight macOS superati
 

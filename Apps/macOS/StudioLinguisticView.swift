@@ -329,7 +329,7 @@ struct StudioLinguisticView: View {
                         .font(.caption.monospaced()).textSelection(.enabled)
                     LabeledContent("linguistic.request-digest", value: output.requestDigest)
                         .font(.caption.monospaced()).textSelection(.enabled)
-                    Text(LocalizedStringKey("advanced.validation.\(output.validationStatus)"))
+                    Text(StudioLocalization.key("advanced.validation.\(output.validationStatus)"))
                     Text("linguistic.interpretation-help").font(.caption).foregroundStyle(
                         .secondary)
                     provenance(output)
@@ -357,7 +357,7 @@ struct StudioLinguisticView: View {
         Section("linguistic.tables") {
             Picker("linguistic.table", selection: $analysis.selectedTable) {
                 ForEach(Array(output.tables.enumerated()), id: \.offset) { index, table in
-                    Text(LocalizedStringKey("linguistic.table.\(table.id)")).tag(index)
+                    Text(StudioLocalization.key("linguistic.table.\(table.id)")).tag(index)
                 }
             }
             if let table = analysis.selectedResultTable {
@@ -365,7 +365,7 @@ struct StudioLinguisticView: View {
                 Table(analysis.visibleRows) {
                     TableColumnForEach(Array(table.columns.enumerated()), id: \.offset) {
                         index, column in
-                        TableColumn(LocalizedStringKey("linguistic.column.\(column)")) { row in
+                        TableColumn(StudioLocalization.key("linguistic.column.\(column)")) { row in
                             if row.values.indices.contains(index) {
                                 cell(row.values[index]).textSelection(.enabled)
                             }

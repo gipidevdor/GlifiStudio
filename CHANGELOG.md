@@ -12,6 +12,23 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Etichette localizzate macOS
+
+- Corretti 39 identificatori dinamici di statistiche, operatori, analisi
+  avanzate, corpus, linguistica, piani, evidenze ed etichette accessibili
+  dei formati di export: il ponte costruisce la
+  chiave completa prima del lookup. I messaggi con argomenti conservano
+  l'interpolazione localizzabile. Verifica GUI e regressioni native it/en
+  accompagnano il controllo statico (GS-DOR-339).
+
+### Dimensionamento del laboratorio macOS
+
+- Corretto il minimo verticale della finestra Welch, che poteva raggiungere
+  2265 punti su uno schermo con 1179 disponibili. Intestazione e pannelli
+  ricevono ora il viewport reale; split, tab e scorrimento nativi restano
+  disponibili. RED/GREEN nella finestra documento, apertura dei dettagli,
+  Calcola ed Export verificati anche nel layout compatto (GS-DOR-340).
+
 ### Copertura BDD e CSV
 
 - Tutte le 172 varianti pubbliche sono associate a casi nominali, input non

@@ -43,6 +43,7 @@ NATIVE_FOLDERS = {
 # App sources and actual test files are derived independently from the filesystem.
 TEST_SUPPORT = {
     "Apps/Shared/StudioHomeModel.swift", "Apps/Shared/StudioWorkspaceNavigation.swift",
+    "Apps/Shared/StudioLocalization.swift",
     "Apps/Shared/StudioVisualExportPreparation.swift", "Apps/Shared/StudioFactorAudioGraph.swift",
     "Apps/Shared/StudioPlotSeries.swift", "Apps/macOS/StudioLinguisticModel.swift",
     "Apps/macOS/StudioOperatorsModel.swift", "Apps/macOS/StudioCorpusMethodsModel.swift",

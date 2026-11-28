@@ -81,19 +81,20 @@ struct StudioOperatorsView: View {
                 Text("operators.introduction").foregroundStyle(.secondary)
                 Picker("operators.method", selection: $operators.request.operation) {
                     ForEach(["matrix", "similarity", "graph", "lexical"], id: \.self) { family in
-                        Section(LocalizedStringKey("operators.family.\(family)")) {
+                        Section(StudioLocalization.key("operators.family.\(family)")) {
                             ForEach(
                                 GlifiStudioCoreOperator.allCases.filter { $0.family == family },
                                 id: \.self
                             ) { method in
-                                Text(LocalizedStringKey("operators.method.\(method.rawValue)")).tag(
-                                    method)
+                                Text(StudioLocalization.key("operators.method.\(method.rawValue)"))
+                                    .tag(
+                                        method)
                             }
                         }
                     }
                 }
                 Text(
-                    LocalizedStringKey(
+                    StudioLocalization.key(
                         "operators.family.\(operators.request.operation.family).help")
                 )
                 .font(.callout).foregroundStyle(.secondary)
@@ -187,7 +188,7 @@ struct StudioOperatorsView: View {
                 case .hacCutCount, .hacCutHeight:
                     Picker("operators.linkage", selection: $operators.request.linkage) {
                         ForEach(["single", "complete", "average", "ward"], id: \.self) {
-                            Text(LocalizedStringKey("operators.linkage.\($0)")).tag($0)
+                            Text(StudioLocalization.key("operators.linkage.\($0)")).tag($0)
                         }
                     }
                     if operators.request.operation == .hacCutCount {
@@ -203,7 +204,7 @@ struct StudioOperatorsView: View {
                         ForEach(
                             ["jaccard", "dice", "cosine", "euclidean", "manhattan", "simpson"],
                             id: \.self
-                        ) { Text(LocalizedStringKey("operators.distance.\($0)")).tag($0) }
+                        ) { Text(StudioLocalization.key("operators.distance.\($0)")).tag($0) }
                     }
                 case .pageRank:
                     decimal("operators.damping", value: $operators.request.damping)
@@ -237,7 +238,8 @@ struct StudioOperatorsView: View {
                     ) {
                         ForEach(GlifiStudioGraphCommunityMethod.allCases, id: \.self) { method in
                             Text(
-                                LocalizedStringKey("operators.community-method.\(method.rawValue)")
+                                StudioLocalization.key(
+                                    "operators.community-method.\(method.rawValue)")
                             ).tag(method.rawValue)
                         }
                     }
@@ -249,8 +251,10 @@ struct StudioOperatorsView: View {
                 case .graphLayout:
                     Picker("operators.layout-method", selection: $operators.request.layoutMethod) {
                         ForEach(GlifiStudioGraphLayoutMethod.allCases, id: \.self) { method in
-                            Text(LocalizedStringKey("operators.layout-method.\(method.rawValue)"))
-                                .tag(method.rawValue)
+                            Text(
+                                StudioLocalization.key("operators.layout-method.\(method.rawValue)")
+                            )
+                            .tag(method.rawValue)
                         }
                     }
                     seedField
@@ -291,7 +295,8 @@ struct StudioOperatorsView: View {
             if let result = operators.result {
                 Section {
                     Text(
-                        LocalizedStringKey("operators.method.\(result.request.operation.rawValue)")
+                        StudioLocalization.key(
+                            "operators.method.\(result.request.operation.rawValue)")
                     )
                     .font(.headline).accessibilityAddTraits(.isHeader)
                     Label("operators.session-only", systemImage: "clock")
@@ -331,7 +336,7 @@ struct StudioOperatorsView: View {
                     ForEach(result.methodIdentifiers, id: \.self) {
                         Text($0).font(.caption.monospaced()).textSelection(.enabled)
                     }
-                    Text(LocalizedStringKey("advanced.validation.\(result.validationStatus)"))
+                    Text(StudioLocalization.key("advanced.validation.\(result.validationStatus)"))
                     if result.request.operation.family == "graph" {
                         Text("operators.graph-semantics").font(.caption)
                         if result.request.operation == .communities {
@@ -433,7 +438,7 @@ struct StudioOperatorsView: View {
             }
         case .pca:
             LabeledContent("operators.scaled") {
-                Text(LocalizedStringKey("operators.boolean.\(String(request.scaled))"))
+                Text(StudioLocalization.key("operators.boolean.\(String(request.scaled))"))
             }
         case .lsa:
             LabeledContent("operators.rank") { Text(request.rank, format: .number) }
@@ -448,7 +453,7 @@ struct StudioOperatorsView: View {
             }
         case .hacCutCount, .hacCutHeight:
             LabeledContent("operators.linkage") {
-                Text(LocalizedStringKey("operators.linkage.\(request.linkage)"))
+                Text(StudioLocalization.key("operators.linkage.\(request.linkage)"))
             }
             if request.operation == .hacCutCount {
                 LabeledContent("operators.cluster-count") {
@@ -463,7 +468,7 @@ struct StudioOperatorsView: View {
             effectiveText("operators.assignments", request.assignments)
         case .distances:
             LabeledContent("operators.distance") {
-                Text(LocalizedStringKey("operators.distance.\(request.distance)"))
+                Text(StudioLocalization.key("operators.distance.\(request.distance)"))
             }
         case .pageRank, .eigenvector:
             if request.operation == .pageRank {
@@ -475,7 +480,8 @@ struct StudioOperatorsView: View {
             }
         case .communities:
             LabeledContent("operators.community-method") {
-                Text(LocalizedStringKey("operators.community-method.\(request.communityMethod)"))
+                Text(
+                    StudioLocalization.key("operators.community-method.\(request.communityMethod)"))
             }
             LabeledContent("operators.resolution") { Text(request.resolution, format: .number) }
             if request.communityMethod == "walktrap" {
@@ -485,7 +491,7 @@ struct StudioOperatorsView: View {
             }
         case .graphLayout:
             LabeledContent("operators.layout-method") {
-                Text(LocalizedStringKey("operators.layout-method.\(request.layoutMethod)"))
+                Text(StudioLocalization.key("operators.layout-method.\(request.layoutMethod)"))
             }
             LabeledContent("operators.seed") { Text(request.seed, format: .number) }
             LabeledContent("operators.iterations") {
@@ -569,7 +575,7 @@ struct StudioOperatorsView: View {
         case let .integer(number): Text(number, format: .number)
         case let .text(text): Text(text)
         case let .localized(key): Text(LocalizedStringKey(key))
-        case let .nonFinite(kind): Text(LocalizedStringKey("operators.nonfinite.\(kind)"))
+        case let .nonFinite(kind): Text(StudioLocalization.key("operators.nonfinite.\(kind)"))
         }
     }
 

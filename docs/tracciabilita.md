@@ -4,15 +4,32 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.97.0 |
+| Versione | 0.98.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-27 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
 
 La matrice collega le fonti iniziali alle necessità degli stakeholder, ai requisiti software, alle parti dell'architettura e alle evidenze di verifica pianificate. Gli identificatori fanno riferimento a [Requisiti](requisiti.md) e [Architettura](architettura.md).
+
+## Dimensionamento nativo del laboratorio
+
+| Requisiti e clausola | Attuazione circoscritta | Verifica |
+| --- | --- | --- |
+| RQ-012/062/063; CMP-340 | Intestazione e pannelli misurati nel viewport reale; split e tab nativi scorrevoli conservati | [GS-DOR-340](pianificazione/dor-altezza-laboratorio.md); [GS-VER-340](evidenze/GS-VER-340-altezza-laboratorio.md) |
+
+Il RED e il GREEN sono osservati nella finestra documento reale con API
+pubbliche e interazioni CUA. I probe hostless non riproducono il difetto e
+restano fuori dal gate; la clausola resta implemented, senza promozione G4
+né attestazione di audit assistivo completo.
+
+## Correttezza delle etichette localizzate
+
+| Requisiti e clausola | Attuazione circoscritta | Verifica |
+| --- | --- | --- |
+| RQ-058/060/062/063; CMP-339 | Identità complete delle chiavi SwiftUI/Foundation, argomenti testuali conservati e osservazione GUI | [GS-DOR-339](pianificazione/dor-chiavi-localizzazione-dinamiche.md); [GS-VER-339](evidenze/GS-VER-339-localizzazione-interattiva.md) |
 
 ## Copertura BDD e correttezza CSV
 

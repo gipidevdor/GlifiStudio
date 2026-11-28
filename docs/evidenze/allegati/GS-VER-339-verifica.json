@@ -1,0 +1,137 @@
+{
+  "schema": "studio.glifi.verification-evidence",
+  "schemaVersion": 1,
+  "evidenceID": "GS-VER-339",
+  "status": "Passed automatic macOS verification and scoped interactive checks",
+  "macOSOnly": true,
+  "sourceFingerprint": "937093c223abe644d0fba2c85e19057c5a015f44287f65544f5b1cc6a6628981",
+  "controlledInputs": 630,
+  "sourceUnchangedAtCompletion": true,
+  "controlledInputScope": "Source, build configuration, scripts and test fixtures; prose documents checked separately after final evidence updates.",
+  "dossier": "macOS-2026-11-27-ui-audit",
+  "logsAndReports": {
+    "make-verify-final.log": "12d4d2a98482776e8f77ed7b326200df392544779b3b5d286064eb3d88885fb5",
+    "packaging-macos-final.log": "95fef1a05817f8acebea81cbbc14aac2b3e2d23a663df9b31ea8e509911372f3",
+    "bdd-final-report.json": "77dd1d82afdb8a42c87db0a694af51d8dc4f204044d9f68cda71dab1b70f6820",
+    "native-final-339-summary.json": "2d9b4356ef06d266474ad8e485941289cbf7f6cd98fb42d58bdd388829bf781e",
+    "native-final-339-tests.json": "29b9c48fde60714c5436abaecfa6716becda8b00d9e75dddee404ece43b242da",
+    "native-final-339-counts.json": "f84dc80fe3bda34700918ed1daa68e91309b584cf5715554d5302110de81bc84",
+    "native-targeted-3.log": "a33fa043cebda625db13c1eabc8b7cd809121a01683986a808b95cf08bbd5035",
+    "dynamic-text-key-red.json": "b9f8fb1ec489633968e4dd724eeb10f116e27362cd986fcef08fba1189d85d84",
+    "dynamic-text-key-green.json": "299acf6c0febec055d70e10c08168d30d301eb638c722313829e4fa4b927640e",
+    "foundation-key-probe.log": "7707158cac3fd0b3220a80da806e7221d779b18b45825193e878610df96db6d4",
+    "source-manifest-final-before.json": "65235b78a05af45b70367fe2cdbcbfc82261c307b774c0e084b7ea2e18d921a0",
+    "source-manifest-final-after.json": "65235b78a05af45b70367fe2cdbcbfc82261c307b774c0e084b7ea2e18d921a0",
+    "interactive-release-final.json": "b81198176ec1b32e3e6c1fbfe07989213d40dd6876cd2239e6fa210107d70d48",
+    "cleanup-window-340.json": "a3dbd806c1365047e718606227524712f6b9e604a3aa8aa801f92b01be111142"
+  },
+  "makeVerify": {
+    "command": "make verify",
+    "exit": 0,
+    "seconds": 753.97,
+    "definitions": {
+      "Core": 782,
+      "Kit": 171,
+      "BDD": 107
+    },
+    "Cucumber": {
+      "features": 16,
+      "expandedScenarios": 744,
+      "steps": 3092
+    },
+    "native": {
+      "definitions": 146,
+      "executions": 439,
+      "failures": 0,
+      "skipped": 0
+    },
+    "oracles": {
+      "rows": 248,
+      "fractionCases": 64,
+      "conformingPDFA": 2
+    },
+    "parity": {
+      "publicOperations": 132,
+      "completeComparisons": 264,
+      "textFixtures": 63,
+      "textCLIChecks": 196,
+      "recoveryCheckpoints": 22
+    }
+  },
+  "packaging": {
+    "command": "Scripts/check-app-store-packaging.sh --macos-only",
+    "exit": 0,
+    "seconds": 494.93,
+    "signed": false,
+    "relationship": "The two preflight components ran separately on the same immutable 630 controlled inputs; no claim that the wrapper make verify-app-store was invoked."
+  },
+  "regression": {
+    "completeSemanticLookupsCorrected": 39,
+    "SwiftUI": 37,
+    "Foundation": 2,
+    "staticGuardExamples": {
+      "rejected": 6,
+      "accepted": 12
+    },
+    "directTextReviewRegression": {
+      "redExit": 1,
+      "greenExit": 0,
+      "realOccurrences": 1
+    },
+    "nativeLocalization": {
+      "definitions": 2,
+      "executions": 4,
+      "languages": [
+        "it_IT",
+        "en_US"
+      ],
+      "textsPerLanguage": 12,
+      "negativeControlsPerLanguage": 6,
+      "meaning": "Exact Foundation lookup and native geometry compared with independent verbatim labels, complemented by real GUI observations; geometry alone does not establish AX text identity."
+    }
+  },
+  "windowVerification": "GS-VER-340-layout.json",
+  "finalReleaseSmoke": {
+    "schemaVersion": 1,
+    "sourceFingerprint": "937093c223abe644d0fba2c85e19057c5a015f44287f65544f5b1cc6a6628981",
+    "configuration": "Release",
+    "executableSHA256": "3a4d2623b565592f4decd3f9abc569b904e4d89ba76e94b4d6a23eae862f2260",
+    "instrumentationIncluded": false,
+    "evidenceKind": "Direct manual CUA actions and AX observations on the final product app",
+    "projectProvenance": "original-synthetic-two-source-project",
+    "welchSelectedFromCatalog": true,
+    "syntheticExampleLoaded": true,
+    "calculationCompleted": true,
+    "detailsExpanded": true,
+    "inputRowsObserved": 8,
+    "alternative": "Bilaterale",
+    "measurementLevel": "Nominale",
+    "requestDigest": "23e77fae2b418886875596520ecc34f6b379100c00a860aa0a7a868d3334f90c",
+    "displayedValues": [
+      "0,593390829097",
+      "5,74363843524",
+      "0,575523078328"
+    ],
+    "rasterAfterOpeningDetails": {
+      "width": 2560,
+      "height": 1600
+    },
+    "limits": [
+      "Scoped Italian GUI smoke check, not complete assistive qualification.",
+      "Native geometry logs belong to the isolated diagnostic experiment, not to this uninstrumented Release app."
+    ]
+  },
+  "provenance": {
+    "newDependencies": 0,
+    "newThirdPartyMaterialsAcquired": 0,
+    "inventoriedMaterials": 30,
+    "scope": "Original wrappers and test expectations; Apple documentation used only as API reference. Structural license checks and source review are distinct."
+  },
+  "limitations": [
+    "Scoped interactive checks do not establish complete VoiceOver, Voice Control, contrast, pseudo-language, RTL or usability qualification.",
+    "Large accessibility text, smaller viewports, other laboratories and interactive English remain outside this GUI check.",
+    "No iPadOS execution, App Store submission, G4 or G5 qualification.",
+    "No new performance benchmark is claimed for this UI correctness change.",
+    "Intermediate completed gates are retained as intermediate evidence; these final logs cover the frozen source payload."
+  ]
+}

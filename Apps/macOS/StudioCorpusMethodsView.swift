@@ -312,7 +312,7 @@ struct StudioCorpusMethodsView: View {
                 if analysis.tool == .hierarchical {
                     Picker("cm.linkage", selection: $analysis.draft.linkage) {
                         ForEach(["single", "complete", "average", "ward"], id: \.self) { value in
-                            Text(LocalizedStringKey("cm.linkage.\(value)")).tag(value)
+                            Text(StudioLocalization.key("cm.linkage.\(value)")).tag(value)
                         }
                     }
                 }

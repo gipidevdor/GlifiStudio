@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.40 |
+| Versione | 1.6.42 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-27 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Non applicabile; registro operativo |
 
 Le schede DoR sono gate di ingresso al coding (GS-STD-001-07). Ogni unità di
@@ -28,6 +28,10 @@ distribuisce quattro agenti su query, feedback statico, revisione e integrazione
 preservando i confini del lavoro già in corso nell'altra chat.
 
 ## Indice
+
+- [GS-DOR-340 — Altezza del laboratorio](dor-altezza-laboratorio.md) — RED/GREEN nella finestra documento reale e layout adattivo circoscritto
+
+- [GS-DOR-339 — Chiavi localizzate dinamiche](dor-chiavi-localizzazione-dinamiche.md) — Identificatori completi distinti dagli argomenti localizzati
 
 - [GS-DOR-338 — CSV con CRLF](dor-csv-crlf.md) — Quoting per scalari, byte conservati e rifiuto delle alterazioni
 - [GS-DOR-337 — Scenari completi](dor-scenari-completi.md) — 172 varianti, tre fasi, fixture originali e fonti web verificate
