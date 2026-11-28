@@ -6073,6 +6073,50 @@
       "gate": "G3",
       "status": "implemented",
       "blockingReason": null
+    },
+    {
+      "id": "CMP-344",
+      "clause": "GS-API-007 § Stato e provenienza",
+      "specification": "docs/api/07-studio-documentale.md",
+      "requirements": [
+        "RF-089",
+        "RQ-028",
+        "RQ-030",
+        "RQ-032",
+        "RQ-033",
+        "RQ-037",
+        "RQ-043",
+        "RQ-047",
+        "RQ-058",
+        "RQ-060",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiStudyState.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiStudyPackage.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioStudySession.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift",
+        "Apps/macOS/StudioStudyModel.swift",
+        "Apps/macOS/StudioStudyView.swift",
+        "Apps/macOS/StudioStudyNativeReaders.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiStudyTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudyCommandTests.swift",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/GlifiStudySteps.swift",
+        "Apps/macOS/Tests/StudioStudyTests.swift"
+      ],
+      "fixtures": [
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/StudyWorkflow.feature",
+        "Config/Testing/bdd-contracts.json",
+        "Config/Testing/bdd-coverage.json"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-344-studio-documentale.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
     }
   ]
 }

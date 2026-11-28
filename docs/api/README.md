@@ -47,6 +47,10 @@ GlifiCLI ───────────────────► GlifiKit �
   condiviso e gate di parità sono governati da [GS-API-003](03-parita-continua-cli.md)
   e ADR-0036.
 
+Lo studio documentale macOS, con estratti autonomi e conclusioni personali,
+usa le sei operazioni condivise di [GS-API-007](07-studio-documentale.md).
+L'associazione all'indagine non cambia l'autorità scientifica delle annotazioni.
+
 ## 3. Convenzioni Swift
 
 Le API seguono le Swift API Design Guidelines: chiarezza al punto d'uso, nomi

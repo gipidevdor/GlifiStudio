@@ -362,6 +362,7 @@ final class StudioHomeModel {
     var selectedReferenceRevisionIDs: Set<String> = []
 
     #if os(macOS)
+        let study = StudioStudyModel()
         let advancedAnalysis = StudioAdvancedAnalysisModel()
         let corpusMethods = StudioCorpusMethodsModel()
         let statistics = StudioStatisticsModel()
@@ -1452,6 +1453,54 @@ final class StudioHomeModel {
             snapshot = updated
         }
 
+        /// Reopens an externally updated notebook before replacing this scene's verified session.
+        func reloadStudyFromDisk() async throws {
+            let previous = try requireSession()
+            guard let url = projectURL, let projectID = snapshot?.projectID else {
+                throw Self.researchFailure()
+            }
+            let studyOwnership = study.ownershipID
+            let accessGranted = url.startAccessingSecurityScopedResource()
+            var candidate: GlifiStudioProjectSession?
+            var adopted = false
+            do {
+                let opened = try await service.openProject(at: url)
+                candidate = opened
+                let candidateSnapshot = try await opened.snapshot()
+                let candidateState = try await opened.studyState()
+                let heads = try await opened.investigationHeads()
+                try Task.checkCancellation()
+                guard previous === session,
+                    projectURL?.standardizedFileURL == url.standardizedFileURL,
+                    snapshot?.projectID == projectID
+                else { throw CancellationError() }
+                guard candidateSnapshot.projectID == projectID,
+                    candidateState.projectID == projectID
+                else {
+                    throw GlifiStudioFailure(
+                        code: "study.project-mismatch", category: "invalidInput",
+                        operation: "investigate",
+                        retryDisposition: "afterCorrection", retainedState: "unchanged",
+                        messageKey: "failure.study.project-mismatch")
+                }
+                try study.adoptReloadedState(candidateState, expectedOwnership: studyOwnership)
+                let previousScope = securityScopedProjectURL
+                session = opened
+                securityScopedProjectURL = accessGranted ? url : previousScope
+                snapshot = candidateSnapshot
+                investigationHeads = heads
+                adopted = true
+                await previous.close()
+                if accessGranted { previousScope?.stopAccessingSecurityScopedResource() }
+            } catch {
+                if !adopted {
+                    await candidate?.close()
+                    if accessGranted { url.stopAccessingSecurityScopedResource() }
+                }
+                throw error
+            }
+        }
+
         /// Saves the most recent native result and its complete frozen settings.
         func saveCurrentResearchAnalysis(title: String) async throws {
             let active = try requireSession()
@@ -2140,6 +2189,7 @@ final class StudioHomeModel {
 
     private func clearAnalysisState() {
         #if os(macOS)
+            study.reset()
             advancedAnalysis.reset()
             corpusMethods.reset()
             statistics.reset()

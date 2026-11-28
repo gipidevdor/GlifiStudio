@@ -59,7 +59,8 @@ struct GlifiResearchReaderCompatibilityTests {
         _ = try await project.saveResearchState(.init(), expectedRevision: 0)
         let manifest = url.appending(path: "manifest.json")
         let bytes = try Data(contentsOf: manifest)
-        for minimum in [1, 2, 4] {
+        let future = GlifiProjectManifest.readerVersion + 1
+        for minimum in [1, 2, future] {
             var value = try #require(JSONSerialization.jsonObject(with: bytes) as? [String: Any])
             value["minimumReaderVersion"] = minimum
             try JSONSerialization.data(withJSONObject: value, options: [.sortedKeys]).write(
@@ -68,7 +69,8 @@ struct GlifiResearchReaderCompatibilityTests {
                 _ = try GlifiProjectPackage.open(at: url)
                 Issue.record("An incompatible research reader requirement was accepted")
             } catch let failure as GlifiFailure {
-                #expect(failure.category == (minimum == 4 ? .incompatibleVersion : .corruption))
+                #expect(
+                    failure.category == (minimum == future ? .incompatibleVersion : .corruption))
             }
         }
         try bytes.write(to: manifest)

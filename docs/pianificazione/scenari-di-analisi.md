@@ -144,3 +144,12 @@ metadati, preparazione, ripristino e rapporto. Queste sono operazioni di
 persistenza e presentazione: non introducono nuovi kernel numerici o prove
 scientifiche implicite. I test di contratto e i riferimenti normativi sono nella
 matrice; gli esiti realmente osservati sono registrati in GS-VER-343.
+
+## Incremento dello studio documentale
+
+GS-SCN-014 aggiunge le sei operazioni `study-call`, portando il totale a 194
+varianti pubbliche; GS-SCN-015 registra lettura, raccolta, conclusioni e ritorno
+alle revisioni originali. Il registro BDD comprende 18 feature, 820 scenari
+espansi e 3.347 passaggi, conservando invariate le 795 attese precedenti.
+Le nuove fasi nominale, input invalido e cancellazione preventiva non attestano
+l'usabilità visiva; i test nativi e gli audit sono distinti in GS-VER-344.

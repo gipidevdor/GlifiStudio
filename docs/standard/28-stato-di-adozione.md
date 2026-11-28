@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-STD-001-28 |
 | Tipo | Capitolo normativo |
-| Versione | 1.13.17 |
+| Versione | 1.13.18 |
 | Stato | Attivo |
 | Responsabile | Amministratore del repository, provvisorio |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Registro operativo; baseline normativa ancora proposta |
 | Documento padre | [GS-STD-001](../standard-di-progetto.md) |
 
@@ -39,6 +39,14 @@
 | Backup | Remote primario attivo; piano definito | Configurare copia indipendente e provare il ripristino |
 
 Un elemento `Configurato` non è `Verificato` finché non esiste un'esecuzione osservata nell'ambiente dichiarato. La baseline locale viene verificata da `make verify`; protezioni, backup e CI remote richiedono evidenze successive.
+
+## Studio documentale
+
+ADR-0048 e GS-API-007 definiscono estratti, note/conclusioni personali e ritorno
+alla fonte come incremento macOS. GS-UX-001-18 pone lettura e conclusioni al
+centro, con taccuino e confronto progressivi. GS-VER-344 registra gli esiti
+effettivamente osservati; nessuna attestazione automatica di intuitività,
+audit assistivi o gate G4/G5 deriva dalla sola implementazione.
 
 ## Incrementi complementari del 2026-11-21
 

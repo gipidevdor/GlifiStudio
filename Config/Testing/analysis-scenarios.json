@@ -871,6 +871,45 @@
       ],
       "nativeScope": "Editor nativi macOS per dataset, variabili, preparazione e risultati salvati; i kernel restano quelli già inventariati.",
       "headlessOnly": []
+    },
+    {
+      "id": "GS-SCN-014",
+      "command": "study-call",
+      "variants": [
+        "collect",
+        "export",
+        "original",
+        "resolve",
+        "saveState",
+        "state"
+      ],
+      "contracts": [
+        "Gli estratti autonomi conservano revisione, digest, rappresentazione, intervalli UTF8 e citazione originale immutabile.",
+        "Note personali, gruppi, ordine misto e due pin di confronto riaprono con controllo di revisione e identità del progetto.",
+        "Le sei API native e la CLI condividono input, output e failure; letture ed export non aggiungono generazioni.",
+        "Conflitti, riferimenti pendenti, anchor alterate e cancellazione non pubblicano stato parziale."
+      ],
+      "tests": [
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStudyCommandTests.swift",
+          "symbol": "allStudyOperationsHaveNativeParity"
+        },
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiStudyTests.swift",
+          "symbol": "invalidWritesAreAtomic"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioStudyTests.swift",
+          "symbol": "notebookReopensWithConclusionsGroupsComparisonAndExactSourceReturn"
+        }
+      ],
+      "scientificReferences": [
+        "docs/api/07-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md",
+        "docs/adr/0048-studio-documentale-e-taccuino.md"
+      ],
+      "nativeScope": "Studio nativo macOS per lettura originale, estratti e conclusioni personali; nessuna nuova analisi o promozione scientifica.",
+      "headlessOnly": []
     }
   ],
   "workflows": [
@@ -1061,6 +1100,32 @@
       ],
       "limitations": [
         "Gli audit manuali assistivi e le validazioni scientifiche esterne restano distinti dai test automatici."
+      ]
+    },
+    {
+      "id": "GS-SCN-015",
+      "description": "Leggere, raccogliere passaggi e scrivere conclusioni con ritorno alle fonti",
+      "contracts": [
+        "Due estratti originali sostengono una conclusione personale e mantengono note libere, gruppi, ordine misto e confronto.",
+        "Riapertura, risoluzione ed export conservano quote, revisioni, digest, coordinate e byte originali.",
+        "Annotazioni e associazioni manuali non generano Evidence, Finding o passi del planner eseguiti."
+      ],
+      "tests": [
+        {
+          "path": "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiStudyTests.swift",
+          "symbol": "studyReaderAndImmutablePassagesSurviveReopening"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioStudyTests.swift",
+          "symbol": "notebookReopensWithConclusionsGroupsComparisonAndExactSourceReturn"
+        },
+        {
+          "path": "Apps/macOS/Tests/StudioStudyTests.swift",
+          "symbol": "failedReadingAndLateCompletionPreserveValidContext"
+        }
+      ],
+      "limitations": [
+        "La suite headless non certifica rendering, tecnologie assistive o usabilità con persone; gli audit nativi restano distinti."
       ]
     }
   ],

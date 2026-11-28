@@ -205,3 +205,4 @@ preservando i confini del lavoro già in corso nell'altra chat.
 - [GS-DOR-286 — Operatori tipizzati e failure coese](dor-operatori-tipizzati-e-failure-coese.md) — Ready; invarianti del parser, policy Kit e checkpoint MDS/SOM deterministici
 
 - [GS-DOR-342 — Flussi tematici e dendrogrammi esplorabili](dor-flussi-tematici-e-dendrogrammi.md) — Ready per integrazione e verifica; diciannove tag KH nella GUI macOS
+- [GS-DOR-344 — Leggere, raccogliere e concludere](dor-studio-documentale.md) — Primo incremento di studio documentale, provenienza, compatibilità e usabilità

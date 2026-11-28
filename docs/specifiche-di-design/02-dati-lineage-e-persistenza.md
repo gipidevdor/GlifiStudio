@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-DAT-001 |
 | Tipo | Specifica di design di dati e persistenza |
-| Versione | 1.12.2 |
+| Versione | 1.13.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Baseline proposta; prototipo e benchmark richiesti al gate G2 |
 | Riferimenti | GS-DOM-001; GS-MET-001-01; GS-MET-001-02; GS-SEC-001; GS-API-001; ADR-0016; ADR-0019 |
 
@@ -489,3 +489,29 @@ acquisizione usa una nuova SourceRevisionID, anche con SourceID e originale
 identici; il raw object viene deduplicato per digest e le due revisioni restano
 attive secondo il contratto esistente. I vecchi payload, descriptor e nodeID
 restano invariati; il decoder non aggiunge impostazioni V2 agli snapshot V1.
+
+## Stato autorevole di ricerca e di studio
+
+ADR-0047 e ADR-0048 estendono il package con payload versionati, senza cambiare
+contenitore, manifest o schema SQLite. I dati di ricerca di GS-API-004/005/006
+richiedono il lettore 3 al primo commit; il taccuino di GS-API-007 richiede il
+lettore 4 al primo commit. Il minimo non diminuisce su importazioni o altre
+scritture successive. I precedenti progetti conservano 1/2/3 finché non usano
+la nuova capacità; l'apertura non riscrive dati e lettori precedenti rifiutano
+un minimo non supportato.
+
+Le configurazioni autorevoli usano scope vuoto nel descriptor v2, catena di
+dipendenze immutabili e controllo ottimistico della revisione: un nuovo import
+indipendente non le invalida. Lo studio verifica projectID, riferimenti interni,
+revisione della fonte, digest originale ed estratto, contratto di estrazione,
+confini UTF-8 allineati ai caratteri e vera SpanMap. L'identità dell'estratto
+deriva dall'anchor canonica; titoli e note non riscrivono la citazione. Per PDF
+gli intervalli source si riferiscono al testo acquisito e i locatori reali
+alla pagina/risorsa del binario. Non sono coordinate inventate sul file PDF.
+
+Una conclusione personale può collegare più estratti e un'indagine può
+organizzare il taccuino, senza produrre implicitamente Evidence o Finding.
+Ripristino ed export conservano l'identità del progetto e non importano fonti
+assenti. Versioni sconosciute, riferimenti pendenti e corruzione falliscono
+prima dell'uso o del commit. Restano transazioni e recupero generazionale;
+una migrazione incompatibile futura richiede decisione e copia verificata.

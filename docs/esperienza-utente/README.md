@@ -73,6 +73,7 @@ concettuali della specifica non costituiscono automaticamente API pubbliche.
 | GS-UX-001-15 | Checklist G4 accessibilità | [Checklist G4 accessibilità e dispositivi](15-checklist-g4-accessibilita.md) |
 | GS-UX-001-16 | Codifica qualitativa | [Codifica qualitativa](16-codifica-qualitativa.md) |
 | GS-UX-001-17 | Completamento analitico macOS | [Laboratorio di analisi testuale](17-laboratorio-analisi-testuale.md) |
+| GS-UX-001-18 | Lettura e conclusioni personali | [Leggere, raccogliere e concludere](18-studio-documentale.md) |
 
 ## Evoluzione
 

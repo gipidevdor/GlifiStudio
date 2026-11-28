@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-UI-001 |
 | Tipo | Specifica di design dell'interfaccia |
-| Versione | 1.4.0 |
+| Versione | 1.5.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-27 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Baseline proposta; prototipi e studi richiesti |
 | Riferimenti | GS-UX-001; GS-DOM-001; GS-ANA-001; Apple HIG; ADR-0006; ADR-0016; ADR-0034 |
 
@@ -46,6 +46,14 @@ Document browser / Recent projects
 Ricerca globale e object explorer sono accessi trasversali, non nuove gerarchie.
 La route canonica contiene ProjectID, oggetto tipizzato, eventuale subroute e
 selezione. Non conserva indici di riga o nomi mutabili.
+
+Nel primo incremento macOS di ADR-0048, **Studio** è un accesso primario nella
+sidebar del progetto. Una lettura ampia resta dominante; taccuino e confronto
+sono richiesti dalla persona. Il percorso di GS-UX-001-18 mette in sequenza
+lettura, raccolta di passaggi e conclusioni collegate. Organizzazione, provenienza
+tecnica ed esportazione restano accessi secondari. Il lettore nativo conserva
+selezione/copia e offre selezione per frasi o caratteri come alternativa accessibile.
+Lo stato autorevole del taccuino è distinto dalla posizione di lettura per scena.
 
 ## Modello di scena e finestra
 

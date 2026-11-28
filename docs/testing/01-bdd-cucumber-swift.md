@@ -6,12 +6,12 @@
 | --- | --- |
 | Identificatore | GS-BDD-001 |
 | Tipo | Contratto di verifica comportamentale |
-| Versione | 1.4.0 |
+| Versione | 1.5.0 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-28 |
 | Approvazione | Richiesta esplicita di integrare BDD con Cucumber Swift |
-| Riferimenti | ADR-0046; GS-STD-001-16 § 16.5; GS-DOR-332; GS-DOR-341; GS-TST-001; GS-API-003; CMP-332; CMP-341; CMP-337; GS-LIC-003; GS-VER-333; GS-VER-334; GS-VER-341 |
+| Riferimenti | ADR-0046; GS-STD-001-16 § 16.5; GS-DOR-332; GS-DOR-341; GS-TST-001; GS-API-003; CMP-332; CMP-341; CMP-337; GS-LIC-003; GS-API-007; GS-DOR-344; CMP-344; GS-VER-333; GS-VER-334; GS-VER-341 |
 
 ## Esecuzione
 
@@ -39,14 +39,14 @@ il contesto comune. Duplicare, sostituire o riordinare passaggi non soddisfa
 il controllo, anche se conteggio ed esiti restano positivi.
 Il report temporaneo viene rimosso alla fine; gli
 esiti da conservare si registrano nell'evidenza del lotto. L'inventario
-corrente comprende **17 feature, 795 scenari espansi e 3264 passaggi**.
+corrente comprende **18 feature, 820 scenari espansi e 3347 passaggi**.
 
 Il [registro dei contratti](../../Config/Testing/bdd-contracts.json) associa
 ogni scenario a variante, fase, oracolo e provenienza. Il gate completo richiede
-**188 varianti pubbliche × tre fasi** (nominale, input non valido e cancellazione
-preventiva), tutte le **63 fixture testuali originali invariate** e i sei
+**194 varianti pubbliche × tre fasi** (nominale, input non valido e cancellazione
+preventiva), tutte le **63 fixture testuali originali invariate** e i sette
 workflow dichiarati, distinguendo il modello nativo dalla GUI. Le esecuzioni
-nominali aggiuntive portano a 613 casi pubblici; altri 182 scenari riguardano
+nominali aggiuntive portano a 631 casi pubblici; altri 189 scenari riguardano
 workflow, planner, trasporti e regressioni. Hash di matrice, feature e righe,
 indirizzi esatti e nomi ordinati dei passi nel report impediscono associazioni
 obsolete o omissioni. Il controllo verifica le dichiarazioni revisionate;
@@ -84,8 +84,8 @@ ciascun digest: `THIRD_PARTY_NOTICES.txt` con i quattro avvisi MIT BDD,
 `GlifiStudio-LICENSE.txt` con la BSD del progetto e
 `GlifiStudio-THIRD_PARTY_NOTICES.txt` con gli avvisi Core, inclusi Snowball e
 SplitMix. Il test bundle collega anche GlifiKit e GlifiCore e deve conservare
-anche questi testi. Non è uno scenario Gherkin e non aumenta i **795 esempi**
-o i **3264 passaggi** dell'inventario BDD. Il verificatore statico confronta
+anche questi testi. Non è uno scenario Gherkin e non aumenta i **820 esempi**
+o i **3347 passaggi** dell'inventario BDD. Il verificatore statico confronta
 le tre risorse byte per byte con `Config/Licenses/bdd-tools.txt`, `LICENSE`
 e `THIRD_PARTY_NOTICES.txt` alla radice, rispettivamente.
 
@@ -167,7 +167,7 @@ stesso tipo di figlio con escalation, avvio fallito e output oltre limite.
 Le prove di terminazione ricevono il PID dal callback di avvio e usano
 `POSIX_SPAWN_START_SUSPENDED`, senza dipendere dall'avvio della shell o da
 pause arbitrarie. Verificano che `waitpid` restituisca `ECHILD`, confermando
-la raccolta del figlio. Questi test Swift ordinari sono separati dai 795 esempi
+la raccolta del figlio. Questi test Swift ordinari sono separati dai 820 esempi
 Gherkin. Il limite di memoria e il controllo V2 dei metadati sono tracciati
 in GS-VER-341; il ciclo di sviluppo resta tracciato in GS-VER-334.
 
@@ -259,7 +259,7 @@ costituisce il riscontro dell'espansione e dei conteggi effettivamente eseguiti.
 La collezione attraversa i comportamenti di dominio condivisi e la CLI
 macOS: progetto/fonti, ricerca, analisi, persistenza, codifica ed export.
 L'[inventario versionato](../../Config/Testing/bdd-coverage.json) identifica
-**795 esempi espansi e 3264 passaggi** nelle feature correnti; l'evidenza
+**820 esempi espansi e 3347 passaggi** nelle feature correnti; l'evidenza
 del lotto registra gli esiti. La matrice di
 [GS-TST-001](../pianificazione/scenari-di-analisi.md) continua a inventariare
 le varianti pubbliche delle analisi; la parità permanente resta governata da
@@ -284,6 +284,7 @@ le varianti pubbliche delle analisi; la parità permanente resta governata da
 | [PlannerContracts](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/PlannerContracts.feature) | 13 | Tutti gli undici intenti, input invalido e cancellazione |
 | [InterchangeContracts](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/InterchangeContracts.feature) | 36 | JSON, coordinate Unicode e CSV con attese sintetiche originali; fonti e condizioni in GS-LIC-003 |
 | [ResearchWorkflow](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/ResearchWorkflow.feature) | 48 | Tutte le 15 operazioni di ricerca nelle tre fasi, CSV e celle originali, metadati e preparazione italiana, CLARA e HAC con variabili derivate, ripristino e rapporto descrittivo con byte conservati, DTO sopra 1 MiB tramite file bounded e cancellazione della lettura nativa senza mutazioni |
+| [StudyWorkflow](../../Packages/GlifiCore/Tests/GlifiBDDTests/Features/StudyWorkflow.feature) | 25 | Sei operazioni di studio in tre fasi, citazioni UTF8 originali, conclusioni multi-supporto e note libere, gruppi/ordine/confronto, ripristino ed export riproducibile; conflitti, anchor alterate e grafemi spezzati rifiutati |
 
 BDD non attesta tutte le combinazioni di input, comportamento visivo,
 VoiceOver, Voice Control, tastiera, usabilità, prestazioni o correttezza di
