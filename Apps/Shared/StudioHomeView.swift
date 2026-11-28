@@ -57,6 +57,9 @@ struct StudioHomeView: View {
                         section in
                         sidebarRow(section)
                     }
+                    #if os(macOS)
+                        sidebarRow(.study)
+                    #endif
                 }
                 Section("workspace.sidebar.explore") {
                     ForEach([StudioSection.investigation, .query, .coding, .tools]) { section in
@@ -105,6 +108,11 @@ struct StudioHomeView: View {
                         StudioToolCatalogView(onSelect: openTool)
                     #endif
                 #if os(macOS)
+                    case .study:
+                        StudioStudyView(
+                            home: model,
+                            onImportSources: { isSourceImporterPresented = true },
+                            onOpenProject: { isProjectImporterPresented = true })
                     case .textAnalysis:
                         StudioTextAnalysisView(
                             model: model,
@@ -238,7 +246,11 @@ struct StudioHomeView: View {
             guard case let .success(urls) = result, !urls.isEmpty else {
                 return
             }
-            showSection(.sources)
+            #if os(macOS)
+                if selection != .study { showSection(.sources) }
+            #else
+                showSection(.sources)
+            #endif
             Task { await model.importSources(at: urls) }
         }
         .fileImporter(
@@ -380,6 +392,9 @@ struct StudioHomeView: View {
         case .corpus: selection = .sources
         case .query: openQueryEditor()
         case .coding: selection = .coding
+        #if os(macOS)
+            case .study: selection = .study
+        #endif
         case .export: selection = .export
         case .keyness:
             model.selectedIntent = .compareObjects

@@ -10,6 +10,7 @@ enum StudioSection: String, CaseIterable, Identifiable {
     case sources
     case tools
     #if os(macOS)
+        case study
         case textAnalysis
         case advancedAnalysis
         case corpusMethods
@@ -34,6 +35,7 @@ enum StudioSection: String, CaseIterable, Identifiable {
         case .sources: "sidebar.sources"
         case .tools: "workspace.tools.title"
         #if os(macOS)
+            case .study: "study.title"
             case .textAnalysis: "sidebar.text-analysis"
             case .advancedAnalysis: "workspace.advanced.title"
             case .corpusMethods: "core-features.corpus"
@@ -59,6 +61,7 @@ enum StudioSection: String, CaseIterable, Identifiable {
         case .sources: "doc.text"
         case .tools: "square.grid.2x2"
         #if os(macOS)
+            case .study: "book"
             case .textAnalysis: "text.magnifyingglass"
             case .advancedAnalysis: "point.3.connected.trianglepath.dotted"
             case .corpusMethods: "chart.bar.doc.horizontal"
@@ -92,6 +95,7 @@ enum StudioToolGroup: String, CaseIterable, Identifiable {
 enum StudioToolDestination: String, CaseIterable, Identifiable {
     case corpus, query, coding
     #if os(macOS)
+        case study
         case summary, documents, lexicon, termWeights, lexicalLaws
         case mds, som, clara, topics, classification, classifierValidation
         case codingRules, codeCrosstab, distances, correspondence, hierarchical, network
@@ -107,6 +111,7 @@ enum StudioToolDestination: String, CaseIterable, Identifiable {
         switch self {
         case .corpus, .query, .coding: .read
         #if os(macOS)
+            case .study: .read
             case .summary, .documents, .lexicon, .lexicalLaws: .read
             case .termWeights, .codeCrosstab, .distances: .compare
             case .corpusMethods: .compare
@@ -127,6 +132,7 @@ enum StudioToolDestination: String, CaseIterable, Identifiable {
         case .query: "magnifyingglass"
         case .coding: "highlighter"
         #if os(macOS)
+            case .study: "book"
             case .summary: "text.alignleft"
             case .documents: "doc.text.magnifyingglass"
             case .lexicon: "textformat.abc"
@@ -162,6 +168,8 @@ enum StudioToolDestination: String, CaseIterable, Identifiable {
         case .query: "KWIC query concordanze concordance boolean regex"
         case .coding: "codebook annotation annotazioni accordo agreement"
         #if os(macOS)
+            case .study:
+                "studio study lettura reading documenti passaggi estratti taccuino conclusioni"
             case .summary: "riassunto summary estrattivo extractive MMR"
             case .documents: "BM25 ranking documenti documents"
             case .lexicon: "frequenze frequencies n-grammi ngrams MTLD diversità diversity"
@@ -202,7 +210,7 @@ enum StudioToolDestination: String, CaseIterable, Identifiable {
     #if os(macOS)
         var theme: StudioAnalysisTheme {
             switch self {
-            case .corpus, .documents, .query, .summary, .lexicon, .lexicalLaws: .vocabulary
+            case .corpus, .documents, .query, .summary, .lexicon, .lexicalLaws, .study: .vocabulary
             case .relationships, .network: .relationships
             case .keyness, .similarity, .distances, .corpusMethods, .statistics: .comparison
             case .themes, .mds, .som, .clara, .topics, .correspondence, .hierarchical: .structure
@@ -420,7 +428,8 @@ struct StudioToolCatalogView: View {
                         .network, .corpusMethods, .statistics, .evaluation, .operators,
                         .linguistics:
                         return false
-                    case .corpus, .query, .coding, .summary, .documents, .lexicon, .termWeights,
+                    case .corpus, .query, .coding, .study, .summary, .documents, .lexicon,
+                        .termWeights,
                         .lexicalLaws, .keyness, .relationships, .themes, .similarity, .review,
                         .export:
                         break

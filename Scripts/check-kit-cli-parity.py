@@ -33,6 +33,7 @@ DEFAULT_FAMILIES = [
     {"command": "project-call", "enum": "GlifiStudioProjectOperation"},
     {"command": "profile", "enum": "GlifiStudioTextFormat"},
     {"command": "research-call", "enum": "GlifiStudioResearchOperation"},
+    {"command": "study-call", "enum": "GlifiStudioStudyOperation"},
 ]
 
 

@@ -12,6 +12,18 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Studio documentale
+
+- Percorso di lettura con raccolta di passaggi indipendenti dalle categorie,
+  taccuino di conclusioni collegate alle fonti e confronto richiesto dalla persona.
+- Estratti e note persistenti, gruppi e ordine; citazioni immutabili verificate
+  sulla revisione archiviata, originali PDF e ritorno al contesto.
+- Sei operazioni condivise `study-call`, esportazione JSON riproducibile e
+  Markdown leggibile. Il primo salvataggio di studio richiede il lettore 4;
+  progetti precedenti senza studio conservano il proprio requisito e non vengono
+  riscritti all'apertura. Un lettore precedente rifiuta il progetto con studio.
+  Contratti ADR-0048 e GS-API-007; verifiche e limiti in GS-VER-344.
+
 ### Dataset e lavoro di ricerca persistenti
 
 - Importazione CSV/Excel XLSX con anteprima, mapping, tipi e provenienza delle celle;

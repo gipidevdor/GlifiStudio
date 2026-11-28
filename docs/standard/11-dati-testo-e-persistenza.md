@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-STD-001-11 |
 | Tipo | Capitolo normativo |
-| Versione | 0.3.1 |
+| Versione | 0.3.2 |
 | Stato | Proposto |
 | Responsabile | Da assegnare |
 | Ultima modifica | 2026-11-28 |
@@ -91,3 +91,16 @@ Il requisito minimo del lettore è elevato in modo lazy a 3 quando vengono
 committati dati di ricerca. I precedenti requisiti 1 (testo) e 2 (documenti ricchi)
 restano invariati per progetti senza questi dati. Un lettore che ignora la
 preparazione autorevole deve rifiutare tali progetti, non applicare default.
+
+## 11.9 Studio documentale
+
+ADR-0048 autorizza il taccuino persistente di GS-API-007. Gli estratti **DEVONO**
+conservare revisione originale, digest, rappresentazione estratta e intervallo
+UTF-8 verificabile; titoli e note **NON DEVONO** alterare la citazione.
+Conclusioni manuali ed evidenze calcolate **DEVONO** restare distinte.
+Il requisito minimo diventa 4 soltanto al primo commit di studio, senza riscrivere
+i progetti precedenti all'apertura né abbassare requisiti già pubblicati.
+Catena, checksum, riferimenti e limiti **DEVONO** essere verificati prima dell'uso.
+Il recupero resta generazionale; un errore o una cancellazione **NON DEVONO**
+pubblicare uno stato parziale. L'aggiunta di fonti indipendenti **NON DEVE**
+invalidare estratti o conclusioni autorevoli.

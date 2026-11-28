@@ -3273,6 +3273,138 @@
       ]
     },
     {
+      "file": "StudyWorkflow.feature",
+      "expandedScenarios": 25,
+      "sourceSHA256": "99dc22f10010da017c6e76058b577af64a3a7c28239b313f40b44d14f09f35f9",
+      "scenarios": [
+        {
+          "line": 10,
+          "stepCount": 3,
+          "stepsSHA256": "5b407ca204416375111ae99ef1f691352e560ad37ccaaf79c0abe7ab8051b79c"
+        },
+        {
+          "line": 25,
+          "stepCount": 4,
+          "stepsSHA256": "5a92b1059a7a936927aab8060c848dbf816e429cc59c6164b13443dabe6cb7d7"
+        },
+        {
+          "line": 26,
+          "stepCount": 4,
+          "stepsSHA256": "5232a5729106fc2e902c7ba73c9c524433fbcd689255c0ae327ccfd22ed8e6af"
+        },
+        {
+          "line": 27,
+          "stepCount": 4,
+          "stepsSHA256": "c427ebeaf2de6401f49e37034415b5ee66d359e4afaf92bb7c4abb21535fc3aa"
+        },
+        {
+          "line": 28,
+          "stepCount": 4,
+          "stepsSHA256": "f7deb3a536ad2b0a9491e9fbc138ae1ea203f78c65cc7edaf192c7fff8632741"
+        },
+        {
+          "line": 29,
+          "stepCount": 4,
+          "stepsSHA256": "dc98d696d6c42b534b404eaca435035f2651c3e6efb5a34e2c53c438671899e3"
+        },
+        {
+          "line": 39,
+          "stepCount": 3,
+          "stepsSHA256": "0058bd45b7738b66d2a22254f60c73e7a4b5057647fbb9c9ad10c5da28d028a2"
+        },
+        {
+          "line": 40,
+          "stepCount": 3,
+          "stepsSHA256": "fd075b440531b1c31b845d784447b04c774d46be1e1f39ba6e787eb5955da420"
+        },
+        {
+          "line": 41,
+          "stepCount": 3,
+          "stepsSHA256": "5c0d42f0b729b4b8b32661763c7096caf1fa7abb9759c429d12f3a85f3ffca2f"
+        },
+        {
+          "line": 42,
+          "stepCount": 3,
+          "stepsSHA256": "154c16b52ceefdfe8d7ca0ef5c2c853ac527ab0a9c12248631c7ced03afb1f4a"
+        },
+        {
+          "line": 43,
+          "stepCount": 3,
+          "stepsSHA256": "ec632e6d6ea79eeb284fd1a0cba3b60a498c1a1590962e20cd82f2641b17c191"
+        },
+        {
+          "line": 44,
+          "stepCount": 3,
+          "stepsSHA256": "46b24a76cee6602874f812f0a6aeb66a2d5d41c73070a5272d5ca9b691edda70"
+        },
+        {
+          "line": 54,
+          "stepCount": 3,
+          "stepsSHA256": "fc1ab43d6ed251e701ce6d744aa6ec5aa4259357b796fb2d120539ce9be75637"
+        },
+        {
+          "line": 55,
+          "stepCount": 3,
+          "stepsSHA256": "da0c1ca498c8c674ef8e6685420660325471826019bb07d7fd1c7375f86f9981"
+        },
+        {
+          "line": 56,
+          "stepCount": 3,
+          "stepsSHA256": "c008bb2fc69d218291eeb140c43631ff622b91f25ede44e2eb9fd5d533e79766"
+        },
+        {
+          "line": 57,
+          "stepCount": 3,
+          "stepsSHA256": "ec190094e8d037b0b1956f97c74918dbf130b020132c7ccd9798dad33b6f398e"
+        },
+        {
+          "line": 58,
+          "stepCount": 3,
+          "stepsSHA256": "38368fe32fe8ed2a8405a46eabbe61e4b93b5e37b34184b507a74d0824197586"
+        },
+        {
+          "line": 59,
+          "stepCount": 3,
+          "stepsSHA256": "de4f2bdbd8b46dbdf544af3d0019aa69e1b029304ab5780a5d88be9145789ed1"
+        },
+        {
+          "line": 61,
+          "stepCount": 6,
+          "stepsSHA256": "ed3c55e136954170774bd2d9752c6aa2bcbfe561ecbc3c56d65167840012ff9d"
+        },
+        {
+          "line": 70,
+          "stepCount": 3,
+          "stepsSHA256": "918ab52f72c911936bb14d4125049f4659f39640321b391648ba8921153b0f32"
+        },
+        {
+          "line": 76,
+          "stepCount": 3,
+          "stepsSHA256": "0ed02a32018f2f22dd970e4349e0bdfc31b7fca0647eccd49024cb2d58910fd6"
+        },
+        {
+          "line": 82,
+          "stepCount": 3,
+          "stepsSHA256": "ff87e8e618baf333fbe4db1ca338f2e881c9cbe10e51a3f806ea5dd8bca75dc8"
+        },
+        {
+          "line": 88,
+          "stepCount": 3,
+          "stepsSHA256": "faac515b3cc4081fe8791f050e581b5cb17da790bd0c4241d319811cc43cfcbc"
+        },
+        {
+          "line": 94,
+          "stepCount": 3,
+          "stepsSHA256": "de1fc26fab739ece9f532a3a369e0982c4fc58d90ea773ee7e88b9c7e2d566e0"
+        },
+        {
+          "line": 100,
+          "stepCount": 3,
+          "stepsSHA256": "a7a432daa4580aaa73fa64121089045adb649c7147a4398a40cf20e223284660"
+        }
+      ]
+    },
+    {
       "file": "TextAnalysisVariants.feature",
       "expandedScenarios": 148,
       "sourceSHA256": "e04698c721b8546ff0487dd948e3977750709a71d0c5ae258c5adab7b79aca62",

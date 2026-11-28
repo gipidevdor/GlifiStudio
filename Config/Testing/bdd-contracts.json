@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.bdd-contracts",
   "schemaVersion": 1,
-  "sourceMatrixSHA256": "4864184a65b81fa2f7b163f18c71415178efae707bc29092fb6c696f025eb560",
+  "sourceMatrixSHA256": "6f3eaa182935697446c7277196aadb6adecd4476e023bf77e6c7c39c69413705",
   "cases": [
     {
       "caseID": "statistics.alphaInterval.nominal.19",
@@ -15879,6 +15879,389 @@
       "command": "research-call",
       "variant": "savedInvestigation",
       "phase": "pre-cancelled"
+    },
+    {
+      "caseID": "study-call.state.nominal.10",
+      "feature": "StudyWorkflow.feature",
+      "line": 10,
+      "sourceLineSHA256": "6cdd36aea30816337481dd88200ab1003fdb5033975f285461c99c79d40efd92",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "un progetto di studio con una fonte italiana originale",
+        "richiedo lo stato di studio tramite la CLI reale",
+        "lo studio contiene zero estratti note gruppi e selezioni di confronto"
+      ],
+      "oracle": "Stato vuoto project-bound con revisione0, nessun estratto/nota/gruppo/ordine/pin; stessa risposta canonica via API nativa e CLI reale.",
+      "command": "study-call",
+      "variant": "state",
+      "phase": "nominal"
+    },
+    {
+      "caseID": "study-call.saveState.nominal.25",
+      "feature": "StudyWorkflow.feature",
+      "line": 25,
+      "sourceLineSHA256": "a1d86e5c01225065fa6acaecd519be5145e27382eb3f3a3d341047f3f1a8c055",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"saveState\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase nominale",
+        "il risultato di studio coincide con l'API nativa e con i fatti JSON {\"revision\":1,\"notes.$count\":1,\"groups.$count\":1,\"order.$count\":1}",
+        "lo studio riaperto conserva contenuto e provenienza senza nuove scritture"
+      ],
+      "oracle": "Nota libera originale e gruppo vengono salvati a revisione1; ordine misto completo e JSON identico alla API nativa su copia dello stesso progetto.",
+      "command": "study-call",
+      "variant": "saveState",
+      "phase": "nominal"
+    },
+    {
+      "caseID": "study-call.collect.nominal.26",
+      "feature": "StudyWorkflow.feature",
+      "line": 26,
+      "sourceLineSHA256": "624f3d89354ce9fd19cb230f98d39b2bea175d9bf4f162e6210c0e09270cd760",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"collect\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase nominale",
+        "il risultato di studio coincide con l'API nativa e con i fatti JSON {\"revision\":1,\"excerpts.$count\":1,\"excerpts.0.anchor.quote\":\"La casa guarda il fiume.\"}",
+        "lo studio riaperto conserva contenuto e provenienza senza nuove scritture"
+      ],
+      "oracle": "Citazione esatta La casa guarda il fiume. dopo accento ed emoji; rangeUTF8 half-open, hash canonico anchor, digest originali e contratto di estrazione verificati.",
+      "command": "study-call",
+      "variant": "collect",
+      "phase": "nominal"
+    },
+    {
+      "caseID": "study-call.resolve.nominal.27",
+      "feature": "StudyWorkflow.feature",
+      "line": 27,
+      "sourceLineSHA256": "ac7432ddbabc6f0bf34036019d7a9bbd48df1ad8a346fd88ac98afd093db3e72",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"resolve\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase nominale",
+        "il risultato di studio coincide con l'API nativa e con i fatti JSON {\"excerpt.anchor.quote\":\"La casa guarda il fiume.\"}",
+        "lo studio riaperto conserva contenuto e provenienza senza nuove scritture"
+      ],
+      "oracle": "Estratto raccolto e testo completo estratto/originale con intervalli verificati; quote non modificata e stessa risposta nativa/CLI.",
+      "command": "study-call",
+      "variant": "resolve",
+      "phase": "nominal"
+    },
+    {
+      "caseID": "study-call.export.nominal.28",
+      "feature": "StudyWorkflow.feature",
+      "line": 28,
+      "sourceLineSHA256": "9847b7dbc5ef1c32830c26c35eb05d2acfadf9f822bce5bb9b106533f2be1287",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"export\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase nominale",
+        "il risultato di studio coincide con l'API nativa e con i fatti JSON {\"schema\":\"studio.glifi.study-export\",\"schemaVersion\":1,\"state.excerpts.$count\":1}",
+        "lo studio riaperto conserva contenuto e provenienza senza nuove scritture"
+      ],
+      "oracle": "JSON studio.glifi.study-export v1 con projectID e stato completo; byte deterministici uguali a native API, senza nuova generazione.",
+      "command": "study-call",
+      "variant": "export",
+      "phase": "nominal"
+    },
+    {
+      "caseID": "study-call.original.nominal.29",
+      "feature": "StudyWorkflow.feature",
+      "line": 29,
+      "sourceLineSHA256": "f9d20ae36b92a20ceec3c8337c87c140abeea8b5b958ccc0c8df3f349737ce3d",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"original\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase nominale",
+        "il risultato di studio coincide con l'API nativa e con i fatti JSON {\"$has:sourceRevisionID\":true,\"$has:contentDigest\":true}",
+        "lo studio riaperto conserva contenuto e provenienza senza nuove scritture"
+      ],
+      "oracle": "Byte sorgenti UTF8 originali, formato TXT, revisione e SHA256 calcolato indipendentemente, identici nel DTO nativo e CLI.",
+      "command": "study-call",
+      "variant": "original",
+      "phase": "nominal"
+    },
+    {
+      "caseID": "study-call.state.invalid-input.39",
+      "feature": "StudyWorkflow.feature",
+      "line": 39,
+      "sourceLineSHA256": "eae8a3b8ce1ef85c64927ceba37813b54985241429d0770ec9e7122feb5ba42a",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"state\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase JSON-invalido",
+        "lo studio fallisce con codice \"command.unknown-field\" e categoria \"invalidInput\" senza scritture"
+      ],
+      "oracle": "Parametro sconosciuto rifiutato con command.unknown-field/invalidInput; snapshot e notebook invariati.",
+      "command": "study-call",
+      "variant": "state",
+      "phase": "invalid-input"
+    },
+    {
+      "caseID": "study-call.saveState.invalid-input.40",
+      "feature": "StudyWorkflow.feature",
+      "line": 40,
+      "sourceLineSHA256": "72a5e0d590327798ef16c639761c9fe6ccaf160959c20f9e9bce66dfcb909607",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"saveState\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase JSON-invalido",
+        "lo studio fallisce con codice \"command.unknown-field\" e categoria \"invalidInput\" senza scritture"
+      ],
+      "oracle": "Parametro sconosciuto rifiutato con command.unknown-field/invalidInput; snapshot e notebook invariati.",
+      "command": "study-call",
+      "variant": "saveState",
+      "phase": "invalid-input"
+    },
+    {
+      "caseID": "study-call.collect.invalid-input.41",
+      "feature": "StudyWorkflow.feature",
+      "line": 41,
+      "sourceLineSHA256": "73036d9017ce01cea8539019b559d4558e0f2dfef38016922b7e284af022424c",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"collect\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase JSON-invalido",
+        "lo studio fallisce con codice \"command.unknown-field\" e categoria \"invalidInput\" senza scritture"
+      ],
+      "oracle": "Parametro sconosciuto rifiutato con command.unknown-field/invalidInput; snapshot e notebook invariati.",
+      "command": "study-call",
+      "variant": "collect",
+      "phase": "invalid-input"
+    },
+    {
+      "caseID": "study-call.resolve.invalid-input.42",
+      "feature": "StudyWorkflow.feature",
+      "line": 42,
+      "sourceLineSHA256": "3b75ad8fd0d3bc43197702e2d7712d737c49e643be4c856a21215f4878173741",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"resolve\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase JSON-invalido",
+        "lo studio fallisce con codice \"command.unknown-field\" e categoria \"invalidInput\" senza scritture"
+      ],
+      "oracle": "Parametro sconosciuto rifiutato con command.unknown-field/invalidInput; snapshot e notebook invariati.",
+      "command": "study-call",
+      "variant": "resolve",
+      "phase": "invalid-input"
+    },
+    {
+      "caseID": "study-call.export.invalid-input.43",
+      "feature": "StudyWorkflow.feature",
+      "line": 43,
+      "sourceLineSHA256": "ccd166247a23c21bda92959ea392bf1dc7ccfaf36eb777294699f6fe368a8b77",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"export\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase JSON-invalido",
+        "lo studio fallisce con codice \"command.unknown-field\" e categoria \"invalidInput\" senza scritture"
+      ],
+      "oracle": "Parametro sconosciuto rifiutato con command.unknown-field/invalidInput; snapshot e notebook invariati.",
+      "command": "study-call",
+      "variant": "export",
+      "phase": "invalid-input"
+    },
+    {
+      "caseID": "study-call.original.invalid-input.44",
+      "feature": "StudyWorkflow.feature",
+      "line": 44,
+      "sourceLineSHA256": "bdc7935d8a60a1e5e47d6e4ed1508d387ed04aeaa0addf94fa3bb985ffe3619d",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"original\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase JSON-invalido",
+        "lo studio fallisce con codice \"command.unknown-field\" e categoria \"invalidInput\" senza scritture"
+      ],
+      "oracle": "Parametro sconosciuto rifiutato con command.unknown-field/invalidInput; snapshot e notebook invariati.",
+      "command": "study-call",
+      "variant": "original",
+      "phase": "invalid-input"
+    },
+    {
+      "caseID": "study-call.state.pre-cancelled.54",
+      "feature": "StudyWorkflow.feature",
+      "line": 54,
+      "sourceLineSHA256": "eae8a3b8ce1ef85c64927ceba37813b54985241429d0770ec9e7122feb5ba42a",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"state\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase precancellata",
+        "lo studio fallisce con codice \"command.cancelled\" e categoria \"cancelled\" senza scritture"
+      ],
+      "oracle": "Dispatcher già cancellato produce command.cancelled/cancelled, retainedState unchanged e nessun risultato o commit.",
+      "command": "study-call",
+      "variant": "state",
+      "phase": "pre-cancelled"
+    },
+    {
+      "caseID": "study-call.saveState.pre-cancelled.55",
+      "feature": "StudyWorkflow.feature",
+      "line": 55,
+      "sourceLineSHA256": "72a5e0d590327798ef16c639761c9fe6ccaf160959c20f9e9bce66dfcb909607",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"saveState\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase precancellata",
+        "lo studio fallisce con codice \"command.cancelled\" e categoria \"cancelled\" senza scritture"
+      ],
+      "oracle": "Dispatcher già cancellato produce command.cancelled/cancelled, retainedState unchanged e nessun risultato o commit.",
+      "command": "study-call",
+      "variant": "saveState",
+      "phase": "pre-cancelled"
+    },
+    {
+      "caseID": "study-call.collect.pre-cancelled.56",
+      "feature": "StudyWorkflow.feature",
+      "line": 56,
+      "sourceLineSHA256": "73036d9017ce01cea8539019b559d4558e0f2dfef38016922b7e284af022424c",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"collect\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase precancellata",
+        "lo studio fallisce con codice \"command.cancelled\" e categoria \"cancelled\" senza scritture"
+      ],
+      "oracle": "Dispatcher già cancellato produce command.cancelled/cancelled, retainedState unchanged e nessun risultato o commit.",
+      "command": "study-call",
+      "variant": "collect",
+      "phase": "pre-cancelled"
+    },
+    {
+      "caseID": "study-call.resolve.pre-cancelled.57",
+      "feature": "StudyWorkflow.feature",
+      "line": 57,
+      "sourceLineSHA256": "3b75ad8fd0d3bc43197702e2d7712d737c49e643be4c856a21215f4878173741",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"resolve\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase precancellata",
+        "lo studio fallisce con codice \"command.cancelled\" e categoria \"cancelled\" senza scritture"
+      ],
+      "oracle": "Dispatcher già cancellato produce command.cancelled/cancelled, retainedState unchanged e nessun risultato o commit.",
+      "command": "study-call",
+      "variant": "resolve",
+      "phase": "pre-cancelled"
+    },
+    {
+      "caseID": "study-call.export.pre-cancelled.58",
+      "feature": "StudyWorkflow.feature",
+      "line": 58,
+      "sourceLineSHA256": "ccd166247a23c21bda92959ea392bf1dc7ccfaf36eb777294699f6fe368a8b77",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"export\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase precancellata",
+        "lo studio fallisce con codice \"command.cancelled\" e categoria \"cancelled\" senza scritture"
+      ],
+      "oracle": "Dispatcher già cancellato produce command.cancelled/cancelled, retainedState unchanged e nessun risultato o commit.",
+      "command": "study-call",
+      "variant": "export",
+      "phase": "pre-cancelled"
+    },
+    {
+      "caseID": "study-call.original.pre-cancelled.59",
+      "feature": "StudyWorkflow.feature",
+      "line": 59,
+      "sourceLineSHA256": "bdc7935d8a60a1e5e47d6e4ed1508d387ed04aeaa0addf94fa3bb985ffe3619d",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"original\" su citazioni italiane originali",
+        "eseguo la variante di studio in fase precancellata",
+        "lo studio fallisce con codice \"command.cancelled\" e categoria \"cancelled\" senza scritture"
+      ],
+      "oracle": "Dispatcher già cancellato produce command.cancelled/cancelled, retainedState unchanged e nessun risultato o commit.",
+      "command": "study-call",
+      "variant": "original",
+      "phase": "pre-cancelled"
     }
   ],
   "supplementalCases": [
@@ -19655,6 +20038,142 @@
         "la preparazione cancellata conserva il contratto di lettura e lo snapshot"
       ],
       "domain": "research-read-only-cancellation"
+    },
+    {
+      "caseID": "supplemental.StudyWorkflow.61",
+      "feature": "StudyWorkflow.feature",
+      "line": 61,
+      "sourceLineSHA256": "0c917a6b2c71adf46805a69243ec6c4d4a54069d79aa85d0524b2d7ba52df054",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "un progetto di studio con una fonte italiana originale",
+        "raccolgo due passaggi originali e li collego a note gruppi ordine e confronto",
+        "il taccuino conserva citazioni esatte e conclusioni personali distinte dalle fonti",
+        "riapro lo studio e torno alle fonti dei due passaggi",
+        "revisioni digest intervalli e byte originali coincidono con quelli raccolti",
+        "gli export JSON e Markdown sono riproducibili e rispettano l'ordine del taccuino"
+      ],
+      "oracle": "Due citazioni originali, nota con due supporti e nota libera, gruppo e ordine misto con due pin. Riapertura conserva stato; quote/revisioni/SHA256/coordinate UTF8 e byte originali identici. JSON/Markdown ripetibili rispettano l’ordine; nessun nuovo evento cognitivo.",
+      "domain": "studio-full-workflow"
+    },
+    {
+      "caseID": "supplemental.StudyWorkflow.70",
+      "feature": "StudyWorkflow.feature",
+      "line": 70,
+      "sourceLineSHA256": "204c2bafe9c4b1369e01cd5e6c2e05a3b1b9fc03ba7d7a4fd93c41559d89fe68",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"resolve\" su citazioni italiane originali",
+        "tento di salvare una revisione di studio superata",
+        "il conflitto ottimistico conserva lo studio e l'intero progetto"
+      ],
+      "oracle": "Revisione attesa obsoleta produce study.stale-revision/staleArtifact; snapshot, notebook e originale invariati.",
+      "domain": "studio-optimistic-concurrency"
+    },
+    {
+      "caseID": "supplemental.StudyWorkflow.76",
+      "feature": "StudyWorkflow.feature",
+      "line": 76,
+      "sourceLineSHA256": "a6a4207db7b24eec9466be1afa5a3b7d404854da3583a2d55c35b1978ae22b08",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"resolve\" su citazioni italiane originali",
+        "tento di riscrivere citazione digest e coordinate dell'estratto raccolto",
+        "ogni anchor alterata è rifiutata e la fonte originale resta verificata"
+      ],
+      "oracle": "Quote, digest e startUTF8 alterati con identità esistente producono study.immutable-anchor/invalidInput. Una anchor NUOVA con SHA256 valido, stessi digest/range e quote canonicamente equivalente ma con byte distinti (a+U0301+U0323 invece di a+U0323+U0301) deve produrre study.invalid-anchor: nessuna citazione o generazione può cambiare.",
+      "domain": "studio-immutable-anchor"
+    },
+    {
+      "caseID": "supplemental.StudyWorkflow.82",
+      "feature": "StudyWorkflow.feature",
+      "line": 82,
+      "sourceLineSHA256": "87f9b2391a2a7399ea1f84e712c7fddd808c81f0ab6b3b14059392693b2726fd",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"resolve\" su citazioni italiane originali",
+        "propongo riferimenti di studio mancanti o più di due passaggi in confronto",
+        "nessun riferimento invalido modifica estratti note o progetto"
+      ],
+      "oracle": "Ordine incompleto, gruppo o supporto inesistente e excerptID ignoto sono rifiutati con invalidInput e codici study precisi. Tre pin superano il limite di risorse due di GS-API-007 e producono study.resource-limit/insufficientResources. Tutti i rifiuti conservano stato originale e retainedState unchanged.",
+      "domain": "studio-reference-integrity"
+    },
+    {
+      "caseID": "supplemental.StudyWorkflow.88",
+      "feature": "StudyWorkflow.feature",
+      "line": 88,
+      "sourceLineSHA256": "d385afc27cb77b0ea0c6e1bcb9e0ba4951d7660e54b1d176d088420040d1cda8",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"resolve\" su citazioni italiane originali",
+        "ripristino lo stato in un progetto diverso con gli stessi byte sorgenti",
+        "il progetto destinatario rifiuta lo stato e conserva la propria identità"
+      ],
+      "oracle": "Uno stato project-bound non è ammesso in un altro progetto anche con gli stessi byte sorgenti: study.project-mismatch/invalidInput e snapshot destinatario invariato.",
+      "domain": "studio-project-identity"
+    },
+    {
+      "caseID": "supplemental.StudyWorkflow.94",
+      "feature": "StudyWorkflow.feature",
+      "line": 94,
+      "sourceLineSHA256": "cdd54ab908cecd4d428af0c1f4128841fc7c800c582d6cd11e019f2ba0e2adb1",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"resolve\" su citazioni italiane originali",
+        "precancello ciascuna delle sei API native di studio",
+        "ogni cancellazione è tipizzata e non scrive una nuova generazione"
+      ],
+      "oracle": "Tutte le sei API native precancellate producono study.cancelled/cancelled, newRequest, retainedState unchanged; snapshot, notebook e byte originali invariati.",
+      "domain": "studio-native-cancellation"
+    },
+    {
+      "caseID": "supplemental.StudyWorkflow.100",
+      "feature": "StudyWorkflow.feature",
+      "line": 100,
+      "sourceLineSHA256": "f5f1c32b231fafc93a1dfb52713bb8480e8197a842aed596264c907fbddcb9fe",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/07-studio-documentale.md",
+        "docs/pianificazione/dor-studio-documentale.md",
+        "docs/esperienza-utente/18-studio-documentale.md"
+      ],
+      "witnesses": [
+        "la variante di studio \"resolve\" su citazioni italiane originali",
+        "ripristino una nuova anchor con hash valido che divide un emoji composto",
+        "il ripristino rifiuta il grafema spezzato senza modificare lo studio"
+      ],
+      "oracle": "Anchor NUOVA con IDSHA256 canonico e quote Unicode valida U+1F469 dentro emoji composto U+1F469+modifier+ZWJ+microscopio: restore deve study.invalid-anchor/invalidInput senza scritture, sebbene UTF8/range/digest/SpanMap siano altrimenti validi.",
+      "domain": "studio-restored-grapheme-boundary"
     }
   ],
   "workflowCoverage": [
@@ -20301,6 +20820,16 @@
         {
           "feature": "ResearchWorkflow.feature",
           "line": 84
+        }
+      ]
+    },
+    {
+      "id": "GS-SCN-015",
+      "mode": "bdd",
+      "cases": [
+        {
+          "feature": "StudyWorkflow.feature",
+          "line": 61
         }
       ]
     }

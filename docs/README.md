@@ -114,3 +114,4 @@ Le fonti sono materiale di lavoro. In caso di divergenza futura, fanno fede le d
 - [GS-API-004 — Importazione tabellare](api/04-importazione-tabellare.md)
 - [GS-API-005 — Stato di ricerca](api/05-stato-di-ricerca.md)
 - [GS-API-006 — Lavoro avanzato persistente](api/06-lavoro-avanzato-persistente.md)
+- [GS-API-007 — Studio documentale persistente](api/07-studio-documentale.md)

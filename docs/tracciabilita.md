@@ -864,3 +864,12 @@ promossi.
 | Evidenza | Requisiti | Realizzazione e verifica |
 | --- | --- | --- |
 | [GS-VER-343](evidenze/GS-VER-343-flusso-ricerca-persistente.md) | RF-006; RF-008; RF-011; RF-013; RF-015; RF-016; RF-040; RF-087; RQ-058; RQ-060; RQ-063 | Import CSV/XLSX, metadati tipizzati, sottoinsiemi, preparazione condivisa, acquisizione/ripristino ed export avanzato; contratti GS-API-004/005/006, ADR-0047; esiti finali distinti dagli intermedi |
+
+## Studio dei documenti e conclusioni
+
+RF-089 e RQ-028/030/032/033/037/043/047 sono governati da
+[GS-DOR-344](pianificazione/dor-studio-documentale.md), ADR-0048, GS-API-007
+e GS-UX-001-18. La lettura privilegia il contenuto; il taccuino collega conclusioni
+personali a estratti della revisione originale verificata. La nuova annotazione
+manuale non viene promossa a Evidence scientifica. GS-VER-344 registra gli esiti
+osservati di Core/Kit/CLI/macOS; usabilità con utenti e audit assistivi sono distinti.

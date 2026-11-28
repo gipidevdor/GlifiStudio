@@ -227,7 +227,7 @@ public struct GlifiProjectManifest: Codable, Equatable, Sendable {
     /// Current package format major.
     public static let formatVersion = 1
     /// Current reader capability, including authoritative research settings and saved results.
-    public static let readerVersion = 3
+    public static let readerVersion = 4
 
     /// Stable schema identifier encoded in the document.
     public let schema: String
@@ -276,7 +276,8 @@ public struct GlifiProjectManifest: Codable, Equatable, Sendable {
         qualitativeRootDigest: String = GlifiProjectManifest.emptyQualitativeRootDigest,
         qualitativeEventCount: Int = 0,
         containsRichDocuments: Bool = false,
-        containsResearchData: Bool = false
+        containsResearchData: Bool = false,
+        containsStudyData: Bool = false
     ) {
         schema = Self.schema
         schemaVersion =
@@ -286,9 +287,11 @@ public struct GlifiProjectManifest: Codable, Equatable, Sendable {
         self.qualitativeEventCount = qualitativeEventCount > 0 ? qualitativeEventCount : nil
         formatVersion = Self.formatVersion
         minimumReaderVersion =
-            containsResearchData
-            ? 3
-            : (containsRichDocuments ? 2 : Self.formatVersion)
+            containsStudyData
+            ? 4
+            : containsResearchData
+                ? 3
+                : (containsRichDocuments ? 2 : Self.formatVersion)
         self.projectID = projectID
         self.generation = generation
         self.baseGeneration = baseGeneration
@@ -1069,6 +1072,10 @@ private enum GlifiProjectPackageIO {
                 manifest.minimumReaderVersion >= 3
                     || !artifacts.contains(where: requiresResearchReader)
             else { throw corruption("project.research-reader-version-mismatch") }
+            guard
+                manifest.minimumReaderVersion >= 4
+                    || !artifacts.contains(where: requiresStudyReader)
+            else { throw corruption("project.study-reader-version-mismatch") }
             guard artifacts.count == manifest.artifactCount,
                 try artifactRootDigest(artifacts) == manifest.artifactRootDigest
             else {
@@ -1452,6 +1459,10 @@ private enum GlifiProjectPackageIO {
             || family == "studio.glifi.artifact.saved-research-analysis"
     }
 
+    private static func requiresStudyReader(_ artifact: GlifiProjectArtifactRecord) -> Bool {
+        artifact.node.descriptor.artifactTypeIdentifier == "studio.glifi.artifact.study-state"
+    }
+
     /// Builds the manifest and its generation digest from one set of roots, without I/O.
     private static func makeCandidateManifest(
         after snapshot: GlifiProjectSnapshot,
@@ -1461,7 +1472,8 @@ private enum GlifiProjectPackageIO {
         investigationRoot: GenerationRoot? = nil,
         qualitativeRoot: GenerationRoot? = nil,
         containsNewRichDocument: Bool = false,
-        containsResearchData: Bool = false
+        containsResearchData: Bool = false,
+        containsStudyData: Bool = false
     ) throws -> GlifiProjectManifest {
         let sourceRoot =
             sourceRoot
@@ -1510,7 +1522,9 @@ private enum GlifiProjectPackageIO {
                     GlifiDocumentExtractionPersistence.isRich($0.format)
                 },
             containsResearchData: containsResearchData
-                || snapshot.artifacts.contains(where: requiresResearchReader)
+                || snapshot.artifacts.contains(where: requiresResearchReader),
+            containsStudyData: containsStudyData
+                || snapshot.artifacts.contains(where: requiresStudyReader)
         )
     }
 
@@ -1875,7 +1889,8 @@ private enum GlifiProjectPackageIO {
             after: observedSnapshot, generation: transaction.targetGeneration,
             sourceRoot: .init(digest: combinedRoot, count: combinedSources.count),
             artifactRoot: .init(digest: artifactRootDigest, count: artifacts.count),
-            containsResearchData: artifacts.contains(where: requiresResearchReader)
+            containsResearchData: artifacts.contains(where: requiresResearchReader),
+            containsStudyData: artifacts.contains(where: requiresStudyReader)
         )
         let database = try GlifiSQLiteProjectStore.open(at: databaseURL(in: packageURL))
         try database.discardGenerations(after: observedSnapshot.generation)

@@ -64,6 +64,12 @@ enum GlifiCLI {
             let result = try await GlifiStudioEvaluationCommand.execute(
                 json: CLITextAnalysisInput.read(at: url))
             try writeCommandResult(result, request: request)
+        case let .studyCall(projectURL, requestURL):
+            let json = try CLITextAnalysisInput.read(at: requestURL)
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await GlifiStudioStudyCommand.execute(json: json, session: session)
+            }
+            try writeCommandResult(result, request: request)
         case let .researchCall(projectURL, requestURL):
             let json = try CLITextAnalysisInput.read(at: requestURL)
             let result = try await withOpenProject(at: projectURL, service: service) { session in
@@ -1197,6 +1203,7 @@ private struct CLIRequest {
           glifi [--format text|json] [--no-progress] operator --request <richiesta.json>
           glifi [--format text|json] [--no-progress] evaluation --request <richiesta.json>
           glifi [--format text|json] [--no-progress] research-call <progetto.glifi> --request <richiesta.json>
+          glifi [--format text|json] [--no-progress] study-call <progetto.glifi> --request <richiesta.json>
           glifi [--format text|json] [--no-progress] project-call <progetto.glifi> --request <richiesta.json>
           glifi [--format text|json] [--no-progress] profile <fonte> --input-format plainText|markdown|pdf|epub
           glifi [--format text|json] [--no-progress] profile --request <richiesta.json>
@@ -1292,6 +1299,12 @@ private struct CLIRequest {
             case "profile": command = .profileRequest(url)
             default: throw CLIUsageError.invalidArguments
             }
+        } else if remaining.count == 4, remaining[0] == "study-call",
+            remaining[2] == "--request"
+        {
+            command = .studyCall(
+                URL(fileURLWithPath: remaining[1]).standardizedFileURL,
+                URL(fileURLWithPath: remaining[3]).standardizedFileURL)
         } else if remaining.count == 4, remaining[0] == "research-call",
             remaining[2] == "--request"
         {
@@ -1979,6 +1992,7 @@ private enum CLICommand {
     case coreOperator(URL)
     case evaluation(URL)
     case researchCall(URL, URL)
+    case studyCall(URL, URL)
     case projectCall(URL, URL)
     case profile(URL, GlifiStudioTextFormat)
     case profileRequest(URL)
@@ -2032,6 +2046,7 @@ private enum CLICommand {
         case .coreOperator: "operator"
         case .evaluation: "evaluation"
         case .researchCall: "research-call"
+        case .studyCall: "study-call"
         case .projectCall: "project-call"
         case .profile: "profile"
         case .profileRequest: "profile"

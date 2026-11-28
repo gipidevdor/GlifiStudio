@@ -25,5 +25,6 @@ extension Cucumber: @retroactive StepImplementation {
         registerEvaluationVariantSteps()
         registerProjectVariantSteps()
         registerResearchSteps()
+        registerStudySteps()
     }
 }

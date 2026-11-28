@@ -13,6 +13,7 @@ fonti, metodi e passaggi di analisi, per risalire dal risultato al testo origina
 
 - **Organizza le fonti.** Importa TXT, Markdown, PDF ed EPUB in un progetto `.glifi`, conservando gli originali.
 - **Esplora i testi.** Cerca parole e passaggi nel loro contesto, analizza le raccolte e confrontale.
+- **Studia i documenti.** Raccogli passaggi, torna alla fonte e scrivi conclusioni collegate in un taccuino persistente; apri il confronto quando serve.
 - **Condividi il lavoro.** Esporta risultati e riferimenti in PDF/A-2u, Markdown, CSV e JSON.
 
 Il laboratorio macOS aggiunge riassunti estrattivi, ricerca BM25, frequenze,
@@ -50,8 +51,8 @@ nelle [evidenze](docs/evidenze/README.md). La
 [baseline di prodotto](docs/specifiche-di-design/10-product-baseline-mvp.md)
 definisce il perimetro della versione 0.1.
 
-La suite [BDD](docs/testing/01-bdd-cucumber-swift.md) associa tutte le 188 varianti
-pubbliche a tre fasi e verifica 795 scenari espansi. Le fonti web consultate e
+La suite [BDD](docs/testing/01-bdd-cucumber-swift.md) associa tutte le 194 varianti
+pubbliche a tre fasi e verifica 820 scenari espansi. Le fonti web consultate e
 le condizioni del loro uso sono nel [registro di provenienza](docs/testing/02-provenienza-scenari.md).
 La copertura dichiarata resta distinta dagli audit interattivi e assistivi.
 

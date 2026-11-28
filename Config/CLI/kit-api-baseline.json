@@ -25,6 +25,10 @@
     {
       "command": "research-call",
       "enum": "GlifiStudioResearchOperation"
+    },
+    {
+      "command": "study-call",
+      "enum": "GlifiStudioStudyOperation"
     }
   ],
   "symbols": [
@@ -30285,6 +30289,124 @@
       "reason": "Session resource lifecycle. Every CLI project command opens and closes its own session."
     },
     {
+      "identifier": "s:8GlifiKit0A20StudioProjectSessionC19collectStudyExcerpt16sourceRevisionID9selection5title05groupK008expectedJ0AA0acG5StateVSS_AA0aC16PassageSelectionOS2SSgSitYaKF",
+      "kind": "swift.method",
+      "path": [
+        "GlifiStudioProjectSession",
+        "collectStudyExcerpt(sourceRevisionID:selection:title:groupID:expectedRevision:)"
+      ],
+      "declaration": "func collectStudyExcerpt(sourceRevisionID: String, selection: GlifiStudioPassageSelection, title: String, groupID: String? = nil, expectedRevision: Int) async throws -> GlifiStudioStudyState",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "sourceRevisionID",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "sourceRevisionID"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "selection",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "selection"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "GlifiStudioPassageSelection",
+                "preciseIdentifier": "s:8GlifiKit0A22StudioPassageSelectionO"
+              }
+            ]
+          },
+          {
+            "name": "title",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "title"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "groupID",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "groupID"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              },
+              {
+                "kind": "text",
+                "spelling": "?"
+              }
+            ]
+          },
+          {
+            "name": "expectedRevision",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "expectedRevision"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "GlifiStudioStudyState",
+            "preciseIdentifier": "s:8GlifiKit0A16StudioStudyStateV"
+          }
+        ]
+      },
+      "role": "operation",
+      "commands": [
+        "study-call"
+      ]
+    },
+    {
       "identifier": "s:8GlifiKit0A20StudioProjectSessionC18compareGroupMetric6groups6metric7options13corpusOptionsAA0acgH6ResultVSaySaySSGG_AA0ac8DocumentH0OAA0acg10ComparisonM0VAA0ac14CorpusAnalysisM0VtYaKF",
       "kind": "swift.method",
       "path": [
@@ -31145,6 +31267,48 @@
       ]
     },
     {
+      "identifier": "s:8GlifiKit0A20StudioProjectSessionC11exportStudy6format10Foundation4DataVAA0acG12ExportFormatO_tYaKF",
+      "kind": "swift.method",
+      "path": [
+        "GlifiStudioProjectSession",
+        "exportStudy(format:)"
+      ],
+      "declaration": "func exportStudy(format: GlifiStudioStudyExportFormat = .json) async throws -> Data",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "format",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "format"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "GlifiStudioStudyExportFormat",
+                "preciseIdentifier": "s:8GlifiKit0A23StudioStudyExportFormatO"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Data",
+            "preciseIdentifier": "s:10Foundation4DataV"
+          }
+        ]
+      },
+      "role": "operation",
+      "commands": [
+        "study-call"
+      ]
+    },
+    {
       "identifier": "s:8GlifiKit0A20StudioProjectSessionC19exportVisualization_2toAA0aC19VisualExportReceiptVAA0acG0V_10Foundation3URLVtYaKF",
       "kind": "swift.method",
       "path": [
@@ -31922,6 +32086,48 @@
       ]
     },
     {
+      "identifier": "s:8GlifiKit0A20StudioProjectSessionC19resolveStudyExcerpt9excerptIDAA0acg8ResolvedH0VSS_tYaKF",
+      "kind": "swift.method",
+      "path": [
+        "GlifiStudioProjectSession",
+        "resolveStudyExcerpt(excerptID:)"
+      ],
+      "declaration": "func resolveStudyExcerpt(excerptID: String) async throws -> GlifiStudioStudyResolvedExcerpt",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "excerptID",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "excerptID"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "GlifiStudioStudyResolvedExcerpt",
+            "preciseIdentifier": "s:8GlifiKit0A26StudioStudyResolvedExcerptV"
+          }
+        ]
+      },
+      "role": "operation",
+      "commands": [
+        "study-call"
+      ]
+    },
+    {
       "identifier": "s:8GlifiKit0A20StudioProjectSessionC28reviseInvestigationSelectionyAA0acG6ResultVAA0acgH7RequestVYaKF",
       "kind": "swift.method",
       "path": [
@@ -32294,6 +32500,66 @@
       ]
     },
     {
+      "identifier": "s:8GlifiKit0A20StudioProjectSessionC14saveStudyState_16expectedRevisionAA0acgH0VAG_SitYaKF",
+      "kind": "swift.method",
+      "path": [
+        "GlifiStudioProjectSession",
+        "saveStudyState(_:expectedRevision:)"
+      ],
+      "declaration": "@discardableResult func saveStudyState(_ state: GlifiStudioStudyState, expectedRevision: Int) async throws -> GlifiStudioStudyState",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "state",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "state"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "GlifiStudioStudyState",
+                "preciseIdentifier": "s:8GlifiKit0A16StudioStudyStateV"
+              }
+            ]
+          },
+          {
+            "name": "expectedRevision",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "expectedRevision"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "GlifiStudioStudyState",
+            "preciseIdentifier": "s:8GlifiKit0A16StudioStudyStateV"
+          }
+        ]
+      },
+      "role": "operation",
+      "commands": [
+        "study-call"
+      ]
+    },
+    {
       "identifier": "s:8GlifiKit0A20StudioProjectSessionC13savedAnalysesSayAA0aC13SavedAnalysisVGyYaKF",
       "kind": "swift.method",
       "path": [
@@ -32478,6 +32744,70 @@
       "role": "operation",
       "commands": [
         "project-call source-text"
+      ]
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioProjectSessionC13studyOriginal16sourceRevisionIDAA0ac5StudyG0VSS_tYaKF",
+      "kind": "swift.method",
+      "path": [
+        "GlifiStudioProjectSession",
+        "studyOriginal(sourceRevisionID:)"
+      ],
+      "declaration": "func studyOriginal(sourceRevisionID: String) async throws -> GlifiStudioStudyOriginal",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "sourceRevisionID",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "sourceRevisionID"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "GlifiStudioStudyOriginal",
+            "preciseIdentifier": "s:8GlifiKit0A19StudioStudyOriginalV"
+          }
+        ]
+      },
+      "role": "operation",
+      "commands": [
+        "study-call"
+      ]
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioProjectSessionC10studyStateAA0ac5StudyG0VyYaKF",
+      "kind": "swift.method",
+      "path": [
+        "GlifiStudioProjectSession",
+        "studyState()"
+      ],
+      "declaration": "func studyState() async throws -> GlifiStudioStudyState",
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "GlifiStudioStudyState",
+            "preciseIdentifier": "s:8GlifiKit0A16StudioStudyStateV"
+          }
+        ]
+      },
+      "role": "operation",
+      "commands": [
+        "study-call"
       ]
     },
     {
@@ -38855,6 +39185,1770 @@
       },
       "role": "infrastructure",
       "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyAnchorV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioStudyAnchor"
+      ],
+      "declaration": "struct GlifiStudioStudyAnchor",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyAnchorV7endUTF8Sivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyAnchor",
+        "endUTF8"
+      ],
+      "declaration": "let endUTF8: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyAnchorV28extractionContractIdentifierSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyAnchor",
+        "extractionContractIdentifier"
+      ],
+      "declaration": "let extractionContractIdentifier: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyAnchorV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyAnchor",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": any "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyAnchorV16sourceRevisionID0F13ContentDigest24representationIdentifier0kJ0018extractionContractL09startUTF803endP05quote0F6RangesACSS_S4SS2iSSSayAA0acD5RangeVGtcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyAnchor",
+        "init(sourceRevisionID:sourceContentDigest:representationIdentifier:representationDigest:extractionContractIdentifier:startUTF8:endUTF8:quote:sourceRanges:)"
+      ],
+      "declaration": "init(sourceRevisionID: String, sourceContentDigest: String, representationIdentifier: String = \"extracted-utf8-v1\", representationDigest: String, extractionContractIdentifier: String, startUTF8: Int, endUTF8: Int, quote: String, sourceRanges: [GlifiStudioStudyRange])",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "sourceRevisionID",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "sourceRevisionID"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "sourceContentDigest",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "sourceContentDigest"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "representationIdentifier",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "representationIdentifier"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "representationDigest",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "representationDigest"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "extractionContractIdentifier",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "extractionContractIdentifier"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "startUTF8",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "startUTF8"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "endUTF8",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "endUTF8"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "quote",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "quote"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "sourceRanges",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "sourceRanges"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "GlifiStudioStudyRange",
+                "preciseIdentifier": "s:8GlifiKit0A16StudioStudyRangeV"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyAnchorV5quoteSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyAnchor",
+        "quote"
+      ],
+      "declaration": "let quote: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyAnchorV20representationDigestSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyAnchor",
+        "representationDigest"
+      ],
+      "declaration": "let representationDigest: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyAnchorV24representationIdentifierSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyAnchor",
+        "representationIdentifier"
+      ],
+      "declaration": "let representationIdentifier: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyAnchorV19sourceContentDigestSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyAnchor",
+        "sourceContentDigest"
+      ],
+      "declaration": "let sourceContentDigest: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyAnchorV12sourceRangesSayAA0acD5RangeVGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyAnchor",
+        "sourceRanges"
+      ],
+      "declaration": "let sourceRanges: [GlifiStudioStudyRange]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyAnchorV16sourceRevisionIDSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyAnchor",
+        "sourceRevisionID"
+      ],
+      "declaration": "let sourceRevisionID: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyAnchorV9startUTF8Sivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyAnchor",
+        "startUTF8"
+      ],
+      "declaration": "let startUTF8: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioStudyCommandO",
+      "kind": "swift.enum",
+      "path": [
+        "GlifiStudioStudyCommand"
+      ],
+      "declaration": "enum GlifiStudioStudyCommand",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioStudyCommandO7execute4json7sessionAA0acE6ResultV10Foundation4DataV_AA0aC14ProjectSessionCtYaAA0aC7FailureVYKFZ",
+      "kind": "swift.type.method",
+      "path": [
+        "GlifiStudioStudyCommand",
+        "execute(json:session:)"
+      ],
+      "declaration": "@concurrent static func execute(json: Data, session: GlifiStudioProjectSession) async throws(GlifiStudioFailure) -> GlifiStudioCommandResult",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "json",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "json"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Data",
+                "preciseIdentifier": "s:10Foundation4DataV"
+              }
+            ]
+          },
+          {
+            "name": "session",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "session"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "GlifiStudioProjectSession",
+                "preciseIdentifier": "s:8GlifiKit0A20StudioProjectSessionC"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "GlifiStudioCommandResult",
+            "preciseIdentifier": "s:8GlifiKit0A19StudioCommandResultV"
+          }
+        ]
+      },
+      "role": "operation",
+      "commands": [
+        "study-call"
+      ]
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioStudyCommandO6schemaSSvpZ",
+      "kind": "swift.type.property",
+      "path": [
+        "GlifiStudioStudyCommand",
+        "schema"
+      ],
+      "declaration": "static let schema: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioStudyCommandO13schemaVersionSivpZ",
+      "kind": "swift.type.property",
+      "path": [
+        "GlifiStudioStudyCommand",
+        "schemaVersion"
+      ],
+      "declaration": "static let schemaVersion: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioStudyExcerptV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioStudyExcerpt"
+      ],
+      "declaration": "struct GlifiStudioStudyExcerpt",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioStudyExcerptV6anchorAA0acD6AnchorVvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyExcerpt",
+        "anchor"
+      ],
+      "declaration": "let anchor: GlifiStudioStudyAnchor",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioStudyExcerptV7groupIDSSSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyExcerpt",
+        "groupID"
+      ],
+      "declaration": "var groupID: String?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioStudyExcerptV2idSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyExcerpt",
+        "id"
+      ],
+      "declaration": "let id: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioStudyExcerptV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyExcerpt",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": any "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioStudyExcerptV2id5title7groupID6anchorACSS_S2SSgAA0acD6AnchorVtcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyExcerpt",
+        "init(id:title:groupID:anchor:)"
+      ],
+      "declaration": "init(id: String, title: String, groupID: String? = nil, anchor: GlifiStudioStudyAnchor)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "id",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "id"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "title",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "title"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "groupID",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "groupID"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              },
+              {
+                "kind": "text",
+                "spelling": "?"
+              }
+            ]
+          },
+          {
+            "name": "anchor",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "anchor"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "GlifiStudioStudyAnchor",
+                "preciseIdentifier": "s:8GlifiKit0A17StudioStudyAnchorV"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A18StudioStudyExcerptV5titleSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyExcerpt",
+        "title"
+      ],
+      "declaration": "var title: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyExportV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioStudyExport"
+      ],
+      "declaration": "struct GlifiStudioStudyExport",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyExportV6decode4jsonAC10Foundation4DataV_tAA0aC7FailureVYKFZ",
+      "kind": "swift.type.method",
+      "path": [
+        "GlifiStudioStudyExport",
+        "decode(json:)"
+      ],
+      "declaration": "static func decode(json: Data) throws(GlifiStudioFailure) -> GlifiStudioStudyExport",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "json",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "json"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Data",
+                "preciseIdentifier": "s:10Foundation4DataV"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "GlifiStudioStudyExport",
+            "preciseIdentifier": "s:8GlifiKit0A17StudioStudyExportV"
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Strict, bounded construction of a versioned restoration DTO; no project I/O, source resolution or mutation. Project restoration uses study-call/save-state."
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyExportV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyExport",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": any "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyExportV5stateAcA0acD5StateV_tcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyExport",
+        "init(state:)"
+      ],
+      "declaration": "init(state: GlifiStudioStudyState)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "state",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "state"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "GlifiStudioStudyState",
+                "preciseIdentifier": "s:8GlifiKit0A16StudioStudyStateV"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyExportV9projectIDSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyExport",
+        "projectID"
+      ],
+      "declaration": "let projectID: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyExportV6schemaSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyExport",
+        "schema"
+      ],
+      "declaration": "let schema: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyExportV13schemaVersionSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyExport",
+        "schemaVersion"
+      ],
+      "declaration": "let schemaVersion: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A17StudioStudyExportV5stateAA0acD5StateVvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyExport",
+        "state"
+      ],
+      "declaration": "let state: GlifiStudioStudyState",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioStudyExportFormatO",
+      "kind": "swift.enum",
+      "path": [
+        "GlifiStudioStudyExportFormat"
+      ],
+      "declaration": "enum GlifiStudioStudyExportFormat",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioStudyExportFormatO8rawValueACSgSS_tcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyExportFormat",
+        "init(rawValue:)"
+      ],
+      "declaration": "init?(rawValue: String)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "rawValue",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "rawValue"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioStudyExportFormatO4jsonyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioStudyExportFormat",
+        "json"
+      ],
+      "declaration": "case json",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A23StudioStudyExportFormatO8markdownyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioStudyExportFormat",
+        "markdown"
+      ],
+      "declaration": "case markdown",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyGroupV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioStudyGroup"
+      ],
+      "declaration": "struct GlifiStudioStudyGroup",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyGroupV2idSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyGroup",
+        "id"
+      ],
+      "declaration": "let id: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyGroupV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyGroup",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": any "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyGroupV2id5titleACSS_SStcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyGroup",
+        "init(id:title:)"
+      ],
+      "declaration": "init(id: String, title: String)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "id",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "id"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "title",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "title"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyGroupV5titleSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyGroup",
+        "title"
+      ],
+      "declaration": "var title: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioStudyNoteV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioStudyNote"
+      ],
+      "declaration": "struct GlifiStudioStudyNote",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioStudyNoteV10excerptIDsSaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyNote",
+        "excerptIDs"
+      ],
+      "declaration": "var excerptIDs: [String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioStudyNoteV7groupIDSSSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyNote",
+        "groupID"
+      ],
+      "declaration": "var groupID: String?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioStudyNoteV2idSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyNote",
+        "id"
+      ],
+      "declaration": "let id: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioStudyNoteV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyNote",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": any "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioStudyNoteV2id5title4text7groupID10excerptIDsACSS_S3SSgSaySSGtcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyNote",
+        "init(id:title:text:groupID:excerptIDs:)"
+      ],
+      "declaration": "init(id: String, title: String, text: String, groupID: String? = nil, excerptIDs: [String] = [])",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "id",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "id"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "title",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "title"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "text",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "text"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "groupID",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "groupID"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              },
+              {
+                "kind": "text",
+                "spelling": "?"
+              }
+            ]
+          },
+          {
+            "name": "excerptIDs",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "excerptIDs"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioStudyNoteV4textSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyNote",
+        "text"
+      ],
+      "declaration": "var text: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A15StudioStudyNoteV5titleSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyNote",
+        "title"
+      ],
+      "declaration": "var title: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioStudyOperationO",
+      "kind": "swift.enum",
+      "path": [
+        "GlifiStudioStudyOperation"
+      ],
+      "declaration": "enum GlifiStudioStudyOperation",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioStudyOperationO7collectyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioStudyOperation",
+        "collect"
+      ],
+      "declaration": "case collect",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioStudyOperationO6exportyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioStudyOperation",
+        "export"
+      ],
+      "declaration": "case export",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioStudyOperationO8rawValueACSgSS_tcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyOperation",
+        "init(rawValue:)"
+      ],
+      "declaration": "init?(rawValue: String)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "rawValue",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "rawValue"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioStudyOperationO8originalyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioStudyOperation",
+        "original"
+      ],
+      "declaration": "case original",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioStudyOperationO7resolveyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioStudyOperation",
+        "resolve"
+      ],
+      "declaration": "case resolve",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioStudyOperationO9saveStateyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioStudyOperation",
+        "saveState"
+      ],
+      "declaration": "case saveState",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A20StudioStudyOperationO5stateyA2CmF",
+      "kind": "swift.enum.case",
+      "path": [
+        "GlifiStudioStudyOperation",
+        "state"
+      ],
+      "declaration": "case state",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A19StudioStudyOriginalV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioStudyOriginal"
+      ],
+      "declaration": "struct GlifiStudioStudyOriginal",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A19StudioStudyOriginalV13contentDigestSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyOriginal",
+        "contentDigest"
+      ],
+      "declaration": "let contentDigest: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A19StudioStudyOriginalV4data10Foundation4DataVvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyOriginal",
+        "data"
+      ],
+      "declaration": "let data: Data",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A19StudioStudyOriginalV6formatAA0aC10TextFormatOvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyOriginal",
+        "format"
+      ],
+      "declaration": "let format: GlifiStudioTextFormat",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A19StudioStudyOriginalV16sourceRevisionIDSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyOriginal",
+        "sourceRevisionID"
+      ],
+      "declaration": "let sourceRevisionID: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyRangeV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioStudyRange"
+      ],
+      "declaration": "struct GlifiStudioStudyRange",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyRangeV7endUTF8Sivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyRange",
+        "endUTF8"
+      ],
+      "declaration": "let endUTF8: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyRangeV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyRange",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": any "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyRangeV9startUTF803endG0ACSi_Sitcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyRange",
+        "init(startUTF8:endUTF8:)"
+      ],
+      "declaration": "init(startUTF8: Int, endUTF8: Int)",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "startUTF8",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "startUTF8"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "endUTF8",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "endUTF8"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyRangeV9startUTF8Sivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyRange",
+        "startUTF8"
+      ],
+      "declaration": "let startUTF8: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioStudyResolvedExcerptV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioStudyResolvedExcerpt"
+      ],
+      "declaration": "struct GlifiStudioStudyResolvedExcerpt",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioStudyResolvedExcerptV8documentAA0aC18DocumentProvenanceVSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyResolvedExcerpt",
+        "document"
+      ],
+      "declaration": "let document: GlifiStudioDocumentProvenance?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioStudyResolvedExcerptV7excerptAA0acdF0Vvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyResolvedExcerpt",
+        "excerpt"
+      ],
+      "declaration": "let excerpt: GlifiStudioStudyExcerpt",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioStudyResolvedExcerptV13extractedTextSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyResolvedExcerpt",
+        "extractedText"
+      ],
+      "declaration": "let extractedText: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioStudyResolvedExcerptV12sourceRangesSayAA0acD5RangeVGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyResolvedExcerpt",
+        "sourceRanges"
+      ],
+      "declaration": "let sourceRanges: [GlifiStudioStudyRange]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A26StudioStudyResolvedExcerptV10sourceTextSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyResolvedExcerpt",
+        "sourceText"
+      ],
+      "declaration": "let sourceText: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyStateV",
+      "kind": "swift.struct",
+      "path": [
+        "GlifiStudioStudyState"
+      ],
+      "declaration": "struct GlifiStudioStudyState",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyStateV20comparisonExcerptIDsSaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyState",
+        "comparisonExcerptIDs"
+      ],
+      "declaration": "var comparisonExcerptIDs: [String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyStateV8excerptsSayAA0acD7ExcerptVGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyState",
+        "excerpts"
+      ],
+      "declaration": "var excerpts: [GlifiStudioStudyExcerpt]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyStateV6groupsSayAA0acD5GroupVGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyState",
+        "groups"
+      ],
+      "declaration": "var groups: [GlifiStudioStudyGroup]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyStateV4fromACs7Decoder_p_tKcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyState",
+        "init(from:)"
+      ],
+      "declaration": "init(from decoder: any Decoder) throws",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "from",
+            "internalName": "decoder",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "decoder"
+              },
+              {
+                "kind": "text",
+                "spelling": ": any "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Decoder",
+                "preciseIdentifier": "s:s7DecoderP"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyStateV9projectID8revision013investigationG08excerpts5notes6groups5order20comparisonExcerptIDsACSS_SiSSSgSayAA0acdO0VGSayAA0acD4NoteVGSayAA0acD5GroupVGSaySSGAVtcfc",
+      "kind": "swift.init",
+      "path": [
+        "GlifiStudioStudyState",
+        "init(projectID:revision:investigationID:excerpts:notes:groups:order:comparisonExcerptIDs:)"
+      ],
+      "declaration": "init(projectID: String, revision: Int = 0, investigationID: String? = nil, excerpts: [GlifiStudioStudyExcerpt] = [], notes: [GlifiStudioStudyNote] = [], groups: [GlifiStudioStudyGroup] = [], order: [String] = [], comparisonExcerptIDs: [String] = [])",
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "projectID",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "projectID"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          },
+          {
+            "name": "revision",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "revision"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "investigationID",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "investigationID"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              },
+              {
+                "kind": "text",
+                "spelling": "?"
+              }
+            ]
+          },
+          {
+            "name": "excerpts",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "excerpts"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "GlifiStudioStudyExcerpt",
+                "preciseIdentifier": "s:8GlifiKit0A18StudioStudyExcerptV"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          },
+          {
+            "name": "notes",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "notes"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "GlifiStudioStudyNote",
+                "preciseIdentifier": "s:8GlifiKit0A15StudioStudyNoteV"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          },
+          {
+            "name": "groups",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "groups"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "GlifiStudioStudyGroup",
+                "preciseIdentifier": "s:8GlifiKit0A16StudioStudyGroupV"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          },
+          {
+            "name": "order",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "order"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          },
+          {
+            "name": "comparisonExcerptIDs",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "comparisonExcerptIDs"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Data or runtime object construction."
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyStateV15investigationIDSSSgvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyState",
+        "investigationID"
+      ],
+      "declaration": "var investigationID: String?",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyStateV5notesSayAA0acD4NoteVGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyState",
+        "notes"
+      ],
+      "declaration": "var notes: [GlifiStudioStudyNote]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyStateV5orderSaySSGvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyState",
+        "order"
+      ],
+      "declaration": "var order: [String]",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyStateV9projectIDSSvp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyState",
+        "projectID"
+      ],
+      "declaration": "let projectID: String",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyStateV8revisionSivp",
+      "kind": "swift.property",
+      "path": [
+        "GlifiStudioStudyState",
+        "revision"
+      ],
+      "declaration": "var revision: Int",
+      "role": "data"
+    },
+    {
+      "identifier": "s:8GlifiKit0A16StudioStudyStateV8validateyyAA0aC7FailureVYKF",
+      "kind": "swift.method",
+      "path": [
+        "GlifiStudioStudyState",
+        "validate()"
+      ],
+      "declaration": "func validate() throws(GlifiStudioFailure)",
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "role": "infrastructure",
+      "reason": "Pure validation of DTO bounds, identities and internal references; authoritative source verification and mutations use study-call."
     },
     {
       "identifier": "s:8GlifiKit0A19StudioSummaryBudgetV",

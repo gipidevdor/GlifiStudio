@@ -41,6 +41,7 @@ planner o formato `.glifi`; uno stato `candidate` rimane tale.
 | `glifi operator --request <file.json>` | Lo stesso `GlifiStudioCoreOperatorRequest` Codable di `GlifiStudioCoreOperators.execute` |
 | `glifi evaluation --request <file.json>` | `GlifiStudioEvaluationCommand.execute(json:)`, per valutazione linguistica, tempo e primitive lessicali |
 | `glifi project-call <progetto.glifi> --request <file.json>` | `GlifiStudioProjectCommand.execute(json:session:)`, con la sessione aperta sul progetto indicato |
+| `glifi study-call <progetto.glifi> --request <file.json>` | `GlifiStudioStudyCommand.execute(json:session:)`; sei operazioni di studio secondo [GS-API-007](07-studio-documentale.md) |
 | `glifi profile --request <file.json>` | `GlifiStudioService.profileText(json:)`, da `GlifiStudioProfileRequest` |
 
 È disponibile anche l'alias diretto

@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B2E13E1400EC6C78107FAF03 /* StudioStudyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 837A3B2EB1604E5277DBC429 /* StudioStudyModel.swift */; };
+		594879C96A967AE0C3E4677B /* StudioStudyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 837A3B2EB1604E5277DBC429 /* StudioStudyModel.swift */; };
+		E4523574BD780642FF52A211 /* StudioStudyNativeReaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D3365944031E9776D9CF4F /* StudioStudyNativeReaders.swift */; };
+		024989A819DBA17010EF0C2B /* StudioStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCAE6AA4FBB699A7F501F2E /* StudioStudyView.swift */; };
+		B77F85D4B3D64814F453AB85 /* StudioStudyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE65BA7EC073868521EDA79 /* StudioStudyTests.swift */; };
 		B33900000000000000000001 /* StudioLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33900000000000000000001 /* StudioLocalization.swift */; };
 		B33900000000000000000002 /* StudioLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33900000000000000000001 /* StudioLocalization.swift */; };
 		B33900000000000000000003 /* StudioLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33900000000000000000001 /* StudioLocalization.swift */; };
@@ -115,6 +120,10 @@
 /* End PBXBuildFile section for macOS tests */
 
 /* Begin PBXFileReference section */
+		837A3B2EB1604E5277DBC429 /* StudioStudyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioStudyModel.swift; sourceTree = "<group>"; };
+		72D3365944031E9776D9CF4F /* StudioStudyNativeReaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioStudyNativeReaders.swift; sourceTree = "<group>"; };
+		DBCAE6AA4FBB699A7F501F2E /* StudioStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioStudyView.swift; sourceTree = "<group>"; };
+		1FE65BA7EC073868521EDA79 /* StudioStudyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioStudyTests.swift; sourceTree = "<group>"; };
 		A33900000000000000000001 /* StudioLocalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioLocalization.swift; sourceTree = "<group>"; };
 		A32100000000000000000001 /* THIRD_PARTY_NOTICES.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = THIRD_PARTY_NOTICES.txt; sourceTree = SOURCE_ROOT; };
 		A10000000000000000000001 /* StudioHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioHomeView.swift; sourceTree = "<group>"; };
@@ -386,6 +395,9 @@
 		C10000000000000000000004 /* macOS */ = {
 			isa = PBXGroup;
 			children = (
+				DBCAE6AA4FBB699A7F501F2E /* StudioStudyView.swift */,
+				72D3365944031E9776D9CF4F /* StudioStudyNativeReaders.swift */,
+				837A3B2EB1604E5277DBC429 /* StudioStudyModel.swift */,
 				A72000000000000000000001 /* StudioLinguisticModel.swift */,
 				A8B100000000000000000001 /* StudioKHMatrixModel.swift */,
 				6F3875650B661FFFC0B9AE83 /* StudioResearchView.swift */,
@@ -504,6 +516,7 @@
 		C30600000000000000000003 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				1FE65BA7EC073868521EDA79 /* StudioStudyTests.swift */,
 				A60000000000000000000006 /* StudioAdvancedAnalysisTests.swift */,
 				A71000000000000000000001 /* StudioCorpusMethodsTests.swift */,
 				A64000000000000000000001 /* StudioCorpusPresentationTests.swift */,
@@ -680,6 +693,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				024989A819DBA17010EF0C2B /* StudioStudyView.swift in Sources */,
+				E4523574BD780642FF52A211 /* StudioStudyNativeReaders.swift in Sources */,
+				B2E13E1400EC6C78107FAF03 /* StudioStudyModel.swift in Sources */,
 				B72000000000000000000001 /* StudioLinguisticModel.swift in Sources */,
 				B8B100000000000000000001 /* StudioKHMatrixModel.swift in Sources */,
 				418F78EC5DAADE0F73C50AD0 /* StudioResearchView.swift in Sources */,
@@ -745,6 +761,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B77F85D4B3D64814F453AB85 /* StudioStudyTests.swift in Sources */,
+				594879C96A967AE0C3E4677B /* StudioStudyModel.swift in Sources */,
 				B72000000000000000000002 /* StudioLinguisticModel.swift in Sources */,
 				B8B200000000000000000001 /* StudioKHMatrixModel.swift in Sources */,
 				B8B200000000000000000003 /* StudioKHLanguageModel.swift in Sources */,
