@@ -2141,8 +2141,8 @@
     },
     {
       "file": "ResearchWorkflow.feature",
-      "expandedScenarios": 46,
-      "sourceSHA256": "6f2d101b2381f4e64aa21ba7f01bc0fa791bab62005a4ef1c09a59d240b3f361",
+      "expandedScenarios": 47,
+      "sourceSHA256": "949ca803c2e18e6a7125ea65c071ff134989c76c8cbbf0cff8b6eb5d989baf8c",
       "scenarios": [
         {
           "line": 20,
@@ -2373,6 +2373,11 @@
           "line": 84,
           "stepCount": 6,
           "stepsSHA256": "f63c6126c65780cd99b6e931f22d350dc9a3bdb0ffc5098c455330d6fe7580a0"
+        },
+        {
+          "line": 93,
+          "stepCount": 3,
+          "stepsSHA256": "6f19484074a3e3ad93b32b28d1a08d8f2ee70638832b627d700b803b8ed86947"
         }
       ]
     },

@@ -43,7 +43,8 @@ struct BDDSubprocessTests {
                     executable: URL(filePath: "/bin/dd"),
                     arguments: ["if=/dev/zero", "bs=1048577", "count=1"], directory: directory)
             }
-            #expect(try FileManager.default.contentsOfDirectory(atPath: directory.path).isEmpty)
+            let remainingFiles = try FileManager.default.contentsOfDirectory(atPath: directory.path)
+            #expect(remainingFiles.isEmpty)
         }
     }
 

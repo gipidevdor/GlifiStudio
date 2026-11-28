@@ -20,7 +20,8 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   configurazioni revisionate e digest distinti per riuso coerente delle analisi.
 - Analisi KH avanzate salvabili con impostazioni e risultati completi, ripristino
   nativo senza ricalcolo, variabili derivate e collegamento descrittivo ai rapporti.
-- Trasporto condiviso `research-call` con parità Kit/CLI. Estensione additiva del
+- Trasporto condiviso `research-call` con parità Kit/CLI e ingressi da file per
+  tabelle e metadati oltre il budget dell’envelope. Estensione additiva del
   package esistente, senza nuova lingua di analisi o dipendenza di prodotto
   (ADR-0047; GS-API-004/005/006; verifiche e limiti in GS-VER-343).
 

@@ -23,6 +23,10 @@ private final class BDDResearchWorld {
     var workflowState: GlifiStudioResearchState?
     var workflowFilter = GlifiStudioResearchFilter()
     var investigationHead = ""
+    var largeTableResult: Data?
+    var largeStateResult: Data?
+    var largeDTOFailures: [String: GlifiStudioFailure] = [:]
+    var largeState: GlifiStudioResearchState?
 
     // Three original synthetic rows, authored here rather than copied from an external corpus.
     let csv = Data(
@@ -612,6 +616,123 @@ private final class BDDResearchWorld {
         #expect(try await reopened.snapshot() == snapshot)
     }
 
+    func transferLargeDTOs() async throws {
+        let active = try #require(session)
+        let directory = try #require(root)
+        let cell = String(repeating: "a", count: 220)
+        let data = Data(
+            ("id,testo,nota\n"
+                + (0..<5_000).map {
+                    "row\($0),Testo originale \($0),\(cell)\n"
+                }.joined()).utf8)
+        let table = try await GlifiStudioTabularImporter.preview(data: data, options: .init())
+        let tableJSON = try BDDVariantAssertions.encode(table)
+        try #require(tableJSON.count > 1_048_576 && tableJSON.count < 64 * 1_048_576)
+        let tableURL = directory.appending(path: "table.json")
+        try tableJSON.write(to: tableURL)
+        let mapping = GlifiStudioTabularMapping(textColumns: [2], identifierColumn: 1)
+        let reference = try await GlifiStudioTabularImporter.map(table: table, mapping: mapping)
+        #expect(reference.records.count == 5_000)
+        #expect(reference.records.first?.identifier == "row0")
+        #expect(reference.records.last?.rowNumber == 5_001)
+
+        var state = try await active.researchState()
+        let largeText = String(repeating: "b", count: 65_536)
+        for index in 0..<20 {
+            let id = "large-\(index)"
+            state.fields.append(.init(id: id, label: "Campo sintetico \(index)", type: .text))
+            state.records[0].values[id] = .text(largeText)
+        }
+        let stateJSON = try BDDVariantAssertions.encode(state)
+        try #require(stateJSON.count > 1_048_576 && stateJSON.count < 32 * 1_048_576)
+        let stateURL = directory.appending(path: "state.json")
+        try stateJSON.write(to: stateURL)
+        largeState = state
+        largeDTOFailures = [:]
+        let calls: [(String, GlifiStudioResearchOperation, [String: Any])] = [
+            ("tablePath", .tabularMap, ["tablePath": tableURL.path, "mapping": try wire(mapping)]),
+            (
+                "statePath", .saveState,
+                ["statePath": stateURL.path, "expectedRevision": state.revision]
+            ),
+        ]
+        let cliProject = directory.appending(path: "CLI.glifi")
+        try FileManager.default.copyItem(at: projectURL, to: cliProject)
+        for (name, operation, parameters) in calls {
+            let envelope = try command(operation, parameters: parameters)
+            try #require(envelope.count < 1_048_576)
+            do {
+                let output = try await GlifiStudioResearchCommand.execute(
+                    json: envelope, session: active)
+                if name == "tablePath" {
+                    largeTableResult = output.json
+                } else {
+                    largeStateResult = output.json
+                }
+            } catch let observed {
+                largeDTOFailures[name] = observed
+            }
+            let requestURL = directory.appending(path: "\(name)-request.json")
+            let outputURL = directory.appending(path: "\(name)-output.json")
+            try envelope.write(to: requestURL)
+            let cli = try await BDDSubprocess.run(
+                executable: URL(fileURLWithPath: "/bin/sh"),
+                arguments: [
+                    "-c", #"output=$1; shift; exec "$@" > "$output""#, "glifi-research-output",
+                    outputURL.path, try locateBDDCLI().path, "--format", "json", "--no-progress",
+                    "research-call", cliProject.path, "--request", requestURL.path,
+                ], directory: directory)
+            #expect(cli.status == 0, "CLI \(name): \(String(decoding: cli.stderr, as: UTF8.self))")
+            try #require(cli.status == 0)
+            let byteCount = try outputURL.resourceValues(forKeys: [.fileSizeKey]).fileSize
+            try #require(try #require(byteCount) <= 16 * 1_048_576)
+            let cliJSON = try Data(contentsOf: outputURL)
+            let expected = try #require(name == "tablePath" ? largeTableResult : largeStateResult)
+            let cliEnvelope = try #require(BDDVariantAssertions.object(cliJSON) as? [String: Any])
+            #expect(cliEnvelope["cliProtocolVersion"] as? Int == 1)
+            #expect(cliEnvelope["command"] as? String == "research-call")
+            #expect(cliEnvelope["outcome"] as? String == "succeeded")
+            let cliResult = try #require(cliEnvelope["result"])
+            #expect(
+                try JSONSerialization.data(
+                    withJSONObject: cliResult, options: [.sortedKeys])
+                    == JSONSerialization.data(
+                        withJSONObject: BDDVariantAssertions.object(expected),
+                        options: [.sortedKeys]))
+        }
+        if let largeTableResult {
+            #expect(largeTableResult == (try BDDVariantAssertions.encode(reference)))
+        }
+    }
+
+    func verifyLargeDTOs() async throws {
+        #expect(
+            largeDTOFailures.isEmpty, "File DTO failures: \(largeDTOFailures.mapValues(\.code))")
+        let mapped = try #require(largeTableResult)
+        try BDDVariantAssertions.expectFacts(
+            BDDVariantAssertions.object(mapped),
+            json:
+                #"{"records.$count":5000,"records.0.identifier":"row0","records.4999.identifier":"row4999","records.4999.rowNumber":5001}"#
+        )
+        let saved = try JSONDecoder().decode(
+            GlifiStudioResearchState.self, from: #require(largeStateResult))
+        var expected = try #require(largeState)
+        expected.revision += 1
+        #expect(saved.fields.count == 22)
+        #expect(saved.records.count == 3)
+        #expect(Set(saved.fields.map(\.id)) == Set(expected.fields.map(\.id)))
+        #expect(saved.records == expected.records)
+        let active = try #require(session)
+        #expect(try await active.researchState() == saved)
+        let snapshot = try await active.snapshot()
+        await active.close()
+        let reopened = try await GlifiStudioService().openProject(at: projectURL)
+        session = reopened
+        #expect(try await reopened.researchState() == saved)
+        #expect(try await reopened.tabularSource(artifactID: originalArtifactID).data == csv)
+        #expect(try await reopened.snapshot() == snapshot)
+    }
+
     private func command(_ operation: GlifiStudioResearchOperation, parameters: [String: Any])
         throws -> Data
     {
@@ -675,5 +796,11 @@ func registerResearchSteps() {
     Then("la riapertura ripristina corpus preparazione selezione variabile e rapporto acquisito") {
         _, _ in
         try await researchWorld.reopenWorkflow()
+    }
+    When("trasporto anteprima e stato oltre un MiB tramite file JSON espliciti") { _, _ in
+        try await researchWorld.transferLargeDTOs()
+    }
+    Then("mapping e stato grandi conservano parità nativa provenienza e riapertura") { _, _ in
+        try await researchWorld.verifyLargeDTOs()
     }
 }

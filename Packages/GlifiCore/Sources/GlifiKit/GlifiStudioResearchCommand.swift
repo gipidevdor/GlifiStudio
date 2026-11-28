@@ -85,7 +85,8 @@ public enum GlifiStudioResearchCommand {
             case .saveState:
                 return try await GlifiStudioCommandResult(
                     session.saveResearchState(
-                        try required(p.state), expectedRevision: try required(p.expectedRevision)))
+                        try structuredValue(p.state, path: p.statePath, maximum: 32 * 1_048_576),
+                        expectedRevision: try required(p.expectedRevision)))
             case .select:
                 return try await GlifiStudioCommandResult(
                     session.selectResearchSources(
@@ -97,7 +98,9 @@ public enum GlifiStudioResearchCommand {
             case .tabularMap:
                 return try await GlifiStudioCommandResult(
                     GlifiStudioTabularImporter.map(
-                        table: try required(p.table), mapping: try required(p.mapping)))
+                        table: try structuredValue(
+                            p.table, path: p.tablePath, maximum: 64 * 1_048_576),
+                        mapping: try required(p.mapping)))
             case .tabularImport:
                 return try await GlifiStudioCommandResult(
                     session.importTabular(
@@ -155,10 +158,10 @@ public enum GlifiStudioResearchCommand {
                 "preparationDigest", "preparation",
             ]
         case .state, .savedList: []
-        case .saveState: ["state", "expectedRevision"]
+        case .saveState: ["state", "statePath", "expectedRevision"]
         case .select: ["filter"]
         case .tabularPreview: ["data", "sourcePath", "options"]
-        case .tabularMap: ["table", "mapping"]
+        case .tabularMap: ["table", "tablePath", "mapping"]
         case .tabularImport: ["data", "sourcePath", "options", "mapping"]
         case .tabularSource, .savedRead, .savedExport: ["artifactID"]
         case .savedRun: ["requestJSON", "requestPath", "title", "sourceRevisionIDs"]
@@ -183,6 +186,18 @@ public enum GlifiStudioResearchCommand {
     private static func inputData(_ parameters: ResearchCommandParameters) throws -> Data {
         let maximum = parameters.options?.limits.maximumByteCount ?? 16 * 1_024 * 1_024
         return try binaryData(parameters.data, path: parameters.sourcePath, maximum: maximum)
+    }
+
+    /// Accepts a bare DTO through the same exclusive, bounded file admission as binary inputs.
+    private static func structuredValue<Value: Codable>(
+        _ value: Value?, path: String?, maximum: Int
+    ) throws -> Value {
+        if let value {
+            guard path == nil else { throw commandFailure("invalid-request") }
+            return value
+        }
+        let data = try binaryData(nil, path: path, maximum: maximum)
+        return try CommandJSON.decodeStrict(Value.self, from: data, maximumByteCount: maximum)
     }
 
     private static func requestData(_ parameters: ResearchCommandParameters) throws -> Data {
@@ -277,12 +292,14 @@ private struct ResearchCommandParameters: Codable {
     var command: String?
     var methodIdentifier: String?
     var state: GlifiStudioResearchState?
+    var statePath: String?
     var expectedRevision: Int?
     var filter: GlifiStudioResearchFilter?
     var data: Data?
     var sourcePath: String?
     var options: GlifiStudioTabularOptions?
     var table: GlifiStudioTabularTable?
+    var tablePath: String?
     var mapping: GlifiStudioTabularMapping?
     var artifactID: String?
     var fieldID: String?

@@ -108,3 +108,14 @@ il formato `.glifi`. L'incorporazione nel progetto deve conservare i byte
 originali, mapping, issue e provenienza attraverso il percorso transazionale
 di progetto, separato dal parser. I test dei parser non attestano da soli
 il completamento della GUI, del commit di progetto o della parità CLI.
+
+## Trasporto delle anteprime grandi
+
+Il trasporto `research-call` mantiene l’envelope entro 1 MiB. Preview e import
+leggono l’originale tramite `sourcePath`; il mapping ammette `tablePath` in
+alternativa al DTO inline `table`. Il file contiene il risultato tabellare
+completo e ha un budget di 64 MiB, verificato prima della decodifica rigorosa.
+La mappatura usa la stessa API nativa, gli stessi limiti delle celle, opzioni
+e provenienza. Un parametro inline insieme al path è ambiguo e viene rifiutato.
+Il lettore condiviso verifica tipo, dimensione e stabilità del file senza
+seguire symlink o attendere una FIFO; le failure sono quelle di GS-API-006.

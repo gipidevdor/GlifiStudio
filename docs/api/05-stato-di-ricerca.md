@@ -146,3 +146,14 @@ revisioni, tipi e date, mancanti, corruzione, composizione dei filtri con `NOT`,
 precedenza lessicale, confini dei composti, digest canonico e coordinate Unicode.
 Gli esiti effettivamente eseguiti e i limiti dell'integrazione sono registrati
 nell'evidenza del lotto; questo documento non anticipa il risultato del gate.
+
+## Trasporto degli stati grandi
+
+`save-state` accetta `statePath` in alternativa a `state`: JSON del DTO completo,
+senza envelope, entro 32 MiB prima della decodifica rigorosa. Le due forme
+invocano la stessa `saveResearchState(_:expectedRevision:)`; controllo della
+revisione attesa, provenienza, mancanti e limite persistente di 16 MiB restano
+identici. La presenza simultanea di `state` e `statePath` fallisce prima del
+commit. Il lettore di file e le relative failure sono condivisi con gli altri
+ingressi descritti in GS-API-006. La GUI continua a salvare il DTO nativo,
+compresi gli stati che eccedono il budget dell’envelope JSON.

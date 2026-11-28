@@ -89,3 +89,9 @@ Funzionalità: Le operazioni di ricerca conservano dati preparazione e lavoro av
     Allora revisioni obsolete e risultati incoerenti sono rifiutati senza perdita di lavoro
     Quando collego l'output al planner e al rapporto esportando gli stessi byte
     Allora la riapertura ripristina corpus preparazione selezione variabile e rapporto acquisito
+
+  @research-large-dto
+  Scenario: Anteprima e stato grandi rientrano nel flusso di ricerca tramite file JSON
+    Data la variante di ricerca "state" su tre righe italiane originali
+    Quando trasporto anteprima e stato oltre un MiB tramite file JSON espliciti
+    Allora mapping e stato grandi conservano parità nativa provenienza e riapertura

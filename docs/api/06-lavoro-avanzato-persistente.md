@@ -70,22 +70,31 @@ La CLI espone `glifi research-call <progetto.glifi> --request <richiesta.json>`:
 | Operazione | Parametri |
 | --- | --- |
 | `state` | Nessuno |
-| `save-state` | `state`, `expectedRevision` |
+| `save-state` | `state` oppure `statePath`; `expectedRevision` |
 | `select` | `filter` opzionale: sottoinsieme, uguaglianza tipizzata e query |
 | `tabular-preview` | `data` oppure `sourcePath`; `options` opzionale |
-| `tabular-map` | `table`, `mapping` |
+| `tabular-map` | `table` oppure `tablePath`; `mapping` |
 | `tabular-import` | `data` oppure `sourcePath`; `options`, `mapping` |
 | `tabular-source` | `artifactID` dell'originale |
 | `saved-list` | Nessuno |
 | `saved-read`, `saved-export` | `artifactID` |
-| `saved-run` | `requestJSON`, `title`, `sourceRevisionIDs` |
+| `saved-run` | `requestJSON` oppure `requestPath`; `title`, `sourceRevisionIDs` |
 | `workbench-capture` | `command` (`statistics`, `operator`, `evaluation`), `requestJSON`, `resultJSON`, `methodIdentifier`, `title`; scope, vista, preparazione effettiva e momento opzionali |
 | `capture` | `requestJSON`, `resultJSON`, `title`, `sourceRevisionIDs`; vista, preparazione, momento e revisioni delle righe opzionali |
 | `derive-variable` | `artifactID`, `fieldID`, `label`, `expectedRevision`; `clusterCount` opzionale per HAC |
 | `saved-investigation` | `artifactID`, `question` |
 
 I byte nei DTO JSON sono base64. La richiesta resta entro 1 MiB; `sourcePath`
-consente dataset più grandi entro i limiti dell'importatore. Si rifiutano chiavi
+consente dataset più grandi entro i limiti dell’importatore. `tablePath` e
+`statePath` contengono rispettivamente il DTO JSON completo della tabella e
+dello stato, senza envelope CLI: ammettono 64 e 32 MiB prima della decodifica
+rigorosa. Permettono di riusare anteprime e metadati validi sopra 1 MiB,
+senza aumentare il limite della richiesta. Ogni coppia valore/path è
+esclusiva. I file devono essere regolari, vengono aperti tramite un unico
+descrittore non-following e non bloccante e ricontrollati dopo la lettura;
+symlink, FIFO, file modificati durante la lettura e ingressi oltre budget
+non vengono accettati. Restano applicabili tutti i limiti di dominio e
+quelli del payload persistente. Si rifiutano chiavi
 sconosciute, parametri di altre operazioni e versioni incompatibili. Envelope,
 failure ed exit status rimangono quelli di GS-API-001. Validazione e identità dei
 DTO sono infrastruttura del contratto, non operazioni utente separate.

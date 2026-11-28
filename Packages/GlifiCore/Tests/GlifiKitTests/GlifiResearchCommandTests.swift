@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
+import Darwin
 import Foundation
 import Testing
 
@@ -156,6 +157,239 @@ struct GlifiResearchCommandTests {
         }
         #expect(try await session.snapshot() == before)
         await session.close()
+    }
+
+    @Test(
+        "Anteprime e stati oltre un MiB attraversano file JSON senza cambiare limiti o API native")
+    func largeTableAndStateFilesHaveNativeParity() async throws {
+        let fixture = try await fileFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let session = fixture.session
+        let repeated = String(repeating: "x", count: 220)
+        let data = Data(
+            ("id,testo,nota\n"
+                + (0..<5_000).map {
+                    "row\($0),Testo \($0),\(repeated)\n"
+                }.joined()).utf8)
+        let table = try await GlifiStudioTabularImporter.preview(data: data, options: .init())
+        let tableJSON = try CommandJSON.encode(table)
+        #expect(tableJSON.count > 1_048_576)
+        let tableURL = fixture.root.appending(path: "large-table.json")
+        try tableJSON.write(to: tableURL)
+        let mapping = GlifiStudioTabularMapping(textColumns: [2], identifierColumn: 1)
+        let expectedMap = try await GlifiStudioCommandResult(
+            GlifiStudioTabularImporter.map(table: table, mapping: mapping))
+        let tableEnvelope = try fileRequest(
+            .tabularMap,
+            parameters: [
+                "tablePath": tableURL.path, "mapping": try object(mapping),
+            ])
+        #expect(tableEnvelope.count < 1_048_576)
+        let baseline = try await session.snapshot()
+        let mapped = try await GlifiStudioResearchCommand.execute(
+            json: tableEnvelope, session: session)
+        #expect(mapped.json == expectedMap.json)
+        #expect(try await session.snapshot() == baseline)
+
+        var proposed = fixture.state
+        for index in 0..<20 {
+            let id = "large-\(index)"
+            proposed.fields.append(.init(id: id, label: "Campo \(index)", type: .text))
+            proposed.records[0].values[id] = .text(String(repeating: "v", count: 65_536))
+        }
+        let stateJSON = try CommandJSON.encode(proposed)
+        #expect(stateJSON.count > 1_048_576)
+        let stateURL = fixture.root.appending(path: "large-state.json")
+        try stateJSON.write(to: stateURL)
+        let nativeURL = fixture.root.appending(path: "Native.glifi")
+        try FileManager.default.copyItem(at: fixture.project, to: nativeURL)
+        let nativeSession = try await GlifiStudioService().openProject(at: nativeURL)
+        let expectedState = try await nativeSession.saveResearchState(
+            proposed, expectedRevision: proposed.revision)
+        let stateEnvelope = try fileRequest(
+            .saveState,
+            parameters: [
+                "statePath": stateURL.path, "expectedRevision": proposed.revision,
+            ])
+        #expect(stateEnvelope.count < 1_048_576)
+        let changed = try await GlifiStudioResearchCommand.execute(
+            json: stateEnvelope, session: session)
+        #expect(changed.json == (try CommandJSON.encode(expectedState)))
+        #expect(try await session.researchState() == expectedState)
+        let nativeSnapshot = try await nativeSession.snapshot()
+        #expect(try await session.snapshot() == nativeSnapshot)
+        let snapshot = try await session.snapshot()
+        await nativeSession.close()
+        await session.close()
+        let reopened = try await GlifiStudioService().openProject(at: fixture.project)
+        #expect(try await reopened.researchState() == expectedState)
+        #expect(try await reopened.snapshot() == snapshot)
+        await reopened.close()
+    }
+
+    @Test("I file DTO rifiutano alias contraddittori JSON ignoto malformato e oggetti non regolari")
+    func structuredFileAdmissionPreservesTheProject() async throws {
+        let fixture = try await fileFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let baseline = try await fixture.session.snapshot()
+        let variants: [(GlifiStudioResearchOperation, String, String, Data, [String: Any], Int)] = [
+            (
+                .tabularMap, "table", "tablePath", try CommandJSON.encode(fixture.table),
+                [
+                    "mapping": try object(
+                        GlifiStudioTabularMapping(textColumns: [2], identifierColumn: 1))
+                ], 64 * 1_048_576
+            ),
+            (
+                .saveState, "state", "statePath", try CommandJSON.encode(fixture.state),
+                ["expectedRevision": fixture.state.revision], 32 * 1_048_576
+            ),
+        ]
+        for (operation, inlineKey, pathKey, json, base, maximum) in variants {
+            let validURL = fixture.root.appending(path: "\(inlineKey)-valid.json")
+            try json.write(to: validURL)
+            var p = base
+            p[pathKey] = validURL.path
+            p[inlineKey] = try JSONSerialization.jsonObject(with: json)
+            try await expectFileFailure(
+                operation, parameters: p, code: "command.invalid-request",
+                session: fixture.session, baseline: baseline)
+            p = base
+            let invalidURL = fixture.root.appending(path: "\(inlineKey)-invalid.json")
+            p[pathKey] = invalidURL.path
+            var unknown = try #require(JSONSerialization.jsonObject(with: json) as? [String: Any])
+            unknown["unexpected"] = true
+            try JSONSerialization.data(withJSONObject: unknown).write(to: invalidURL)
+            try await expectFileFailure(
+                operation, parameters: p, code: "command.unknown-field",
+                session: fixture.session, baseline: baseline)
+            for bytes in [Data("{".utf8), Data([0xFF])] {
+                try bytes.write(to: invalidURL)
+                try await expectFileFailure(
+                    operation, parameters: p, code: "text-analysis.invalid-request",
+                    session: fixture.session, baseline: baseline)
+            }
+
+            let link = fixture.root.appending(path: "\(inlineKey)-link.json")
+            try FileManager.default.createSymbolicLink(at: link, withDestinationURL: validURL)
+            p[pathKey] = link.path
+            try await expectFileFailure(
+                operation, parameters: p, code: "command.source-open-failed",
+                category: "transientIO", session: fixture.session, baseline: baseline)
+            let pipe = fixture.root.appending(path: "\(inlineKey)-pipe")
+            try #require(Darwin.mkfifo(pipe.path, 0o600) == 0)
+            p[pathKey] = pipe.path
+            try await expectFileFailure(
+                operation, parameters: p, code: "command.invalid-request",
+                session: fixture.session, baseline: baseline)
+            p[pathKey] = fixture.root.path
+            try await expectFileFailure(
+                operation, parameters: p, code: "command.invalid-request",
+                session: fixture.session, baseline: baseline)
+
+            let oversized = fixture.root.appending(path: "\(inlineKey)-oversized.json")
+            try Data().write(to: oversized)
+            let handle = try FileHandle(forWritingTo: oversized)
+            try handle.truncate(atOffset: UInt64(maximum + 1))
+            try handle.close()
+            p[pathKey] = oversized.path
+            try await expectFileFailure(
+                operation, parameters: p, code: "command.resource-limit",
+                category: "insufficientResources", session: fixture.session, baseline: baseline)
+            p[pathKey] = validURL.path
+            let request = try fileRequest(operation, parameters: p)
+            let task = Task {
+                withUnsafeCurrentTask { $0?.cancel() }
+                return try await GlifiStudioResearchCommand.execute(
+                    json: request, session: fixture.session)
+            }
+            do {
+                _ = try await task.value
+                Issue.record("Expected pre-cancelled DTO file rejection")
+            } catch let failure as GlifiStudioFailure {
+                #expect(failure.code == "command.cancelled")
+                #expect(failure.category == "cancelled")
+            }
+            #expect(try await fixture.session.snapshot() == baseline)
+        }
+        await fixture.session.close()
+    }
+
+    @Test("I file DTO conservano le validazioni di dominio e non ammettono envelope inline grandi")
+    func structuredFileTransportPreservesDomainLimits() async throws {
+        let fixture = try await fileFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let baseline = try await fixture.session.snapshot()
+        var state = fixture.state
+        for index in 0..<257 {
+            state.fields.append(.init(id: "field-\(index)", label: "Campo \(index)", type: .text))
+        }
+        let url = fixture.root.appending(path: "invalid-state.json")
+        try CommandJSON.encode(state).write(to: url)
+        try await expectFileFailure(
+            .saveState,
+            parameters: ["statePath": url.path, "expectedRevision": state.revision],
+            code: "research.invalid-state", session: fixture.session, baseline: baseline)
+        let tooLarge = Data(repeating: 0x20, count: 1_048_577)
+        do {
+            _ = try await GlifiStudioResearchCommand.execute(
+                json: tooLarge, session: fixture.session)
+            Issue.record("Expected unchanged research envelope budget")
+        } catch let failure {
+            #expect(failure.category == "insufficientResources")
+        }
+        #expect(try await fixture.session.snapshot() == baseline)
+        await fixture.session.close()
+    }
+
+    private func fileFixture() async throws -> (
+        root: URL, project: URL, session: GlifiStudioProjectSession,
+        table: GlifiStudioTabularTable, state: GlifiStudioResearchState
+    ) {
+        let root = FileManager.default.temporaryDirectory.appending(
+            path: "GlifiResearchFiles-\(UUID())")
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: false)
+        let project = root.appending(path: "Files.glifi")
+        let session = try await GlifiStudioService().createProject(at: project)
+        let data = Data("id,testo\na,Cane e gatto\n".utf8)
+        _ = try await session.importTabular(
+            data: data, options: .init(),
+            mapping: .init(textColumns: [2], identifierColumn: 1))
+        return (
+            root, project, session,
+            try await GlifiStudioTabularImporter.preview(data: data, options: .init()),
+            try await session.researchState()
+        )
+    }
+
+    private func fileRequest(_ operation: GlifiStudioResearchOperation, parameters: [String: Any])
+        throws -> Data
+    {
+        try JSONSerialization.data(
+            withJSONObject: [
+                "schema": GlifiStudioResearchCommand.schema, "schemaVersion": 1,
+                "operation": operation.rawValue, "parameters": parameters,
+            ], options: [.sortedKeys])
+    }
+
+    private func object<Value: Encodable>(_ value: Value) throws -> Any {
+        try JSONSerialization.jsonObject(with: CommandJSON.encode(value))
+    }
+
+    private func expectFileFailure(
+        _ operation: GlifiStudioResearchOperation, parameters: [String: Any], code: String,
+        category: String = "invalidInput", session: GlifiStudioProjectSession,
+        baseline: GlifiStudioProjectSnapshot
+    ) async throws {
+        let request = try fileRequest(operation, parameters: parameters)
+        do {
+            _ = try await GlifiStudioResearchCommand.execute(json: request, session: session)
+            Issue.record("Expected file DTO rejection: \(code)")
+        } catch let failure {
+            #expect(failure.code == code)
+            #expect(failure.category == category)
+        }
+        #expect(try await session.snapshot() == baseline)
     }
 
     private func native(

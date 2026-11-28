@@ -19618,6 +19618,25 @@
       ],
       "oracle": "CSV3righe→campi tipizzati+preparazione italiana persistente:5token/5tipi e matrice3×5. Filtro Nord AND roma seleziona solo c. Distanze→HACaverage a3oggetti/2merge; cut2cluster con parametri e lineage conservati. Revisioni obsolete/output incoerenti non mutano; rapporto5file con allegato scientifico byte-identico e caveat descrittivi. Riapertura e riuso indagine senza nuovi commit.",
       "domain": "research-full-workflow"
+    },
+    {
+      "caseID": "supplemental.ResearchWorkflow.93",
+      "feature": "ResearchWorkflow.feature",
+      "line": 93,
+      "sourceLineSHA256": "6c4d01d70b875c46951c603cedd21c2b3e93ab51c6fa4ba45e8376176edc4078",
+      "oracle": "Anteprima CSV sintetica di5000righe, JSON oltre1MiB: tablePath produce lo stesso mapping nativo byteperbyte con indirizzi fino alla riga5001. Stato di22campi/3record, con20valori di65536byte e JSON oltre1MiB: statePath pubblica la revisione successiva e conserva contenuti e originale dopo riapertura, senza nuovi commit di lettura. Envelope dei comandi sempre inferiore a1MiB.",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/04-importazione-tabellare.md",
+        "docs/api/05-stato-di-ricerca.md",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiResearchCommandTests.swift"
+      ],
+      "witnesses": [
+        "la variante di ricerca \"state\" su tre righe italiane originali",
+        "trasporto anteprima e stato oltre un MiB tramite file JSON espliciti",
+        "mapping e stato grandi conservano parità nativa provenienza e riapertura"
+      ],
+      "domain": "research-large-dto-files"
     }
   ],
   "workflowCoverage": [

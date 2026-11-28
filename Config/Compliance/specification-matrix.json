@@ -6044,7 +6044,9 @@
         "Apps/macOS/StudioResearchView.swift",
         "Apps/macOS/StudioResearchModel.swift",
         "Packages/GlifiCore/Sources/GlifiCore/GlifiWorkbenchCaptureEnvelope.swift",
-        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioWorkbenchCapture.swift"
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioWorkbenchCapture.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiTabularXLSX.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
       ],
       "tests": [
         "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTabularImportTests.swift",
@@ -6054,9 +6056,17 @@
         "Apps/macOS/Tests/StudioResearchTests.swift",
         "Apps/macOS/Tests/StudioResearchArchiveTests.swift",
         "Apps/macOS/Tests/StudioWorkbenchArchiveTests.swift",
-        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiWorkbenchCaptureTests.swift"
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiWorkbenchCaptureTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCorpusPreparationTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiResearchReaderCompatibilityTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiResearchSavedIntegrityTests.swift",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/GlifiResearchSteps.swift"
       ],
-      "fixtures": [],
+      "fixtures": [
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/ResearchWorkflow.feature",
+        "Config/Testing/bdd-contracts.json",
+        "Config/Testing/bdd-coverage.json"
+      ],
       "evidence": [
         "docs/evidenze/GS-VER-343-flusso-ricerca-persistente.md"
       ],

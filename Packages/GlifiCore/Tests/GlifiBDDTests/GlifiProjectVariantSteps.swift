@@ -149,10 +149,11 @@ private final class BDDProjectVariantWorld {
             let original = try #require(BDDVariantAssertions.object(request) as? [String: Any])
             let parameters = try #require(original["parameters"] as? [String: Any])
             let before = try #require(parameters["visualization"] as? [String: Any])
-            #expect(
-                try BDDVariantAssertions.encode(view.dendrogramTree)
-                    == JSONSerialization.data(
-                        withJSONObject: #require(before["dendrogramTree"]), options: [.sortedKeys]))
+            let treeJSON = try JSONSerialization.data(
+                withJSONObject: #require(before["dendrogramTree"]), options: [.sortedKeys])
+            let originalTree = try JSONDecoder().decode(
+                GlifiStudioDendrogramTree.self, from: treeJSON)
+            #expect(view.dendrogramTree == originalTree)
         }
         if variant == "bm25" {
             let ranking = try #require(fields["ranking"] as? [[String: Any]])
