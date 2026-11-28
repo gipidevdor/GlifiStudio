@@ -15,7 +15,7 @@ struct StudioStudyView: View {
     @Environment(\.locale) private var locale
     @State private var pdfSlots: Set<StudioStudyReaderSlot> = [.first, .second]
     @State private var compactSlot: StudioStudyReaderSlot = .first
-    @State private var editor: StudyEditor?
+    @State private var editor: StudioStudyEditor?
     @State private var showsOrganization = false
     @State private var exportData: Data?
     @State private var exportType = UTType.json
@@ -74,15 +74,16 @@ struct StudioStudyView: View {
                 title, text, group, support in
                 Task {
                     await home.runAdvancedAnalysis { session in
-                        switch editing {
-                        case let .excerpt(id):
-                            study.updateExcerpt(id: id, title: title, groupID: group)
-                        case let .note(id):
-                            study.saveNote(
-                                id: id, title: title, text: text, groupID: group,
-                                excerptIDs: support)
+                        try await study.commitEditorChange(session: session) {
+                            switch editing {
+                            case let .excerpt(id):
+                                study.updateExcerpt(id: id, title: title, groupID: group)
+                            case let .note(id):
+                                study.saveNote(
+                                    id: id, title: title, text: text, groupID: group,
+                                    excerptIDs: support)
+                            }
                         }
-                        try await study.save(session: session)
                         try await home.refreshAfterResearchChange()
                     }
                     if home.lastFailure == nil { editor = nil }
@@ -220,8 +221,10 @@ struct StudioStudyView: View {
         ) { toggleComparison() }
         .disabled(home.isBusy)
         Button("study.notebook", systemImage: "note.text") { study.showsNotebook.toggle() }
-        Button("study.conclusion.new", systemImage: "square.and.pencil") { editor = .note(nil) }
-            .disabled(home.isBusy || !study.hasLoaded)
+        Button("study.conclusion.new", systemImage: "square.and.pencil") {
+            editor = .newConclusion()
+        }
+        .disabled(home.isBusy || !study.hasLoaded)
     }
 
     private func reader(_ slot: StudioStudyReaderSlot) -> some View {
@@ -407,7 +410,7 @@ struct StudioStudyView: View {
                         .padding(.vertical, 4)
                     }
                     Button("study.conclusion.new", systemImage: "square.and.pencil") {
-                        editor = .note(nil)
+                        editor = .newConclusion()
                     }
                 }
             }
@@ -661,17 +664,6 @@ struct StudioStudyView: View {
     }
 }
 
-private enum StudyEditor: Identifiable {
-    case excerpt(String)
-    case note(String?)
-    var id: String {
-        switch self {
-        case let .excerpt(id): "excerpt:\(id)"
-        case let .note(id): "note:\(id ?? "new")"
-        }
-    }
-}
-
 private struct StudioStudyAccessibleSelection: View {
     let reading: StudioStudyReading
     let disabled: Bool
@@ -730,7 +722,7 @@ private struct StudioStudyAccessibleSelection: View {
 
 private struct StudioStudyObjectEditor: View {
     @Bindable var study: StudioStudyModel
-    let editing: StudyEditor
+    let editing: StudioStudyEditor
     let isBusy: Bool
     let failureMessage: LocalizedStringKey?
     let onReload: () -> Void

@@ -6,6 +6,10 @@ import Foundation
 import GlifiKit
 import Testing
 
+nonisolated private enum StudioStudyCanceledModal: CaseIterable, Sendable {
+    case note, excerpt, restore
+}
+
 @MainActor
 struct StudioStudyTests {
     @Test("La selezione nativa rispetta emoji e confini dei caratteri Unicode")
@@ -288,6 +292,123 @@ struct StudioStudyTests {
         await #expect(throws: GlifiStudioFailure.self) { try await model.prepareRestore(at: link) }
         #expect(model.state == preserved)
         await fixture.session.close()
+    }
+
+    @Test("Ritentare il salvataggio della stessa conclusione non crea copie")
+    func failedConclusionSaveRetriesTheSameEditorIntentExactlyOnce() async throws {
+        let fixture = try await makeFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = StudioStudyModel()
+        try await model.load(session: fixture.session)
+        let editor = StudioStudyEditor.newConclusion()
+        guard case let .note(id) = editor else {
+            Issue.record("Expected the conclusion editor intent")
+            await fixture.session.close()
+            return
+        }
+        model.saveNote(
+            id: id, title: "Conclusione", text: "Prima versione da conservare.", groupID: nil,
+            excerptIDs: [])
+        let firstID = try #require(model.state.notes.first?.id)
+        await fixture.session.close()
+        await #expect(throws: GlifiStudioFailure.self) {
+            try await model.save(session: fixture.session)
+        }
+        #expect(model.hasChanges)
+        #expect(model.state.notes.first?.text == "Prima versione da conservare.")
+
+        let fresh = try await GlifiStudioService().openProject(at: fixture.project)
+        model.saveNote(
+            id: id, title: "Conclusione modificata",
+            text: "Seconda versione dopo il tentativo fallito.", groupID: nil, excerptIDs: [])
+        try await model.save(session: fresh)
+        let saved = try await fresh.studyState()
+        #expect(saved.notes.count == 1)
+        #expect(saved.notes.map(\.id) == [firstID])
+        #expect(saved.order == [firstID])
+        #expect(saved.notes.first?.title == "Conclusione modificata")
+        #expect(saved.notes.first?.text == "Seconda versione dopo il tentativo fallito.")
+        #expect(!model.hasChanges)
+        await fresh.close()
+    }
+
+    @Test(
+        "Annullare un editor dopo un errore non pubblica la proposta con altre azioni",
+        arguments: StudioStudyCanceledModal.allCases)
+    private func canceledFailedModalDoesNotLeakIntoAnotherCommit(kind: StudioStudyCanceledModal)
+        async throws
+    {
+        let fixture = try await makeFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = StudioStudyModel()
+        try await model.load(session: fixture.session)
+        try await model.readSource(session: fixture.session, sourceID: fixture.first, slot: .first)
+        try await model.previewPassage(
+            session: fixture.session, slot: .first,
+            selection: .sentences(first: 0, last: 0))
+        model.pendingTitle = "Passaggio originale"
+        try await model.collect(session: fixture.session)
+        let excerptID = try #require(model.state.excerpts.first?.id)
+        model.saveNote(
+            id: "original-note", title: "Nota originale", text: "Contenuto originale.",
+            groupID: nil, excerptIDs: [excerptID])
+        try await model.save(session: fixture.session)
+        model.addGroup(title: "Bozza preesistente")
+        model.addGroup(title: "Da ripetere")
+        model.undo()
+        model.showsNotebook = false
+        let before = model.state
+        let previousUndo = model.canUndo
+        let previousRedo = model.canRedo
+        let recovery = model.recoveryDraft
+        await fixture.session.close()
+
+        switch kind {
+        case .note:
+            await #expect(throws: GlifiStudioFailure.self) {
+                try await model.commitEditorChange(session: fixture.session) {
+                    model.saveNote(
+                        id: "canceled-note", title: "Da annullare", text: "Non pubblicare.",
+                        groupID: nil, excerptIDs: [])
+                }
+            }
+        case .excerpt:
+            await #expect(throws: GlifiStudioFailure.self) {
+                try await model.commitEditorChange(session: fixture.session) {
+                    model.updateExcerpt(id: excerptID, title: "Titolo annullato", groupID: nil)
+                }
+            }
+        case .restore:
+            let proposed = GlifiStudioStudyState(
+                projectID: model.state.projectID,
+                notes: [
+                    .init(
+                        id: "restored-note", title: "Da non ripristinare", text: "Non pubblicare.")
+                ],
+                order: ["restored-note"])
+            model.proposedRestore = proposed
+            await #expect(throws: GlifiStudioFailure.self) {
+                try await model.restoreProposedNotebook(session: fixture.session)
+            }
+            #expect(model.proposedRestore == proposed)
+        }
+        #expect(model.state == before)
+        #expect(model.canUndo == previousUndo)
+        #expect(model.canRedo == previousRedo)
+        #expect(model.recoveryDraft == recovery)
+        #expect(!model.showsNotebook)
+        // Cancel closes the local editor; only its proposal is discarded, not the existing draft.
+        model.proposedRestore = nil
+        let fresh = try await GlifiStudioService().openProject(at: fixture.project)
+        model.addGroup(title: "Azione successiva")
+        try await model.save(session: fresh)
+        let saved = try await fresh.studyState()
+        #expect(saved.notes.map(\.id) == ["original-note"])
+        #expect(saved.notes.first?.text == "Contenuto originale.")
+        #expect(saved.excerpts.first?.title == "Passaggio originale")
+        #expect(saved.order == before.order)
+        #expect(saved.groups.map(\.title) == ["Bozza preesistente", "Azione successiva"])
+        await fresh.close()
     }
 
     @Test("Il PDF nativo usa l’originale e il ritorno al passaggio conserva la pagina reale")

@@ -12,6 +12,21 @@ nonisolated enum StudioStudyReaderSlot: String, CaseIterable, Identifiable, Send
     var id: Self { self }
 }
 
+nonisolated enum StudioStudyEditor: Identifiable {
+    case excerpt(String)
+    case note(String?)
+
+    /// Allocates one stable note identity for the complete lifetime of its editor.
+    static func newConclusion() -> Self { .note(UUID().uuidString.lowercased()) }
+
+    var id: String {
+        switch self {
+        case let .excerpt(id): "excerpt:\(id)"
+        case let .note(id): "note:\(id ?? "new")"
+        }
+    }
+}
+
 @MainActor struct StudioStudyReading {
     let sourceRevisionID: String
     let source: GlifiStudioSourceText
@@ -105,6 +120,38 @@ nonisolated enum StudioStudyReaderSlot: String, CaseIterable, Identifiable, Send
         if revealsConclusions, !next.notes.isEmpty { showsNotebook = true }
     }
 
+    func commitEditorChange(
+        session: GlifiStudioProjectSession, mutation: @MainActor () -> Void
+    ) async throws {
+        let owner = lifecycle
+        let before = state
+        let committedRevision = committed.revision
+        let committedProjectID = committed.projectID
+        let undoHistory = previous
+        let redoHistory = following
+        let recovery = recoveryDraft
+        let notebookWasVisible = showsNotebook
+        mutation()
+        let proposed = state
+        do {
+            try await save(session: session)
+        } catch {
+            // A failed modal must not leak its proposal into a later unrelated commit.
+            // The editor retains its local fields; a newer project or publication is never undone.
+            if lifecycle == owner, committed.revision == committedRevision,
+                committed.projectID == committedProjectID, state == proposed
+            {
+                state = before
+                previous = undoHistory
+                following = redoHistory
+                recoveryDraft = recovery
+                showsNotebook = notebookWasVisible
+                updateHistory()
+            }
+            throw error
+        }
+    }
+
     func reloadPreservingDraft(session: GlifiStudioProjectSession) async throws {
         let owner = lifecycle
         let next = try await session.studyState()
@@ -147,10 +194,11 @@ nonisolated enum StudioStudyReaderSlot: String, CaseIterable, Identifiable, Send
         guard var next = proposedRestore, next.projectID == state.projectID else {
             throw Self.failure()
         }
-        if hasChanges { recoveryDraft = state }
-        next.revision = committed.revision
-        change { $0 = next }
-        try await save(session: session)
+        try await commitEditorChange(session: session) {
+            if hasChanges { recoveryDraft = state }
+            next.revision = committed.revision
+            change { $0 = next }
+        }
         proposedRestore = nil
     }
 
