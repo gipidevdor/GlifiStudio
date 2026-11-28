@@ -77,7 +77,7 @@ struct StudioStudyView: View {
                         try await study.commitEditorChange(session: session) {
                             switch editing {
                             case let .excerpt(id):
-                                study.updateExcerpt(id: id, title: title, groupID: group)
+                                try study.updateExcerpt(id: id, title: title, groupID: group)
                             case let .note(id):
                                 study.saveNote(
                                     id: id, title: title, text: text, groupID: group,
@@ -133,26 +133,18 @@ struct StudioStudyView: View {
             Button("common.ok", role: .cancel) {}
         }
         .task(id: home.snapshot?.projectID) {
-            guard home.snapshot != nil, !study.hasLoaded else { return }
-            await home.runAdvancedAnalysis { session in
-                try await study.load(session: session)
-                if let first = study.state.comparisonExcerptIDs.first {
-                    try await study.openExcerpt(session: session, excerptID: first, slot: .first)
-                    if let second = study.state.comparisonExcerptIDs.dropFirst().first {
-                        try await study.openExcerpt(
-                            session: session, excerptID: second, slot: .second)
-                    }
-                } else if let source = home.snapshot?.sources.first {
-                    try await study.readSource(
-                        session: session, sourceID: source.sourceRevisionID, slot: .first)
-                }
-            }
+            await initializeNotebookIfNeeded()
         }
         .onChange(of: home.snapshot?.sources.map(\.sourceRevisionID)) { _, _ in
             openFirstAvailableSource()
         }
         .onChange(of: home.isBusy) { _, busy in
-            if !busy { openFirstAvailableSource() }
+            guard !busy else { return }
+            if !study.hasLoaded, home.lastFailure == nil {
+                Task { await initializeNotebookIfNeeded() }
+            } else {
+                openFirstAvailableSource()
+            }
         }
     }
 
@@ -576,6 +568,22 @@ struct StudioStudyView: View {
         }
     }
 
+    private func initializeNotebookIfNeeded() async {
+        guard home.snapshot != nil, !home.isBusy, !study.hasLoaded else { return }
+        await home.runAdvancedAnalysis { session in
+            try await study.load(session: session)
+            if let first = study.state.comparisonExcerptIDs.first {
+                try await study.openExcerpt(session: session, excerptID: first, slot: .first)
+                if let second = study.state.comparisonExcerptIDs.dropFirst().first {
+                    try await study.openExcerpt(session: session, excerptID: second, slot: .second)
+                }
+            } else if let source = home.snapshot?.sources.first {
+                try await study.readSource(
+                    session: session, sourceID: source.sourceRevisionID, slot: .first)
+            }
+        }
+    }
+
     private func openFirstAvailableSource() {
         guard !home.isBusy, home.lastFailure == nil, study.hasLoaded, study.firstReading == nil,
             let source = home.snapshot?.sources.first
@@ -728,25 +736,45 @@ private struct StudioStudyObjectEditor: View {
     let onReload: () -> Void
     let onSave: (String, String, String?, [String]) -> Void
     @Environment(\.dismiss) private var dismiss
-    @State private var title = ""
-    @State private var text = ""
-    @State private var groupID = ""
-    @State private var support: Set<String> = []
+    @State private var draft = StudioStudyEditorDraft()
     @State private var initial = ""
 
     private var isNote: Bool { if case .note = editing { true } else { false } }
     private var fingerprint: String {
-        "\(title)\u{0}\(text)\u{0}\(groupID)\u{0}\(support.sorted())"
+        "\(draft.title)\u{0}\(draft.text)\u{0}\(draft.groupID)\u{0}\(draft.support.sorted())"
+    }
+
+    private var reconciledDraft: StudioStudyEditorDraft {
+        var current = draft
+        current.reconcile(with: study.state)
+        return current
+    }
+
+    private var excerptIsUnavailable: Bool {
+        guard case let .excerpt(id) = editing else { return false }
+        return !study.state.excerpts.contains { $0.id == id }
     }
 
     var body: some View {
+        let reconciled = reconciledDraft
         NavigationStack {
             Form {
+                if reconciled != draft {
+                    Label("study.editor.references-updated", systemImage: "info.circle")
+                        .font(.callout).foregroundStyle(.secondary)
+                }
+                if excerptIsUnavailable {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("study.editor.excerpt-unavailable", systemImage: "info.circle")
+                            .foregroundStyle(.secondary)
+                        Button("study.reload") { onReload() }
+                    }
+                }
                 Section {
-                    TextField("study.object.title", text: $title)
+                    TextField("study.object.title", text: $draft.title)
                     if isNote {
                         Text("study.conclusion.prompt").foregroundStyle(.secondary)
-                        TextEditor(text: $text).frame(minHeight: 180)
+                        TextEditor(text: $draft.text).frame(minHeight: 180)
                             .accessibilityLabel("study.conclusion.text")
                         Text("study.conclusions.personal").font(.caption).foregroundStyle(
                             .secondary)
@@ -757,12 +785,12 @@ private struct StudioStudyObjectEditor: View {
                         ForEach(study.orderedExcerpts) { excerpt in
                             Toggle(
                                 isOn: Binding(
-                                    get: { support.contains(excerpt.id) },
+                                    get: { reconciled.support.contains(excerpt.id) },
                                     set: {
                                         if $0 {
-                                            support.insert(excerpt.id)
+                                            draft.support.insert(excerpt.id)
                                         } else {
-                                            support.remove(excerpt.id)
+                                            draft.support.remove(excerpt.id)
                                         }
                                     })
                             ) {
@@ -776,7 +804,10 @@ private struct StudioStudyObjectEditor: View {
                     }
                 }
                 DisclosureGroup("study.organize") {
-                    Picker("study.group", selection: $groupID) {
+                    Picker(
+                        "study.group",
+                        selection: Binding(get: { reconciled.groupID }, set: { draft.groupID = $0 })
+                    ) {
                         Text("study.group.none").tag("")
                         ForEach(study.state.groups) { group in Text(group.title).tag(group.id) }
                     }
@@ -792,7 +823,7 @@ private struct StudioStudyObjectEditor: View {
                 }
                 if let failureMessage {
                     Text(failureMessage).foregroundStyle(.secondary)
-                    Button("study.reload") { onReload() }
+                    if !excerptIsUnavailable { Button("study.reload") { onReload() } }
                 }
             }
             .formStyle(.grouped)
@@ -806,13 +837,17 @@ private struct StudioStudyObjectEditor: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("study.save") {
-                        onSave(title, text, groupID.isEmpty ? nil : groupID, support.sorted())
+                        let saving = reconciledDraft
+                        onSave(
+                            saving.title, saving.text,
+                            saving.groupID.isEmpty ? nil : saving.groupID, saving.support.sorted())
                     }
                     .keyboardShortcut(.defaultAction)
                     .disabled(
-                        title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                             || (isNote
-                                && text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                                && draft.text.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    .isEmpty)
                     )
                 }
             }
@@ -824,17 +859,17 @@ private struct StudioStudyObjectEditor: View {
             switch editing {
             case let .excerpt(id):
                 if let value = study.state.excerpts.first(where: { $0.id == id }) {
-                    title = value.title
-                    groupID = value.groupID ?? ""
+                    draft.title = value.title
+                    draft.groupID = value.groupID ?? ""
                 }
             case let .note(id):
                 if let value = study.state.notes.first(where: { $0.id == id }) {
-                    title = value.title
-                    text = value.text
-                    groupID = value.groupID ?? ""
-                    support = Set(value.excerptIDs)
+                    draft.title = value.title
+                    draft.text = value.text
+                    draft.groupID = value.groupID ?? ""
+                    draft.support = Set(value.excerptIDs)
                 } else if let selected = study.selectedExcerptID {
-                    support = [selected]
+                    draft.support = [selected]
                 }
             }
             initial = fingerprint

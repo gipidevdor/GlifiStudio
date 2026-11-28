@@ -55529,6 +55529,40 @@
         }
       }
     },
+    "study.editor.references-updated" : {
+      "extractionState": "manual",
+      "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alcuni passaggi o gruppi non sono più nel taccuino aggiornato. I collegamenti non disponibili non verranno salvati; titolo e testo sono conservati."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Some passages or groups are no longer in the updated notebook. Unavailable links will not be saved; your title and text are retained."
+          }
+        }
+      }
+    },
+    "study.editor.excerpt-unavailable" : {
+      "extractionState": "manual",
+      "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo passaggio è stato rimosso dal taccuino. La bozza resta aperta: puoi copiare il titolo oppure ripristinare il passaggio e ricaricare."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This passage was removed from the notebook. Your draft stays open: copy its title, or restore the passage and reload."
+          }
+        }
+      }
+    },
     "study.empty.project" : {
       "extractionState": "manual",
       "localizations": {

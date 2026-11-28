@@ -375,7 +375,7 @@ struct StudioStudyTests {
         case .excerpt:
             await #expect(throws: GlifiStudioFailure.self) {
                 try await model.commitEditorChange(session: fixture.session) {
-                    model.updateExcerpt(id: excerptID, title: "Titolo annullato", groupID: nil)
+                    try model.updateExcerpt(id: excerptID, title: "Titolo annullato", groupID: nil)
                 }
             }
         case .restore:
@@ -455,6 +455,109 @@ struct StudioStudyTests {
         #expect(model.firstReading?.pdf?.pageCount == 2)
         #expect(try await fixture.session.studyOriginal(sourceRevisionID: id).data == bytes)
         await fixture.session.close()
+    }
+
+    @Test("Ricaricare riconcilia collegamenti e gruppi rimossi senza perdere la conclusione")
+    func reloadedEditorDraftKeepsTextAndReconcilesDeletedReferences() async throws {
+        let fixture = try await makeFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let prepared = StudioStudyModel()
+        try await prepared.load(session: fixture.session)
+        for source in [fixture.first, fixture.second] {
+            try await prepared.readSource(session: fixture.session, sourceID: source, slot: .first)
+            try await prepared.previewPassage(
+                session: fixture.session, slot: .first,
+                selection: .sentences(first: 0, last: 0))
+            try await prepared.collect(session: fixture.session)
+        }
+        let removed = try #require(prepared.state.excerpts.first?.id)
+        let retained = try #require(prepared.state.excerpts.last?.id)
+        prepared.addGroup(title: "Gruppo precedente")
+        try await prepared.save(session: fixture.session)
+        let group = try #require(prepared.state.groups.first?.id)
+        prepared.saveNote(
+            id: "editor-note", title: "Nota", text: "Conclusione iniziale.",
+            groupID: group, excerptIDs: [removed, retained])
+        try await prepared.save(session: fixture.session)
+        await fixture.session.close()
+
+        let home = StudioHomeModel()
+        await home.openProject(at: fixture.project)
+        try await home.study.load(session: try #require(home.researchProjectSession))
+        try await home.study.openExcerpt(
+            session: try #require(home.researchProjectSession), excerptID: retained, slot: .second)
+        try await home.study.openExcerpt(
+            session: try #require(home.researchProjectSession), excerptID: removed, slot: .first)
+        let readingID = try #require(home.study.firstReading?.navigationID)
+        var draft = StudioStudyEditorDraft(
+            title: "Titolo della bozza", text: "Testo personale da non perdere.", groupID: group,
+            support: [removed, retained])
+        let independent = try await GlifiStudioService().openProject(at: fixture.project)
+        let remote = StudioStudyModel()
+        try await remote.load(session: independent)
+        remote.removeObject(id: removed)
+        remote.removeGroup(id: group)
+        try await remote.save(session: independent)
+        await independent.close()
+        try await home.reloadStudyFromDisk()
+
+        draft.reconcile(with: home.study.state)
+        #expect(draft.title == "Titolo della bozza")
+        #expect(draft.text == "Testo personale da non perdere.")
+        #expect(draft.support == [retained])
+        #expect(draft.groupID.isEmpty)
+        #expect(home.study.selectedExcerptID == nil)
+        #expect(home.study.excerptID(in: .first) == nil)
+        #expect(home.study.excerptID(in: .second) == retained)
+        #expect(home.study.firstReading?.navigationID == readingID)
+        home.study.saveNote(
+            id: "editor-note", title: draft.title, text: draft.text,
+            groupID: draft.groupID.isEmpty ? nil : draft.groupID, excerptIDs: draft.support.sorted()
+        )
+        let fresh = try #require(home.researchProjectSession)
+        try await home.study.save(session: fresh)
+        let saved = try await fresh.studyState()
+        #expect(saved.notes.first?.text == "Testo personale da non perdere.")
+        #expect(saved.notes.first?.excerptIDs == [retained])
+        #expect(saved.notes.first?.groupID == nil)
+        await home.closeProject()
+    }
+
+    @Test("Modificare un estratto eliminato esternamente fallisce e conserva il titolo della bozza")
+    func removedExcerptEditorCannotReportASuccessfulSave() async throws {
+        let fixture = try await makeFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let prepared = StudioStudyModel()
+        try await prepared.load(session: fixture.session)
+        try await prepared.readSource(
+            session: fixture.session, sourceID: fixture.first, slot: .first)
+        try await prepared.previewPassage(
+            session: fixture.session, slot: .first, selection: .sentences(first: 0, last: 0))
+        try await prepared.collect(session: fixture.session)
+        let id = try #require(prepared.state.excerpts.first?.id)
+        await fixture.session.close()
+        let home = StudioHomeModel()
+        await home.openProject(at: fixture.project)
+        try await home.study.load(session: try #require(home.researchProjectSession))
+        let draft = StudioStudyEditorDraft(title: "Titolo importante ancora da salvare")
+        let independent = try await GlifiStudioService().openProject(at: fixture.project)
+        let remote = StudioStudyModel()
+        try await remote.load(session: independent)
+        remote.removeObject(id: id)
+        try await remote.save(session: independent)
+        await independent.close()
+        try await home.reloadStudyFromDisk()
+        let fresh = try #require(home.researchProjectSession)
+        let before = try await fresh.snapshot()
+        await #expect(throws: GlifiStudioFailure.self) {
+            try await home.study.commitEditorChange(session: fresh) {
+                try home.study.updateExcerpt(id: id, title: draft.title, groupID: nil)
+            }
+        }
+        #expect(draft.title == "Titolo importante ancora da salvare")
+        #expect(home.study.state.excerpts.isEmpty)
+        #expect(try await fresh.snapshot() == before)
+        await home.closeProject()
     }
 
     private func makeFixture() async throws -> (

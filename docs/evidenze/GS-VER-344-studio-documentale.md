@@ -6,8 +6,8 @@
 | --- | --- |
 | Identificatore | GS-VER-344 |
 | Tipo | Evidenza di integrazione Core, Kit, CLI e GUI macOS |
-| Versione | 1.2.0 |
-| Stato | Gate automatico e preflight macOS superati; verifica visiva parziale |
+| Versione | 1.3.0 |
+| Stato | Riesame UI mirato superato; gate e preflight sul nuovo snapshot da consolidare |
 | Responsabile | Codex, coordinamento della copia condivisa |
 | Ultima modifica | 2026-11-28 |
 | Approvazione | Richiesta esplicita di procedere, mantenendo stile Glifi Studio e priorità a contenuto e conclusioni |
@@ -34,7 +34,11 @@ L'ambito è implementazione e integrazione G3. Non si promuovono G4/G5 né una q
 assistiva completa. Lavagna spaziale, Pencil/scrittura a mano, cloud e iPadOS sono
 rinviati e non rientrano in questa attestazione.
 
-## Identità della verifica finale
+## Identità del checkpoint verificato prima del riesame UI
+
+Il checkpoint seguente ha superato i gate indicati. Le successive correzioni di
+inizializzazione e recupero dell'editor hanno superato il RED/GREEN mirato sotto
+descritto; il gate completo sul nuovo snapshot va registrato prima dell'integrazione.
 
 | Campo | Identità |
 | --- | --- |
@@ -88,6 +92,14 @@ Le attese su citazioni, confini Unicode e conservazione del lavoro sono rimaste 
 | Ricaricamento da un'altra finestra | Sei test nativi verdi e una failure: gruppo salvato da una sessione indipendente assente dopo il vecchio reload | Apertura e verifica di una sessione candidata prima dell'adozione; bozza e lettura conservate; GREEN nativo |
 | Retry della nuova conclusione | Regressione nativa: due note invece di una dopo errore e nuova pressione di Salva | UUID stabile per intenzione di editor; correzione della bozza e retry non duplicano la conclusione; GREEN |
 | Annullamento dopo errore | Tre casi parametrizzati, nota/estratto/ripristino: proposte annullate potevano entrare in un commit successivo | Ripristino esplicito della proposta precedente; GREEN nei tre casi |
+| Apertura mentre il progetto è occupato | Vista SwiftUI reale: `hasLoaded` rimaneva falso dopo il termine dell'operazione | Inizializzazione ripresa quando il modello torna libero, senza sostituire una lettura già aperta; GREEN |
+| Collegamenti eliminati durante la scrittura | Seconda sessione reale: supporti e gruppo rimossi restavano nella bozza e impedivano Salva | Proiezione riconciliata usata da controlli e Salva, avviso visibile e titolo/testo conservati; selezione e pin obsoleti rimossi; GREEN |
+| Estratto eliminato durante la modifica | Salva sull'ID assente non generava l'errore atteso | Failure tipizzata `study.unknown-excerpt`, nessun falso successo, titolo conservato e generazione invariata; GREEN |
+
+Il riesame UI ha eseguito 20 definizioni e 24 esecuzioni native: RED con 17
+definizioni superate e tre fallite; GREEN con tutte e 20 superate, zero failure,
+skip e runtime warning del prodotto. Un primo tentativo fermato in compilazione
+per la view non inclusa nel target test non è contato come RED funzionale.
 
 Il rifiuto di tre pin usa `study.resource-limit`/`insufficientResources`, coerentemente
 con il limite di due di GS-API-007. Gli altri riferimenti pendenti rimangono rifiuti

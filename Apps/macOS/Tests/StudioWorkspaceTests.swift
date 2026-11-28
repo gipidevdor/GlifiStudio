@@ -10,6 +10,70 @@ import Testing
 struct StudioWorkspaceTests {
     private final class BundleAnchor {}
 
+    @Test("Aprire Studio durante un’altra operazione avvia la lettura appena il progetto è libero")
+    func studyOpenedDuringAnOperationInitializesAfterItFinishes() async throws {
+        let root = FileManager.default.temporaryDirectory.appending(
+            path: "GlifiStudyStartup-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: false)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let project = root.appending(path: "Studio.glifi")
+        let session = try await GlifiStudioService().createProject(at: project)
+        let source = root.appending(path: "fonte.txt")
+        try Data("Un contenuto importante da studiare.".utf8).write(to: source)
+        _ = try await session.importText(at: source, format: .plainText)
+        await session.close()
+        let home = StudioHomeModel()
+        await home.openProject(at: project)
+        try #require(home.snapshot != nil)
+        let gate = AsyncStream<Void>.makeStream()
+        let started = AsyncStream<Void>.makeStream()
+        let operation = Task { @MainActor in
+            await home.runAdvancedAnalysis { _ in
+                started.continuation.yield(())
+                for await _ in gate.stream { break }
+            }
+        }
+        defer {
+            gate.continuation.finish()
+            started.continuation.finish()
+            operation.cancel()
+        }
+        var starting = started.stream.makeAsyncIterator()
+        _ = await starting.next()
+        try #require(home.isBusy)
+        let window = NSWindow(
+            contentRect: NSRect(x: -20_000, y: -20_000, width: 1_100, height: 700),
+            styleMask: [.borderless], backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        let host = NSHostingView(
+            rootView: StudioStudyView(home: home, onImportSources: {}, onOpenProject: {}))
+        window.contentView = host
+        window.orderBack(nil)
+        defer {
+            window.contentView = nil
+            window.close()
+        }
+        host.layoutSubtreeIfNeeded()
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(!home.study.hasLoaded)
+        gate.continuation.finish()
+        await operation.value
+        for _ in 0..<150 {
+            if home.study.hasLoaded, home.study.firstReading != nil, !home.isBusy { break }
+            try await Task.sleep(for: .milliseconds(20))
+        }
+        #expect(home.lastFailure == nil)
+        #expect(home.study.hasLoaded)
+        #expect(home.study.firstReading?.text == "Un contenuto importante da studiare.")
+        #expect(!home.isBusy)
+        // A later ordinary operation must not reload or replace the current reading.
+        let navigation = home.study.firstReading?.navigationID
+        await home.runAdvancedAnalysis { _ in }
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(home.study.firstReading?.navigationID == navigation)
+        await home.closeProject()
+    }
+
     @Test(arguments: ["it_IT", "en_US"])
     func dynamicallyComposedLocalizationValuesResolveInTheSelectedLanguage(identifier: String)
         throws

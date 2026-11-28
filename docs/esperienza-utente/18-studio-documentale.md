@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-UX-001-18 |
 | Tipo | Specifica dell'esperienza di studio documentale |
-| Versione | 1.0.0 |
+| Versione | 1.1.0 |
 | Stato | Definito; usabilità con utenti da validare |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-28 |
@@ -45,6 +45,13 @@ testo salvato e offre Salva/Annulla; lo stato di salvataggio resta leggibile.
 Non si perdono bozze in modo silenzioso cambiando fonte o
 vista. Una failure non sostituisce la lettura valida con un risultato parziale;
 risposte tardive da una fonte precedente non cambiano il contesto corrente.
+
+Se Studio viene aperto durante un'altra operazione, inizializza il taccuino e la
+lettura quando il progetto torna disponibile. Ricaricare dopo modifiche di
+un'altra finestra conserva titolo e testo dell'editor, riconcilia i passaggi e i
+gruppi ancora disponibili e segnala i collegamenti rimossi. Un estratto eliminato
+non può risultare salvato tramite un'operazione vuota: l'editor conserva la bozza
+e spiega come copiare il titolo o recuperare il passaggio.
 
 ## Accessibilità e verifica
 

@@ -50,6 +50,8 @@ TEST_SUPPORT = {
     "Apps/macOS/StudioKHMatrixModel.swift", "Apps/macOS/StudioKHLanguageModel.swift",
     "Apps/macOS/StudioResearchModel.swift",
     "Apps/macOS/StudioStudyModel.swift",
+    # The hosted SwiftUI startup regression uses the actual reader composition.
+    "Apps/macOS/StudioStudyView.swift", "Apps/macOS/StudioStudyNativeReaders.swift",
     "Apps/macOS/StudioStatisticsModel.swift", "Apps/macOS/StudioEvaluationModel.swift",
     "Apps/macOS/StudioCoreMethodRoute.swift", "Apps/macOS/StudioAdvancedAnalysisModel.swift",
     "Apps/macOS/StudioSourceLookup.swift", "Apps/macOS/StudioMacRuntimeMonitor.swift",

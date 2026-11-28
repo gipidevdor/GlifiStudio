@@ -11,6 +11,8 @@
 		594879C96A967AE0C3E4677B /* StudioStudyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 837A3B2EB1604E5277DBC429 /* StudioStudyModel.swift */; };
 		E4523574BD780642FF52A211 /* StudioStudyNativeReaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D3365944031E9776D9CF4F /* StudioStudyNativeReaders.swift */; };
 		024989A819DBA17010EF0C2B /* StudioStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCAE6AA4FBB699A7F501F2E /* StudioStudyView.swift */; };
+		B9C400000000000000000001 /* StudioStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCAE6AA4FBB699A7F501F2E /* StudioStudyView.swift */; };
+		B9C400000000000000000002 /* StudioStudyNativeReaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D3365944031E9776D9CF4F /* StudioStudyNativeReaders.swift */; };
 		B77F85D4B3D64814F453AB85 /* StudioStudyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE65BA7EC073868521EDA79 /* StudioStudyTests.swift */; };
 		B33900000000000000000001 /* StudioLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33900000000000000000001 /* StudioLocalization.swift */; };
 		B33900000000000000000002 /* StudioLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33900000000000000000001 /* StudioLocalization.swift */; };
@@ -763,6 +765,8 @@
 			files = (
 				B77F85D4B3D64814F453AB85 /* StudioStudyTests.swift in Sources */,
 				594879C96A967AE0C3E4677B /* StudioStudyModel.swift in Sources */,
+				B9C400000000000000000001 /* StudioStudyView.swift in Sources */,
+				B9C400000000000000000002 /* StudioStudyNativeReaders.swift in Sources */,
 				B72000000000000000000002 /* StudioLinguisticModel.swift in Sources */,
 				B8B200000000000000000001 /* StudioKHMatrixModel.swift in Sources */,
 				B8B200000000000000000003 /* StudioKHLanguageModel.swift in Sources */,
