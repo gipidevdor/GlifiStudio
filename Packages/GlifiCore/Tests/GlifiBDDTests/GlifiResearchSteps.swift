@@ -733,6 +733,31 @@ private final class BDDResearchWorld {
         #expect(try await reopened.snapshot() == snapshot)
     }
 
+    func precancelNativePreparation() async throws {
+        let active = try #require(session)
+        let ids = sourceIDs
+        baseline = try await active.snapshot()
+        result = nil
+        failure = nil
+        let task = Task {
+            withUnsafeCurrentTask { $0?.cancel() }
+            return try await GlifiStudioTextAnalytics.prepareProjectInput(
+                session: active, sourceRevisionIDs: ids)
+        }
+        do {
+            result = try await BDDVariantAssertions.encode(task.value)
+        } catch let observed as GlifiStudioFailure {
+            failure = observed
+        }
+    }
+
+    func verifyPreparationCancellation() async throws {
+        try BDDVariantAssertions.expectFailure(
+            failure, result: result, code: "operation.cancelled", category: "cancelled",
+            operation: "analyze")
+        try await verifyUnchanged()
+    }
+
     private func command(_ operation: GlifiStudioResearchOperation, parameters: [String: Any])
         throws -> Data
     {
@@ -802,5 +827,11 @@ func registerResearchSteps() {
     }
     Then("mapping e stato grandi conservano parità nativa provenienza e riapertura") { _, _ in
         try await researchWorld.verifyLargeDTOs()
+    }
+    When("precancello direttamente la preparazione nativa del corpus") { _, _ in
+        try await researchWorld.precancelNativePreparation()
+    }
+    Then("la preparazione cancellata conserva il contratto di lettura e lo snapshot") { _, _ in
+        try await researchWorld.verifyPreparationCancellation()
     }
 }

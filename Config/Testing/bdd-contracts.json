@@ -19637,6 +19637,24 @@
         "mapping e stato grandi conservano parità nativa provenienza e riapertura"
       ],
       "domain": "research-large-dto-files"
+    },
+    {
+      "caseID": "supplemental.ResearchWorkflow.99",
+      "feature": "ResearchWorkflow.feature",
+      "line": 99,
+      "sourceLineSHA256": "d433fc794467724f9993682b11bffb53d89f67b7f4ddd8dc965829bc101db3ee",
+      "oracle": "La preparazione del corpus tramite API nativa con Task già cancellato non produce un risultato: failure operation.cancelled, categoria cancelled, operazione analyze, retry newRequest e retainedState unchanged. Snapshot, stato di ricerca revisione1, unico output acquisito e byte del CSV originale restano invariati.",
+      "dataOrigin": "original-synthetic",
+      "references": [
+        "docs/api/03-parita-continua-cli.md",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiProjectLaboratoryInputTests.swift"
+      ],
+      "witnesses": [
+        "la variante di ricerca \"state\" su tre righe italiane originali",
+        "precancello direttamente la preparazione nativa del corpus",
+        "la preparazione cancellata conserva il contratto di lettura e lo snapshot"
+      ],
+      "domain": "research-read-only-cancellation"
     }
   ],
   "workflowCoverage": [

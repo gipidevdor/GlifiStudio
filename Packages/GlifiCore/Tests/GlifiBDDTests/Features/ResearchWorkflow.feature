@@ -95,3 +95,9 @@ Funzionalità: Le operazioni di ricerca conservano dati preparazione e lavoro av
     Data la variante di ricerca "state" su tre righe italiane originali
     Quando trasporto anteprima e stato oltre un MiB tramite file JSON espliciti
     Allora mapping e stato grandi conservano parità nativa provenienza e riapertura
+
+  @research-native-cancellation
+  Scenario: La preparazione nativa precancellata conserva il contratto di sola lettura
+    Data la variante di ricerca "state" su tre righe italiane originali
+    Quando precancello direttamente la preparazione nativa del corpus
+    Allora la preparazione cancellata conserva il contratto di lettura e lo snapshot

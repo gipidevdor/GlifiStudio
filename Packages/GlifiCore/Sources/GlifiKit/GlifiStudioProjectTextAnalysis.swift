@@ -133,18 +133,24 @@ extension GlifiStudioTextAnalytics {
                 matrix: matrix, lexicalTokenCount: tokenCount,
                 preparationDigest: preparationDigest, preparation: research.preparation)
         } catch let failure as GlifiStudioFailure {
+            if failure.category == "cancelled" { throw projectInputCancellation() }
             throw failure
         } catch let failure as GlifiFailure {
+            if failure.category == .cancelled { throw projectInputCancellation() }
             throw GlifiStudioFailure(failure)
         } catch is CancellationError {
-            throw GlifiStudioFailure(
-                code: "operation.cancelled", category: "cancelled", operation: "analyze",
-                retryDisposition: "newRequest", retainedState: "unchanged",
-                messageKey: "failure.category.cancelled")
+            throw projectInputCancellation()
         } catch {
             throw projectInputFailure()
         }
     }
+}
+
+private func projectInputCancellation() -> GlifiStudioFailure {
+    GlifiStudioFailure(
+        code: "operation.cancelled", category: "cancelled", operation: "analyze",
+        retryDisposition: "newRequest", retainedState: "unchanged",
+        messageKey: "failure.category.cancelled")
 }
 
 private func projectInputFailure(resource: Bool = false) -> GlifiStudioFailure {
