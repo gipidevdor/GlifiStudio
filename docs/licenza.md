@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-LIC-001 |
 | Tipo | Politica di licenza del progetto |
-| Versione | 0.4.0 |
+| Versione | 0.4.1 |
 | Stato | Attivo |
 | Responsabile | Glifi Studio contributors |
 | Ultima modifica | 2026-11-27 |
@@ -85,6 +85,13 @@ prodotto serve una nuova valutazione. Una citazione di articolo o manuale non
 è una concessione di licenza sul relativo codice, testo, tabella o dato.
 
 ## 8. Dipendenze BDD esclusivamente di sviluppo
+
+Le fonti esterne consultate per progettare casi originali sono registrate
+separatamente in [GS-LIC-003](testing/02-provenienza-scenari.md). Una licenza
+per dati o componenti di codice non si estende automaticamente alla relativa
+pubblicazione. Il lotto non copia esempi, suite o dataset delle fonti: una
+futura acquisizione richiede riesame e conservazione degli avvisi applicabili,
+anche quando il materiale è destinato soltanto ai test.
 
 [ADR-0046](adr/0046-bdd-cucumber-swift.md) adotta CucumberSwift 6.9.0 e la
 dipendenza transitiva CucumberSwiftExpressions 1.4.2 con licenza MIT. Manifest

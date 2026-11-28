@@ -6,12 +6,12 @@
 | --- | --- |
 | Identificatore | GS-LIC-002 |
 | Tipo | Registro controllato di provenienza |
-| Versione | 1.0.1 |
+| Versione | 1.0.2 |
 | Stato | Revisione locale con limiti dichiarati |
 | Responsabile | Glifi Studio contributors |
 | Ultima modifica | 2026-11-27 |
 | Approvazione | Richiesta esplicita di revisione delle licenze e delle fonti algoritmiche |
-| Riferimenti | GS-LIC-001; GS-STD-001-13; GS-DOR-318; GS-VER-318; GS-VER-319; GS-VER-321; ADR-0046; GS-VER-332 |
+| Riferimenti | GS-LIC-001; GS-LIC-003; GS-STD-001-13; GS-DOR-318; GS-VER-318; GS-VER-319; GS-VER-321; ADR-0046; GS-VER-332 |
 
 ## Regola di attribuzione
 
@@ -114,6 +114,17 @@ L’individuazione futura di un port richiede riesame della licenza o sostituzio
 la classificazione «riferimento» non è un modo per approvare codice GPL copiato.
 
 ## Oracoli e strumenti separati
+
+Gli scenari BDD usano anche le fonti primarie revisionate in
+[GS-LIC-003](testing/02-provenienza-scenari.md): Gherkin, NIST/SEMATECH,
+Unicode e RFC JSON/CSV. Il registro distingue licenza del codice, dati e
+pubblicazioni, conserva revisioni e condizioni e dichiara l'uso di casi
+originali senza acquisire esempi o suite esterne. Sono riferimenti per
+classi di casi, non nuovi oracoli indipendenti o dipendenze del prodotto.
+Il manuale NIST è pertinente a t/paired/Welch e goodness-of-fit, non viene
+attribuito a tutte le famiglie. Gli altri scenari mantengono forme chiuse,
+invarianti originali o riferimenti alle specifiche interne già riesaminate;
+il registro collega i nomi effettivi delle feature senza anticipare esiti GREEN.
 
 R e i pacchetti `igraph`, `NMF`, `cluster` sono strumenti GPL eseguiti come
 processi di verifica su dati sintetici del progetto. Le licenze sono verificate

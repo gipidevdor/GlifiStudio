@@ -17,5 +17,13 @@ extension Cucumber: @retroactive StepImplementation {
         registerWorkflowSteps()
         registerCLISteps()
         registerAnalyticalSteps()
+        registerCompleteMethodSteps()
+        registerProfileSteps()
+        registerInterchangeSteps()
+        registerPlannerContractSteps()
+        registerTextVariantSteps()
+        registerEvaluationVariantSteps()
+        registerProjectVariantSteps()
+        registerResearchSteps()
     }
 }

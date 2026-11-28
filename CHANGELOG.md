@@ -36,6 +36,37 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
   i diagnostici scientifici; verifiche automatiche e audit manuali distinti
   in GS-VER-342.
 
+### Etichette localizzate macOS
+
+- Corretti 39 identificatori dinamici di statistiche, operatori, analisi
+  avanzate, corpus, linguistica, piani, evidenze ed etichette accessibili
+  dei formati di export: il ponte costruisce la
+  chiave completa prima del lookup. I messaggi con argomenti conservano
+  l'interpolazione localizzabile. Verifica GUI e regressioni native it/en
+  accompagnano il controllo statico (GS-DOR-339).
+
+### Dimensionamento del laboratorio macOS
+
+- Corretto il minimo verticale della finestra Welch, che poteva raggiungere
+  2265 punti su uno schermo con 1179 disponibili. Intestazione e pannelli
+  ricevono ora il viewport reale; split, tab e scorrimento nativi restano
+  disponibili. RED/GREEN nella finestra documento, apertura dei dettagli,
+  Calcola ed Export verificati anche nel layout compatto (GS-DOR-340).
+
+### Copertura BDD e CSV
+
+- Tutte le 172 varianti pubbliche sono associate a casi nominali, input non
+  validi e cancellazione preventiva; tutte le 63 fixture testuali originali
+  sono eseguite invariate. Il gate confronta registro, inventario upstream e
+  report: 16 feature, 744 scenari e 3092 passaggi (GS-DOR-337).
+- Cinque gruppi di fonti primarie web sono riesaminati per condizioni e uso:
+  solo fatti e metodi di riferimento, con fixture originali; nessun corpus,
+  codice o suite esterna acquisita (GS-LIC-003).
+- Corretto l'export CSV di campi contenenti CRLF senza altri delimitatori:
+  quoting basato sugli scalari Unicode, byte conservati e verifica fail-closed
+  anche dopo rehash. I bundle storici malformati vengono rifiutati; API e
+  schema restano invariati (GS-DOR-338).
+
 ### Sviluppo BDD e interazione macOS
 
 - Cucumber entra nel ciclo RED/GREEN: `make test-bdd-list` elenca le selezioni;
@@ -56,7 +87,7 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 - CucumberSwift fissato alla versione 6.9.0 nel solo target di test BDD:
   feature italiane per progetto, query, corpus, codifica, export e parità CLI,
   con oracoli espliciti, failure e conservazione dello stato (GS-DOR-332).
-  `make test-bdd` e `make verify` richiedono il report completo degli esempi
+  `make test`, `make test-bdd` e `make verify` richiedono il report completo degli esempi
   inventariati; licenze, dipendenze e decisione tecnica sono tracciate.
 - Attribuzioni Gherkin e Cucumber Expressions conservate integralmente con le
   licenze BSD/Core nel bundle dei test; controllo di ogni pin risolto, fonte

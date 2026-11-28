@@ -651,7 +651,7 @@ nonisolated struct StudioKHLanguageOutput: Sendable {
                                 status($0.test),
                                 $0.test?.appliedCorrection.map { value in
                                     String(
-                                        localized: String.LocalizationValue(
+                                        localized: StudioLocalization.value(
                                             "kh.language.correction.\(value.rawValue)"),
                                         locale: locale)
                                 } ?? "—",

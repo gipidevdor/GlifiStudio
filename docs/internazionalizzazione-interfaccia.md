@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-I18N-002 |
 | Tipo | Specifica di internazionalizzazione dell'interfaccia |
-| Versione | 0.3.0 |
+| Versione | 0.4.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Decisione esplicita dell'iniziatore del progetto |
 | Decisione | [ADR-0005](adr/0005-interfaccia-internazionalizzabile.md) |
 
@@ -58,3 +58,29 @@ Le app Glifi Studio devono adattare lingua e formattazione alle preferenze della
 ## Verifica automatica
 
 `Scripts/check-localization.py` verifica lingua sorgente, chiavi richieste, completezza italiana e inglese, inclusione del catalogo nei due target e impostazioni Xcode. Le build macOS e iPadOS compilano lo stesso catalogo come parte del quality gate.
+
+## Identificatori dinamici e argomenti delle frasi
+
+Le chiavi semantiche costruite a runtime **DEVONO** essere stringhe complete
+prima di diventare `LocalizedStringKey` o `String.LocalizationValue`.
+L'interpolazione nel costruttore localizzabile crea invece un template di
+messaggio con argomenti: non equivale alla ricerca della chiave composta.
+Il ponte applicativo `StudioLocalization.key/value` riceve un `String` e
+mantiene questa distinzione senza cambiare cataloghi o fallback.
+Le frasi con quantità o argomenti **DEVONO** conservare l'interpolazione
+localizzabile ordinaria; non vanno convertite in identificatori concatenati.
+
+`Scripts/check-localization.py` controlla il pattern di costruzione degli
+identificatori nel codice applicativo, distinto dalle risorse e dai template
+con argomenti. Include i costruttori espliciti e il caso diretto
+`Text("prefisso.semantico.\(componente)")`, anche nelle etichette accessibili;
+un messaggio come `Text("statistics.table.count \(count)")` conserva invece
+l'argomento localizzabile. Il controllo è circoscritto al pattern dichiarato
+e non è un parser Swift generale. Le regressioni native confrontano risoluzione esatta
+Foundation e dimensioni di rendering con testi attesi indipendenti; queste
+prove non attestano la semantica AX di un'intera vista. L'audit GUI e i limiti
+assistivi sono registrati separatamente in GS-VER-339.
+
+Riferimenti primari Apple: [inizializzazione interpolata](https://developer.apple.com/documentation/swiftui/localizedstringkey/init(stringinterpolation:))
+e [Text con chiave completa](https://developer.apple.com/documentation/swiftui/text/init(_:tablename:bundle:comment:)).
+Solo contratti API consultati: nessun esempio o sorgente esterno incorporato.

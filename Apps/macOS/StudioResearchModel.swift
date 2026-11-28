@@ -281,6 +281,34 @@ nonisolated struct StudioResearchSavedValue: Identifiable, Sendable {
             })
     }
 
+    enum VariableUse {
+        case classification, groupComparison, codeCrosstab
+
+        var client: String {
+            switch self {
+            case .classification, .codeCrosstab: "advanced"
+            case .groupComparison: "corpusMethods"
+            }
+        }
+    }
+
+    /// Connects the saved variable to an existing editor without replacing the person's rules.
+    func useVariable(fieldID: String, for destination: VariableUse, in home: StudioHomeModel) {
+        let labels = classLabels(fieldID: fieldID)
+        switch destination {
+        case .classification:
+            home.advancedAnalysis.labels = labels
+            home.advancedAnalysis.tool = .classification
+            home.khLanguage.draft.labels = labels
+        case .groupComparison:
+            home.corpusMethods.draft.groupLabels = labels
+            home.corpusMethods.draft.tool = .groupMetrics
+        case .codeCrosstab:
+            home.advancedAnalysis.labels = labels
+            home.advancedAnalysis.tool = .codeCrosstab
+        }
+    }
+
     func temporalAnnotations(fieldID: String) -> [String: StudioTemporalAnnotationDraft] {
         var annotations: [String: StudioTemporalAnnotationDraft] = [:]
         for record in state.records {

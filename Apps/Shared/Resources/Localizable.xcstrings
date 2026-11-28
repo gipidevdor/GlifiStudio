@@ -55443,6 +55443,40 @@
           }
         }
       }
+    },
+    "research.variable.use-comparisons" : {
+      "extractionState": "manual",
+      "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usa per confronti"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use for comparisons"
+          }
+        }
+      }
+    },
+    "research.variable.use-crosstabs" : {
+      "extractionState": "manual",
+      "localizations": {
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usa per tabelle incrociate"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use for crosstabs"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

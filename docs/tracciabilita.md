@@ -4,7 +4,7 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.97.1 |
+| Versione | 0.98.0 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-28 |
@@ -13,6 +13,30 @@
 ## Scopo
 
 La matrice collega le fonti iniziali alle necessità degli stakeholder, ai requisiti software, alle parti dell'architettura e alle evidenze di verifica pianificate. Gli identificatori fanno riferimento a [Requisiti](requisiti.md) e [Architettura](architettura.md).
+
+## Dimensionamento nativo del laboratorio
+
+| Requisiti e clausola | Attuazione circoscritta | Verifica |
+| --- | --- | --- |
+| RQ-012/062/063; CMP-340 | Intestazione e pannelli misurati nel viewport reale; split e tab nativi scorrevoli conservati | [GS-DOR-340](pianificazione/dor-altezza-laboratorio.md); [GS-VER-340](evidenze/GS-VER-340-altezza-laboratorio.md) |
+
+Il RED e il GREEN sono osservati nella finestra documento reale con API
+pubbliche e interazioni CUA. I probe hostless non riproducono il difetto e
+restano fuori dal gate; la clausola resta implemented, senza promozione G4
+né attestazione di audit assistivo completo.
+
+## Correttezza delle etichette localizzate
+
+| Requisiti e clausola | Attuazione circoscritta | Verifica |
+| --- | --- | --- |
+| RQ-058/060/062/063; CMP-339 | Identità complete delle chiavi SwiftUI/Foundation, argomenti testuali conservati e osservazione GUI | [GS-DOR-339](pianificazione/dor-chiavi-localizzazione-dinamiche.md); [GS-VER-339](evidenze/GS-VER-339-localizzazione-interattiva.md) |
+
+## Copertura BDD e correttezza CSV
+
+| Requisiti e clausola | Attuazione circoscritta | Verifica |
+| --- | --- | --- |
+| RQ-058/060/062/063; CMP-337 | Tutte le varianti pubbliche nelle tre fasi, tutte le fixture testuali, associazioni e fonti controllate | [GS-DOR-337](pianificazione/dor-scenari-completi.md); [GS-VER-337](evidenze/GS-VER-337-scenari-completi.md) |
+| RQ-011/061/062/063; CMP-338 | Quoting CSV anche per CRLF isolato; rifiuto dei payload incoerenti dopo rehash | [GS-DOR-338](pianificazione/dor-csv-crlf.md); [GS-VER-338](evidenze/GS-VER-338-csv-crlf.md) |
 
 ## Sviluppo BDD e interazione della ricerca
 

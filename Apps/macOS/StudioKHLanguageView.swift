@@ -365,7 +365,8 @@ struct StudioKHLanguageView: View {
                     LabeledContent("visual.method", value: output.methodIdentifier)
                     ForEach(output.metrics) { metric in
                         LabeledContent(
-                            LocalizedStringKey("kh.language.\(metric.key)"), value: metric.value)
+                            StudioLocalization.key("kh.language.\(metric.key)"), value: metric.value
+                        )
                     }
                     Menu("cm.export", systemImage: "square.and.arrow.up") {
                         Button("advanced.export-result") { exportData = output.encodedResult }
@@ -414,7 +415,7 @@ struct StudioKHLanguageView: View {
                     }
                 }
                 ForEach(output.tables) { table in
-                    Section(LocalizedStringKey("kh.language.table.\(table.id)")) {
+                    Section(StudioLocalization.key("kh.language.table.\(table.id)")) {
                         resultTable(table)
                     }
                 }
@@ -439,7 +440,7 @@ struct StudioKHLanguageView: View {
                                 if let first = table.literalColumnStart, index >= first {
                                     Text(key)
                                 } else {
-                                    Text(LocalizedStringKey("kh.language.\(key)"))
+                                    Text(StudioLocalization.key("kh.language.\(key)"))
                                 }
                             }.fontWeight(.semibold).accessibilityAddTraits(.isHeader)
                         }

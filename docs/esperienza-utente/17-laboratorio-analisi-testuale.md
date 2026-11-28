@@ -458,6 +458,12 @@ e navigazione SwiftUI esistenti. Le sezioni riguardano importazione, dati,
 preparazione e analisi salvate. Anteprima e mapping precedono il commit; righe
 scartate e provenienza delle celle sono esplicite.
 
+Le variabili salvate alimentano azioni esplicite per confronti fra gruppi,
+tabelle incrociate, classi e annotazioni temporali. I confronti riusano le
+etichette per fonte del laboratorio corpus; gli incroci riusano gruppi e
+regole della codifica, conservando lo scope scelto. Non occorre trascrivere
+i valori dei metadati negli editor dei laboratori.
+
 I risultati rimangono di sessione fino all'azione esplicita di salvataggio.
 L'acquisizione persistente conserva la configurazione effettiva, non il draft
 modificato dopo il calcolo. Il ripristino riapre impostazioni e vista senza

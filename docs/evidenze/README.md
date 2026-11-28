@@ -19,6 +19,13 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 - [GS-VER-341 — Affidabilità verificabile dei test BDD e dell'inferenza](GS-VER-341-ingegneria-verificabile.md) — Regressioni mirate superate; gate integrato bloccato dai nuovi messaggi tabellari e dal flusso persistente concorrente
 - [GS-VER-333 — Attribuzioni e avvisi degli strumenti BDD](GS-VER-333-licenze-bdd.md) — Superato: avvisi diretti e incorporati, tre copie legali compilate, 19 regressioni e gate macOS
 
+- [GS-VER-340 — Misure del laboratorio](GS-VER-340-altezza-laboratorio.md) — RED/GREEN della finestra documento reale; dettagli e azioni raggiungibili nei layout ampio e compatto
+
+- [GS-VER-339 — Localizzazione interattiva](GS-VER-339-localizzazione-interattiva.md) — RED/GREEN GUI e rendering it/en; esiti finali nell'allegato
+
+- [GS-VER-338 — CSV con CRLF](GS-VER-338-csv-crlf.md) — RED/GREEN, gate macOS e preflight senza firma superati
+- [GS-VER-337 — Scenari completi e provenienza](GS-VER-337-scenari-completi.md) — 172 varianti, tre fasi e 744 scenari; gate e preflight macOS superati
+
 - [GS-VER-336 — Catalogo e stato accessibile](GS-VER-336-catalogo-stato-accessibile.md) — Superato macOS e preflight senza firma; limiti del controllo interattivo espliciti
 - [GS-VER-335 — Contesto e stato della ricerca](GS-VER-335-ricerca-contesto.md) — Superato macOS e preflight senza firma; limiti del controllo interattivo espliciti
 - [GS-VER-334 — Sviluppo BDD](GS-VER-334-sviluppo-bdd.md) — Selezioni Cucumber reali, 16 controlli cache e gate/preflight macOS superati

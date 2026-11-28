@@ -534,6 +534,103 @@
       "noticeFile": "Config/Licenses/bdd-tools.txt",
       "status": "reviewed",
       "notes": "SyntaxError.swift dichiara la riproduzione letterale dei messaggi e la dipendenza attribuisce grammatica/informazioni implementative a cucumber/cucumber-expressions. Conservati copyright Cucumber Ltd e contributori, permesso e disclaimer MIT completi anche nel bundle test. Lo snapshot primario identifica la licenza riesaminata; non identifica l’esatta revisione storica adattata dal port Swift."
+    },
+    {
+      "id": "gherkin-scenario-reference",
+      "category": "algorithm-specification",
+      "paths": [
+        "docs/testing/02-provenienza-scenari.md"
+      ],
+      "sourceURLs": [
+        "https://github.com/cucumber/gherkin/blob/e21434718037092b4cd1127b8b4049e545bda71b/gherkin.berp",
+        "https://github.com/cucumber/gherkin/blob/e21434718037092b4cd1127b8b4049e545bda71b/gherkin-languages.json",
+        "https://raw.githubusercontent.com/cucumber/gherkin/e21434718037092b4cd1127b8b4049e545bda71b/LICENSE"
+      ],
+      "revision": "Gherkin v41.0.0; commit e21434718037092b4cd1127b8b4049e545bda71b",
+      "licenseExpression": "MIT",
+      "distribution": "external-reference",
+      "relationship": "reference-only-original-scenarios",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Grammatica e dialetti consultati come riferimento per casi originali. Nessun parser, dizionario, esempio o suite copiato; la versione del runner Swift resta quella del lockfile, non quella di questa fonte. LICENSE MIT letto al commit; digest e risoluzione del tag annotato in GS-LIC-003. Una futura copia di parti sostanziali deve conservare gli avvisi MIT."
+    },
+    {
+      "id": "nist-handbook-scenario-reference",
+      "category": "algorithm-specification",
+      "paths": [
+        "docs/testing/02-provenienza-scenari.md"
+      ],
+      "sourceURLs": [
+        "https://www.itl.nist.gov/div898/handbook/eda/section3/eda353.htm",
+        "https://www.itl.nist.gov/div898/handbook/eda/section3/eda35f.htm",
+        "https://www.nist.gov/copyrights-disclaimers",
+        "https://www.nist.gov/open/copyright-fair-use-and-licensing-statements-srd-data-software-and-technical-series-publications"
+      ],
+      "revision": "NIST/SEMATECH Handbook sections 1.3.5.3 and 1.3.5.15; accessed 2026-11-27; no immutable page revision exposed",
+      "licenseExpression": "LicenseRef-NIST-Handbook-Reference",
+      "distribution": "external-reference",
+      "relationship": "reference-only-original-scenarios",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Solo riferimento a fatti e formule per test t e goodness-of-fit. Nessun dato AUTO83B, tabella, testo, codice o esempio numerico del manuale acquisito. Le condizioni NIST distinguono SRD, opere di dipendenti, terzi e diritti esteri: non si dichiara pubblico dominio universale. La fonte non è un oracolo dei risultati Glifi; attese e fixture rimangono originali."
+    },
+    {
+      "id": "unicode-scenario-reference",
+      "category": "algorithm-specification",
+      "paths": [
+        "docs/testing/02-provenienza-scenari.md"
+      ],
+      "sourceURLs": [
+        "https://www.unicode.org/reports/tr29/tr29-47.html",
+        "https://www.unicode.org/Public/17.0.0/ucd/auxiliary/WordBreakTest.txt",
+        "https://www.unicode.org/copyright.html",
+        "https://www.unicode.org/license.txt"
+      ],
+      "revision": "UAX29 revision 47, Unicode 17.0.0, 2025-08-17; WordBreakTest17.0.0 dated 2025-03-24; terms accessed 2026-11-27",
+      "licenseExpression": "LicenseRef-Unicode-Publication-Terms AND Unicode-3.0",
+      "distribution": "external-reference",
+      "relationship": "reference-only-original-scenarios",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Solo riferimento per categorie di casi con stringhe originali. Nessuna riga della suite UCD né testo, tabelle o regole UAX copiati. Unicode License V3 riguarda dati/software; la pubblicazione UAX ha condizioni distinte. Le coordinate e la segmentazione sono verificate secondo il contratto Glifi e il sistema registrato, senza dichiarare conformità UAX completa. Digest del file versione17 e del testo V3 consultato in GS-LIC-003."
+    },
+    {
+      "id": "json-rfc8259-scenario-reference",
+      "category": "algorithm-specification",
+      "paths": [
+        "docs/testing/02-provenienza-scenari.md"
+      ],
+      "sourceURLs": [
+        "https://www.rfc-editor.org/rfc/rfc8259.html",
+        "https://www.rfc-editor.org/rfc/rfc8259.txt",
+        "https://trustee.ietf.org/documents/trust-legal-provisions/tlp-5/"
+      ],
+      "revision": "RFC8259, December2017; IETF TLP5 effective2015-03-25, corrected2021",
+      "licenseExpression": "LicenseRef-IETF-RFC8259-Reference",
+      "distribution": "external-reference",
+      "relationship": "reference-only-original-scenarios",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Riferimento alle regole di interoperabilità JSON per envelope e dati originali. Nessun esempio, testo, ABNF o Code Component estratto; i termini BSD dei soli componenti di codice non sono applicati all’intero RFC. Aspettative per duplicati, limiti e Unicode malformato devono corrispondere al contratto Glifi effettivo. Versione e digest in GS-LIC-003."
+    },
+    {
+      "id": "csv-rfc4180-scenario-reference",
+      "category": "algorithm-specification",
+      "paths": [
+        "docs/testing/02-provenienza-scenari.md"
+      ],
+      "sourceURLs": [
+        "https://www.rfc-editor.org/rfc/rfc4180.html",
+        "https://www.rfc-editor.org/rfc/rfc4180.txt",
+        "https://www.rfc-editor.org/rfc/rfc3978.html"
+      ],
+      "revision": "RFC4180, October2005; BCP78 historical RFC3978, March2005",
+      "licenseExpression": "LicenseRef-IETF-RFC4180-Reference",
+      "distribution": "external-reference",
+      "relationship": "reference-only-original-scenarios",
+      "noticeFile": null,
+      "status": "reviewed",
+      "notes": "Riferimento Informational a quoting, campi e righe CSV con record inventati. Nessun esempio, ABNF, testo o tabella copiati; nessuna attribuzione BSD all’intero RFC né applicazione retroattiva del TLP corrente. Si verifica solo il formato esposto dal prodotto, senza introdurre nuovi ingressi. Versione e digest in GS-LIC-003."
     }
   ],
   "reviewedInputs": {

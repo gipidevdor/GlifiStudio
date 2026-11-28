@@ -6,7 +6,7 @@
 | --- | --- |
 | Identificatore | GS-DOR-IDX-001 |
 | Tipo | Registro delle schede Definition of Ready |
-| Versione | 1.6.40 |
+| Versione | 1.6.42 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
 | Ultima modifica | 2026-11-28 |
@@ -30,6 +30,14 @@ preservando i confini del lavoro già in corso nell'altra chat.
 ## Indice
 
 - [GS-DOR-341 — Affidabilità verificabile dei test BDD e dell'inferenza](dor-ingegneria-verificabile.md) — Ownership del subprocesso, inventario V2, JSON rigoroso e fallback numerici selettivi
+
+- [GS-DOR-340 — Altezza del laboratorio](dor-altezza-laboratorio.md) — RED/GREEN nella finestra documento reale e layout adattivo circoscritto
+
+- [GS-DOR-339 — Chiavi localizzate dinamiche](dor-chiavi-localizzazione-dinamiche.md) — Identificatori completi distinti dagli argomenti localizzati
+
+- [GS-DOR-338 — CSV con CRLF](dor-csv-crlf.md) — Quoting per scalari, byte conservati e rifiuto delle alterazioni
+- [GS-DOR-337 — Scenari completi](dor-scenari-completi.md) — 172 varianti, tre fasi, fixture originali e fonti web verificate
+
 - [GS-DOR-336 — Catalogo da tastiera e stato accessibile](dor-catalogo-tastiera.md) — Attivazione univoca, nome/valore e annuncio delle failure
 - [GS-DOR-335 — Contesto e stato della ricerca](dor-ricerca-contesto.md) — Risultato e fonte atomici, bozza esplicita e prerequisiti reali
 - [GS-DOR-334 — Sviluppo guidato dai comportamenti](dor-sviluppo-bdd.md) — RED/GREEN e selezione esatta, gate completo conservato

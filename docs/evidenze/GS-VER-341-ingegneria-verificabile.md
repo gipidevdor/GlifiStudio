@@ -157,3 +157,10 @@ chiavi tabellari; controlli documentali, matrice di compliance e `git diff
 rimossa (1.923.940 KiB), insieme alla cache isolata del subprocesso già misurata
 (66.488 KiB): totale circa 1,90 GiB. Strumenti, dipendenze globali, altre cache
 attive, file utente ed evidenze versionate sono conservati.
+
+## Identità nel registro condiviso
+
+L’identificativo iniziale GS-VER-334 è stato riallineato a GS-VER-341
+per distinguere evidenze create in parallelo e già presenti su main.
+I comandi e gli esiti storici restano riferiti ai rispettivi snapshot;
+la verifica della composizione finale è registrata in GS-VER-343.

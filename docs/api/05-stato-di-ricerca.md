@@ -66,6 +66,12 @@ selezione da un'anteprima KWIC troncata. L'ordine restituito è quello delle fon
 nella generazione. Le selezioni nominate conservano identità esplicite e restano
 riutilizzabili nelle analisi che ricevono le revisioni selezionate.
 
+La GUI proietta i valori tramite `codingVariables` e le etichette per fonte
+nei parametri delle operazioni già esistenti: confronti di gruppi, incroci
+codici/gruppi, classificazione e temporale. Il trasporto rimane quello delle
+operazioni originali, con richieste catturate e parità Kit/CLI; questa
+proiezione non crea un secondo motore di analisi.
+
 ## Preparazione condivisa
 
 La preparazione sceglie forme normalizzate, lemmi Apple italiani oppure stemming

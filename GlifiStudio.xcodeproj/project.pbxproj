@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B33900000000000000000001 /* StudioLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33900000000000000000001 /* StudioLocalization.swift */; };
+		B33900000000000000000002 /* StudioLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33900000000000000000001 /* StudioLocalization.swift */; };
+		B33900000000000000000003 /* StudioLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33900000000000000000001 /* StudioLocalization.swift */; };
 		B32100000000000000000001 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = A3060000000000000000000A /* LICENSE */; };
 		B32100000000000000000002 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = A3060000000000000000000A /* LICENSE */; };
 		B32100000000000000000003 /* THIRD_PARTY_NOTICES.txt in Resources */ = {isa = PBXBuildFile; fileRef = A32100000000000000000001 /* THIRD_PARTY_NOTICES.txt */; };
@@ -112,6 +115,7 @@
 /* End PBXBuildFile section for macOS tests */
 
 /* Begin PBXFileReference section */
+		A33900000000000000000001 /* StudioLocalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioLocalization.swift; sourceTree = "<group>"; };
 		A32100000000000000000001 /* THIRD_PARTY_NOTICES.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = THIRD_PARTY_NOTICES.txt; sourceTree = SOURCE_ROOT; };
 		A10000000000000000000001 /* StudioHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioHomeView.swift; sourceTree = "<group>"; };
 		A10000000000000000000020 /* StudioVisualizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioVisualizationView.swift; sourceTree = "<group>"; };
@@ -365,6 +369,7 @@
 			children = (
 				A7000000000000000000000A /* StudioVisualExportPreparation.swift */,
 				A60000000000000000000001 /* StudioWorkspaceNavigation.swift */,
+				A33900000000000000000001 /* StudioLocalization.swift */,
 				A10000000000000000000001 /* StudioHomeView.swift */,
 				A8A100000000000000000001 /* StudioFactorAudioGraph.swift */,
 				A8A200000000000000000001 /* StudioPlotSeries.swift */,
@@ -694,6 +699,7 @@
 				B7000000000000000000000D /* StudioCoreMethodRoute.swift in Sources */,
 				B7000000000000000000000F /* StudioVisualExportPreparation.swift in Sources */,
 				B60000000000000000000001 /* StudioWorkspaceNavigation.swift in Sources */,
+				B33900000000000000000001 /* StudioLocalization.swift in Sources */,
 				B60000000000000000000004 /* StudioAdvancedAnalysisModel.swift in Sources */,
 				B60000000000000000000006 /* StudioAdvancedAnalysisView.swift in Sources */,
 				B60000000000000000000007 /* StudioLexicalLawsView.swift in Sources */,
@@ -719,6 +725,7 @@
 			files = (
 				B70000000000000000000010 /* StudioVisualExportPreparation.swift in Sources */,
 				B60000000000000000000002 /* StudioWorkspaceNavigation.swift in Sources */,
+				B33900000000000000000002 /* StudioLocalization.swift in Sources */,
 				B10000000000000000000003 /* StudioHomeView.swift in Sources */,
 				B8A100000000000000000002 /* StudioFactorAudioGraph.swift in Sources */,
 				B8A200000000000000000002 /* StudioPlotSeries.swift in Sources */,
@@ -760,6 +767,7 @@
 				B70000000000000000000012 /* StudioOperatorsTests.swift in Sources */,
 				B60000000000000000000009 /* StudioAdvancedAnalysisTests.swift in Sources */,
 				B60000000000000000000003 /* StudioWorkspaceNavigation.swift in Sources */,
+				B33900000000000000000003 /* StudioLocalization.swift in Sources */,
 				B60000000000000000000005 /* StudioAdvancedAnalysisModel.swift in Sources */,
 				B8A100000000000000000003 /* StudioFactorAudioGraph.swift in Sources */,
 				B8A200000000000000000003 /* StudioPlotSeries.swift in Sources */,

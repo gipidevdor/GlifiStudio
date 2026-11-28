@@ -179,7 +179,7 @@ struct StudioKHMatrixView: View {
                                 .euclidean, .manhattan,
                             ], id: \.self
                         ) { value in
-                            Text(LocalizedStringKey("advanced.distance.\(value.rawValue)")).tag(
+                            Text(StudioLocalization.key("advanced.distance.\(value.rawValue)")).tag(
                                 value)
                         }
                     }
@@ -286,8 +286,9 @@ struct StudioKHMatrixView: View {
                                     .h2, .h1,
                                 ], id: \.self
                             ) { value in
-                                Text(LocalizedStringKey("kh.matrix.level.\(value.rawValue)")).tag(
-                                    value)
+                                Text(StudioLocalization.key("kh.matrix.level.\(value.rawValue)"))
+                                    .tag(
+                                        value)
                             }
                         }
                         TextField("kh.matrix.alpha", value: $level.alpha, format: .number)
@@ -367,7 +368,7 @@ struct StudioKHMatrixView: View {
             Text(LocalizedStringKey(output.tool.titleKey)).font(.headline)
             LabeledContent("visual.method", value: output.methodIdentifier)
             LabeledContent("advanced.validation") {
-                Text(LocalizedStringKey("advanced.validation.\(output.validationStatus)"))
+                Text(StudioLocalization.key("advanced.validation.\(output.validationStatus)"))
             }
             LabeledContent("advanced.request-digest", value: output.requestDigest)
                 .textSelection(.enabled)

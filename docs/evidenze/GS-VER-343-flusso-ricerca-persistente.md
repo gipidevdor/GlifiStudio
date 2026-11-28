@@ -37,3 +37,10 @@ documentato; nessuna nuova lingua di analisi è introdotta.
 
 Le fixture possiedono directory temporanee e cleanup. Sono conservate cache
 attive, evidenze utili, artefatti di altre attività e file dell'utente.
+
+## Identità nel registro condiviso
+
+L’identificativo iniziale GS-VER-336 è stato riallineato a GS-VER-343
+per distinguere evidenze create in parallelo e già presenti su main.
+I comandi e gli esiti storici restano riferiti ai rispettivi snapshot;
+la verifica della composizione finale è registrata in GS-VER-343.

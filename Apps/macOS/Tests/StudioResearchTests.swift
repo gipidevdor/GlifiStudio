@@ -151,4 +151,81 @@ struct StudioResearchTests {
         #expect(model.savedTitle.isEmpty)
         #expect(!model.hasLoaded)
     }
+
+    @Test("Una variabile riaperta alimenta confronti e tabelle incrociate effettivi")
+    func persistedMetadataFeedsGroupComparisonsAndCrosstabRequests() async throws {
+        let root = FileManager.default.temporaryDirectory.appending(
+            path: "GlifiResearchGroups-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: false)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let project = root.appending(path: "Groups.glifi")
+        let initial = try await GlifiStudioService().createProject(at: project)
+        let texts = [
+            "casa mare", "casa sole mare", "scuola libro classe banco penna",
+            "scuola libro classe banco penna quaderno alunno",
+        ]
+        var labels: [String: String] = [:]
+        for (index, text) in texts.enumerated() {
+            let url = root.appending(path: "source-\(index).txt")
+            try Data(text.utf8).write(to: url)
+            let imported = try await initial.importText(at: url, format: .plainText)
+            let source = try #require(
+                imported.project.sources.first { labels[$0.sourceRevisionID] == nil })
+            labels[source.sourceRevisionID] = index < 2 ? "Nord" : "Sud"
+        }
+        var state = try await initial.researchState()
+        state.fields = [.init(id: "area", label: "Area", type: .text)]
+        state.records = labels.map {
+            .init(sourceRevisionID: $0.key, values: ["area": .text($0.value)])
+        }
+        _ = try await initial.saveResearchState(state, expectedRevision: state.revision)
+        await initial.close()
+
+        let session = try await GlifiStudioService().openProject(at: project)
+        let research = StudioResearchModel()
+        try await research.load(session: session)
+        let home = StudioHomeModel()
+        let ids = labels.keys.sorted()
+        let numbers = Dictionary(
+            uniqueKeysWithValues: ids.enumerated().map { ($0.element, $0.offset + 1) })
+        research.useVariable(fieldID: "area", for: .groupComparison, in: home)
+        home.corpusMethods.draft.bootstrapResamples = 99
+        home.corpusMethods.draft.permutationCount = 99
+        _ = try await home.corpusMethods.execute(
+            session: session, sourceRevisionIDs: ids, sourceNumbers: numbers,
+            locale: Locale(identifier: "it_IT"))
+        let comparison = try #require(home.corpusMethods.output)
+        let expectedGroups = ["Nord", "Sud"].map { label in
+            ids.filter { labels[$0] == label }
+        }
+        #expect(comparison.groupNames == ["Nord", "Sud"])
+        guard case let .groupMetrics(result) = comparison.payload else {
+            Issue.record("Expected the metadata-driven group comparison")
+            await session.close()
+            return
+        }
+        #expect(result.groups.map(\.sourceRevisionIDs) == expectedGroups)
+        #expect(result.groups.map(\.mean) == [2.5, 6])
+
+        home.advancedAnalysis.rules = "*Casa\ncasa"
+        research.useVariable(fieldID: "area", for: .codeCrosstab, in: home)
+        try await home.advancedAnalysis.execute(
+            session: session, sourceRevisionIDs: ids, sourceNumbers: numbers,
+            locale: Locale(identifier: "it_IT"))
+        let output = try #require(home.advancedAnalysis.output)
+        let request = try GlifiStudioTextAnalysisRequest.decode(output.canonicalRequest)
+        guard case let .codeCrosstab(_, rules, groups) = request,
+            case let .codeCrosstab(table) = try #require(output.typedResult).payload
+        else {
+            Issue.record("Expected the metadata-driven crosstab request and result")
+            await session.close()
+            return
+        }
+        #expect(rules == "*Casa\ncasa")
+        #expect(groups == output.input.sourceRevisionIDs.map { labels[$0] })
+        #expect(table.groups == ["Nord", "Sud"])
+        #expect(table.sizes == [2, 2])
+        #expect(table.counts == [[2], [0]])
+        await session.close()
+    }
 }

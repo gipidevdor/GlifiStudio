@@ -440,7 +440,14 @@ struct StudioResearchView: View {
                         $0.id == research.filterFieldID
                     }) {
                         Button("research.variable.use-classes", systemImage: "tag") {
-                            useVariableForClasses(field)
+                            useVariable(field, for: .classification)
+                        }
+                        Button("research.variable.use-comparisons", systemImage: "chart.bar.xaxis")
+                        {
+                            useVariable(field, for: .groupComparison)
+                        }
+                        Button("research.variable.use-crosstabs", systemImage: "tablecells") {
+                            useVariable(field, for: .codeCrosstab)
                         }
                         if field.type == .date {
                             Button("research.variable.use-time", systemImage: "calendar") {
@@ -770,18 +777,17 @@ struct StudioResearchView: View {
         }
     }
 
-    private func useVariableForClasses(_ field: GlifiStudioResearchField) {
+    private func useVariable(
+        _ field: GlifiStudioResearchField, for destination: StudioResearchModel.VariableUse
+    ) {
         Task {
             await home.runAdvancedAnalysis { session in
                 try await research.save(session: session)
-                let labels = research.classLabels(fieldID: field.id)
-                home.advancedAnalysis.labels = labels
-                home.advancedAnalysis.tool = .classification
-                home.khLanguage.draft.labels = labels
+                research.useVariable(fieldID: field.id, for: destination, in: home)
                 try await home.refreshAfterResearchChange()
             }
             if home.lastFailure == nil {
-                onRestore("advanced")
+                onRestore(destination.client)
                 dismiss()
             }
         }

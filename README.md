@@ -50,6 +50,11 @@ nelle [evidenze](docs/evidenze/README.md). La
 [baseline di prodotto](docs/specifiche-di-design/10-product-baseline-mvp.md)
 definisce il perimetro della versione 0.1.
 
+La suite [BDD](docs/testing/01-bdd-cucumber-swift.md) associa tutte le 172 varianti
+pubbliche a tre fasi e verifica 744 scenari espansi. Le fonti web consultate e
+le condizioni del loro uso sono nel [registro di provenienza](docs/testing/02-provenienza-scenari.md).
+La copertura dichiarata resta distinta dagli audit interattivi e assistivi.
+
 ## Avvio rapido
 
 Servono Xcode 27, gli SDK macOS e iPadOS 27 e Apple Swift 6.4 o una versione

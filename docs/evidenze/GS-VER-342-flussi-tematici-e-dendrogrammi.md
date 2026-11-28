@@ -290,7 +290,7 @@ le prove utili non vengono rimossi.
 ### Archivio delle prove e pulizia misurata
 
 L'integratore conserva l'archivio locale
-`~/Library/Caches/GlifiStudio/evidence/GS-VER-342/run-20261128-GNIEvW`.
+`~/Library/Caches/GlifiStudio/evidence/GS-VER-335/run-20261128-GNIEvW`.
 Comprende i 41 sorgenti dello snapshot, tutti i log intermedi/finali,
 le fixture CLI complete con i PDF sintetici e il risultato Xcode finale
 `NativeFinal.xcresult`. Il rapporto strutturato elenca i digest degli archivi,
@@ -306,3 +306,10 @@ del lotto, non una misura dello spazio libero dell'intero volume.
 Il checkout condiviso, i file utente, le toolchain e l'istanza applicativa
 attiva nella cache dell'altro lavoro restano intatti. La pulizia non modifica
 il confine della verifica: il gate del checkout condiviso non è attestato.
+
+## Identità nel registro condiviso
+
+L’identificativo iniziale GS-VER-335 è stato riallineato a GS-VER-342
+per distinguere evidenze create in parallelo e già presenti su main.
+I comandi e gli esiti storici restano riferiti ai rispettivi snapshot;
+la verifica della composizione finale è registrata in GS-VER-343.
