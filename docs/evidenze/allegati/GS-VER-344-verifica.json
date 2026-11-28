@@ -1,0 +1,152 @@
+{
+  "schema": "studio.glifi.verification-evidence",
+  "schemaVersion": 1,
+  "evidenceID": "GS-VER-344",
+  "status": "passed-automatic-macos",
+  "testedCommit": "c0e3431b9d6ce02aafff5e6363ffde96f4f1c61e",
+  "inputs": {
+    "count": 1037,
+    "fingerprint": "f79ec88368cc1e2ad9a39a11491c08bd8532ae899e5fbf5bf75c7792cd92a6dc",
+    "manifest": "GS-VER-344-inputs.json",
+    "unchangedBetweenVerificationAndPackaging": true
+  },
+  "environment": {
+    "xcode": "27.2",
+    "swift": "6.4.2",
+    "swiftTools": "6.4",
+    "swiftLanguageMode": "6",
+    "python": "3.14.10",
+    "veraPDF": "1.30.4",
+    "macOS": "27.2.1",
+    "macOSBuild": "26B131",
+    "architecture": "arm64"
+  },
+  "makeVerify": {
+    "command": "make verify",
+    "profile": "macOS",
+    "commit": "c0e3431b9d6ce02aafff5e6363ffde96f4f1c61e",
+    "inputFingerprint": "f79ec88368cc1e2ad9a39a11491c08bd8532ae899e5fbf5bf75c7792cd92a6dc",
+    "inputCount": 1037,
+    "elapsedSeconds": 728.16,
+    "exitCode": 0
+  },
+  "packaging": {
+    "command": "Scripts/check-app-store-packaging.sh --macos-only",
+    "profile": "macOS",
+    "commit": "c0e3431b9d6ce02aafff5e6363ffde96f4f1c61e",
+    "inputFingerprint": "f79ec88368cc1e2ad9a39a11491c08bd8532ae899e5fbf5bf75c7792cd92a6dc",
+    "inputCount": 1037,
+    "inputUnchanged": true,
+    "elapsedSeconds": 546.54,
+    "exitCode": 0,
+    "scope": [
+      "static-analysis",
+      "unsigned-archive",
+      "bundle-verification"
+    ]
+  },
+  "swiftTesting": {
+    "core": 823,
+    "kit": 205,
+    "bdd": 129,
+    "failures": 0
+  },
+  "cucumber": {
+    "features": 18,
+    "scenarios": 820,
+    "steps": 3347,
+    "operationVariants": 194,
+    "integrationWorkflows": 7,
+    "reportSHA256": "88aebf614bf967e8454781c676edcf53ecc50604263afab3e8badd30e2bf3f5c"
+  },
+  "native": {
+    "result": "Passed",
+    "definitions": 186,
+    "executions": 500,
+    "failed": 0,
+    "skipped": 0,
+    "runtimeWarnings": 0,
+    "architecture": "arm64",
+    "macOS": "27.2.1",
+    "macOSBuild": "26B131"
+  },
+  "parity": {
+    "operations": 165,
+    "completeResultComparisons": 330,
+    "publicDeclarations": 3224,
+    "additiveDeclarations": 90,
+    "removedOrChangedExistingDeclarations": 0,
+    "textAnalysisChecks": 196,
+    "sharedTextFixtures": 63,
+    "largeStatePathInputBytes": 1400261,
+    "largeStatePathOutputBytes": 1400341,
+    "largeStatePathRuns": 2
+  },
+  "numericalReferences": {
+    "independentRowsReproduced": 248,
+    "fractionCases": 64,
+    "qualificationChanged": false
+  },
+  "recovery": {
+    "processKillCheckpoints": 22
+  },
+  "pdfa": {
+    "integratedInMakeVerify": true,
+    "validator": "veraPDF 1.30.4",
+    "exitCode": 0,
+    "profile": "PDF/A-2u",
+    "conformingPDFs": 2
+  },
+  "developmentRegressionEvidence": {
+    "missingStudyCall": "CLI exit 2 after successful compilation; six operations GREEN",
+    "graphemeBoundary": "valid-hash anchor splitting composed emoji rejected after real BDD RED",
+    "quoteBytes": "canonically equivalent strings with distinct UTF-8 bytes rejected after real BDD RED",
+    "independentSessionReload": "6 passed, 1 failed before fresh candidate-session adoption; GREEN",
+    "conclusionRetry": "8 passed, 1 failed; stable editor-intent identity prevents duplicate conclusions",
+    "canceledModalProposal": "9 passed, 3 failed executions for note/excerpt/restore; transactional rollback GREEN",
+    "finalTargetedNative": {
+      "definitions": 10,
+      "executions": 12,
+      "failures": 0
+    }
+  },
+  "toolchainDiagnostics": [
+    "Diagnostica interna IDELaunchSession sul completion handler durante avvio test Xcode",
+    "Placeholder Any Mac privo di operatingSystemVersion durante build/analyze/archive; comandi superati",
+    "Warning SwiftPM preesistenti su macro di test; nessun runtime warning del prodotto nel riepilogo nativo"
+  ],
+  "logs": {
+    "verify": {
+      "file": "verify.log",
+      "rawSHA256": "f6c514b049c075cbb55ad1011165e025144eceae10fbceb8293e2c5ae5f67ef6",
+      "sanitizedSHA256": "8c63c3e4abc17dcda5b403e24e62f52c9d7f98b5fee50e15a6a74b9432bd0ea2",
+      "byteCount": 496882
+    },
+    "packaging": {
+      "file": "packaging.log",
+      "rawSHA256": "ed75828461750c5123c9bcce5631ae1182496a4c5fd55fd88d3ee8826bfa1979",
+      "sanitizedSHA256": "d2e023aed88c5b062e1ab522722c2f52143f7fc8522473bf01f3297ddffa635d",
+      "byteCount": 2286
+    }
+  },
+  "cleanup": {
+    "temporaryPathsRemoved": 39,
+    "temporaryAllocatedKiBRemoved": 235236,
+    "finalManagedCacheAllocatedKiB": 3884180,
+    "intermediateCacheAllocatedKiBRemoved": 2911604,
+    "intermediateLiveAppAllocatedKiBRetained": 174244,
+    "cacheSavingsAllocatedKiB": 6795784,
+    "managedFinalCacheRemoved": true,
+    "activeUIFixtureRetained": true,
+    "externalLocksPreserved": true
+  },
+  "localEvidence": "$HOME/Library/Caches/GlifiStudio/evidence/GS-VER-344/run-20261128-c0e3431",
+  "limitations": [
+    "Analisi italiana; nessun nuovo supporto multilingua",
+    "CUA intermedia: selezione, anteprima, raccolta e conservazione bozza con Cmd-W osservate; salvataggio conclusione interrotto dal blocco del Mac",
+    "Layout visivo finale, VoiceOver, Voice Control, tastiera completa, contrasto, testo grande, pseudo-lingua e RTL non attestati come audit manuali conclusi",
+    "Lavagna spaziale, scrittura a mano, cloud e iPadOS fuori da questo incremento",
+    "Firma, notarizzazione, submission, CI remota e qualificazione G4/G5 non attestati da questi comandi",
+    "App e progetto sintetico della prova grafica ancora aperta conservati per non perdere la bozza"
+  ]
+}

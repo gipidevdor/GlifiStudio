@@ -16,7 +16,7 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 
 ## Indice
 
-- [GS-VER-344 — Studio documentale, passaggi e conclusioni](GS-VER-344-studio-documentale.md) — RED osservato; integrazione e verifica finale in corso
+- [GS-VER-344 — Studio documentale, passaggi e conclusioni](GS-VER-344-studio-documentale.md) — Gate automatico e preflight macOS superati; regressioni, parità, pulizia e limiti della prova visiva registrati
 - [GS-VER-341 — Affidabilità verificabile dei test BDD e dell'inferenza](GS-VER-341-ingegneria-verificabile.md) — Regressioni mirate superate; gate integrato bloccato dai nuovi messaggi tabellari e dal flusso persistente concorrente
 - [GS-VER-333 — Attribuzioni e avvisi degli strumenti BDD](GS-VER-333-licenze-bdd.md) — Superato: avvisi diretti e incorporati, tre copie legali compilate, 19 regressioni e gate macOS
 
