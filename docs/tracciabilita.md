@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-TRC-001 |
 | Tipo | Requirements traceability matrix |
-| Versione | 0.94.0 |
+| Versione | 0.97.1 |
 | Stato | Bozza controllata |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-26 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Non ancora approvato |
 
 ## Scopo
@@ -759,3 +759,73 @@ GS-VER-324 confronta fasi isolate e binari alternati, GS-VER-325 documenta
 D1 e consumatori, GS-VER-326 conserva risultati negativi e ripristino.
 La nuova griglia verifica bit dei riferimenti R, casi limite, failure e
 propagazione degli intervalli; non promuove soglie prestazionali o G4/G5.
+
+## Specifiche comportamentali BDD
+
+RQ-027/058/060/062/063 collegano CMP-332 a
+[GS-STD-001-16 § 16.5](standard/16-strategia-di-verifica-e-test.md),
+[ADR-0046](adr/0046-bdd-cucumber-swift.md) e
+[GS-DOR-332](pianificazione/dor-bdd-cucumber-swift.md).
+[GS-BDD-001](testing/01-bdd-cucumber-swift.md) descrive feature italiane,
+step Swift, fixture isolate, oracoli osservabili e integrazione nel gate macOS.
+La dipendenza di sviluppo è separata dai target di produzione e inventariata
+con revisioni e licenze. Gli esiti del lotto sono registrati in
+[GS-VER-332](evidenze/GS-VER-332-bdd-cucumber-swift.md);
+l'integrazione non sostituisce oracoli scientifici, parità, audit assistivi o
+verifica iPadOS, né promuove G4/G5.
+
+Il successivo riesame RQ-062/063 in
+[GS-VER-333](evidenze/GS-VER-333-licenze-bdd.md) completa gli avvisi dei
+materiali Cucumber/Gherkin e Cucumber Expressions incorporati, oltre ai due
+pin SwiftPM. [GS-LIC-001 § 8](licenza.md) e ADR-0046 versione 1.1.0
+distinguono le revisioni risolte delle dipendenze dagli snapshot di revisione
+delle licenze indirette, che non attestano l'origine storica esatta degli
+adattamenti. Avvisi sorgente, risorsa byte-identica del test bundle e relativo
+test Swift sono verifiche separate dai 116 esempi comportamentali.
+La copertura automatica dei pin richiede una voce revisionata e fonte
+immutabile per ogni dipendenza remota; la review dei materiali senza pin
+rimane necessaria. GS-VER-332 conserva gli esiti storici; la verifica del nuovo
+lotto resta esplicitata in GS-VER-333 senza certificazioni legali universali.
+
+## Affidabilità verificabile dei test e dell'inferenza
+
+RQ-011/027/058/060/062/063 collegano CMP-334 a
+[GS-DOR-334](pianificazione/dor-ingegneria-verificabile.md),
+[GS-BDD-001](testing/01-bdd-cucumber-swift.md) e
+[GS-MET-001-21](metodi-analitici/21-fondazione-statistica.md).
+L'incremento rende posseduto e cancellabile il figlio CLI dei test, vincola
+l'ordine dei passaggi nel report con l'inventario V2, rifiuta JSON ambiguo e
+disabilita esplicitamente i trait opzionali della dipendenza. Corregge
+inoltre intermedi numerici traboccati con risultati finali finiti e conserva
+le code di confidenza estreme; il producer passa a `4` soltanto per
+`group-metric-comparison`, con storici 1–3 leggibili.
+
+[GS-VER-334](evidenze/GS-VER-334-ingegneria-verificabile.md) registra la
+checklist GS-STD-001-29 § 29.6, le regressioni e gli esiti effettivi. Le
+evidenze GS-VER-332/333 restano storiche. UI e accessibilità, sanitizer, DocC
+e metriche/audit G4 senza prove specifiche non sono promossi dalla presenza
+dei test o da un giudizio numerico complessivo sul repository.
+
+## Flussi tematici e dendrogrammi esplorabili
+
+RF-033/RF-087 e RQ-027/028/033/037/038/058/060/063 collegano CMP-335 alla
+copertura operativa macOS di tutti i metodi del catalogo, ai diciannove tag
+KH e al completamento delle viste CA/HAC. Il clustering delle parole usa
+unità e fonti contributive distinte; API e CLI condividono `hierarchicalTerms`.
+Il taglio nativo ha il binding `project-call`/`recut-visualization` per numero
+o altezza, con risultato completo e failure uguali. Taglio, zoom e compressione del dendrogramma rimangono proiezioni dell'albero
+completo, senza ricalcolo del corpus o sostituzione del risultato persistito.
+
+[GS-DOR-335](pianificazione/dor-flussi-tematici-e-dendrogrammi.md) consolida il
+perimetro autorizzato; [GS-VER-335](evidenze/GS-VER-335-flussi-tematici-e-dendrogrammi.md)
+registra 928 test Core/Kit, 451 esecuzioni native e parità CLI superati sullo
+snapshot isolato con manifesto dei digest; il gate del checkout condiviso
+rimane non attestato. CMP-335 resta `implemented`. Gli audit assistivi/manuali
+non sono eseguiti e gli stati scientifici dei profili KH o G4/G5 non vengono
+promossi.
+
+## Flusso di ricerca persistente
+
+| Evidenza | Requisiti | Realizzazione e verifica |
+| --- | --- | --- |
+| [GS-VER-336](evidenze/GS-VER-336-flusso-ricerca-persistente.md) | RF-006; RF-008; RF-011; RF-013; RF-015; RF-016; RF-040; RF-087; RQ-058; RQ-060; RQ-063 | Import CSV/XLSX, metadati tipizzati, sottoinsiemi, preparazione condivisa, acquisizione/ripristino ed export avanzato; contratti GS-API-004/005/006, ADR-0047; esiti finali distinti dagli intermedi |

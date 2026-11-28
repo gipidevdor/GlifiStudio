@@ -78,6 +78,7 @@ struct StudioOperatorsView: View {
     private var configuration: some View {
         Form {
             Section {
+                StudioAnalysisRoleView(route: .operators(operators.request.operation))
                 Text("operators.introduction").foregroundStyle(.secondary)
                 Picker("operators.method", selection: $operators.request.operation) {
                     ForEach(["matrix", "similarity", "graph", "lexical"], id: \.self) { family in

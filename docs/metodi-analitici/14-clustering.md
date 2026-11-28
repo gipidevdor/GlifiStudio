@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-14 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.3.1 |
+| Versione | 1.3.2 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 | Riferimenti | GS-MET-001-23; ADR-0043; GS-DOR-305; GS-VER-305 |
@@ -190,3 +190,37 @@ CLARA-PAM e SOM batch completano le famiglie di clustering della libreria second
 [GS-MET-001-23](23-operatori-kh-coder.md). Restano candidate. Il Ward di varianza su dissimilarità
 non euclidee continua a essere rifiutato; il profilo KH algebrico esplicito
 segue il contratto distinto sopra indicato.
+
+## Unità del clustering nel profilo corpus
+
+Il profilo documentale `document-term-relative-frequency-v1` conserva la
+normalizzazione di ciascun documento sulla propria esposizione dichiarata.
+Il nuovo profilo delle parole `term-document-relative-frequency-v1` usa
+invece un vettore per termine selezionato. Data la matrice dei conteggi
+`N[d,t]`, la coordinata del termine `t` nel documento `d` è:
+
+```text
+x[t,d] = N[d,t] / Σ_e N[e,t]
+```
+
+Il denominatore è positivo e finito. Ogni profilo di termine ha somma uno:
+una diversa frequenza totale della parola non diventa automaticamente una
+distanza maggiore. Il profilo non equivale alla trasposizione delle frequenze
+relative documentali e non introduce una distanza Jaccard/cosine implicita.
+La geometria è euclidea; single, complete, average e Ward riusano `HAC-v1`
+e i vincoli Ward già definiti sopra. Il profilo KH Ward.D2 algebrico rimane
+un'operazione distinta su dissimilarità esplicite.
+
+La selezione usa frequenza documentale decrescente, poi frequenza totale e
+ordine lessicografico per risolvere le parità; il sottoinsieme selezionato
+viene ordinato lessicograficamente prima del calcolo. Il descriptor registra
+`clusterUnit=terms`, rappresentazione, linkage, numero di gruppi e limite di
+termini. Le appartenenze e i figli dell'albero si riferiscono all'ordine dei
+termini, mentre l'elenco delle revisioni sorgente resta l'ordine dei documenti.
+
+Per ogni foglia termine, il risultato **DEVE** conservare i soli documenti con
+conteggio positivo. Il lineage della foglia è contributivo; l'identità del
+termine non **DEVE** essere usata come `SourceRevisionID`. Una fusione unisce
+le fonti dei due rami senza duplicati. Il taglio della vista è distinto dal
+taglio persistito nel risultato, come specificato in GS-VIZ-001.
+[GS-VER-335](../evidenze/GS-VER-335-flussi-tematici-e-dendrogrammi.md).

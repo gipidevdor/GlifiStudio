@@ -102,7 +102,7 @@ struct StudioLinguisticView: View {
                 }
             }
             .disabled(model.isBusy)
-            Text(LocalizedStringKey(analysis.tool.descriptionKey))
+            StudioAnalysisRoleView(route: .linguistics(analysis.tool))
                 .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             Label("linguistic.session-only", systemImage: "clock")
                 .font(.caption).foregroundStyle(.secondary)

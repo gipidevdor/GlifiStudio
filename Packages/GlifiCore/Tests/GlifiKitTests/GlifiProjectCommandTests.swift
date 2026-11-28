@@ -22,6 +22,15 @@ struct GlifiProjectCommandTests {
                         as GlifiStudioVisualization?)
                 parameters.destinationPath = fixture.root.appending(path: "transport-export").path
             }
+            if operation == .recutVisualization {
+                let result = try await fixture.session.analyzeMultivariate(
+                    sourceRevisionIDs: fixture.sourceIDs,
+                    method: .hierarchicalTerms(linkage: "average", clusterCount: 2),
+                    maximumTermCount: 4)
+                let visualization = try GlifiStudioVisualizationBuilder.dendrogram(result)
+                parameters.visualization = visualization
+                parameters.clusterCount = 3
+            }
             let request = ProjectCommandTestRequest(operation: operation, parameters: parameters)
             let referenceURL = fixture.root.appending(path: "Reference.glifi")
             try FileManager.default.copyItem(at: fixture.projectURL, to: referenceURL)
@@ -130,6 +139,7 @@ struct GlifiProjectCommandTests {
             .latentSemantic(rank: 3),
             .nonNegativeFactorization(rank: 2, seed: UInt64.max, restarts: 2),
             .hierarchical(linkage: "average", clusterCount: 3),
+            .hierarchicalTerms(linkage: "ward", clusterCount: 2),
             .kMeans(clusterCount: 3, seed: UInt64.max, restarts: 4),
         ]
         for method in methods {
@@ -138,6 +148,57 @@ struct GlifiProjectCommandTests {
                     GlifiStudioMultivariateMethod.self, from: JSONEncoder().encode(method))
                     == method)
         }
+    }
+
+    @Test("HAC dei termini conserva identità, fonti contribuenti e parità del trasporto")
+    func termClusteringPreservesUnitsAndProjectTransport() async throws {
+        let fixture = try await ProjectCommandFixture.create()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let method = GlifiStudioMultivariateMethod.hierarchicalTerms(
+            linkage: "average", clusterCount: 2)
+        let result = try await fixture.session.analyzeMultivariate(
+            sourceRevisionIDs: fixture.sourceIDs, method: method, maximumTermCount: 4)
+        #expect(result.clusterUnitKindIdentifier == "terms")
+        #expect(result.clusterUnitIdentifiers == result.terms)
+        #expect(result.terms.count == 4)
+        #expect(result.clusterAssignments?.count == result.terms.count)
+        #expect(result.merges?.count == result.terms.count - 1)
+        #expect(result.clusterUnitSourceRevisionIDs?.count == result.terms.count)
+        #expect(result.representationIdentifier == "term-document-relative-frequency-v1")
+        let documentResult = try await fixture.session.analyzeMultivariate(
+            sourceRevisionIDs: fixture.sourceIDs,
+            method: .hierarchical(linkage: "average", clusterCount: 2), maximumTermCount: 4)
+        #expect(documentResult.clusterUnitKindIdentifier == "documents")
+        #expect(documentResult.clusterUnitIdentifiers == documentResult.sourceRevisionIDs)
+        #expect(documentResult.clusterUnitSourceRevisionIDs == nil)
+        #expect(documentResult.lineage.artifactID != result.lineage.artifactID)
+        let reopened = try await fixture.session.analyzeMultivariate(
+            sourceRevisionIDs: fixture.sourceIDs.reversed(), method: method, maximumTermCount: 4)
+        #expect(reopened.lineage.artifactID == result.lineage.artifactID)
+        #expect(reopened.clusterAssignments == result.clusterAssignments)
+        #expect(reopened.clusterUnitSourceRevisionIDs == result.clusterUnitSourceRevisionIDs)
+        var parameters = try Self.parameters(.multivariate, sourceIDs: fixture.sourceIDs)
+        parameters.multivariateMethod = method
+        parameters.corpusOptions = nil
+        let request = ProjectCommandTestRequest(operation: .multivariate, parameters: parameters)
+        let actual = try await GlifiStudioProjectCommand.execute(
+            json: JSONEncoder().encode(request), session: fixture.session)
+        let expected = try GlifiStudioCommandResult(reopened)
+        #expect(actual.json == expected.json)
+        let snapshot = try Self.exportSnapshotIfRequested(
+            fixture.projectURL, operation: .multivariate, verificationID: UUID().uuidString)
+        try exportKitCLIParityFixture(
+            command: "project-call", operation: "multivariate", request: request,
+            result: expected, projectURL: snapshot, variant: "terms")
+        var oldJSON = try #require(
+            JSONSerialization.jsonObject(with: JSONEncoder().encode(documentResult))
+                as? [String: Any])
+        oldJSON.removeValue(forKey: "clusterUnitSourceRevisionIDs")
+        let old = try JSONDecoder().decode(
+            GlifiStudioMultivariateResult.self,
+            from: JSONSerialization.data(withJSONObject: oldJSON))
+        #expect(old == documentResult)
+        await fixture.session.close()
     }
 
     @Test("La cancellazione delle richieste di progetto resta tipizzata e non muta i dati")
@@ -160,6 +221,73 @@ struct GlifiProjectCommandTests {
             #expect(failure.retainedState == "unchanged")
         }
         #expect(try await fixture.session.snapshot() == before)
+        await fixture.session.close()
+    }
+
+    @Test(
+        "Il trasporto del taglio include le parità e rifiuta selettori invalidi senza mutare il progetto"
+    )
+    func recutVisualizationSupportsInclusiveHeightAndRejectsInvalidCuts() async throws {
+        let fixture = try await ProjectCommandFixture.create()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let result = try await fixture.session.analyzeMultivariate(
+            sourceRevisionIDs: fixture.sourceIDs,
+            method: .hierarchicalTerms(linkage: "average", clusterCount: 2), maximumTermCount: 4)
+        let visualization = try #require(try GlifiStudioVisualizationBuilder.dendrogram(result))
+        let tree = try #require(visualization.dendrogramTree)
+        let height = try #require(tree.merges.first?.height)
+        let before = try await fixture.session.snapshot()
+        var parameters = ProjectCommandTestParameters()
+        parameters.visualization = visualization
+        parameters.maximumHeight = height
+        let request = ProjectCommandTestRequest(
+            operation: .recutVisualization, parameters: parameters)
+        let expected = try GlifiStudioCommandResult(
+            GlifiStudioVisualizationBuilder.recutDendrogram(visualization, height: height))
+        let actual = try await GlifiStudioProjectCommand.execute(
+            json: JSONEncoder().encode(request), session: fixture.session)
+        #expect(actual.json == expected.json)
+        let recut = try JSONDecoder().decode(GlifiStudioVisualization.self, from: actual.json)
+        #expect(recut.artifactID == visualization.artifactID)
+        #expect(recut.analysisNodeID == visualization.analysisNodeID)
+        #expect(recut.dendrogramTree == visualization.dendrogramTree)
+        let retained = tree.merges.prefix { $0.height <= height }.count
+        #expect(
+            Set(recut.marks.filter { $0.kind == .point }.map(\.series)).count
+                == tree.leafIdentifiers.count - retained)
+        let snapshot = try Self.exportSnapshotIfRequested(
+            fixture.projectURL, operation: .recutVisualization, verificationID: UUID().uuidString)
+        try exportKitCLIParityFixture(
+            command: "project-call", operation: "recutVisualization", request: request,
+            result: expected, projectURL: snapshot, variant: "height")
+        let invalidCuts: [(Int?, Double?)] = [
+            (nil, nil), (2, height), (0, nil), (tree.leafIdentifiers.count + 1, nil), (nil, -1),
+        ]
+        for (clusterCount, maximumHeight) in invalidCuts {
+            var invalid = parameters
+            invalid.clusterCount = clusterCount
+            invalid.maximumHeight = maximumHeight
+            let invalidRequest = ProjectCommandTestRequest(
+                operation: .recutVisualization, parameters: invalid)
+            var expectedFailure: GlifiStudioFailure?
+            do {
+                _ = try GlifiStudioVisualizationBuilder.recutDendrogram(
+                    visualization, clusterCount: clusterCount, height: maximumHeight)
+                Issue.record("Invalid native dendrogram cut was accepted")
+            } catch let failure { expectedFailure = failure }
+            do {
+                _ = try await GlifiStudioProjectCommand.execute(
+                    json: JSONEncoder().encode(invalidRequest), session: fixture.session)
+                Issue.record("Invalid transported dendrogram cut was accepted")
+            } catch let failure as GlifiStudioFailure {
+                #expect(failure.code == expectedFailure?.code)
+                #expect(failure.category == expectedFailure?.category)
+                #expect(failure.category == "invalidInput")
+                #expect(failure.retryDisposition == "afterCorrection")
+                #expect(failure.retainedState == "unchanged")
+            }
+            #expect(try await fixture.session.snapshot() == before)
+        }
         await fixture.session.close()
     }
 
@@ -273,7 +401,7 @@ struct GlifiProjectCommandTests {
         case .passages:
             p.sourceRevisionID = ids[0]
             p.selections = [.sentences(first: 1, last: 1), .characters(start: 0, end: 4)]
-        case .exportVisualization:
+        case .exportVisualization, .recutVisualization:
             break
         case .prepareInput:
             p.sourceRevisionIDs = ids
@@ -420,6 +548,11 @@ struct GlifiProjectCommandTests {
         case .exportVisualization:
             return try await GlifiStudioCommandResult(
                 session.exportVisualization(#require(p.visualization), to: nativeExportURL))
+        case .recutVisualization:
+            return try GlifiStudioCommandResult(
+                GlifiStudioVisualizationBuilder.recutDendrogram(
+                    #require(p.visualization), clusterCount: p.clusterCount, height: p.maximumHeight
+                ))
         case .prepareInput:
             return try await GlifiStudioCommandResult(
                 GlifiStudioTextAnalytics.prepareProjectInput(
@@ -594,6 +727,8 @@ private struct ProjectCommandTestParameters: Encodable {
     var sourceRevisionID: String?
     var selections: [GlifiStudioPassageSelection]?
     var visualization: GlifiStudioVisualization?
+    var clusterCount: Int?
+    var maximumHeight: Double?
     var destinationPath: String?
     var allowsEmptyLexicon: Bool?
     var assignments: [ProjectCommandTestTemporalAssignment]?
@@ -607,7 +742,8 @@ private struct ProjectCommandTestParameters: Encodable {
             maximumRowCount
         case query, k1, b, window, minimumLogDice, usesWeightedJointCount, sourceRevisionID,
             selections
-        case visualization, destinationPath, allowsEmptyLexicon, assignments, terms, configuration
+        case visualization, clusterCount, maximumHeight, destinationPath, allowsEmptyLexicon,
+            assignments, terms, configuration
         case method, parameters
     }
 
@@ -647,6 +783,8 @@ private struct ProjectCommandTestParameters: Encodable {
         try c.encodeIfPresent(sourceRevisionID, forKey: .sourceRevisionID)
         try c.encodeIfPresent(selections, forKey: .selections)
         try c.encodeIfPresent(visualization, forKey: .visualization)
+        try c.encodeIfPresent(clusterCount, forKey: .clusterCount)
+        try c.encodeIfPresent(maximumHeight, forKey: .maximumHeight)
         try c.encodeIfPresent(destinationPath, forKey: .destinationPath)
         try c.encodeIfPresent(allowsEmptyLexicon, forKey: .allowsEmptyLexicon)
         try c.encodeIfPresent(assignments, forKey: .assignments)

@@ -76,6 +76,44 @@ public struct GlifiQueryEvaluator: Sendable {
         try validation.validate(query.root, depth: 0)
     }
 
+    /// Admits all execution capabilities before source-dependent short-circuiting.
+    ///
+    /// Structural validation stays separate so the codec retains the complete v1 algebra.
+    func validateExecution(
+        _ query: GlifiQueryAST,
+        limits: GlifiQueryLimits = .standard,
+        availableFields: Set<GlifiQueryField> = []
+    ) throws {
+        try validate(query, limits: limits)
+        var pending = [query.root]
+        while let node = pending.popLast() {
+            try Task.checkCancellation()
+            switch node {
+            case .matchAll:
+                break
+            case let .term(field, _, _), let .phrase(field, _, _), let .regex(field, _, _):
+                try requireTextField(field, availableFields: availableFields)
+            case .range, .exists:
+                throw queryExecutionFailure("query.unsupported-field", category: .insufficientData)
+            case let .proximity(left, right, _, _, _):
+                pending.append(right)
+                pending.append(left)
+            case let .not(child):
+                pending.append(child)
+            case let .within(child, scope):
+                switch scope {
+                case .sourceRevision:
+                    pending.append(child)
+                case .project, .corpus:
+                    throw queryExecutionFailure(
+                        "query.unsupported-scope", category: .insufficientData)
+                }
+            case let .and(children), let .or(children):
+                pending.append(contentsOf: children.reversed())
+            }
+        }
+    }
+
     /// Evaluates a query using the positional tokenization of the same source snapshot.
     public func evaluate(
         _ query: GlifiQueryAST,
@@ -83,14 +121,26 @@ public struct GlifiQueryEvaluator: Sendable {
         tokenization: GlifiTokenization,
         limits: GlifiQueryLimits = .standard
     ) throws -> GlifiQueryResult {
-        try validate(query, limits: limits)
+        try validateExecution(
+            query, limits: limits, availableFields: Set(tokenization.availableQueryFields))
         guard tokenization.sourceUTF8Length == importedText.text.utf8.count else {
             throw queryExecutionFailure("query.incompatible-ast", category: .incompatibleVersion)
+        }
+        if queryRequiresAnnotation(.partOfSpeech, node: query.root),
+            tokenization.tokens.contains(where: { $0.partOfSpeech == nil })
+        {
+            throw queryExecutionFailure("query.unsupported-annotation", category: .insufficientData)
+        }
+        if queryRequiresAnnotation(.lemma, node: query.root),
+            tokenization.tokens.contains(where: { $0.lemma == nil })
+        {
+            throw queryExecutionFailure("query.unsupported-annotation", category: .insufficientData)
         }
 
         let context = QueryEvaluationContext(
             source: importedText,
             tokens: tokenization.tokens,
+            availableFields: Set(tokenization.availableQueryFields),
             limits: limits,
             budget: QueryEvaluationBudget(limits: limits)
         )
@@ -107,6 +157,21 @@ public struct GlifiQueryEvaluator: Sendable {
             matches: matches,
             isTruncated: isTruncated
         )
+    }
+}
+
+private func queryRequiresAnnotation(_ requested: GlifiQueryField, node: GlifiQueryNode) -> Bool {
+    switch node {
+    case .matchAll: false
+    case let .term(field, _, _), let .phrase(field, _, _), let .regex(field, _, _),
+        let .range(field, _), let .exists(field):
+        field == requested
+    case let .proximity(left, right, _, _, _):
+        queryRequiresAnnotation(requested, node: left)
+            || queryRequiresAnnotation(requested, node: right)
+    case let .not(child), let .within(child, _): queryRequiresAnnotation(requested, node: child)
+    case let .and(children), let .or(children):
+        children.contains { queryRequiresAnnotation(requested, node: $0) }
     }
 }
 
@@ -198,9 +263,21 @@ private struct QueryValidation {
     }
 }
 
+private func requireTextField(
+    _ field: GlifiQueryField, availableFields: Set<GlifiQueryField> = []
+) throws {
+    guard
+        field == .form || field == .normalized || field == .text
+            || ((field == .lemma || field == .partOfSpeech) && availableFields.contains(field))
+    else {
+        throw queryExecutionFailure("query.unsupported-field", category: .insufficientData)
+    }
+}
+
 private struct QueryEvaluationContext {
     let source: GlifiImportedText
     let tokens: [GlifiSurfaceToken]
+    let availableFields: Set<GlifiQueryField>
     let limits: GlifiQueryLimits
     let budget: QueryEvaluationBudget
 
@@ -247,7 +324,7 @@ private struct QueryEvaluationContext {
                 )
             }
         case let .phrase(field, values, slop):
-            try requireTextField(field)
+            try requireTextField(field, availableFields: availableFields)
             return try phraseMatches(
                 field: field, values: values, slop: slop,
                 requireCompleteAnchors: requireCompleteAnchors)
@@ -376,13 +453,13 @@ private struct QueryEvaluationContext {
         requireCompleteAnchors: Bool,
         predicate: (String) throws -> Bool
     ) throws -> QueryEvaluation {
-        try requireTextField(field)
+        try requireTextField(field, availableFields: availableFields)
         var anchors: [QueryTokenInterval] = []
         for (index, token) in tokens.enumerated() {
             try budget.consumeStep()
             if index.isMultiple(of: 4_096) { try Task.checkCancellation() }
             guard token.kind.contributesToLexicalStatistics,
-                let value = token.range.text(in: source.text),
+                let value = tokenValue(at: index, field: field),
                 try predicate(value)
             else {
                 continue
@@ -458,6 +535,11 @@ private struct QueryEvaluationContext {
         else {
             return nil
         }
+        if field == .normalized {
+            return tokens[index].analysisForm ?? comparable(value, field: field)
+        }
+        if field == .lemma { return tokens[index].lemma }
+        if field == .partOfSpeech { return tokens[index].partOfSpeech }
         return comparable(value, field: field)
     }
 
@@ -549,11 +631,6 @@ private struct QueryEvaluationContext {
         anchors = merged
     }
 
-    private func requireTextField(_ field: GlifiQueryField) throws {
-        guard field == .form || field == .normalized || field == .text else {
-            throw queryExecutionFailure("query.unsupported-field", category: .insufficientData)
-        }
-    }
 }
 
 private struct QueryEvaluation {
@@ -735,6 +812,14 @@ private struct SafeTokenPattern {
                 members.append(character)
                 index = parsed.nextIndex
             } else {
+                guard characters[index] != "[" else {
+                    throw queryExecutionFailure("query.regex-rejected")
+                }
+                if characters[index] == "-", !members.isEmpty,
+                    index + 1 < characters.count, characters[index + 1] != "]"
+                {
+                    throw queryExecutionFailure("query.regex-rejected")
+                }
                 members.append(characters[index])
                 index += 1
             }
@@ -756,7 +841,10 @@ private struct SafeTokenPattern {
         case "d": return (.digit, start + 2)
         case "w": return (.word, start + 2)
         case "s": return (.whitespace, start + 2)
-        case let escaped: return (.literal(escaped), start + 2)
+        case let escaped where escaped.isASCII && (escaped.isLetter || escaped.isNumber):
+            throw queryExecutionFailure("query.regex-rejected")
+        case let escaped:
+            return (.literal(escaped), start + 2)
         }
     }
 

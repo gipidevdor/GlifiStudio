@@ -142,16 +142,18 @@ extension GlifiAnalysisArtifactDescriptorFactory {
         )
     }
 
-    /// Recompute only the families affected by the corrected distribution kernels.
+    /// Recompute only the families affected by corrected numerical kernels.
     ///
-    /// Payload schemas remain readable; historical algorithm revision 1 is retained.
+    /// Payload schemas and historical algorithm revisions 1 through 3 remain readable.
     private static func numericalAlgorithmVersion(for artifactType: String) -> String {
         switch artifactType {
-        case "studio.glifi.artifact.corpus-association",
-            "studio.glifi.artifact.group-metric-comparison",
-            "studio.glifi.artifact.group-metric-posthoc",
-            "studio.glifi.artifact.metric-correlation",
+        case "studio.glifi.artifact.group-metric-comparison":
+            return "4"
+        case "studio.glifi.artifact.group-metric-posthoc",
             "studio.glifi.artifact.paired-metric-comparison":
+            return "3"
+        case "studio.glifi.artifact.corpus-association",
+            "studio.glifi.artifact.metric-correlation":
             return "2"
         default:
             return "1"

@@ -119,6 +119,53 @@ struct StudioFactorAudioGraphTests {
         #expect(other.tableSelectionMarks["merge:1"] == nil)
     }
 
+    @Test func foldedBranchesUseTopologyEvenWhenTermsShareTheirSource() async throws {
+        let json = """
+            {"lineage":{"projectID":"p","sourceGeneration":0,"generation":1,"artifactID":"tree","analysisNodeID":"n"},
+             "analysisIdentifier":"fixture","methodIdentifier":"HAC-v1","representationIdentifier":"term-document-relative-frequency-v1",
+             "sourceRevisionIDs":["shared-source"],"terms":["#1","merge:10","porto","mare"],
+             "clusterUnitSourceRevisionIDs":[["shared-source"],["shared-source"],["shared-source"],["shared-source"]],
+             "axisValues":[],"axisShares":[],"rowCoordinates":[],"columnCoordinates":[],
+             "excludedSourceRevisionIDs":[],"excludedTerms":[],"clusterAssignments":[0,0,1,1],
+             "merges":[{"first":0,"second":1,"height":0,"size":2},{"first":2,"second":3,"height":0,"size":2},
+                       {"first":4,"second":5,"height":2,"size":4}]}
+            """
+        let result = try JSONDecoder().decode(
+            GlifiStudioMultivariateResult.self, from: Data(json.utf8))
+        let proposedVisualization = try GlifiStudioVisualizationBuilder.dendrogram(result)
+        let visualization = try #require(proposedVisualization)
+        let folded = try await StudioDendrogramPresentation.prepare(
+            visualization, collapsedMarkID: "merge:1:bridge")
+        #expect(folded.visualization == visualization)
+        #expect(folded.branch?.leafCount == 2)
+        #expect(folded.branch?.mark.sourceRevisionIDs == ["shared-source"])
+        #expect(!folded.marks.contains { $0.id == "leaf:#1" || $0.id == "leaf:merge:10" })
+        #expect(folded.marks.contains { $0.id == "leaf:porto" })
+        #expect(folded.marks.contains { $0.id == "merge:2:bridge" })
+        #expect(folded.visualization.table.rows == visualization.table.rows)
+        let recut = try await StudioDendrogramPresentation.prepare(
+            folded.visualization, clusterCount: 1, collapsedMarkID: "merge:1:bridge")
+        #expect(recut.branch?.leafCount == 2)
+        #expect(
+            Set(recut.visualization.marks.filter { $0.kind == .point }.map(\.series)) == [
+                "cluster.1"
+            ])
+        let expanded = try await StudioDendrogramPresentation.prepare(recut.visualization)
+        #expect(expanded.branch == nil)
+        #expect(expanded.marks == recut.visualization.marks)
+        #expect(expanded.visualization.dendrogramTree == visualization.dendrogramTree)
+    }
+
+    @Test func branchSelectionRequiresAnExactMergeBridgeIdentifier() {
+        #expect(StudioDendrogramPresentation.isMergeID("merge:1:bridge"))
+        #expect(StudioDendrogramPresentation.isMergeID("merge:10:bridge"))
+        for identifier in [
+            nil, "merge:1", "merge:0:bridge", "merge:1:bridge:extra", "leaf:merge:1:bridge",
+        ] {
+            #expect(!StudioDendrogramPresentation.isMergeID(identifier))
+        }
+    }
+
     @Test func omitsGraphsWithoutMetricData() throws {
         for family in ["network", "dendrogram", "collocation-table"] {
             let plot = try specification(family: family)

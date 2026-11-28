@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-ADR-IDX-001 |
 | Tipo | Registro delle decisioni architetturali |
-| Versione | 0.32.3 |
+| Versione | 0.33.0 |
 | Stato | Attivo |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-27 |
 | Approvazione | Non applicabile; registro operativo |
 
 Gli ADR documentano le scelte architetturali importanti, il contesto in cui sono state prese e le conseguenze accettate.
@@ -78,3 +78,7 @@ Ogni ADR deve contenere titolo, stato, contesto, decisione, conseguenze e, quand
 - [ADR-0044 — Importazione nativa PDF ed EPUB](0044-importazione-nativa-pdf-epub.md) — Accettato; originale e snapshot atomici, backend Apple, verifica GS-VER-310
 
 - [ADR-0045 — Profilo OCR nativo adattivo e tracciato](0045-profilo-ocr-nativo-adattivo.md) — Accettato; accurate preferito, recupero fast bounded e provenienza esplicita
+
+- [ADR-0046 — Specifiche comportamentali eseguibili con CucumberSwift](0046-bdd-cucumber-swift.md) — Accettato; dipendenza di test, feature italiane e integrazione nel gate macOS
+
+- [ADR-0047 — Dataset, preparazione e lavoro di ricerca persistenti](0047-flusso-di-ricerca-persistente.md) — Accettata nel perimetro richiesto; compatibilità additiva e verifica GS-VER-336

@@ -47,6 +47,7 @@ python3 Scripts/check-oracles-tests.py
 Scripts/check-oracles.py
 Scripts/check-fixtures.py
 python3 Scripts/check-analysis-scenarios.py --self-test
+python3 -B Scripts/check-bdd.py --self-test
 Scripts/check-architecture.sh
 Scripts/check-localization.py
 Scripts/check-failure-taxonomy.py
@@ -62,9 +63,11 @@ text_analysis_parity_directory="$temporary_build_directory/TextAnalysisParity"
 kit_cli_parity_directory="$temporary_build_directory/KitCLIParity"
 GLIFI_KIT_CLI_PARITY_DIRECTORY="$kit_cli_parity_directory" \
 GLIFI_TEXT_ANALYSIS_PARITY_DIRECTORY="$text_analysis_parity_directory" \
+CUCUMBER_REPORT_PATH="$temporary_build_directory/cucumber.json" \
 GLIFI_ORACLE_PDF_DIRECTORY="$pdfa_output_directory" swift test \
     --package-path Packages/GlifiCore \
     --scratch-path "$build_cache_directory/SwiftPM"
+python3 -B Scripts/check-bdd.py --report "$temporary_build_directory/cucumber.json"
 Scripts/check-pdfa.py --directory "$pdfa_output_directory"
 swift build --package-path Packages/GlifiCore \
     --scratch-path "$build_cache_directory/SwiftPM" --product GlifiCLI

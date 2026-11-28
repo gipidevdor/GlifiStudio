@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-VIZ-001 |
 | Tipo | Specifica di design delle visualizzazioni |
-| Versione | 1.1.2 |
+| Versione | 1.1.4 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Baseline proposta; prototipi percettivi e accessibili richiesti |
 | Riferimenti | GS-MET-001-22; GS-UX-001-09; GS-UI-001; GS-DAT-001; ADR-0016 |
 
@@ -90,6 +90,42 @@ dei valori singolari per LSA. Per tutti e tre i metodi l'avviso di quota bassa
 si attiva quando gli assi rappresentati spiegano insieme meno del 50%.
 [GS-VER-270](../evidenze/GS-VER-270-grafici-comandi-neural-engine.md)
 
+### Esplorazione del dendrogramma
+
+Una specifica di dendrogramma può conservare `dendrogramTree`, metadato
+opzionale con identità ordinate delle unità, fonti contributive allineate,
+tipo di unità e albero completo delle fusioni. L'assenza del campo nei JSON
+precedenti rimane ammessa; il client non inventa la topologia mancante.
+La topologia **DEVE** essere validata prima di applicare un nuovo taglio.
+Identità attive, cardinalità, dimensioni, altezze finite/monotone e fonti
+allineate impediscono di seguire un albero incoerente.
+
+Il taglio a numero cambia le appartenenze della sola vista. Il taglio ad
+altezza include tutte le fusioni alla soglia, comprese le parità; non viene
+presentato come equivalente a un taglio a numero quando le altezze sono
+uguali. Si conservano identità, metodo, Artifact, albero e lineage originali;
+si aggiornano serie dei gruppi, riferimento di taglio e sintesi. Non viene
+rieseguita l'analisi del corpus e non si modifica il risultato persistito.
+La medesima operazione è disponibile tramite `project-call`, tag
+`recut-visualization`, con `visualization` ed esattamente uno tra
+`clusterCount` e `maximumHeight`. Il trasporto conserva risultato e failure
+della funzione nativa e lascia il progetto invariato (GS-API-003).
+
+Zoom e scorrimento **DEVONO** conservare la cardinalità dichiarata. La
+compressione di un ramo segue i figli dell'albero e rende esplicita la
+numerosità delle foglie comprese; non viene inferita dalla somiglianza dei
+nomi o dalla coincidenza delle fonti contributive. Nel profilo corrente la
+compressione riguarda il grafico: tabella ed export mantengono l'albero
+completo e il taglio della vista. L'interfaccia **DEVE** dichiararlo accanto
+ai controlli. Espandi ripristina i segni originali senza ricalcolo analitico.
+
+Controlli di sistema per zoom, taglio e ramo selezionato, insieme alla tabella
+completa, offrono l'alternativa da tastiera e accessibile alle selezioni nel
+grafico. La preparazione della partizione e dei rami avviene fuori Main Actor;
+richieste superate, cambio della vista e scomparsa del componente invalidano
+la pubblicazione tardiva. La verifica automatica non sostituisce gli audit
+assistivi manuali registrati separatamente in
+[GS-VER-335](../evidenze/GS-VER-335-flussi-tematici-e-dendrogrammi.md).
 ## Dataset grandi
 
 Virtualizzazione, tiling, level-of-detail e aggregazione sono ammessi soltanto con
@@ -126,6 +162,33 @@ dopo audit di compatibilità e sicurezza; non è requisito MVP.
 L'export dichiara filtri, dimensione, versione software, downsampling e data di
 generazione. Un'immagine senza provenance non è considerata export scientifico
 completo.
+
+### Verifica della fonte nella sessione
+
+Prima di scrivere l'export di una vista, la sessione **DEVE** verificare che
+l'Artifact sia corrente e che nodo produttore, analisi e metodo dichiarati
+corrispondano alla fonte persistita. La lettura del payload necessario al
+confronto mantiene i controlli di schema, identità e integrità del progetto;
+failure e cancellazione attraversano il confine GlifiKit con operazione
+`export`. Un payload non appartenente agli schemi di vista supportati viene
+rifiutato.
+
+Anche l'ammissione di questa operazione attraversa lo stesso confine:
+la sessione chiusa conserva codice, retry e stato del lifecycle con operazione
+`export`; una task già cancellata conserva l'operazione `export` e lo stato
+`unchanged`. Il lifecycle delle altre operazioni non cambia.
+
+Metadati scientifici incompatibili producono
+`visual-export.source-mismatch`, categoria `invalidInput`, senza pubblicare
+file o modificare la generazione. La vista deve essere rigenerata dalla
+fonte prima di ripetere l'export. L'Artifact assente conserva la failure
+`visual-export.stale-artifact`.
+
+Questo confronto non richiede l'uguaglianza con la vista standard: assi
+alternativi ammessi e altre scelte di presentazione restano disponibili.
+La verifica riguarda i metadati del produttore; non autentica eventuali
+coordinate, valori o trasformazioni modificati dal chiamante. Il controllo
+offline descritto sotto conserva il proprio contratto distinto.
 
 ### Profilo macchina v1 e verifica offline
 

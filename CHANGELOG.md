@@ -12,6 +12,72 @@ Le modifiche rilevanti per utenti, formati, compatibilità, sicurezza e operazio
 
 ## Non rilasciato
 
+### Dataset e lavoro di ricerca persistenti
+
+- Importazione CSV/Excel XLSX con anteprima, mapping, tipi e provenienza delle celle;
+  originali, fonti derivate e metadati pubblicati nello stesso commit.
+- Variabili tipizzate, gruppi riutilizzabili e preparazione italiana condivisa;
+  configurazioni revisionate e digest distinti per riuso coerente delle analisi.
+- Analisi KH avanzate salvabili con impostazioni e risultati completi, ripristino
+  nativo senza ricalcolo, variabili derivate e collegamento descrittivo ai rapporti.
+- Trasporto condiviso `research-call` con parità Kit/CLI. Estensione additiva del
+  package esistente, senza nuova lingua di analisi o dipendenza di prodotto
+  (ADR-0047; GS-API-004/005/006; verifiche e limiti in GS-VER-336).
+
+### Analisi per tema, corrispondenze e cluster
+
+- Catalogo macOS organizzato in otto temi di ricerca, con scopo specifico e
+  destinazione operativa di ogni metodo; flussi nativi per i diciannove tag
+  KH già presenti in GlifiKit/CLI (GS-DOR-335).
+- Clustering gerarchico delle parole sui profili tra documenti, con fonti
+  contributive per termine e parità CLI `multivariate --method hac --unit terms`.
+- Dendrogrammi con zoom, taglio per numero/altezza e compressione dei rami;
+  tabella ed export conservano l'albero completo. CA mantiene il grafico e
+  i diagnostici scientifici; verifiche automatiche e audit manuali distinti
+  in GS-VER-335.
+
+### Specifiche comportamentali eseguibili
+
+- CucumberSwift fissato alla versione 6.9.0 nel solo target di test BDD:
+  feature italiane per progetto, query, corpus, codifica, export e parità CLI,
+  con oracoli espliciti, failure e conservazione dello stato (GS-DOR-332).
+  `make test-bdd` e `make verify` richiedono il report completo degli esempi
+  inventariati; licenze, dipendenze e decisione tecnica sono tracciate.
+- Attribuzioni Gherkin e Cucumber Expressions conservate integralmente con le
+  licenze BSD/Core nel bundle dei test; controllo di ogni pin risolto, fonte
+  legale immutabile e integrità delle copie distribuite (GS-VER-333).
+- Runner CLI con cancellazione, deadline e raccolta del processo posseduto;
+  report BDD vincolato anche all'identità e all'ordine dei passi, JSON rigoroso
+  e trait delle dipendenze esclusi esplicitamente (GS-DOR-334).
+- Inferenza con contrasti ed errore standard finiti anche quando trabocca un
+  intermedio; intervalli definiti per il livello valido immediatamente sotto
+  uno e failure tipizzate per output non rappresentabili. Revisione producer 4
+  dei confronti di gruppi, con storici leggibili e parità CLI/Kit (GS-DOR-334).
+- Importazione dello stato del classificatore: JSON malformato o incompleto
+  produce un errore di input correggibile e conserva lo stato precedente,
+  invece di un errore interno inatteso (GS-VER-334).
+
+### Correttezza semantica e conservazione del contesto
+
+- Query: capability verificate sull'intero AST prima delle fonti; regex non
+  implementate rifiutate senza reinterpretazione, con codec v1 conservato
+  (GS-DOR-327).
+- Statistica: correzione delle dipendenze da unità e offset nelle permutazioni
+  e degli overflow/underflow intermedi di inferenza, bootstrap e quantili
+  (GS-DOR-328). Revisione produttore 3 per post-hoc e paired; i confronti di
+  gruppi passano a 4 con GS-DOR-334, con storici leggibili e famiglie
+  indipendenti conservate.
+- Codifica: il cambio fonte pubblica insieme identità, segmenti e testi
+  soltanto dopo letture riuscite; failure e cancellazione conservano il
+  contesto precedente e consentono il retry (GS-DOR-329).
+- Corpus: limiti correnti di vocabolario, n-grammi e matrice applicati anche
+  agli Artifact riutilizzati, senza duplicare risultati scientificamente
+  identici (GS-DOR-330).
+- Export delle viste: nodo, analisi e metodo confrontati con la fonte
+  autorevole; metadati contraddittori o payload corrotti impediscono la
+  pubblicazione. Errori di ammissione riferiti all'export, messaggio mirato
+  it/en e scelte lecite degli assi conservate (GS-DOR-331).
+
 ### Prestazioni statistiche con correttezza conservata
 
 - Keyness: quantile dell'intervallo calcolato una sola volta per confronto,

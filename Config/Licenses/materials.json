@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.license-inventory",
   "schemaVersion": 1,
-  "reviewedOn": "2026-11-26",
+  "reviewedOn": "2026-11-28",
   "materials": [
     {
       "id": "glifi-original",
@@ -10,7 +10,8 @@
         "LICENSE",
         "Packages/GlifiCore/Package.swift",
         "Packages/GlifiCore/Sources/**/*.swift",
-        "Apps/**/*.swift"
+        "Apps/**/*.swift",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-LICENSE.txt"
       ],
       "sourceURLs": [],
       "revision": "Repository revision recorded by verification",
@@ -19,7 +20,7 @@
       "relationship": "original-work",
       "noticeFile": "LICENSE",
       "status": "reviewed",
-      "notes": "Licenza dei contributi originali; le voci specifiche Snowball e SplitMix conservano provenienza e avvisi distinti. Nessuna dipendenza remota SwiftPM dichiarata."
+      "notes": "Licenza dei contributi originali; le voci specifiche Snowball e SplitMix conservano provenienza e avvisi distinti. Le dipendenze remote SwiftPM sono inventariate separatamente come strumenti BDD esclusivi dei test."
     },
     {
       "id": "apple-system-frameworks",
@@ -82,7 +83,8 @@
       "id": "snowball-italian",
       "category": "algorithm-specification",
       "paths": [
-        "Packages/GlifiCore/Sources/GlifiCore/GlifiItalianStemmer.swift"
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiItalianStemmer.swift",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-THIRD_PARTY_NOTICES.txt"
       ],
       "sourceURLs": [
         "https://snowballstem.org/algorithms/italian/stemmer.html",
@@ -102,7 +104,8 @@
       "category": "algorithm-specification",
       "paths": [
         "Packages/GlifiCore/Sources/GlifiCore/GlifiResamplingStatistics.swift",
-        "Packages/GlifiCore/Tests/Oracles/Python/splitmix64.py"
+        "Packages/GlifiCore/Tests/Oracles/Python/splitmix64.py",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-THIRD_PARTY_NOTICES.txt"
       ],
       "sourceURLs": [
         "https://prng.di.unimi.it/splitmix.c"
@@ -446,6 +449,91 @@
       "noticeFile": null,
       "status": "reviewed",
       "notes": "Sorgenti R/C++ consultati per schedule/PCA/default e confrontati manualmente con Swift corrente e introduttivo. Il fit nativo riproduce questi comportamenti matematici, con struttura scalare/LAPACK propria, rispetto a TNT/SomParam upstream. Nessuna copia espressiva inequivocabile osservata nel campione; nessuna certificazione clean-room. Il pacchetto non è incorporato o richiamato dagli oracoli, che usano R base."
+    },
+    {
+      "id": "cucumber-swift-bdd",
+      "category": "development-tool",
+      "paths": [
+        "Packages/GlifiCore/Package.swift",
+        "Packages/GlifiCore/Package.resolved",
+        "Config/Licenses/bdd-tools.txt",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/THIRD_PARTY_NOTICES.txt"
+      ],
+      "sourceURLs": [
+        "https://github.com/cucumberswift/CucumberSwift/blob/5547f9025c0da3f0276a22a3c746bfebc405741f/LICENSE",
+        "https://github.com/cucumberswift/CucumberSwift/blob/5547f9025c0da3f0276a22a3c746bfebc405741f/Package.swift"
+      ],
+      "revision": "6.9.0; 5547f9025c0da3f0276a22a3c746bfebc405741f",
+      "licenseExpression": "MIT",
+      "distribution": "external-tool",
+      "relationship": "test-runner-and-build-tool",
+      "noticeFile": "Config/Licenses/bdd-tools.txt",
+      "status": "reviewed",
+      "notes": "Licenza letta sulla revisione risolta. Dipendenza esclusiva di GlifiBDDTests; CucumberSwiftTesting e CucumberSwiftTestingPlugin selezionati senza trait Macros, nessun swift-syntax risolto o compilato. Nessun codice/binario upstream vendorizzato o incluso nei target applicativi; il test bundle collega il runner e il build tool genera test nel workdir. Avvisi MIT conservati separatamente; versioni e lockfile da riesaminare insieme secondo ADR-0046. Gli avvisi integrali sono inclusi come risorsa del bundle dei test, con confronto byte a byte con il testo canonico e test del digest confezionato. Le attribuzioni indirette sono registrate in voci distinte. La dichiarazione traits: [] disabilita esplicitamente i default upstream, inclusa l’attivazione condizionale Macros tramite SPI_BUILD; il grafo resta limitato alle due revisioni approvate."
+    },
+    {
+      "id": "cucumber-swift-expressions-bdd",
+      "category": "development-tool",
+      "paths": [
+        "Packages/GlifiCore/Package.swift",
+        "Packages/GlifiCore/Package.resolved",
+        "Config/Licenses/bdd-tools.txt",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/THIRD_PARTY_NOTICES.txt"
+      ],
+      "sourceURLs": [
+        "https://github.com/cucumberswift/CucumberSwiftExpressions/blob/ab4c6482d3230d24a13814a961b6fff1d50f830f/LICENSE",
+        "https://github.com/cucumberswift/CucumberSwiftExpressions/blob/ab4c6482d3230d24a13814a961b6fff1d50f830f/Package.swift"
+      ],
+      "revision": "1.4.2; ab4c6482d3230d24a13814a961b6fff1d50f830f",
+      "licenseExpression": "MIT",
+      "distribution": "external-tool",
+      "relationship": "test-runner-transitive-dependency",
+      "noticeFile": "Config/Licenses/bdd-tools.txt",
+      "status": "reviewed",
+      "notes": "Licenza letta sulla revisione risolta; dipendenza transitiva del solo runner BDD, collegata al test bundle. Nessun sorgente o binario vendorizzato o distribuito nel bundle app. Avviso MIT completo conservato; l’aggiornamento del lockfile richiede riesame. Gli avvisi integrali sono inclusi come risorsa del bundle dei test, con confronto byte a byte con il testo canonico e test del digest confezionato. Le attribuzioni indirette sono registrate in voci distinte."
+    },
+    {
+      "id": "cucumber-gherkin-embedded-dialects",
+      "category": "development-tool",
+      "paths": [
+        "Config/Licenses/bdd-tools.txt",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/THIRD_PARTY_NOTICES.txt"
+      ],
+      "sourceURLs": [
+        "https://github.com/cucumberswift/CucumberSwift/blob/5547f9025c0da3f0276a22a3c746bfebc405741f/Sources/CucumberSwift/Gherkin/Core/Languages.swift",
+        "https://github.com/cucumberswift/CucumberSwift/blob/5547f9025c0da3f0276a22a3c746bfebc405741f/Sources/CucumberSwiftTesting/LocalizedStepTypes.swift",
+        "https://github.com/cucumberswift/CucumberSwift/blob/5547f9025c0da3f0276a22a3c746bfebc405741f/README.md#attributions",
+        "https://github.com/cucumber/gherkin/blob/81ef221bd9e1f0d41b62e3986c5dd61439641117/LICENSE"
+      ],
+      "revision": "Embedded in CucumberSwift 6.9.0, 5547f9025c0da3f0276a22a3c746bfebc405741f; primary license review snapshot 81ef221bd9e1f0d41b62e3986c5dd61439641117",
+      "licenseExpression": "MIT",
+      "distribution": "external-tool",
+      "relationship": "embedded-dialect-data",
+      "noticeFile": "Config/Licenses/bdd-tools.txt",
+      "status": "reviewed",
+      "notes": "Il parser Gherkin selezionato incorpora dati dei dialetti e dichiarazioni localizzate attribuiti da upstream a cucumber/gherkin. Conservati copyright Cucumber Ltd e contributori, permesso e disclaimer MIT completi anche nel bundle test. Lo snapshot della licenza primaria è una revisione di review, non una dichiarazione dell’esatta origine storica dei dati adattati. Il corpus di test upstream non è copiato nelle fixture del progetto."
+    },
+    {
+      "id": "cucumber-expressions-embedded-diagnostics",
+      "category": "development-tool",
+      "paths": [
+        "Config/Licenses/bdd-tools.txt",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/THIRD_PARTY_NOTICES.txt"
+      ],
+      "sourceURLs": [
+        "https://github.com/cucumberswift/CucumberSwiftExpressions/blob/ab4c6482d3230d24a13814a961b6fff1d50f830f/Sources/CucumberSwiftExpressions/SyntaxError.swift",
+        "https://github.com/cucumberswift/CucumberSwiftExpressions/blob/ab4c6482d3230d24a13814a961b6fff1d50f830f/README.md#attributions",
+        "https://github.com/cucumber/cucumber-expressions/blob/eb1ad273949ad8bfd20632f73f1959bae6135a45/LICENSE",
+        "https://github.com/cucumberswift/CucumberSwiftExpressions/blob/ab4c6482d3230d24a13814a961b6fff1d50f830f/Sources/CucumberSwiftExpressions/SyntaxParser.swift",
+        "https://github.com/cucumber/cucumber-expressions/blob/eb1ad273949ad8bfd20632f73f1959bae6135a45/java/src/main/java/io/cucumber/cucumberexpressions/CucumberExpressionException.java"
+      ],
+      "revision": "Embedded in CucumberSwiftExpressions 1.4.2, ab4c6482d3230d24a13814a961b6fff1d50f830f; primary license review snapshot eb1ad273949ad8bfd20632f73f1959bae6135a45",
+      "licenseExpression": "MIT",
+      "distribution": "external-tool",
+      "relationship": "adapted-expression-diagnostics",
+      "noticeFile": "Config/Licenses/bdd-tools.txt",
+      "status": "reviewed",
+      "notes": "SyntaxError.swift dichiara la riproduzione letterale dei messaggi e la dipendenza attribuisce grammatica/informazioni implementative a cucumber/cucumber-expressions. Conservati copyright Cucumber Ltd e contributori, permesso e disclaimer MIT completi anche nel bundle test. Lo snapshot primario identifica la licenza riesaminata; non identifica l’esatta revisione storica adattata dal port Swift."
     }
   ],
   "reviewedInputs": {
@@ -462,11 +550,16 @@
     "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-32@2x.png": "90ec675eb4ac9121de21930cc9dbf82194561c1a9bc63ca98d675919ac6aae6d",
     "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-512.png": "b54f304ab20fb2c03b0c4729926a6e26fe138fc9d567e457bdc43eababd5e443",
     "Apps/Shared/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-macOS-512@2x.png": "80e0893f803c4dcf30b9ebce534674b60dfb1f73ec248bc2581f90deebfcd337",
+    "Config/Licenses/bdd-tools.txt": "4031f3de35638d2d3bd578ab448b46929cc946157c3cc4420c178a410b755679",
     "Design/AppIcon/AppIcon-master-1024.png": "80e0893f803c4dcf30b9ebce534674b60dfb1f73ec248bc2581f90deebfcd337",
     "Fixtures/Linguistics/it-gold-v1/ATTRIBUTION.md": "eadd4b52188de68c2cfe74d3d70071bd4226603c79a3d4ba5efee7022fa5dfe1",
     "LICENSE": "81f47968bba326e331d547c1a4030f240512d62cb6e8c537cec2616da82d7d72",
-    "Packages/GlifiCore/Package.swift": "390130809eefe8840277be50388ad58b63f647e8d34341cf476d80a2249c0600",
+    "Packages/GlifiCore/Package.resolved": "d7192d75b75156eb6544d3282fa4043f9ced4e28890da1312d7579981911a59f",
+    "Packages/GlifiCore/Package.swift": "5c88abeb2515b4a64ebdc6d5eae58b9658ece7035f9bd97bc1890e79841344d5",
     "THIRD_PARTY_NOTICES.txt": "dc869382f68d264c0054b209cf7f7c0926e09df5daeef8c9fd9b0895acabf944",
-    "docs/assets/glifistudio-hero.png": "672cc4fa464ba426f625ff19bf252bf33019b255de649b4a540cfbc920168f19"
+    "docs/assets/glifistudio-hero.png": "672cc4fa464ba426f625ff19bf252bf33019b255de649b4a540cfbc920168f19",
+    "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/THIRD_PARTY_NOTICES.txt": "4031f3de35638d2d3bd578ab448b46929cc946157c3cc4420c178a410b755679",
+    "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-LICENSE.txt": "81f47968bba326e331d547c1a4030f240512d62cb6e8c537cec2616da82d7d72",
+    "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-THIRD_PARTY_NOTICES.txt": "dc869382f68d264c0054b209cf7f7c0926e09df5daeef8c9fd9b0895acabf944"
   }
 }

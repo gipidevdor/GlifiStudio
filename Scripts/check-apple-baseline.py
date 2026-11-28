@@ -5,6 +5,8 @@
 
 from __future__ import annotations
 
+import json
+import math
 import plistlib
 import re
 import sys
@@ -17,6 +19,77 @@ PROJECT_DIRECTORY = Path(__file__).resolve().parent.parent
 def read(relative_path: str) -> str:
     """Read a UTF-8 project file."""
     return (PROJECT_DIRECTORY / relative_path).read_text(encoding="utf-8")
+
+
+def read_json(relative_path: str) -> object:
+    """Reject duplicate keys and non-JSON constants before checking package policy."""
+    def unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("JSON della baseline con chiave duplicata")
+            result[key] = value
+        return result
+
+    def reject_constant(_: str) -> object:
+        raise ValueError("costante non JSON nella baseline")
+
+    def finite_float(value: str) -> float:
+        number = float(value)
+        if not math.isfinite(number):
+            raise ValueError("numero non rappresentabile nella baseline")
+        return number
+
+    return json.loads(read(relative_path), object_pairs_hook=unique_object,
+                      parse_constant=reject_constant, parse_float=finite_float)
+
+
+def validate_test_dependencies(manifest: str, lock: object) -> list[str]:
+    """Allow only the ADR-0046 test tooling, with no production consumer."""
+    errors = []
+    compact = re.sub(r"\s+", "", manifest)
+    dependency = '.package(url:"https://github.com/cucumberswift/CucumberSwift.git",exact:"6.9.0",traits:[])'
+    target = '''.testTarget(
+        name: "GlifiBDDTests",
+        dependencies: [
+            "GlifiKit",
+            .product(name: "CucumberSwiftTesting", package: "CucumberSwift"),
+        ],
+        exclude: ["Features"],
+        resources: [.copy("Licenses")],
+        plugins: [.plugin(name: "CucumberSwiftTestingPlugin", package: "CucumberSwift")]
+    )'''
+    allowed_target = re.sub(r"\s+", "", target)
+    packages = re.findall(r"\.package\([^)]*\)", compact)
+    if packages != [dependency] or compact.count(allowed_target) != 1:
+        errors.append("Dipendenza BDD o target fuori dalla allowlist ADR-0046.")
+    remainder = compact.replace(dependency, "").replace(allowed_target, "")
+    if "cucumber" in remainder.casefold():
+        errors.append("CucumberSwift può essere consumato soltanto da GlifiBDDTests.")
+    expected = {
+        "cucumberswift": ("CucumberSwift", "6.9.0", "5547f9025c0da3f0276a22a3c746bfebc405741f"),
+        "cucumberswiftexpressions": (
+            "CucumberSwiftExpressions", "1.4.2", "ab4c6482d3230d24a13814a961b6fff1d50f830f"),
+    }
+    pins = lock.get("pins") if isinstance(lock, dict) else None
+    if not isinstance(pins, list) or len(pins) != len(expected):
+        return errors + ["Package.resolved BDD assente o con dipendenze inattese."]
+    seen = set()
+    for pin in pins:
+        if not isinstance(pin, dict):
+            errors.append("Pin BDD non valido.")
+            continue
+        identity = pin.get("identity")
+        if identity not in expected or identity in seen:
+            errors.append("Pin BDD inatteso o duplicato.")
+            continue
+        seen.add(identity)
+        name, version, revision = expected[identity]
+        if (pin.get("kind") != "remoteSourceControl"
+                or pin.get("location") != f"https://github.com/cucumberswift/{name}.git"
+                or pin.get("state") != {"revision": revision, "version": version}):
+            errors.append(f"Pin BDD non approvato: {identity}.")
+    return errors
 
 
 def main() -> int:
@@ -319,10 +392,12 @@ def main() -> int:
             if fragment in body:
                 errors.append(f"Assertion energetica non autorizzata in {relative_path}: {fragment}")
 
-    # The 0.1 allowlist is intentionally empty. Any external package or linked
-    # framework must first update requirements, an ADR, and this explicit policy.
-    if re.search(r"\.package\s*\(", package_manifest):
-        errors.append("La allowlist SwiftPM esterna della baseline 0.1 deve restare vuota.")
+    # ADR-0046 adds only pinned BDD test tooling. The application allowlist stays empty.
+    try:
+        lock = read_json("Packages/GlifiCore/Package.resolved")
+        errors.extend(validate_test_dependencies(package_manifest, lock))
+    except (OSError, ValueError) as error:
+        errors.append(f"Package.resolved BDD non leggibile: {error}")
 
     forbidden_project_dependency_markers = (
         "XCRemoteSwiftPackageReference",

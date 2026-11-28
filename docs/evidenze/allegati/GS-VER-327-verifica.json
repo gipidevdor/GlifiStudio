@@ -1,0 +1,25 @@
+{
+  "identifier": "GS-VER-327",
+  "date": "2026-11-27",
+  "baseHEAD": "44dd90f22f1b4b4930f87a6f6e818ccb3efaa5d4",
+  "status": "Targeted GREEN passed; integrated macOS gate pending",
+  "targeted": {
+    "coreDefinitions": 28,
+    "kitDefinitions": 17,
+    "issues": 0,
+    "buildSeconds": 47.04,
+    "log": "core-green.log",
+    "sha256": "c892aedff2d3ef655745e6156f89683c8b0487f18488340f84f6650251bf7a31"
+  },
+  "source": {
+    "controlledInputs": 590,
+    "fingerprint": "5aeefb5d07d002001e9ee143bb9c3728e3aeb6c5e509a918d9b16d8c45b99793",
+    "localManifest": "source-manifest-before.json"
+  },
+  "independentReview": "No concrete blockers after preservation of literal escapes and the full structural codec algebra",
+  "limitations": [
+    "macOS integrated gate pending",
+    "Future capabilities and persistent index not promoted",
+    "Interactive and assistive audits remain open"
+  ]
+}

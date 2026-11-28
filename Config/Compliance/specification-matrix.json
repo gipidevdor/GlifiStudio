@@ -1,7 +1,7 @@
 {
   "schema": "studio.glifi.specification-compliance-matrix",
   "schemaVersion": 1,
-  "updatedAt": "2026-11-26",
+  "updatedAt": "2026-11-28",
   "requiredRequirementCoverage": [
     "RQ-057",
     "RQ-058",
@@ -5508,6 +5508,344 @@
         "docs/evidenze/GS-VER-326-ottimizzazione-beta-gamma.md"
       ],
       "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-327",
+      "clause": "GS-QRY-001 § Semantica e ammissione delle capability prima della scansione",
+      "specification": "docs/specifiche-di-design/04-ricerca-e-linguaggio-di-query.md",
+      "requirements": [
+        "RF-015",
+        "RQ-042",
+        "RQ-058",
+        "RQ-060",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiQueryEvaluator.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiQueryEvaluatorTests.swift",
+        "Scripts/check-query-ast.py"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/pianificazione/dor-semantica-query.md",
+        "docs/evidenze/GS-VER-327-semantica-query.md"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-328",
+      "clause": "GS-MET-001-21 § inferenza con aritmetica finita e invarianti di scala",
+      "specification": "docs/metodi-analitici/21-fondazione-statistica.md",
+      "requirements": [
+        "RQ-008",
+        "RQ-027",
+        "RQ-058",
+        "RQ-060",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiResamplingStatistics.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiPairedLocationStatistics.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiInferenceExtensions.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiDerivedAnalyses.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiInferenceStabilityTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKeynessCacheContractTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/pianificazione/dor-stabilita-inferenza.md",
+        "docs/evidenze/GS-VER-328-stabilita-inferenza.md"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-329",
+      "clause": "GS-APL-001 § contesto di codifica pubblicato atomicamente dopo le letture",
+      "specification": "docs/apple/01-ciclo-di-vita-e-stato-swiftui.md",
+      "requirements": [
+        "RF-043",
+        "RQ-011",
+        "RQ-047",
+        "RQ-058",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Apps/Shared/StudioHomeModel.swift"
+      ],
+      "tests": [
+        "Apps/macOS/Tests/StudioSelectionConsistencyTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/pianificazione/dor-contesto-fonte-codifica.md",
+        "docs/evidenze/GS-VER-329-contesto-fonte-codifica.md"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-330",
+      "clause": "GS-API-003 § Ammissione e valori dei limiti corpus anche nel riuso",
+      "specification": "docs/api/03-parita-continua-cli.md",
+      "requirements": [
+        "RQ-008",
+        "RQ-033",
+        "RQ-058",
+        "RQ-060",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCorpusCacheBudgetTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/pianificazione/dor-cache-budget-corpus.md",
+        "docs/evidenze/GS-VER-330-budget-corpus-cache.md"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-331",
+      "clause": "GS-VIZ-001 § Export e associazione autorevole ai metadati dell’Artifact",
+      "specification": "docs/specifiche-di-design/08-visualizzazione-scientifica.md",
+      "requirements": [
+        "RQ-008",
+        "RQ-036",
+        "RQ-058",
+        "RQ-060",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectSession.swift",
+        "Apps/Shared/Resources/Localizable.xcstrings"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiVisualExportSourceTests.swift",
+        "Scripts/check-kit-cli-parity.py"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/pianificazione/dor-metadata-origine-export-viste.md",
+        "docs/evidenze/GS-VER-331-metadata-origine-export-viste.md"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-332",
+      "clause": "GS-STD-001-16 § 16.5 Specifiche comportamentali BDD",
+      "specification": "docs/standard/16-strategia-di-verifica-e-test.md",
+      "requirements": [
+        "RQ-027",
+        "RQ-058",
+        "RQ-060",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Package.swift",
+        "Scripts/check-bdd.py",
+        "Scripts/test.sh",
+        "Scripts/verify.sh",
+        "Scripts/check-apple-baseline.py",
+        "Scripts/check-licenses.py"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiBDDTests/GlifiBDDRunner.swift",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/GlifiWorkflowSteps.swift",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/GlifiCLISteps.swift",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/GlifiAnalyticalSteps.swift",
+        "Scripts/check-bdd.py",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/GlifiBDDLicenseTests.swift",
+        "Scripts/check-licenses-tests.py"
+      ],
+      "fixtures": [
+        "Config/Testing/bdd-coverage.json",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/AnalyticalMethods.feature",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/CLIParity.feature",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/CorpusAnalysis.feature",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/ProjectLifecycle.feature",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/QualitativeCoding.feature",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/RequestValidation.feature",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/ScientificExport.feature",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Features/TextQuery.feature",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/THIRD_PARTY_NOTICES.txt",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-LICENSE.txt",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/Licenses/GlifiStudio-THIRD_PARTY_NOTICES.txt"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-332-bdd-cucumber-swift.md",
+        "docs/evidenze/GS-VER-333-licenze-bdd.md"
+      ],
+      "gate": "G3",
+      "status": "verified",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-334",
+      "clause": "GS-STD-001-12 §§ 12.5–12.6; GS-STD-001-16 § 16.5; GS-STD-001-29 § 29.6, revisione con evidenza circoscritta",
+      "specification": "docs/pianificazione/dor-ingegneria-verificabile.md",
+      "requirements": [
+        "RQ-011",
+        "RQ-027",
+        "RQ-058",
+        "RQ-060",
+        "RQ-062",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Tests/GlifiBDDTests/BDDSubprocess.swift",
+        "Packages/GlifiCore/Tests/GlifiBDDTests/GlifiCLISteps.swift",
+        "Packages/GlifiCore/Package.swift",
+        "Scripts/check-bdd.py",
+        "Scripts/check-licenses.py",
+        "Scripts/check-apple-baseline.py",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiPairedLocationStatistics.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiEffectSizeStatistics.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiDerivedAnalyses.swift",
+        "Apps/macOS/StudioKHLanguageModel.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiBDDTests/BDDSubprocessTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiInferenceStabilityTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiGroupMetricConfidenceCacheTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiKeynessCacheContractTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiStatisticsRangeContractTests.swift",
+        "Scripts/check-bdd.py",
+        "Scripts/check-licenses-tests.py",
+        "Apps/macOS/Tests/StudioKHMatrixTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiDistributionOptimizationReferenceTests.swift"
+      ],
+      "fixtures": [
+        "Config/Testing/bdd-coverage.json"
+      ],
+      "evidence": [
+        "docs/evidenze/GS-VER-334-ingegneria-verificabile.md"
+      ],
+      "gate": "G3",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-335",
+      "clause": "GS-UX-001-17 § Flussi di ricerca e completamento dei profili KH; GS-VIZ-001 § Esplorazione del dendrogramma",
+      "specification": "docs/esperienza-utente/17-laboratorio-analisi-testuale.md",
+      "requirements": [
+        "RF-033",
+        "RF-087",
+        "RQ-027",
+        "RQ-028",
+        "RQ-033",
+        "RQ-037",
+        "RQ-038",
+        "RQ-058",
+        "RQ-060",
+        "RQ-063"
+      ],
+      "code": [
+        "Apps/macOS/StudioCoreMethodRoute.swift",
+        "Apps/macOS/StudioCorpusMethodsModel.swift",
+        "Apps/macOS/StudioAdvancedAnalysisModel.swift",
+        "Apps/macOS/StudioKHMatrixModel.swift",
+        "Apps/macOS/StudioKHLanguageModel.swift",
+        "Apps/Shared/StudioVisualizationView.swift",
+        "Apps/Shared/StudioPlotSeries.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiCorpusMultivariateAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiVisualizationPresentation.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioProjectCommand.swift",
+        "Packages/GlifiCore/Sources/GlifiCLI/GlifiCLI.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTermClusteringTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiVisualizationTests.swift",
+        "Apps/macOS/Tests/StudioAdvancedAnalysisTests.swift",
+        "Apps/macOS/Tests/StudioFactorAudioGraphTests.swift",
+        "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+        "Apps/macOS/Tests/StudioKHMatrixTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiProjectCommandTests.swift",
+        "Scripts/check-kit-cli-parity.py"
+      ],
+      "fixtures": [
+        "Config/Testing/analysis-scenarios.json"
+      ],
+      "evidence": [
+        "docs/pianificazione/dor-flussi-tematici-e-dendrogrammi.md",
+        "docs/evidenze/GS-VER-335-flussi-tematici-e-dendrogrammi.md",
+        "docs/evidenze/allegati/GS-VER-335-snapshot-isolato.json",
+        "docs/evidenze/allegati/GS-VER-335-verifica.json"
+      ],
+      "gate": "G2",
+      "status": "implemented",
+      "blockingReason": null
+    },
+    {
+      "id": "CMP-336",
+      "clause": "GS-STD-001-11 § 11.8; GS-API-004/005/006; GS-UX-001-17 § Dati di ricerca e risultati salvati",
+      "specification": "docs/api/06-lavoro-avanzato-persistente.md",
+      "requirements": [
+        "RF-006",
+        "RF-008",
+        "RF-011",
+        "RF-013",
+        "RF-015",
+        "RF-016",
+        "RF-040",
+        "RF-087",
+        "RQ-058",
+        "RQ-060",
+        "RQ-063"
+      ],
+      "code": [
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiTabularImport.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiResearchState.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiCorpusPreparation.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiSavedResearchAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioResearchCommand.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioSavedAnalysis.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioTabularProject.swift",
+        "Apps/macOS/StudioResearchView.swift",
+        "Apps/macOS/StudioResearchModel.swift",
+        "Packages/GlifiCore/Sources/GlifiCore/GlifiWorkbenchCaptureEnvelope.swift",
+        "Packages/GlifiCore/Sources/GlifiKit/GlifiStudioWorkbenchCapture.swift"
+      ],
+      "tests": [
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiTabularImportTests.swift",
+        "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiResearchStateTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiResearchCommandTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiSavedInvestigationTests.swift",
+        "Apps/macOS/Tests/StudioResearchTests.swift",
+        "Apps/macOS/Tests/StudioResearchArchiveTests.swift",
+        "Apps/macOS/Tests/StudioWorkbenchArchiveTests.swift",
+        "Packages/GlifiCore/Tests/GlifiKitTests/GlifiWorkbenchCaptureTests.swift"
+      ],
+      "fixtures": [],
+      "evidence": [
+        "docs/evidenze/GS-VER-336-flusso-ricerca-persistente.md"
+      ],
+      "gate": "G3",
       "status": "implemented",
       "blockingReason": null
     }

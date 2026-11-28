@@ -703,10 +703,11 @@ extension GlifiEngine {
             from: project,
             maximumSourceByteCount: corpusOptions.maximumSourceByteCount
         )
+        let tokenizer = try await researchTokenizer(in: project)
         let locale = Locale(identifier: "it_IT")
         return try sources.map { source in
             try Task.checkCancellation()
-            let tokenization = try textTokenizer.tokenize(source.text)
+            let tokenization = try tokenizer.tokenize(source.text)
             var tokenIndex = 0
             let sentences = try tokenization.sentences.map { sentence in
                 guard let sentenceText = sentence.range.text(in: source.text) else {
@@ -726,7 +727,9 @@ extension GlifiEngine {
                         continue
                     }
                     terms.append(
-                        surface.precomposedStringWithCanonicalMapping.lowercased(with: locale))
+                        token.analysisForm
+                            ?? surface.precomposedStringWithCanonicalMapping.lowercased(
+                                with: locale))
                 }
                 return GlifiSummaryCandidateSentence(
                     range: sentence.range, terms: terms,
@@ -814,10 +817,11 @@ extension GlifiEngine {
             from: project,
             maximumSourceByteCount: corpusOptions.maximumSourceByteCount
         )
+        let tokenizer = try await researchTokenizer(in: project)
         return try sources.map {
             (
                 $0.sourceRevisionID,
-                try GlifiQueryTermNormalizer.terms($0.text, tokenizer: textTokenizer)
+                try GlifiQueryTermNormalizer.terms($0.text, tokenizer: tokenizer)
             )
         }
     }
@@ -840,7 +844,9 @@ extension GlifiEngine {
             else {
                 throw derivedAnalysisFailure("bm25.invalid-parameters")
             }
-            let terms = Array(Set(try GlifiQueryTermNormalizer.terms(query))).sorted()
+            let tokenizer = try await researchTokenizer(in: project)
+            let terms = Array(Set(try GlifiQueryTermNormalizer.terms(query, tokenizer: tokenizer)))
+                .sorted()
             guard !terms.isEmpty else {
                 throw derivedAnalysisFailure("bm25.empty-query")
             }
@@ -920,12 +926,13 @@ extension GlifiEngine {
                     maximumSourceByteCount: corpusOptions.maximumSourceByteCount
                 )
             }
+            let tokenizer = try await researchTokenizer(in: project)
             return try await derivedArtifact(
                 descriptor: descriptor,
                 sourceSnapshot: snapshot,
                 in: project
             ) {
-                try GlifiWindowCollocationAnalyzer(tokenizer: textTokenizer)
+                try GlifiWindowCollocationAnalyzer(tokenizer: tokenizer)
                     .analyze(sources, options: options)
             }
         }
@@ -973,12 +980,13 @@ extension GlifiEngine {
                     maximumSourceByteCount: corpusOptions.maximumSourceByteCount
                 )
             }
+            let tokenizer = try await researchTokenizer(in: project)
             return try await derivedArtifact(
                 descriptor: descriptor,
                 sourceSnapshot: snapshot,
                 in: project
             ) {
-                try GlifiWindowNetworkAnalyzer(tokenizer: textTokenizer)
+                try GlifiWindowNetworkAnalyzer(tokenizer: tokenizer)
                     .analyze(sources, options: options)
             }
         }

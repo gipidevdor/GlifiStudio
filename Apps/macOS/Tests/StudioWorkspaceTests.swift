@@ -61,3 +61,56 @@ struct StudioWorkspaceTests {
         #expect(model.queryResult == nil)
     }
 }
+
+@MainActor struct StudioThematicWorkflowTests {
+    @Test func everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole() throws {
+        let routes = StudioCoreMethodRoute.allCases
+        #expect(Set(routes.map(\.id)).count == routes.count)
+        #expect(
+            Set(
+                routes.compactMap { route -> StudioAdvancedTool? in
+                    if case let .advanced(value) = route { return value }
+                    return nil
+                }) == Set(StudioAdvancedTool.allCases))
+        #expect(
+            Set(
+                routes.compactMap { route -> StudioKHMatrixTool? in
+                    if case let .khMatrix(value) = route { return value }
+                    return nil
+                }) == Set(StudioKHMatrixTool.allCases))
+        #expect(
+            Set(
+                routes.compactMap { route -> StudioKHLanguageTool? in
+                    if case let .khLanguage(value) = route { return value }
+                    return nil
+                }) == Set(StudioKHLanguageTool.allCases))
+        let catalogURL = URL(filePath: #filePath).deletingLastPathComponent()
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .appending(path: "Shared/Resources/Localizable.xcstrings")
+        let catalog = try #require(
+            JSONSerialization.jsonObject(with: Data(contentsOf: catalogURL)) as? [String: Any])
+        let strings = try #require(catalog["strings"] as? [String: [String: Any]])
+        for route in routes {
+            for key in [
+                route.titleKey, route.purposeKey, route.theme.titleKey,
+                route.theme.descriptionKey,
+            ] {
+                let localizations = try #require(
+                    strings[key]?["localizations"] as? [String: Any],
+                    "Missing context for \(route.id): \(key)")
+                for language in ["it", "en"] {
+                    let localized = try #require(localizations[language] as? [String: Any])
+                    let unit = try #require(localized["stringUnit"] as? [String: Any])
+                    let text = try #require(unit["value"] as? String)
+                    #expect(!text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    #expect(text != key)
+                }
+            }
+        }
+        #expect(Set(routes.map(\.theme)) == Set(StudioAnalysisTheme.allCases))
+        #expect(StudioCoreMethodRoute.corpus(.hierarchical).theme == .structure)
+        #expect(StudioCoreMethodRoute.operators(.pageRank).theme == .relationships)
+        #expect(StudioCoreMethodRoute.statistics(.cohenKappa).theme == .coding)
+        #expect(StudioCoreMethodRoute.evaluation(.lemmas).theme == .validation)
+    }
+}

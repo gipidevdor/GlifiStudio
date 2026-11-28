@@ -3,7 +3,7 @@
 import Foundation
 
 /// One explicit temporal annotation supplied by the researcher for an immutable revision.
-public struct GlifiStudioTemporalAssignment: Equatable, Sendable {
+public struct GlifiStudioTemporalAssignment: Codable, Equatable, Sendable {
     /// Immutable project source revision.
     public let sourceRevisionID: String
     /// Observed date type and precision, including an explicit missing value.
@@ -20,7 +20,7 @@ public struct GlifiStudioTemporalAssignment: Equatable, Sendable {
 }
 
 /// Temporal observations retain the exact project inputs and manual metadata used.
-public struct GlifiStudioProjectTemporalEvaluation: Sendable {
+public struct GlifiStudioProjectTemporalEvaluation: Decodable, Sendable {
     /// Project owning the selected immutable revisions.
     public let projectID: String
     /// Project generation captured while preparing inputs.
@@ -33,6 +33,35 @@ public struct GlifiStudioProjectTemporalEvaluation: Sendable {
     public let selectedTerms: [String]
     /// Descriptive calendar aggregation returned by the core.
     public let result: GlifiStudioTemporalResult
+    /// Exact shared lexical preparation used for the captured token exposures.
+    public let preparation: GlifiStudioCorpusPreparation
+    /// Versioned preparation identity captured before reading sources.
+    public let preparationDigest: String
+}
+
+extension GlifiStudioProjectTemporalEvaluation {
+    private enum RestoreKeys: String, CodingKey {
+        case projectID, generation, documents, contentDigests, selectedTerms, result
+        case preparation, preparationDigest
+    }
+
+    /// Restores captured observations and accepts the historical surface-only transport.
+    public init(from decoder: any Decoder) throws {
+        let fields = try decoder.container(keyedBy: RestoreKeys.self)
+        let preparation =
+            try fields.decodeIfPresent(
+                GlifiStudioCorpusPreparation.self, forKey: .preparation) ?? .init()
+        self.init(
+            projectID: try fields.decode(String.self, forKey: .projectID),
+            generation: try fields.decode(Int.self, forKey: .generation),
+            documents: try fields.decode([GlifiStudioTemporalDocument].self, forKey: .documents),
+            contentDigests: try fields.decode([String].self, forKey: .contentDigests),
+            selectedTerms: try fields.decode([String].self, forKey: .selectedTerms),
+            result: try fields.decode(GlifiStudioTemporalResult.self, forKey: .result),
+            preparation: preparation,
+            preparationDigest: try fields.decodeIfPresent(String.self, forKey: .preparationDigest)
+                ?? preparation.digest())
+    }
 }
 
 /// Source-aware preparation for the existing temporal and linguistic evaluation operators.
@@ -76,7 +105,8 @@ public enum GlifiStudioEvaluationWorkbench {
         return .init(
             projectID: input.projectID, generation: input.generation,
             documents: documents, contentDigests: input.contentDigests,
-            selectedTerms: selectedTerms, result: result)
+            selectedTerms: selectedTerms, result: result,
+            preparation: input.preparation, preparationDigest: input.preparationDigest)
     }
 
     /// Evaluates supplied boundary annotations after checking scalar-aligned UTF-8 offsets.

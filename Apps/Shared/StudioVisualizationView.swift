@@ -8,7 +8,8 @@ import UniformTypeIdentifiers
 /// Renders one `GlifiStudioVisualization` as chart, legend, caveats and equivalent table.
 ///
 /// The view draws only the positions, domains and marks declared by the specification
-/// (GS-VIZ-001); it never recomputes values. Color is never the only channel: every
+/// (GS-VIZ-001); recutting delegates to GlifiKit without rerunning the analysis.
+/// Color is never the only channel: every
 /// series also has its own shape, and every mark is reachable from the table and from
 /// VoiceOver.
 struct StudioVisualizationView: View {
@@ -33,22 +34,48 @@ struct StudioVisualizationView: View {
     @State private var exportFailed = false
     @State private var preparationTask: Task<Void, Never>?
     @State private var preparationID = UUID()
+    @State private var dendrogramPresentation: StudioDendrogramPresentation?
+    @State private var dendrogramTask: Task<Void, Never>?
+    @State private var dendrogramRequestID = UUID()
+    @State private var isPreparingDendrogram = false
+    @State private var dendrogramFailed = false
+    @State private var dendrogramZoom = 1.0
+    @State private var cutByHeight = false
+    @State private var draftClusterCount = 2
+    @State private var draftCutHeight = 0.0
+    @State private var selectedDendrogramMarkID: String?
+
+    private var displayedVisualization: GlifiStudioVisualization {
+        dendrogramPresentation?.visualization ?? visualization
+    }
+
+    private var displayedMarks: [GlifiStudioVisualMark] {
+        dendrogramPresentation?.marks ?? visualization.marks
+    }
+
+    private var activeMarkID: String? {
+        visualization.family == .dendrogram
+            ? selectedDendrogramMarkID ?? selectedMarkID : selectedMarkID
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(labels.summary(visualization))
+            Text(labels.summary(displayedVisualization))
                 .font(.callout)
                 .accessibilityAddTraits(.isSummaryElement)
-            if !visualization.marks.isEmpty {
-                let series = StudioPlotSeries(visualization.marks)
-                chart(series)
+            if visualization.family == .dendrogram, visualization.dendrogramTree != nil {
+                dendrogramControls
+            }
+            if !displayedMarks.isEmpty || dendrogramPresentation?.branch != nil {
+                let series = StudioPlotSeries(displayedMarks)
+                chartContainer(series)
                     .frame(minHeight: 240, idealHeight: 320, maxHeight: 420)
                 legend(series)
             }
             metadata
-            if !visualization.caveatKeys.isEmpty {
+            if !displayedVisualization.caveatKeys.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
-                    ForEach(visualization.caveatKeys, id: \.self) { key in
+                    ForEach(displayedVisualization.caveatKeys, id: \.self) { key in
                         Label(LocalizedStringKey(key), systemImage: "exclamationmark.triangle")
                             .font(.caption)
                     }
@@ -98,7 +125,20 @@ struct StudioVisualizationView: View {
         .alert("visual.export.failed", isPresented: $exportFailed) {
             Button("common.ok", role: .cancel) {}
         }
+        .alert("visual.dendrogram.failed", isPresented: $dendrogramFailed) {
+            Button("common.ok", role: .cancel) {}
+        }
+        .onChange(of: visualization, initial: true) { _, value in
+            resetDendrogram(for: value)
+        }
+        .onChange(of: selectedMarkID) { _, value in
+            selectedDendrogramMarkID = value
+        }
         .onDisappear {
+            dendrogramRequestID = UUID()
+            dendrogramTask?.cancel()
+            dendrogramTask = nil
+            isPreparingDendrogram = false
             preparationID = UUID()
             preparationTask?.cancel()
             preparationTask = nil
@@ -121,6 +161,7 @@ struct StudioVisualizationView: View {
         isPreparingExport = true
         let identifier = UUID()
         preparationID = identifier
+        let exportedVisualization = displayedVisualization
         preparationTask = Task {
             defer {
                 if preparationID == identifier {
@@ -130,7 +171,7 @@ struct StudioVisualizationView: View {
             }
             do {
                 let value = try await StudioVisualExportPreparation.prepare(
-                    visualization, kind: kind)
+                    exportedVisualization, kind: kind)
                 guard !Task.isCancelled, preparationID == identifier else { return }
                 switch value {
                 case let .text(text, isJSON):
@@ -147,11 +188,169 @@ struct StudioVisualizationView: View {
         }
     }
 
+    // MARK: - Dendrogram exploration
+
+    private var dendrogramControls: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("visual.dendrogram.controls").font(.headline)
+            ViewThatFits(in: .horizontal) {
+                HStack { zoomControls }
+                VStack(alignment: .leading) { zoomControls }
+            }
+            Picker("visual.dendrogram.cut-mode", selection: $cutByHeight) {
+                Text("visual.dendrogram.cut-count").tag(false)
+                Text("visual.dendrogram.cut-height").tag(true)
+            }
+            .pickerStyle(.menu)
+            if cutByHeight {
+                TextField(
+                    "visual.dendrogram.cut-height", value: $draftCutHeight, format: .number
+                )
+                .textFieldStyle(.roundedBorder)
+                if maximumDendrogramHeight > 0 {
+                    Slider(value: $draftCutHeight, in: 0...maximumDendrogramHeight) {
+                        Text("visual.dendrogram.cut-height")
+                    }
+                }
+            } else {
+                Stepper(
+                    value: $draftClusterCount, in: 1...max(1, visualization.totalObservationCount)
+                ) {
+                    LabeledContent("visual.dendrogram.cut-count") {
+                        Text(draftClusterCount, format: .number).monospacedDigit()
+                    }
+                }
+            }
+            Button("visual.dendrogram.apply-cut", systemImage: "scissors") {
+                updateDendrogram(
+                    clusterCount: cutByHeight ? nil : draftClusterCount,
+                    height: cutByHeight ? draftCutHeight : nil,
+                    collapsedMarkID: dendrogramPresentation?.branch?.mark.id)
+            }
+            .disabled(isPreparingDendrogram)
+            ViewThatFits(in: .horizontal) {
+                HStack { branchControls }
+                VStack(alignment: .leading) { branchControls }
+            }
+            if let branch = dendrogramPresentation?.branch {
+                LabeledContent("visual.dendrogram.collapsed-count") {
+                    Text(branch.leafCount, format: .number).monospacedDigit()
+                }
+                .font(.caption)
+            }
+            Text("visual.dendrogram.view-only")
+                .font(.caption).foregroundStyle(.secondary)
+            if isPreparingDendrogram { ProgressView("visual.dendrogram.preparing") }
+        }
+        .accessibilityElement(children: .contain)
+    }
+
+    private var maximumDendrogramHeight: Double {
+        visualization.axes.first { $0.fieldIdentifier == "merge-height" }?.upperBound ?? 0
+    }
+
+    @ViewBuilder private var zoomControls: some View {
+        Button("visual.dendrogram.zoom-out", systemImage: "minus.magnifyingglass") {
+            dendrogramZoom = max(1, dendrogramZoom - 0.5)
+        }
+        .disabled(dendrogramZoom <= 1)
+        Slider(value: $dendrogramZoom, in: 1...8, step: 0.5) {
+            Text("visual.dendrogram.zoom")
+        }
+        .frame(minWidth: 100, maxWidth: 240)
+        .accessibilityValue(dendrogramZoom.formatted(.percent.precision(.fractionLength(0))))
+        Button("visual.dendrogram.zoom-in", systemImage: "plus.magnifyingglass") {
+            dendrogramZoom = min(8, dendrogramZoom + 0.5)
+        }
+        .disabled(dendrogramZoom >= 8)
+        Button("visual.dendrogram.reset", systemImage: "arrow.down.right.and.arrow.up.left") {
+            dendrogramZoom = 1
+        }
+    }
+
+    @ViewBuilder private var branchControls: some View {
+        Button("visual.dendrogram.collapse", systemImage: "arrow.down.right.and.arrow.up.left") {
+            updateDendrogram(collapsedMarkID: activeMarkID)
+        }
+        .disabled(isPreparingDendrogram || !StudioDendrogramPresentation.isMergeID(activeMarkID))
+        Button("visual.dendrogram.expand", systemImage: "arrow.up.left.and.arrow.down.right") {
+            updateDendrogram()
+        }
+        .disabled(isPreparingDendrogram || dendrogramPresentation?.branch == nil)
+    }
+
+    private func resetDendrogram(for value: GlifiStudioVisualization) {
+        dendrogramRequestID = UUID()
+        dendrogramTask?.cancel()
+        dendrogramTask = nil
+        dendrogramPresentation = nil
+        isPreparingDendrogram = false
+        dendrogramZoom = 1
+        selectedDendrogramMarkID = nil
+        draftClusterCount = min(max(value.totalObservationCount, 1), 2)
+        if let clusters = value.summaryArguments.first(where: { $0.name == "clusters" }),
+            case let .integer(count) = clusters.value, count > 0
+        {
+            draftClusterCount = min(count, max(value.totalObservationCount, 1))
+        }
+        draftCutHeight = value.marks.first { $0.kind == .rule && $0.series == "cut" }?.y ?? 0
+    }
+
+    private func updateDendrogram(
+        clusterCount: Int? = nil, height: Double? = nil, collapsedMarkID: String? = nil
+    ) {
+        dendrogramTask?.cancel()
+        let identifier = UUID()
+        dendrogramRequestID = identifier
+        isPreparingDendrogram = true
+        let source = displayedVisualization
+        dendrogramTask = Task {
+            defer {
+                if dendrogramRequestID == identifier {
+                    isPreparingDendrogram = false
+                    dendrogramTask = nil
+                }
+            }
+            do {
+                let value = try await StudioDendrogramPresentation.prepare(
+                    source, clusterCount: clusterCount, height: height,
+                    collapsedMarkID: collapsedMarkID)
+                guard !Task.isCancelled, dendrogramRequestID == identifier else { return }
+                dendrogramPresentation = value
+            } catch is CancellationError {
+                return
+            } catch {
+                if dendrogramRequestID == identifier { dendrogramFailed = true }
+            }
+        }
+    }
+
+    private func selectMark(_ mark: GlifiStudioVisualMark) {
+        if visualization.family == .dendrogram { selectedDendrogramMarkID = mark.id }
+        onSelect(mark)
+    }
+
     // MARK: - Chart
+
+    @ViewBuilder private func chartContainer(_ series: StudioPlotSeries) -> some View {
+        if visualization.family == .dendrogram {
+            GeometryReader { geometry in
+                ScrollView([.horizontal, .vertical]) {
+                    chart(series)
+                        .frame(
+                            width: max(geometry.size.width, geometry.size.width * dendrogramZoom),
+                            height: max(geometry.size.height, geometry.size.height * dendrogramZoom)
+                        )
+                }
+            }
+        } else {
+            chart(series)
+        }
+    }
 
     private func chart(_ series: StudioPlotSeries) -> some View {
         GeometryReader { geometry in
-            let frame = PlotFrame(visualization: visualization, size: geometry.size)
+            let frame = PlotFrame(visualization: displayedVisualization, size: geometry.size)
             let plot = Canvas { context, _ in
                 draw(in: &context, frame: frame, series: series)
             }
@@ -159,22 +358,22 @@ struct StudioVisualizationView: View {
             .accessibilityLabel(LocalizedStringKey(visualization.titleKey))
             .accessibilityValue(labels.summary(visualization))
             .accessibilityChildren {
-                ForEach(series.points) { mark in
+                ForEach(selectableMarks(series)) { mark in
                     Rectangle()
                         .accessibilityLabel(markDescription(mark))
                         .accessibilityAddTraits(
-                            mark.id == selectedMarkID ? [.isButton, .isSelected] : .isButton
+                            mark.id == activeMarkID ? [.isButton, .isSelected] : .isButton
                         )
-                        .accessibilityAction { onSelect(mark) }
+                        .accessibilityAction { selectMark(mark) }
                 }
             }
             .contentShape(Rectangle())
             .onTapGesture { location in
-                if let mark = frame.nearestPoint(to: location, among: series.points) {
-                    onSelect(mark)
+                if let mark = frame.nearestMark(to: location, among: selectableMarks(series)) {
+                    selectMark(mark)
                 }
             }
-            if let audioGraph = StudioFactorAudioGraph(visualization, labels: labels) {
+            if let audioGraph = StudioFactorAudioGraph(displayedVisualization, labels: labels) {
                 plot.accessibilityChartDescriptor(audioGraph)
             } else {
                 plot
@@ -192,7 +391,7 @@ struct StudioVisualizationView: View {
             origin.addLine(to: frame.point(x: frame.xDomain.upperBound, y: 0))
             context.stroke(origin, with: .color(.secondary.opacity(0.4)), lineWidth: 0.5)
         }
-        for mark in visualization.marks {
+        for mark in displayedMarks {
             switch mark.kind {
             case .segment, .rule:
                 var path = Path()
@@ -207,7 +406,7 @@ struct StudioVisualizationView: View {
                     with: .color(mark.kind == .rule ? .red : .secondary.opacity(0.7)),
                     style: style
                 )
-                if mark.id == selectedMarkID {
+                if mark.id == activeMarkID {
                     context.stroke(path, with: .color(.primary), lineWidth: 2.5)
                 }
             case .point:
@@ -216,7 +415,7 @@ struct StudioVisualizationView: View {
                 let color = Self.palette[seriesIndex % Self.palette.count]
                 let symbol = Self.shape(seriesIndex, center: center, radius: 4.5)
                 context.fill(symbol, with: .color(color))
-                if mark.id == selectedMarkID {
+                if mark.id == activeMarkID {
                     context.stroke(
                         Path(
                             ellipseIn: CGRect(
@@ -225,7 +424,7 @@ struct StudioVisualizationView: View {
                         lineWidth: 1.5
                     )
                 }
-                if mark.isEmphasized || mark.id == selectedMarkID {
+                if mark.isEmphasized || mark.id == activeMarkID {
                     context.draw(
                         Text(mark.label).font(.caption2),
                         at: CGPoint(x: center.x + 6, y: center.y - 6),
@@ -234,6 +433,25 @@ struct StudioVisualizationView: View {
                 }
             }
         }
+        if let branch = dendrogramPresentation?.branch {
+            var triangle = Path()
+            triangle.move(to: frame.point(x: branch.rootX, y: branch.rootHeight))
+            triangle.addLine(to: frame.point(x: branch.minimumX, y: 0))
+            triangle.addLine(to: frame.point(x: branch.maximumX, y: 0))
+            triangle.closeSubpath()
+            context.fill(triangle, with: .color(.secondary.opacity(0.15)))
+            context.stroke(triangle, with: .color(.primary), lineWidth: 1.5)
+            context.draw(
+                Text(branch.leafCount.formatted()).font(.caption),
+                at: frame.point(x: branch.rootX, y: branch.rootHeight / 2))
+        }
+    }
+
+    private func selectableMarks(_ series: StudioPlotSeries) -> [GlifiStudioVisualMark] {
+        guard visualization.family == .dendrogram else { return series.points }
+        let bridges = displayedMarks.filter { $0.kind == .segment && $0.id.hasSuffix(":bridge") }
+        return series.points + bridges
+            + (dendrogramPresentation?.branch.map { [$0.mark] } ?? [])
     }
 
     private static func shape(_ index: Int, center: CGPoint, radius: CGFloat) -> Path {
@@ -294,7 +512,7 @@ struct StudioVisualizationView: View {
 
     private var metadata: some View {
         VStack(alignment: .leading, spacing: 2) {
-            ForEach(Array(visualization.axes.enumerated()), id: \.offset) { _, axis in
+            ForEach(Array(displayedVisualization.axes.enumerated()), id: \.offset) { _, axis in
                 LabeledContent {
                     Text(
                         "\(labels.format(axis.lowerBound)) – \(labels.format(axis.upperBound))"
@@ -306,8 +524,8 @@ struct StudioVisualizationView: View {
             }
             LabeledContent("visual.observations") {
                 Text(
-                    "\(visualization.visibleObservationCount.formatted()) / "
-                        + visualization.totalObservationCount.formatted()
+                    "\(displayedVisualization.visibleObservationCount.formatted()) / "
+                        + displayedVisualization.totalObservationCount.formatted()
                 )
                 .monospacedDigit()
             }
@@ -343,8 +561,8 @@ struct StudioVisualizationView: View {
     // MARK: - Equivalent table
 
     private var table: some View {
-        let columns = visualization.table.columns
-        let selections = visualization.tableSelectionMarks
+        let columns = displayedVisualization.table.columns
+        let selections = displayedVisualization.tableSelectionMarks
         return ScrollView([.horizontal, .vertical]) {
             Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 4) {
                 GridRow {
@@ -355,7 +573,7 @@ struct StudioVisualizationView: View {
                     }
                 }
                 Divider()
-                ForEach(visualization.table.rows) { row in
+                ForEach(displayedVisualization.table.rows) { row in
                     tableRow(row, columns: columns, mark: selections[row.id])
                 }
             }
@@ -369,7 +587,7 @@ struct StudioVisualizationView: View {
         _ row: GlifiStudioVisualRow, columns: [GlifiStudioVisualColumn],
         mark: GlifiStudioVisualMark?
     ) -> some View {
-        let selected = mark != nil && mark?.id == selectedMarkID
+        let selected = mark != nil && mark?.id == activeMarkID
         let content = GridRow {
             ForEach(Array(row.cells.enumerated()), id: \.offset) { index, cell in
                 cellText(
@@ -388,20 +606,20 @@ struct StudioVisualizationView: View {
         if let mark {
             content
                 .contentShape(Rectangle())
-                .onTapGesture { onSelect(mark) }
+                .onTapGesture { selectMark(mark) }
                 .focusable()
                 .onKeyPress(.return) {
-                    onSelect(mark)
+                    selectMark(mark)
                     return .handled
                 }
                 .onKeyPress(.space) {
-                    onSelect(mark)
+                    selectMark(mark)
                     return .handled
                 }
                 .accessibilityAddTraits(.isButton)
                 .accessibilityAddTraits(selected ? .isSelected : [])
-                .accessibilityAction { onSelect(mark) }
-                .accessibilityAction(named: "action.open-mark-source") { onSelect(mark) }
+                .accessibilityAction { selectMark(mark) }
+                .accessibilityAction(named: "action.open-mark-source") { selectMark(mark) }
         } else {
             content
         }
@@ -490,13 +708,25 @@ private struct PlotFrame {
         )
     }
 
-    func nearestPoint(
+    func nearestMark(
         to location: CGPoint, among marks: [GlifiStudioVisualMark]
     ) -> GlifiStudioVisualMark? {
         let candidates = marks.map { mark -> (GlifiStudioVisualMark, Double) in
             let p = point(x: mark.x, y: mark.y)
-            let dx = Double(p.x - location.x)
-            let dy = Double(p.y - location.y)
+            let end = point(x: mark.x2 ?? mark.x, y: mark.y2 ?? mark.y)
+            let vx = Double(end.x - p.x)
+            let vy = Double(end.y - p.y)
+            let lengthSquared = vx * vx + vy * vy
+            let projection =
+                lengthSquared > 0
+                ? min(
+                    1,
+                    max(
+                        0,
+                        (Double(location.x - p.x) * vx
+                            + Double(location.y - p.y) * vy) / lengthSquared)) : 0
+            let dx = Double(p.x - location.x) + projection * vx
+            let dy = Double(p.y - location.y) + projection * vy
             return (mark, dx * dx + dy * dy)
         }
         guard let best = candidates.min(by: { $0.1 < $1.1 }), best.1 <= 144 else {

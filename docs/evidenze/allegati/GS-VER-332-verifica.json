@@ -1,0 +1,127 @@
+{
+  "identifier": "GS-VER-332",
+  "date": "2026-11-27",
+  "baseHEAD": "44dd90f22f1b4b4930f87a6f6e818ccb3efaa5d4",
+  "workingTree": true,
+  "status": "passed",
+  "profile": "macOS",
+  "environment": {
+    "macOS": "27.2.1",
+    "xcode": "27.2 (27B52)",
+    "swift": "6.4.2",
+    "python": "3.12.14",
+    "veraPDF": "1.30.4"
+  },
+  "bdd": {
+    "features": 8,
+    "expandedScenarios": 116,
+    "steps": 655,
+    "swiftTestingDefinitions": 60,
+    "serialExitStatus": 0,
+    "parallelExitStatus": 0,
+    "report": "GS-VER-332-cucumber.json",
+    "reportSHA256": "5ad3fe2352df46c6b32351ef0cd2f4ad042b1ae97867a6bb262f21307d7ca915",
+    "inventorySHA256": "9e20417bb54ee1535f145223c24c097cd53733e461020f9bb1c76c60fd37277f",
+    "featureResults": [
+      {
+        "file": "AnalyticalMethods.feature",
+        "scenarios": 27,
+        "steps": 180
+      },
+      {
+        "file": "CLIParity.feature",
+        "scenarios": 20,
+        "steps": 114
+      },
+      {
+        "file": "CorpusAnalysis.feature",
+        "scenarios": 18,
+        "steps": 84
+      },
+      {
+        "file": "ProjectLifecycle.feature",
+        "scenarios": 11,
+        "steps": 50
+      },
+      {
+        "file": "QualitativeCoding.feature",
+        "scenarios": 10,
+        "steps": 56
+      },
+      {
+        "file": "RequestValidation.feature",
+        "scenarios": 11,
+        "steps": 66
+      },
+      {
+        "file": "ScientificExport.feature",
+        "scenarios": 11,
+        "steps": 55
+      },
+      {
+        "file": "TextQuery.feature",
+        "scenarios": 8,
+        "steps": 50
+      }
+    ]
+  },
+  "macOSTests": {
+    "result": "Passed",
+    "totalTestCount": 135,
+    "passedTests": 135,
+    "failedTests": 0,
+    "skippedTests": 0,
+    "expectedFailures": 0
+  },
+  "verify": {
+    "command": "make verify",
+    "exitStatus": 0,
+    "pythonFromMise": true,
+    "veraPDFConfigured": true,
+    "pdfA2uConformantFiles": 2,
+    "kitCLIOperations": 132,
+    "kitCLICompleteResultChecks": 264,
+    "recoveryCheckpoints": 22,
+    "appBuildConfigurations": [
+      "Debug",
+      "Release"
+    ],
+    "logSHA256": "d9e887bc1cfab4b9380a32d12c325bdc65b8798bff40ff2a678f258df5d9ce03"
+  },
+  "bundle": {
+    "noCucumberBundleEntries": true,
+    "noCucumberDynamicLinks": true
+  },
+  "source": {
+    "roots": [
+      "Apps",
+      "Packages",
+      "Config",
+      "Scripts",
+      ".github"
+    ],
+    "fileCount": 536,
+    "fingerprint": "638bbbe6cdb1e641e72f9c6578943d2f9248fb58089617b55482f6d3399fc3c4",
+    "algorithm": "SHA256 of UTF-8 canonical JSON mapping rg --files paths to SHA256, sorted keys and compact separators"
+  },
+  "limitations": [
+    "Headless BDD; no UI or assistive audit",
+    "iPadOS deferred",
+    "No exhaustive claim for all analytical input combinations",
+    "Local verification; no remote CI run triggered"
+  ],
+  "postDocumentationStaticExitStatus": 0,
+  "cleanup": {
+    "measuredKiB": {
+      "buildCache": 2340868,
+      "reviewCheckout": 50888
+    },
+    "measuredGiB": 2.281,
+    "kept": [
+      "Versioned Cucumber report and verification summary",
+      "Active Python, R, veraPDF and Xcode toolchains",
+      "Global SwiftPM dependency cache"
+    ],
+    "status": "completed"
+  }
+}

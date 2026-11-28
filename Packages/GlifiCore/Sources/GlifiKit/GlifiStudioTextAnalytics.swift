@@ -138,7 +138,7 @@ public struct GlifiStudioLDAResult: Encodable, Equatable, Sendable {
 }
 
 /// Application-facing document and its external variables for automated coding.
-public struct GlifiStudioAutomaticCodingUnit: Encodable, Equatable, Sendable {
+public struct GlifiStudioAutomaticCodingUnit: Codable, Equatable, Sendable {
     /// Stable caller identity.
     public let id: String
     /// Extracted text.

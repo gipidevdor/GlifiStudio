@@ -368,6 +368,8 @@ final class StudioHomeModel {
         let evaluation = StudioEvaluationModel()
         let operators = StudioOperatorsModel()
         let linguistics = StudioLinguisticModel()
+        let khMatrix = StudioKHMatrixModel()
+        let khLanguage = StudioKHLanguageModel()
         var textAnalysisScope: StudioTextAnalysisScope = .allSources
         var selectedTextAnalysisSourceRevisionIDs: Set<String> = []
         var summaryMethod: StudioSummaryMethod = .sentenceTFIDFMean
@@ -1080,13 +1082,19 @@ final class StudioHomeModel {
     func loadCodingSource(_ sourceRevisionID: String) async {
         await run(messageKey: "progress.loading-source") { [self] in
             let active = try requireSession()
-            codingPassage = nil
-            codingSegments = try await active.textSegments(sourceRevisionID: sourceRevisionID)
-            codingSourceCharacterCount = try await active.extractedCharacterCount(
+            let segments = try await active.textSegments(sourceRevisionID: sourceRevisionID)
+            let characterCount = try await active.extractedCharacterCount(
                 sourceRevisionID: sourceRevisionID)
+            let state = try await active.qualitativeState()
+            let texts = try await resolveCodingTexts(
+                in: active, sourceRevisionID: sourceRevisionID, state: state)
+            try Task.checkCancellation()
+            codingSegments = segments
+            codingSourceCharacterCount = characterCount
             codingSourceRevisionID = sourceRevisionID
-            qualitativeState = try await active.qualitativeState()
-            try await refreshCodingTexts(active)
+            qualitativeState = state
+            codingTexts = texts
+            codingPassage = nil
         }
     }
 
@@ -1199,21 +1207,26 @@ final class StudioHomeModel {
 
     /// Resolves the passage of every coding of the loaded source, for the review list.
     private func refreshCodingTexts(_ active: GlifiStudioProjectSession) async throws {
-        guard let sourceRevisionID = codingSourceRevisionID else {
-            codingTexts = [:]
-            return
-        }
-        let codings = (qualitativeState?.codings ?? []).filter {
+        codingTexts = try await resolveCodingTexts(
+            in: active, sourceRevisionID: codingSourceRevisionID, state: qualitativeState)
+    }
+
+    /// Resolves coding excerpts without publishing presentation state.
+    private func resolveCodingTexts(
+        in active: GlifiStudioProjectSession, sourceRevisionID: String?,
+        state: GlifiStudioQualitativeState?
+    ) async throws -> [String: String] {
+        try Task.checkCancellation()
+        guard let sourceRevisionID else { return [:] }
+        let codings = (state?.codings ?? []).filter {
             $0.sourceRevisionID == sourceRevisionID
         }
-        guard !codings.isEmpty else {
-            codingTexts = [:]
-            return
-        }
+        guard !codings.isEmpty else { return [:] }
         let resolved = try await active.passages(
             sourceRevisionID: sourceRevisionID,
             selections: codings.map { .bytes(start: $0.startUTF8, end: $0.endUTF8) })
-        codingTexts = Dictionary(
+        try Task.checkCancellation()
+        return Dictionary(
             zip(codings.map(\.eventID), resolved.map(\.text)), uniquingKeysWith: { _, last in last }
         )
     }
@@ -1401,6 +1414,146 @@ final class StudioHomeModel {
                 lastLexicalLaws = result
                 snapshot = updatedSnapshot
             }
+        }
+
+        /// The sheet borrows this scene's owned session; it never creates a second project writer.
+        var researchProjectSession: GlifiStudioProjectSession? { session }
+
+        var canSaveCurrentResearchAnalysis: Bool {
+            advancedAnalysis.output?.typedResult != nil || khMatrix.output?.typedResult != nil
+                || khLanguage.output?.result != nil || statistics.result != nil
+                || operators.result != nil
+                || evaluation.output != nil || linguistics.output != nil
+        }
+
+        func refreshAfterResearchChange() async throws {
+            let active = try requireSession()
+            let updated = try await active.snapshot()
+            guard active === session else { return }
+            snapshot = updated
+        }
+
+        /// Saves the most recent native result and its complete frozen settings.
+        func saveCurrentResearchAnalysis(title: String) async throws {
+            let active = try requireSession()
+            let candidates: [(String, Date)] = [
+                advancedAnalysis.output.flatMap {
+                    $0.typedResult == nil ? nil : ("advanced", $0.completedAt)
+                },
+                khMatrix.output.flatMap {
+                    $0.typedResult == nil ? nil : ("khMatrix", $0.completedAt)
+                },
+                khLanguage.output.flatMap {
+                    $0.result == nil ? nil : ("khLanguage", $0.completedAt)
+                },
+                statistics.completedAt.map { ("statistics", $0) },
+                operators.completedAt.map { ("operators", $0) },
+                evaluation.output.map { ("evaluation", $0.completedAt) },
+                linguistics.output.map { ("linguistic", $0.completedAt) },
+            ].compactMap { $0 }
+            guard let latest = candidates.max(by: { $0.1 < $1.1 }) else {
+                throw Self.researchFailure()
+            }
+            switch latest.0 {
+            case "advanced":
+                guard let output = advancedAnalysis.output, let result = output.typedResult else {
+                    throw Self.researchFailure()
+                }
+                _ = try await active.saveCompletedAnalysis(
+                    request: output.request, result: result, title: title,
+                    sourceRevisionIDs: output.input.sourceRevisionIDs,
+                    presentationJSON: try await advancedAnalysis.archiveData(),
+                    preparationDigest: output.input.preparationDigest,
+                    preparation: output.input.preparation,
+                    resultSourceRevisionIDs: output.rows.contains(where: {
+                        $0.sourceRevisionID != nil
+                    })
+                        ? Array(Set(output.rows.compactMap(\.sourceRevisionID))).sorted()
+                        : output.input.sourceRevisionIDs)
+            case "khMatrix":
+                guard let output = khMatrix.output, let result = output.typedResult else {
+                    throw Self.researchFailure()
+                }
+                _ = try await active.saveCompletedAnalysis(
+                    request: GlifiStudioTextAnalysisRequest.decode(output.request),
+                    result: result, title: title,
+                    sourceRevisionIDs: output.provenance?.sourceRevisionIDs ?? [],
+                    presentationJSON: try await khMatrix.archiveData(),
+                    preparationDigest: try khMatrix.capturedPreparation?.digest(),
+                    preparation: khMatrix.capturedPreparation)
+            case "khLanguage":
+                guard let output = khLanguage.output, let result = output.result else {
+                    throw Self.researchFailure()
+                }
+                _ = try await active.saveCompletedAnalysis(
+                    request: GlifiStudioTextAnalysisRequest.decode(output.encodedRequest),
+                    result: result, title: title, sourceRevisionIDs: output.sourceRevisionIDs,
+                    presentationJSON: try await khLanguage.archiveData(),
+                    preparationDigest: try output.capturedPreparation?.digest(),
+                    preparation: output.capturedPreparation)
+            case "statistics": _ = try await statistics.saveArchive(session: active, title: title)
+            case "operators": _ = try await operators.saveArchive(session: active, title: title)
+            case "evaluation": _ = try await evaluation.saveArchive(session: active, title: title)
+            case "linguistic": _ = try await linguistics.saveArchive(session: active, title: title)
+            default: throw Self.researchFailure()
+            }
+            try await refreshAfterResearchChange()
+        }
+
+        func restoreSavedResearchAnalysis(_ entry: GlifiStudioSavedAnalysis) async throws {
+            let active = try requireSession()
+            let saved = try await active.savedAnalysis(artifactID: entry.artifactID)
+            guard let data = saved.presentationJSON else { throw Self.researchFailure() }
+            let client = try await Self.researchArchiveClient(data)
+            switch client {
+            case "advanced": try await advancedAnalysis.restoreArchive(data, saved: saved)
+            case "khMatrix": try await khMatrix.restoreArchive(data, saved: saved)
+            case "khLanguage": try await khLanguage.restoreArchive(data, saved: saved)
+            case "statistics": try await statistics.restoreArchive(data, saved: saved)
+            case "operators": try await operators.restoreArchive(data, saved: saved)
+            case "evaluation": try await evaluation.restoreArchive(data, saved: saved)
+            case "linguistic": try await linguistics.restoreArchive(data, saved: saved)
+            default: throw Self.researchFailure()
+            }
+            textAnalysisScope = .selectedSources
+            selectedTextAnalysisSourceRevisionIDs = Set(saved.sourceRevisionIDs)
+            try await refreshAfterResearchChange()
+        }
+
+        /// Starts a reportable investigation from a verified, already-computed result.
+        func linkSavedResearchAnalysisToInvestigation(
+            _ entry: GlifiStudioSavedAnalysis, question: String
+        ) async throws {
+            let active = try requireSession()
+            let result = try await active.createSavedAnalysisInvestigation(
+                artifactID: entry.artifactID, question: question)
+            guard active === session else { throw CancellationError() }
+            lastInvestigationCreationRequest = nil
+            lastInvestigationSelectionRequest = nil
+            lastInvestigationProjectID = result.projectID
+            lastInvestigationGeneration = result.generation
+            investigation = result.investigation
+            editorialSelectedFindingIDs = Set(result.investigation.selectedFindingIDs)
+            investigationHeads = try await active.investigationHeads()
+            try await refreshAfterResearchChange()
+        }
+
+        nonisolated private struct ResearchArchiveHeader: Decodable, Sendable {
+            let client: String?
+        }
+
+        @concurrent private static func researchArchiveClient(_ data: Data) async throws -> String {
+            try Task.checkCancellation()
+            guard data.count <= 8 * 1_048_576 else { throw Self.researchFailure() }
+            return try JSONDecoder().decode(ResearchArchiveHeader.self, from: data).client
+                ?? "advanced"
+        }
+
+        nonisolated private static func researchFailure() -> GlifiStudioFailure {
+            GlifiStudioFailure(
+                code: "research.invalid-native-archive", category: "invalidInput",
+                operation: "analyze", retryDisposition: "afterCorrection",
+                retainedState: "unchanged", messageKey: "failure.category.invalidInput")
         }
 
         /// Shares operation ownership, cancellation and error presentation with direct analyses.
@@ -1974,6 +2127,8 @@ final class StudioHomeModel {
             evaluation.reset()
             operators.reset()
             linguistics.reset()
+            khMatrix.reset()
+            khLanguage.reset()
             textAnalysisScope = .allSources
             selectedTextAnalysisSourceRevisionIDs = []
             summaryMethod = .sentenceTFIDFMean

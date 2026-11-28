@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-MET-001-06 |
 | Tipo | Specifica normativa dei metodi analitici |
-| Versione | 1.0.0 |
+| Versione | 1.1.0 |
 | Stato | Bozza controllata |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Baseline da revisionare |
 | Documento padre | [GS-MET-001](README.md) |
 
@@ -39,6 +39,25 @@ Righe e colonne vuote **NON DEVONO** essere rimosse silenziosamente. La rimozion
 una trasformazione separata che registra identità escluse e motivo.
 
 ## Rappresentazione e accesso
+
+### Preparazione italiana condivisa
+
+Il profilo corpus e le analisi che ne dipendono leggono la configurazione
+persistente di [GS-API-005](../api/05-stato-di-ricerca.md). La matrice conta le
+basi effettive, comprese le espressioni composte osservate, e non riscrive le
+fonti. Il contratto di tokenizzazione comprende il digest canonico della
+preparazione; la configurazione vuota mantiene il contratto storico
+`it-token-v1`. Un cambiamento semantico produce un nuovo nodo del profilo e
+quindi nuove identità per i discendenti: i vecchi artefatti restano storici e
+non soddisfano la richiesta con la nuova preparazione. Il riordino o la
+duplicazione delle stesse voci lessicali non produce una nuova identità.
+
+I medesimi termini preparati alimentano sequenze lessicali, n-grammi,
+diversità, riassunti estrattivi, BM25 e finestre di collocazione/rete.
+Gli intervalli di token e composti restano coordinate UTF-8 del testo estratto;
+la trasformazione non sostituisce gli intervalli con quelli di lemmi o stem.
+
+### Contratto dello storage
 
 La rappresentazione logica è indipendente dallo storage. CSR, CSC, coordinate,
 blocchi persistiti o iteratori sono backend ammessi. Gli zeri impliciti sono zeri

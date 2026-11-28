@@ -385,6 +385,12 @@ import Testing
             case let .evaluation(method):
                 #expect(route.activate(on: model) == .evaluation)
                 #expect(model.evaluation.tool == method)
+            case let .khMatrix(method):
+                #expect(route.activate(on: model) == .khMatrix)
+                #expect(model.khMatrix.tool == method)
+            case let .khLanguage(method):
+                #expect(route.activate(on: model) == .khLanguage)
+                #expect(model.khLanguage.tool == method)
             }
             #expect(route.matches(route.rawName, locale: Locale(identifier: "it")))
         }

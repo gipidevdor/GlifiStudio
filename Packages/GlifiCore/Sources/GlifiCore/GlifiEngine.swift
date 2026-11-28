@@ -578,13 +578,44 @@ public actor GlifiEngine {
                 )
             }
             try Task.checkCancellation()
+            let report = try GlifiReportRevision(
+                investigation: investigation, interpretation: payload.interpretation)
+            var capturedResearchPayloads: [ArtifactID: Data] = [:]
+            var capturedByteCount = 0
+            for artifactID in GlifiSavedResearchReport.selectedArtifactIDs(in: report) {
+                guard
+                    let captured = snapshot.artifacts.first(where: { $0.artifactID == artifactID }),
+                    captured.node.descriptor.outputSchemaIdentifier
+                        == GlifiSavedResearchAnalysis.outputSchemaIdentifier
+                else {
+                    throw GlifiFailure(
+                        code: "export.captured-output-not-found", category: .staleArtifact,
+                        operation: .export, retryDisposition: .newRequest,
+                        retainedState: .lastCommittedGeneration,
+                        messageKey: "failure.export.captured-output-not-found")
+                }
+                guard
+                    captured.byteCount <= GlifiScientificExporter.maximumFileByteCount
+                        - capturedByteCount
+                else {
+                    throw GlifiFailure(
+                        code: "export.captured-output-limit", category: .insufficientResources,
+                        operation: .export, retryDisposition: .afterConditionsChange,
+                        retainedState: .lastCommittedGeneration,
+                        messageKey: "failure.export.captured-output-limit")
+                }
+                capturedByteCount += captured.byteCount
+                capturedResearchPayloads[artifactID] = try await project.artifactData(
+                    for: artifactID)
+            }
             return try GlifiScientificExporter().export(
                 snapshot: snapshot,
                 investigation: investigation,
                 interpretationRecord: interpretationRecord,
                 interpretation: payload.interpretation,
                 request: request,
-                to: destinationURL
+                to: destinationURL,
+                capturedResearchPayloads: capturedResearchPayloads
             )
         } catch let failure as GlifiFailure {
             throw failure
@@ -610,6 +641,7 @@ public actor GlifiEngine {
         do {
             try Task.checkCancellation()
             let snapshot = await project.snapshot()
+            let tokenizer = try await researchTokenizer(in: project)
             let planningSources = try snapshot.sources.map {
                 try GlifiPlanningSource(
                     sourceRevisionID: $0.sourceRevisionID,
@@ -628,7 +660,7 @@ public actor GlifiEngine {
             let descriptor = try GlifiAnalysisArtifactDescriptorFactory.analysisPlan(
                 projectID: snapshot.projectID,
                 sourceRootDigest: snapshot.sourceRootDigest,
-                tokenizationContractIdentifier: textTokenizer.tokenizationContractIdentifier,
+                tokenizationContractIdentifier: tokenizer.tokenizationContractIdentifier,
                 plan: plan
             )
             let nodeID = try descriptor.nodeID()
@@ -984,6 +1016,8 @@ public actor GlifiEngine {
         do {
             try Task.checkCancellation()
             let snapshot = await project.snapshot()
+            let tokenizer = try await researchTokenizer(in: project)
+            let corpusAnalyzer = GlifiCorpusAnalyzer(tokenizer: tokenizer)
             try validateCorpusSelection(
                 documentByteCounts: try GlifiDocumentExtractionPersistence.admissionByteCounts(
                     for: snapshot.sources, artifacts: snapshot.artifacts),
@@ -992,7 +1026,7 @@ public actor GlifiEngine {
             let descriptor = try GlifiAnalysisArtifactDescriptorFactory.corpusProfile(
                 snapshot: snapshot,
                 sourceRevisionIDs: snapshot.sources.map(\.sourceRevisionID),
-                tokenizationContractIdentifier: textTokenizer.tokenizationContractIdentifier,
+                tokenizationContractIdentifier: tokenizer.tokenizationContractIdentifier,
                 options: options
             )
             let nodeID = try descriptor.nodeID()
@@ -1004,7 +1038,9 @@ public actor GlifiEngine {
                 }
                 try validatePlannedAnalysis(
                     payload.analysis,
-                    sourceRevisionIDs: snapshot.sources.map(\.sourceRevisionID)
+                    sourceRevisionIDs: snapshot.sources.map(\.sourceRevisionID),
+                    options: options,
+                    expectedTokenizationContract: tokenizer.tokenizationContractIdentifier
                 )
                 return GlifiProjectCorpusAnalysisResult(
                     projectID: snapshot.projectID,
@@ -1032,7 +1068,9 @@ public actor GlifiEngine {
             }
             try validatePlannedAnalysis(
                 analysis,
-                sourceRevisionIDs: snapshot.sources.map(\.sourceRevisionID)
+                sourceRevisionIDs: snapshot.sources.map(\.sourceRevisionID),
+                options: options,
+                expectedTokenizationContract: tokenizer.tokenizationContractIdentifier
             )
             try Task.checkCancellation()
             let committed = try await project.storeArtifact(
@@ -1382,8 +1420,9 @@ public actor GlifiEngine {
         in project: GlifiProjectPackage,
         limits: GlifiQueryLimits = .standard
     ) async throws -> GlifiProjectQueryResult {
-        try await executeQuery(in: project, limits: limits) {
-            try GlifiQueryParser(tokenizer: textTokenizer).parse(queryText, limits: limits)
+        let tokenizer = try await researchTokenizer(in: project)
+        return try await executeQuery(in: project, limits: limits, tokenizer: tokenizer) {
+            try GlifiQueryParser(tokenizer: tokenizer).parse(queryText, limits: limits)
         }
     }
 
@@ -1393,7 +1432,8 @@ public actor GlifiEngine {
         in project: GlifiProjectPackage,
         limits: GlifiQueryLimits = .standard
     ) async throws -> GlifiProjectQueryResult {
-        try await executeQuery(in: project, limits: limits) {
+        let tokenizer = try await researchTokenizer(in: project)
+        return try await executeQuery(in: project, limits: limits, tokenizer: tokenizer) {
             try GlifiQueryAST.decode(data, limits: limits)
         }
     }
@@ -1401,11 +1441,13 @@ public actor GlifiEngine {
     private func executeQuery(
         in project: GlifiProjectPackage,
         limits: GlifiQueryLimits,
+        tokenizer: any GlifiTokenizing,
         makeQuery: () throws -> GlifiQueryAST
     ) async throws -> GlifiProjectQueryResult {
         do {
             let query = try makeQuery()
-            try GlifiQueryEvaluator().validate(query, limits: limits)
+            try GlifiQueryEvaluator().validateExecution(
+                query, limits: limits, availableFields: Set(tokenizer.availableQueryFields))
             let queryDigest = try query.canonicalDigest()
             let snapshot = await project.snapshot()
             guard !snapshot.sources.isEmpty else {
@@ -1468,7 +1510,7 @@ public actor GlifiEngine {
                         ])
                 }
                 scannedByteCount += extraBytes
-                let tokenization = try textTokenizer.tokenize(importedText.text)
+                let tokenization = try tokenizer.tokenize(importedText.text)
                 let result = try GlifiQueryEvaluator().evaluate(
                     query,
                     in: importedText,
@@ -1619,13 +1661,15 @@ public actor GlifiEngine {
         // corrente è rifiutata dal calcolo del digest, mentre l'arrivo di altre fonti non lo
         // invalida più (ADR-0028).
         let currentSnapshot = await project.snapshot()
+        let tokenizer = try await researchTokenizer(in: project)
+        let corpusAnalyzer = GlifiCorpusAnalyzer(tokenizer: tokenizer)
         try validateCorpusSelection(
             documentByteCounts: try GlifiDocumentExtractionPersistence.admissionByteCounts(
                 for: records, artifacts: currentSnapshot.artifacts), options: options)
         let descriptor = try GlifiAnalysisArtifactDescriptorFactory.corpusProfile(
             snapshot: currentSnapshot,
             sourceRevisionIDs: records.map(\.sourceRevisionID),
-            tokenizationContractIdentifier: textTokenizer.tokenizationContractIdentifier,
+            tokenizationContractIdentifier: tokenizer.tokenizationContractIdentifier,
             options: options
         )
         let nodeID = try descriptor.nodeID()
@@ -1637,7 +1681,9 @@ public actor GlifiEngine {
             }
             try validatePlannedAnalysis(
                 payload.analysis,
-                sourceRevisionIDs: records.map(\.sourceRevisionID)
+                sourceRevisionIDs: records.map(\.sourceRevisionID),
+                options: options,
+                expectedTokenizationContract: tokenizer.tokenizationContractIdentifier
             )
             return (payload.analysis, artifact)
         }
@@ -1651,7 +1697,9 @@ public actor GlifiEngine {
         }
         try validatePlannedAnalysis(
             analysis,
-            sourceRevisionIDs: records.map(\.sourceRevisionID)
+            sourceRevisionIDs: records.map(\.sourceRevisionID),
+            options: options,
+            expectedTokenizationContract: tokenizer.tokenizationContractIdentifier
         )
         let committed = try await project.storeArtifact(
             GlifiCorpusAnalysisArtifactPayload(
@@ -1837,18 +1885,29 @@ public actor GlifiEngine {
 
     private func validatePlannedAnalysis(
         _ analysis: GlifiCorpusAnalysis,
-        sourceRevisionIDs: [SourceRevisionID]
+        sourceRevisionIDs: [SourceRevisionID],
+        options: GlifiCorpusAnalysisOptions,
+        expectedTokenizationContract: String? = nil
     ) throws {
         let expectedIDs = sourceRevisionIDs.sorted {
             $0.canonicalValue < $1.canonicalValue
         }
         guard analysis.sourceRevisionIDs == expectedIDs,
             analysis.tokenizationContractIdentifier
-                == textTokenizer.tokenizationContractIdentifier,
+                == (expectedTokenizationContract ?? textTokenizer.tokenizationContractIdentifier),
             analysis.normalizationIdentifier == "nfc-lowercase-it-v1",
             analysis.numericPolicyIdentifier == "IEEE-754-binary64-ordered-reduction-v1"
         else {
             throw analysisArtifactFailure("analysis.descriptor-result-mismatch")
+        }
+        guard analysis.terms.count <= options.maximumVocabularySize else {
+            throw analysisFailure("analysis.vocabulary-limit-exceeded")
+        }
+        guard analysis.ngrams.count <= options.maximumDistinctNGramCount else {
+            throw analysisFailure("analysis.ngram-limit-exceeded")
+        }
+        guard analysis.matrix.cells.count <= options.maximumNonZeroCellCount else {
+            throw analysisFailure("analysis.matrix-limit-exceeded")
         }
     }
 

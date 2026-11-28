@@ -108,3 +108,9 @@ completo.
 Le fonti sono materiale di lavoro. In caso di divergenza futura, fanno fede le decisioni esplicitamente approvate e gli ADR accettati.
 
 </details>
+
+## Incremento del flusso di ricerca
+
+- [GS-API-004 — Importazione tabellare](api/04-importazione-tabellare.md)
+- [GS-API-005 — Stato di ricerca](api/05-stato-di-ricerca.md)
+- [GS-API-006 — Lavoro avanzato persistente](api/06-lavoro-avanzato-persistente.md)

@@ -17,6 +17,7 @@ enum StudioSection: String, CaseIterable, Identifiable {
         case evaluation
         case operators
         case linguistics
+        case khMatrix, khLanguage
     #endif
     case investigation
     case query
@@ -40,6 +41,8 @@ enum StudioSection: String, CaseIterable, Identifiable {
             case .evaluation: "core-features.evaluation"
             case .operators: "core-features.operators"
             case .linguistics: "core-features.linguistics"
+            case .khMatrix: "core-features.khMatrix"
+            case .khLanguage: "core-features.khLanguage"
         #endif
         case .investigation: "sidebar.investigation"
         case .query: "sidebar.query"
@@ -63,6 +66,8 @@ enum StudioSection: String, CaseIterable, Identifiable {
             case .evaluation: "checkmark.seal"
             case .operators: "square.grid.3x3"
             case .linguistics: "textformat.abc"
+            case .khMatrix: "tablecells"
+            case .khLanguage: "text.badge.checkmark"
         #endif
         case .investigation: "lightbulb"
         case .query: "magnifyingglass"
@@ -194,6 +199,21 @@ enum StudioToolDestination: String, CaseIterable, Identifiable {
         }
     }
 
+    #if os(macOS)
+        var theme: StudioAnalysisTheme {
+            switch self {
+            case .corpus, .documents, .query, .summary, .lexicon, .lexicalLaws: .vocabulary
+            case .relationships, .network: .relationships
+            case .keyness, .similarity, .distances, .corpusMethods, .statistics: .comparison
+            case .themes, .mds, .som, .clara, .topics, .correspondence, .hierarchical: .structure
+            case .classification, .classifierValidation: .classification
+            case .coding, .codingRules, .codeCrosstab: .coding
+            case .review, .evaluation, .export: .validation
+            case .termWeights, .operators, .linguistics: .preparation
+            }
+        }
+    #endif
+
     func matches(_ query: String, locale: Locale) -> Bool {
         let words = query.split(whereSeparator: \.isWhitespace)
         guard !words.isEmpty else { return true }
@@ -213,6 +233,9 @@ struct StudioToolCatalogView: View {
     @Environment(\.locale) private var locale
     @State private var searchText = ""
     @FocusState private var isSearchFocused: Bool
+    #if os(macOS)
+        @State private var selectedTheme: StudioAnalysisTheme?
+    #endif
 
     init(onSelect: @escaping (StudioToolDestination) -> Void) {
         self.onSelect = onSelect
@@ -250,6 +273,16 @@ struct StudioToolCatalogView: View {
                             onSelect(tool)
                         }
                     }
+                #if os(macOS)
+                    if onSelectCore != nil {
+                        Picker("analysis.theme", selection: $selectedTheme) {
+                            Text("analysis.theme.all").tag(StudioAnalysisTheme?.none)
+                            ForEach(StudioAnalysisTheme.allCases) { theme in
+                                Text(LocalizedStringKey(theme.titleKey)).tag(Optional(theme))
+                            }
+                        }
+                    }
+                #endif
             }
             .padding()
             Divider()
@@ -259,65 +292,76 @@ struct StudioToolCatalogView: View {
                 List {
                     #if os(macOS)
                         if let onSelectCore {
-                            ForEach(StudioCoreMethodFamily.allCases) { family in
-                                let routes = filteredCoreMethods.filter { $0.family == family }
-                                if !routes.isEmpty {
-                                    Section(LocalizedStringKey(family.titleKey)) {
-                                        ForEach(routes) { route in
-                                            Button {
-                                                onSelectCore(route)
-                                            } label: {
-                                                Label(
-                                                    LocalizedStringKey(route.titleKey),
-                                                    systemImage: family.systemImage
-                                                )
-                                                .frame(maxWidth: .infinity, alignment: .leading)
-                                                .contentShape(Rectangle())
-                                                .padding(.vertical, 4)
+                            ForEach(StudioAnalysisTheme.allCases) { theme in
+                                if selectedTheme == nil,
+                                    searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+                                        .isEmpty
+                                {
+                                    Button {
+                                        selectedTheme = theme
+                                    } label: {
+                                        HStack(alignment: .top, spacing: 12) {
+                                            Image(systemName: theme.systemImage)
+                                                .font(.title2).foregroundStyle(.tint)
+                                                .frame(width: 30).accessibilityHidden(true)
+                                            VStack(alignment: .leading, spacing: 6) {
+                                                Text(LocalizedStringKey(theme.titleKey)).font(
+                                                    .headline)
+                                                Text(LocalizedStringKey(theme.descriptionKey))
+                                                    .foregroundStyle(.secondary)
+                                                    .fixedSize(horizontal: false, vertical: true)
                                             }
-                                            .buttonStyle(.plain)
+                                            Spacer(minLength: 0)
+                                            Image(systemName: "chevron.forward")
+                                                .foregroundStyle(.secondary).accessibilityHidden(
+                                                    true)
+                                        }
+                                        .padding(.vertical, 10)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .contentShape(Rectangle())
+                                    }
+                                    .buttonStyle(.plain).accessibilityElement(children: .combine)
+                                } else {
+                                    let routes = filteredCoreMethods.filter { $0.theme == theme }
+                                    let tools = filteredTools.filter { $0.theme == theme }
+                                    if !routes.isEmpty || !tools.isEmpty {
+                                        Section {
+                                            Text(LocalizedStringKey(theme.descriptionKey))
+                                                .font(.callout).foregroundStyle(.secondary)
+                                                .fixedSize(horizontal: false, vertical: true)
+                                            ForEach(tools) { tool in toolButton(tool) }
+                                            ForEach(routes) { route in
+                                                Button {
+                                                    onSelectCore(route)
+                                                } label: {
+                                                    VStack(alignment: .leading, spacing: 4) {
+                                                        Text(LocalizedStringKey(route.titleKey))
+                                                            .font(.headline)
+                                                        Text(LocalizedStringKey(route.purposeKey))
+                                                            .font(.callout).foregroundStyle(
+                                                                .secondary
+                                                            )
+                                                            .fixedSize(
+                                                                horizontal: false, vertical: true)
+                                                    }
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                                    .contentShape(Rectangle())
+                                                    .padding(.vertical, 6)
+                                                }
+                                                .buttonStyle(.plain)
+                                                .accessibilityElement(children: .combine)
+                                            }
+                                        } header: {
+                                            Label(
+                                                LocalizedStringKey(theme.titleKey),
+                                                systemImage: theme.systemImage)
                                         }
                                     }
                                 }
                             }
                         }
                     #endif
-                    ForEach(StudioToolGroup.allCases) { group in
-                        let tools = filteredTools.filter { $0.group == group }
-                        if !tools.isEmpty {
-                            Section(LocalizedStringKey(group.titleKey)) {
-                                ForEach(tools) { tool in
-                                    Button {
-                                        onSelect(tool)
-                                    } label: {
-                                        HStack(alignment: .top, spacing: 12) {
-                                            Image(systemName: tool.systemImage)
-                                                .font(.title3)
-                                                .foregroundStyle(.tint)
-                                                .frame(width: 28)
-                                                .accessibilityHidden(true)
-                                            VStack(alignment: .leading, spacing: 4) {
-                                                Text(LocalizedStringKey(tool.titleKey))
-                                                    .font(.headline)
-                                                Text(LocalizedStringKey(tool.descriptionKey))
-                                                    .foregroundStyle(.secondary)
-                                                    .fixedSize(horizontal: false, vertical: true)
-                                            }
-                                            Spacer(minLength: 0)
-                                            Image(systemName: "chevron.forward")
-                                                .foregroundStyle(.secondary)
-                                                .accessibilityHidden(true)
-                                        }
-                                        .padding(.vertical, 8)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .contentShape(Rectangle())
-                                    }
-                                    .buttonStyle(.plain)
-                                    .accessibilityElement(children: .combine)
-                                }
-                            }
-                        }
-                    }
+                    if usesLegacyGroups { legacyGroups }
                 }
             }
         }
@@ -326,7 +370,68 @@ struct StudioToolCatalogView: View {
     }
 
     private var filteredTools: [StudioToolDestination] {
-        StudioToolDestination.allCases.filter { $0.matches(searchText, locale: locale) }
+        StudioToolDestination.allCases.filter { tool in
+            #if os(macOS)
+                if onSelectCore != nil {
+                    // Concrete method routes supply specialized analyses; retain research workflows.
+                    switch tool {
+                    case .mds, .som, .clara, .topics, .classification, .classifierValidation,
+                        .codingRules, .codeCrosstab, .distances, .correspondence, .hierarchical,
+                        .network, .corpusMethods, .statistics, .evaluation, .operators,
+                        .linguistics:
+                        return false
+                    case .corpus, .query, .coding, .summary, .documents, .lexicon, .termWeights,
+                        .lexicalLaws, .keyness, .relationships, .themes, .similarity, .review,
+                        .export:
+                        break
+                    }
+                    if let selectedTheme, tool.theme != selectedTheme { return false }
+                }
+            #endif
+            return tool.matches(searchText, locale: locale)
+        }
+    }
+
+    private var usesLegacyGroups: Bool {
+        #if os(macOS)
+            onSelectCore == nil
+        #else
+            true
+        #endif
+    }
+
+    private var legacyGroups: some View {
+        ForEach(StudioToolGroup.allCases) { group in
+            let tools = filteredTools.filter { $0.group == group }
+            if !tools.isEmpty {
+                Section(LocalizedStringKey(group.titleKey)) {
+                    ForEach(tools) { tool in toolButton(tool) }
+                }
+            }
+        }
+    }
+
+    private func toolButton(_ tool: StudioToolDestination) -> some View {
+        Button {
+            onSelect(tool)
+        } label: {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: tool.systemImage)
+                    .font(.title3).foregroundStyle(.tint).frame(width: 28)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(LocalizedStringKey(tool.titleKey)).font(.headline)
+                    Text(LocalizedStringKey(tool.descriptionKey)).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.forward").foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
+            }
+            .padding(.vertical, 8).frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain).accessibilityElement(children: .combine)
     }
 
     private var hasNoMatches: Bool {
@@ -339,9 +444,11 @@ struct StudioToolCatalogView: View {
 
     #if os(macOS)
         private var filteredCoreMethods: [StudioCoreMethodRoute] {
-            guard onSelectCore != nil, !searchText.trimmingCharacters(in: .whitespaces).isEmpty
-            else { return [] }
-            return StudioCoreMethodRoute.allCases.filter { $0.matches(searchText, locale: locale) }
+            guard onSelectCore != nil else { return [] }
+            return StudioCoreMethodRoute.allCases.filter {
+                (selectedTheme == nil || $0.theme == selectedTheme)
+                    && $0.matches(searchText, locale: locale)
+            }
         }
     #endif
 }

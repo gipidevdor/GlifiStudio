@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-VER-IDX-001 |
 | Tipo | Registro delle evidenze di verifica |
-| Versione | 1.20.18 |
+| Versione | 1.20.23 |
 | Stato | Attivo |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-26 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Non applicabile; registro operativo |
 
 Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un esito positivo prova soltanto l'ambito dichiarato e non sostituisce l'approvazione dei requisiti o della baseline.
@@ -15,6 +15,18 @@ Le evidenze registrano risultati osservati e limiti dei controlli eseguiti. Un e
 - [GS-VER-275 — Parità continua fra GlifiKit e CLI](GS-VER-275-parita-continua-kit-cli.md) — Gate completo superato: 126 operazioni, 252 confronti e inventario pubblico verificato; PDF/A saltato per assenza di veraPDF
 
 ## Indice
+
+- [GS-VER-334 — Affidabilità verificabile dei test BDD e dell'inferenza](GS-VER-334-ingegneria-verificabile.md) — Regressioni mirate superate; gate integrato bloccato dai nuovi messaggi tabellari e dal flusso persistente concorrente
+
+- [GS-VER-333 — Attribuzioni e avvisi degli strumenti BDD](GS-VER-333-licenze-bdd.md) — Superato: avvisi diretti e incorporati, tre copie legali compilate, 19 regressioni e gate macOS
+
+- [GS-VER-332 — Specifiche comportamentali con CucumberSwift](GS-VER-332-bdd-cucumber-swift.md) — Superato: 116 esempi, 655 passaggi, seriale/parallelo e gate macOS
+
+- [GS-VER-331 — Metadati di origine degli export](GS-VER-331-metadata-origine-export-viste.md) — Fonte autorevole, personalizzazioni e failure verificate; chiusura del gate in corso
+- [GS-VER-330 — Budget corpus e cache](GS-VER-330-budget-corpus-cache.md) — RED riprodotto; verifica della correzione in corso
+- [GS-VER-329 — Contesto della fonte da codificare](GS-VER-329-contesto-fonte-codifica.md) — RED nativo riprodotto; verifica della pubblicazione atomica in corso
+- [GS-VER-328 — Stabilità dell'inferenza](GS-VER-328-stabilita-inferenza.md) — Estremi e invarianti affini riprodotti; verifica numerica in corso
+- [GS-VER-327 — Semantica delle query](GS-VER-327-semantica-query.md) — Capability e sintassi regex riprodotte; verifica del contratto in corso
 
 - [GS-VER-326 — Valutazione beta/gamma](GS-VER-326-ottimizzazione-beta-gamma.md) — Candidato bit-identico scartato per beneficio non stabile
 - [GS-VER-325 — Quantile normale protetto](GS-VER-325-quantile-normale-newton.md) — Halley con bisezione finale e verifica D1
@@ -321,3 +333,7 @@ separata in GS-VER-171; gli esiti storici non ne costituiscono il gate.
 - [GS-VER-311 — Disponibilità e failure OCR native](GS-VER-311-disponibilita-ocr.md) — Superato localmente e nel gate funzionale remoto; profilo OCR V2 esplicito, 892 test Core/Kit
 
 - [GS-VER-286 — Operatori tipizzati e failure coese](GS-VER-286-operatori-tipizzati-e-failure-coese.md) — Prove sui checkpoint dichiarati e mirati MDS/SOM superati; composizione finale verificata in GS-VER-311
+
+- [GS-VER-335 — Flussi tematici, corrispondenze e dendrogrammi](GS-VER-335-flussi-tematici-e-dendrogrammi.md) — Superato nello snapshot isolato: 928 Core/Kit, 451 esecuzioni native e parità CLI; gate condiviso non attestato
+
+- [GS-VER-336 — Dataset e lavoro di ricerca persistenti](GS-VER-336-flusso-ricerca-persistente.md) — In verifica; import, stato, preparazione e risultati salvati

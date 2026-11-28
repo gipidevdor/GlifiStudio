@@ -1,0 +1,46 @@
+{
+  "evidenceIdentifier": "GS-VER-329",
+  "date": "2026-11-27",
+  "status": "RED reproduced; candidate applied; native GREEN pending",
+  "scope": [
+    "Apps/Shared/StudioHomeModel.swift",
+    "Apps/macOS/Tests/StudioSelectionConsistencyTests.swift"
+  ],
+  "red": {
+    "runner": "Coordinator native macOS workspace tests",
+    "exitCode": 65,
+    "testDefinitions": 7,
+    "testExecutions": 10,
+    "failedExecutions": 4,
+    "passedExecutions": 6,
+    "failedCases": [
+      "Character-count admission denied",
+      "Character-count task cancelled",
+      "Coding-text admission denied",
+      "Coding-text task cancelled"
+    ]
+  },
+  "contracts": {
+    "publication": "Single Main Actor block after all reads and a final cancellation check",
+    "rejection": "Preserve source revision, segments, character count, resolved passage, qualitative state and coding texts",
+    "retry": "Same source selection after conditions recover",
+    "newPublicAPI": false,
+    "persistentSchemaChanged": false,
+    "projectEventsWrittenBySourceLoading": false,
+    "newTaskOwner": false
+  },
+  "staticVerification": {
+    "swiftFormatLintExitCode": 0,
+    "swiftFilesChecked": 2,
+    "diffCheckExitCode": 0
+  },
+  "pending": [
+    "Native GREEN tests and qualitative regressions",
+    "Coordinator integrated macOS gate"
+  ],
+  "limits": [
+    "No iPadOS execution",
+    "No real-window, VoiceOver or other manual accessibility audit",
+    "No performance improvement claimed"
+  ]
+}

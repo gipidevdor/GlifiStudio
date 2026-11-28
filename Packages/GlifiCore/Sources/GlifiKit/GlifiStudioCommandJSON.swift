@@ -26,10 +26,12 @@ public struct GlifiStudioCommandResult: Encodable, Sendable {
 
 /// Shared decoding for CLI and native JSON entry points; file access stays in the client.
 enum CommandJSON {
-    static func validate(_ json: Data) throws(GlifiStudioFailure) {
+    static func validate(
+        _ json: Data, maximumByteCount: Int = GlifiStudioTextAnalysisRequest.maximumRequestBytes
+    ) throws(GlifiStudioFailure) {
         guard !Task.isCancelled else { throw commandFailure("cancelled", category: "cancelled") }
         do {
-            try TextAnalysisJSON.check(json)
+            try TextAnalysisJSON.check(json, maximumByteCount: maximumByteCount)
         } catch let failure as GlifiStudioFailure {
             throw failure
         } catch {
@@ -38,9 +40,10 @@ enum CommandJSON {
     }
 
     static func decode<Value: Decodable>(
-        _ type: Value.Type, from json: Data
+        _ type: Value.Type, from json: Data,
+        maximumByteCount: Int = GlifiStudioTextAnalysisRequest.maximumRequestBytes
     ) throws(GlifiStudioFailure) -> Value {
-        try validate(json)
+        try validate(json, maximumByteCount: maximumByteCount)
         do {
             return try JSONDecoder().decode(type, from: json)
         } catch let failure as GlifiStudioFailure {
@@ -52,9 +55,10 @@ enum CommandJSON {
 
     /// Existing Codable request DTOs are transported intact; unknown input keys never disappear.
     static func decodeStrict<Value: Codable>(
-        _ type: Value.Type, from json: Data
+        _ type: Value.Type, from json: Data,
+        maximumByteCount: Int = GlifiStudioTextAnalysisRequest.maximumRequestBytes
     ) throws(GlifiStudioFailure) -> Value {
-        let value = try decode(type, from: json)
+        let value = try decode(type, from: json, maximumByteCount: maximumByteCount)
         let canonical = try encode(value)
         do {
             let original = try JSONSerialization.jsonObject(
@@ -70,6 +74,17 @@ enum CommandJSON {
             throw commandFailure("invalid-request")
         }
         return value
+    }
+
+    /// Canonicalizes captured output without changing exact integers or signed zero.
+    static func canonicalize(_ json: Data, maximumByteCount: Int) throws(GlifiStudioFailure) -> Data
+    {
+        do {
+            try TextAnalysisJSON.check(json, maximumByteCount: maximumByteCount)
+            return try encode(JSONDecoder().decode(CommandJSONValue.self, from: json))
+        } catch let failure as GlifiStudioFailure { throw failure } catch {
+            throw commandFailure("invalid-json-value")
+        }
     }
 
     static func encode<Value: Encodable>(_ value: Value) throws(GlifiStudioFailure) -> Data {

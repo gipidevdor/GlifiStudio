@@ -117,12 +117,11 @@ extension GlifiStatisticalFoundation {
             resampleCount: resampleCount,
             seed: seed
         )
-        let total = sample.reduce(0, +)
-        let jackknife = sample.map { (total - $0) / Double(sample.count - 1) }
+        let location = try resamplingLocation(sample, includeJackknife: true)
         return try bcaInterval(
-            estimate: total / Double(sample.count),
+            estimate: location.estimate,
             sortedReplicates: replicates,
-            jackknife: jackknife,
+            jackknife: location.jackknife,
             confidenceLevel: confidenceLevel,
             seed: seed
         )
@@ -143,15 +142,20 @@ extension GlifiStatisticalFoundation {
         let biasCorrection = try GlifiDistributionFunctions.normalQuantile(
             Double(below) / Double(sortedReplicates.count)
         )
-        let jackknifeMean = jackknife.reduce(0, +) / Double(jackknife.count)
+        let conditioned = try centeredInferenceCoordinates(jackknife)
+        let jackknifeMean = conditioned.values.reduce(0, +) / Double(jackknife.count)
         var squares = 0.0
         var cubes = 0.0
-        for value in jackknife {
+        for (index, value) in conditioned.values.enumerated() {
+            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
             let deviation = jackknifeMean - value
             squares += deviation * deviation
             cubes += deviation * deviation * deviation
         }
         let acceleration = squares > 0 ? cubes / (6 * pow(squares, 1.5)) : 0
+        guard acceleration.isFinite else {
+            throw inferenceFailure("statistics.non-finite-result", category: .invalidInput)
+        }
         let tail = (1 - confidenceLevel) / 2
         func adjusted(_ probability: Double) throws -> Double {
             let z = try GlifiDistributionFunctions.normalQuantile(probability)

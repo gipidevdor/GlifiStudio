@@ -6,10 +6,10 @@
 | --- | --- |
 | Identificatore | GS-UX-001-17 |
 | Tipo | Specifica normativa dell'esperienza utente |
-| Versione | 1.3.6 |
+| Versione | 1.3.8 |
 | Stato | Baseline implementativa per incrementi separati |
 | Responsabile | Iniziatore del progetto |
-| Ultima modifica | 2026-11-22 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | ADR-0033; ADR-0034; richieste esplicite di completamento dell'analisi testuale e riprogettazione della GUI |
 | Documento padre | [GS-UX-001](README.md) |
 
@@ -411,3 +411,57 @@ I layout hanno tabelle complete e un'anteprima nativa con pari scala dei due
 assi, fino a 512 collegamenti distinti; oltre tale limite l'anteprima non viene
 presentata come grafo completo. La foresta usa costi non negativi (zero ammesso);
 le altre proiezioni spiegano forza, topologia e policy di direzione.
+
+## Flussi di ricerca e completamento dei profili KH
+
+Il catalogo **DEVE** raggruppare ogni destinazione operativa per tema di
+ricerca: Vocabolario e stile, Relazioni e reti, Confronti e differenze, Temi e
+strutture, Classificazione dei documenti, Codifica e categorie, Qualità e
+validazione, Preparazione delle rappresentazioni. Ogni metodo **DEVE** avere
+uno scopo specifico, ricercabile e visibile quando viene aperto. Il tema non
+sostituisce l'identità del metodo: lo stesso flusso conserva selezione, input,
+parametri, risultato precedente e stato scientifico.
+
+Le diciannove operazioni KH del trasporto testuale hanno accessi nativi:
+nove operazioni di preparazione/misura su matrici, sei di linguaggio,
+classificazione e codifica e quattro esplorative. Gli editor presentano
+conteggi, identità, esposizioni, annotazioni e parametri con controlli
+specifici. Non richiedono la compilazione di JSON per svolgere il compito.
+Le preannotazioni linguistiche, classi e gruppi restano dati espliciti;
+lo stato incrementale del classificatore è di sessione.
+L'importazione di uno stato JSON sintatticamente o strutturalmente non valido
+**DEVE** restituire una failure di input correggibile e conservare lo stato
+precedente; non viene presentata come errore interno inatteso. La regressione
+del modello è registrata in [GS-VER-334](../evidenze/GS-VER-334-ingegneria-verificabile.md).
+
+Nel flusso Temi e strutture, CA **DEVE** rendere visibili coordinate, inerzia,
+contributi e qualità insieme al grafico fattoriale. HAC **DEVE** permettere la
+scelta tra documenti e parole; il profilo delle parole segue GS-MET-001-14 e
+conserva il lineage contributivo verso i documenti effettivi. Il dendrogramma
+usa il contratto di GS-VIZ-001 per zoom, taglio e compressione dei rami.
+
+MDS ordinale KH espone parità primary/secondary, dimensioni, distanza,
+iterazioni, tolleranza e, quando applicabili, seed e avvii. SOM KH espone
+griglia, topologia, due fasi e inizializzazione PCA o prototipi numerici
+espliciti nell'ordine dichiarato dei termini. I risultati mantengono tutti
+gli avvii MDS e gli stadi dei codebook, con diagnostici e tabelle complete.
+
+[GS-DOR-335](../pianificazione/dor-flussi-tematici-e-dendrogrammi.md) e
+[GS-VER-335](../evidenze/GS-VER-335-flussi-tematici-e-dendrogrammi.md)
+registrano perimetro, verifiche osservate e audit manuali ancora distinti.
+
+## Dati di ricerca e risultati salvati
+
+ADR-0047 estende il percorso con la finestra «Dati di ricerca», raggiungibile da
+Fonti e dal menu del progetto. Mantiene Form, tabelle, pulsanti, colori semantici
+e navigazione SwiftUI esistenti. Le sezioni riguardano importazione, dati,
+preparazione e analisi salvate. Anteprima e mapping precedono il commit; righe
+scartate e provenienza delle celle sono esplicite.
+
+I risultati rimangono di sessione fino all'azione esplicita di salvataggio.
+L'acquisizione persistente conserva la configurazione effettiva, non il draft
+modificato dopo il calcolo. Il ripristino riapre impostazioni e vista senza
+ricalcolare e preserva il risultato precedente in caso di archivio non valido.
+Il collegamento al rapporto usa una proposizione descrittiva e caveat espliciti,
+senza attribuire validazione scientifica al metodo o all'output acquisito.
+I contratti applicativi sono GS-API-004, GS-API-005 e GS-API-006.

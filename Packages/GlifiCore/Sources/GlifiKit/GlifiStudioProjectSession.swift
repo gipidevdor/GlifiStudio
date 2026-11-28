@@ -7,8 +7,8 @@ import GlifiCore
 public actor GlifiStudioProjectSession {
     private static let maximumActiveAnalysisExecutionCount = 1
 
-    private let engine: GlifiEngine
-    private let project: GlifiProjectPackage
+    package let engine: GlifiEngine
+    package let project: GlifiProjectPackage
     private let runtimeEnvironment: GlifiStudioRuntimeEnvironment
     private let activityProvider: GlifiStudioActivityProvider
     private var isClosed = false
@@ -717,36 +717,105 @@ public actor GlifiStudioProjectSession {
 
     /// Writes a view export (table, specification, provenance manifest) to a new folder.
     ///
-    /// The Artifact must belong to the current generation; the folder is staged next to the
-    /// destination, verified against its manifest and moved into place in one step.
+    /// The current Artifact must match the declared producer node, analysis and method;
+    /// contradictory source metadata fails with `visual-export.source-mismatch`.
+    /// Presentation choices such as alternate factor axes remain unchanged. The folder is
+    /// staged next to the destination, verified against its manifest and moved in one step.
+    /// Admission and source-read failures use the export operation; cancellation retains
+    /// unchanged project state, including when the calling task is already cancelled.
     public func exportVisualization(
         _ visualization: GlifiStudioVisualization,
         to destinationURL: URL
     ) async throws -> GlifiStudioVisualExportReceipt {
-        try ensureOpen(operation: .export)
-        let current = await project.snapshot()
-        guard
-            current.artifacts.contains(where: {
-                $0.artifactID.canonicalValue == visualization.artifactID
-            })
-        else {
-            throw GlifiStudioFailure(
-                GlifiFailure(
-                    code: "visual-export.stale-artifact",
-                    category: .staleArtifact,
-                    operation: .export,
-                    retryDisposition: .newRequest,
-                    retainedState: .unchanged,
-                    messageKey: "failure.visual-export.stale-artifact"
-                ))
+        do {
+            try ensureOpen(operation: .export)
+            let current = await project.snapshot()
+            guard
+                let artifact = current.artifacts.first(where: {
+                    $0.artifactID.canonicalValue == visualization.artifactID
+                })
+            else {
+                throw GlifiStudioFailure(
+                    GlifiFailure(
+                        code: "visual-export.stale-artifact",
+                        category: .staleArtifact,
+                        operation: .export,
+                        retryDisposition: .newRequest,
+                        retainedState: .unchanged,
+                        messageKey: "failure.visual-export.stale-artifact"
+                    ))
+            }
+            try Task.checkCancellation()
+            try await validateVisualizationSource(visualization, artifact: artifact)
+            try Task.checkCancellation()
+            let files = try GlifiStudioVisualExport.bundle(
+                visualization,
+                projectID: current.projectID.canonicalValue,
+                generation: current.generation,
+                createdAt: Date()
+            )
+            return try GlifiStudioVisualExport.write(files, to: destinationURL)
+        } catch {
+            throw Self.mapVisualizationExportFailure(error)
         }
-        let files = try GlifiStudioVisualExport.bundle(
-            visualization,
-            projectID: current.projectID.canonicalValue,
-            generation: current.generation,
-            createdAt: Date()
-        )
-        return try GlifiStudioVisualExport.write(files, to: destinationURL)
+    }
+
+    private func validateVisualizationSource(
+        _ visualization: GlifiStudioVisualization, artifact: GlifiProjectArtifactRecord
+    ) async throws {
+        guard visualization.analysisNodeID == artifact.node.id.canonicalValue,
+            visualization.analysisIdentifier == artifact.node.descriptor.algorithmIdentifier
+        else { throw Self.visualizationSourceMismatch() }
+
+        let expectedMethod: String
+        switch artifact.node.descriptor.outputSchemaIdentifier {
+        case GlifiCorpusMultivariateAnalysis.outputSchemaIdentifier:
+            let source = try await engine.storedDerivedResult(
+                GlifiCorpusMultivariateAnalysis.self, artifactID: artifact.artifactID, in: project)
+            expectedMethod = source.value.method.identifier
+        case GlifiWindowNetworkAnalysis.outputSchemaIdentifier:
+            let source = try await engine.storedDerivedResult(
+                GlifiWindowNetworkAnalysis.self, artifactID: artifact.artifactID, in: project)
+            expectedMethod = source.value.graphIdentifier
+        case GlifiCorpusLexicalNetworkAnalysis.outputSchemaIdentifier:
+            let source = try await engine.storedDerivedResult(
+                GlifiCorpusLexicalNetworkAnalysis.self, artifactID: artifact.artifactID, in: project
+            )
+            expectedMethod = source.value.graphIdentifier
+        case GlifiWindowCollocationAnalysis.outputSchemaIdentifier:
+            let source = try await engine.storedDerivedResult(
+                GlifiWindowCollocationAnalysis.self, artifactID: artifact.artifactID, in: project)
+            expectedMethod = source.value.universeIdentifier
+        default:
+            throw Self.visualizationSourceMismatch()
+        }
+        guard visualization.methodIdentifier == expectedMethod else {
+            throw Self.visualizationSourceMismatch()
+        }
+    }
+
+    private static func visualizationSourceMismatch() -> GlifiStudioFailure {
+        GlifiStudioFailure(
+            GlifiFailure(
+                code: "visual-export.source-mismatch", category: .invalidInput,
+                operation: .export, retryDisposition: .afterCorrection,
+                retainedState: .unchanged, messageKey: "failure.visual-export.source-mismatch"))
+    }
+
+    private static func mapVisualizationExportFailure(_ error: any Error) -> GlifiStudioFailure {
+        let failure = Self.map(error, operation: .export)
+        if failure.category == GlifiFailureCategory.cancelled.rawValue {
+            return GlifiStudioFailure(
+                GlifiFailure(
+                    code: "operation.cancelled", category: .cancelled, operation: .export,
+                    retryDisposition: .newRequest, retainedState: .unchanged,
+                    messageKey: "failure.operation.cancelled"))
+        }
+        return GlifiStudioFailure(
+            code: failure.code, category: failure.category,
+            operation: GlifiOperationKind.export.rawValue,
+            retryDisposition: failure.retryDisposition, retainedState: failure.retainedState,
+            messageKey: failure.messageKey, arguments: failure.arguments)
     }
 
     /// Appends one change to the qualitative history and returns the new projection.
@@ -867,7 +936,7 @@ public actor GlifiStudioProjectSession {
     }
 
     /// Applies the common session admission and failure boundary to one operation.
-    private func performOperation<Result>(
+    package func performOperation<Result>(
         _ operation: GlifiOperationKind,
         _ body: () async throws -> Result
     ) async throws -> Result {
@@ -919,7 +988,7 @@ public actor GlifiStudioProjectSession {
         activeAnalysisExecutions[operationID] = nil
     }
 
-    private func ensureOpen(operation: GlifiOperationKind? = nil) throws {
+    package func ensureOpen(operation: GlifiOperationKind? = nil) throws {
         guard !isClosed else {
             throw GlifiStudioFailure(
                 GlifiFailure(

@@ -1,0 +1,75 @@
+{
+  "evidenceIdentifier": "GS-VER-330",
+  "date": "2026-11-27",
+  "license": "BSD-3-Clause",
+  "status": "RED reproduced; final targeted regressions GREEN; integrated gate pending",
+  "scope": [
+    "Packages/GlifiCore/Sources/GlifiCore/GlifiEngine.swift",
+    "Packages/GlifiCore/Tests/GlifiCoreTests/GlifiCorpusCacheBudgetTests.swift"
+  ],
+  "red": {
+    "runner": "Coordinator combined Core regression run",
+    "log": "macOS-2026-11-27-semantics/core-red.log",
+    "sha256": "0c20c2eb70859f32c28dffabb4dba7fe2ee5b21b8746ba4379161114092626ba",
+    "exitCode": 1,
+    "testDefinitions": 4,
+    "testExecutions": 8,
+    "failedExecutions": 6,
+    "passedExecutions": 2,
+    "ownRecordedIssues": 6,
+    "coldBudgetChecksPassed": 6,
+    "failingWarmBudgetChecks": 6,
+    "combinedRunRecordedIssues": 70
+  },
+  "contracts": {
+    "budgetOrder": ["vocabulary", "distinctNGrams", "nonZeroCells"],
+    "failureCategory": "insufficientResources",
+    "retryDisposition": "afterConditionsChange",
+    "retainedState": "lastCommittedGeneration",
+    "scientificDescriptorChanged": false,
+    "newPublicAPI": false,
+    "persistentSchemaChanged": false,
+    "cachedPayloadRecomputed": false,
+    "independentReview": "No blocker reported by the algorithm review agent"
+  },
+  "green": {
+    "runner": "Coordinator full SwiftPM stage 2 run",
+    "log": "macOS-2026-11-27-semantics/core-stage2.log",
+    "sha256": "bc271bf399f3c30ed71e252f4b9dc72dc3695f6f2f068d14074a6d358dc27eda",
+    "testDefinitions": 4,
+    "testExecutions": 8,
+    "failedExecutions": 0,
+    "ownRecordedIssues": 0,
+    "wholeCommandSucceeded": false,
+    "unrelatedCoreIssues": 2,
+    "unrelatedExpectedKitREDIssues": 64
+  },
+  "stage3": {
+    "log": "macOS-2026-11-27-semantics/core-stage3.log",
+    "sha256": "d9c5fb430369bfc05fbfea1b76f472efd1113416bbdc6d6e108696fa9e11dd22",
+    "ownExecutionsPassed": 8,
+    "wholeCoreDefinitionsPassed": 781,
+    "wholeCoreIssues": 0,
+    "unrelatedExpectedKitAdmissionREDIssues": 2
+  },
+  "finalGreen": {
+    "runner": "Coordinator final targeted SwiftPM regression run",
+    "log": "macOS-2026-11-27-semantics/core-green.log",
+    "sha256": "c892aedff2d3ef655745e6156f89683c8b0487f18488340f84f6650251bf7a31",
+    "exitCode": 0,
+    "coreTestDefinitions": 28,
+    "kitTestDefinitions": 17,
+    "ownExecutionsPassed": 8,
+    "recordedIssues": 0,
+    "coordinatorRuntimeInputCount": 590,
+    "coordinatorRuntimeInputSHA256": "5aeefb5d07d002001e9ee143bb9c3728e3aeb6c5e509a918d9b16d8c45b99793"
+  },
+  "pending": [
+    "Coordinator integrated macOS gate"
+  ],
+  "limits": [
+    "Cardinality checks apply after bounded Artifact decoding; the existing 64 MiB Artifact cap remains",
+    "No iPadOS execution or GUI accessibility claim",
+    "No measured performance improvement claimed"
+  ]
+}

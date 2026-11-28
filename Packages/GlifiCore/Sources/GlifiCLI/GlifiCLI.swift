@@ -64,6 +64,12 @@ enum GlifiCLI {
             let result = try await GlifiStudioEvaluationCommand.execute(
                 json: CLITextAnalysisInput.read(at: url))
             try writeCommandResult(result, request: request)
+        case let .researchCall(projectURL, requestURL):
+            let json = try CLITextAnalysisInput.read(at: requestURL)
+            let result = try await withOpenProject(at: projectURL, service: service) { session in
+                try await GlifiStudioResearchCommand.execute(json: json, session: session)
+            }
+            try writeCommandResult(result, request: request)
         case let .projectCall(projectURL, requestURL):
             let json = try CLITextAnalysisInput.read(at: requestURL)
             let result = try await withOpenProject(at: projectURL, service: service) { session in
@@ -731,8 +737,8 @@ enum GlifiCLI {
                     print("asse \(axis + 1)\tvalore=\(value)\tquota=\(share)")
                 }
                 if let clusters = result.clusterAssignments {
-                    for (document, cluster) in zip(result.sourceRevisionIDs, clusters) {
-                        print("\(document)\tcluster=\(cluster)")
+                    for (unit, cluster) in zip(result.clusterUnitIdentifiers, clusters) {
+                        print("\(unit)\tcluster=\(cluster)")
                     }
                 }
             case .json:
@@ -1190,6 +1196,7 @@ private struct CLIRequest {
           glifi [--format text|json] [--no-progress] statistics --request <richiesta.json>
           glifi [--format text|json] [--no-progress] operator --request <richiesta.json>
           glifi [--format text|json] [--no-progress] evaluation --request <richiesta.json>
+          glifi [--format text|json] [--no-progress] research-call <progetto.glifi> --request <richiesta.json>
           glifi [--format text|json] [--no-progress] project-call <progetto.glifi> --request <richiesta.json>
           glifi [--format text|json] [--no-progress] profile <fonte> --input-format plainText|markdown|pdf|epub
           glifi [--format text|json] [--no-progress] profile --request <richiesta.json>
@@ -1223,7 +1230,7 @@ private struct CLIRequest {
           glifi [--format text|json] [--no-progress] window-collocations <progetto.glifi> --sources <source-revision-id,...> [--left <n>] [--right <n>] [--cross-sentences true|false] [--self-pairs true|false] [--min-joint <n>] [--max-pairs <n>] [--weighting none|inverse-distance] [--positions <n>]
           glifi [--format text|json] [--no-progress] window-network <progetto.glifi> --sources <source-revision-id,...> [opzioni di window-collocations] [--min-logdice <x>] [--weighted-edges true|false]
           glifi [--format text|json] [--no-progress] network <progetto.glifi> --sources <source-revision-id,...> [--max-terms <n>] [--min-joint <n>] [--max-pairs <n>]
-          glifi [--format text|json] [--no-progress] multivariate <progetto.glifi> --sources <source-revision-id,...> --method ca|pca|pca-scaled|lsa|nmf|hac|kmeans [--rank <k>] [--clusters <k>] [--linkage single|complete|average|ward] [--seed <n>] [--restarts <n>] [--max-terms <n>]
+          glifi [--format text|json] [--no-progress] multivariate <progetto.glifi> --sources <source-revision-id,...> --method ca|pca|pca-scaled|lsa|nmf|hac|kmeans [--unit documents|terms] [--rank <k>] [--clusters <k>] [--linkage single|complete|average|ward] [--seed <n>] [--restarts <n>] [--max-terms <n>]
           glifi [--format text|json] [--no-progress] agreement <progetto.glifi> --request <codifica.json>
           glifi [--format text|json] [--no-progress] qualitative state <progetto.glifi>
           glifi [--format text|json] [--no-progress] qualitative append <progetto.glifi> --request <cambiamento.json>
@@ -1285,6 +1292,12 @@ private struct CLIRequest {
             case "profile": command = .profileRequest(url)
             default: throw CLIUsageError.invalidArguments
             }
+        } else if remaining.count == 4, remaining[0] == "research-call",
+            remaining[2] == "--request"
+        {
+            command = .researchCall(
+                URL(fileURLWithPath: remaining[1]).standardizedFileURL,
+                URL(fileURLWithPath: remaining[3]).standardizedFileURL)
         } else if remaining.count == 4, remaining[0] == "project-call",
             remaining[2] == "--request"
         {
@@ -1713,11 +1726,14 @@ private struct CLIRequest {
         case "multivariate":
             try allowed([
                 "--sources", "--method", "--rank", "--clusters", "--linkage", "--seed",
-                "--restarts", "--max-terms",
+                "--restarts", "--max-terms", "--unit",
             ])
             guard let sources = try single("--sources"), let name = try single("--method") else {
                 throw CLIUsageError.invalidArguments
             }
+            let unit = try single("--unit")
+            guard unit == nil || (name == "hac" && ["documents", "terms"].contains(unit ?? ""))
+            else { throw CLIUsageError.invalidArguments }
             let seed =
                 try single("--seed").map { text -> UInt64 in
                     guard let value = UInt64(text) else { throw CLIUsageError.invalidArguments }
@@ -1737,10 +1753,12 @@ private struct CLIRequest {
                     restarts: restarts
                 )
             case "hac":
-                method = .hierarchical(
-                    linkage: try single("--linkage") ?? "ward",
-                    clusterCount: try integer("--clusters") ?? 2
-                )
+                let linkage = try single("--linkage") ?? "ward"
+                let clusterCount = try integer("--clusters") ?? 2
+                method =
+                    unit == "terms"
+                    ? .hierarchicalTerms(linkage: linkage, clusterCount: clusterCount)
+                    : .hierarchical(linkage: linkage, clusterCount: clusterCount)
             case "kmeans":
                 method = .kMeans(
                     clusterCount: try integer("--clusters") ?? 2,
@@ -1960,6 +1978,7 @@ private enum CLICommand {
     case statistics(URL)
     case coreOperator(URL)
     case evaluation(URL)
+    case researchCall(URL, URL)
     case projectCall(URL, URL)
     case profile(URL, GlifiStudioTextFormat)
     case profileRequest(URL)
@@ -2012,6 +2031,7 @@ private enum CLICommand {
         case .statistics: "statistics"
         case .coreOperator: "operator"
         case .evaluation: "evaluation"
+        case .researchCall: "research-call"
         case .projectCall: "project-call"
         case .profile: "profile"
         case .profileRequest: "profile"

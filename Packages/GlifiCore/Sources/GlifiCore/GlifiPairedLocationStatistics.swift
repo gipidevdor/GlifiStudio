@@ -211,19 +211,54 @@ extension GlifiStatisticalFoundation {
         guard sample1.allSatisfy(\.isFinite), sample2.allSatisfy(\.isFinite) else {
             throw pairedStatisticsFailure("statistics.non-finite-value", category: .invalidInput)
         }
-        let first = meanAndSumOfSquares(sample1)
-        let second = meanAndSumOfSquares(sample2)
+        let first = try scaledLocationMoments(sample1)
+        let second = try scaledLocationMoments(sample2)
+        let scaleExponent: Int
+        if first.sumOfSquares == 0 {
+            scaleExponent = second.scaleExponent
+        } else if second.sumOfSquares == 0 {
+            scaleExponent = first.scaleExponent
+        } else {
+            scaleExponent = max(first.scaleExponent, second.scaleExponent)
+        }
+        let firstSquares = locationScale(
+            first.sumOfSquares, by: 2 * (first.scaleExponent - scaleExponent))
+        let secondSquares = locationScale(
+            second.sumOfSquares, by: 2 * (second.scaleExponent - scaleExponent))
         let pooledVariance =
-            (first.sumOfSquares + second.sumOfSquares)
-            / Double(sample1.count + sample2.count - 2)
+            (firstSquares + secondSquares) / Double(sample1.count + sample2.count - 2)
         guard pooledVariance > 0 else {
             throw pairedStatisticsFailure("statistics.non-positive-variance")
         }
-        let pooled = pooledVariance.squareRoot()
-        return GlifiCohenDResult(
-            pooledStandardDeviation: pooled,
-            d: (first.mean - second.mean) / pooled
-        )
+        let normalizedDeviation = pooledVariance.squareRoot()
+        let pooled = locationScale(normalizedDeviation, by: scaleExponent)
+        let anchorDifference = first.anchor - second.anchor
+        let normalizedAnchorDifference =
+            anchorDifference.isFinite
+            ? locationScale(anchorDifference, by: -scaleExponent)
+            : locationScale(first.anchor, by: -scaleExponent)
+                - locationScale(second.anchor, by: -scaleExponent)
+        let firstMeanOffset = locationScale(
+            first.meanOffset, by: first.scaleExponent - scaleExponent)
+        let secondMeanOffset = locationScale(
+            second.meanOffset, by: second.scaleExponent - scaleExponent)
+        let normalizedDifference =
+            normalizedAnchorDifference + firstMeanOffset - secondMeanOffset
+        let d: Double
+        if normalizedAnchorDifference.isInfinite, anchorDifference.isFinite {
+            // Division before power-of-two restoration avoids an overflowing intermediate.
+            // Keep the normalized denominator: the reported physical SD can be subnormal.
+            d =
+                locationScale(
+                    anchorDifference / normalizedDeviation, by: -scaleExponent)
+                + (firstMeanOffset - secondMeanOffset) / normalizedDeviation
+        } else {
+            d = normalizedDifference / normalizedDeviation
+        }
+        guard pooled.isFinite, pooled > 0, d.isFinite else {
+            throw pairedStatisticsFailure("statistics.non-finite-result", category: .invalidInput)
+        }
+        return GlifiCohenDResult(pooledStandardDeviation: pooled, d: d)
     }
 
     /// Number of sign assignments of the ranks `1…n` giving each value of `W⁺`.
@@ -254,14 +289,34 @@ extension GlifiStatisticalFoundation {
         guard sample.allSatisfy(\.isFinite), hypothesizedMean.isFinite else {
             throw pairedStatisticsFailure("statistics.non-finite-value", category: .invalidInput)
         }
-        let values = meanAndSumOfSquares(sample)
-        let variance = values.sumOfSquares / Double(sample.count - 1)
-        guard variance > 0 else {
+        let values = try scaledLocationMoments(sample)
+        guard values.sumOfSquares > 0 else {
             throw pairedStatisticsFailure("statistics.non-positive-variance")
         }
-        let deviation = variance.squareRoot()
-        let statistic =
-            (values.mean - hypothesizedMean) / (deviation / Double(sample.count).squareRoot())
+        let normalizedDeviation =
+            (values.sumOfSquares / Double(sample.count - 1)).squareRoot()
+        let deviation = locationScale(normalizedDeviation, by: values.scaleExponent)
+        let anchorDifference = values.anchor - hypothesizedMean
+        let normalizedAnchorDifference =
+            anchorDifference.isFinite
+            ? locationScale(anchorDifference, by: -values.scaleExponent)
+            : locationScale(values.anchor, by: -values.scaleExponent)
+                - locationScale(hypothesizedMean, by: -values.scaleExponent)
+        let normalizedStandardError = normalizedDeviation / Double(sample.count).squareRoot()
+        let statistic: Double
+        if normalizedAnchorDifference.isInfinite, anchorDifference.isFinite {
+            // A finite contrast can overflow while changing units, before the final division.
+            statistic =
+                locationScale(
+                    anchorDifference / normalizedStandardError, by: -values.scaleExponent)
+                + values.meanOffset / normalizedStandardError
+        } else {
+            statistic =
+                (normalizedAnchorDifference + values.meanOffset) / normalizedStandardError
+        }
+        guard deviation.isFinite, deviation > 0, statistic.isFinite else {
+            throw pairedStatisticsFailure("statistics.non-finite-result", category: .invalidInput)
+        }
         let degrees = sample.count - 1
         return GlifiLocationTTestResult(
             methodIdentifier: identifier,
@@ -290,16 +345,103 @@ extension GlifiStatisticalFoundation {
         guard x.allSatisfy(\.isFinite), y.allSatisfy(\.isFinite) else {
             throw pairedStatisticsFailure("statistics.non-finite-value", category: .invalidInput)
         }
-        return zip(x, y).map { $0 - $1 }
+        let differences = zip(x, y).map { $0 - $1 }
+        guard differences.allSatisfy(\.isFinite) else {
+            throw pairedStatisticsFailure("statistics.non-finite-result", category: .invalidInput)
+        }
+        return differences
     }
 
-    private static func meanAndSumOfSquares(
+    private static func scaledLocationMoments(
         _ sample: [Double]
-    ) -> (mean: Double, sumOfSquares: Double) {
-        let mean = sample.reduce(0, +) / Double(sample.count)
-        let sumOfSquares = sample.reduce(0.0) { $0 + ($1 - mean) * ($1 - mean) }
-        return (mean, sumOfSquares)
+    ) throws -> LocationSampleMoments {
+        let anchor = sample.first ?? 0
+        var needsInputScaling = false
+        var largestInput = 0.0
+        for (index, value) in sample.enumerated() {
+            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
+            needsInputScaling = needsInputScaling || !(value - anchor).isFinite
+            largestInput = max(largestInput, abs(value))
+        }
+        let inputExponent = needsInputScaling ? largestInput.exponent : 0
+        let scaledAnchor = locationScale(anchor, by: -inputExponent)
+        func offset(_ value: Double) -> Double {
+            needsInputScaling
+                ? locationScale(value, by: -inputExponent) - scaledAnchor : value - anchor
+        }
+        var largestOffset = 0.0
+        for (index, value) in sample.enumerated() {
+            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
+            if needsInputScaling, value != 0,
+                locationScale(value, by: -inputExponent) == 0
+            {
+                throw pairedStatisticsFailure(
+                    "statistics.non-finite-result", category: .invalidInput)
+            }
+            largestOffset = max(largestOffset, abs(offset(value)))
+        }
+        guard largestOffset > 0 else {
+            return LocationSampleMoments(
+                anchor: anchor, mean: anchor, meanOffset: 0,
+                scaleExponent: 0, sumOfSquares: 0)
+        }
+        let offsetExponent = largestOffset.exponent
+        let scaleExponent = inputExponent + offsetExponent
+        func coordinate(_ value: Double) -> Double {
+            locationScale(offset(value), by: -offsetExponent)
+        }
+        var sum = 0.0
+        var compensation = 0.0
+        for (index, value) in sample.enumerated() {
+            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
+            let normalized = coordinate(value)
+            guard offset(value) == 0 || normalized != 0 else {
+                throw pairedStatisticsFailure(
+                    "statistics.non-finite-result", category: .invalidInput)
+            }
+            let adjusted = normalized - compensation
+            let next = sum + adjusted
+            compensation = (next - sum) - adjusted
+            sum = next
+        }
+        let meanOffset = sum / Double(sample.count)
+        let restoredOffset = locationScale(meanOffset, by: scaleExponent)
+        var mean = anchor + restoredOffset
+        if !mean.isFinite {
+            mean = locationScale(
+                scaledAnchor + locationScale(meanOffset, by: offsetExponent),
+                by: inputExponent)
+        }
+        var squares = 0.0
+        var squareCompensation = 0.0
+        for (index, value) in sample.enumerated() {
+            if index.isMultiple(of: 1_024) { try Task.checkCancellation() }
+            let deviation = coordinate(value) - meanOffset
+            let adjusted = deviation * deviation - squareCompensation
+            let next = squares + adjusted
+            squareCompensation = (next - squares) - adjusted
+            squares = next
+        }
+        guard mean.isFinite, squares.isFinite, squares > 0 else {
+            throw pairedStatisticsFailure("statistics.non-finite-result", category: .invalidInput)
+        }
+        return LocationSampleMoments(
+            anchor: anchor, mean: mean, meanOffset: meanOffset,
+            scaleExponent: scaleExponent, sumOfSquares: squares)
     }
+
+}
+
+private struct LocationSampleMoments {
+    let anchor: Double
+    let mean: Double
+    let meanOffset: Double
+    let scaleExponent: Int
+    let sumOfSquares: Double
+}
+
+private func locationScale(_ value: Double, by exponent: Int) -> Double {
+    Double(sign: value.sign, exponent: exponent, significand: abs(value))
 }
 
 private func pairedStatisticsFailure(

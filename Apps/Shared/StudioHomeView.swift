@@ -33,6 +33,7 @@ struct StudioHomeView: View {
     @FocusState private var isQueryFocused: Bool
     #if os(macOS)
         @State private var selectedTextTool: StudioTextTool = .summary
+        @State private var isResearchWorkspacePresented = false
         @SceneStorage("workspace.specialized-laboratories") private
             var showsSpecializedLaboratories = false
     #endif
@@ -71,6 +72,8 @@ struct StudioHomeView: View {
                             sidebarRow(.evaluation)
                             sidebarRow(.operators)
                             sidebarRow(.linguistics)
+                            sidebarRow(.khMatrix)
+                            sidebarRow(.khLanguage)
                         }
                     #endif
                 }
@@ -128,6 +131,10 @@ struct StudioHomeView: View {
                         StudioOperatorsView(model: model)
                     case .linguistics:
                         StudioLinguisticView(model: model)
+                    case .khMatrix:
+                        StudioKHMatrixView(model: model)
+                    case .khLanguage:
+                        StudioKHLanguageView(model: model)
                 #endif
                 case .investigation: investigation
                 case .query: query
@@ -146,7 +153,7 @@ struct StudioHomeView: View {
             #if os(macOS)
                 if section == .corpusMethods || section == .advancedAnalysis
                     || section == .statistics || section == .evaluation || section == .operators
-                    || section == .linguistics
+                    || section == .linguistics || section == .khMatrix || section == .khLanguage
                 {
                     showsSpecializedLaboratories = true
                 }
@@ -166,6 +173,12 @@ struct StudioHomeView: View {
                     .help("action.import")
                 }
                 Menu("sidebar.project", systemImage: "folder") {
+                    #if os(macOS)
+                        Button("research.title", systemImage: "tablecells") {
+                            isResearchWorkspacePresented = true
+                        }
+                        .disabled(model.snapshot == nil)
+                    #endif
                     Button("action.new-project", systemImage: "folder.badge.plus") {
                         selection = .project
                         createProjectDocument()
@@ -198,6 +211,22 @@ struct StudioHomeView: View {
         .sheet(isPresented: $isSourcePreviewPresented) {
             sourcePreview
         }
+        #if os(macOS)
+            .sheet(isPresented: $isResearchWorkspacePresented) {
+                StudioResearchView(home: model) { client in
+                    switch client {
+                    case "khMatrix": showSection(.khMatrix)
+                    case "khLanguage": showSection(.khLanguage)
+                    case "evaluation": showSection(.evaluation)
+                    case "statistics": showSection(.statistics)
+                    case "operators": showSection(.operators)
+                    case "linguistic": showSection(.linguistics)
+                    case "report": showSection(.export)
+                    default: showSection(.advancedAnalysis)
+                    }
+                }
+            }
+        #endif
         .focusedSceneValue(\.studioWorkspaceActions, sceneActions)
         .fileImporter(
             isPresented: $isSourceImporterPresented,
@@ -405,11 +434,11 @@ struct StudioHomeView: View {
                 model.advancedAnalysis.tool = .distances
                 selection = .advancedAnalysis
             case .correspondence:
-                model.advancedAnalysis.tool = .correspondence
-                selection = .advancedAnalysis
+                model.corpusMethods.tool = .correspondence
+                selection = .corpusMethods
             case .hierarchical:
-                model.advancedAnalysis.tool = .hierarchical
-                selection = .advancedAnalysis
+                model.corpusMethods.tool = .hierarchical
+                selection = .corpusMethods
             case .network:
                 model.advancedAnalysis.tool = .network
                 selection = .advancedAnalysis
@@ -771,6 +800,12 @@ struct StudioHomeView: View {
                         isSourceImporterPresented = true
                     }
                     .disabled(model.isBusy)
+                    #if os(macOS)
+                        Button("research.title", systemImage: "tablecells") {
+                            isResearchWorkspacePresented = true
+                        }
+                        .disabled(model.isBusy)
+                    #endif
                     Button("action.analyze-corpus") {
                         Task { await model.analyzeCorpusNow() }
                     }

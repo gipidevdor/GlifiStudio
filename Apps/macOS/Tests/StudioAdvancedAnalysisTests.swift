@@ -38,6 +38,31 @@ struct StudioAdvancedAnalysisTests {
         #expect(json["methodIdentifier"] as? String == output.methodIdentifier)
         #expect(try await fixture.session.snapshot() == before)
 
+        if tool == .correspondence {
+            let direct = try await GlifiStudioTextAnalytics.executeTextAnalysis(output.request)
+            if case let .correspondence(value) = direct.payload {
+                let documents = output.factorPoints.filter {
+                    $0.seriesKey == "visual.series.documents"
+                }
+                let terms = output.factorPoints.filter { $0.seriesKey == "visual.series.terms" }
+                #expect(documents.map(\.x) == value.rowCoordinates.map { $0[0] })
+                #expect(terms.map(\.x) == value.columnCoordinates.map { $0[0] })
+                #expect(terms.map(\.label) == value.includedColumns.map { output.input.terms[$0] })
+                #expect(
+                    output.factorPoints.allSatisfy {
+                        output.factorDomain.contains($0.x) && output.factorDomain.contains($0.y)
+                    })
+            } else {
+                Issue.record("A correspondence view lost its result family")
+            }
+        }
+        if tool == .hierarchical {
+            #expect(output.treeVertices.count == (output.input.sourceRevisionIDs.count - 1) * 6)
+            #expect(
+                output.treeLeafLabels.sorted() == output.sourceNumbers.map(String.init).sorted())
+            #expect(output.treeVertices.allSatisfy { $0.x.isFinite && $0.y.isFinite })
+        }
+
         if tool == .classification {
             let prediction = Set(fixture.ids.suffix(2))
             #expect(Set(output.rows.compactMap(\.sourceRevisionID)) == prediction)
@@ -241,7 +266,8 @@ struct StudioAdvancedAnalysisTests {
                     output.tables.first { $0.id == "advanced.table.lda-held-out" }?.rows.count
                         == candidates.count * 2)
             case .mds, .som, .clara, .topics, .classification, .classifierValidation, .coding,
-                .codeCrosstab, .distances, .correspondence, .hierarchical, .network:
+                .codeCrosstab, .distances, .correspondence, .hierarchical, .network,
+                .mdsOrdinal, .mdsOrdinalSearch, .somPCAInitialization, .somKH:
                 Issue.record("Unexpected completion tool")
             }
         }
@@ -420,6 +446,146 @@ struct StudioAdvancedAnalysisTests {
         await fixture.session.close()
     }
 
+    @Test(
+        arguments: [StudioAdvancedTool.mdsOrdinal, .mdsOrdinalSearch],
+        [GlifiStudioMDSOrdinalTies.primary, .secondary])
+    func khOrdinalMapsPreserveTiePolicyAndEveryRun(
+        tool: StudioAdvancedTool, ties: GlifiStudioMDSOrdinalTies
+    ) async throws {
+        let fixture = try await makeFixture(sourceCount: 6)
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = configuredModel(tool: tool, ids: fixture.ids)
+        model.ordinalTies = ties
+        model.dimensions = 1
+        model.mdsStarts = 2
+        try await model.execute(
+            session: fixture.session, sourceRevisionIDs: fixture.ids,
+            sourceNumbers: fixture.numbers, locale: .init(identifier: "it_IT"))
+        let output = try #require(model.output)
+        #expect(output.isOrdinalMDS && output.isOneDimensional)
+        #expect(output.points.count == fixture.ids.count)
+        #expect(output.points.allSatisfy { $0.y == 0 })
+        guard case let .advanced(.kh(operation)) = output.request else {
+            Issue.record("Expected an explicit KH ordinal request")
+            return
+        }
+        switch operation {
+        case let .ordinalMDS(matrix, dimensions, capturedTies, seed, iterations, tolerance):
+            #expect(tool == .mdsOrdinal)
+            #expect(matrix.count == fixture.ids.count && dimensions == 1)
+            #expect(capturedTies == ties && seed == 17 && iterations == 40 && tolerance == 1e-6)
+        case let .ordinalMDSSearch(
+            matrix, dimensions, capturedTies, starts, seed, iterations, tolerance):
+            #expect(tool == .mdsOrdinalSearch)
+            #expect(matrix.count == fixture.ids.count && dimensions == 1)
+            #expect(
+                capturedTies == ties && starts == 2 && seed == 17 && iterations == 40
+                    && tolerance == 1e-6)
+            #expect(
+                output.tables.first { $0.id == "advanced.table.mds-all-coordinates" }?.rows.count
+                    == 2 * fixture.ids.count)
+        case .sampleZScores, .perThousand, .wordContext, .correspondenceScaled,
+            .somPCAInitialization, .somKH, .collocationScores, .wordAssociation, .documentScores,
+            .hierarchicalWardD2, .chiSquare, .codeCrosstabSignificance, .termScores,
+            .termExtraction,
+            .incrementalClassifier, .continueClassifier, .validateClassifierWithAgreement:
+            Issue.record("Unexpected KH operation")
+        }
+        #expect(output.parameters.contains { $0.key == "advanced.ordinal-ties" })
+        #expect(output.tables.contains { $0.id == "advanced.table.mds-objectives" })
+        await fixture.session.close()
+    }
+
+    @Test func khSOMCapturesResolvedDefaultPhasesInItsCanonicalRequest() async throws {
+        let fixture = try await makeFixture(sourceCount: 6)
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let model = configuredModel(tool: .somKH, ids: fixture.ids)
+        model.somKHUsesCustomPhases = false
+        try await model.execute(
+            session: fixture.session, sourceRevisionIDs: fixture.ids,
+            sourceNumbers: fixture.numbers, locale: .init(identifier: "it_IT"))
+        let output = try #require(model.output)
+        let decoded = try GlifiStudioTextAnalysisRequest.decode(output.canonicalRequest)
+        #expect(decoded == output.request)
+        guard case let .advanced(.kh(.somKH(_, _, _, first, second, _, _, _))) = output.request
+        else {
+            Issue.record("Expected the resolved two-phase SOM request")
+            return
+        }
+        #expect(first == .init(steps: 1_000, initialLearningRate: 0.05, initialRadius: 2))
+        #expect(second == .init(steps: 2_000, initialLearningRate: 0.02, initialRadius: 2))
+        #expect(
+            output.parameters.filter { $0.key == "advanced.som-phase-steps" }.map(\.value) == [
+                "1000", "2000",
+            ])
+        #expect(!model.isDraftChanged)
+        model.somKHUsesCustomPhases = true
+        #expect(model.isDraftChanged)
+        #expect(model.output?.request == decoded)
+        await fixture.session.close()
+    }
+
+    @Test func khSOMRetainsExplicitCodebooksSchedulesAndAllTrainingStages() async throws {
+        let fixture = try await makeFixture(sourceCount: 6)
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        let before = try await fixture.session.snapshot()
+        let input = try await GlifiStudioTextAnalytics.prepareProjectInput(
+            session: fixture.session, sourceRevisionIDs: fixture.ids, maximumTermCount: 100)
+        let codebooks = (0..<4).map { unit in
+            Array(repeating: Double(unit) / 2, count: input.terms.count)
+        }
+        let model = configuredModel(tool: .somKH, ids: fixture.ids)
+        model.somKHUsesExplicitCodebooks = true
+        model.somKHInitialCodebooks = codebooks.map { row in
+            row.map { String($0).replacingOccurrences(of: ".", with: ",") }.joined(separator: " ")
+        }.joined(separator: "\n")
+        try await model.execute(
+            session: fixture.session, sourceRevisionIDs: fixture.ids,
+            sourceNumbers: fixture.numbers, locale: .init(identifier: "it_IT"))
+        let output = try #require(model.output)
+        guard
+            case let .advanced(
+                .kh(.somKH(_, width, height, first, second, topology, initial, clusters))) = output
+                .request
+        else {
+            Issue.record("Expected a two-phase SOM request")
+            return
+        }
+        #expect(width == 2 && height == 2 && topology == .hexagonal && clusters == 2)
+        #expect(first?.steps == 20 && second?.steps == 30)
+        #expect(initial == codebooks)
+        #expect(
+            output.tables.first { $0.id == "advanced.table.som-initial-codebooks" }?.rows.count == 4
+                * input.terms.count)
+        #expect(
+            output.tables.first { $0.id == "advanced.table.som-phase-one-codebooks" }?.rows.count
+                == 4 * input.terms.count)
+        #expect(
+            output.tables.first { $0.id == "advanced.table.som-prototypes" }?.rows.count == 4
+                * input.terms.count)
+        #expect(output.tables.first { $0.id == "advanced.table.som-u-matrix" }?.rows.count == 4)
+        #expect(output.tables.first { $0.id == "advanced.table.som-ward" }?.rows.count == 3)
+        #expect(
+            output.parameters.filter { $0.key == "advanced.som-phase-steps" }.map(\.value) == [
+                "20", "30",
+            ])
+        #expect(!output.parameters.contains { $0.key == "advanced.seed" })
+        model.somKHInitialCodebooks = "1 2"
+        do {
+            try await model.execute(
+                session: fixture.session, sourceRevisionIDs: fixture.ids,
+                sourceNumbers: fixture.numbers, locale: .init(identifier: "it_IT"))
+            Issue.record("An incompatible codebook shape must fail")
+        } catch let failure as GlifiStudioFailure {
+            #expect(failure.retainedState == "unchanged")
+        }
+        #expect(model.output?.requestDigest == output.requestDigest)
+        #expect(try await fixture.session.snapshot() == before)
+        model.reset()
+        #expect(model.somKHInitialCodebooks.isEmpty)
+        await fixture.session.close()
+    }
+
     private func configuredModel(tool: StudioAdvancedTool, ids: [String])
         -> StudioAdvancedAnalysisModel
     {
@@ -431,6 +597,9 @@ struct StudioAdvancedAnalysisTests {
         model.mdsStarts = 3
         model.mdsTolerance = 1e-6
         model.somTopology = .hexagonal
+        model.somKHUsesCustomPhases = true
+        model.somKHFirstSteps = 20
+        model.somKHSecondSteps = 30
         model.clustersSOMCodebooks = true
         model.somCodebookClusterCount = 2
         model.topicCandidatesDraft = "2 3"

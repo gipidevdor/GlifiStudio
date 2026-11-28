@@ -194,7 +194,7 @@ func documentExtractionPersistenceReaderFence() async throws {
         let manifestURL = url.appending(path: "manifest.json")
         let bytes = try Data(contentsOf: manifestURL)
         #expect(try documentMigrationManifest(url).minimumReaderVersion == 2)
-        for minimum in [0, 1, 3] {
+        for minimum in [0, 1, GlifiProjectManifest.readerVersion + 1] {
             var value = try #require(JSONSerialization.jsonObject(with: bytes) as? [String: Any])
             value["minimumReaderVersion"] = minimum
             try JSONSerialization.data(

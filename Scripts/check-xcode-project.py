@@ -46,6 +46,8 @@ TEST_SUPPORT = {
     "Apps/Shared/StudioVisualExportPreparation.swift", "Apps/Shared/StudioFactorAudioGraph.swift",
     "Apps/Shared/StudioPlotSeries.swift", "Apps/macOS/StudioLinguisticModel.swift",
     "Apps/macOS/StudioOperatorsModel.swift", "Apps/macOS/StudioCorpusMethodsModel.swift",
+    "Apps/macOS/StudioKHMatrixModel.swift", "Apps/macOS/StudioKHLanguageModel.swift",
+    "Apps/macOS/StudioResearchModel.swift",
     "Apps/macOS/StudioStatisticsModel.swift", "Apps/macOS/StudioEvaluationModel.swift",
     "Apps/macOS/StudioCoreMethodRoute.swift", "Apps/macOS/StudioAdvancedAnalysisModel.swift",
     "Apps/macOS/StudioSourceLookup.swift", "Apps/macOS/StudioMacRuntimeMonitor.swift",

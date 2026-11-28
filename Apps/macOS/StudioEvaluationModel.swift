@@ -4,20 +4,20 @@ import Foundation
 import GlifiKit
 import Observation
 
-nonisolated enum StudioEvaluationTool: String, CaseIterable, Identifiable, Sendable {
+nonisolated enum StudioEvaluationTool: String, Codable, CaseIterable, Identifiable, Sendable {
     case temporal, classification, lemmas, boundaries, namedEntities, morphology
     var id: Self { self }
     var titleKey: String { "evaluation.tool.\(rawValue).title" }
     var descriptionKey: String { "evaluation.tool.\(rawValue).description" }
 }
 
-nonisolated enum StudioTemporalPrecision: String, CaseIterable, Identifiable, Sendable {
+nonisolated enum StudioTemporalPrecision: String, Codable, CaseIterable, Identifiable, Sendable {
     case missing, civilDate, civilMonth, civilYear, instant
     var id: Self { self }
     var titleKey: String { "evaluation.precision.\(rawValue)" }
 }
 
-nonisolated struct StudioTemporalAnnotationDraft: Equatable, Sendable {
+nonisolated struct StudioTemporalAnnotationDraft: Codable, Equatable, Sendable {
     var precision: StudioTemporalPrecision = .missing
     var year = 2024
     var month = 1
@@ -26,13 +26,13 @@ nonisolated struct StudioTemporalAnnotationDraft: Equatable, Sendable {
     var provenance = "manual.session-v1"
 }
 
-nonisolated struct StudioEvaluationFeature: Identifiable, Equatable, Sendable {
+nonisolated struct StudioEvaluationFeature: Codable, Identifiable, Equatable, Sendable {
     var id = UUID()
     var attribute = ""
     var value = ""
 }
 
-nonisolated struct StudioEvaluationObservation: Identifiable, Equatable, Sendable {
+nonisolated struct StudioEvaluationObservation: Codable, Identifiable, Equatable, Sendable {
     var id = UUID()
     var gold = ""
     var predicted = ""
@@ -42,14 +42,14 @@ nonisolated struct StudioEvaluationObservation: Identifiable, Equatable, Sendabl
     var predictedFeatures: [StudioEvaluationFeature] = []
 }
 
-nonisolated struct StudioEvaluationEntityDraft: Identifiable, Equatable, Sendable {
+nonisolated struct StudioEvaluationEntityDraft: Codable, Identifiable, Equatable, Sendable {
     var id = UUID()
     var start = 0
     var end = 0
     var type = ""
 }
 
-nonisolated struct StudioEvaluationDocument: Identifiable, Equatable, Sendable {
+nonisolated struct StudioEvaluationDocument: Codable, Identifiable, Equatable, Sendable {
     var id = UUID()
     var name = ""
     var text = ""
@@ -59,7 +59,7 @@ nonisolated struct StudioEvaluationDocument: Identifiable, Equatable, Sendable {
     var predictedEntities: [StudioEvaluationEntityDraft] = []
 }
 
-nonisolated struct StudioEvaluationInput: Equatable, Sendable {
+nonisolated struct StudioEvaluationInput: Codable, Equatable, Sendable {
     let tool: StudioEvaluationTool
     let zeroPolicy: GlifiStudioEvaluationZeroPolicy
     let observations: [StudioEvaluationObservation]
@@ -80,12 +80,12 @@ nonisolated struct StudioEvaluationInput: Equatable, Sendable {
     let outsidePolicy: GlifiStudioTemporalOutsidePolicy
 }
 
-nonisolated struct StudioEvaluationRow: Identifiable, Sendable {
+nonisolated struct StudioEvaluationRow: Codable, Identifiable, Sendable {
     let id: Int
     let values: [String]
 }
 
-nonisolated struct StudioEvaluationOutput: Sendable {
+nonisolated struct StudioEvaluationOutput: Codable, Sendable {
     let id: UUID
     let input: StudioEvaluationInput
     let linguistic: GlifiStudioLinguisticEvaluationResult?
@@ -93,6 +93,9 @@ nonisolated struct StudioEvaluationOutput: Sendable {
     let linguisticRows: [StudioEvaluationRow]
     let encodedLinguisticResult: Data?
     let sourceNumbers: [String: Int]
+    let canonicalRequest: Data
+    let encodedResult: Data
+    let completedAt: Date
 
     var methodIdentifier: String {
         linguistic?.methodIdentifier ?? temporal?.result.methodIdentifier ?? ""
@@ -161,6 +164,163 @@ nonisolated struct StudioEvaluationOutput: Sendable {
         documents = []
         temporalAnnotations = [:]
         selectedTerms = ""
+    }
+
+    nonisolated private struct Archive: Codable, Sendable {
+        let client: String
+        let version: Int
+        let output: StudioEvaluationOutput
+    }
+
+    func archiveData() async throws -> Data {
+        let expected = lifecycleID
+        guard let output else { throw StudioWorkbenchArchiveCodec.failure() }
+        let bytes = try await StudioWorkbenchArchiveCodec.encode(
+            Archive(
+                client: "evaluation", version: 1, output: output))
+        try Task.checkCancellation()
+        guard lifecycleID == expected else { throw CancellationError() }
+        return bytes
+    }
+
+    func saveArchive(session: GlifiStudioProjectSession, title: String) async throws
+        -> GlifiStudioSavedAnalysis
+    {
+        guard let output else { throw StudioWorkbenchArchiveCodec.failure() }
+        let presentation = try await archiveData()
+        return try await session.captureWorkbenchAnalysis(
+            command: "evaluation", requestJSON: output.canonicalRequest,
+            resultJSON: output.encodedResult, methodIdentifier: output.methodIdentifier,
+            title: title,
+            sourceRevisionIDs: output.temporal?.documents.map(\.sourceRevisionID) ?? [],
+            presentationJSON: presentation,
+            preparationDigest: output.temporal?.preparationDigest,
+            preparation: output.temporal?.preparation,
+            createdAtUnixMilliseconds: Int64(output.completedAt.timeIntervalSince1970 * 1_000))
+    }
+
+    @concurrent private static func decodeArchive(_ data: Data, saved: GlifiStudioSavedAnalysis)
+        async throws -> Archive
+    {
+        try Task.checkCancellation()
+        guard data.count <= 8 * 1_048_576 else { throw StudioWorkbenchArchiveCodec.failure() }
+        let archive = try JSONDecoder().decode(Archive.self, from: data)
+        let captured = try GlifiStudioWorkbenchCapture(saved: saved)
+        let output = archive.output
+        guard archive.client == "evaluation", archive.version == 1,
+            captured.command == "evaluation", captured.methodIdentifier == output.methodIdentifier,
+            output.rowCount <= 100_000,
+            output.temporal?.documents.map(\.sourceRevisionID) ?? [] == saved.sourceRevisionIDs,
+            try StudioWorkbenchArchiveCodec.sameJSON(output.canonicalRequest, captured.requestJSON),
+            try StudioWorkbenchArchiveCodec.sameJSON(output.encodedResult, captured.resultJSON),
+            output.linguisticRows.allSatisfy({ $0.values.count == output.columnKeys.count })
+        else { throw StudioWorkbenchArchiveCodec.failure() }
+        if let temporal = output.temporal {
+            guard temporal.documents.count <= 200,
+                temporal.documents.count == temporal.contentDigests.count,
+                temporal.selectedTerms.count <= 1_000, temporal.result.buckets.count <= 10_000,
+                try StudioWorkbenchArchiveCodec.sameJSON(
+                    StudioWorkbenchArchiveCodec.canonicalData(temporal.result), output.encodedResult
+                )
+            else { throw StudioWorkbenchArchiveCodec.failure() }
+        } else if let linguistic = output.linguistic {
+            guard
+                try StudioWorkbenchArchiveCodec.sameJSON(
+                    StudioWorkbenchArchiveCodec.canonicalData(linguistic), output.encodedResult)
+            else { throw StudioWorkbenchArchiveCodec.failure() }
+        } else {
+            throw StudioWorkbenchArchiveCodec.failure()
+        }
+        return archive
+    }
+
+    func restoreArchive(_ data: Data, saved: GlifiStudioSavedAnalysis) async throws {
+        let expected = UUID()
+        lifecycleID = expected
+        let archive = try await Self.decodeArchive(data, saved: saved)
+        let firstPage = await Self.project(archive.output, page: 0, locale: .current)
+        try Task.checkCancellation()
+        guard lifecycleID == expected else { throw CancellationError() }
+        reset()
+        let captured = archive.output.input
+        tool = captured.tool
+        zeroPolicy = captured.zeroPolicy
+        observations = captured.observations
+        documents = captured.documents
+        includesForms = captured.includesForms
+        includesPartsOfSpeech = captured.includesPartsOfSpeech
+        temporalAnnotations = captured.temporalAnnotations
+        selectedTerms = captured.selectedTerms
+        instantBasis = captured.instantBasis
+        timeZoneIdentifier = captured.timeZoneIdentifier
+        granularity = captured.granularity
+        originYear = captured.originYear
+        originMonth = captured.originMonth
+        originDay = captured.originDay
+        bucketWidth = captured.bucketWidth
+        bucketCount = captured.bucketCount
+        missingPolicy = captured.missingPolicy
+        outsidePolicy = captured.outsidePolicy
+        output = archive.output
+        rows = firstPage
+    }
+
+    /// The same standalone evaluation request that can reproduce these explicit observations.
+    nonisolated private static func commandData(
+        _ input: StudioEvaluationInput, temporal: GlifiStudioProjectTemporalEvaluation?
+    ) throws -> Data {
+        var parameters: [String: Any] = ["zeroPolicy": input.zeroPolicy.rawValue]
+        let operation: String
+        func object<Value: Encodable>(_ value: Value) throws -> Any {
+            try JSONSerialization.jsonObject(with: StudioWorkbenchArchiveCodec.canonicalData(value))
+        }
+        switch input.tool {
+        case .classification:
+            operation = "classification"
+            parameters["gold"] = input.observations.map(\.gold)
+            parameters["predicted"] = input.observations.map(\.predicted)
+        case .lemmas:
+            operation = "lemmas"
+            parameters["gold"] = input.observations.map(\.gold)
+            parameters["predicted"] = input.observations.map(\.predicted)
+            if input.includesForms { parameters["forms"] = input.observations.map(\.form) }
+            if input.includesPartsOfSpeech {
+                parameters["partsOfSpeech"] = input.observations.map(\.partOfSpeech)
+            }
+        case .morphology:
+            operation = "morphology"
+            parameters["gold"] = try input.observations.map { try featureMap($0.goldFeatures) }
+            parameters["predicted"] = try input.observations.map {
+                try featureMap($0.predictedFeatures)
+            }
+        case .boundaries:
+            operation = "boundaries-with-text"
+            parameters["gold"] = try input.documents.map { try boundaries($0.goldBoundaries) }
+            parameters["predicted"] = try input.documents.map {
+                try boundaries($0.predictedBoundaries)
+            }
+            parameters["texts"] = input.documents.map(\.text)
+        case .namedEntities:
+            operation = "named-entities-with-text"
+            parameters["gold"] = try object(
+                input.documents.map { $0.goldEntities.map { entity($0) } })
+            parameters["predicted"] = try object(
+                input.documents.map { $0.predictedEntities.map { entity($0) } })
+            parameters["texts"] = input.documents.map(\.text)
+        case .temporal:
+            guard let temporal else { throw invalidInput() }
+            operation = "temporal"
+            parameters = [
+                "documents": try object(temporal.documents),
+                "configuration": try object(temporal.result.configuration),
+            ]
+        }
+        return try JSONSerialization.data(
+            withJSONObject: [
+                "schema": GlifiStudioEvaluationCommand.schema,
+                "schemaVersion": GlifiStudioEvaluationCommand.schemaVersion,
+                "operation": operation, "parameters": parameters,
+            ], options: [.sortedKeys, .withoutEscapingSlashes])
     }
 
     func showPage(_ requested: Int, locale: Locale) async {
@@ -305,7 +465,9 @@ nonisolated struct StudioEvaluationOutput: Sendable {
         return .init(
             id: UUID(), input: input, linguistic: result, temporal: nil,
             linguisticRows: linguisticRows(result, tool: input.tool, locale: locale),
-            encodedLinguisticResult: try encoder.encode(result), sourceNumbers: [:])
+            encodedLinguisticResult: try encoder.encode(result), sourceNumbers: [:],
+            canonicalRequest: try commandData(input, temporal: nil),
+            encodedResult: try encoder.encode(result), completedAt: .now)
     }
 
     @concurrent private static func aggregate(
@@ -335,7 +497,10 @@ nonisolated struct StudioEvaluationOutput: Sendable {
             configuration: configuration)
         return .init(
             id: UUID(), input: input, linguistic: nil, temporal: result,
-            linguisticRows: [], encodedLinguisticResult: nil, sourceNumbers: sourceNumbers)
+            linguisticRows: [], encodedLinguisticResult: nil, sourceNumbers: sourceNumbers,
+            canonicalRequest: try commandData(input, temporal: result),
+            encodedResult: try StudioWorkbenchArchiveCodec.canonicalData(result.result),
+            completedAt: .now)
     }
 
     nonisolated private static func temporalValue(

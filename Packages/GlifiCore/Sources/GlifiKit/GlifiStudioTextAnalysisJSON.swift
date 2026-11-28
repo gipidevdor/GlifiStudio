@@ -11,8 +11,10 @@ enum TextAnalysisJSON {
         var keys: Set<String> = []
     }
 
-    static func check(_ data: Data) throws {
-        guard data.count <= GlifiStudioTextAnalysisRequest.maximumRequestBytes else {
+    static func check(
+        _ data: Data, maximumByteCount: Int = GlifiStudioTextAnalysisRequest.maximumRequestBytes
+    ) throws {
+        guard data.count <= maximumByteCount else {
             throw textRequestFailure(
                 "text-analysis.request-limit", category: "insufficientResources")
         }

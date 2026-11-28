@@ -4,10 +4,10 @@
 | --- | --- |
 | Identificatore | GS-STD-001-11 |
 | Tipo | Capitolo normativo |
-| Versione | 0.3.0 |
+| Versione | 0.3.1 |
 | Stato | Proposto |
 | Responsabile | Da assegnare |
-| Ultima modifica | 2026-09-15 |
+| Ultima modifica | 2026-11-28 |
 | Approvazione | Non ancora approvato |
 | Documento padre | [GS-STD-001](../standard-di-progetto.md) |
 
@@ -76,3 +76,18 @@ Ogni modifica incompatibile al formato **DEVE** fornire migrazione, lettura comp
 Descrittori e dipendenze **DEVONO** essere serializzati canonicamente. Una modifica
 invalida transitivamente i soli discendenti semantici; artefatti indipendenti restano
 riutilizzabili. Cicli, versioni sconosciute e digest incoerenti sono errori.
+
+## 11.8 Dataset e stato di ricerca
+
+ADR-0047 autorizza i payload additivi di dataset tabellari, metadati tipizzati,
+preparazione italiana e analisi acquisite secondo GS-API-004, GS-API-005 e
+GS-API-006. Lo stato autorevole usa revisioni immutabili concatenate e controllo
+ottimistico; nuovi import indipendenti non devono eliminarlo. Originale tabellare,
+fonti derivate e loro metadati devono essere pubblicati nello stesso commit.
+Richiesta, esito e preparazione catturati sono distinti dalla vista ricostruibile.
+La riapertura di un esito salvato non deve eseguire nuovamente l'algoritmo.
+
+Il requisito minimo del lettore è elevato in modo lazy a 3 quando vengono
+committati dati di ricerca. I precedenti requisiti 1 (testo) e 2 (documenti ricchi)
+restano invariati per progetti senza questi dati. Un lettore che ignora la
+preparazione autorevole deve rifiutare tali progetti, non applicare default.

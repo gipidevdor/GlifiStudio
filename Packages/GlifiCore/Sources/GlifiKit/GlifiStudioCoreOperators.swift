@@ -221,6 +221,53 @@ public struct GlifiStudioCoreOperatorResult: Encodable, Equatable, Sendable {
     public let tables: [GlifiStudioOperatorTable]
 }
 
+extension GlifiStudioCoreOperatorResult: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case schema, schemaVersion, request, methodIdentifiers, validationStatus, tables
+    }
+
+    /// Restores a captured result without executing an operator; bounds precede presentation.
+    public init(from decoder: any Decoder) throws {
+        let fields = try decoder.container(keyedBy: CodingKeys.self)
+        guard
+            try fields.decode(String.self, forKey: .schema) == "studio.glifi.core-operator-result",
+            try fields.decode(Int.self, forKey: .schemaVersion) == 1
+        else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .schema, in: fields, debugDescription: "Unsupported operator result schema")
+        }
+        let request = try fields.decode(GlifiStudioCoreOperatorRequest.self, forKey: .request)
+        let methods = try fields.decode([String].self, forKey: .methodIdentifiers)
+        let status = try fields.decode(String.self, forKey: .validationStatus)
+        let tables = try fields.decode([GlifiStudioOperatorTable].self, forKey: .tables)
+        guard !methods.isEmpty, methods.count <= 1_024, tables.count <= 128,
+            tables.reduce(0, { $0 + $1.rows.count }) <= 100_000,
+            tables.allSatisfy({ table in
+                table.columns.count <= 1_024
+                    && table.rows.allSatisfy { row in
+                        row.count == table.columns.count
+                            && row.allSatisfy { cell in
+                                switch cell {
+                                case let .number(value): value.isFinite
+                                case .integer: true
+                                case let .text(value), let .localized(value):
+                                    value.utf8.count <= 1_048_576
+                                case let .nonFinite(value):
+                                    ["undefined", "positiveInfinity", "negativeInfinity"].contains(
+                                        value)
+                                }
+                            }
+                    }
+            })
+        else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .tables, in: fields, debugDescription: "Invalid captured operator tables")
+        }
+        self.init(
+            request: request, methodIdentifiers: methods, validationStatus: status, tables: tables)
+    }
+}
+
 /// Bounded facade over the existing numerical, graph and lexical operators.
 public enum GlifiStudioCoreOperators {
     /// Maximum input size for each explicit text editor.

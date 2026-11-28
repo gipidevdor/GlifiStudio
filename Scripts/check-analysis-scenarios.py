@@ -54,8 +54,8 @@ def referenced_file(relative: str) -> Path:
 
 
 @functools.lru_cache(maxsize=128)
-def swift_test_names(source: str) -> frozenset[str]:
-    """Recognize test declarations, ignoring comments and quoted fixture text."""
+def swift_code(source: str) -> str:
+    """Mask comments and literals before inspecting controlled Swift declarations."""
     masked = list(source)
     quoted = re.compile(r'(#+)?("""|")')
     position = 0
@@ -95,9 +95,15 @@ def swift_test_names(source: str) -> frozenset[str]:
         for index in range(start, min(position, len(source))):
             if masked[index] != "\n":
                 masked[index] = " "
+    return "".join(masked)
+
+
+@functools.lru_cache(maxsize=128)
+def swift_test_names(source: str) -> frozenset[str]:
+    """Recognize executable test declarations, ignoring fixture text and comments."""
     pending = False
     names = set()
-    for token in re.finditer(r"@Test\b|\bfunc\s+([A-Za-z_][A-Za-z_0-9]*)\s*\(", "".join(masked)):
+    for token in re.finditer(r"@Test\b|\bfunc\s+([A-Za-z_][A-Za-z_0-9]*)\s*\(", swift_code(source)):
         if token.group(1) is None:
             pending = True
         else:
@@ -164,6 +170,121 @@ def string_list(value, *, allow_empty=False) -> bool:
     return isinstance(value, list) and (allow_empty or bool(value)) and all(nonempty_text(item) for item in value)
 
 
+def swift_body(code: str, pattern: str) -> str:
+    match = re.search(pattern, code)
+    if match is None:
+        raise ValueError("Missing native Swift declaration: " + pattern)
+    opening = code.find("{", match.end())
+    if opening < 0:
+        raise ValueError("Missing native declaration body")
+    depth = 1
+    position = opening + 1
+    while position < len(code) and depth:
+        depth += (code[position] == "{") - (code[position] == "}")
+        position += 1
+    if depth:
+        raise ValueError("Unbalanced native declaration")
+    return code[opening + 1:position - 1]
+
+
+def native_typed_dispatch(code: str, tool_case: str, request_case: str) -> bool:
+    """Require the typed constructor in the declared tool's top-level switch branch."""
+    pattern = r"\bswitch\s+(?:spec\.)?tool\b"
+    for switch in re.finditer(pattern, code):
+        body = swift_body(code[switch.start():], pattern)
+        depth = 0
+        branches = []
+        for token in re.finditer(r"[{}]|\bcase\b|\bdefault\b", body):
+            if token[0] == "{":
+                depth += 1
+            elif token[0] == "}":
+                depth -= 1
+            elif depth == 0:
+                branches.append(token.start())
+        branches.append(len(body))
+        for start, end in zip(branches, branches[1:]):
+            branch = body[start:end]
+            label, separator, implementation = branch.partition(":")
+            if separator and tool_case in re.findall(r"\.(\w+)", label):
+                if re.search(r"\." + re.escape(request_case) + r"\s*\(", implementation):
+                    return True
+    return False
+
+
+def check_native_kh_bindings(group: dict, kh: set[str]) -> None:
+    """Promotion requires exhaustive, executable and thematically reachable GUI evidence."""
+    bindings = group["nativeBindings"]
+    if not isinstance(bindings, list):
+        raise ValueError("Native KH bindings must be a list")
+    route_path = "Apps/macOS/StudioCoreMethodRoute.swift"
+    route_code = swift_code(referenced_file(route_path).read_text(encoding="utf-8"))
+    activation = swift_body(route_code, r"\bfunc\s+activate\s*\(")
+    home_code = swift_code(referenced_file("Apps/Shared/StudioHomeView.swift").read_text(encoding="utf-8"))
+    request_source = referenced_file("Packages/GlifiCore/Sources/GlifiKit/GlifiStudioKHAnalysisRequest.swift").read_text(encoding="utf-8")
+    request_tags = dict(re.findall(r'case\s+\.(\w+):\s*"([^"]+)"', request_source.split("init(from", 1)[0]))
+    route_test = {"path": "Apps/macOS/Tests/StudioWorkspaceTests.swift",
+                  "symbol": "everyAnalyticalFamilyHasAnExecutableRouteAndLocalizedRole"}
+    observed = set()
+    for binding in bindings:
+        if not isinstance(binding, dict) or set(binding) != {
+            "operation", "requestCase", "toolEnum", "toolCase", "routeCase", "model", "view", "tests",
+        }:
+            raise ValueError("Invalid native KH binding fields")
+        operation = binding["operation"]
+        if operation not in kh or operation in observed:
+            raise ValueError("Duplicate or unknown native KH operation")
+        observed.add(operation)
+        names = [binding[key] for key in ("requestCase", "toolEnum", "toolCase", "routeCase")]
+        if any(not isinstance(name, str) or re.fullmatch(r"[A-Za-z_][A-Za-z_0-9]*", name) is None for name in names):
+            raise ValueError("Invalid native KH source identifiers")
+        request_case, tool_enum, tool_case, route_case = names
+        if request_tags.get(request_case) != operation:
+            raise ValueError("Native KH request case does not match its compiled wire tag")
+        model_path = referenced_file(binding["model"])
+        view_path = referenced_file(binding["view"])
+        if model_path.suffix != ".swift" or view_path.suffix != ".swift" or "macOS" not in model_path.parts or "macOS" not in view_path.parts:
+            raise ValueError("Native KH binding requires macOS Swift model and view sources")
+        model = swift_code(model_path.read_text(encoding="utf-8"))
+        view = swift_code(view_path.read_text(encoding="utf-8"))
+        enum_body = swift_body(model, r"\benum\s+" + re.escape(tool_enum) + r"\b")
+        cases = {name for line in re.findall(r"^\s*case\s+([A-Za-z_][^\n]*)", enum_body, re.M)
+                 for name in re.findall(r"(?:^|,)\s*([A-Za-z_]\w*)", line)}
+        if tool_case not in cases or not native_typed_dispatch(model, tool_case, request_case):
+            raise ValueError("Native KH tool or typed request dispatch is missing")
+        if re.search(r"case\s+" + re.escape(route_case) + r"\(\s*" + re.escape(tool_enum) + r"\s*\)", route_code) is None:
+            raise ValueError("Native KH thematic route does not bind the tool enum")
+        if re.search(re.escape(tool_enum) + r"\.allCases\.map\(Self\." + re.escape(route_case) + r"\)", route_code) is None:
+            raise ValueError("Native KH thematic catalog is not exhaustive")
+        branch = re.search(r"case\s+let\s+\." + re.escape(route_case) + r"\(method\):(?P<body>.*?)(?=\bcase\s|$)", activation, re.S)
+        if branch is None or re.search(r"\.tool\s*=\s*method", branch["body"]) is None:
+            raise ValueError("Native KH thematic route does not activate its selected tool")
+        view_class = re.search(r"\bstruct\s+(\w+)\s*:\s*View", view)
+        if (view_class is None or view_class[1] not in home_code
+                or re.search(r"StudioAnalysisRoleView\(route:\s*\." + re.escape(route_case) + r"\(", view) is None
+                or re.search(r"\banalysis\.execute\s*\(", view) is None):
+            raise ValueError("Native KH view is not reachable with context and executable controls")
+        check_references(binding["tests"])
+        if route_test not in binding["tests"]:
+            raise ValueError("Native KH promotion requires the executable thematic route test")
+        native_tests = [ref for ref in binding["tests"] if ref != route_test and ref["path"].startswith("Apps/macOS/Tests/")]
+        if not native_tests:
+            raise ValueError("Native KH promotion requires an executable native operator test")
+        covered = False
+        for test in native_tests:
+            code = swift_code(referenced_file(test["path"]).read_text(encoding="utf-8"))
+            body = swift_body(code, r"\bfunc\s+" + re.escape(test["symbol"]) + r"\s*\(")
+            parameterized = re.search(
+                r"@Test\(arguments:\s*" + re.escape(tool_enum)
+                + r"\.allCases\)\s*func\s+" + re.escape(test["symbol"]) + r"\s*\(", code)
+            if re.search(r"\.execute\s*\(", body) and (parameterized or re.search(r"\." + re.escape(tool_case) + r"\b", body)):
+                covered = True
+        if not covered:
+            raise ValueError("Native KH test does not execute the declared tool case or its exhaustive enum")
+    headless = set(group["headlessOnly"])
+    if observed & headless or observed | headless != kh:
+        raise ValueError("Native and headless KH coverage must be disjoint and exhaustive")
+
+
 def validate(matrix: dict, symbols: dict[str, dict]) -> tuple[int, int]:
     if not isinstance(matrix, dict) or set(matrix) != {"schema", "schemaVersion", "scope", "groups", "workflows", "limitations"}:
         raise ValueError("Unexpected analysis scenario matrix fields")
@@ -178,7 +299,10 @@ def validate(matrix: dict, symbols: dict[str, dict]) -> tuple[int, int]:
     groups = {}
     count = 0
     for group in matrix["groups"]:
-        if not isinstance(group, dict) or set(group) != {"id", "command", "variants", "contracts", "tests", "scientificReferences", "nativeScope", "headlessOnly"}:
+        fields = {"id", "command", "variants", "contracts", "tests", "scientificReferences", "nativeScope", "headlessOnly"}
+        if isinstance(group, dict) and group.get("command") == "text-analysis":
+            fields.add("nativeBindings")
+        if not isinstance(group, dict) or set(group) != fields:
             raise ValueError("Unexpected scenario group fields")
         identifier, command = group["id"], group["command"]
         if not isinstance(identifier, str) or re.fullmatch(r"GS-SCN-\d{3}", identifier) is None or not nonempty_text(command):
@@ -201,8 +325,7 @@ def validate(matrix: dict, symbols: dict[str, dict]) -> tuple[int, int]:
     if set(groups) != set(expected):
         raise ValueError("The scenario matrix omits an operation family")
     kh = KIT.text_operation_inventory(symbols)["kh"]
-    if set(groups["text-analysis"]["headlessOnly"]) != kh:
-        raise ValueError("KH native coverage requires a separately evidenced GUI implementation")
+    check_native_kh_bindings(groups["text-analysis"], kh)
     for group in matrix["groups"]:
         if group["command"] != "text-analysis" and group["headlessOnly"]:
             raise ValueError("Unexpected headless-only declarations")
@@ -247,7 +370,28 @@ def check_negative_controls(matrix: dict, symbols: dict[str, dict]) -> None:
             self.rejects(lambda value: value["groups"][0]["tests"][0].update(path="../outside.swift"))
 
         def test_false_native_claim(self):
-            self.rejects(lambda value: next(group for group in value["groups"] if group["command"] == "text-analysis")["headlessOnly"].clear())
+            self.rejects(lambda value: next(group for group in value["groups"] if group["command"] == "text-analysis")["nativeBindings"][0].update(tests=[]))
+
+        def test_missing_native_binding(self):
+            self.rejects(lambda value: next(group for group in value["groups"] if group["command"] == "text-analysis")["nativeBindings"].pop())
+
+        def test_duplicate_native_binding(self):
+            def duplicate(value):
+                group = next(group for group in value["groups"] if group["command"] == "text-analysis")
+                group["nativeBindings"].append(copy.deepcopy(group["nativeBindings"][0]))
+            self.rejects(duplicate)
+
+        def test_native_headless_overlap(self):
+            self.rejects(lambda value: next(group for group in value["groups"] if group["command"] == "text-analysis")["headlessOnly"].append("matrix-zscore"))
+
+        def test_native_route_mismatch(self):
+            self.rejects(lambda value: next(group for group in value["groups"] if group["command"] == "text-analysis")["nativeBindings"][0].update(routeCase="missingRoute"))
+
+        def test_native_request_mismatch(self):
+            self.rejects(lambda value: next(group for group in value["groups"] if group["command"] == "text-analysis")["nativeBindings"][0].update(requestCase="missingRequest"))
+
+        def test_existing_tool_case_cannot_claim_another_request(self):
+            self.rejects(lambda value: next(group for group in value["groups"] if group["command"] == "text-analysis")["nativeBindings"][0].update(toolCase="termScores"))
 
         def test_new_compiler_case_requires_coverage(self):
             added = copy.deepcopy(symbols)

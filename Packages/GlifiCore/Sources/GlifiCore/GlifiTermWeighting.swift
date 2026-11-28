@@ -528,7 +528,8 @@ public enum GlifiQueryTermNormalizer {
             else {
                 return nil
             }
-            return surface.precomposedStringWithCanonicalMapping.lowercased(with: locale)
+            return token.analysisForm
+                ?? surface.precomposedStringWithCanonicalMapping.lowercased(with: locale)
         }
     }
 }

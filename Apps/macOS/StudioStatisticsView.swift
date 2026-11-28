@@ -91,6 +91,7 @@ struct StudioStatisticsView: View {
     private var configuration: some View {
         Form {
             Section("statistics.method") {
+                StudioAnalysisRoleView(route: .statistics(statistics.operation))
                 Picker("statistics.operation", selection: $statistics.operation) {
                     ForEach(GlifiStudioStatisticsOperation.allCases) { operation in
                         Text(LocalizedStringKey("statistics.operation.\(operation.rawValue)"))

@@ -213,24 +213,55 @@ func distributionDescriptorRevisionsAreSelective() async throws {
             resolvedParameters: [:], linguisticProfileIdentifiers: [], dependencies: [])
     }
     let changed = try [
-        descriptor(GlifiCorpusAssociationAnalysis.self, "studio.glifi.artifact.corpus-association"),
-        descriptor(
-            GlifiGroupMetricComparison.self, "studio.glifi.artifact.group-metric-comparison"),
-        descriptor(GlifiPostHocAnalysis.self, "studio.glifi.artifact.group-metric-posthoc"),
-        descriptor(GlifiMetricCorrelationAnalysis.self, "studio.glifi.artifact.metric-correlation"),
-        descriptor(
-            GlifiPairedMetricAnalysis.self, "studio.glifi.artifact.paired-metric-comparison"),
+        (
+            descriptor(
+                GlifiCorpusAssociationAnalysis.self, "studio.glifi.artifact.corpus-association"),
+            "2"
+        ),
+        (
+            descriptor(
+                GlifiGroupMetricComparison.self, "studio.glifi.artifact.group-metric-comparison"),
+            "4"
+        ),
+        (descriptor(GlifiPostHocAnalysis.self, "studio.glifi.artifact.group-metric-posthoc"), "3"),
+        (
+            descriptor(
+                GlifiMetricCorrelationAnalysis.self, "studio.glifi.artifact.metric-correlation"),
+            "2"
+        ),
+        (
+            descriptor(
+                GlifiPairedMetricAnalysis.self, "studio.glifi.artifact.paired-metric-comparison"),
+            "3"
+        ),
     ]
-    for current in changed {
+    for (current, expectedVersion) in changed {
         let previous = try distributionLegacyDescriptor(current)
-        #expect(current.algorithmVersion == "2")
+        #expect(current.algorithmVersion == expectedVersion)
         #expect(previous.algorithmVersion == "1")
+        let previousTwo = try distributionLegacyDescriptor(current, algorithmVersion: "2")
+        if expectedVersion == "3" || expectedVersion == "4" {
+            #expect(try current.nodeID() != previousTwo.nodeID())
+        } else {
+            #expect(current == previousTwo)
+            #expect(try current.nodeID() == previousTwo.nodeID())
+        }
         #expect(current.outputSchemaIdentifier == previous.outputSchemaIdentifier)
         #expect(current.algorithmIdentifier == previous.algorithmIdentifier)
         #expect(try current.nodeID() != previous.nodeID())
         #expect(
             try JSONDecoder().decode(
                 GlifiAnalysisDescriptor.self, from: JSONEncoder().encode(previous)) == previous)
+        let previousThree = try distributionLegacyDescriptor(current, algorithmVersion: "3")
+        if expectedVersion == "4" {
+            #expect(try current.nodeID() != previousThree.nodeID())
+            #expect(
+                try JSONDecoder().decode(
+                    GlifiAnalysisDescriptor.self, from: JSONEncoder().encode(previousThree))
+                    == previousThree)
+        } else if expectedVersion == "3" {
+            #expect(current == previousThree)
+        }
     }
     let unaffected = try [
         descriptor(GlifiCorpusDispersionAnalysis.self, "studio.glifi.artifact.corpus-dispersion"),
@@ -247,12 +278,12 @@ func distributionDescriptorRevisionsAreSelective() async throws {
 }
 
 private func distributionLegacyDescriptor(
-    _ descriptor: GlifiAnalysisDescriptor
+    _ descriptor: GlifiAnalysisDescriptor, algorithmVersion: String = "1"
 ) throws -> GlifiAnalysisDescriptor {
     var object = try #require(
         JSONSerialization.jsonObject(
             with: JSONEncoder().encode(descriptor)) as? [String: Any])
-    object["algorithmVersion"] = "1"
+    object["algorithmVersion"] = algorithmVersion
     return try JSONDecoder().decode(
         GlifiAnalysisDescriptor.self, from: JSONSerialization.data(withJSONObject: object))
 }

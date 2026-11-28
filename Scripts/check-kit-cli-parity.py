@@ -32,6 +32,7 @@ DEFAULT_FAMILIES = [
     {"command": "evaluation", "enum": "GlifiStudioEvaluationOperation"},
     {"command": "project-call", "enum": "GlifiStudioProjectOperation"},
     {"command": "profile", "enum": "GlifiStudioTextFormat"},
+    {"command": "research-call", "enum": "GlifiStudioResearchOperation"},
 ]
 
 
@@ -208,18 +209,22 @@ def check_fixtures(binary: Path, directory: Path, families: list[dict], symbols:
         expected[family["command"]] = cases
     fixtures = [read_json(path) for path in sorted(directory.glob("*.json"))]
     observed = {command: set() for command in expected}
+    seen_fixtures = set()
     if not fixtures:
         raise ValueError("No native Kit parity fixtures were exported")
     with tempfile.TemporaryDirectory(prefix="GlifiKitCLIParity-") as temporary:
         request_path = Path(temporary) / "request.json"
         checks = 0
+        source_metadata_checks = 0
         for fixture in fixtures:
             required = {"schemaVersion", "command", "operation", "request", "result"}
-            if not required <= fixture.keys() or fixture.keys() - required - {"projectPath", "visualExportPath"} or fixture["schemaVersion"] != 1:
+            if not required <= fixture.keys() or fixture.keys() - required - {"projectPath", "visualExportPath", "variant"} or fixture["schemaVersion"] != 1:
                 raise ValueError("Invalid native Kit parity fixture schema")
             command, operation = fixture["command"], fixture["operation"]
-            if command not in observed or operation in observed[command]:
+            identity = (command, operation, fixture.get("variant"))
+            if command not in observed or identity in seen_fixtures:
                 raise ValueError(f"Unexpected or duplicate fixture: {command}/{operation}")
+            seen_fixtures.add(identity)
             observed[command].add(operation)
             for repeat in range(2):
                 request = json.loads(json.dumps(fixture["request"]))
@@ -261,13 +266,70 @@ def check_fixtures(binary: Path, directory: Path, families: list[dict], symbols:
                     "cliProtocolVersion": 1, "command": command, "outcome": "succeeded",
                     "result": expected_result,
                 }, command + "/" + operation)
+                if command == "project-call" and operation == "multivariate" and fixture.get("variant") == "terms":
+                    parameters = request["parameters"]
+                    method = parameters["method"]["hierarchicalTerms"]
+                    direct_arguments = [str(binary), "--format", "json", "multivariate", str(copied),
+                                        "--sources", ",".join(parameters["sourceRevisionIDs"]),
+                                        "--method", "hac", "--unit", "terms",
+                                        "--linkage", method["linkage"], "--clusters", str(method["clusterCount"]),
+                                        "--max-terms", str(parameters["maximumTermCount"])]
+                    direct = subprocess.run(direct_arguments, capture_output=True, text=True, timeout=60, check=False)
+                    if direct.returncode != 0 or direct.stderr:
+                        raise ValueError("Direct CLI term HAC failed")
+                    compare(json.loads(direct.stdout)["result"], expected_result, "multivariate/terms")
+                    for bad_arguments in (("hac", "unknown"), ("ca", "terms"), ("ca", "documents")):
+                        rejected_arguments = direct_arguments.copy()
+                        rejected_arguments[rejected_arguments.index("--method") + 1] = bad_arguments[0]
+                        rejected_arguments[rejected_arguments.index("--unit") + 1] = bad_arguments[1]
+                        rejected = subprocess.run(rejected_arguments, capture_output=True, text=True, timeout=60, check=False)
+                        if rejected.returncode != 2 or rejected.stdout:
+                            raise ValueError("Invalid CLI multivariate unit was accepted")
+                if destination is not None:
+                    for field in ("analysisNodeID", "analysisIdentifier", "methodIdentifier"):
+                        contradictory = json.loads(json.dumps(request))
+                        rejected_path = Path(temporary) / f"source-mismatch-{checks}-{field}"
+                        contradictory["parameters"]["destinationPath"] = str(rejected_path)
+                        contradictory["parameters"]["visualization"][field] = (
+                            "analysis-node:sha256:" + "b" * 64 if field == "analysisNodeID"
+                            else "ZQXSOURCEMETADATACANARY-v1"
+                        )
+                        request_path.write_text(json.dumps(contradictory), encoding="utf-8")
+                        rejected = subprocess.run(
+                            arguments, capture_output=True, text=True, timeout=60, check=False,
+                        )
+                        if rejected.returncode != 3 or rejected.stdout:
+                            raise ValueError(f"Contradictory visual source metadata was accepted: {field}")
+                        failure_envelope = json.loads(rejected.stderr)
+                        failure = failure_envelope["failure"]
+                        expected_failure = {
+                            "code": "visual-export.source-mismatch", "category": "invalidInput",
+                            "operation": "export", "retryDisposition": "afterCorrection",
+                            "retainedState": "unchanged", "arguments": [],
+                        }
+                        if (failure_envelope["command"] != command
+                                or failure_envelope["cliProtocolVersion"] != 1
+                                or failure_envelope["outcome"] != "failed"
+                                or any(failure.get(key) != value for key, value in expected_failure.items())):
+                            raise ValueError("Wrong failure for contradictory visual source metadata")
+                        if ("ZQXSOURCEMETADATACANARY" in rejected.stderr
+                                or str(rejected_path) in rejected.stderr or rejected_path.exists()
+                                or list(Path(temporary).glob(".glifi-visual-export-*"))):
+                            raise ValueError("Contradictory metadata leaked or published a visual export")
+                        source_metadata_checks += 1
                 checks += 1
         if observed != expected:
             differences = []
             for command in expected:
                 differences.append(f"{command}: missing={sorted(expected[command] - observed[command])}, extra={sorted(observed[command] - expected[command])}")
             raise ValueError("Compiler-enumerated operation parity failed:\n" + "\n".join(differences))
+        export_fixtures = [fixture for fixture in fixtures
+                           if fixture["command"] == "project-call"
+                           and fixture["operation"] == "exportVisualization"]
+        if not export_fixtures or source_metadata_checks != len(export_fixtures) * 2 * 3:
+            raise ValueError("Missing independent CLI visual source metadata checks")
     print(f"Kit/CLI: {len(fixtures)} compiler-enumerated operations, {checks} complete-result parity checks")
+    print(f"Visual export source metadata: {source_metadata_checks} independent CLI rejection checks")
 
 
 def text_operation_inventory(symbols: dict[str, dict]) -> dict[str, set[str]]:

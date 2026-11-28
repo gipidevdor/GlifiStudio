@@ -16,6 +16,10 @@ let package = Package(
         .executable(name: "GlifiRecoveryHarness", targets: ["GlifiRecoveryHarness"]),
         .executable(name: "GlifiBenchmark", targets: ["GlifiBenchmark"]),
     ],
+    dependencies: [
+        .package(
+            url: "https://github.com/cucumberswift/CucumberSwift.git", exact: "6.9.0", traits: [])
+    ],
     targets: [
         .target(
             name: "GlifiCore",
@@ -34,6 +38,18 @@ let package = Package(
             name: "GlifiCoreTests", dependencies: ["GlifiCore", "GlifiBenchmarkTestSupport"]),
         .testTarget(
             name: "GlifiKitTests", dependencies: ["GlifiKit", "GlifiBenchmarkTestSupport"]),
+        .testTarget(
+            name: "GlifiBDDTests",
+            dependencies: [
+                "GlifiKit",
+                .product(name: "CucumberSwiftTesting", package: "CucumberSwift"),
+            ],
+            exclude: ["Features"],
+            resources: [.copy("Licenses")],
+            plugins: [
+                .plugin(name: "CucumberSwiftTestingPlugin", package: "CucumberSwift")
+            ]
+        ),
     ],
     swiftLanguageModes: [.v6]
 )

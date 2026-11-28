@@ -348,9 +348,11 @@ func distributionOptimizationFailureContracts() {
             estimate: 0, sortedReplicates: [-2, -1, 1, 2], jackknife: [-1, 0, 1],
             confidenceLevel: (1.0).nextDown, seed: 0)
     }
-    #expect(throws: GlifiFailure.self) {
-        try GlifiStatisticalFoundation.standardizedDifference(
-            [1, 2, 3, 4], [2, 3, 4, 6], confidenceLevel: (1.0).nextDown)
+    for confidenceLevel in [0, 1, -1, Double.nan, .infinity, -.infinity] {
+        #expect(throws: GlifiFailure.self) {
+            try GlifiStatisticalFoundation.standardizedDifference(
+                [1, 2, 3, 4], [2, 3, 4, 6], confidenceLevel: confidenceLevel)
+        }
     }
 }
 
